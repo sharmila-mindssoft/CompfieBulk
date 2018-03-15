@@ -1,11 +1,11 @@
 var listPage = $(".list-page");
 var dataListPage = $(".data-list-page");
 
-var clientGroupName = $("#client-group");
+var clientGroup = $("#client-group");
 var clientGroupId = $("#client-group-id");
 var acClientGroup = $("#ac-client-group");
 
-var legalEntityName = $("#legal-entity");
+var legalEntity = $("#legal-entity");
 var legalEntityId = $("#legal-entity-id");
 var acLegalEntity = $("#ac-legal-entity");
 
@@ -13,7 +13,7 @@ var showButton = $("#show-button");
 var listView = $("#list-view");
 
 var dataTableTbody = $("#data-table-tbody");
-var dataFilterHeader = $("#data-filter-header");
+// var dataFilterHeader = $("#data-filter-header");
 
 var downloadBtn = $(".download");
 var passwordApproveSubmit = $('#password-approve-submit');
@@ -29,6 +29,10 @@ var singleRejectRemark = $('#single-reject-remark');
 var passwordSingleRejectSubmit = $('#password-single-reject-submit');
 var singleRejectId = $('#single-reject-id');
 
+var filterUploadedFileName = $('#filter-uploaded-file-name');
+var filterUploadedOn = $('#filter-uploaded-on');
+var filterUploadedBy = $('#filter-uploaded-by');
+var filterNoOfRecords = $('#filter-no-of-records');
 
 var ASID = $("#assigned-statutory-id");
 
@@ -71,18 +75,22 @@ var pageLimits;
 var ItemsPerPage = $('#items_per_page');
 var submit = $('#submit');
 
-var viewDataFiltered = $(".view-data-filtered");
-var domainFiltered = $(".domain-filtered");
-var unitFiltered = $(".unit-filtered");
-var primaryLegislationFiltered = $(".primary-legislation-filtered");
-var secondaryLegislationFiltered = $(".secondary-legislation-filtered");
-var statutoryProvisionFiltered = $(".statutory-provision-filtered");
-var complianceTaskFiltered = $(".compliance-task-filtered");
-var statutoryTaskFiltered = $(".statutory-task-filtered");
-var complianceStatusFiltered = $(".compliance-status-filtered");
-var domplianceDescriptionFiltered = $(".dompliance-description-filtered");
+var clientGroupName = $('#client-group-name');
+var legalEntityName = $('#legal-entity-name');
+var uploadedFileName = $('#uploaded-file-name');
+var uploadedOn = $('#uploaded-on');
+var uploadedBy = $('#uploaded-by');
+
+var filteredData = $(".filtered-data");
 var clearFiltered = $(".clear-filtered");
-var filtered = $(".filtered");
+
+var filterDomain = $("#filter-domain");
+var filterUnit = $("#filter-unit");
+var filterPrimaryLegislation = $("#filter-primary-legislation");
+var filterSecondaryLegislation = $("#filter-secondary-legislation");
+var filterStatutoryProvision = $("#filter-statutory-provision");
+var filterComplianceTask = $("#filter-compliance-task");
+var filterComplianceDescription = $("#filter-compliance-description");
 
 function displayLoader() {
     $('.loading-indicator-spin').show();
@@ -115,10 +123,14 @@ ApproveAssignStatutoryBulkUpload.prototype.pageLoad = function() {
     dataListPage.hide();
 
     listView.hide();
-    clientGroupName.val('');
+    clientGroup.val('');
     clientGroupId.val('');
-    legalEntityName.val('');
+    legalEntity.val('');
     legalEntityId.val('');
+    filterUploadedFileName.val('');
+    filterUploadedOn.val('');
+    filterUploadedBy.val('');
+    filterNoOfRecords.val('');
 
     t_this.initialize();
 };
@@ -150,8 +162,8 @@ ApproveAssignStatutoryBulkUpload.prototype.possibleFailures = function(error) {
 
 function PageControls() {
 
-    clientGroupName.keyup(function(e) {
-        var textVal = clientGroupName.val().trim();
+    clientGroup.keyup(function(e) {
+        var textVal = clientGroup.val().trim();
         var clientGroupList = REPORT._client_group;
         var condition_fields = [];
         var condition_values = [];
@@ -160,8 +172,8 @@ function PageControls() {
         }, condition_fields, condition_values);
     });
 
-    legalEntityName.keyup(function(e) {
-        var textVal = legalEntityName.val().trim();
+    legalEntity.keyup(function(e) {
+        var textVal = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
         var condition_fields = ["cl_id"];
         var condition_values = [clientGroupId.val()];
@@ -174,7 +186,7 @@ function PageControls() {
         if (validate()) {
             listView.show();
             // showAnimation(listView);
-            REPORT.fetchStatutoryValues();
+            REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
         }
     });
 
@@ -191,14 +203,32 @@ function PageControls() {
         validateAuthentication(rejectId.val(), rejectPassword, rejectRemark);
     });
 
-    
+    filterUploadedFileName.keyup(function() {
+        fList = key_search_list(REPORT._data_list);
+        REPORT.displayListPage(fList);
+    });
+
+    filterUploadedOn.keyup(function() {
+        fList = key_search_list(REPORT._data_list);
+        REPORT.displayListPage(fList);
+    });
+
+    filterUploadedBy.keyup(function() {
+        fList = key_search_list(REPORT._data_list);
+        REPORT.displayListPage(fList);
+    });
+
+    filterNoOfRecords.keyup(function() {
+        fList = key_search_list(REPORT._data_list);
+        REPORT.displayListPage(fList);
+    });
 
     checkAllApprove.click(function() {
       if($(this).prop("checked") == true) {
         $('.single-approve').removeAttr("checked");
         $('.single-approve').trigger('click');
-        $('.single-reject').attr("disabled","disabled");
-        checkAllReject.attr("disabled","disabled");
+        // $('.single-reject').attr("disabled","disabled");
+        // checkAllReject.attr("disabled","disabled");
       } else {
         $('.single-approve').removeAttr("checked");
         $('.single-reject').removeAttr("disabled");
@@ -231,8 +261,8 @@ function PageControls() {
         if(checkAllReject.prop("checked") == true) {
           $('.single-reject').removeAttr("checked");
           $('.single-reject').trigger('click');
-          $('.single-approve').attr("disabled","disabled");
-          checkAllApprove.attr("disabled","disabled"); 
+          // $('.single-approve').attr("disabled","disabled");
+          // checkAllApprove.attr("disabled","disabled"); 
         } else {
           singleReject(singleRejectId.val(), true);
         }
@@ -280,43 +310,63 @@ function PageControls() {
     });
 
     search.click(function() {
+
+      var filteredArray = [];
+
       if($(".view-data:checked").val() == "1")
-        viewDataFiltered.html("View Data : Verified");
+        filteredArray.push("View Data : Verified");
       else if($(".view-data:checked").val() == "0")
-        viewDataFiltered.html("View Data : Pending");
-      else
-        viewDataFiltered.html("");
+        filteredArray.push("View Data : Pending");
 
       if(domain.val() != null)
-        domainFiltered.html("Domain Name : "+domain.val().join());
-      else
-        domainFiltered.html("");
+        filteredArray.push("Domain Name : "+domain.val().join());
 
       if(unit.val() != null) {
         var unitText = "";
         $.each(unit.find('option:selected'), function() {
             (unitText != "") ? unitText = unitText+', '+$(this).text() : unitText = $(this).text();
         });
-        unitFiltered.html("Unit Name : "+unitText);
-      } else {
-        unitFiltered.html("");
+        filteredArray.push("Unit Name : "+unitText);
       }
 
-      // unitFiltered.html();
-      // primaryLegislationFiltered.html();
-      // secondaryLegislationFiltered.html();
-      // statutoryProvisionFiltered.html();
-      // complianceTaskFiltered.html();
-      // statutoryTaskFiltered.html();
-      // complianceStatusFiltered.html();
-      // domplianceDescriptionFiltered.html();
-      // clearFiltered
+      if(primaryLegislation.val() != null)
+        filteredArray.push("Primary Legislation : "+primaryLegislation.val().join());
 
+      if(secondaryLegislationName.val() != "")
+        filteredArray.push("Secondary Legislation : "+secondaryLegislationName.val());
+
+      if(statutoryProvisionName.val() != "")
+        filteredArray.push("Statutory Provision : "+statutoryProvisionName.val());
+
+      if(complianceTaskName.val() != "")
+        filteredArray.push("Compliance Task Name : "+complianceTaskName.val());
+
+      if(statutoryStatus.val() != "")
+        filteredArray.push("Statutory Status : "+statutoryStatus.find('option:selected').text());
+
+      if(complianceStatus.val() != "")
+        filteredArray.push("Compliance Status : "+complianceStatus.find('option:selected').text());
+
+      if(complianceDescriptionName.val() != "")
+        filteredArray.push("Compliance Description : "+complianceDescriptionName.val());
+
+      DataText = "";
+      if(filteredArray.length > 0) {
+        clearFiltered.show();
+        for (var i = 0; i < filteredArray.length; i++) {
+          (DataText != "") ? DataText = DataText+' | '+filteredArray[i] : DataText = filteredArray[i];
+        }
+        filteredData.html("Filtered By - "+DataText);
+      } else {
+        filtered.empty();
+        clearFiltered.hide();
+      }
       viewListDetailsPage(ASID.val());
     });
     
     clearFiltered.click(function() {
-      filtered.empty();
+      filteredData.empty();
+      viewListDetailsPage(ASID.val());
     });
 
     submit.click(function() {
@@ -329,6 +379,41 @@ function PageControls() {
         currentPage = 1;
         createPageView(totalRecord);
         viewListDetailsPage(ASID.val());
+    });
+
+    filterDomain.keyup(function() {
+        fList = key_search_details_list(REPORT._data_list_details);
+        REPORT.displayDetailsPage(fList);
+    });
+
+    filterUnit.keyup(function() {
+        fList = key_search_details_list(REPORT._data_list_details);
+        REPORT.displayDetailsPage(fList);
+    });
+
+    filterPrimaryLegislation.keyup(function() {
+        fList = key_search_details_list(REPORT._data_list_details);
+        REPORT.displayDetailsPage(fList);
+    });
+
+    filterSecondaryLegislation.keyup(function() {
+        fList = key_search_details_list(REPORT._data_list_details);
+        REPORT.displayDetailsPage(fList);
+    });
+
+    filterStatutoryProvision.keyup(function() {
+        fList = key_search_details_list(REPORT._data_list_details);
+        REPORT.displayDetailsPage(fList);
+    });
+
+    filterComplianceTask.keyup(function() {
+        fList = key_search_details_list(REPORT._data_list_details);
+        REPORT.displayDetailsPage(fList);
+    });
+
+    filterComplianceDescription.keyup(function() {
+        fList = key_search_details_list(REPORT._data_list_details);
+        REPORT.displayDetailsPage(fList);
     });
 }
 
@@ -364,43 +449,82 @@ clearElement = function(arr) {
 }
 
 onClientGroupAutoCompleteSuccess = function(REPORT, val) {
-    clientGroupName.val(val[1]);
+    clientGroup.val(val[1]);
     clientGroupId.val(val[0]);
-    clientGroupName.focus();
-    clearElement([legalEntityName, legalEntityId]);
+    clientGroup.focus();
+    clearElement([legalEntity, legalEntityId]);
     // REPORT.fetchLegalEntityList(val[0]);
 }
 
 onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
-    legalEntityName.val(val[1]);
+    legalEntity.val(val[1]);
     legalEntityId.val(val[0]);
-    legalEntityName.focus();
+    legalEntity.focus();
 }
 
 validate = function() {
     is_valid = true;
-    if (clientGroupName.val().trim().length == 0) {
+    if (clientGroup.val().trim().length == 0) {
         displayMessage(message.group_required);
         is_valid = false;
-    } else if (clientGroupName.val().trim().length > 50) {
+    } else if (clientGroup.val().trim().length > 50) {
         displayMessage(message.group_50);
         is_valid = false;
-    } else if (legalEntityName.val().trim().length == 0) {
+    } else if (legalEntity.val().trim().length == 0) {
         displayMessage(message.legalentity_required);
         is_valid = false;
-    } else if (legalEntityName.val().trim().length > 50) {
+    } else if (legalEntity.val().trim().length > 50) {
         displayMessage(message.le_50);
         is_valid = false;
     }
     return is_valid;
 };
 
-/*showAnimation = function(element) {
-    element.removeClass().addClass('bounceInLeft animated')
-        .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
-            $(this).removeClass();
-        });
-}*/
+key_search_list = function(d) {
+    key_one = filterUploadedFileName.val().toLowerCase();
+    key_two = filterUploadedOn.val().toLowerCase();
+    key_three = filterUploadedBy.val().toLowerCase();
+    key_four = filterNoOfRecords.val();
+    var fList = [];
+    for (var e in d) {
+      var value_one = d[e].csv_name.toLowerCase();
+      var value_two = d[e].uploaded_on.toLowerCase();
+      var value_three = d[e].uploaded_by.toString().toLowerCase();
+      var value_four = d[e].no_of_records.toString();
+        if( (~value_one.indexOf(key_one)) && (~value_two.indexOf(key_two)) && 
+            (~value_three.indexOf(key_three)) && (~value_four.indexOf(key_four)) ) {
+                fList.push(d[e]);
+        }
+    }
+    return fList
+}
+
+key_search_details_list = function(d) {
+  key_one = filterDomain.val().toLowerCase();
+  key_two = filterUnit.val().toLowerCase();
+  key_three = filterPrimaryLegislation.val();
+  key_four = filterSecondaryLegislation.val();
+  key_five = filterStatutoryProvision.val();
+  key_six = filterComplianceTask.val();
+  key_seven = filterComplianceDescription.val();
+  var fList = [];
+  for (var e in d) {
+    var value_one = d[e].d_name.toLowerCase();
+    var value_two = d[e].u_name.toLowerCase();
+    var value_three = d[e].p_leg.toLowerCase();
+    var value_four = d[e].s_leg.toLowerCase();
+    var value_five = d[e].s_prov.toLowerCase();
+    var value_six = d[e].c_task.toLowerCase();
+    var value_seven = d[e].c_desc.toLowerCase();
+    if( (~value_one.indexOf(key_one)) && (~value_two.indexOf(key_two)) && 
+        (~value_three.indexOf(key_three)) && (~value_four.indexOf(key_four)) &&
+        (~value_five.indexOf(key_five)) && (~value_six.indexOf(key_six)) && 
+        (~value_seven.indexOf(key_seven)) ) {
+              fList.push(d[e]);
+    }
+  }
+  return fList
+}
 
 download = function(element) {
     if ($("." + element).is(':visible') == false) {
@@ -415,16 +539,16 @@ viewListPage = function() {
     REPORT.pageLoad();
 }
 
-ApproveAssignStatutoryBulkUpload.prototype.fetchStatutoryValues = function() {
+ApproveAssignStatutoryBulkUpload.prototype.fetchStatutoryValues = function(c_id, le_id) {
     t_this = this;
-    c_id = clientGroupId.val();
-    le_id = legalEntityId.val();
+    /*c_id = clientGroupId.val();
+    le_id = legalEntityId.val();*/
     displayLoader();
     bu.getAssignStatutoryForApprove(parseInt(c_id), parseInt(le_id), function(error, response) {
-        console.log(error, response);
+        // console.log(error, response);
         if (error == null) {
             t_this._data_list = response.pending_csv_list_as;
-            t_this.displayListPage();
+            t_this.displayListPage(t_this._data_list);
             hideLoader();
         } else {
             t_this.possibleFailures(error);
@@ -433,12 +557,12 @@ ApproveAssignStatutoryBulkUpload.prototype.fetchStatutoryValues = function() {
     });
 };
 
-ApproveAssignStatutoryBulkUpload.prototype.displayListPage = function() {
+ApproveAssignStatutoryBulkUpload.prototype.displayListPage = function(data) {
     t_this = this;
     dataTableTbody.empty();
-    if (t_this._data_list.length > 0) {
+    if (data.length > 0) {
         var no = 0;
-        $.each(t_this._data_list, function(k, v) {
+        $.each(data, function(k, v) {
             no++;
             var clone = $('#template #report-table tr').clone();
             $('.sno', clone).text(no);
@@ -459,11 +583,6 @@ ApproveAssignStatutoryBulkUpload.prototype.displayListPage = function() {
             }
             $('.download', clone).attr("onClick", "download('show-download" + v.csv_id + "')");
 
-            /*$('.download .dowload-excel', clone).attr("onClick", "downloadFile('" + v.download_file + "', 'xlsx')");
-            $('.download .dowload-csv', clone).attr("onClick", "downloadFile('" + v.download_file + "', 'csv')");
-            $('.download .dowload-ods', clone).attr("onClick", "downloadFile('" + v.download_file + "', 'ods')");
-            $('.download .dowload-text', clone).attr("onClick", "downloadFile('" + v.download_file + "', 'txt')");*/
-
             //bulkuploadcsv
             $('.download .dowload-excel', clone).attr("href", "/uploaded_file/xlsx/" + v.download_file.split('.')[0] + ".xlsx");
             $('.download .dowload-csv', clone).attr("href", "/uploaded_file/csv/" + v.download_file.split('.')[0] + ".csv");
@@ -479,7 +598,7 @@ ApproveAssignStatutoryBulkUpload.prototype.displayListPage = function() {
         hideLoader();
         var clone = $('#template #record-not-found tr').clone();
         dataTableTbody.append(clone);
-        dataFilterHeader.hide();
+        // dataFilterHeader.hide();
     }
 };
 
@@ -502,6 +621,8 @@ function confirmationAction(id, action) {
     rejectId.val(id);
     singleRejectRemark.val("");
     rejectRemark.val("");
+    approvePassword.val("");
+    rejectPassword.val("");
     Custombox.open({
         target: '#custom-modal-'+action,
         effect: 'contentscale',
@@ -514,6 +635,8 @@ function confirmationAction(id, action) {
 function closeCustombox() {
   checkAllReject.removeAttr("checked");
   Custombox.close();
+  if($("#reject"+singleRejectId.val()))
+    $("#reject"+singleRejectId.val()).removeAttr("checked");
 }
 
 function validateAuthentication(id, passwordField, remarkField) {
@@ -550,7 +673,7 @@ function validateAuthentication(id, passwordField, remarkField) {
               displaySuccessMessage(message.assign_statutory_approved_success);
             else
               displaySuccessMessage(message.assign_statutory_rejected_success);
-            REPORT.fetchStatutoryValues();
+            REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
         } else {
             REPORT.possibleFailures(error);
             hideLoader();
@@ -577,6 +700,14 @@ viewListDetailsPage = function(id) {
     listPage.hide();
     dataListPage.show();
 
+    filterDomain.val('');
+    filterUnit.val('');
+    filterPrimaryLegislation.val('');
+    filterSecondaryLegislation.val('');
+    filterStatutoryProvision.val('');
+    filterComplianceTask.val('');
+    filterComplianceDescription.val('');
+
     pageLimits = parseInt(ItemsPerPage.val());
     if (currentPage == 1)
         sno = 0;
@@ -589,35 +720,42 @@ viewListDetailsPage = function(id) {
     REPORT.loadDetailsPageWithFilter(id, view_data, domain.val(), unit.val(), primaryLegislation.val(), secondaryLegislationName.val(), statutoryProvisionName.val(), complianceTaskName.val(), statutoryStatus.val(), complianceStatus.val(), complianceDescriptionName.val());
 }
 
-ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
+ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function(data) {
     t_this = this;
     is_null = true;
     var showFrom = sno + 1;
     dataDetailsTableTbody.empty();
-    if (t_this._data_list_details.length > 0) {
+    // alert(data.toSource());
+    if (data.length > 0) {
         var no = 0;
-        $.each(t_this._data_list_details, function(k, v) {
+        var approvedStatus = 0;
+        var rejectedStatus = 0;
+        $.each(data, function(k, v) {
             is_null = false;
             sno = parseInt(sno) + 1;
             no++;
             var clone = $('#template #report-details-table tr').clone();
             $('.sno', clone).text(no);
 
-            $('.single-approve', clone).val(v.as_id).attr({ id:"approve"+v.as_id, onClick:"singleApprove(" + v.as_id + ")" });
-            $('.single-reject', clone).val(v.as_id).attr({ id:"reject"+v.as_id, onClick:"singleReject(" + v.as_id + ", false)" });
+            $('.single-approve', clone).val(v.as_id).attr({ id:"approve"+v.as_id, onClick:"singleApprove(" + v.as_id + ")", name:"action"+v.as_id, });
+            $('.single-reject', clone).val(v.as_id).attr({ id:"reject"+v.as_id, onClick:"singleReject(" + v.as_id + ", false)", name:"action"+v.as_id, });
 
             if(v.bu_action == 1) {
               $('.single-approve', clone).prop('checked', true);
-              $('.single-reject', clone).attr("disabled","disabled");
+              $('.single-reject', clone).prop('checked', false);
+              approvedStatus++;
+              // $('.single-reject', clone).attr("disabled","disabled");
             } else if(v.bu_action == 2) {
               $('.single-reject', clone).prop('checked', true);
-              $('.single-approve', clone).attr("disabled","disabled");
+              $('.single-approve', clone).prop('checked', false);
+              rejectedStatus++;
+              // $('.single-approve', clone).attr("disabled","disabled");
               if(v.remarks != "")
                 $('.rejected-reason', clone).html('<i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="'+v.remarks+'"></i>');
             }
             $('.domain-name', clone).html(v.d_name);
             $('.unit-name span', clone).html(v.u_name);
-            $('.unit-name i', clone).attr("title", v.u_location);
+            $('.unit-name i', clone).attr("title", "Location: "+v.u_location);
             $('.primary-legislation', clone).html(v.p_leg);
             
             if(v.c_status == 1)
@@ -638,10 +776,20 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
             $('.secondary-legislation', clone).html(v.s_leg);
             $('.statutory-provision', clone).html(v.s_prov);
             $('.compliance-task-name span', clone).html(v.c_task);
-            $('.compliance-task-name i', clone).attr("title", v.org_name);
+            $('.compliance-task-name i', clone).attr("title", "Organization: "+v.org_names.join());
             $('.compliance-description', clone).html(v.c_desc);
             dataDetailsTableTbody.append(clone);
         });
+        if(rejectedStatus == no) {
+          checkAllReject.prop('checked', true);
+          checkAllApprove.prop('checked', false);
+        } else if(approvedStatus == no) {
+          checkAllApprove.prop('checked', true);
+          checkAllReject.prop('checked', false);
+        } else {
+          checkAllReject.prop('checked', false);
+          checkAllApprove.prop('checked', false);
+        }
         PaginationView.show();
     } else {
         PaginationView.hide();
@@ -656,7 +804,7 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function() {
 
 singleApprove = function(id) {
     if($('#approve'+id).prop("checked") == true) {
-      $('#reject'+id).attr("disabled","disabled");
+      // $('#reject'+id).attr("disabled","disabled");
       tempAction(id, 1);
     } else {
       $('#reject'+id).removeAttr("disabled");
@@ -670,11 +818,11 @@ singleReject = function(id, flag) {
           singleRejectId.val(id);
           confirmationAction(0, 'single-reject');
         } else {
-          $('#approve'+id).attr("disabled","disabled");
+          // $('#approve'+id).attr("disabled","disabled");
           tempAction(id, 2);
         }
       } else {
-        $('#approve'+id).attr("disabled","disabled");
+        // $('#approve'+id).attr("disabled","disabled");
         tempAction(id, 2);
       }
     } else {
@@ -778,11 +926,15 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
     displayLoader();
     bu.getViewAssignStatutoryDataFromFilter(parseInt(id), parseInt(sno), parseInt(pageLimits),  d_names, u_names, p_leg, s_leg, s_pro, c_task, c_des, v_data, s_status, c_status, function(error, response) {
         // console.log(error, response);
-        alert(response.toSource());
+        clientGroupName.html(response.cl_name);
+        legalEntityName.html(response.le_name);
+        uploadedFileName.html(response.csv_name);
+        uploadedOn.html(response.uploaded_on);
+        uploadedBy.html(response.uploaded_by);
         if (error == null) {
             t_this._data_list_details = response.assign_statutory_data_list;
             totalRecord = 3;
-            t_this.displayDetailsPage();
+            t_this.displayDetailsPage(t_this._data_list_details);
             ASID.val(id);
             hideLoader();
         } else {
@@ -849,4 +1001,6 @@ $(document).ready(function() {
     PageControls();
     loadItemsPerPage();
     // viewListDetailsPage(3);
+    // listView.show();
+    // REPORT.fetchStatutoryValues(1,1);
 });
