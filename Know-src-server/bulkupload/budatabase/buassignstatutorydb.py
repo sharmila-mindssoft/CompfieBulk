@@ -362,7 +362,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
     c_status = request_frame.c_status
 
 
-    result = db.call_proc_with_multiresult_set("sp_assign_statutory_view_by_filter", 
+    result = db.call_proc_with_multiresult_set("sp_assign_statutory_view_by_filter",
         [
             csv_id, domain_name, unit_name, p_legis,
             s_legis, s_prov, c_task, c_desc, f_count, r_range,
@@ -383,7 +383,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
 
     if len(compliance_info) > 0 :
         for idx, d in enumerate(compliance_info) :
-           
+
             orgs = [x for x in d["organization"].split(',') if x != '']
 
             as_data.append(bu_as.AssignStatutoryData(
@@ -478,7 +478,6 @@ def fetch_rejected_assign_sm_data(db, session_user,
              str(d["remarks"]),
              d["action"],
              int(d["declined_count"])
-
         ))
     return rejectdatalist
 
@@ -559,29 +558,37 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
     reportdata=data[0]
     total_record=data[1][0]["total"]
 
-    for d in reportdata :
+    approved_on=''
+    uploaded_on=''
+    rejected_on=''
 
-        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+
+    for d in reportdata:
+
+        if(d["uploaded_on"]!=''):
+            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
             '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
-        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+        if(d["approved_on"] is not None):
+            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+        '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
-        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+        if(d["rejected_on"] is not None):
+            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
             '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
         reportdatalist.append(bu_as.StatutoryReportData(
              int(d["uploaded_by"]),
-             str(uploaded_on),
+             uploaded_on,
              str(d["csv_name"]),
-             int(d["total_records"]),
-             int(d["total_rejected_records"]),
+             d["total_records"],
+             d["total_rejected_records"] if d["total_rejected_records"] is not None else 0,
              d["approved_by"],
              d["rejected_by"],
-             str(approved_on),
-             str(rejected_on),
-             int(d["is_fully_rejected"]),
-             int(d["approve_status"])
+             approved_on,
+             rejected_on,
+             d["is_fully_rejected"],
+             d["approve_status"]
         ))
 
     return reportdatalist, total_record
@@ -634,7 +641,7 @@ def fetch_rejected_asm_download_csv_report(db, session_user, user_id,
              str(download_count),
              str(d["remarks"]),
              str(d["action"]),
-             str(d["rejected_reason"])
+             d["rejected_reason"]
         })
     return data
 

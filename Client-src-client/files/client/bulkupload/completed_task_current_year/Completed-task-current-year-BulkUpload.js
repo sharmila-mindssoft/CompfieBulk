@@ -17,25 +17,30 @@ var lastAct = '';
 var startcount = 0;
 var ACCORDIONCOUNT = 0;
 
-var ULRow = $("#templates .ul-row li");
-var legalentityul = $("#legalentity");
-var divisionul = $("#division");
-var categoryul = $("#category");
-var unitul = $("#units");
-var domainul = $("#domain");
-var actul = $("#level_1");
-var frequencyul = $("#frequency");
+// var ULRow = $("#templates .ul-row li");
+// var legalentityul = $("#legalentity");
+// var divisionul = $("#division");
+// var categoryul = $("#category");
+// var unitul = $("#units");
+// var domainul = $("#domain");
+// var actul = $("#level_1");
+// var frequencyul = $("#frequency");
 
-var LE_ID = null;
+// var LE_ID = null;
 
-var ACTIVE_UNITS = [];
-var ACTIVE_FREQUENCY = [];
+// var ACTIVE_UNITS = [];
+// var ACTIVE_FREQUENCY = [];
 
-var NextButton = $('#btn-next');
-var PreviousButton = $('#btn-previous');
-var SubmitButton = $("#btn-submit");
-var ShowMore = $(".btn-showmore");
-var Filter_List = $('.filter-list');
+// var NextButton = $('#btn-next');
+// var PreviousButton = $('#btn-previous');
+// var SubmitButton = $("#btn-submit");
+// var ShowMore = $(".btn-showmore");
+// var Filter_List = $('.filter-list');
+
+var cancelButton = $("#cancelButton");
+var addScreen = $("#add-screen");
+var viewScreen = $("#list-screen");
+var addButton = $("#btn-add");
 
 function activate_assignee(element, checkval, checkname, clickvalue) {
     $("#assigneeval" + clickvalue).val(checkname);
@@ -204,7 +209,7 @@ function customParse(str) {
 
     // alert(str);
     if (str != null && str != "") {
-        while (n--) { months[months[n]] = n; } // map month names to their index 
+        while (n--) { months[months[n]] = n; } // map month names to their index
         matches = str.match(re); // extract date parts from string
         return new Date(matches[3], months[matches[2]], matches[1]);
     }
@@ -529,6 +534,21 @@ function pageControls() {
             showCurrentLi = currentLiText.indexOf(searchText) !== -1;
             $(this).toggle(showCurrentLi);
         });
+    });
+
+    //--*************----
+
+    // Cancel Button Click Event
+    cancelButton.click(function() {
+        um_page.clearValues();
+        um_page.showList();
+    });
+
+
+    //Add Button Click Event
+    addButton.click(function() {
+        viewScreen.hide();
+        addScreen.show();
     });
 }
 
