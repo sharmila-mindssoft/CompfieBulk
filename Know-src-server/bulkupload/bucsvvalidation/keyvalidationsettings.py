@@ -65,7 +65,7 @@ def is_numeric_with_delimiter(value):
 def is_valid_statutory_date_input(value, irange):
     flag = True
     if value != "" :
-        if only_numeric(int(value)) :
+        if only_numeric(value) :
             if int(value) > irange:
                 flag = False
         else :
@@ -314,7 +314,7 @@ csv_params = {
         validation_method=is_url
     ),
     'Compliance_Frequency': make_required_validation(
-        keyType='STRING', isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=20, isValidCharCheck=True,
         validation_method=is_alphabet, isFoundCheck=True
     ),
     'Statutory_Month': make_required_validation(
@@ -334,7 +334,7 @@ csv_params = {
     ),
 
     'Repeats_Type': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=duration_and_repeats_type,
+        keyType='STRING', maxLengthCheck=20, isValidCharCheck=True, validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
     'Repeats_By (DOM/EOM)': make_required_validation(
@@ -344,7 +344,7 @@ csv_params = {
         keyType='INT', isValidCharCheck=True, validation_method=duration_and_repeats
     ),
     'Duration_Type': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=duration_and_repeats_type,
+        keyType='STRING', maxLengthCheck=20, isValidCharCheck=True, validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
     'Multiple_Input_Section': make_required_validation(
