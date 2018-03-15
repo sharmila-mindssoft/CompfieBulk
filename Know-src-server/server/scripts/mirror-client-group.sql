@@ -443,7 +443,7 @@ insert into tbl_form_category values (35, 36, 1);
 insert into tbl_form_category values (36, 37, 1);
 insert into tbl_form_category values (37, 38, 1);
 insert into tbl_form_category values (38, 39, 1);
-insert into tbl_form_category values (40, 40, 1);
+insert into tbl_form_category values (163, 40, 1);
 
 
 -- legal Entity Admin Forms
@@ -483,7 +483,7 @@ insert into tbl_form_category values (70, 36, 3);
 insert into tbl_form_category values (71, 37, 3);
 insert into tbl_form_category values (72, 38, 3);
 insert into tbl_form_category values (73, 39, 3);
-insert into tbl_form_category values (40, 40, 3);
+insert into tbl_form_category values (164, 40, 3);
 
 -- Domain Admin Forms
 insert into tbl_form_category values (75, 3, 4);
@@ -517,7 +517,7 @@ insert into tbl_form_category values (102, 36, 4);
 insert into tbl_form_category values (103, 37, 4);
 insert into tbl_form_category values (104, 38, 4);
 insert into tbl_form_category values (105, 39, 4);
-insert into tbl_form_category values (40, 40, 4);
+insert into tbl_form_category values (165, 40, 4);
 
 -- Inhouse Users Forms
 insert into tbl_form_category values (106, 35, 5);
