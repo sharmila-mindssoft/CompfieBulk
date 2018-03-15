@@ -929,11 +929,13 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 nature_id = self.Statutory_Nature.get(nature).get("statutory_nature_id")
 
                 for geo_maps in value.get("Applicable_Location").split(CSV_DELIMITER):
-                    geo_ids.append(self.Geographies.get(geo_maps).get("geography_id"))
+                    if self.Geographies.get(geo_maps) is not None :
+                        geo_ids.append(self.Geographies.get(geo_maps).get("geography_id"))
 
                 statu_mapping = value.get("Statutory").split(CSV_DELIMITER)
                 for statu_maps in statu_mapping:
-                    statu_ids.append(self.Statutories.get(statu_maps).get("statutory_id"))
+                    if self.Statutories.get(statu_maps) is not None:
+                        statu_ids.append(self.Statutories.get(statu_maps).get("statutory_id"))
 
                 if len(grouped_list) > 1 :
                     msg.append(grouped_list[0].get("Compliance_Task"))
