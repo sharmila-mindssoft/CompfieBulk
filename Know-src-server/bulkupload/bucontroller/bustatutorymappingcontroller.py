@@ -276,7 +276,7 @@ def update_statutory_mapping_action(db, request_frame, session_user):
             print "After validation"
             print is_declined
             if len(is_declined) > 0 :
-                return bu_sm.ValidationSuccess(is_declined)
+                return bu_sm.ValidationSuccess(len(is_declined))
             else :
                 if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
                     print "after temp db update"
@@ -308,7 +308,7 @@ def submit_statutory_mapping(db, request_frame, session_user):
         )
         is_declined = cObj.perform_validation_before_submit()
         if len(is_declined) > 0 :
-            return bu_sm.ValidationSuccess(is_declined)
+            return bu_sm.ValidationSuccess(len(is_declined))
         else :
 
             cObj.save_manager_message(
