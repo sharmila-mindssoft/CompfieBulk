@@ -175,10 +175,21 @@
                                         </form>
                                     </div>
                                     <div class="clearfix"></div>
-                                    <div class="col-md-12 p-0">
+                                    <div class="col-md-12 p-0 filtered">
                                         <span class="pull-left p-r-5">Filtered By - </span>
-                                        <span class="pull-left p-r-5">Domain Name : </span>
-                                        <span class="pull-left p-r-5"> Labour Law </span>
+                                        <span class="pull-left p-r-5 view-data-filtered"></span>
+                                        <span class="pull-left p-r-5 domain-filtered"></span>
+                                        <span class="pull-left p-r-5 unit-filtered"></span>
+                                        <span class="pull-left p-r-5 primary-legislation-filtered"></span>
+                                        <span class="pull-left p-r-5 secondary-legislation-filtered"></span>
+                                        <span class="pull-left p-r-5 statutory-provision-filtered"></span>
+                                        <span class="pull-left p-r-5 compliance-task-filtered"></span>
+                                        <span class="pull-left p-r-5 statutory-task-filtered"></span>
+                                        <span class="pull-left p-r-5 compliance-status-filtered"></span>
+                                        <span class="pull-left p-r-5 dompliance-description-filtered"></span>
+                                        <span class="pull-left p-r-5 clear-filtered">
+                                            <i class="fa fa-times fa-1-3x text-primary text-muted c-pointer" data-toggle="tooltip" title="" data-original-title="Click here to View Not Applicable"></i>
+                                        </span>
                                     </div>
                                     <div class="clearfix"></div>
                                     <div class="table-responsive">
@@ -350,6 +361,20 @@
         <button type="button" class="btn btn-primary waves-effect waves-light" id="password-reject-submit">Submit</button>
     </div>
 </div>
+<div id="custom-modal-single-reject" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="closeCustombox()"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Reject Reason</h4>
+    <div class="custom-modal-text">
+        <div class="form-group">
+            <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
+            <textarea class="form-control input-sm inp_reason" id="single-reject-remark" rows="2" placeholder="Enter Reason"></textarea>
+        </div>
+        <input type="hidden" id="single-reject-id" value="">
+        <button type="button" class="btn btn-primary waves-effect waves-light" id="password-single-reject-submit">Submit</button>
+    </div>
+</div>
 <div id="template" style="display: none;">
     <table id="report-table">
         <tr>
@@ -409,20 +434,20 @@
                 <span></span>
             </td>
             <td class="primary-legislation"></td>
-            <td class="primary-applicable"><i class="fa fa-check fa-1-3x text-info c-pointer" data-toggle="tooltip" title="Applicable"></i></td>
-            <td class="primary-not-applicable"><i class="fa fa-times fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Not Applicable"></i></td>
-            <td class="primary-do-not-show"><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Do Not Show"></i></td>
+            <td class="compliance-applicable"><i class="fa fa-check fa-1-3x c-pointer" data-toggle="tooltip" title="Applicable"></i></td>
+            <td class="compliance-not-applicable"><i class="fa fa-times fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Not Applicable"></i></td>
+            <td class="compliance-do-not-show"><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Do Not Show"></i></td>
             <td class="statutory-remarks"></td>
             <td class="secondary-legislation"></td>
-            <td class="statutory-provision">Rule 10, Section 1, Sub-Sec 1A</td>
+            <td class="statutory-provision"></td>
             <td class="compliance-task-name">
                 <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip"></i>
                 <span></span>
             </td>
-            <td class="compliance-description">Within 30 days of opening a branch</td>
-            <td class="secondary-applicable"><i class="fa fa-check fa-1-3x text-info c-pointer" data-toggle="tooltip" title="Applicable"></i></td>
-            <td class="secondary-not-applicable"><i class="fa fa-times fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Not Applicable"></i></td>
-            <td class="secondary-do-not-show"><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Do Not Show"></i></td>
+            <td class="compliance-description"></td>
+            <td class="statutory-applicable"><i class="fa fa-check fa-1-3x text-info c-pointer" data-toggle="tooltip" title="Applicable"></i></td>
+            <td class="statutory-not-applicable"><i class="fa fa-times fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Not Applicable"></i></td>
+            <td class="statutory-do-not-show"><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Do Not Show"></i></td>
         </tr>
     </table>
     <table id="record-not-found">

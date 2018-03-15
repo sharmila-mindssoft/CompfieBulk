@@ -50,7 +50,7 @@ class StatutorySource(object):
         self._validation_method_maps = {}
         self.statusCheckMethods()
         self._csv_column_name = []
-        self.__csv_column_name_with_mandatory = []
+        self._csv_column_name_with_mandatory = []
         self.csv_column_fields()
 
     def csv_column_fields(self):
@@ -146,16 +146,12 @@ class StatutorySource(object):
 
     def check_base(self, check_status, store, key_name):
         data = None
-        print key_name
-        print store
-        print check_status
         if type(store) is list :
             if key_name in store :
                 data = key_name
         else :
             data = store.get(key_name)
 
-        print data
         if data is None:
             return "Not found"
 
@@ -202,9 +198,7 @@ class StatutorySource(object):
         msg = []
 
         diff = 12 / int(d["Repeats_Every"])
-        print diff
         for k in keys :
-            print d[k]
             if len(d[k].strip().split(CSV_DELIMITER)) != diff :
                 msg.append("%s-%s" % (k, "Invalid data for multiple input section"))
         return msg
@@ -272,7 +266,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 99 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
-                    msg.append("Repeats_By - Field is blank")
+                    msg.append("Repeats_By (DOM/EOM) - Field is blank")
                 if d["Statutory_Month"] != "":
                     msg.append("Statutory_Month - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "EOM" and d["Statutory_Date"] != "" :
@@ -282,7 +276,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 9 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
-                    msg.append("Repeats_By - Field is blank")
+                    msg.append("Repeats_By (DOM/EOM) - Field is blank")
                 if d["Repeats_By (DOM/EOM)"] == "EOM" and d["Statutory_Date"] != "" :
                     msg.append("Statutory_Date - Invalid data")
 
@@ -290,7 +284,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] != "" :
-                    msg.append("Repeats_By - Invalid data")
+                    msg.append("Repeats_By (DOM/EOM) - Invalid data")
                 if d["Statutory_Month"] != "":
                     msg.append("Statutory_Month - Invalid data")
                 if d["Statutory_Date"] != "" :
@@ -334,7 +328,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 99 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
-                    msg.append("Repeats_By - Field is blank")
+                    msg.append("Repeats_By (DOM/EOM)- Field is blank")
                 if d["Statutory_Month"] != "":
                     msg.append("Statutory_Month - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "EOM" and d["Statutory_Date"] != "" :
@@ -344,7 +338,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 9 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] == "" :
-                    msg.append("Repeats_By - Field is blank")
+                    msg.append("Repeats_By (DOM/EOM)- Field is blank")
                 if d["Repeats_By (DOM/EOM)"] == "EOM" and d["Statutory_Date"] != "" :
                     msg.append("Statutory_Date - Invalid data")
 
@@ -352,7 +346,7 @@ class StatutorySource(object):
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999 :
                     msg.append("Repeats_Every - Invalid data")
                 if d["Repeats_By (DOM/EOM)"] != "" :
-                    msg.append("Repeats_By - Invalid data")
+                    msg.append("Repeats_By (DOM/EOM)- Invalid data")
                 if d["Statutory_Month"] != "":
                     msg.append("Statutory_Month - Invalid data")
                 if d["Statutory_Date"] != "" :
@@ -433,7 +427,6 @@ class StatutorySource(object):
         return statutory_mapping_id
 
     def map_statutory_date(self, s_date, s_month, t_days, r_by):
-        print s_date, s_month, t_days, r_by
         if r_by == "EOM":
             r_by = 1
         else :
@@ -496,7 +489,6 @@ class StatutorySource(object):
             mapped_date = self.map_statutory_date(
                 d["Statutory_Date"], d["Statutory_Month"], d["Trigger_Days"], d["Repeats_By (DOM/EOM)"]
             )
-            print mapped_date
 
             values.append((
                 d["Statutory_Provision"], d["Compliance_Task"],
@@ -686,9 +678,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             return res
 
         for row_idx, data in enumerate(self._source_data):
-            print "\n"
             res = True
-            print data
             error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
             for key in self._csv_column_name:
                 value = data.get(key)
@@ -699,9 +689,10 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 if (key == "Format" and value != ''):
                     self._doc_names.append(value)
                 for v in [v.strip() for v in values] :
-
-                    if v != "" :
+                        print key
                         valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
+                        print valid_failed
+                        print error_cnt
                         if valid_failed is not True :
                             if res is True :
                                 res = valid_failed
@@ -711,23 +702,22 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                                 error_count["mandatory"] += error_cnt["mandatory"]
                                 error_count["max_length"] += error_cnt["max_length"]
                                 error_count["invalid_char"] += error_cnt["invalid_char"]
+                        if v != "":
+                            if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
+                                unboundMethod = self._validation_method_maps.get(key)
+                                if unboundMethod is not None :
+                                    isFound = unboundMethod(v)
 
-                        if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
-                            unboundMethod = self._validation_method_maps.get(key)
-                            if unboundMethod is not None :
-                                isFound = unboundMethod(v)
-
-                            if isFound is not True and isFound != "" :
-                                msg = "%s - %s" % (key, isFound)
-                                if res is not True :
-                                    res.append(msg)
-                                else :
-                                    res = [msg]
-                                print res
-                                if "Status" in isFound :
-                                    self._error_summary["inactive_error"] += 1
-                                else :
-                                    self._error_summary["invalid_data_error"] += 1
+                                if isFound is not True and isFound != "" :
+                                    msg = "%s - %s" % (key, isFound)
+                                    if res is not True :
+                                        res.append(msg)
+                                    else :
+                                        res = [msg]
+                                    if "Status" in isFound :
+                                        self._error_summary["inactive_error"] += 1
+                                    else :
+                                        self._error_summary["invalid_data_error"] += 1
 
                 if key == "Compliance_Frequency":
                     msg = []
@@ -746,8 +736,16 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     self._error_summary["invalid_data_error"] += len(msg)
                     if len(msg) > 0 :
                         res = make_error_desc(res, msg)
-                        print res
-                        print key
+                if res is not True:
+                    err_str = (',').join(res)
+                    if err_str.find(key) != -1:
+                        head_idx = mapped_header_dict.get(key)
+                        if head_idx is None :
+                            head_idx = [row_idx]
+                        else :
+                            head_idx.append(row_idx)
+
+                        mapped_header_dict[key] = head_idx
 
             if not self.check_compliance_task_name_duplicate(
                 self._country_id, self._domain_id, data.get("Statutory"),
@@ -766,38 +764,28 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 dup_error = "Task_ID - Duplicate data"
                 res = make_error_desc(res, dup_error)
 
-            print "final"
-            print res
-
             if res is not True :
                 error_list = mapped_error_dict.get(row_idx)
                 if error_list is None:
                     error_list = res
                 else :
                     error_list.extend(res)
-                res = True
 
                 mapped_error_dict[row_idx] = error_list
 
-                head_idx = mapped_header_dict.get(key)
-                if head_idx is None :
-                    head_idx = [row_idx]
-                else :
-                    head_idx.append(row_idx)
-
-                mapped_header_dict[key] = head_idx
                 invalid += 1
                 self._error_summary["mandatory_error"] += error_count["mandatory"]
                 self._error_summary["max_length_error"] += error_count["max_length"]
                 self._error_summary["invalid_char_error"] += error_count["invalid_char"]
+                res = True
 
-        print invalid
         if invalid > 0 :
             return self.make_invalid_return(mapped_error_dict, mapped_header_dict)
         else :
             return self.make_valid_return(mapped_error_dict, mapped_header_dict)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
+
         fileString = self._csv_name.split('.')
         file_name = "%s_%s.%s" % (
             fileString[0], "invalid", "xlsx"
@@ -815,7 +803,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         # make ods file
         rename_file_type(file_name, "ods")
         # make text file
-        # rename_file_type(file_name, "txt")
+        rename_file_type(file_name, "txt")
         return {
             "return_status": False,
             "invalid_file": file_name,
@@ -903,7 +891,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 self._country_id, self._domain_id, data.get("Statutory"),
                 data.get("Statutory_Provision"), data.get("Compliance_Task")
             ) :
-                print "compliance task name dulicate"
                 declined_count += 1
 
             if not self.check_task_id_duplicate(
@@ -911,7 +898,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 data.get("Statutory_Provision"), data.get("Compliance_Task"),
                 data.get("Task_ID")
             ):
-                print "Task id duplicate"
                 declined_count += 1
 
             if declined_count > 0 :
@@ -928,51 +914,32 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 s["Organization"], s["Statutory_Nature"], s["Statutory"], s["Applicable_Location"]
             )):
                 grouped_list = list(v)
-                print len(grouped_list)
                 if len(grouped_list) == 0:
                     continue
-                print k
                 org_ids = []
                 statu_ids = []
                 geo_ids = []
                 nature_id = None
                 statu_mapping = None
-                print "grouped list"
-                # print grouped_list
                 value = grouped_list[0]
-                print value
                 for org in value.get("Organization").strip().split(CSV_DELIMITER):
                     org_ids.append(self.Organization.get(org).get("organisation_id"))
-                print org_ids
-                print "\n"
 
                 nature = value.get("Statutory_Nature")
-                print nature
-                print self.Statutory_Nature
                 nature_id = self.Statutory_Nature.get(nature).get("statutory_nature_id")
-                print nature_id
-                print "\n"
 
                 for geo_maps in value.get("Applicable_Location").split(CSV_DELIMITER):
-                    print geo_maps
-                    print self.Geographies
-                    geo_ids.append(self.Geographies.get(geo_maps).get("geography_id"))
-                print geo_ids
-                print "\n"
+                    if self.Geographies.get(geo_maps) is not None :
+                        geo_ids.append(self.Geographies.get(geo_maps).get("geography_id"))
 
                 statu_mapping = value.get("Statutory").split(CSV_DELIMITER)
                 for statu_maps in statu_mapping:
-                    print statu_maps
-                    print self.Statutories
-                    statu_ids.append(self.Statutories.get(statu_maps).get("statutory_id"))
-                print statu_ids
-                print "\n"
+                    if self.Statutories.get(statu_maps) is not None:
+                        statu_ids.append(self.Statutories.get(statu_maps).get("statutory_id"))
 
                 if len(grouped_list) > 1 :
                     msg.append(grouped_list[0].get("Compliance_Task"))
-                    print msg
                 uploaded_by = grouped_list[0].get("uploaded_by")
-                print uploaded_by
 
                 mapping_id = self.save_mapping_data(self._country_id, self._domain_id, nature_id, uploaded_by, str(statu_mapping))
 
@@ -985,7 +952,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 self.save_geograhy_location(mapping_id, uploaded_by, geo_ids)
 
         except Exception, e:
-            print e
             print str(traceback.format_exc())
             raise e
 

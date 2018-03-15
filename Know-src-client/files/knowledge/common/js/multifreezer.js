@@ -5,6 +5,7 @@ jQuery MultiFreezer - scrollable tables with freezed thead and (n) first columns
 */
 $('.table-freeze-multi').each(function () {
 
+
     var table = $(this),
         scrollbarWidth = freezerGetScrollbarWidth();
 
@@ -78,6 +79,8 @@ $('.table-freeze-multi').each(function () {
     leftblock.on('mousewheel', false);
 
 	});
+
+    document.body.className += "freezer-active-bu";
 });
 
 // @see https://davidwalsh.name/detect-scrollbar-width

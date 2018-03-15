@@ -65,7 +65,7 @@ def is_numeric_with_delimiter(value):
 def is_valid_statutory_date_input(value, irange):
     flag = True
     if value != "" :
-        if only_numeric(int(value)) :
+        if only_numeric(value) :
             if int(value) > irange:
                 flag = False
         else :
@@ -83,11 +83,12 @@ def trigger_days(value):
 
 def duration_and_repeats(value):
     flag = True
-    if only_numeric(value):
-        if int(value) > 999 :
+    if value != "":
+        if only_numeric(value):
+            if int(value) > 999 :
+                flag = False
+        else :
             flag = False
-    else :
-        flag = False
     return flag
 
 def duration_and_repeats_type(value):
@@ -118,8 +119,16 @@ def is_alpha_numeric(value):
         return False
 
 def is_url(value):
-    r = re.compile("^[a-zA-Z0-9=/:.-]*$")  # a-z with special char
-    if r.match(value):
+    regex = re.compile(
+        r'^https?://'  # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'  # domain...
+        r'localhost|'  # localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+        r'(?::\d+)?'  # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE
+    )
+
+    if regex.search(value):
         return True
     else:
         return False
@@ -179,10 +188,11 @@ def parse_csv_dictionary_values(key, val):
         msg.append(key + " - Cannot exceed max length")
         error_count["max_length"] = 1
 
-    if _validation_method is not None :
-        if _validation_method(val) is False :
-            msg.append(key + " - Invalid character")
-            error_count["invalid_char"] = 1
+    if val != "":
+        if _validation_method is not None :
+            if _validation_method(val) is False :
+                msg.append(key + " - Invalid character")
+                error_count["invalid_char"] = 1
     if len(msg) == 0 :
         return True, error_count
     else :
@@ -300,7 +310,7 @@ csv_params = {
         validation_method=is_alphabet, isFoundCheck=True, isActiveCheck=True
     ),
     'Statutory': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
         validation_method=is_statutory, isFoundCheck=True, isActiveCheck=True
     ),
 
@@ -314,7 +324,7 @@ csv_params = {
         validation_method=is_alpha_numeric
     ),
     'Compliance_Document': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
+        keyType='STRING', maxLengthCheck=100, isValidCharCheck=True,
         validation_method=is_alpha_numeric
     ),
     'Task_ID': make_required_validation(
@@ -338,7 +348,7 @@ csv_params = {
         validation_method=is_url
     ),
     'Compliance_Frequency': make_required_validation(
-        keyType='STRING', isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=20, isValidCharCheck=True,
         validation_method=is_alphabet, isFoundCheck=True
     ),
     'Statutory_Month': make_required_validation(
@@ -358,7 +368,7 @@ csv_params = {
     ),
 
     'Repeats_Type': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=duration_and_repeats_type,
+        keyType='STRING', maxLengthCheck=20, isValidCharCheck=True, validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
     'Repeats_By (DOM/EOM)': make_required_validation(
@@ -368,7 +378,7 @@ csv_params = {
         keyType='INT', isValidCharCheck=True, validation_method=duration_and_repeats
     ),
     'Duration_Type': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=duration_and_repeats_type,
+        keyType='STRING', maxLengthCheck=20, isValidCharCheck=True, validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
     'Multiple_Input_Section': make_required_validation(
