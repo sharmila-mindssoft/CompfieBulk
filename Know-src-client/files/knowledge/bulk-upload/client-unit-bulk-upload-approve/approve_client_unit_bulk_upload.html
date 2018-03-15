@@ -182,153 +182,167 @@
                       <!-- <span class="pull-left p-r-5"></span> -->
                     </div>
                     <div class="clearfix"></div>
-                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight view-compfie js-filtertable-action" cellspacing="0" width="100%">
-                      <thead>
-                          <tr>
-                              <th width="1%" rowspan="2">#</th>
-                              <th width="3%" class="text-left b-b-0 p-l-10" colspan="3">
-                              Action
-                              </th>
-                              <th width="10%" rowspan="2">Legal Entity</th>
-                              <th width="5%" rowspan="2">Division</th>
-                              <th width="5%" rowspan="2">Category</th>
-                              <th width="8%" rowspan="2">Geography Level</th>
-                              <th width="8%" rowspan="2">Unit Location</th>
-                              <th width="5%" rowspan="2">Unit Code</th>
-                              <th width="10%" rowspan="2">Unit Name</th>
-                              <th width="10%" rowspan="2">Unit Address</th>
-                              <th width="6%" rowspan="2">City</th>
-                              <th width="6%" rowspan="2">State</th>
-                              <th width="8%" rowspan="2">Postal Code</th>
-                              <th width="8%" rowspan="2">Domain</th>
-                              <th width="10%" rowspan="2">Organization</th>
-                          </tr>
-                          <tr>
-                            <th class="b-t-0 p-t-0 p-b-0">
-                            <div class="icon-3x">
-                              <i class="fa fa-check-square-o text-primary c-pointer" title="Approve"></i>
-                            </div>
-                            </th>
-                            <th class="b-t-0 p-t-0 p-b-0">
-                              <div class="icon-3x">
-                                <i class="fa fa-check-square-o text-danger c-pointer" title="Reject"></i>
-                              </div>
-                            </th>
-                            <th class="b-t-0 p-t-0 p-b-0"></th>
-                          </tr>
-                          <tr>
-                            <td></td>
-                            <td class="text-center" >
-                              <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-                                  <input id="singleCheckbox2" value="option2" type="checkbox">
-                                  <label> </label>
-                              </div>
-                            </td>
-                            <td class="text-center" >
-                              <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
-                                <input id="singleCheckbox2" value="option2" type="checkbox" >
-                                <label> </label>
-                              </div>
-                            </td>
-                            <td></td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Legal Entity">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Division">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Category">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Geography Level">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Location">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Code">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Name">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Address">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="City">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="State">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Postal Code">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Domain">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm js-filter-view" placeholder="Organization">
-                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                              </div>
-                            </td>
-                          </tr>
-                      </thead>
-                      <tbody class="tbody-bulk-client-unit-file-details">
-                      </tbody>
-                    </table>
-                    <table class="pagination-view default-display-none" style="width: 100%; display: table;">
+                    <div id="freezer-example">
+                      <div class="table-responsive vertical-scroll" >
+                        <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight view-compfie js-filtertable-action" cellspacing="0" width="100%">
+                          <thead>
+                              <tr>
+                                  <th width="1%" rowspan="2">#</th>
+                                  <th width="3%" class="text-left b-b-0 p-l-10" colspan="3">
+                                  Action
+                                  </th>
+                                  <th width="10%" rowspan="2">Legal Entity</th>
+                                  <th width="5%" rowspan="2">Division</th>
+                                  <th width="5%" rowspan="2">Category</th>
+                                  <th width="8%" rowspan="2">Geography Level</th>
+                                  <th width="8%" rowspan="2">Unit Location</th>
+                                  <th width="5%" rowspan="2">Unit Code</th>
+                                  <th width="10%" rowspan="2">Unit Name</th>
+                                  <th width="10%" rowspan="2">Unit Address</th>
+                                  <th width="6%" rowspan="2">City</th>
+                                  <th width="6%" rowspan="2">State</th>
+                                  <th width="8%" rowspan="2">Postal Code</th>
+                                  <th width="8%" rowspan="2">Domain</th>
+                                  <th width="10%" rowspan="2">Organization</th>
+                              </tr>
+                              <tr>
+                                <th class="b-t-0 p-t-0 p-b-0">
+                                <div class="icon-3x">
+                                  <i class="fa fa-check-square-o text-primary c-pointer" title="Approve"></i>
+                                </div>
+                                </th>
+                                <th class="b-t-0 p-t-0 p-b-0">
+                                  <div class="icon-3x">
+                                    <i class="fa fa-check-square-o text-danger c-pointer" title="Reject"></i>
+                                  </div>
+                                </th>
+                                <th class="b-t-0 p-t-0 p-b-0"></th>
+                              </tr>
+                              <tr>
+                                <td></td>
+                                <td class="text-center" >
+                                  <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
+                                      <input id="singleCheckbox2" value="option2" type="checkbox">
+                                      <label> </label>
+                                  </div>
+                                </td>
+                                <td class="text-center" >
+                                  <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
+                                    <input id="singleCheckbox2" value="option2" type="checkbox" >
+                                    <label> </label>
+                                  </div>
+                                </td>
+                                <td></td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Legal Entity">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Division">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Category">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Geography Level">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Location">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Code">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Name">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Address">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="City">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="State">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Postal Code">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Domain">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Organization">
+                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                  </div>
+                                </td>
+                              </tr>
+                          </thead>
+                          <tbody class="tbody-bulk-client-unit-file-details">
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                      <table class="pagination-view default-display-none" style="width: 100%; display: table;">
                       <tbody>
                         <tr>
                           <td>
-                            <span class="compliance_count"></span>
+                            <span class="compliance_count">Showing 1 to 25 of 525 entries </span>
                             <span class="divider-view"> | </span>
                             <span class="items-per-page"> Show
                               <select id="items_per_page" autocomplete="off">
-                              <option value="500">250</option><option value="750">500</option><option value="1000">750</option></select>
+                              <option value="500">250</option>
+                              <option value="750">500</option>
+                              <option value="1000">750</option>
+                              </select>
                               entries
                             </span>
                           </td>
                           <td style="width:250px"></td>
                           <td style="text-align:right;" class="pull-right">
-                            <ul id="pagination-rpt" class="pagination-rpt"></ul>
+                            <ul id="pagination-rpt" class="pagination-rpt">
+                              <li class="first disabled"><a href="#">First</a></li>
+                              <li class="prev disabled"><a href="#">Previous</a></li>
+                              <li class="page active"><a href="#">1</a></li>
+                              <li class="page"><a href="#">2</a></li>
+                              <li class="next disabled"><a href="#">Next</a></li>
+                              <li class="last disabled"><a href="#">Last</a></li>
+                            </ul>
                           </td>
                         </tr>
                       </tbody>
@@ -635,68 +649,6 @@
               }
           })
       });
-
-      $(function(){
-        $('.reject-checkbox').on('change', function(e){
-          if(e.target.checked){
-            $('.view-reason').show();
-          } else {
-            $('.view-reason').hide();
-          }
-        })
-      });
-
-      function hideFirstColumn(){
-
-        if($(".inp_password").val()!="" && $(".inp_reason").val()!="" ){
-
-          $("#firstTr").delay(500).hide(0);
-          Custombox.close();
-          $(".inp_password").val("");
-          $(".inp_reason").val()
-        }
-      }
-      function hideFirstColumnapprove(){
-
-        if($(".inp_password_approve").val()!=""){
-
-          $("#firstTr").delay(500).hide(0);
-          Custombox.close();
-          $(".inp_password_approve").val("");
-
-        }
-      }
-
-      function confirm_alert()
-      {
-        swal({
-            title: "Do you want to continue?",
-            text: "Reject and Remove all records in this file !",
-            type: "success",
-            showCancelButton: true,
-            confirmButtonClass: 'btn-success waves-effect waves-light',
-            confirmButtonText: 'Yes'
-        }, function(isConfirm) {
-          if(isConfirm){
-              Custombox.open({
-              target: '#custom-modal',
-              effect: 'contentscale',
-              complete:   function() {
-                // CurrentPassword.focus();
-                // isAuthenticate = false;
-              },
-              close:   function() {
-                $("#reject_all").prop('checked',false)
-                // if(isAuthenticate){
-                //   country_active(countryId, passStatus);
-                // }
-              }
-            });
-          }else{
-            $("#reject_all").prop('checked',false)
-          }
-        })
-      }
 
   </script>
 
