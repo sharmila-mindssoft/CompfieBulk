@@ -17,25 +17,25 @@ var lastAct = '';
 var startcount = 0;
 var ACCORDIONCOUNT = 0;
 
-var ULRow = $("#templates .ul-row li");
-var legalentityul = $("#legalentity");
-var divisionul = $("#division");
-var categoryul = $("#category");
-var unitul = $("#units");
-var domainul = $("#domain");
-var actul = $("#level_1");
-var frequencyul = $("#frequency");
+// var ULRow = $("#templates .ul-row li");
+// var legalentityul = $("#legalentity");
+// var divisionul = $("#division");
+// var categoryul = $("#category");
+// var unitul = $("#units");
+// var domainul = $("#domain");
+// var actul = $("#level_1");
+// var frequencyul = $("#frequency");
 
-var LE_ID = null;
+// var LE_ID = null;
 
-var ACTIVE_UNITS = [];
-var ACTIVE_FREQUENCY = [];
+// var ACTIVE_UNITS = [];
+// var ACTIVE_FREQUENCY = [];
 
-var NextButton = $('#btn-next');
-var PreviousButton = $('#btn-previous');
-var SubmitButton = $("#btn-submit");
-var ShowMore = $(".btn-showmore");
-var Filter_List = $('.filter-list');
+// var NextButton = $('#btn-next');
+// var PreviousButton = $('#btn-previous');
+// var SubmitButton = $("#btn-submit");
+// var ShowMore = $(".btn-showmore");
+// var Filter_List = $('.filter-list');
 
 var cancelButton = $("#cancelButton");
 var addScreen = $("#add-screen");
@@ -542,6 +542,13 @@ function pageControls() {
     cancelButton.click(function() {
         um_page.clearValues();
         um_page.showList();
+    });
+
+
+    //Add Button Click Event
+    addButton.click(function() {
+        viewScreen.hide();
+        addScreen.show();
     });
 }
 
