@@ -3,7 +3,7 @@ var complianceFrequencyList;
 var SystemRejected = "COMPFIE";
 var count = 1;
 var PaginationView = $('.pagination-view');
-var Pagination = $('#pagination-rpt');
+var Pagination = $('#pagination_rpt');
 var CompliacneCount = $('.compliance_count');
 var on_current_page = 1;
 var sno = 0;
@@ -133,7 +133,7 @@ function loadCountwiseResult(filterList) {
         }
         var occurance = '';
         var occuranceid;
-        var tableRow1 = $('#act-templates .table-act-list .table-row-act-list');
+        var tableRow1 = $('#act_templates .table-act-list .table-row-act-list');
         var clone1 = tableRow1.clone();
         $('.tbl-sno', clone1).text(sno);
         $('.tbl-country', clone1).text(country_name);
@@ -146,7 +146,7 @@ function loadCountwiseResult(filterList) {
         $('.tbl-approved-rejected-on', clone1).text(rejected_on);
         $('.tbl-approved-rejected-by', clone1).text(rejected_by);
         $('.tbl-reason-for-rejection', clone1).text(reason_for_rejection);
-        $('#datatable-responsive .tbody-compliance').append(clone1);
+        $('#datatable_responsive .tbody-compliance').append(clone1);
         compliance_count = compliance_count + 1;
         lastActName = country_name;
     }
@@ -205,7 +205,7 @@ function processSubmit() {
 
     function onSuccess(data) {
         $('.details').show();
-        $('#mapping-animation').removeClass().addClass('bounceInLeft animated')
+        $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
             .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
                 $(this).removeClass();
                 $(this).show();
@@ -216,7 +216,7 @@ function processSubmit() {
         hideLoader();
         if (totalRecord == 0) {
             $('.tbody-compliance').empty();
-            var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
+            var tableRow4 = $('#nocompliance_templates .table-nocompliances-list .table-row');
             var clone4 = tableRow4.clone();
             $('.tbl-norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
@@ -372,7 +372,7 @@ function loadCurrentUserDetails() {
         knowledgeName = user.employee_code + " - "
                         + user.employee_name.toUpperCase()
         $('.active-knowledge-executive').attr('style','display:block');
-        $('#knowledge-name').text(knowledgeName);
+        $('#knowledge_name').text(knowledgeName);
         kUserdetails = {
             /*"user_name":knowledgeName,*/
             "user_id": user.user_id
@@ -387,7 +387,7 @@ function loadCurrentUserDetails() {
 //get statutory mapping bulk report filter details from api
 function getUserMappingsList(logged_user_id) {
     $('.form-group-kename-kmanager').attr("style", "display:block !important");
-    $('#kename-kmanager').multiselect('rebuild');
+    $('#kename_kmanager').multiselect('rebuild');
 
     function onSuccess(logged_user_id, data) {
         console.log("logged_user_id->" + logged_user_id);

@@ -84,51 +84,44 @@ function createPageView(total_records) {
     });
 };
 
-
 function resetFields() {
     $('#group-id').val('');
     $('#legalentityid').val('');
     $('#unitid').val('');
 }
 
-
-function processPaging(){
-  _page_limit = parseInt(ItemsPerPage.val());
-  showFrom = sno + 1;
-  if (on_current_page == 1) {
-    sno = 0
-  }
-  else {
-    sno = (on_current_page - 1) *  _page_limit;
-  }
-  sno  = sno;
-  if (totalRecord == 0) {
-    /*loadHeader();*/
-    hideLoader();
-    $('.tbody-usermappingdetails-list').empty();
-    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
-    var clone4 = tableRow4.clone();
-    $('.tbl-norecords', clone4).text('No Records Found');
-    $('.tbody-usermappingdetails-list').append(clone4);
-    //ExportButton.hide();
-    PaginationView.hide();
-    ReportView.show();
-    hideLoader();
-
-  } else {
-    hideLoader();
-    if(sno==0){
-      //ExportButton.show();
-      createPageView(totalRecord);
+function processPaging() {
+    _page_limit = parseInt(ItemsPerPage.val());
+    showFrom = sno + 1;
+    if (on_current_page == 1) {
+        sno = 0
+    } else {
+        sno = (on_current_page - 1) * _page_limit;
     }
-    PaginationView.show();
-    ReportView.show();
-
-    loadUserMappingDetailsList();
-  }
+    sno = sno;
+    if (totalRecord == 0) {
+        /*loadHeader();*/
+        hideLoader();
+        $('.tbody-usermappingdetails-list').empty();
+        var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+        var clone4 = tableRow4.clone();
+        $('.tbl-norecords', clone4).text('No Records Found');
+        $('.tbody-usermappingdetails-list').append(clone4);
+        //ExportButton.hide();
+        PaginationView.hide();
+        ReportView.show();
+        hideLoader();
+    } else {
+        hideLoader();
+        if (sno == 0) {
+            //ExportButton.show();
+            createPageView(totalRecord);
+        }
+        PaginationView.show();
+        ReportView.show();
+        loadUserMappingDetailsList();
+    }
 }
-
-
 // get statutory mapping report data from api
 function processSubmit() {
     var clientGroup = parseInt(GroupId.val());
@@ -413,7 +406,6 @@ Client_unit_bulk_report_page.prototype.getValue = function(field_name, f_id) {
         return f_date;
     }
 };
-
 //display client unit bulk upload details according to count
 function loadCountwiseResult(filterList) {
     $('.tbody-compliance').empty();

@@ -4,7 +4,7 @@
 
 
 
-/* width upto 25% */
+/* using width css classes instead of html width attribute */
 
 .width-1 {
     width: 1%;
@@ -104,6 +104,10 @@
 
 .width-25 {
     width: 25%;
+}
+
+.width-85 {
+    width: 85%;
 }
 
 
