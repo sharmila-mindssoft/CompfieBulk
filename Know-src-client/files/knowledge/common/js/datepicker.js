@@ -29,5 +29,11 @@ $(function() {
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ],
         maxDate: new Date(),
+        onClose: function(selectedDate) {
+                var event = arguments.callee.caller.caller.arguments[0];
+                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                    $(this).val('');
+                }
+            }
     });
 });
