@@ -657,7 +657,7 @@ BEGIN
   INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
   WHERE
     FIND_IN_SET(t1.uploaded_by, user_ids) AND
-    t1.client_group = client_group_id AND
+    t1.client_id = client_group_id AND
     (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC
   LIMIT from_limit, to_limit;
@@ -667,7 +667,7 @@ BEGIN
   INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
   WHERE
     FIND_IN_SET(t1.uploaded_by, user_ids) AND
-    t1.client_group = client_group_id AND
+    t1.client_id = client_group_id AND
     (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
 END //
@@ -1317,19 +1317,19 @@ DROP PROCEDURE IF EXISTS `sp_assign_statutory_view_by_filter`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
-    IN csvid INT, domain_name text, unit_name text,
+    IN csvid INT, domain_name text, unit_code text,
     p_legis text, s_legis VARCHAR(200), s_prov VARCHAR(500),
     c_task VARCHAR(100), c_desc VARCHAR(500), f_count INT, f_range INT,
     view_data INT, s_status INT, c_status INT
 )
 BEGIN
-
+    
     select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
-    t2.client_group
+    (select distinct client_group from tbl_bulk_assign_statutory where csv_assign_statutory_id = t1.csv_assign_statutory_id) as client_group,
+    (select count(0) from tbl_bulk_assign_statutory where csv_assign_statutory_id = t1.csv_assign_statutory_id) as total_count
     from tbl_bulk_assign_statutory_csv as t1
-    inner join tbl_bulk_assign_statutory as t2 on t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id
     where t1.csv_assign_statutory_id = csvid;
 
     select t2.bulk_assign_statutory_id,
@@ -1344,7 +1344,7 @@ BEGIN
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
 
     and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
-    and IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_name, unit_name), 1)
+    and IF(unit_code IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_code), 1)
     and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
     and IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     and IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)

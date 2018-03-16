@@ -245,18 +245,16 @@ def fetch_client_unit_bulk_report(db, session_user, user_id,
     data = db.call_proc_with_multiresult_set('sp_client_unit_bulk_reportdata',
                                              args, expected_result)
 
-    print "sp_client_unit_bulk_reportdata  >>"
-    print data
-    print "Total"
-    print data[1][0]["total"]
-
     clientdata = data[0]
     total_record = data[1][0]["total"]
     approved_on = ""
     rejected_on = ""
+    uploaded_on = ""
     if(clientdata):
         for d in clientdata:
-            uploaded_on = datetime.datetime.strptime(
+
+            if(d["uploaded_on"] is not None):
+                uploaded_on = datetime.datetime.strptime(
                           str(d["uploaded_on"]),
                           '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
@@ -270,22 +268,17 @@ def fetch_client_unit_bulk_report(db, session_user, user_id,
                               str(d["rejected_on"]),
                               '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
-            if(d["is_fully_rejected"] is not None):
-                is_fully_rejected = d["is_fully_rejected"]
-            else:
-                is_fully_rejected = 0
-
             clientdatalist.append(bu_cu.StatutoryReportData(
                  int(d["uploaded_by"]),
                  str(uploaded_on),
                  str(d["csv_name"]),
                  int(d["total_records"]),
-                 int(d["total_rejected_records"]),
-                 int(d["approved_by"]),
-                 int(d["rejected_by"]),
+                 d["total_rejected_records"],
+                 d["approved_by"],
+                 d["rejected_by"],
                  str(approved_on),
                  str(rejected_on),
-                 int(is_fully_rejected),
+                 d["is_fully_rejected"],
                  int(d["approve_status"])
             ))
 

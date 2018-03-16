@@ -293,6 +293,8 @@ function pageControls() {
                 } else {
                     if(error == 'Invalid Csv file'){
                         displayMessage(error);
+                    }else if(error == 'UploadAssignStatutoryCSVFailed'){
+                        displayMessage('Records not uploaded successfully');
                     }else{
                         displayMessage(error);
                         InvalidFileName = data.invalid_file.split('.');;
