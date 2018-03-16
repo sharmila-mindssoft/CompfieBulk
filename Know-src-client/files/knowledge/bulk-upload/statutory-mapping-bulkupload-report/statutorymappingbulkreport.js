@@ -1,4 +1,3 @@
-
 var STATUTORY_MAPPING_REPORT_DATA;
 var SYSTEM_REJECTED="COMPFIE";
 var count = 1;
@@ -193,7 +192,7 @@ function loadCountwiseResult(filterList) {
         $('.tbl-approved-rejected-on', clone1).text(approved_rejected_on);
         $('.tbl-approved-rejected-by', clone1).text(approved_rejected_by);
         $('.tbl-reason-for-rejection', clone1).text(reason_for_rejection);
-        $('#datatable-responsive .tbody-compliance').append(clone1);
+        $('#datatable_responsive .tbody-compliance').append(clone1);
 
         compliance_count = compliance_count + 1;
         lastActName = country_name;
@@ -261,6 +260,7 @@ function processSubmit() {
 
             sno = sno;
             STATUTORY_MAPPING_REPORT_DATA = data.reportdata;
+            console.log(STATUTORY_MAPPING_REPORT_DATA);
             /*totalRecord = data.total_count*/;
             totalRecord = data.total;
             hideLoader();
@@ -283,11 +283,10 @@ function processSubmit() {
                 ReportView.show();
                 loadCountwiseResult(STATUTORY_MAPPING_REPORT_DATA);
             }
-            PaginationView.show();
+            /*PaginationView.show();
             ReportView.show();
-            loadCountwiseResult(statutoryMappingReportDataList);
+            loadCountwiseResult(STATUTORY_MAPPING_REPORT_DATA);*/
         }
-    }
 
     function onFailure(error) {
         displayMessage(error);
