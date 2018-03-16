@@ -378,6 +378,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
     csv_name = header_info[0]["csv_name"]
     upload_on = header_info[0]["uploaded_on"]
     upload_by = header_info[0]["uploaded_by"]
+    total_records = header_info[0]["total_count"]
     as_data = []
 
 
@@ -398,7 +399,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
             ))
     return bu_as.ViewAssignStatutoryDataSuccess(
         csv_id, csv_name, client_name, legal_entity_name, upload_by,
-        upload_on,  as_data, len(compliance_info)
+        upload_on,  as_data, total_records
     )
 
 
