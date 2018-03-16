@@ -609,6 +609,7 @@ def fetch_rejected_sm_download_csv_report(db, session_user, user_id,
 def process_delete_rejected_sm_csv_id(db, session_user, user_id, country_id,
                                       domain_id, csv_id):
     args = [csv_id]
+    rejectdatalist = ''
     data = db.call_proc('sp_delete_reject_sm_by_csvid', args)
     if(data):
         rejectdatalist = fetch_rejected_statutory_mapping_bulk_report(
