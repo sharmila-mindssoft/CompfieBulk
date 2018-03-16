@@ -1,5 +1,5 @@
 $(function() {
-    $("#from-date").datepicker({
+    $("#from_date").datepicker({
         showButtonPanel: true,
         closeText: 'Clear',
         changeMonth: true,
@@ -18,7 +18,7 @@ $(function() {
             }
         }
     });
-    $("#to-date").datepicker({
+    $("#to_date").datepicker({
         showButtonPanel: true,
         closeText: 'Clear',
         changeMonth: true,
