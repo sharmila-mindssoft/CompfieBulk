@@ -130,7 +130,6 @@ DELIMITER ;
 -- --------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_bulk_reportdata`;
 DELIMITER //
- DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_bulk_reportdata`;;
 CREATE PROCEDURE `sp_tbl_statutory_mappings_bulk_reportdata`(IN `user_ids` varchar(100), IN `country_ids` varchar(100), IN `domain_ids` varchar(100), IN `from_date` date, IN `to_date` date, IN `from_limit` int(11), IN `to_limit` int(11))
 BEGIN
  SELECT
