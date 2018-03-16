@@ -1,34 +1,33 @@
-{% extends "files/knowledge/common/html/container.html" %}
-{% block content %}
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="container">
-    <div class="row" id="animationSandbox">
+    <div class="row" id="animation_sandbox">
         <div class="col-sm-12">
             <div class="portlet">
                 <div class="portlet-heading bg-info">
-                    <h3 class="portlet-title">Statutory Mapping - Bulk Upload Report</h3>
+                    <h3 class="portlet-title">Statutory Mapping - Bulk upload Report</h3>
+
                     <div class="portlet-widgets">
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <div id="bg-primary1" class="panel-collapse collapse in">
+                <div id="bg_primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
                         <div class="form-horizontal group-border-dashed">
                             <div class="col-sm-6">
-                            	<!---	Country -->
-								<div class="form-group">
-									<label class=" col-sm-offset-1 col-sm-3 control-label">
-										Country: <span class="mandatory">*</span>
-									</label>
-									<div class="col-sm-6 has-feedback">
-										<select class="form-control input-sm" id="country" multiple="multiple">
-										</select>
-									</div>
-								</div>
-
-								<!---	From -->
-                                 <div class="form-group has-feedback">
+                                <!---   Country -->
+                                <div class="form-group">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">
-                                    	From: <span class="mandatory">*</span>
+                                        Country: <span class="mandatory">*</span>
+                                    </label>
+                                    <div class="col-sm-6 has-feedback">
+                                        <select class="form-control input-sm" id="country" multiple="multiple">
+                                        </select>
+                                    </div>
+                                </div>
+                                <!---   From -->
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                        From: <span class="mandatory">*</span>
                                     </label>
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm from-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="from-date" tabindex="8">
@@ -36,78 +35,65 @@
                                     </div>
                                 </div>
 
-	                             <!---KE Name -->
-	                             <div class="form-group active-knowledge-executive" style="display: none">
-								 	 <label class=" col-sm-offset-1 col-sm-3 control-label">KE Name: </label>
-								  	<div  class="col-sm-6 has-feedback">
-								  		<p id="knowledge-name" class="form-control-static"></p>
-								  	</div>
-								</div>
+                                <!---KE Name -->
+                                <div class="form-group active-knowledge-executive default-display-none">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">KE Name: </label>
+                                    <div class="col-sm-6 has-feedback">
+                                        <p id="knowledge_name" class="form-control-static"></p>
+                                    </div>
+                                </div>
 
                                 <!---   KE Name -->
-                                <div class="form-group form-group-kename-kmanager" style="display: none;">
+                                <div class="form-group form-group-kename-kmanager default-display-none">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">
                                         KE Name:
                                     </label>
                                     <div class="col-sm-6 has-feedback">
-                                        <select class="form-control input-sm" id="kename-kmanager" multiple="multiple">
+                                        <select class="form-control input-sm" id="kename_kmanager" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>
-
-
-
-
-
-
                             </div>
                             <div class="col-sm-6">
-
-								<div class="form-group">
-									<label class=" col-sm-offset-1 col-sm-3 control-label">
-									Domain: <span class="mandatory">*</span>
-									</label>
-									<div class="col-sm-6 has-feedback">
-										<select class="form-control input-sm" id="domain" multiple="multiple">
-										</select>
-									</div>
-								</div>
-
-
-								<div class="form-group has-feedback">
-	                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
-	                                    	To Date: <span class="mandatory">*</span>
-	                                    </label>
-	                                    <div class="col-sm-6">
-	                                        <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to-date" tabindex="10">
-	                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
-	                                    </div>
-	                             </div>
-                            </div>
-
-                            <div class="col-sm-12">
-                                    <div class="form-group m-t-5 m-b-0 text-center">
-                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="8"> Show </button>
-                                        <button id="export" class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                <div class="form-group">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                        Domain: <span class="mandatory">*</span>
+                                    </label>
+                                    <div class="col-sm-6 has-feedback">
+                                        <select class="form-control input-sm" id="domain" multiple="multiple">
+                                        </select>
                                     </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                        To Date: <span class="mandatory">*</span>
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to-date" tabindex="10">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
                             </div>
-
-
-
+                            <div class="col-sm-12">
+                                <div class="form-group m-t-5 m-b-0 text-center">
+                                    <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="8"> Show </button>
+                                    <button id="export" class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                </div>
+                            </div>
                             <div class="clear"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="mapping_animation" class="grid-table-rpt default-display-none" style="padding-bottom:0em;">
+            <div id="mapping_animation" class="grid-table-rpt default-display-none">
                 <div class="card-box details">
                     <div class="table-responsive">
                         <div class="col-sm-12">
-                            <div class="col-sm-12 text-center"><h4>Statutory Mapping Report</h4></div>
-
+                            <div class="col-sm-12 text-center">
+                                <h4>Statutory Mapping - Bulk upload Report</h4></div>
                         </div>
                         <div class="clearfix"></div>
-                        <table id="datatable-responsive" class="table dt-responsive nowrap">
+                        <table id="datatable_responsive" class="table dt-responsive nowrap">
                             <thead>
                                 <tr>
                                     <th class="width-2">#</th>
@@ -127,22 +113,22 @@
                             </tbody>
                         </table>
                         <table class="pagination-view default-display-none">
-                          <tr>
-                            <td>
-                              <span class="compliance_count"> </span>
-                              <span class="divider-view"> | </span>
-                              <span class="items-per-page">
+                            <tr>
+                                <td>
+                                    <span class="compliance_count"> </span>
+                                    <span class="divider-view"> | </span>
+                                    <span class="items-page">
                               Show
                               <select id="items_per_page">
                               </select>
                               entries
                               </span>
-                            </td>
-                            <td style="width:650px;"></td>
-                            <td style="text-align:right;padding-right:10px;">
-                              <ul id="pagination-rpt"></ul>
-                            </td>
-                          </tr>
+                                </td>
+                                <td class="pagination-space"></td>
+                                <td class="pagination-right-side">
+                                    <ul id="pagination_rpt"></ul>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -151,86 +137,45 @@
         <!-- end col -->
     </div>
 </div>
-<div id="act-templates" class="default-display-none">
-    <table class="font1 table-act-list" style="width:100%;height:30px; ">
-            <tr class="table-row-act-list">
-                <td class="tbl_sno"></td>
-                <td class="tbl_country"></td>
-                <td class="tbl_domain"> </td>
-                <td class="tbl_uploaded_by"></td>
-                <td class="tbl_uploaded_on"></td>
-                <td class="tbl_uploaded_file_name"></td>
-                <td class="tbl_no_of_tasks"></td>
-                <td class="tbl_approved_rejected_tasks"></td>
-                <td class="tbl_approved_rejected_on"></td>
-                <td class="tbl_approved_rejected_by"></td>
-                <td class="tbl_reason_for_rejection"></td>
+<div id="act_templates" class="default-display-none">
+    <table class="font1 table-act-list">
+        <tr class="table-row-act-list">
+            <td class="tbl-sno"></td>
+            <td class="tbl-country"></td>
+            <td class="tbl-domain"> </td>
+            <td class="tbl-uploaded-by"></td>
+            <td class="tbl-uploaded-on"></td>
+            <td class="tbl-uploaded-file-name"></td>
+            <td class="tbl-no-of-tasks"></td>
+            <td class="tbl-approved-rejected-tasks"></td>
+            <td class="tbl-approved-rejected-on"></td>
+            <td class="tbl-approved-rejected-by"></td>
+            <td class="tbl-reason-for-rejection"></td>
         </tr>
     </table>
 </div>
-
-<!-- <div id="head-templates">
+<div id="head_templates">
     <table class="table-compliance-frequency-list">
         <tr class="table-row-com-frequency">
-            <td colspan="100%">
+            <!-- <td colspan="100%"> -->
+            <td>
                 <div class="col-sm-12 no-padding">
-                    <mark class="p-l-10 p-r-10 tbl_heading"></mark>
+                    <mark class="p-l-10 p-r-10 tbl-heading"></mark>
                 </div>
             </td>
         </tr>
     </table>
     <div class="clearfix"></div>
-</div> -->
-
-<div id="nocompliance-templates" class="default-display-none">
-    <table width="100%" style="border:1px dotted #CCCCCC;" class="table-nocompliances-list">
-        <tr class="table-row" >
-            <td align="center" colspan="11" class="tbl_norecords"></td>
+</div>
+<div id="nocompliance_templates" class="default-display-none">
+    <table class="table-nocompliances-list">
+        <tr class="table-row">
+            <td colspan="11" class="tbl-norecords text-center"></td>
         </tr>
     </table>
 </div>
-{% endblock %}
-{% block contentscript %}
-    <script type="text/javascript" src="/script/bulk-upload/statutory-mapping-bulkupload-report/statutorymappingbulkreport.js"></script>
-	<script src="/js/multiselect/bootstrap-multiselect.js"></script>
-
-	<script type="text/javascript">
-    $(function() {
-        $("#from-date").datepicker({
-            showButtonPanel: true,
-            closeText: 'Clear',
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: "dd-M-yy",
-            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-            ],
-            maxDate: new Date(),
-            onClose: function(selectedDate) {
-                $("#to-date").datepicker("option", "minDate", selectedDate);
-                var event = arguments.callee.caller.caller.arguments[0];
-                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
-                    $(this).val('');
-                }
-            }
-
-        });
-
-        $("#to-date").datepicker({
-            showButtonPanel: true,
-            closeText: 'Clear',
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: "dd-M-yy",
-            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-            ],
-            maxDate: new Date(),
-        });
-    });
-</script>
-
-
+{% endblock %} {% block contentscript %}
+<script src="/script/bulk-upload/statutory-mapping-bulkupload-report/statutorymappingbulkreport.js"></script>
+<script src="/js/multiselect/bootstrap-multiselect.js"></script>
+<script src="/js/datepicker.js"></script>
 {% endblock %}
