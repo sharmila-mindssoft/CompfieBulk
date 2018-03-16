@@ -123,7 +123,7 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
 def get_statutory_mapping_csv_list(db, request_frame, session_user):
 
-    upload_more, csv_data = get_uploaded_sm_csv_list(db,
+    upload_more, csv_data = get_uploaded_statutory_mapping_csv_list(db,
                                                      session_user.user_id())
     result = bu_sm.GetStatutoryMappingCsvUploadedListSuccess(
         upload_more, csv_data

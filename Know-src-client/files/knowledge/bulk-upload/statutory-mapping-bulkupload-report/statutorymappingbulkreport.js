@@ -1,65 +1,41 @@
-var statutoryMappingReportDataList;
-var complianceFrequencyList;
-
-var SystemRejected="COMPFIE";
-
+var STATUTORY_MAPPING_REPORT_DATA;
+var SYSTEM_REJECTED="COMPFIE";
 var count = 1;
-var PaginationView = $('.pagination-view');
-var Pagination = $('#pagination-rpt');
-var CompliacneCount = $('.compliance_count');
 var on_current_page = 1;
 var sno = 0;
 var totalRecord = 0;
-var ReportView = $('.grid-table-rpt');
-
 var compliance_count = 0;
 
 var ItemsPerPage = $('#items_per_page');
 var Show_btn = $('#show');
 var Export_btn = $('#export');
 
-
+var PaginationView = $('.pagination-view');
+var Pagination = $('#pagination-rpt');
+var CompliacneCount = $('.compliance_count');
+var ReportView = $('.grid-table-rpt');
 var Country = $('#country');
 var Domain = $('#domain');
 var ToDate = $("#to-date");
 var FromDate = $("#from-date");
 
-
 var Country_ids = [];
 var Domain_ids = [];
+var KnowledgeExecutives = [];
+var ALLUSERS = [];
+
 var EmpCode;
 var EmpName;
 s_page = null;
-
 var UserCategoryID = 0;
-var KnowledgeExecutives = [];
-var ALLUSERS = [];
 var CSV = false;
 
 
-function Statutory_mapping_bulk_report_page() {
-    // this._sno = 0;
-    // this._userList = {};
-    // this._formList = {};
-    // this._categoryList = {};
-    // this._auditData = {};
-    // this._auditFormData = {};
-    // this._clientUsers = {};
-    // this._clientForms = {};
-    // this._clients = {};
-    // this._businessGroups = {};
-    // this._legalEntities = {};
-    // this._divisions = {};
-    // this._divCategories = {};
-    // this._unitList = {};
-    // this._on_current_page = 1;
-    // this._sno = 0;
-    // this._total_record = 0;
-    // this._csv = false;
+function SM_Bulk_Report() {
 }
 
 // To get the corresponding value
-Statutory_mapping_bulk_report_page.prototype.getValue = function(field_name, f_id)
+SM_Bulk_Report.prototype.getValue = function(field_name, f_id)
 {
     if (field_name == "from-date")
     {
@@ -74,7 +50,7 @@ Statutory_mapping_bulk_report_page.prototype.getValue = function(field_name, f_i
 };
 
 // Fields Manadory validation
-Statutory_mapping_bulk_report_page.prototype.validateMandatory = function()
+SM_Bulk_Report.prototype.validateMandatory = function()
 {
     is_valid = true;
 
@@ -115,7 +91,8 @@ function getStatutoryMappings() {
 
 
         //Load Countries MultiSelectBox
-        for (var countiesOpt in countriesList) {
+        for (var countiesOpt in countriesList)
+        {
             var option = $('<option></option>');
             option.val(countriesList[countiesOpt].country_id);
             option.text(countriesList[countiesOpt].country_name);
@@ -154,41 +131,56 @@ function loadCountwiseResult(filterList) {
         var domain_name = filterList[entity].domain_name;
         var csv_name = filterList[entity].csv_name_text;
         var tbl_no_of_tasks = filterList[entity].total_records;
-        var tbl_no_of_tasks = filterList[entity].total_records;
         var uploaded_by = filterList[entity].uploaded_by;
         var uploaded_on = filterList[entity].uploaded_on;
         var total_rejected_records = filterList[entity].total_rejected_records;
         var rejected_on = filterList[entity].rejected_on;
         var rejected_by = filterList[entity].rejected_by;
-        var reason_for_rejection = filterList[entity].is_fully_rejected;
-        var approve_status = filterList[entity].approve_status;
 
-        /*  if(parseInt(uploaded_by)==userDetails.user_id){
-            EmpCode = userDetails.employee_code;
-            EmpName = userDetails.employee_name;
-            uploaded_by=EmpCode+" - "+ EmpName.toUpperCase();
-        }*/
-        $(allUserInfo).each(function(key,value)
-        {
-            if(parseInt(uploaded_by) == value["user_id"])
-            {
+        var approved_on = filterList[entity].approved_on;
+        var approved_by = filterList[entity].approved_by;
+
+        var reason_for_rejection = filterList[entity].is_fully_rejected;
+        var total_approve_records = filterList[entity].total_approve_records;
+        var rejected_reason = filterList[entity].rejected_reason;
+        var approved_rejected_on = '';
+        var approved_rejected_by = '';
+        var approved_rejected_tasks='-';
+
+        $(allUserInfo).each(function(key,value){
+            if(parseInt(uploaded_by) == value["user_id"]){
                 EmpCode = value["employee_code"];
                 EmpName = value["employee_name"];
-                uploaded_by = EmpCode + " - " + EmpName.toUpperCase();
+                uploaded_by = EmpCode + " - " + EmpName;
             }
-            else if(parseInt(rejected_by) == value["user_id"])
-            {
+            else if(parseInt(rejected_by) == value["user_id"]){
                 EmpCode = value["employee_code"];
                 EmpName = value["employee_name"];
-                rejected_by = EmpCode + " - " + EmpName.toUpperCase();
+                rejected_by = EmpCode + " - " + EmpName;
+            }
+            else if(parseInt(approved_by) == value["user_id"]){
+                EmpCode = value["employee_code"];
+                EmpName = value["employee_name"];
+                approved_by = EmpCode + " - " + EmpName;
             }
         });
         if(parseInt(reason_for_rejection) == 1){
-            reason_for_rejection = "Fully Rejected";
+            reason_for_rejection = rejected_reason;
         }
         else{
-            reason_for_rejection = "- -";
+            reason_for_rejection = "";
+            approved_rejected_tasks = total_approve_records+" / "+total_rejected_records
         }
+
+        if(String(approved_on)!="null"){
+            approved_rejected_on = approved_on;
+            approved_rejected_by = approved_by;
+        }
+        if(String(rejected_on)!="null"){
+            approved_rejected_on=rejected_on;
+            approved_rejected_by = rejected_by;
+        }
+        console.log(sno+" - - "+approved_rejected_by);
 
         var occurance = '';
         var occuranceid;
@@ -203,9 +195,9 @@ function loadCountwiseResult(filterList) {
         $(".tbl_uploaded_by", clone1).text(uploaded_by);
         $('.tbl_uploaded_on', clone1).text(uploaded_on);
         $('.tbl_no_of_tasks', clone1).text(tbl_no_of_tasks);
-        $('.tbl_approved_rejected_tasks', clone1).text(approve_status+" / "+total_rejected_records);
-        $('.tbl_approved_rejected_on', clone1).text(rejected_on);
-        $('.tbl_approved_rejected_by', clone1).text(rejected_by);
+        $('.tbl_approved_rejected_tasks', clone1).text(approved_rejected_tasks);
+        $('.tbl_approved_rejected_on', clone1).text(approved_rejected_on);
+        $('.tbl_approved_rejected_by', clone1).text(approved_rejected_by);
         $('.tbl_reason_for_rejection', clone1).text(reason_for_rejection);
         $('#datatable-responsive .tbody-compliance').append(clone1);
 
@@ -285,7 +277,7 @@ function processSubmit() {
 
             sno = sno;
 
-            statutoryMappingReportDataList = data.reportdata;
+            STATUTORY_MAPPING_REPORT_DATA = data.reportdata;
 
             /*totalRecord = data.total_count*/;
             totalRecord = data.total;
@@ -308,7 +300,7 @@ function processSubmit() {
                 }
                 PaginationView.show();
                 ReportView.show();
-                loadCountwiseResult(statutoryMappingReportDataList);
+                loadCountwiseResult(STATUTORY_MAPPING_REPORT_DATA);
             }
 
         }
@@ -356,14 +348,6 @@ function loadDomains() {
                     if ($.inArray(cId, v.country_ids) >= 0)
                     {
                         var sText = '';
-                        $.each(Domain_ids, function(key2, value2)
-                        {
-                            if (v.domain_id == value2.d_id && cId == value2.c_id)
-                            {
-                                sText = 'selected="selected"'
-                            }
-                        });
-
                         if (flag)
                         {
                             str += '<optgroup label="' + value.country_name + '">';
@@ -474,7 +458,7 @@ function loadCurrentUserDetails(){
     if(UserCategoryID == 4){
         // KE-Name  : Knowledge-Executive
         knowledgeName = user.employee_code + " - "
-                        + user.employee_name.toUpperCase()
+                        + user.employee_name;
         $('.active-knowledge-executive').attr('style','display:block');
         $('#knowledge-name').text(knowledgeName);
 
@@ -526,18 +510,14 @@ function getUserMappingsList(logged_user_id) {
             option.text(value["employee_code"]+" - "+value["employee_name"]);
             $('#kename-kmanager').append(option);
 
-            knowledgeName = value["employee_code"] +" - "+ value["employee_name"].toUpperCase()
+            knowledgeName = value["employee_code"] +" - "+ value["employee_name"];
             kUserdetails={
                 "name":knowledgeName,
                 "user_id":value["user_id"]
             }
-
             ALLUSERS.push(kUserdetails);
-
          }
         });
-
-
         $('#kename-kmanager').multiselect('rebuild');
     }
 
@@ -559,7 +539,7 @@ function getUserMappingsList(logged_user_id) {
 
 
 // Instance Creation of the page class
-s_page = new Statutory_mapping_bulk_report_page();
+s_page = new SM_Bulk_Report();
 
 //initialization
 $(function() {
@@ -580,7 +560,7 @@ $(document).ready(function(){
 
 
 //To export data
-Statutory_mapping_bulk_report_page.prototype.exportData = function() {
+SM_Bulk_Report.prototype.exportData = function() {
 
     var country = $('#country').val();
     var domain = $('#domain').val();
