@@ -52,6 +52,7 @@ var max_length = {
   'no_of_units': 3,
   'logo': 50,
   'statutory_nature_name': 50,
+  'reason': 500,
 }
 
 
