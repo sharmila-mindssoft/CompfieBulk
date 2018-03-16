@@ -1,6 +1,5 @@
 var countriesList;
 var domains_list=[];
-var FullyRejected="Fully Rejected";
 var SystemRejected="COMPFIE";
 
 var GroupName = $('#cgroupval');
@@ -438,6 +437,7 @@ function loadCountwiseResult(filterList) {
 
         StatutoryAction = filterList[entity].statutory_action;
         FileDownloadCount = filterList[entity].file_download_count;
+        FullyRejected=filterList[entity].rejected_reason;
 
         if(parseInt(IsFullyRejected)==1){
             RemoveHrefTag='';
@@ -625,8 +625,9 @@ function validateAuthentication(){
       hideLoader();
       isAuthenticate = true;
       Custombox.close();
-      displaySuccessMessage(message.password_authentication_success);
+      /*displaySuccessMessage(message.password_authentication_success);*/
       CurrentPassword.empty();
+
     } else {
       hideLoader();
       if (error == 'InvalidPassword') {
