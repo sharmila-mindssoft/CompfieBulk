@@ -457,8 +457,8 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 isFound = ""
                 if value is None :
                     continue
-                   
-                values = value.strip().split(CSV_DELIMITER)
+                
+                values = str(value).strip().split(CSV_DELIMITER)
                 csvParam = csv_params_as.get(key)
                 if csvParam is None :
                     continue
