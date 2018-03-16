@@ -454,6 +454,7 @@ def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
         if (d["action"] is not None):
             bu_action = d["action"]
 
+        d["csv_name"]
         reportdatalist.append(bu_sm.ReportData(
              d["country_name"], d["domain_name"],
              d["uploaded_by"], uploaded_on, d["csv_name"],

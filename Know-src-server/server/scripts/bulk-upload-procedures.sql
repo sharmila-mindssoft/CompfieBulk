@@ -139,7 +139,7 @@ BEGIN
   tbl_bsm_csv.domain_name,
   tbl_bsm_csv.uploaded_by,
   tbl_bsm_csv.uploaded_on,
-  tbl_bsm_csv.csv_name,
+  SUBSTRING_INDEX(tbl_bsm_csv.csv_name,'.csv',1) as csv_name,
   tbl_bsm_csv.total_records,
   (SELECT COUNT(*) FROM tbl_bulk_statutory_mapping WHERE csv_id=tbl_bsm_csv.csv_id AND action=2) AS total_rejected_records,
   tbl_bsm_csv.approved_by,
