@@ -993,6 +993,7 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
     parseInt(pageLimits), d_names, u_names, p_leg, s_leg, s_pro, c_task,
     c_des, v_data, s_status, c_status,
     function(error, response) {
+      alert(response.toSource());
       clientGroupName.html(response.cl_name);
       legalEntityName.html(response.le_name);
       uploadedFileName.html(response.csv_name);
@@ -1006,7 +1007,6 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
         t_this._data_list_details = response.assign_statutory_data_list;
         // totalRecord = 32;
         totalRecord = response.count;
-        alert(response.count);
         
         if (sno == 0)
           createPageView(totalRecord);
