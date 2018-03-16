@@ -555,8 +555,9 @@ ApproveAssignStatutoryBulkUpload.prototype.fetchStatutoryValues = function(c_id,
         t_this._data_list = response.pending_csv_list_as;
         mirror.getDomainUserInfo(function(err, resp) {
           if (err == null) {
-            // t_this._UserList = resp.domain_executive_info;
-            t_this._UserList = JSON.parse('[{"user_id":10,"emp_code_name":"DE01 - D Executive"},{"user_id":14,"emp_code_name":"DE02 - D Executive A"}]');
+            t_this._UserList = resp.domain_executive_info;
+            alert(t_this._UserList.toSource());
+            // t_this._UserList = JSON.parse('[{"user_id":10,"emp_code_name":"DE01 - D Executive"},{"user_id":14,"emp_code_name":"DE02 - D Executive A"}]');
             for (var i=0; i<t_this._data_list.length; i++) {
               for (var j=0; j<t_this._UserList.length; j++) {
                   if (t_this._data_list[i].uploaded_by == t_this._UserList[j].user_id) {
@@ -729,6 +730,7 @@ goToDetailsPage = function(id) {
 
 
 viewListDetailsPage = function(id) {
+  alert(id);
   listPage.hide();
   dataListPage.show();
   filterDomain.val('');
@@ -1002,7 +1004,10 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
       }
       if (error == null) {
         t_this._data_list_details = response.assign_statutory_data_list;
-        totalRecord = 32;
+        // totalRecord = 32;
+        totalRecord = response.count;
+        alert(response.count);
+        
         if (sno == 0)
           createPageView(totalRecord);
         t_this.displayDetailsPage(t_this._data_list_details, false);
