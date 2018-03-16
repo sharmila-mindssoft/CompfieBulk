@@ -267,9 +267,9 @@ function processSubmit() {
 
             if (totalRecord == 0) {
                 $('.tbody-compliance').empty();
-                var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
+                var tableRow4 = $('#nocompliance_templates .table-nocompliances-list .table-row');
                 var clone4 = tableRow4.clone();
-                $('.tbl_norecords', clone4).text('No Records Found');
+                $('.tbl-norecords', clone4).text('No Records Found');
                 $('.tbody-compliance').append(clone4);
                 PaginationView.hide();
                 ReportView.show();
