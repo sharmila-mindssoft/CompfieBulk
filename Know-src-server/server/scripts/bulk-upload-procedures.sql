@@ -130,51 +130,45 @@ DELIMITER ;
 -- --------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_bulk_reportdata`;
 DELIMITER //
- CREATE PROCEDURE `sp_tbl_statutory_mappings_bulk_reportdata`(
-    IN `user_ids` varchar(100),
-    IN `country_ids` varchar(100),
-    IN `domain_ids` varchar(100),
-    IN `from_date` date,
-    IN `to_date` date,
-    IN `from_limit` int(11),
-    IN `to_limit` int(11))
- BEGIN
-  SELECT
-    tbl_bsm_csv.country_name,
-    tbl_bsm_csv.domain_name,
-    tbl_bsm_csv.uploaded_by,
-    tbl_bsm_csv.uploaded_on,
-    tbl_bsm_csv.csv_name,
-    tbl_bsm_csv.total_records,
-    tbl_bsm_csv.total_rejected_records,
-    tbl_bsm_csv.approved_by,
-    tbl_bsm_csv.rejected_by,
-    tbl_bsm_csv.approved_on,
-    tbl_bsm_csv.rejected_on,
-    tbl_bsm_csv.is_fully_rejected,
-    tbl_bsm_csv.approve_status,
-    tbl_bsm.action,
-    tbl_bsm_csv.rejected_reason
-  FROM tbl_bulk_statutory_mapping AS tbl_bsm
-  INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
-  WHERE
-    FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
-    AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
-    AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
-    AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
+CREATE PROCEDURE `sp_tbl_statutory_mappings_bulk_reportdata`(IN `user_ids` varchar(100), IN `country_ids` varchar(100), IN `domain_ids` varchar(100), IN `from_date` date, IN `to_date` date, IN `from_limit` int(11), IN `to_limit` int(11))
+BEGIN
+ SELECT
+  DISTINCT tbl_bsm.csv_id,
+  tbl_bsm_csv.country_name,
+  tbl_bsm_csv.domain_name,
+  tbl_bsm_csv.uploaded_by,
+  tbl_bsm_csv.uploaded_on,
+  SUBSTRING_INDEX(tbl_bsm_csv.csv_name,'.csv',1) as csv_name,
+  tbl_bsm_csv.total_records,
+  (SELECT COUNT(*) FROM tbl_bulk_statutory_mapping WHERE csv_id=tbl_bsm_csv.csv_id AND action=2) AS total_rejected_records,
+  tbl_bsm_csv.approved_by,
+  tbl_bsm_csv.rejected_by,
+  tbl_bsm_csv.approved_on,
+  tbl_bsm_csv.rejected_on,
+  tbl_bsm_csv.is_fully_rejected,
+  (SELECT COUNT(*) FROM tbl_bulk_statutory_mapping WHERE csv_id=tbl_bsm_csv.csv_id AND action=1) AS total_approve_records,
+  tbl_bsm.action,
+  tbl_bsm_csv.rejected_reason
+FROM tbl_bulk_statutory_mapping AS tbl_bsm
+INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
+WHERE
+  FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
+  AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
+  AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
   ORDER BY tbl_bsm_csv.uploaded_on DESC
   LIMIT from_limit, to_limit;
 
-  SELECT count(0) as total
-  FROM tbl_bulk_statutory_mapping AS tbl_bsm
-  INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
-  WHERE
-    FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
-    AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
-    AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
-    AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
-    ORDER BY tbl_bsm_csv.uploaded_on DESC;
- END //
+SELECT count(DISTINCT tbl_bsm.csv_id) as total
+FROM tbl_bulk_statutory_mapping AS tbl_bsm
+INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
+ WHERE
+  FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
+  AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
+  AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
+  ORDER BY tbl_bsm_csv.uploaded_on DESC;
+END //
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_filter_list`;
@@ -657,7 +651,7 @@ BEGIN
   INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
   WHERE
     FIND_IN_SET(t1.uploaded_by, user_ids) AND
-    t1.client_group = client_group_id AND
+    t1.client_id = client_group_id AND
     (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC
   LIMIT from_limit, to_limit;
@@ -667,7 +661,7 @@ BEGIN
   INNER JOIN tbl_bulk_units AS t2 ON t2.csv_unit_id=t1.csv_unit_id
   WHERE
     FIND_IN_SET(t1.uploaded_by, user_ids) AND
-    t1.client_group = client_group_id AND
+    t1.client_id = client_group_id AND
     (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
 END //
