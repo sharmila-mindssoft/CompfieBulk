@@ -26,7 +26,16 @@ var SM_MAPPING = null;
 var ALL_USER_INFO;
 var USER_DETAILS;
 
-// Creating Class
+/**** User Level Category ***********/
+var KM_USER_CATEGORY = 3;
+var KE_USER_CATEGORY = 4;
+var TM_USER_CATEGORY = 5;
+var TM_USER_CATEGORY = 6;
+var DM__USER_CATEGORY = 7;
+var DE_USER_CATEGORY = 8;
+
+
+// Creating SM_Report Class
 function SM_Report() {}
 
 // To get the corresponding value
@@ -282,8 +291,8 @@ function processSubmit() {
     //}
 }
 
+ /******** Load Domain Lists *********/
 function loadDomains() {
-    /******** Load Domain Lists *********/
     DOMAIN.empty();
     if (COUNTRY.val() != null) {
         var select_countries = COUNTRY.val().map(Number);
@@ -316,6 +325,7 @@ function loadDomains() {
     }
 }
 
+/****** Pagination ***********/
 function showPagePan(SHOW_FROM, showTo, total) {
     var showText = 'Showing ' + SHOW_FROM + ' to ' + showTo + ' of ';
     showText = total + ' entries ';
@@ -323,11 +333,13 @@ function showPagePan(SHOW_FROM, showTo, total) {
     PAGINATION_VIEW.show();
 };
 
+/****** Pagination ***********/
 function hidePagePan() {
     COMPLIANCE_CLASS.text('');
     PAGINATION_VIEW.hide();
 }
 
+/****** Pagination ***********/
 function createPageView(total_records) {
     perPage = parseInt(ITEMS_PER_PAGE.val());
     PAGINATION.empty();
@@ -346,6 +358,7 @@ function createPageView(total_records) {
     });
 };
 
+/****** StatutoryMapping Report Page Actions ***********/
 function pageControls() {
     /**** Load Domain List When MultiSelecting The Countries **********/
     COUNTRY.change(function() {
@@ -387,6 +400,7 @@ function pageControls() {
     });
 }
 
+/****** Get Current User Employee Name & Code ***********/
 function loadCurrentUserDetails() {
     var user = mirror.getUserInfo();
     var logged_user_id = 0;
@@ -398,7 +412,7 @@ function loadCurrentUserDetails() {
             logged_user_id = value["user_id"];
         }
     });
-    if (USER_CATEGORY_ID == 4) {
+    if (USER_CATEGORY_ID == KE_USER_CATEGORY) {
         // KE-Name  : Knowledge-Executive
         knowledge_name = user.employee_code + " - " +
             user.employee_name;
@@ -410,7 +424,7 @@ function loadCurrentUserDetails() {
         }
         ALLUSERS.push(knowledge_user_details);
         KNOWLEDGE_EXECUTIVES.push(user.user_id);
-    } else if (USER_CATEGORY_ID == 3 && USER_CATEGORY_ID != 4
+    } else if (USER_CATEGORY_ID == KM_USER_CATEGORY && USER_CATEGORY_ID != KE_USER_CATEGORY
         && logged_user_id > 0){
         // KE-Name  : Knowledge-Manager
         getUserMappingsList(logged_user_id);
