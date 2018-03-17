@@ -342,7 +342,7 @@ function confirm_alert(event) {
     }, function(isConfirm) {
       if(isConfirm){
           Custombox.open({
-          target: '#authentication-modal-box',
+          target: '#custom-modal-approve',
           effect: 'contentscale',
           complete:   function() {
              CurrentPassword.focus();
