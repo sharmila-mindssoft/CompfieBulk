@@ -7,6 +7,7 @@ var CancelButton = $("#btn-sm-csv-cancel");
 var SubmitButton = $("#btn-submit");
 var ListRowTemplate = $('#templates .table-sm-csv-info .table-row');
 
+var TemplateDiv = $('.dwn-template')
 var FileUploadCsv = $("#bu-upload-csv");
 
 var DataSummary = $("#bu-data-summary");
@@ -115,6 +116,7 @@ BulkUploadStatutoryMapping.prototype.showAddScreen = function() {
     domain_val.val('');
     domain_ac.val('');
     FileUploadCsv.val('');
+    TemplateDiv.show();
 
     this._ActionMode = "add";
 
@@ -197,6 +199,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
     };
     bu.uploadStatutoryMappingCSV(args, function (error, response) {
+        TemplateDiv.hide();
         if (error == null) {
             if (response.invalid == 0) {
                 displaySuccessMessage(message.upload_success);
