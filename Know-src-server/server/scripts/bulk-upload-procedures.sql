@@ -130,7 +130,6 @@ DELIMITER ;
 -- --------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_bulk_reportdata`;
 DELIMITER //
- DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_bulk_reportdata`;;
 CREATE PROCEDURE `sp_tbl_statutory_mappings_bulk_reportdata`(IN `user_ids` varchar(100), IN `country_ids` varchar(100), IN `domain_ids` varchar(100), IN `from_date` date, IN `to_date` date, IN `from_limit` int(11), IN `to_limit` int(11))
 BEGIN
  SELECT
@@ -139,7 +138,8 @@ BEGIN
   tbl_bsm_csv.domain_name,
   tbl_bsm_csv.uploaded_by,
   tbl_bsm_csv.uploaded_on,
-  SUBSTRING_INDEX(tbl_bsm_csv.csv_name,'.csv',1) as csv_name,
+  LEFT(tbl_bsm_csv.csv_name, LENGTH(tbl_bsm_csv.csv_name) - LOCATE('_', REVERSE(tbl_bsm_csv.csv_name)))
+    AS csv_name
   tbl_bsm_csv.total_records,
   (SELECT COUNT(*) FROM tbl_bulk_statutory_mapping WHERE csv_id=tbl_bsm_csv.csv_id AND action=2) AS total_rejected_records,
   tbl_bsm_csv.approved_by,
@@ -568,36 +568,36 @@ CREATE PROCEDURE `sp_rejected_statutory_mapping_reportdata`(
     IN `domain_id` int(11),
     IN `user_id` int(11))
  BEGIN
-  SELECT DISTINCT
-   sm.csv_id,
-   sm_csv.country_name,
-   sm_csv.domain_name,
-   sm_csv.uploaded_by,
-   sm_csv.uploaded_on,
-   sm_csv.csv_name,
-   sm_csv.total_records,
-   sm_csv.total_rejected_records,
-   sm_csv.approved_by,
-   sm_csv.rejected_by,
-   sm_csv.approved_on,
-   sm_csv.rejected_on,
-   sm_csv.is_fully_rejected,
-   sm_csv.approve_status,
-   sm_csv.rejected_file_download_count,
-   sm.remarks,
-   sm.action,
-   sm_csv.rejected_reason,
-   (SELECT COUNT(*) FROM tbl_bulk_statutory_mapping
-  WHERE csv_id = sm_csv.csv_id AND action=3) AS declined_count
-  FROM tbl_bulk_statutory_mapping AS sm
-  INNER JOIN tbl_bulk_statutory_mapping_csv AS sm_csv ON sm_csv.csv_id=sm.csv_id
-  WHERE
-   sm_csv.country_id=country_id AND
-   sm_csv.domain_id=domain_id AND
-   sm_csv.uploaded_by=user_id AND
-   (sm.action=3 OR sm_csv.is_fully_rejected=1) -- Declined Action
+ SELECT DISTINCT sm.csv_id,
+    sm_csv.country_name,
+    sm_csv.domain_name,
+    sm_csv.uploaded_by,
+    sm_csv.uploaded_on,
+    LEFT(sm_csv.csv_name, LENGTH(sm_csv.csv_name) - LOCATE('_', REVERSE(sm_csv.csv_name)))
+    AS csv_name,
+    sm_csv.total_records,
+    sm_csv.total_rejected_records,
+    sm_csv.approved_by,
+    sm_csv.rejected_by,
+    sm_csv.approved_on,
+    sm_csv.rejected_on,
+    sm_csv.is_fully_rejected,
+    sm_csv.approve_status,
+    sm_csv.rejected_file_download_count,
+    sm.remarks,
+    sm.action,
+    sm_csv.rejected_reason,
+    (SELECT COUNT(*) FROM tbl_bulk_statutory_mapping WHERE csv_id = sm_csv.csv_id AND action=3)
+     AS declined_count
+FROM tbl_bulk_statutory_mapping AS sm
+INNER JOIN tbl_bulk_statutory_mapping_csv AS sm_csv ON sm_csv.csv_id=sm.csv_id
+WHERE
+  sm_csv.country_id=country_id AND
+  sm_csv.domain_id=domain_id AND
+  sm_csv.uploaded_by=user_id AND
+  (sm.action=3 OR sm_csv.is_fully_rejected=1)
   ORDER BY sm_csv.uploaded_on ASC;
-END//
+END //
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_update_download_count_by_csvid`;
