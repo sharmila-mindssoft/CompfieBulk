@@ -520,7 +520,6 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
     rejected_on = ''
     for d in data:
         if(d["uploaded_on"] is not None):
-
             uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
                                                      '%Y-%m-%d %H:%M:%S'
                                                      ).strftime(
@@ -540,12 +539,13 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
             download_count = 0
         else:
             download_count = d["rejected_file_download_count"]
+
         rejectdatalist.append(bu_sm.StatutoryMappingRejectData(
              int(d["csv_id"]), int(d["uploaded_by"]), str(uploaded_on),
              str(d["csv_name"]), int(d["total_records"]),
-             int(d["total_rejected_records"]), d["approved_by"],
+             d["total_rejected_records"], d["approved_by"],
              d["rejected_by"], str(approved_on), str(rejected_on),
-             int(d["is_fully_rejected"]), int(d["approve_status"]),
+             d["is_fully_rejected"], int(d["approve_status"]),
              int(download_count), str(d["remarks"]), d["action"],
              int(d["declined_count"]), str(d["rejected_reason"])
         ))
@@ -625,12 +625,10 @@ def process_delete_rejected_sm_csv_id(db, session_user, user_id, country_id,
                                       domain_id, csv_id):
     args = [csv_id]
     rejectdatalist = ''
-    data = db.call_proc('sp_delete_reject_sm_by_csvid', args)
-    if(data):
-        rejectdatalist = fetch_rejected_statutory_mapping_bulk_report(
+    db.call_proc('sp_delete_reject_sm_by_csvid', args)
+    rejectdatalist = fetch_rejected_statutory_mapping_bulk_report(
             db, session_user, user_id, country_id, domain_id)
     return rejectdatalist
-
 
 def update_download_count_by_csvid(db, session_user, csv_id):
     updated_count = []
