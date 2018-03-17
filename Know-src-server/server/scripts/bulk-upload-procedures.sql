@@ -130,16 +130,22 @@ DELIMITER ;
 -- --------------------------------
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_bulk_reportdata`;
 DELIMITER //
-CREATE PROCEDURE `sp_tbl_statutory_mappings_bulk_reportdata`(IN `user_ids` varchar(100), IN `country_ids` varchar(100), IN `domain_ids` varchar(100), IN `from_date` date, IN `to_date` date, IN `from_limit` int(11), IN `to_limit` int(11))
+CREATE PROCEDURE `sp_tbl_statutory_mappings_bulk_reportdata`(
+  IN `user_ids` varchar(100),
+  IN `country_ids` varchar(100),
+  IN `domain_ids` varchar(100),
+  IN `from_date` date,
+  IN `to_date` date,
+  IN `from_limit` int(11),
+  IN `to_limit` int(11))
 BEGIN
  SELECT
-  DISTINCT tbl_bsm.csv_id,
+  tbl_bsm.csv_id,
   tbl_bsm_csv.country_name,
   tbl_bsm_csv.domain_name,
   tbl_bsm_csv.uploaded_by,
   tbl_bsm_csv.uploaded_on,
-  LEFT(tbl_bsm_csv.csv_name, LENGTH(tbl_bsm_csv.csv_name) - LOCATE('_', REVERSE(tbl_bsm_csv.csv_name)))
-    AS csv_name
+  LEFT(tbl_bsm_csv.csv_name, LENGTH(tbl_bsm_csv.csv_name) - LOCATE('_', REVERSE(tbl_bsm_csv.csv_name))) AS csv_name,
   tbl_bsm_csv.total_records,
   (SELECT COUNT(*) FROM tbl_bulk_statutory_mapping WHERE csv_id=tbl_bsm_csv.csv_id AND action=2) AS total_rejected_records,
   tbl_bsm_csv.approved_by,
@@ -157,6 +163,7 @@ WHERE
   AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
   AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
+  GROUP BY tbl_bsm.csv_id
   ORDER BY tbl_bsm_csv.uploaded_on DESC
   LIMIT from_limit, to_limit;
 

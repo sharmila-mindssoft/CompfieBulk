@@ -11,7 +11,7 @@ $(function() {
         ],
         maxDate: new Date(),
         onClose: function(selectedDate) {
-            $("#to-date").datepicker("option", "minDate", selectedDate);
+            $("#to_date").datepicker("option", "minDate", selectedDate);
             var event = arguments.callee.caller.caller.arguments[0];
             if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
                 $(this).val('');

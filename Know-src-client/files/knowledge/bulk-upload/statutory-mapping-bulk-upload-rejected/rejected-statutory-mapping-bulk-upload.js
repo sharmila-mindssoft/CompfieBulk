@@ -16,6 +16,7 @@ var ReportView = $('.grid-table-rpt');
 var PasswordSubmitButton = $('#password-submit');
 var CurrentPassword = $('#current-password');
 var RemoveStatutoryCsvId;
+var Download_Limit = 2;
 
 
 
@@ -277,10 +278,10 @@ function loadCountwiseResult(filterList) {
         {
           DownloadRejectedFiles='<i id="download_icon_'+CsvId+'" data-id="'+CsvId+'" class="fa fa-download text-primary c-pointer dropbtn" onclick="rejectedFiles(this)"></i>';
           DownloadRejectedFiles+='<div id="download_files_'+CsvId+'" class="dropdown-content">';
-          DownloadRejectedFiles+='<a class="export-excel" data-format="excel" onclick="downloadclick('+CsvId+',this)" href="javascript:void(0);">Download Excel</a>';
-          DownloadRejectedFiles+='<a class="export-csv" data-format="csv" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download CSV</a>';
-          DownloadRejectedFiles+='<a class="export-ods" data-format="ods" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download ODS</a>';
-          DownloadRejectedFiles+='<a class="export-text" data-format="text" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download Text</a>';
+          DownloadRejectedFiles+='<a class="export-excel" data-format="excel" onclick="downloadClick('+CsvId+',this)" href="javascript:void(0);">Download Excel</a>';
+          DownloadRejectedFiles+='<a class="export-csv" data-format="csv" onclick="downloadClick('+CsvId+', this)" href="javascript:void(0);">Download CSV</a>';
+          DownloadRejectedFiles+='<a class="export-ods" data-format="ods" onclick="downloadClick('+CsvId+', this)" href="javascript:void(0);">Download ODS</a>';
+          DownloadRejectedFiles+='<a class="export-text" data-format="text" onclick="downloadClick('+CsvId+', this)" href="javascript:void(0);">Download Text</a>';
           DownloadRejectedFiles+='</div>';
           $('.tbl_rejected_file', clone1).html(DownloadRejectedFiles);
         }
@@ -474,7 +475,7 @@ function RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId) {
    hideLoader();
 }
 
-function downloadclick(CSV_ID, event)
+function downloadClick(CSV_ID, event)
 {
   var c_id=Country.val();
   var d_id=Domain.val();
@@ -499,7 +500,7 @@ function downloadclick(CSV_ID, event)
         $("#delete_action_"+dataCSVid).attr("style","display:block");
 
       }
-      else if(parseInt(downloadCount)>=2)
+      else if(parseInt(downloadCount)>=parseInt(Download_Limit))
       {
         eventID=eventID+dataCSVid;
         document.getElementById(eventID).classList.toggle("show");
@@ -530,11 +531,8 @@ function downloadclick(CSV_ID, event)
       if (error == null) {
           onSuccess(response);
           requestDownload(requestDownloadData, download_file_format);
-
-           displayLoader();
-
+          displayLoader();
       } else {
-
           onFailure(error);
       }
   });
@@ -552,21 +550,25 @@ function requestDownload(requestDownloadData, download_file_format)
           {
             $(location).attr('href', d_response.csv_link);
             hideLoader();
+            return false;
           }
           else if(download_file_format=="excel")
           {
             $(location).attr('href', d_response.xlsx_link);
             hideLoader();
+            return false;
           }
           else if(download_file_format=="text")
           {
             $(location).attr('href', d_response.txt_link);
             hideLoader();
+            return false;
           }
           else if(download_file_format=="ods")
           {
             $(location).attr('href', d_response.ods_link);
             hideLoader();
+            return false;
           }
 
 
