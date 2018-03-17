@@ -187,11 +187,15 @@ def get_ClientUnits_Uploaded_CSVFiles(db, request_frame, session_user):
 
 ########################################################
 
-def get_rejected_client_unit_data(db, request_frame, session_user):
-    client_group_id=request_frame.bu_client_id
-    user_id=session_user.user_id()
 
-    rejected_unit_data = fetch_rejected_client_unit_report(db, session_user, user_id, client_group_id)
+def get_rejected_client_unit_data(db, request_frame, session_user):
+    client_group_id = request_frame.bu_client_id
+    user_id = session_user.user_id()
+    print "client_group_id, user_id >>>"
+    print client_group_id, user_id
+    rejected_unit_data = fetch_rejected_client_unit_report(db, session_user,
+                                                           user_id,
+                                                           client_group_id)
     result = bu_cu.GetRejectedClientUnitDataSuccess(rejected_unit_data)
     return result
 ########################################################
