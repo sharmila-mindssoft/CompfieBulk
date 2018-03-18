@@ -363,22 +363,24 @@ def delete_rejected_asm_data(db, request_frame, session_user):
         request_frame: Object
         session_user: Object
     :returns
-        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+        result: returns processed api response
+        GetRejectedASMBulkUploadDataSuccess class Object
     rtype:
         result: Object
 '''
 ########################################################
+
+
 def get_rejected_assign_sm_data(db, request_frame, session_user):
 
-    client_id=request_frame.client_id
-    le_id=request_frame.le_id
-    domain_ids=request_frame.domain_ids
-    unit_code=request_frame.asm_unit_code
+    client_id = request_frame.client_id
+    le_id = request_frame.le_id
+    domain_ids = request_frame.domain_ids
+    unit_code = request_frame.asm_unit_code
+    user_id = session_user.user_id()
 
-    user_id=session_user.user_id()
-
-    asm_rejected_data = fetch_rejected_assign_sm_data(db, session_user, user_id,
-        client_id, le_id, domain_ids, unit_code)
+    asm_rejected_data = fetch_rejected_assign_sm_data(
+        db, session_user, user_id, client_id, le_id, domain_ids, unit_code)
     result = bu_as.GetRejectedASMBulkUploadDataSuccess(asm_rejected_data)
     return result
 

@@ -21,8 +21,8 @@ function initMethods() {
         submitMappingAction: submitMappingAction,
 
         getAssignedStatutoryBulkReportData: getAssignedStatutoryBulkReportData,
-        getRejectedStatutoryMappingBulkUploadData: getRejectedStatutoryMappingBulkUploadData,
-        deleteRejectedStatutoryMappingByCsvID: deleteRejectedStatutoryMappingByCsvID,
+        getRejectedSMBulkData: getRejectedSMBulkData,
+        deleteRejectedSMByCsvID: deleteRejectedSMByCsvID,
         setDownloadClickCount: setDownloadClickCount,
         getClientUnitBulkReportData: getClientUnitBulkReportData,
         getClientUnitRejectedData: getClientUnitRejectedData,

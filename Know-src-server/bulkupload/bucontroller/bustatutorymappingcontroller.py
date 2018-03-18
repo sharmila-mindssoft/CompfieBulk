@@ -123,7 +123,7 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
 def get_statutory_mapping_csv_list(db, request_frame, session_user):
 
-    upload_more, csv_data = get_uploaded_sm_csv_list(db,
+    upload_more, csv_data = get_uploaded_statutory_mapping_csv_list(db,
                                                      session_user.user_id())
     result = bu_sm.GetStatutoryMappingCsvUploadedListSuccess(
         upload_more, csv_data
@@ -276,7 +276,7 @@ def update_statutory_mapping_action(db, request_frame, session_user):
             print "After validation"
             print is_declined
             if len(is_declined) > 0 :
-                return bu_sm.ValidationSuccess(is_declined)
+                return bu_sm.ValidationSuccess(len(is_declined))
             else :
                 if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
                     print "after temp db update"
@@ -308,7 +308,7 @@ def submit_statutory_mapping(db, request_frame, session_user):
         )
         is_declined = cObj.perform_validation_before_submit()
         if len(is_declined) > 0 :
-            return bu_sm.ValidationSuccess(is_declined)
+            return bu_sm.ValidationSuccess(len(is_declined))
         else :
 
             cObj.save_manager_message(
