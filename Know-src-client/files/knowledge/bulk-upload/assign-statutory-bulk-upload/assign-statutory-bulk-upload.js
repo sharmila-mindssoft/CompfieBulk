@@ -24,7 +24,6 @@ var LengthErrorsCount = $('.lengthErrors');
 var InvalidErrorsCount = $('.invalidErrors');
 var InvalidFileName = null;
 
-
 var GROUPS = null;
 var LEGAL_ENTITIES = null;
 var UNITS = null;

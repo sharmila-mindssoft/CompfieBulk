@@ -75,6 +75,7 @@ class SourceDB(object):
         self.get_unit_code(client_id)
         self.get_unit_name(client_id)
         self.get_statutories()
+        self.get_child_statutories()
         self.get_statutory_provision()
         self.get_compliance_task()
         self.get_compliance_description()
@@ -208,7 +209,7 @@ class SourceDB(object):
     def check_child_statutories(self, child_statutories):
         return self.check_base(False, self.Child_Statutories, child_statutories, None)
 
-    def save_client_statutories_data(self, cl_id, u_id, d_id, uploadedby, user_id):
+    def save_client_statutories_data(self, cl_id, u_id, d_id, user_id):
         created_on = get_date_time()
         client_statutory_value = [
             int(cl_id), int(u_id),
@@ -217,7 +218,7 @@ class SourceDB(object):
         ]
         q = "INSERT INTO tbl_client_statutories (client_id, unit_id, domain_id, status, " + \
             " approved_by, approved_on) values " + \
-            " (%s, %s, %s, %s, %s)"
+            " (%s, %s, %s, %s, %s, %s)"
         client_statutory_id = self._source_db.execute_insert(
             q, client_statutory_value
         )
@@ -237,14 +238,15 @@ class SourceDB(object):
             "updated_by", "updated_on"
 
         ]
-        approval_status = 0
-        if d["Compliance_Applicable_Status"] == 3 :
-            approval_status = 3
-        else :
-            approval_status = 5
 
         values = []
         for idx, d in enumerate(data) :
+            approval_status = 0
+            if d["Compliance_Applicable_Status"] == 3 :
+                approval_status = 3
+            else :
+                approval_status = 5
+            
             statu_id = self.Statutories.get(d["Primary_Legislation"]).get("statutory_id")
             comp_id = None
             c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name" , [d["Compliance_Task"], d["Compliance_Description"]])
@@ -490,22 +492,25 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 if value is None :
                     continue
                 
-                values = str(value).strip().split(CSV_DELIMITER)
-                csvParam = csv_params_as.get(key)
+                csvParam = csv_params.get(key)
                 if csvParam is None :
                     continue
 
-                for v in values :
-                    v = v.strip()
+                if type(value) is not int:
+                    values = value.strip().split(CSV_DELIMITER)
 
-                    if v != "" :
-                        if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
-                            unboundMethod = self._validation_method_maps.get(key)
-                            if unboundMethod is not None :
-                                isFound = unboundMethod(v)
+                    for v in values :
+                        if type(v) is str:
+                            v = v.strip()
 
-                        if isFound is not True and isFound != "" :
-                            declined_count += 1
+                        if v != "" :
+                            if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
+                                unboundMethod = self._validation_method_maps.get(key)
+                                if unboundMethod is not None :
+                                    isFound = unboundMethod(v)
+
+                            if isFound is not True and isFound != "" :
+                                declined_count += 1
 
             # if not self.check_compliance_task_name_duplicate(
             #     self._country_id, self._domain_id, data.get("Statutory"),
