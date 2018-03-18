@@ -363,13 +363,18 @@ function PageControls() {
   });
 
   clearFiltered.click(function() {
-    filteredData.empty();
-    clearFiltered.hide();
     goToDetailsPage(ASID.val());
   });
 
   submit.click(function() {
-    REPORT.submitProcess();
+    var approveCount = $('.single-approve:checked').length;
+    var rejectCount = $('.single-reject:checked').length;
+    if(approveCount == 0 || rejectCount) {
+      displayMessage(message.action_selection_required);
+    } else {
+      // to check the record checked all the action need to check temp db
+    }
+    // REPORT.submitProcess();
   });
 
   ItemsPerPage.on('change', function(e) {
@@ -467,10 +472,10 @@ onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
 validate = function() {
   is_valid = true;
   if (clientGroup.val().trim().length == 0) {
-    displayMessage(message.group_required);
+    displayMessage(message.client_group_required);
     is_valid = false;
   } else if (clientGroup.val().trim().length > 50) {
-    displayMessage(message.group_50);
+    displayMessage(message.client_group_50);
     is_valid = false;
   } else if (legalEntity.val().trim().length == 0) {
     displayMessage(message.legalentity_required);
@@ -556,8 +561,6 @@ ApproveAssignStatutoryBulkUpload.prototype.fetchStatutoryValues = function(c_id,
         mirror.getDomainUserInfo(function(err, resp) {
           if (err == null) {
             t_this._UserList = resp.domain_executive_info;
-            alert(t_this._UserList.toSource());
-            // t_this._UserList = JSON.parse('[{"user_id":10,"emp_code_name":"DE01 - D Executive"},{"user_id":14,"emp_code_name":"DE02 - D Executive A"}]');
             for (var i=0; i<t_this._data_list.length; i++) {
               for (var j=0; j<t_this._UserList.length; j++) {
                   if (t_this._data_list[i].uploaded_by == t_this._UserList[j].user_id) {
@@ -606,7 +609,7 @@ ApproveAssignStatutoryBulkUpload.prototype.displayListPage = function(data) {
             'text-center waves-effect waves-light" type="button"> View </button>')
           .attr("onClick", "goToDetailsPage(" + v.csv_id + ")");
       }
-      $('.download', clone)
+      $('.fa-download', clone)
         .attr("onClick", "download('show-download" + v.csv_id + "')");
       $('.download .dowload-excel', clone)
         .attr("href", "/uploaded_file/xlsx/" + v.download_file.split('.')[0] + ".xlsx");
@@ -712,6 +715,8 @@ function validateAuthentication(id, passwordField, reasonField) {
 }
 
 goToDetailsPage = function(id) {
+  filteredData.empty();
+  clearFiltered.hide();
   $(".all-data").trigger('click');
   domain.find("option").remove();
   domain.multiselect('destroy');
@@ -730,7 +735,7 @@ goToDetailsPage = function(id) {
 
 
 viewListDetailsPage = function(id) {
-  alert(id);
+  console.log(id);
   listPage.hide();
   dataListPage.show();
   filterDomain.val('');
@@ -792,6 +797,9 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function(data, p
             .html('<i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer" ' +
               'data-toggle="tooltip" data-original-title="' + v.remarks + '"></i>');
         }
+      } else {
+        $('.single-reject', clone).prop('checked', false);
+        $('.single-reject', clone).prop('checked', false);
       }
       $('.domain-name', clone).html(v.d_name);
       $('.unit-name span', clone).html(v.u_name);
@@ -809,7 +817,7 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function(data, p
       } else if (v.c_status == 3) {
         $('.compliance-applicable i', clone).addClass("text-muted");
         $('.compliance-not-applicable i', clone).addClass("text-muted");
-        $('.compliance-do-not-show i', clone).addClass("text-warning");
+        $('.compliance-do-not-show i', clone).addClass("text-danger");
       } else {
         $('.compliance-applicable i', clone).addClass("text-muted");
         $('.compliance-not-applicable i', clone).addClass("text-muted");
@@ -827,14 +835,15 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function(data, p
       } else if (v.s_status == 3) {
         $('.statutory-applicable i', clone).addClass("text-muted");
         $('.statutory-not-applicable i', clone).addClass("text-muted");
-        $('.statutory-do-not-show i', clone).addClass("text-warning");
+        $('.statutory-do-not-show i', clone).addClass("text-danger");
       } else {
         $('.statutory-applicable i', clone).addClass("text-muted");
         $('.statutory-not-applicable i', clone).addClass("text-muted");
         $('.statutory-do-not-show i', clone).addClass("text-muted");
       }
-
-      $('.statutory-remarks', clone).html(v.s_remarks);
+      if(v.s_remarks != "") {
+        $('.statutory-remarks', clone).html(v.s_remarks);
+      }
       $('.secondary-legislation', clone).html(v.s_leg);
       $('.statutory-provision', clone).html(v.s_prov);
       $('.compliance-task-name span', clone).html(v.c_task);
@@ -993,6 +1002,7 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
     parseInt(pageLimits), d_names, u_names, p_leg, s_leg, s_pro, c_task,
     c_des, v_data, s_status, c_status,
     function(error, response) {
+      // alert(response.toSource());
       clientGroupName.html(response.cl_name);
       legalEntityName.html(response.le_name);
       uploadedFileName.html(response.csv_name);
@@ -1006,7 +1016,6 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
         t_this._data_list_details = response.assign_statutory_data_list;
         // totalRecord = 32;
         totalRecord = response.count;
-        alert(response.count);
         
         if (sno == 0)
           createPageView(totalRecord);
@@ -1079,7 +1088,7 @@ $(document).ready(function() {
   REPORT.pageLoad();
   PageControls();
   loadItemsPerPage();
-  // viewListDetailsPage(33);
+  viewListDetailsPage(33);
   // listView.show();
   // REPORT.fetchStatutoryValues(1,1);
 });
