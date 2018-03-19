@@ -74,7 +74,7 @@ csvFileName.change(function(e){
         return false;
     }
 	if($.inArray(ext, ["csv"]) == -1) {
-		displayMessage('Upload only CSV file');
+		displayMessage(message.invalid_file_format);
 		return false;
 	}
 	/*if(file_size == undefined) {
@@ -96,17 +96,6 @@ csvFileName.change(function(e){
 
 // CSV file upload button click event
 csvUploadButton.click(function () {
-    $(".animateprogress").click(function() {
-      $('.invaliddata').hide();
-      $('.view-summary').hide();
-      $('.download-file').hide();
-      setTimeout(function(){
-    $('#myModal').modal('hide');
-      $('.invaliddata').show();
-      $('.view-summary').show();
-      $('.download-file').hide();
-      }, 500);
-    });
     $('.invaliddata').hide();
 	$('.view-summary').hide();
 	$('.download-file').hide();
@@ -117,31 +106,32 @@ csvUploadButton.click(function () {
 		var f_name = csvUploadedFile.file_name;
 		var f_data = csvUploadedFile.file_content;
 		function onSuccess(response) {
-			TotalRecordsCount.text(response.total);
-			ValidRecordsCount.text(response.valid);
-			InvalidRecordsCount.text(response.invalid);
-			InvalidFileName = null;
-			MandatoryErrorsCount.text("0");
-			DuplicateErrorsCount.text("0");
-			StatusErrorsCount.text("0");
-			LengthErrorsCount.text("0");
-			InvalidErrorsCount.text("0");
-			UnitCountErrorsCount.text("0");
+			$('.invaliddata').hide();
+			$('.view-summary').hide();
+			$('.download-file').hide();
+			groupSelect_name.val('');
+			csvUploadedFile.val('');
 			displayMessage(message.client_unit_upload_success);
 		}
 
 		function onFailure(error, response) {
+
 			if(error == "EmptyCSVUploaded") {
 				displayMessage(message.file_content_empty);
 			}
+			else if(error == "Csv Column Mismatched") {
+				displayMessage("Csv Column Mismatched");
+			}
 			else if (response.invalid_file != "" && response.invalid_file != null) {
-				setTimeout(function(){
+				/*setTimeout(function(){
 			    	$('#myModal').modal('hide');
 			      	$('.invaliddata').show();
 			      	$('.view-summary').show();
 			      	$('.download-file').hide();
       				displayMessage(message.client_unit_upload_failed);
-			    }, 2000);
+			    }, 2000);*/
+			    $('.invaliddata').show();
+				$('.view-summary').show();
 				InvalidFileName = response.invalid_file;
 			    TotalRecordsCount.text(response.total);
 				var getValidCount = parseInt(response.total) - parseInt(response.invalid);
