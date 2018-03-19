@@ -859,40 +859,42 @@ CREATE PROCEDURE `sp_export_statutory_mappings_bulk_reportdata`(
     IN `from_date` date,
     IN `to_date` date)
 BEGIN
-   SELECT
-     tbl_bsm_csv.country_name,
-     tbl_bsm_csv.domain_name,
-     tbl_bsm_csv.uploaded_by,
-     tbl_bsm_csv.uploaded_on,
-     tbl_bsm_csv.csv_name,
-     tbl_bsm_csv.total_records,
-     tbl_bsm_csv.total_rejected_records,
-     tbl_bsm_csv.approved_by,
-     tbl_bsm_csv.rejected_by,
-     tbl_bsm_csv.approved_on,
-     tbl_bsm_csv.rejected_on,
-     tbl_bsm_csv.is_fully_rejected,
-     tbl_bsm_csv.approve_status,
-     tbl_bsm.action,
-     tbl_bsm_csv.rejected_reason
-   FROM tbl_bulk_statutory_mapping AS tbl_bsm
-   INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
-   WHERE FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
-     AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
-     AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
-     AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
-   ORDER BY tbl_bsm_csv.uploaded_on DESC;
+  SELECT
+    tbl_bsm.csv_id,
+    tbl_bsm_csv.country_name,
+    tbl_bsm_csv.domain_name,
+    tbl_bsm_csv.uploaded_by,
+    tbl_bsm_csv.uploaded_on,
+    LEFT(tbl_bsm_csv.csv_name, LENGTH(tbl_bsm_csv.csv_name) - LOCATE('_', REVERSE(tbl_bsm_csv.csv_name))) AS csv_name,
+    tbl_bsm_csv.total_records,
+    (SELECT COUNT(*) FROM tbl_bulk_statutory_mapping WHERE csv_id=tbl_bsm_csv.csv_id AND action=2) AS total_rejected_records,
+    tbl_bsm_csv.approved_by,
+    tbl_bsm_csv.rejected_by,
+    tbl_bsm_csv.approved_on,
+    tbl_bsm_csv.rejected_on,
+    tbl_bsm_csv.is_fully_rejected,
+    (SELECT COUNT(*) FROM tbl_bulk_statutory_mapping WHERE csv_id=tbl_bsm_csv.csv_id AND action=1) AS total_approve_records,
+    tbl_bsm.action,
+    tbl_bsm_csv.rejected_reason
+  FROM tbl_bulk_statutory_mapping AS tbl_bsm
+  INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
+  WHERE
+    FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
+    AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+    AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
+    AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
+    GROUP BY tbl_bsm_csv.csv_id
+    ORDER BY tbl_bsm_csv.uploaded_on DESC;
 
-
-   SELECT count(0) as total
-   FROM tbl_bulk_statutory_mapping AS tbl_bsm
-   INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
-   WHERE
-     FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
-     AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
-     AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
-     AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
-   ORDER BY tbl_bsm_csv.uploaded_on DESC;
+  SELECT count(DISTINCT tbl_bsm.csv_id) as total
+  FROM tbl_bulk_statutory_mapping AS tbl_bsm
+  INNER JOIN tbl_bulk_statutory_mapping_csv AS tbl_bsm_csv ON tbl_bsm_csv.csv_id=tbl_bsm.csv_id
+  WHERE
+    FIND_IN_SET(tbl_bsm_csv.uploaded_by, user_ids)
+    AND (DATE_FORMAT(date(tbl_bsm_csv.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+    AND FIND_IN_SET(tbl_bsm_csv.domain_id, domain_ids)
+    AND FIND_IN_SET(tbl_bsm_csv.country_id, country_ids)
+    ORDER BY tbl_bsm_csv.uploaded_on DESC;
 END //
 DELIMITER ;
 
