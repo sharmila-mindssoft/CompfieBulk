@@ -1,11 +1,10 @@
 
 import re
 
-from server.constants import CSV_DELIMITER
-
 __all__ = [
-    "csv_params", "parse_csv_dictionary_values"
+    "csv_params", "parse_csv_dictionary_values", "parse_csv_dictionary_values_as", "csv_params_as"
 ]
+
 
 def expectation_error(expected, received):
     msg = "expected %s, but received: %s"
@@ -67,7 +66,7 @@ def is_valid_statutory_date_input(value, irange):
     if value != "" :
         if only_numeric(value) :
             if int(value) > irange:
-                flag = False
+                flag = "cannot exceed maxlength %s" % (irange)
         else :
             flag = False
     return flag
@@ -121,7 +120,7 @@ def is_alpha_numeric(value):
 def is_url(value):
     regex = re.compile(
         r'^https?://'  # http:// or https://
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'  # domain...
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'
         r'localhost|'  # localhost...
         r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
         r'(?::\d+)?'  # optional port
@@ -177,7 +176,6 @@ def parse_csv_dictionary_values(key, val):
 
     _mandatory = csvparam.get("check_mandatory")
     _maxlength = csvparam.get("max_length")
-
     _validation_method = csvparam.get("validation_method")
 
     msg = []
@@ -191,30 +189,78 @@ def parse_csv_dictionary_values(key, val):
 
     if val != "":
         if _validation_method is not None :
-            if _validation_method(val) is False :
+            _result = _validation_method(val)
+            if _result is False :
                 msg.append(key + " - Invalid character")
                 error_count["invalid_char"] = 1
+
+            elif _result is not True:
+                msg.append("%s - %s" % (key, _result))
+                error_count["max_length"] += 1
+
     if len(msg) == 0 :
         return True, error_count
     else :
         return msg, error_count
 
+
+
+def parse_csv_dictionary_values_as(key, val):
+    error_count = {
+        "mandatory": 0,
+        "max_length": 0,
+        "invalid_char": 0
+    }
+    csvparam = csv_params_as.get(key)
+
+    if csvparam is None:
+        raise ValueError('%s is not configured in csv parameter' % (key))
+
+    _mandatory = csvparam.get("check_mandatory")
+    _maxlength = csvparam.get("max_length")
+
+    _validation_method = csvparam.get("validation_method")
+
+    msg = []
+    if _mandatory is True and (len(val) == 0 or val == '') :
+        msg.append(key + " - Field is blank")
+        error_count["mandatory"] = 1
+
+    if _maxlength is not None and len(val) > _maxlength :
+        msg.append(key + " - Cannot exceed max length")
+        error_count["max_length"] = 1
+
+    if _validation_method is not None :
+        if _validation_method(val) is False :
+            msg.append(key + " - Invalid character")
+            error_count["invalid_char"] = 1
+    if len(msg) == 0 :
+        return True, error_count
+    else :
+        return msg, error_count
 ########################################################
 '''
     frame the validation constraints based on the given param
     :param
 
         keyType: type of key name
-        isMandatoryCheck=False: to enable mandatory validation value has to be True,
+        isMandatoryCheck=False: to enable mandatory validation value
+            has to be True,
             otherwise it will not validate
-        maxLengthCheck=None: to enable max length validation value should not be None
-        isValidCharCheck=False: to enable character validation value should be True
-        validation_method=None: corresponding validation will done if the isValidCharCheck is True
-        isFoundCheck=False: to check data already found given value should be True
+        maxLengthCheck=None: to enable max length validation value
+            should not be None
+        isValidCharCheck=False: to enable character validation
+            value should be True
+        validation_method=None: corresponding validation will
+            be done if the isValidCharCheck is True
+        isFoundCheck=False: to check data already found
+            given value should be True
         isActiveCheck=False: to check data status given value shoould be True
 
-        if the param boolean value False means it will skip the corresponding validation
-        maxlength param is not meant for INT type if the value not None means that will check maximum given value not length
+        if the param boolean value False means it will
+        skip the corresponding validation
+        maxlength param is not meant for INT type if the value not None
+        means that will check maximum given value not length
 
     :type
         keyName: string
@@ -235,7 +281,8 @@ def parse_csv_dictionary_values(key, val):
 
 def make_required_validation(
     keyType,
-    isMandatoryCheck=False, maxLengthCheck=None, isValidCharCheck=False, validation_method=None,
+    isMandatoryCheck=False, maxLengthCheck=None, isValidCharCheck=False,
+    validation_method=None,
     isFoundCheck=False, isActiveCheck=False
 ):
     constraints = {
@@ -264,29 +311,37 @@ def make_required_validation(
 
 csv_params = {
     'Organization': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
-        validation_method=is_domain_orgn, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
+        isValidCharCheck=True,
+        validation_method=is_domain_orgn, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Applicable_Location': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
-        validation_method=is_applicable_location, isFoundCheck=True, isActiveCheck=True
+        validation_method=is_applicable_location, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Statutory_Nature': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
-        validation_method=is_alphabet, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
+        isValidCharCheck=True,
+        validation_method=is_alphabet, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Statutory': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100,
+        isValidCharCheck=True,
         validation_method=is_statutory, isFoundCheck=True, isActiveCheck=True
     ),
 
     'Statutory_Provision': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500,
+        isValidCharCheck=True,
         validation_method=is_alpha_numeric
     ),
 
     'Compliance_Task': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100,
+        isValidCharCheck=True,
         validation_method=is_alpha_numeric
     ),
     'Compliance_Document': make_required_validation(
@@ -298,7 +353,8 @@ csv_params = {
         validation_method=is_alpha_numeric
     ),
     'Compliance_Description': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500,
+        isValidCharCheck=True,
         validation_method=is_alpha_numeric
     ),
     'Penal_Consequences': make_required_validation(
@@ -306,7 +362,8 @@ csv_params = {
         validation_method=is_alpha_numeric
     ),
     'Task_Type': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100,
+        isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
     'Reference_Link': make_required_validation(
@@ -314,7 +371,8 @@ csv_params = {
         validation_method=is_url
     ),
     'Compliance_Frequency': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=20, isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=20,
+        isValidCharCheck=True,
         validation_method=is_alphabet, isFoundCheck=True
     ),
     'Statutory_Month': make_required_validation(
@@ -330,33 +388,41 @@ csv_params = {
         validation_method=trigger_days
     ),
     'Repeats_Every': make_required_validation(
-        keyType='INT', isValidCharCheck=True, validation_method=duration_and_repeats
+        keyType='INT', isValidCharCheck=True,
+        validation_method=duration_and_repeats
     ),
 
     'Repeats_Type': make_required_validation(
-        keyType='STRING', maxLengthCheck=20, isValidCharCheck=True, validation_method=duration_and_repeats_type,
+        keyType='STRING', maxLengthCheck=20, isValidCharCheck=True,
+        validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
     'Repeats_By (DOM/EOM)': make_required_validation(
         keyType='STRING', isValidCharCheck=True, validation_method=repeats_by
     ),
     'Duration': make_required_validation(
-        keyType='INT', isValidCharCheck=True, validation_method=duration_and_repeats
+        keyType='INT', isValidCharCheck=True,
+        validation_method=duration_and_repeats
     ),
     'Duration_Type': make_required_validation(
-        keyType='STRING', maxLengthCheck=20, isValidCharCheck=True, validation_method=duration_and_repeats_type,
+        keyType='STRING', maxLengthCheck=20, isValidCharCheck=True,
+        validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
     'Multiple_Input_Section': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=multiple_input_selection,
+        keyType='STRING', isValidCharCheck=True,
+        validation_method=multiple_input_selection,
         isFoundCheck=True
     ),
     'Format': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=is_alpha_numeric,
+        keyType='STRING', maxLengthCheck="150", isValidCharCheck=True,
+        validation_method=is_alpha_numeric,
     ),
     'Legal_Entity': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
+        isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Division': make_required_validation(
         keyType='STRING', maxLengthCheck=50, isValidCharCheck=True,
@@ -367,8 +433,10 @@ csv_params = {
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
     'Geography_Level': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
-        validation_method=is_address, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
+        isValidCharCheck=True,
+        validation_method=is_address, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Unit_Location': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
@@ -477,35 +545,101 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
         validation_method=is_alpha_numeric
     ),
-
     'approve_status': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
         validation_method=is_alpha_numeric
     ),
-    'Statutory_Provision_': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    
+    'Statutory_Provision_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
     ),
-    'Compliance_Task_': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    'Compliance_Task_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
     ),
-    'Compliance_Description_': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    'Compliance_Description_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
     ),
-    'Unit_Name_': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    'Unit_Name_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
     ),
-    'Primary_Legislation_': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    'Primary_Legislation_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
     ),
-    'Statutory_Applicable_Status_': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_alphabet
+    'Statutory_Applicable_Status_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
-    'Compliance_Applicable_Status_': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_alphabet
+    'Compliance_Applicable_Status_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
+    ),
+    'Unit_Location_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Unit_Code_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
+    ),
+    'Organisation_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Domain_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Legal_Entity_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Client_Group_Column': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
+    ),
+}
+
+
+csv_params_as = {
+    'Statutory_remarks': make_required_validation(
+        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
+        validation_method=is_alpha_numeric
+    ),
+    'S.No': make_required_validation(
+        keyType='INT', isValidCharCheck=True, validation_method=is_numeric
+    ),
+    'Secondary_Legislaion': make_required_validation(
+        keyType='STRING', isFoundCheck=True
+    ),
+    'Statutory_Provision': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Compliance_Task': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Compliance_Description': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Unit_Name': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Primary_Legislation': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
+    ),
+    'Statutory_Applicable_Status': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
+    ),
+    'Compliance_Applicable_Status': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
+    ),
+    'Unit_Location': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Unit_Code': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
+    ),
+    'Organisation': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Domain': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Legal_Entity': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Client_Group': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
 }

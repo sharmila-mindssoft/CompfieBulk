@@ -105,7 +105,7 @@ csvUploadButton.click(function () {
       $('.invaliddata').show();
       $('.view-summary').show();
       $('.download-file').hide();
-      }, 2000);
+      }, 500);
     });
     $('.invaliddata').hide();
 	$('.view-summary').hide();
@@ -127,17 +127,20 @@ csvUploadButton.click(function () {
 			LengthErrorsCount.text("0");
 			InvalidErrorsCount.text("0");
 			UnitCountErrorsCount.text("0");
-			displayMessage("Records uploaded successfully for approval");
+			displayMessage(message.client_unit_upload_success);
 		}
 
-		function onFailure(response) {
-			if (response.invalid_file != "" && response.invalid_file != null) {
+		function onFailure(error, response) {
+			if(error == "EmptyCSVUploaded") {
+				displayMessage(message.file_content_empty);
+			}
+			else if (response.invalid_file != "" && response.invalid_file != null) {
 				setTimeout(function(){
 			    	$('#myModal').modal('hide');
 			      	$('.invaliddata').show();
 			      	$('.view-summary').show();
 			      	$('.download-file').hide();
-      				displayMessage("Records are not uploaded successfully");
+      				displayMessage(message.client_unit_upload_failed);
 			    }, 2000);
 				InvalidFileName = response.invalid_file;
 			    TotalRecordsCount.text(response.total);
@@ -160,7 +163,7 @@ csvUploadButton.click(function () {
 		    if (error == null) {
 		        onSuccess(response);
 		    } else {
-		        onFailure(response);
+		        onFailure(error, response);
 		    }
 		});
 	} else {

@@ -19,10 +19,11 @@ function initMethods() {
         updateActionFromView: updateActionFromView,
         getApproveMappingViewFilter: getApproveMappingViewFilter,
         submitMappingAction: submitMappingAction,
+        getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
 
         getAssignedStatutoryBulkReportData: getAssignedStatutoryBulkReportData,
-        getRejectedStatutoryMappingBulkUploadData: getRejectedStatutoryMappingBulkUploadData,
-        deleteRejectedStatutoryMappingByCsvID: deleteRejectedStatutoryMappingByCsvID,
+        getRejectedSMBulkData: getRejectedSMBulkData,
+        deleteRejectedSMByCsvID: deleteRejectedSMByCsvID,
         setDownloadClickCount: setDownloadClickCount,
         getClientUnitBulkReportData: getClientUnitBulkReportData,
         getClientUnitRejectedData: getClientUnitRejectedData,

@@ -161,7 +161,7 @@ function loadCountwiseResult(data) {
         }
         table_row = $('#act_templates .table-act-list .table-row-act-list');
         var tr_clone = table_row.clone();
-        $('.tbl-SNO', tr_clone).text(SNO);
+        $('.tbl-sno', tr_clone).text(SNO);
         $('.tbl-country', tr_clone).text(country_name);
         $('.tbl-domain', tr_clone).text(domain_name);
         $('.tbl-uploaded-file-name', tr_clone).text(csv_name);

@@ -351,21 +351,21 @@ CREATE PROCEDURE `sp_client_info`(
 BEGIN
     -- group details
     select distinct t1.client_id, t1.group_name, t1.is_active
-     from tbl_client_groups as t1
-     inner join tbl_user_units as t2
-     on t1.client_id = t2.client_id where t2.user_id = uid;
+    from tbl_client_groups as t1
+    inner join tbl_user_units as t2
+    on t1.client_id = t2.client_id where t2.user_id = uid;
 
     -- legal entity details
     select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name
-     from tbl_legal_entities as t1
-     inner join tbl_user_units as t2
-     on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid;
+    from tbl_legal_entities as t1
+    inner join tbl_user_units as t2
+    on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid and t1.is_closed = 0;
 
     -- domains
     select distinct t1.domain_name, t3.domain_id, t3.legal_entity_id
-     from tbl_domains as t1
-     inner join tbl_user_units as t3 on t1.domain_id = t3.domain_id
-     where t3.user_id = uid;
+    from tbl_domains as t1
+    inner join tbl_user_units as t3 on t1.domain_id = t3.domain_id
+    where t3.user_id = uid and t1.is_active = 1;
 
     -- units
     SELECT t01.unit_id, t01.unit_code, t01.unit_name,
@@ -373,6 +373,7 @@ BEGIN
     FROM tbl_units as t01
     INNER JOIN tbl_units_organizations as t02 on t01.unit_id = t02.unit_id
     INNER JOIN tbl_user_units as t03 on t01.unit_id = t03.unit_id
+    where t03.user_id = uid and t01.is_closed = 0
     group by t01.unit_id,t02.unit_id;
 
 END //
@@ -479,7 +480,7 @@ CREATE PROCEDURE `sp_bu_as_user_legal_entities`(
 )
 BEGIN
     -- legal entity details
-    select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name
+    select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name, t1.is_closed
      from tbl_legal_entities as t1
      inner join tbl_user_units as t2
      on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid;
@@ -530,7 +531,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_bu_unit_code_and_name`(
   IN _client_id INT(11))
 BEGIN
-  SELECT legal_entity_id, unit_code, unit_name, unit_id from tbl_units
+  SELECT legal_entity_id, unit_code, unit_name, unit_id, is_closed from tbl_units
   WHERE client_id = _client_id;
 END //
 
@@ -542,7 +543,8 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_bu_compliance_info`()
 BEGIN
-  SELECT compliance_id, statutory_provision, compliance_task, compliance_description from tbl_compliances;
+  SELECT compliance_id, statutory_provision, compliance_task, compliance_description,
+  is_active from tbl_compliances;
 END //
 
 DELIMITER ;
@@ -629,7 +631,7 @@ CREATE PROCEDURE `sp_domain_executive_info`(
 IN user_id INT
 )
 BEGIN
-  select distinct t1.child_user_id, t2.employee_name, t2.employee_code
+  select distinct t2.user_id, t2.employee_name, t2.employee_code
     from tbl_user_mapping as t1
     inner join tbl_users as t2 on t2.user_id = t1.child_user_id
   where t1.user_category_id = 7 and t1.parent_user_id = user_id;
@@ -710,3 +712,31 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 
 
+DROP PROCEDURE IF EXISTS `sp_bu_chils_level_statutories`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_chils_level_statutories`()
+BEGIN
+   select t1.statutory_id, t1.statutory_name from tbl_statutories as t1
+   where t1.parent_ids != '';
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_compliance_for_unit`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_check_duplicate_compliance_for_unit`(
+IN domain_ INT, unit_ INT, compid_ INT
+)
+BEGIN
+
+  select compliance_id from tbl_client_compliances
+  where domain_id = domain_
+  and unit_id = unit_
+  and compliance_id = compid_;
+END //
+
+DELIMITER ;

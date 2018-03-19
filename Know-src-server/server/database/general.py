@@ -1142,12 +1142,12 @@ def get_domain_executive(db, user_id):
     result = db.call_proc("sp_domain_executive_info", [user_id])
     domain_users = []
     for r in result :
-        userid = r.get("child_user_id")
+        userid = r.get("user_id")
         emp_name = "%s - %s" % (r.get("employee_code"), r.get("employee_name"))
 
         domain_users.append(
             generalprotocol.DomainExecutiveInfo(
-                emp_name, user_id
+                emp_name, userid
             )
         )
     return domain_users

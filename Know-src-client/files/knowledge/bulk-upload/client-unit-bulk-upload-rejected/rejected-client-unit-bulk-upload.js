@@ -193,7 +193,7 @@ function loadCountwiseResult(filterList) {
         console.log(deleteStatus);
 
 
-        RemoveHrefTag='<a id="delete_action_'+CsvId+'" '+deleteStatus+' data-csv-id="'+CsvId+'" onclick="confirm_alert(this)" title="'+CsvName+' - Click here to remove">';
+        RemoveHrefTag='<a id="delete_action_'+CsvId+'" '+deleteStatus+' data-csv-id="'+CsvId+'" onclick="confirm_alert(this)" title="Click here to remove">';
         RemoveHrefTag+=' <i class="fa fa-times text-danger c-pointer"></i>';
         RemoveHrefTag+='</a>';
 

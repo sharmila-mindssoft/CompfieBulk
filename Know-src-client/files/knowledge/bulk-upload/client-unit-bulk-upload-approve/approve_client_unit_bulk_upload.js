@@ -59,6 +59,7 @@ var filterOrganizationName = $('#ac-organization');
 var filterSearch = $('#btn_go');
 
 var CurrentPassword = null;
+var RejectReason = null;
 var isAuthenticate;
 
 var ItemsPerPage = $('#items_per_page');
@@ -216,6 +217,7 @@ function displayPopUp(TYPE, csv_id, b_u_id){
     if (TYPE == "reject_all") {
         targetid = "#custom-modal";
         CurrentPassword = $('#current-password-reject');
+        RejectReason = $('.rej_all_reason');
     }
     else if (TYPE == "approve_all" || TYPE =="submit") {
         targetid = "#custom-modal-approve"
@@ -234,6 +236,10 @@ function displayPopUp(TYPE, csv_id, b_u_id){
                 CurrentPassword.focus();
                 CurrentPassword.val('');
             }
+            if (RejectReason != null) {
+                RejectReason.focus();
+                RejectReason.val('');
+            }
             isAuthenticate = false;
         },
         close: function() {
@@ -244,7 +250,7 @@ function displayPopUp(TYPE, csv_id, b_u_id){
                     	performApproveRejectAction(csv_id, 1, CurrentPassword.val(), null)
                     }
                     else if (TYPE == "reject_all") {
-                        performApproveRejectAction(csv_id, 2, CurrentPassword.val(), null)
+                        performApproveRejectAction(csv_id, 2, CurrentPassword.val(), $('.rej_all_reason').val())
                     }
                     else if (TYPE == "view-reject") {
                         bu.updateClientUnitActionFromView(csv_id, b_u_id, 2, $('.view-reason').val(), function(err, res) {
@@ -276,6 +282,10 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText) {
             console.log(error, response)
             if (error == null) {
                 if (actionType == 1) {
+                    if(response.declined_count > 0){
+                        msg = response.declined_count + " units has been declined";
+                        displayMessage(msg);
+                    }
                     displayMessage(message.approve_success);
                 }
                 else {
@@ -327,7 +337,7 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
                             function(error, response)
                             {
                                 if (error == null) {
-                                    displayMessage("Bulk Client Unit List Submitted Successfully");
+                                    displayMessage("Client Unit Approved Successfully");
                                     initialize('list');
                                 }
                                 else {
@@ -355,13 +365,22 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
 // To validate the password inputted in custom box
 function validateAuthentication() {
     var password = CurrentPassword.val().trim();
+    if (RejectReason != null){
+        var rej_reason = RejectReason.val().trim();
+        console.log(rej_reason.length);
+    }
     if (password.length == 0) {
         displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
     }else if(isLengthMinMax(CurrentPassword, 1, 20, message.password_should_not_exceed_20) == false){
         return false;
-    } else {
+    } else if(RejectReason != null && rej_reason.length == 0) {
+        displayMessage(message.remarks_required);
+        RejectReason.focus();
+        return false;
+    }
+    else {
     	isAuthenticate = true;
         Custombox.close();
     }
