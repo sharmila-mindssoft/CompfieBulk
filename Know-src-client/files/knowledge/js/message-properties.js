@@ -476,7 +476,9 @@ var message = {
   "upload_success": "CSV file uploaded successfully",
   "approve_success": "CSV file approved successfully",
   "reject_success": "CSV file rejected successfully",
-  "upload_failed": "CSV file upload failed"
+  "upload_failed": "CSV file upload failed",
+  'client_group_required': 'Client Group Required',
+  'client_group_50': 'More than 50 characters are not allowed for Client Group Name',
 }
 
 function clearMessage() {

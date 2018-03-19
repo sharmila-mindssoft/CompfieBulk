@@ -1319,19 +1319,19 @@ DROP PROCEDURE IF EXISTS `sp_assign_statutory_view_by_filter`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
-    IN csvid INT, domain_name text, unit_name text,
+    IN csvid INT, domain_name text, unit_code text,
     p_legis text, s_legis VARCHAR(200), s_prov VARCHAR(500),
     c_task VARCHAR(100), c_desc VARCHAR(500), f_count INT, f_range INT,
     view_data INT, s_status INT, c_status INT
 )
 BEGIN
-
+    
     select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
-    t2.client_group
+    (select distinct client_group from tbl_bulk_assign_statutory where csv_assign_statutory_id = t1.csv_assign_statutory_id) as client_group,
+    (select count(0) from tbl_bulk_assign_statutory where csv_assign_statutory_id = t1.csv_assign_statutory_id) as total_count
     from tbl_bulk_assign_statutory_csv as t1
-    inner join tbl_bulk_assign_statutory as t2 on t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id
     where t1.csv_assign_statutory_id = csvid;
 
     select t2.bulk_assign_statutory_id,
@@ -1346,7 +1346,7 @@ BEGIN
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
 
     and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
-    and IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_name, unit_name), 1)
+    and IF(unit_code IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_code), 1)
     and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
     and IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     and IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
@@ -1651,6 +1651,39 @@ BEGIN
     from tbl_bulk_statutory_mapping as t2
     where t2.csv_id = csvid and ifnull(action, 0) = 0;
 
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_check_duplicate_compliance_for_unit`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_duplicate_compliance_for_unit`(
+IN domain_ VARCHAR(50), unitcode_ VARCHAR(50), provision_ VARCHAR(500),
+taskname_ VARCHAR(150), description_ VARCHAR(500)
+)
+BEGIN
+  select
+    compliance_task_name 
+    from tbl_bulk_assign_statutory where
+    domain = domain_ and unit_code = unitcode_ and statutory_provision = provision_
+    and compliance_task_name = taskname_ and compliance_description = description_;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_check_upload_compliance_count_for_unit`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_upload_compliance_count_for_unit`(
+IN domain_ VARCHAR(50), unitcode_ VARCHAR(50)
+)
+BEGIN
+  select count(1) as count from tbl_download_assign_statutory_template where
+    domain = domain_ and unit_code = unitcode_;
 END //
 
 DELIMITER ;
