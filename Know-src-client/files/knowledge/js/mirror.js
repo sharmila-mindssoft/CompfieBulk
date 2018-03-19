@@ -1098,6 +1098,7 @@ function apiRequest(callerName, request, callback) {
         error: function(jqXHR, textStatus, errorThrown) {
             rdata = parseJSON(jqXHR.responseText);
             rdata = atob(rdata.substring(5));
+            console.log(rdata)
             callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
         }
     });

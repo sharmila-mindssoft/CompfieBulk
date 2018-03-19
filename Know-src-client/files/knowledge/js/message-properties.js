@@ -483,6 +483,7 @@ var message = {
   'statutory_provision_required': 'Please select any one of the Statutory Provision',
   'compliance_task_required': 'Please select any one of the Compliance Task',
   'compliance_description_required': 'Please select any one of the Compliance Description',
+  "confirm_success": "Action taken successfully"
 }
 
 function clearMessage() {
