@@ -565,7 +565,7 @@ class ReportData(object):
     def __init__(self, country_name, domain_name, uploaded_by,
                  uploaded_on, csv_name_text, total_records,
                  total_rejected_records, approved_by, rejected_by, approved_on,
-                 rejected_on, is_fully_rejected, approve_status, bu_action,
+                 rejected_on, is_fully_rejected, total_approve_records, bu_action,
                  rejected_reason):
 
         self.country_name = country_name
@@ -580,7 +580,7 @@ class ReportData(object):
         self.approved_on = approved_on
         self.rejected_on = rejected_on
         self.is_fully_rejected = is_fully_rejected
-        self.approve_status = approve_status
+        self.total_approve_records = total_approve_records
         self.bu_action = bu_action
         self.rejected_reason = rejected_reason
 
@@ -592,7 +592,7 @@ class ReportData(object):
                                        "total_rejected_records", "approved_by",
                                        "rejected_by", "approved_on",
                                        "rejected_on", "is_fully_rejected",
-                                       "approve_status", "bu_action",
+                                       "total_approve_records", "bu_action",
                                        "rejected_reason"])
         return ReportData(
             data.get("country_name"),
@@ -607,7 +607,7 @@ class ReportData(object):
             data.get("approved_on"),
             data.get("rejected_on"),
             data.get("is_fully_rejected"),
-            data.get("approve_status"),
+            data.get("total_approve_records"),
             data.get("bu_action"),
             data.get("rejected_reason")
         )
@@ -626,7 +626,7 @@ class ReportData(object):
             "approved_on": self.approved_on,
             "rejected_on": self.rejected_on,
             "is_fully_rejected": self.is_fully_rejected,
-            "approve_status": self.approve_status,
+            "total_approve_records": self.total_approve_records,
             "bu_action": self.bu_action,
             "rejected_reason": self.rejected_reason
             }

@@ -99,7 +99,7 @@ class ConvertJsonToCSV(object):
                         "Statutory_Applicable_Status*", "Statutory_remarks",
                         "Compliance_Applicable_Status*"
                     ]
-                    
+
                     self.write_csv(csv_headers, None)
                     is_header = True
                 csv_values = [
@@ -438,6 +438,7 @@ def getUserNameAndCode(cnx_pool, userId):
     query = "select employee_code, employee_name " + \
            "from tbl_users  as t1 where t1.user_id = %s ;"
     condition_val = []
+    user_name_res = ''
     condition_val.append(userId)
     c = cnx_pool.cursor(dictionary=True, buffered=True)
     result = c.execute(query, condition_val)

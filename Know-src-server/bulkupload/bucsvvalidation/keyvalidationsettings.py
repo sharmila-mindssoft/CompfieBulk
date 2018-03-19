@@ -567,8 +567,7 @@ csv_params_as = {
         keyType='INT', isValidCharCheck=True, validation_method=is_numeric
     ),
     'Secondary_Legislaion': make_required_validation(
-        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        keyType='STRING', isFoundCheck=True
     ),
     'Statutory_Provision': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
@@ -583,7 +582,7 @@ csv_params_as = {
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
     ),
     'Primary_Legislation': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
     'Statutory_Applicable_Status': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True

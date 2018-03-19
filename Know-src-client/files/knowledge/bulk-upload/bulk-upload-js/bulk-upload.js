@@ -169,14 +169,14 @@ function deleteRejectedUnitByCsvID(args, callback) {
 
 
 // Assigned Statutory Bulk Report
-function getRejectedStatutoryMappingBulkUploadData(args, callback) {
+function getRejectedSMBulkData(args, callback) {
     var request = [
         'GetRejectedStatutoryMappingBulkUploadData', args
     ];
     apiRequest('bu/statutory_mapping', request, callback);
 }
 // Assigned Statutory Bulk Report
-function deleteRejectedStatutoryMappingByCsvID(args, callback) {
+function deleteRejectedSMByCsvID(args, callback) {
     var request = [
         'DeleteRejectedSMCsvId', args
     ];

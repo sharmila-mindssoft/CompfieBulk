@@ -107,7 +107,8 @@ bu_api_params = {
     'domain_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
 
     'total_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'total_rejected_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'total_rejected_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'total_approve_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'approved_by': {'type': 'INT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'rejected_by': {'type': 'INT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'approved_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
