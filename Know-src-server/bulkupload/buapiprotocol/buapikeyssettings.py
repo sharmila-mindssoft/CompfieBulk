@@ -1,4 +1,8 @@
-from protocol.api_key_validation import *
+from protocol.api_key_validation import (
+    is_alphabet_withdot, is_file_name, is_alphabet, is_alpha_numeric,
+    is_alphabet_wtih_bracket, is_numeric, is_url, is_address,
+    is_alphabet_csv_delimeter
+)
 __all__ = [
     'bu_api_params'
 ]
@@ -9,11 +13,11 @@ client_units = "bulkupload.buapiprotocol.buclientunitsprotocol"
 
 bu_api_params = {
     'c_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
+    'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': True},
     'd_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'd_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
-    'csv_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'csv_name': {'type': 'STRING', 'length': 100, 'validation_method': is_file_name, 'is_optional': False},
+    'd_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': True},
+    'csv_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
+    'csv_name': {'type': 'STRING', 'length': 100, 'validation_method': is_file_name, 'is_optional': True},
     'no_of_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'no_of_documents': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'uploaded_documents': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -25,9 +29,9 @@ bu_api_params = {
     'total': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'valid': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'invalid': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'csv_data': {'type': 'TEXT', 'length': None , 'validation_method': None, 'is_optional': False},
+    'csv_data': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
     'csv_size': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'uploadby_name': {'type': 'TEXT', 'length': None , 'validation_method': None, 'is_optional': False},
+    'uploadby_name': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
     'mandatory_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'max_length_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'invalid_char_error': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -61,7 +65,7 @@ bu_api_params = {
     'pending_csv_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
 
 
-    'orga_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
+    'orga_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_csv_delimeter, 'is_optional': True},
     's_nature': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'geo_location': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'c_task_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
@@ -198,8 +202,8 @@ bu_api_params = {
 
     'bulk_unit_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'bu_le_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'bu_division_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'bu_category_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'bu_division_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'bu_category_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'bu_geography_level': {'type': 'STRING', 'length': 50, 'validation_method': is_address, 'is_optional': True},
     'bu_unit_location': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     'bu_unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
@@ -211,10 +215,12 @@ bu_api_params = {
     'bu_domain_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'bu_domain': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     'bu_orgn': {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
-    'le_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
-    'div_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
-    'cg_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
+    'le_names': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    'div_names': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
+    'cg_names': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'unit_locations': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'unit_codes': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'client_unit_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "BulkClientUnitList"},
+
+
 }

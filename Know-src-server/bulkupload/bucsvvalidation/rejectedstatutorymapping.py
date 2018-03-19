@@ -11,7 +11,7 @@ from server.constants import (
 
 from keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..bulkuploadcommon import (
-    write_data_to_excel, rename_file_type, rename_download_file_type
+    rename_download_file_type, write_download_data_to_excel
 )
 
 __all__ = [
@@ -175,48 +175,35 @@ class ValidateRejectedSMBulkCsvData():
     def perform_validation(self):
         mapped_error_dict = {}
         mapped_header_dict = {}
-        download_format = self._download_format
-        isValid = True
 
         for row_idx, data in enumerate(self._source_data):
             for key in self._csv_column_name:
-                value = data.get(key)
-                return self.generateDownloadFiles(mapped_error_dict, mapped_header_dict, download_format)
+                return self.generateDownloadFiles(mapped_error_dict,
+                                                  mapped_header_dict)
 
-    def generateDownloadFiles(self, mapped_error_dict, mapped_header_dict, download_format):
-
+    def generateDownloadFiles(self, mapped_error_dict, mapped_header_dict):
         fileString = self._csv_name.split('.')
-        file_txt_name=fileString[0]
         file_name = "%s_%s.%s" % (
             fileString[0], "download", "xlsx"
         )
         final_hearder = self._csv_column_name
-        invalid = len(mapped_error_dict.keys())
-        total = len(self._source_data)
-
-        # if(download_format=="xlsx"):
-
-        write_data_to_excel(
-            os.path.join(REJECTED_DOWNLOAD_PATH, "xlsx"), file_name, final_hearder,
-            self._source_data, mapped_error_dict, mapped_header_dict, self._sheet_name
+        write_download_data_to_excel(
+            os.path.join(REJECTED_DOWNLOAD_PATH, "xlsx"), file_name,
+            final_hearder, self._source_data, mapped_error_dict,
+            mapped_header_dict, self._sheet_name
         )
-        xlsx_download_path=REJECTED_DOWNLOAD_BASE_PATH+"xlsx/"
+        xlsx_download_path = REJECTED_DOWNLOAD_BASE_PATH+"xlsx/"
         xlsx_link = os.path.join(xlsx_download_path, file_name)
 
-        csv_link=rename_download_file_type(file_name, "csv")
+        csv_link = rename_download_file_type(file_name, "csv")
 
-        ods_link=rename_download_file_type(file_name, "ods")
+        ods_link = rename_download_file_type(file_name, "ods")
 
-        txt_file_name = "%s_%s.%s" % (
-            fileString[0], "download", "txt"
-        )
-        txt_link = os.path.join(
-             REJECTED_DOWNLOAD_BASE_PATH, txt_file_name)
-
+        txt_link = rename_download_file_type(file_name, "txt")
         return {
             "xlsx_link": xlsx_link,
-            "csv_link" : csv_link,
-            "ods_link" : ods_link,
-            "txt_link" : txt_link
+            "csv_link": csv_link,
+            "ods_link": ods_link,
+            "txt_link": txt_link
 
         }

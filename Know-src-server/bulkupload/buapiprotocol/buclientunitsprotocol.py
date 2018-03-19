@@ -847,16 +847,18 @@ class ReturnDeclinedCount(Response):
         }
 
 class UpdateApproveRejectActionFromListSuccess(Response):
-    def __init__(self):
+    def __init__(self, declined_count):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return UpdateApproveRejectActionFromListSuccess()
+        data = parse_dictionary(data, ["declined_count"])
+        return UpdateApproveRejectActionFromListSuccess(data.get("declined_count"))
 
     def to_inner_structure(self):
-        return {}
+        return {
+            "declined_count": self.declined_count
+        }
 
 class SubmitClientUnitDeclinationSuccess(Response):
     def __init__(self):
@@ -993,6 +995,18 @@ class SubmitClientUnitActionFromListFailure(Response):
     def to_inner_structure(self):
         return {}
 
+class EmptyCSVUploaded(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return EmptyCSVUploaded()
+
+    def to_inner_structure(self):
+        return {}
+
 def _init_Response_class_map():
     classes = [
         UploadClientUnitBulkCSVSuccess,
@@ -1007,7 +1021,8 @@ def _init_Response_class_map():
         GetBulkClientUnitFilterDataSuccess,
         SubmitClientUnitActionFromListSuccess,
         SaveClientUnitActionSuccess,
-        SubmitClientUnitActionFromListFailure
+        SubmitClientUnitActionFromListFailure,
+        EmptyCSVUploaded
     ]
     class_map = {}
     for c in classes:

@@ -140,16 +140,15 @@ def get_download_assing_statutory(db, request_frame, session_user):
     d_names = request_frame.d_names
     u_names = request_frame.u_names
 
-    res = get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, session_user)
-
-    if len(res) > 0:
-        converter = ConvertJsonToCSV(
-                db, request_frame, session_user, "DownloadAssignStatutory"
-            )
-        result = bu_as.DownloadAssignStatutorySuccess(
-            converter.FILE_DOWNLOAD_PATH
+    res = get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, session_user)    
+    
+    converter = ConvertJsonToCSV(
+            db, request_frame, session_user, "DownloadAssignStatutory"
         )
-        return result
+    result = bu_as.DownloadAssignStatutorySuccess(
+        converter.FILE_DOWNLOAD_PATH
+    )
+    return result
 
 
 ########################################################
@@ -182,39 +181,43 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
     # read data from csv file
     header, assign_statutory_data = read_data_from_csv(csv_name)
 
-    # csv data validation
-    cObj = ValidateAssignStatutoryCsvData(
-        db, assign_statutory_data, session_user, request_frame.csv_name, header, 1
-    )
-    res_data = cObj.perform_validation()
 
-    if res_data["return_status"] is True :
-
-        d_ids = ",".join(str(e) for e in request_frame.d_ids)
-        d_names = ",".join(str(e) for e in request_frame.d_names)
-
-        csv_args = [
-            session_user.user_id(),
-            request_frame.cl_id, request_frame.le_id,
-            d_ids, request_frame.le_name, d_names,
-            csv_name,
-            res_data["total"]
-        ]
-        new_csv_id = save_assign_statutory_csv(db, csv_args)
-        if new_csv_id :
-            if save_assign_statutory_data(db, new_csv_id, res_data["data"]) is True :
-                result = bu_as.UploadAssignStatutoryCSVSuccess(
-                    res_data["total"], res_data["valid"], res_data["invalid"]
-                )
-
-        # csv data save to temp db
-    else :
-        result = bu_as.UploadAssignStatutoryCSVFailed(
-            res_data["invalid_file"], res_data["mandatory_error"],
-            res_data["max_length_error"], res_data["duplicate_error"],
-            res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"], res_data["total"], res_data["invalid"]
+    if len(assign_statutory_data) > 0 :
+        # csv data validation
+        cObj = ValidateAssignStatutoryCsvData(
+            db, assign_statutory_data, session_user, request_frame.csv_name, header, 1
         )
+        res_data = cObj.perform_validation()
+
+        if res_data["return_status"] is True :
+
+            d_ids = ",".join(str(e) for e in request_frame.d_ids)
+            d_names = ",".join(str(e) for e in request_frame.d_names)
+
+            csv_args = [
+                session_user.user_id(),
+                request_frame.cl_id, request_frame.le_id,
+                d_ids, request_frame.le_name, d_names,
+                csv_name,
+                res_data["total"]
+            ]
+            new_csv_id = save_assign_statutory_csv(db, csv_args)
+            if new_csv_id :
+                if save_assign_statutory_data(db, new_csv_id, res_data["data"]) is True :
+                    result = bu_as.UploadAssignStatutoryCSVSuccess(
+                        res_data["total"], res_data["valid"], res_data["invalid"]
+                    )
+
+            # csv data save to temp db
+        else :
+            result = bu_as.UploadAssignStatutoryCSVFailed(
+                res_data["invalid_file"], res_data["mandatory_error"],
+                res_data["max_length_error"], res_data["duplicate_error"],
+                res_data["invalid_char_error"], res_data["invalid_data_error"],
+                res_data["inactive_error"], res_data["total"], res_data["invalid"]
+            )
+    else :
+        raise ValueError("Invalid Csv file")
 
     return result
 
@@ -262,6 +265,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
     remarks = request_frame.remarks
     client_id = request_frame.cl_id
     legal_entity_id = request_frame.le_id
+    user_id=session_user.user_id()
     try :
         if action == 1 :
             cObj = ValidateAssignStatutoryForApprove(
@@ -272,7 +276,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                 return bu_as.ValidationSuccess(len(is_declined))
             else :
                 if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
-                    cObj.frame_data_for_main_db_insert()
+                    cObj.frame_data_for_main_db_insert(user_id)
                     cObj.source_commit()
                     return bu_as.AssignStatutoryApproveActionInListSuccess()
         else :
@@ -496,17 +500,19 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     client_id = request_frame.cl_id
     legal_entity_id = request_frame.le_id
+    user_id = session_user.user_id()
     # csv data validation
     cObj = ValidateAssignStatutoryForApprove(
         db, csv_id, client_id, legal_entity_id, session_user
     )
     is_declined = cObj.perform_validation_before_submit()
     if len(is_declined) > 0 :
-        cObj.frame_data_for_main_db_insert()
-        cObj.source_commit()
-        cObj.make_rejection(is_declined)
+        return bu_as.ValidationSuccess(len(is_declined))
+        # cObj.frame_data_for_main_db_insert(user_id)
+        # cObj.source_commit()
+        # cObj.make_rejection(is_declined)
         # cObj.save_manager_message(1, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
-        return bu_as.SubmitAssignStatutorySuccess()
+        # return bu_as.SubmitAssignStatutorySuccess()
     else :
-        cObj.frame_data_for_main_db_insert()
-        return bu_as.SubmitAssignStatutorySuccess()
+        cObj.frame_data_for_main_db_insert(user_id)
+        return bu_as.SubmitAssignStatutorySuccess(user_id)

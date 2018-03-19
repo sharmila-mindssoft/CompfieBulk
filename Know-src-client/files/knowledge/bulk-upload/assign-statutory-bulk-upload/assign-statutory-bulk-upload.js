@@ -24,7 +24,6 @@ var LengthErrorsCount = $('.lengthErrors');
 var InvalidErrorsCount = $('.invalidErrors');
 var InvalidFileName = null;
 
-
 var GROUPS = null;
 var LEGAL_ENTITIES = null;
 var UNITS = null;
@@ -240,6 +239,9 @@ function pageControls() {
         } else if (UploadFile.val() == '') {
             displayMessage("Upload File Required");
             return false;
+        } else if (csvInfo == null) {
+            displayMessage("Invalid file format");
+            return false;
         } else {
             d_ids = MultiSelect_Domain.val().map(Number);
             d_names = [];
@@ -273,7 +275,7 @@ function pageControls() {
                     StatusErrorsCount.text("0");
                     LengthErrorsCount.text("0");
                     InvalidErrorsCount.text("0");
-                    $('.view-summary').show();
+                    $('.view-summary').hide();
                     $('.invaliddata').hide();
                     displaySuccessMessage("Records uploaded successfully for approval");
                     GroupName.val('');
@@ -293,8 +295,8 @@ function pageControls() {
                 } else {
                     if(error == 'Invalid Csv file'){
                         displayMessage(error);
-                    }else{
-                        displayMessage(error);
+                    }else if(error == 'UploadAssignStatutoryCSVFailed'){
+                        displayMessage('Records not uploaded successfully');
                         InvalidFileName = data.invalid_file.split('.');;
                         TotalRecordsCount.text(data.total);
                         var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
@@ -317,6 +319,8 @@ function pageControls() {
                         $('#excel').attr("href", xls_path);
                         $('#ods').attr("href", ods_path);
                         $('#txt').attr("href", txt_path);
+                    }else{
+                        displayMessage(error);
                     }
                     hideLoader();
                 }
