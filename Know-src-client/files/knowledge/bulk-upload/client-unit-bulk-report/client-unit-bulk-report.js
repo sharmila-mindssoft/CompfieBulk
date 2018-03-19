@@ -512,23 +512,22 @@ ClientUnitBulkReport.prototype.exportData = function() {
         "csv": CSV
     };
     displayLoader();
-    bu.exportCUBulkReportData(filterdata,
-        function(error, response) {
-            if (error == null) {
-                hideLoader();
-                if (CSV) {
-                    var download_url = response.link;
-                    $(location).attr('href', download_url);
-                }
-            } else {
-                hideLoader();
-                if (error == "ExportToCSVEmpty") {
-                    displayMessage(message.empty_export);
-                } else {
-                    displayMessage(error);
-                }
+    bu.exportCUBulkReportData(filterdata, function(error, response) {
+        if (error == null) {
+            hideLoader();
+            if (CSV) {
+                var download_url = response.link;
+                $(location).attr('href', download_url);
             }
-        });
+        } else {
+            hideLoader();
+            if (error == "ExportToCSVEmpty") {
+                displayMessage(message.empty_export);
+            } else {
+                displayMessage(error);
+            }
+        }
+    });
 };
 
 // Form Initalize
