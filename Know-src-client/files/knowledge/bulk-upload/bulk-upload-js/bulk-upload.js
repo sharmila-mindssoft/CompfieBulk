@@ -572,3 +572,15 @@ function submitMappingAction(csvid, country_id, domain_id, pwd, callback){
   ];
   apiRequest("bu/statutory_mapping", request, callback);
 }
+
+function validateAssignStatutory(csvid, callback){
+  var request = [
+    'AssignStatutoryValidate',
+    {
+        "csv_id": csvid
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+

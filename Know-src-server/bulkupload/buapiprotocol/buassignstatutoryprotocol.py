@@ -498,6 +498,22 @@ class ConfirmAssignStatutorySubmit(Request):
             "le_id": self.le_id,
         }
 
+class AssignStatutoryValidate(Request):
+    def __init__(self, csv_id):
+        self.csv_id = csv_id
+        
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id"])
+        return AssignStatutoryValidate(
+            data.get("csv_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id
+        }
+
 def _init_Request_class_map():
     classes = [
 
@@ -508,7 +524,8 @@ def _init_Request_class_map():
         GetAssignStatutoryForApprove, GetRejectedAssignSMData,
         UpdateASMClickCount, DeleteRejectedASMByCsvID,
         GetAssignedStatutoryBulkReportData, DownloadRejectedASMReport,
-        ExportASBulkReportData, SaveAction, ConfirmAssignStatutorySubmit
+        ExportASBulkReportData, SaveAction, ConfirmAssignStatutorySubmit,
+        AssignStatutoryValidate
     ]
 
     class_map = {}
@@ -1121,6 +1138,24 @@ class SubmitAssignStatutorySuccess(Response):
     def to_inner_structure(self):
         return {}
 
+class AssignStatutoryValidateSuccess(Response):
+    def __init__(self, rej_count, un_saved_count):
+        self.rej_count = rej_count
+        self.un_saved_count = un_saved_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["rej_count", "un_saved_count"])
+        return AssignStatutoryValidateSuccess(
+            data.get("rej_count"), data.get("un_saved_count")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "rej_count": self.rej_count,
+            "un_saved_count": self.un_saved_count
+        }
+
 def _init_Response_class_map():
     classes = [
         GetClientInfoSuccess,
@@ -1137,7 +1172,8 @@ def _init_Response_class_map():
         AssignStatutoryApproveActionInListSuccess,
         ValidationSuccess,
         SaveActionSuccess,
-        SubmitAssignStatutorySuccess
+        SubmitAssignStatutorySuccess,
+        AssignStatutoryValidateSuccess
         ]
 
     class_map = {}
