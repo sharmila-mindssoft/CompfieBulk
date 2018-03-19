@@ -1328,7 +1328,7 @@ CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
     view_data INT, s_status INT, c_status INT
 )
 BEGIN
-    
+
     select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
@@ -1669,7 +1669,7 @@ taskname_ VARCHAR(150), description_ VARCHAR(500)
 )
 BEGIN
   select
-    compliance_task_name 
+    compliance_task_name
     from tbl_bulk_assign_statutory where
     domain = domain_ and unit_code = unitcode_ and statutory_provision = provision_
     and compliance_task_name = taskname_ and compliance_description = description_;
