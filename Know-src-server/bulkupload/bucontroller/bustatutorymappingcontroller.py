@@ -343,7 +343,7 @@ def submit_statutory_mapping(db, request_frame, session_user):
         # csv data validation
         if get_pending_action(db, csv_id):
             raise RuntimeError(
-                "Some records action still pending, Complete action before submmit"
+                "All compliance should be selected before submit"
             )
 
         cObj = ValidateStatutoryMappingForApprove(
