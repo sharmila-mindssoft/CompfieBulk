@@ -191,7 +191,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
 
         # csv data validation
         cObj = ValidateAssignStatutoryCsvData(
-            db, assign_statutory_data, session_user, request_frame.csv_name, header, 1
+            db, assign_statutory_data, session_user, request_frame.csv_name, header, request_frame.cl_id
         )
         res_data = cObj.perform_validation()
 
