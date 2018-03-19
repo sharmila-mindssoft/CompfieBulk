@@ -5,6 +5,7 @@ var ADDSCREEN = $("#add-screen");
 var VIEWSCREEN = $("#list-screen");
 var ADDBUTTON = $("#btn-add");
 var DOWNLOADBUTTON = $("#btnDownloadFile");
+var DIVUPLOAD = $('#divUploadFile')
 var LegalEntityNameLabel = $(".legal-entity-name");
 var LegalEntityNameAC = $(".legal-entity-name-ac");
 var LegalEntityId = $("#legal_entity_id");
@@ -107,8 +108,11 @@ function downloadData() {
         displayMessage(message.unit_required);
         txtUnit.focus();
         return false;
+    } else {
+        $('#downloadFormatFile').attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
+        $('#downloadFormatFile').attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
+        DIVUPLOAD.show();
     }
-
 }
 
 $(function() {
@@ -126,6 +130,7 @@ function pageControls() {
     ADDBUTTON.click(function() {
         VIEWSCREEN.hide();
         ADDSCREEN.show();
+        DIVUPLOAD.hide();
     });
 
     //Add Button Click Event
