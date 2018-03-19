@@ -9,16 +9,22 @@ from server.constants import(
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
     REJECTED_DOWNLOAD_PATH, REJECTED_DOWNLOAD_BASE_PATH
 )
+
 #   returns: unique random string
+
+
 def new_uuid():
         s = str(uuid.uuid4())
         return s.replace("-", "")
 
 
 #    remove the already exists file.
+
+
 def remove_uploaded_file(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
+
 
 def frame_file_name(file_name):
     return "%s_%s.csv" % (
@@ -78,7 +84,7 @@ def read_data_from_csv(file_name):
     csv_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
     file_path = os.path.join(csv_path, file_name)
     if os.path.exists(file_path):
-        with io.FileIO(file_path, "rb") as fn :
+        with open(file_path, "rb") as fn :
             rows = csv.reader(
                 fn, quotechar='"', delimiter=',',
                 quoting=csv.QUOTE_ALL, skipinitialspace=True
@@ -109,7 +115,11 @@ def write_data_to_excel(
     error_format = workbook.add_format({
         'font_color': 'red'
     })
-    cells = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    cells = [
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+        'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
+        'W', 'X', 'Y', 'Z'
+    ]
     for idx, h in enumerate(headers):
         if idx < 26 :
             x = idx
@@ -174,7 +184,9 @@ def rename_file_type(src_file_name, des_file_type):
     if des_file_type == "txt":
         general_txt_file(src_file, new_dst_file_name)
     else :
-        pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+        pyexcel.save_as(
+            file_name=src_file, dest_file_name=new_dst_file_name
+        )
 
 def generate_valid_file(src_file_name):
     f_types = ["xlsx", "ods", "txt"]
@@ -190,7 +202,9 @@ def generate_valid_file(src_file_name):
         if f == "txt":
             general_txt_file(src_file, new_dst_file_name)
         else :
-            pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+            pyexcel.save_as(
+                file_name=src_file, dest_file_name=new_dst_file_name
+            )
 
 def rename_download_file_type(src_file_name, des_file_type):
     src_path = os.path.join(REJECTED_DOWNLOAD_PATH, "xlsx")

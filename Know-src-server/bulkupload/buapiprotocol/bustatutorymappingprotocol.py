@@ -6,6 +6,8 @@ from protocol.jsonvalidators import (
 #
 # Request
 #
+
+
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
@@ -45,7 +47,9 @@ class GetStatutoryMappingCsvUploadedList(Request):
         }
 
 class UploadStatutoryMappingCSV(Request):
-    def __init__(self, c_id, c_name, d_id, d_name, csv_name, csv_data, csv_size):
+    def __init__(
+        self, c_id, c_name, d_id, d_name, csv_name, csv_data, csv_size
+    ):
         self.c_id = c_id
         self.c_name = c_name
         self.d_id = d_id
@@ -56,7 +60,10 @@ class UploadStatutoryMappingCSV(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "c_name", "d_id", "d_name", "csv_name", "csv_data", "csv_size"])
+        data = parse_dictionary(data, [
+            "c_id", "c_name", "d_id", "d_name", "csv_name",
+            "csv_data", "csv_size"
+        ])
         return UploadStatutoryMappingCSV(
             data.get("c_id"), data.get("c_name"), data.get("d_id"),
             data.get("d_name"), data.get("csv_name"), data.get("csv_data"),
@@ -108,8 +115,8 @@ class GetBulkReportData(Request):
             "c_ids": self.c_ids, "d_ids": self.d_ids,
             "from_date": self.from_date, "to_date": self.to_date,
             "r_count": self.r_count, "p_count": self.p_count,
-            "child_ids":self.child_ids,
-            "user_category_id":self.user_category_id
+            "child_ids": self.child_ids,
+            "user_category_id": self.user_category_id
             }
 
 class ExportSMBulkReportData(Request):
@@ -301,7 +308,8 @@ class GetApproveStatutoryMappingViewFilter(Request):
         ])
         return GetApproveStatutoryMappingViewFilter(
             data.get("csv_id"), data.get("orga_name"), data.get("s_nature"),
-            data.get("f_types"), data.get("statutory"), data.get("geo_location"),
+            data.get("f_types"), data.get("statutory"),
+            data.get("geo_location"),
             data.get("c_task_name"), data.get("c_desc"), data.get("c_doc"),
             data.get("f_count"), data.get("r_range")
         )
@@ -1067,7 +1075,9 @@ class UploadStatutoryMappingCSVValidSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["total", "valid", "invalid", "doc_count", "doc_names"])
+        data = parse_dictionary(data, [
+            "total", "valid", "invalid", "doc_count", "doc_names"
+        ])
         return UploadStatutoryMappingCSVValidSuccess(
             data.get("total"), data.get("valid"), data.get("invalid"),
             data.get("doc_count"), data.get("doc_names")
@@ -1170,7 +1180,8 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "invalid_file", "mandatory_error", "max_length_error", "duplicate_error",
+            "invalid_file", "mandatory_error", "max_length_error",
+            "duplicate_error",
             "invalid_char_error", "invalid_data_error", "inactive_error",
             "total", "invalid", "valid"
         ])
