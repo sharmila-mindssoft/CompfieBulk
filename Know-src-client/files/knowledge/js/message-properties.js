@@ -479,6 +479,10 @@ var message = {
   "upload_failed": "CSV file upload failed",
   'client_group_required': 'Client Group Required',
   'client_group_50': 'More than 50 characters are not allowed for Client Group Name',
+  'secondary_legislation_required': 'Please select any one of the Secondary Legislation',
+  'statutory_provision_required': 'Please select any one of the Statutory Provision',
+  'compliance_task_required': 'Please select any one of the Compliance Task',
+  'compliance_description_required': 'Please select any one of the Compliance Description',
 }
 
 function clearMessage() {
