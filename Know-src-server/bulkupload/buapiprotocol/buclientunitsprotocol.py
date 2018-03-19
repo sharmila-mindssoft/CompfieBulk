@@ -621,7 +621,7 @@ class GetRejectedClientUnitDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["rejected_unit_data"])
-        return GetRejectedStatutoryMappingBulkUploadDataSuccess(
+        return GetRejectedClientUnitDataSuccess(
             data.get("rejected_unit_data")
         )
 
@@ -833,17 +833,17 @@ class ClientUnitsUploadedCSVFilesListSuccess(Response):
         }
 
 class ReturnDeclinedCount(Response):
-    def __init__(self, declined_count):
-        self.declined_count = declined_count
+    def __init__(self, rej_count):
+        self.rej_count = rej_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["declined_count"])
-        return ReturnDeclinedCount(data.get("declined_count"))
+        data = parse_dictionary(data, ["rej_count"])
+        return ReturnDeclinedCount(data.get("rej_count"))
 
     def to_inner_structure(self):
         return {
-            "declined_count": self.declined_count
+            "rej_count": self.rej_count
         }
 
 class UpdateApproveRejectActionFromListSuccess(Response):

@@ -471,7 +471,7 @@ var message = {
   "knowledge_executive_name_required": "KE Required",
   "download_files" : "File Downloaded Successfully !",
   "password_authentication_success":"Authentication Success",
-  "record_deleted":"Record Deleted Successfully",
+  "record_deleted":"Record Removed Successfully",
   "upload_csv": "File Required",
   "upload_success": "CSV file uploaded successfully",
   "approve_success": "CSV file approved successfully",
