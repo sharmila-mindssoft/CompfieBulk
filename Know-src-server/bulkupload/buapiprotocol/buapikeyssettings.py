@@ -1,6 +1,7 @@
 from protocol.api_key_validation import (
     is_alphabet_withdot, is_file_name, is_alphabet, is_alpha_numeric,
-    is_alphabet_wtih_bracket, is_numeric, is_url, is_address
+    is_alphabet_wtih_bracket, is_numeric, is_url, is_address,
+    is_alphabet_csv_delimeter
 )
 __all__ = [
     'bu_api_params'
@@ -64,7 +65,7 @@ bu_api_params = {
     'pending_csv_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "PendingCsvList"},
 
 
-    'orga_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
+    'orga_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_csv_delimeter, 'is_optional': True},
     's_nature': {'type': 'STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
     'geo_location': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'c_task_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},

@@ -20,6 +20,14 @@ def is_alphabet(value):
     else:
         raise expectation_error('a alphabets', value)
 
+
+def is_alphabet_csv_delimeter(value):
+    r = re.compile("^[a-zA-Z |;]*$")  # a-z with space
+    if r.match(value):
+        return value
+    else:
+        raise expectation_error('a alphabets', value)
+
 def is_alphabet_withdot(value):
     r = re.compile("^[a-zA-Z-. ]*$")  # a-z with space
     if r.match(value):

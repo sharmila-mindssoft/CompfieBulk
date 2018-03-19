@@ -161,6 +161,7 @@ class StatutorySource(object):
 
     def check_base(self, check_status, store, key_name):
         data = None
+        key_name = key_name.strip()
         if type(store) is list:
             if key_name in store:
                 data = key_name
@@ -1029,12 +1030,15 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
                             if isFound is not True and isFound != "":
                                 declined_count += 1
+                                print "Not Found Error"
+                                print key, v
 
             if not self.check_compliance_task_name_duplicate(
                 self._country_id, self._domain_id, data.get("Statutory"),
                 data.get("Statutory_Provision"), data.get("Compliance_Task")
             ):
                 declined_count += 1
+                print "duplicate task_name"
 
             if not self.check_task_id_duplicate(
                 self._country_id, self._domain_id, data.get("Statutory"),
@@ -1042,6 +1046,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 data.get("Task_ID")
             ):
                 declined_count += 1
+                print "duplicate task id"
 
             if declined_count > 0:
                 self._declined_row_idx.append(
@@ -1072,9 +1077,15 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 for org in value.get(
                     "Organization"
                 ).strip().split(CSV_DELIMITER):
-                    org_ids.append(
-                        self.Organization.get(org).get("organisation_id")
-                    )
+                    org_info = self.Organization.get(org)
+                    print org_info
+                    print self.Organization
+                    print org
+                    print "------------------------------------------------"
+                    if org_info is not None :
+                        org_ids.append(
+                            org_info.get("organisation_id")
+                        )
 
                 nature = value.get("Statutory_Nature")
                 nature_id = self.Statutory_Nature.get(
