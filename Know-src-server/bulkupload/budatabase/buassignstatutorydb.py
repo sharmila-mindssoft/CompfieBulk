@@ -672,10 +672,10 @@ def save_action_from_view(db, csv_id, as_id, action, remarks, session_user):
 
 def get_validation_info(db, csv_id):
 
-    approved_count = []
+    rej_count = []
     un_saved_count = []
     result = db.call_proc_with_multiresult_set("sp_as_validation_info", [csv_id], 2)
-    approved_count = result[0][0]["approved"]
+    rej_count = result[0][0]["rejected"]
     un_saved_count = result[1][0]["un_saved"]
-    
-    return approved_count, un_saved_count
+
+    return rej_count, un_saved_count

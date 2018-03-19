@@ -1139,20 +1139,20 @@ class SubmitAssignStatutorySuccess(Response):
         return {}
 
 class AssignStatutoryValidateSuccess(Response):
-    def __init__(self, approved_count, un_saved_count):
-        self.approved_count = approved_count
+    def __init__(self, rej_count, un_saved_count):
+        self.rej_count = rej_count
         self.un_saved_count = un_saved_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["approved_count", "un_saved_count"])
+        data = parse_dictionary(data, ["rej_count", "un_saved_count"])
         return AssignStatutoryValidateSuccess(
-            data.get("approved_count"), data.get("un_saved_count")
+            data.get("rej_count"), data.get("un_saved_count")
         )
 
     def to_inner_structure(self):
         return {
-            "approved_count": self.approved_count,
+            "rej_count": self.rej_count,
             "un_saved_count": self.un_saved_count
         }
 
