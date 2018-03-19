@@ -3,7 +3,6 @@ var SYSTEM_REJECTED = "COMPFIE";
 var ON_CURRENT_PAGE = 1;
 var SNO = 0;
 var TOTAL_RECORD = 0;
-
 var ITEMS_PER_PAGE = $('#items_per_page');
 var SHOW_BTN = $('#show');
 var EXPORT_BTN = $('#export');
@@ -25,7 +24,6 @@ var CSV = false;
 var SM_MAPPING = null;
 var ALL_USER_INFO;
 var USER_DETAILS;
-
 /**** User Level Category ***********/
 var KM_USER_CATEGORY = 3;
 var KE_USER_CATEGORY = 4;
@@ -33,11 +31,8 @@ var TM_USER_CATEGORY = 5;
 var TM_USER_CATEGORY = 6;
 var DM__USER_CATEGORY = 7;
 var DE_USER_CATEGORY = 8;
-
-
 // Creating SM_Report Class
 function SM_Report() {}
-
 // To get the corresponding value
 SM_Report.prototype.getValue = function(field_name, f_id) {
     if (field_name == "from_date") {
@@ -67,7 +62,7 @@ SM_Report.prototype.validateMandatory = function() {
     return is_valid;
 };
 //get statutory mapping bulk report filter details from api
-function getStatutoryMappings(){
+function getStatutoryMappings() {
     function onSuccess(data) {
         country_list = data.countries;
         domain_list = data.domains;
@@ -113,7 +108,6 @@ function loadCountwiseResult(data) {
     var entity;
     var table_row;
     SHOW_FROM = SNO + 1;
-
     for (var entity in data) {
         is_null = false;
         SNO = parseInt(SNO) + 1;
@@ -134,7 +128,6 @@ function loadCountwiseResult(data) {
         approved_rejected_on = '';
         approved_rejected_by = '';
         approved_rejected_tasks = '-';
-
         $(ALL_USER_INFO).each(function(key, value) {
             if (parseInt(uploaded_by) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
@@ -154,7 +147,7 @@ function loadCountwiseResult(data) {
             reason_for_rejection = rejected_reason;
         } else {
             reason_for_rejection = "";
-            approved_rejected_tasks =  total_approve_records;
+            approved_rejected_tasks = total_approve_records;
             approved_rejected_tasks += " / ";
             approved_rejected_tasks += total_rejected_records;
         }
@@ -166,8 +159,6 @@ function loadCountwiseResult(data) {
             approved_rejected_on = rejected_on;
             approved_rejected_by = rejected_by;
         }
-
-
         table_row = $('#act_templates .table-act-list .table-row-act-list');
         var tr_clone = table_row.clone();
         $('.tbl-SNO', tr_clone).text(SNO);
@@ -205,13 +196,11 @@ function processSubmit() {
     $.each(country, function(key, value) {
         selected_country_id.push(parseInt(value));
     });
-
     /* multiple DOMAIN selection */
     $.each(domain, function(key, value) {
         split_domain_name = value.split("-");
         selected_domain_id.push(parseInt(split_domain_name[1]));
     });
-
     if ($('#kename-kmanager').val() == null) {
         selected_ke = KNOWLEDGE_EXECUTIVES;
     } else {
@@ -219,7 +208,6 @@ function processSubmit() {
             selected_ke.push(parseInt(this.value));
         });
     }
-
     _page_limit = parseInt(ITEMS_PER_PAGE.val());
     if (ON_CURRENT_PAGE == 1) {
         SNO = 0
@@ -236,19 +224,16 @@ function processSubmit() {
         "child_ids": selected_ke,
         "user_category_id": USER_CATEGORY_ID
     };
-
     /******** API Response Data Sucess process *****/
     function onSuccess(data) {
         var tr;
         var div_class = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd';
-         div_class += 'oanimationend animationend';
-
+        div_class += 'oanimationend animationend';
         var table = '#nocompliance_templates .table-nocompliances-list';
-        table+=" .table-row";
-
+        table += " .table-row";
         $('.details').show();
         $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
-        .one(div_class, function() {
+            .one(div_class, function() {
                 $(this).removeClass();
                 $(this).show();
             });
@@ -290,8 +275,7 @@ function processSubmit() {
     //temp_act = act;
     //}
 }
-
- /******** Load Domain Lists *********/
+/******** Load Domain Lists *********/
 function loadDomains() {
     DOMAIN.empty();
     if (COUNTRY.val() != null) {
@@ -324,7 +308,6 @@ function loadDomains() {
         DOMAIN.multiselect('rebuild');
     }
 }
-
 /****** Pagination ***********/
 function showPagePan(SHOW_FROM, showTo, total) {
     var showText = 'Showing ' + SHOW_FROM + ' to ' + showTo + ' of ';
@@ -332,13 +315,11 @@ function showPagePan(SHOW_FROM, showTo, total) {
     COMPLIANCE_CLASS.text(showText);
     PAGINATION_VIEW.show();
 };
-
 /****** Pagination ***********/
 function hidePagePan() {
     COMPLIANCE_CLASS.text('');
     PAGINATION_VIEW.hide();
 }
-
 /****** Pagination ***********/
 function createPageView(total_records) {
     perPage = parseInt(ITEMS_PER_PAGE.val());
@@ -357,7 +338,6 @@ function createPageView(total_records) {
         }
     });
 };
-
 /****** StatutoryMapping Report Page Actions ***********/
 function pageControls() {
     /**** Load Domain List When MultiSelecting The Countries **********/
@@ -383,8 +363,9 @@ function pageControls() {
             $('#mapping_animation').
             removeClass().addClass('bounceInLeft animated')
                 .one('webkitAnimationEnd ' +
-                    'mozAnimationEnd MSAnimationEnd oanimationend'+
-                    ' animationend', function() {
+                    'mozAnimationEnd MSAnimationEnd oanimationend' +
+                    ' animationend',
+                    function() {
                         $(this).removeClass();
                     });
             ON_CURRENT_PAGE = 1;
@@ -399,7 +380,6 @@ function pageControls() {
         }
     });
 }
-
 /****** Get Current User Employee Name & Code ***********/
 function loadCurrentUserDetails() {
     var user = mirror.getUserInfo();
@@ -416,7 +396,7 @@ function loadCurrentUserDetails() {
         // KE-Name  : Knowledge-Executive
         knowledge_name = user.employee_code + " - " +
             user.employee_name;
-        $('.active-knowledge-executive').attr('style','display:block');
+        $('.active-knowledge-executive').attr('style', 'display:block');
         $('#knowledge_name').text(knowledge_name);
         knowledge_user_details = {
             /*"user_name":knowledge_name,*/
@@ -424,8 +404,8 @@ function loadCurrentUserDetails() {
         }
         ALLUSERS.push(knowledge_user_details);
         KNOWLEDGE_EXECUTIVES.push(user.user_id);
-    } else if (USER_CATEGORY_ID == KM_USER_CATEGORY && USER_CATEGORY_ID != KE_USER_CATEGORY
-        && logged_user_id > 0){
+    } else if (USER_CATEGORY_ID == KM_USER_CATEGORY && USER_CATEGORY_ID != KE_USER_CATEGORY &&
+        logged_user_id > 0) {
         // KE-Name  : Knowledge-Manager
         getUserMappingsList(logged_user_id);
     }
@@ -461,9 +441,8 @@ function getUserMappingsList(logged_user_id) {
                 option.val(value["user_id"]);
                 option.text(value["employee_code"] + " - " + value["employee_name"]);
                 $('#kename_kmanager').append(option);
-                knowledge_name = value["employee_code"] + " - "
-                + value["employee_name"].toUpperCase();
-
+                knowledge_name = value["employee_code"] + " - " +
+                    value["employee_name"].toUpperCase();
                 knowledge_user_details = {
                     "name": knowledge_name,
                     "user_id": value["user_id"]

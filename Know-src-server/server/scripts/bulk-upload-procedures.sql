@@ -486,7 +486,7 @@ IN `from_limit` int, IN `to_limit` int,
 IN `user_ids` varchar(100), IN `domain_ids` varchar(100))
 BEGIN
 IF (unit_id='') THEN
-  SELECT  t1.domain, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
+  SELECT  t1.domain_ids, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
   t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,
   t1.approve_status, t1.rejected_reason
   FROM tbl_bulk_assign_statutory_csv AS t1
@@ -511,7 +511,7 @@ IF (unit_id='') THEN
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
 ELSE
-  SELECT t1.domain, t2.unit_code, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
+  SELECT t1.domain_ids, t2.unit_code, t1.uploaded_by, t1.uploaded_on,t1.csv_name, t1.total_records, t1.total_rejected_records,
   t1.approved_by,t1.rejected_by,t1.approved_on, t1.rejected_on,t1.is_fully_rejected,
   t1.approve_status, t1.rejected_reason
   FROM tbl_bulk_assign_statutory_csv AS t1

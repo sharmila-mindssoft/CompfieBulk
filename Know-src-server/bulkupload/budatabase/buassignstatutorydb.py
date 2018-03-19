@@ -559,43 +559,47 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
 
     args = [clientGroupId, legalEntityId, unitId, from_date, to_date, record_count, page_count, str(user_ids), domain_ids]
     data = db.call_proc_with_multiresult_set('sp_assgined_statutory_bulk_reportdata', args, expected_result)
+    print ">>>>"
+    print data
+    if data is not None:
+        reportdata=data[0]
+        total_record=data[1][0]["total"]
+
+        approved_on=''
+        uploaded_on=''
+        rejected_on=''
 
 
-    reportdata=data[0]
-    total_record=data[1][0]["total"]
+        for d in reportdata:
 
-    approved_on=''
-    uploaded_on=''
-    rejected_on=''
+            if(d["uploaded_on"]!=''):
+                uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
-
-    for d in reportdata:
-
-        if(d["uploaded_on"]!=''):
-            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+            if(d["approved_on"] is not None):
+                approved_on = datetime.datetime.strptime(str(d["approved_on"]),
             '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
-        if(d["approved_on"] is not None):
-            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-        '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+            if(d["rejected_on"] is not None):
+                rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
 
-        if(d["rejected_on"] is not None):
-            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        reportdatalist.append(bu_as.StatutoryReportData(
-             int(d["uploaded_by"]),
-             uploaded_on,
-             str(d["csv_name"]),
-             d["total_records"],
-             d["total_rejected_records"] if d["total_rejected_records"] is not None else 0,
-             d["approved_by"],
-             d["rejected_by"],
-             approved_on,
-             rejected_on,
-             d["is_fully_rejected"],
-             d["approve_status"]
-        ))
+            reportdatalist.append(bu_as.StatutoryReportData(
+                 int(d["uploaded_by"]),
+                 uploaded_on,
+                 str(d["csv_name"]),
+                 d["total_records"],
+                 d["total_rejected_records"] if d["total_rejected_records"] is not None else 0,
+                 d["approved_by"],
+                 d["rejected_by"],
+                 approved_on,
+                 rejected_on,
+                 d["is_fully_rejected"],
+                 d["approve_status"]
+            ))
+    else:
+        reportdata=[]
+        total_record=0
 
     return reportdatalist, total_record
 
