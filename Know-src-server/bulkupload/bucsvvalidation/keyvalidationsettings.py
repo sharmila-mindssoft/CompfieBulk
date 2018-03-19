@@ -352,7 +352,7 @@ csv_params = {
         isFoundCheck=True
     ),
     'Format': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=is_alpha_numeric,
+        keyType='STRING', maxLengthCheck="150", isValidCharCheck=True, validation_method=is_alpha_numeric,
     ),
     'Legal_Entity': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,

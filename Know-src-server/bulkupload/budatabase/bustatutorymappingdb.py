@@ -306,7 +306,7 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     if len(data) > 0 :
         if len(data[1]) > 0:
             total = data[1][0]["total"]
-        if len(data[0] > 0) :
+        if len(data[0]) > 0 :
             compliance = data[0]
             for idx, d in enumerate(compliance) :
                 if idx == 0 :

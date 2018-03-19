@@ -613,7 +613,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 seen.add(t)
 
         if len(seen) != len(self._source_data):
-            raise ValueError("Duplicate dara found in CSV")
+            raise ValueError("Duplicate data found in CSV")
 
     def check_duplicate_task_name_in_csv(self):
         self._source_data.sort(key=lambda x: (

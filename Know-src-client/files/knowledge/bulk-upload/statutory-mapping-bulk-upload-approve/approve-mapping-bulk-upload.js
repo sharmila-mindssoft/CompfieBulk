@@ -30,20 +30,20 @@ var searchUploadBy = $('.search-upload-by');
 var searchTotRecords = $('.search-tot-records');
 var searchUploadOn = $('.search-upload-on');
 
-var searchStatutory = $('.search-statutory');
-var searchOrganization = $('.search-organization');
-var searchNature = $('.search-nature');
-var searchProvision = $('.search-provision');
-var searchCTask = $('.search-c-task');
-var searchCDoc = $('.search-c-doc');
-var searchTaskId = $('.search-task-id');
-var searchCDesc = $('.search-c-desc');
-var searchPCons = $('.search-p-cons');
-var searchTaskType = $('.search-task-type');
-var searchReferLink = $('.search-refer-link');
-var searchFreq = $('.search-frequency');
-var searchFormat = $('.search-format');
-var searchGeography = $('.search-geo');
+var searchStatutory = $('#search-statutory');
+var searchOrganization = $('#search-organization');
+var searchNature = $('#search-nature');
+var searchProvision = $('#search-provision');
+var searchCTask = $('#search-c-task');
+var searchCDoc = $('#search-c-doc');
+var searchTaskId = $('#search-task-id');
+var searchCDesc = $('#search-c-desc');
+var searchPCons = $('#search-p-cons');
+var searchTaskType = $('#search-task-type');
+var searchReferLink = $('#search-refer-link');
+var searchFreq = $('#search-frequency');
+var searchFormat = $('#search-format');
+var searchGeography = $('#search-geo');
 
 // filter controls
 
@@ -107,10 +107,12 @@ function displayPopUp(TYPE, csv_id, smid){
     if (TYPE == "reject") {
         targetid = "#custom-modal";
         CurrentPassword = $('#current-password-reject');
+        $('.reject-reason-txt').val('')
     }
     else if (TYPE == "view-reject") {
         targetid = "#custom-modal-remarks";
         CurrentPassword = null;
+        $('.view-reason').val('')
     }
     else {
         targetid = "#custom-modal-approve"
@@ -403,6 +405,7 @@ displayLoader();
 };
 ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) {
     t_this = this;
+
     displayLoader();
     bu.getApproveMappingView(csv_id, f_count, r_range, function(error, response){
         if(error == null) {
@@ -753,7 +756,6 @@ function key_view_search(mainList) {
     key_freq = searchFreq.val().toLowerCase();
     key_format = searchFormat.val().toLowerCase();
     key_geo = searchGeography.val().toLowerCase();
-
 
     var fList = [];
     for (var entity in mainList) {
