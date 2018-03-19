@@ -435,10 +435,10 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
                 upload_by = d["uploaded_by"]
 
             client_unit_data.append(bu_cu.BulkClientUnitList(
-                d["bulk_unit_id"], d["legal_entity"], d["division"],
+                int(d["bulk_unit_id"]), d["legal_entity"], d["division"],
                 d["category"], d["geography_level"], d["unit_location"],
                 d["unit_code"], d["unit_name"], d["address"], d["city"],
-                d["state"], d["postalcode"], d["domain"], d["organization"],
+                d["state"], int(d["postalcode"]), d["domain"], d["organization"],
                 d["action"], d["remarks"]
             ))
 
@@ -500,10 +500,15 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
                             last = o[1].strip()
                             orga_names.append(o[1].strip())
                 else:
-                    o = d["organization"].split(">>")
-                    if last != o[1].strip():
-                        last = o[1].strip()
-                        orga_names.append(o[1].strip())
+                    if d["organization"].find(">>") > 0:
+                        o = d["organization"].split(">>")
+                        if last != o[1].strip():
+                            last = o[1].strip()
+                            orga_names.append(o[1].strip())
+                    else:
+                        if last != d["organization"].strip():
+                            last = d["organization"].strip()
+                            orga_names.append(d["organization"].strip())
 
     return bu_cu.GetBulkClientUnitViewAndFilterDataSuccess(
         group_name, csv_name, upload_by, upload_on, csv_id,
