@@ -1654,3 +1654,36 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_check_duplicate_compliance_for_unit`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_duplicate_compliance_for_unit`(
+IN domain_ VARCHAR(50), unitcode_ VARCHAR(50), provision_ VARCHAR(500),
+taskname_ VARCHAR(150), description_ VARCHAR(500)
+)
+BEGIN
+  select
+    compliance_task_name 
+    from tbl_bulk_assign_statutory where
+    domain = domain_ and unit_code = unitcode_ and statutory_provision = provision_
+    and compliance_task_name = taskname_ and compliance_description = description_;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_check_upload_compliance_count_for_unit`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_upload_compliance_count_for_unit`(
+IN domain_ VARCHAR(50), unitcode_ VARCHAR(50)
+)
+BEGIN
+  select count(1) as count from tbl_download_assign_statutory_template where
+    domain = domain_ and unit_code = unitcode_;
+END //
+
+DELIMITER ;

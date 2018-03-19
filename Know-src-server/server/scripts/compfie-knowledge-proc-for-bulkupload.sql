@@ -723,3 +723,20 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_compliance_for_unit`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_check_duplicate_compliance_for_unit`(
+IN domain_ INT, unit_ INT, compid_ INT
+)
+BEGIN
+
+  select compliance_id from tbl_client_compliances
+  where domain_id = domain_
+  and unit_id = unit_
+  and compliance_id = compid_;
+END //
+
+DELIMITER ;

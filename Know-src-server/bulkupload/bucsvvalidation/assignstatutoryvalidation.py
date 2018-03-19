@@ -246,7 +246,7 @@ class SourceDB(object):
                 approval_status = 3
             else :
                 approval_status = 5
-            
+
             statu_id = self.Statutories.get(d["Primary_Legislation"]).get("statutory_id")
             comp_id = None
             c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name" , [d["Compliance_Task"], d["Compliance_Description"]])
@@ -297,6 +297,31 @@ class SourceDB(object):
             "Statutory_remarks", "Compliance_Applicable_Status"
         ]
 
+
+    def check_compliance_task_name_duplicate(self, domain_name, unit_code, statutory_provision, task_name, compliance_description):
+        data = self._db.call_proc("sp_check_duplicate_compliance_for_unit", [
+            domain_name, unit_code, statutory_provision, task_name, compliance_description
+        ])
+        if len(data) > 0 :
+            return False
+        else:
+            return True
+
+    def check_compliance_task_name_duplicate_in_knowledge(self, domain_name, unit_code, statutory_provision, task_name, compliance_description):
+        
+        unit_id = self.Unit_Code.get(unit_code).get("unit_id")
+        domain_id = self.Domain.get(domain_name).get("domain_id")
+        c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name" , [task_name, compliance_description])
+        comp_id = c_ids[0]["compliance_id"]
+
+        data = self._source_db.call_proc("sp_bu_check_duplicate_compliance_for_unit", [
+            domain_id, domain_id, comp_id
+        ])
+        if len(data) > 0 :
+            return False
+        else:
+            return True
+
     def source_commit(self):
         self._source_db.commit()
         
@@ -336,12 +361,70 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         rType: dictionary
     '''
 
+    def check_duplicate_in_csv(self):
+        seen = set()
+        for d in self._source_data:
+            t = tuple(d.items())
+            if t not in seen:
+                seen.add(t)
+
+        if len(seen) != len(self._source_data):
+            raise ValueError("Duplicate dara found in CSV")
+
+    def check_duplicate_compliance_for_same_unit_in_csv(self):
+        self._source_data.sort(key=lambda x: (
+            x["Domain"], x["Unit_Code"], x["Statutory_Provision"], x["Compliance_Task"]
+        ))
+        comp_name = []
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Domain"], s["Unit_Code"], s["Statutory_Provision"], s["Compliance_Task"]
+        )):
+
+            grouped_list = list(v)
+            if len(grouped_list) > 1 :
+                comp_name.append(grouped_list[0].get("Compliance_Task") + ' for ' + grouped_list[0].get("Unit_Code"))
+
+        if len(comp_name) > 0 :
+            error_msg = "Duplicate compliance task found in csv %s" % (
+                ','.join(comp_name)
+            )
+            raise ValueError(str(error_msg))
+
+    def check_uploaded_count_in_csv(self):
+        self._source_data.sort(key=lambda x: (
+            x["Domain"], x["Unit_Name"]
+        ))
+        unit_names = []
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Domain"], s["Unit_Name"]
+        )):
+            grouped_list = list(v)
+            if len(grouped_list) > 1 :
+                unit_code = grouped_list[0].get("Unit_Code")
+                domain = grouped_list[0].get("Domain")
+                unit_names.append(grouped_list[0].get("Unit_Code"))
+
+                data = self._db.call_proc("sp_check_upload_compliance_count_for_unit", [
+                    domain, unit_code
+                ])
+                uploaded_count = data[0]["count"]
+
+                if(len(grouped_list) != uploaded_count) :
+                    error_msg = "Downloaded records and uploaded records are not same for unit %s" % (
+                        ','.join(unit_names)
+                    )
+                    raise ValueError(str(error_msg))
+
+
 
     def perform_validation(self):
         mapped_error_dict = {}
         mapped_header_dict = {}
         invalid = 0
         self.compare_csv_columns()
+        self.check_duplicate_in_csv()
+        self.check_duplicate_compliance_for_same_unit_in_csv()
+        self.check_uploaded_count_in_csv()
         self.init_values(self._session_user_obj.user_id(), self._client_id)
 
         def make_error_desc(res, msg):
@@ -393,6 +476,26 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                                     self._error_summary["inactive_error"] += 1
                                 else :
                                     self._error_summary["invalid_data_error"] += 1
+        
+
+            if not self.check_compliance_task_name_duplicate(
+                data.get("Domain"), data.get("Unit_Code"),
+                data.get("Statutory_Provision"), data.get("Compliance_Task"),
+                data.get("Compliance_Description"),
+            ) :
+                self._error_summary["duplicate_error"] += 1
+                dup_error = "Compliance_Task - Duplicate data"
+                res = make_error_desc(res, dup_error)
+            else:
+                if not self.check_compliance_task_name_duplicate_in_knowledge(
+                    data.get("Domain"), data.get("Unit_Code"),
+                    data.get("Statutory_Provision"), data.get("Compliance_Task"),
+                    data.get("Compliance_Description"),
+                ) :
+                    self._error_summary["duplicate_error"] += 1
+                    dup_error = "Compliance_Task - Duplicate data"
+                    res = make_error_desc(res, dup_error)
+
 
             if res is not True :
                 error_list = mapped_error_dict.get(row_idx)
