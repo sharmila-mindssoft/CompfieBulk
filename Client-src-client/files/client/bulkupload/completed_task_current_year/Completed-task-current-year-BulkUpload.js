@@ -1,9 +1,10 @@
 var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
 
-var cancelButton = $("#cancelButton");
-var addScreen = $("#add-screen");
-var viewScreen = $("#list-screen");
-var addButton = $("#btn-add");
+var CANCELBUTTON = $("#cancelButton");
+var ADDSCREEN = $("#add-screen");
+var VIEWSCREEN = $("#list-screen");
+var ADDBUTTON = $("#btn-add");
+var DOWNLOADBUTTON = $("#btnDownloadFile");
 var LegalEntityNameLabel = $(".legal-entity-name");
 var LegalEntityNameAC = $(".legal-entity-name-ac");
 var LegalEntityId = $("#legal_entity_id");
@@ -27,7 +28,6 @@ txtdomain.keyup(function(e) {
     var condition_fields = [];
     var condition_values = [];
     var text_val = $(this).val();
-    console.log(domainList);
     commonAutoComplete(e, divDomain, hdnDomain, text_val, domainList, "d_name", "d_id", function(val) {
         onAutoCompleteSuccess(txtdomain, hdnDomain, val);
     }, condition_fields, condition_values);
@@ -38,7 +38,6 @@ txtUnit.keyup(function(e) {
     var condition_fields = [];
     var condition_values = [];
     var text_val = $(this).val();
-    console.log(unitList);
     commonAutoComplete(
         e, divUnit, hdnUnit, text_val,
         unitList, "unit_name", "unit_id",
@@ -93,22 +92,47 @@ function loadEntityDetails() {
     }
 }
 
+function downloadData() {
+    if (LegalEntityName.val().trim() == "") {
+        displayMessage(message.legalentity_required);
+        LegalEntityName.focus();
+        return false;
+    }
+    if (txtdomain.val().trim() == "") {
+        displayMessage(message.domain_required);
+        txtdomain.focus();
+        return false;
+    }
+    if (txtUnit.val().trim() == "") {
+        displayMessage(message.unit_required);
+        txtUnit.focus();
+        return false;
+    }
+
+}
+
 $(function() {
     loadEntityDetails();
 });
 
 function pageControls() {
     // Cancel Button Click Event
-    cancelButton.click(function() {
-        viewScreen.show();
-        addScreen.hide();
+    CANCELBUTTON.click(function() {
+        VIEWSCREEN.show();
+        ADDSCREEN.hide();
     });
 
     //Add Button Click Event
-    addButton.click(function() {
-        viewScreen.hide();
-        addScreen.show();
+    ADDBUTTON.click(function() {
+        VIEWSCREEN.hide();
+        ADDSCREEN.show();
     });
+
+    //Add Button Click Event
+    DOWNLOADBUTTON.click(function() {
+        downloadData();
+    });
+
 }
 
 //initialization & master list filter
