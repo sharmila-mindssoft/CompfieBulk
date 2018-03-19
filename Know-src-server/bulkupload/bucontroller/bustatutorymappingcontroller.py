@@ -5,9 +5,11 @@ from ..bucsvvalidation.statutorymappingvalidation import (
 )
 from ..bucsvvalidation.rejectedstatutorymapping import (
     ValidateRejectedSMBulkCsvData
-    )
+)
+
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 from ..budatabase.bustatutorymappingdb import *
+
 from ..bulkuploadcommon import (
     convert_base64_to_file,
     read_data_from_csv,
@@ -17,23 +19,25 @@ from ..bulkexport import ConvertJsonToCSV
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
 from server.exceptionmessage import fetch_error, fetch_run_error
-# from protocol import core, generalprotocol, technoreports
+
 from protocol import generalprotocol, technoreports
+
 __all__ = [
     "process_bu_statutory_mapping_request"
 ]
+
 ########################################################
 '''
     Process all statutory mapping request here
-    :param
+   :param
         request: api Request class object
         db: database object
         session_user: logged in user details
-    :type
+   :type
         request: Object
         db: Object
         session_user: Object
-    :returns
+   :returns
         result: returns processed api response class Object
     rtype:
         result: Object
@@ -72,7 +76,9 @@ def process_bu_statutory_mapping_request(request, db, session_user):
                                                  session_user)
 
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingView:
-        result = get_statutory_mapping_data_by_csvid(db, request_frame, session_user)
+        result = get_statutory_mapping_data_by_csvid(
+            db, request_frame, session_user
+        )
 
     if type(request_frame) is bu_sm.ExportSMBulkReportData:
         result = export_statutory_bulk_report(db, request_frame, session_user)
@@ -87,15 +93,17 @@ def process_bu_statutory_mapping_request(request, db, session_user):
         result = get_filter_for_approve_page(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.GetApproveStatutoryMappingViewFilter:
-        result = get_statutory_mapping_data_by_filter(db, request_frame,
-                                                      session_user)
+        result = get_statutory_mapping_data_by_filter(
+            db, request_frame, session_user
+        )
 
     if type(request_frame) is bu_sm.SubmitStatutoryMapping:
         result = submit_statutory_mapping(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.ConfirmStatutoryMappingSubmit:
-        result = confirm_submit_statutory_mapping(db, request_frame,
-                                                  session_user)
+        result = confirm_submit_statutory_mapping(
+            db, request_frame, session_user
+        )
 
     return result
 
@@ -103,16 +111,18 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
 ########################################################
 '''
-    returns statutory mapping csv list
-    :param
+
+    returns statutory mapping uploaded csv list
+   :param
         db: database object
     request_frame: api request GetStatutoryMappingCsvUploadedList class object
         session_user: logged in user details
-    :type
+   :type
         db: Object
         request_frame: Object
         session_user: Object
-    :returns
+
+   :returns
         result: returns processed api response
         GetStatutoryMappingCsvUploadedListSuccess class Object
     rtype:
@@ -123,8 +133,9 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
 def get_statutory_mapping_csv_list(db, request_frame, session_user):
 
-    upload_more, csv_data = get_uploaded_statutory_mapping_csv_list(db,
-                                                     session_user.user_id())
+    upload_more, csv_data = get_uploaded_statutory_mapping_csv_list(
+        db, session_user.user_id()
+    )
     result = bu_sm.GetStatutoryMappingCsvUploadedListSuccess(
         upload_more, csv_data
     )
@@ -133,96 +144,115 @@ def get_statutory_mapping_csv_list(db, request_frame, session_user):
 ########################################################
 '''
    save the file in csv folder after success full csv data validation
-    :param
+   :param
         db: database object
         request_frame: api request UploadStatutoryMappingCSV class object
         session_user: logged in user details
-    :type
+   :type
         db: Object
         request_frame: Object
         session_user: Object
-    :returns
-        result: return could be success class object or failure class objects
-        also raise the exceptions
+
+   :returns
+        result: return could be success class object or failure
+         class objects also raise the exceptions
     rtype:
         result: Object
 '''
 ########################################################
 
 def upload_statutory_mapping_csv(db, request_frame, session_user):
-    if request_frame.csv_size > 0 :
-        pass
-    # save csv file
-    csv_name = convert_base64_to_file(
-            BULKUPLOAD_CSV_PATH, request_frame.csv_name,
-            request_frame.csv_data
+    try:
+        if request_frame.csv_size > 0:
+            pass
+        # save csv file
+        csv_name = convert_base64_to_file(
+                BULKUPLOAD_CSV_PATH, request_frame.csv_name,
+                request_frame.csv_data
+            )
+        # read data from csv file
+        header, statutory_mapping_data = read_data_from_csv(csv_name)
+
+        if len(statutory_mapping_data) == 0:
+            raise ValueError("CSV file cannot be blank")
+
+        # csv data validation
+        cObj = ValidateStatutoryMappingCsvData(
+            db, statutory_mapping_data, session_user,
+            request_frame.c_id, request_frame.d_id,
+            request_frame.csv_name, header
         )
-    # read data from csv file
-    header, statutory_mapping_data = read_data_from_csv(csv_name)
+        res_data = cObj.perform_validation()
+        print res_data
 
-    # csv data validation
-    cObj = ValidateStatutoryMappingCsvData(
-        db, statutory_mapping_data, session_user, request_frame.c_id, request_frame.d_id,
-        request_frame.csv_name, header
-    )
-    res_data = cObj.perform_validation()
+        if res_data["return_status"] is True:
+            generate_valid_file(csv_name)
+            if res_data["doc_count"] == 0:
+                upload_sts = 1
+            else:
+                upload_sts = 0
 
-    if res_data["return_status"] is True :
-        generate_valid_file(csv_name)
-        if res_data["doc_count"] == 0 :
-            upload_sts = 1
-        else :
-            upload_sts = 0
+            csv_args = [
+                session_user.user_id(),
+                request_frame.c_id, request_frame.c_name,
+                request_frame.d_id,
+                request_frame.d_name, csv_name,
+                res_data["total"], res_data["doc_count"], upload_sts
+            ]
+            new_csv_id = save_mapping_csv(db, csv_args)
 
-        csv_args = [
-            session_user.user_id(),
-            request_frame.c_id, request_frame.c_name,
-            request_frame.d_id,
-            request_frame.d_name, csv_name,
-            res_data["total"], res_data["doc_count"], upload_sts
-        ]
-        new_csv_id = save_mapping_csv(db, csv_args)
+            if new_csv_id:
+                if save_mapping_data(db, new_csv_id, res_data["data"]) is True:
+                    cObj.save_executive_message(
+                        csv_name, request_frame.c_name,
+                        request_frame.d_name, session_user.user_id()
+                    )
+                    result = bu_sm.UploadStatutoryMappingCSVValidSuccess(
+                        res_data["total"], res_data["valid"],
+                        res_data["invalid"],
+                        res_data["doc_count"], res_data["doc_names"]
+                    )
 
-        if new_csv_id :
-            if save_mapping_data(db, new_csv_id, res_data["data"]) is True :
-                cObj.save_executive_message(csv_name, request_frame.c_name, request_frame.d_name, session_user.user_id())
-                result = bu_sm.UploadStatutoryMappingCSVValidSuccess(
-                    res_data["total"], res_data["valid"], res_data["invalid"],
-                    res_data["doc_count"], res_data["doc_names"]
-                )
+            # csv data save to temp db
+        else:
+            result = bu_sm.UploadStatutoryMappingCSVInvalidSuccess(
+                res_data["invalid_file"], res_data["mandatory_error"],
+                res_data["max_length_error"], res_data["duplicate_error"],
+                res_data["invalid_char_error"], res_data["invalid_data_error"],
+                res_data["inactive_error"], res_data["total"],
+                res_data["invalid"],
+                res_data["total"] - res_data["invalid"]
+            )
 
-        # csv data save to temp db
-    else :
-        result = bu_sm.UploadStatutoryMappingCSVInvalidSuccess(
-            res_data["invalid_file"], res_data["mandatory_error"],
-            res_data["max_length_error"], res_data["duplicate_error"],
-            res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"], res_data["total"], res_data["invalid"],
-            res_data["total"] - res_data["invalid"]
-        )
-
-    return result
+        return result
+    except Exception, e:
+        print e
+        raise e
 
 ########################################################
 '''
     returns statutory mapping list for approve
-    :param
+   :param
         db: database object
         request_frame: api request GetApproveStatutoryMappingList class object
         session_user: logged in user details
-    :type
+   :type
         db: Object
         request_frame: Object
         session_user: Object
-    :returns
-        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+   :returns
+        result: returns processed api response
+        GetApproveStatutoryMappingListSuccess class Object
     rtype:
         result: Object
 '''
 ########################################################
 def get_mapping_list_for_approve(db, request_frame, session_user):
 
-    pending_data = get_pending_mapping_list(db, request_frame.c_id, request_frame.d_id, request_frame.uploaded_by)
+    pending_data = get_pending_mapping_list(
+        db, request_frame.c_id, request_frame.d_id,
+        request_frame.uploaded_by
+    )
     result = bu_sm.GetApproveStatutoryMappingListSuccess(
         pending_data
     )
@@ -232,16 +262,17 @@ def get_mapping_list_for_approve(db, request_frame, session_user):
 ########################################################
 '''
     returns filters for approve statutory mapping view
-    :param
+   :param
         db: database object
         request_frame: api request GetApproveMappingFilter class object
         session_user: logged in user details
-    :type
+   :type
         db: Object
         request_frame: Object
         session_user: Object
-    :returns
-        result: returns processed api response GetApproveMappingFilterSuccess class Object
+   :returns
+        result: returns processed api response
+        GetApproveMappingFilterSuccess class Object
     rtype:
         result: Object
 '''
@@ -266,27 +297,37 @@ def update_statutory_mapping_action(db, request_frame, session_user):
     remarks = request_frame.remarks
     country_id = request_frame.c_id
     domain_id = request_frame.d_id
-    try :
+    try:
         cObj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
-        if action == 1 :
+        if action == 1:
             print "Object init"
             is_declined = cObj.perform_validation_before_submit()
             print "After validation"
             print is_declined
-            if len(is_declined) > 0 :
+            if len(is_declined) > 0:
                 return bu_sm.ValidationSuccess(len(is_declined))
-            else :
-                if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
+            else:
+                if (update_approve_action_from_list(
+                        db, csv_id, action, remarks, session_user
+                )):
                     print "after temp db update"
                     cObj.frame_data_for_main_db_insert()
-                    cObj.save_manager_message(action, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
+                    cObj.save_manager_message(
+                        action, cObj._csv_name, cObj._country_name,
+                        cObj._domain_name, session_user.user_id()
+                    )
                     cObj.source_commit()
                     return bu_sm.UpdateApproveActionFromListSuccess()
-        else :
-            if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
-                cObj.save_manager_message(action, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
+        else:
+            if (update_approve_action_from_list(
+                db, csv_id, action, remarks, session_user
+            )):
+                cObj.save_manager_message(
+                    action, cObj._csv_name, cObj._country_name,
+                    cObj._domain_name, session_user.user_id()
+                )
                 cObj.source_commit()
                 return bu_sm.UpdateApproveActionFromListSuccess()
 
@@ -295,21 +336,23 @@ def update_statutory_mapping_action(db, request_frame, session_user):
 
 
 def submit_statutory_mapping(db, request_frame, session_user):
-    try :
+    try:
         csv_id = request_frame.csv_id
         country_id = request_frame.c_id
         domain_id = request_frame.d_id
         # csv data validation
         if get_pending_action(db, csv_id):
-            raise fetch_run_error("Some records action pending, Complete action before submmit")
+            raise RuntimeError(
+                "Some records action still pending, Complete action before submmit"
+            )
 
         cObj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
         is_declined = cObj.perform_validation_before_submit()
-        if len(is_declined) > 0 :
+        if len(is_declined) > 0:
             return bu_sm.ValidationSuccess(len(is_declined))
-        else :
+        else:
 
             cObj.save_manager_message(
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
@@ -322,25 +365,31 @@ def submit_statutory_mapping(db, request_frame, session_user):
     except Exception, e:
         print e
         print str(traceback.format_exc())
-        raise fetch_error()
+        raise e
 
 def confirm_submit_statutory_mapping(db, request_frame, session_user):
-    csv_id = request_frame.csv_id
-    country_id = request_frame.c_id
-    domain_id = request_frame.d_id
-    # csv data validation
-    cObj = ValidateStatutoryMappingForApprove(
-        db, csv_id, country_id, domain_id, session_user
-    )
-    is_declined = cObj.perform_validation_before_submit()
-    if len(is_declined) > 0 :
-        cObj.frame_data_for_main_db_insert()
-        cObj.make_rejection(is_declined)
-        cObj.save_manager_message(1, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
-        return bu_sm.SubmitStatutoryMappingSuccess()
+    try :
+        csv_id = request_frame.csv_id
+        country_id = request_frame.c_id
+        domain_id = request_frame.d_id
+        # csv data validation
+        cObj = ValidateStatutoryMappingForApprove(
+            db, csv_id, country_id, domain_id, session_user
+        )
+        is_declined = cObj.perform_validation_before_submit()
+        if len(is_declined) > 0:
+            cObj.frame_data_for_main_db_insert()
+            cObj.make_rejection(is_declined)
+            cObj.save_manager_message(
+                1, cObj._csv_name, cObj._country_name, cObj._domain_name,
+                session_user.user_id()
+            )
+            return bu_sm.SubmitStatutoryMappingSuccess()
+    except Exception, e :
+        raise e
 
 def save_action(db, request_frame, session_user):
-    try :
+    try:
         save_action_from_view(
             db, request_frame.csv_id, request_frame.sm_id,
             request_frame.bu_action, request_frame.remarks,
@@ -348,7 +397,7 @@ def save_action(db, request_frame, session_user):
         )
         return bu_sm.SaveActionSuccess()
 
-    except Exception, e :
+    except Exception, e:
         raise e
 
 # transaction methods end
@@ -455,16 +504,7 @@ def export_statutory_bulk_report(db, request, session_user):
 #                 link=converter.FILE_DOWNLOAD_PATH
 #             )
 
-def get_mapping_list_for_approve(db, request_frame, session_user):
 
-    pending_data = get_pending_mapping_list(db, request_frame.c_id, request_frame.d_id, request_frame.uploaded_by)
-    result = bu_sm.GetApproveStatutoryMappingListSuccess(
-        pending_data
-    )
-    return result
-
-
-# Download -Rejected Statutory Mapping In Different Format(CSV, ODS, TXT, XLSX)
 def download_rejected_sm_report(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     country_id = request_frame.c_id

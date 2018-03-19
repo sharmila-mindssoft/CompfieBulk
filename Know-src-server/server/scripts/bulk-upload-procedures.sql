@@ -83,9 +83,9 @@ BEGIN
     select t1.csv_id, csv_name, uploaded_on, uploaded_by,
     total_records,
     (select count(action) from tbl_bulk_statutory_mapping where
-     action = 1 and csv_id = t1.csv_id) as approve_count,
+     ifnull(action, 0) = 1 and csv_id = t1.csv_id) as approve_count,
     (select count(action) from tbl_bulk_statutory_mapping where
-     action = 2 and csv_id = t1.csv_id) as rej_count
+     ifnull(action, 0) = 2 and csv_id = t1.csv_id) as rej_count
     from tbl_bulk_statutory_mapping_csv as t1
     where upload_status =  1 and approve_status = 0 and ifnull(t1.is_fully_rejected, 0) = 0
     and country_id = cid and domain_id = did
@@ -409,7 +409,10 @@ BEGIN
     t1.csv_unit_id and action = 3) AS declined_count
  FROM
     tbl_bulk_units_csv as t1 WHERE t1.client_id = _clientId AND
-    t1.client_group = _groupName ORDER BY t1.uploaded_on desc;
+    t1.client_group = _groupName and
+    (t1.is_fully_rejected = 0 or t1.is_fully_rejected is null) and
+    (t1.approve_status = 0 or t1.approve_status is null)
+    ORDER BY t1.uploaded_on desc;
 END //
 
 DELIMITER ;
@@ -1513,6 +1516,7 @@ BEGIN
         is_fully_rejected = 1,
         rejected_by = _user_id,
         rejected_on = current_ist_datetime(),
+        rejected_reason = _remarks,
         total_rejected_records = (select count(0) from
         tbl_bulk_units as t1 WHERE t1.csv_unit_id = _csv_unit_id)
         WHERE csv_unit_id = _csv_unit_id;
@@ -1676,7 +1680,7 @@ taskname_ VARCHAR(150), description_ VARCHAR(500)
 )
 BEGIN
   select
-    compliance_task_name 
+    compliance_task_name
     from tbl_bulk_assign_statutory where
     domain = domain_ and unit_code = unitcode_ and statutory_provision = provision_
     and compliance_task_name = taskname_ and compliance_description = description_;

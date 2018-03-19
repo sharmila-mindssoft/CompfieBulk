@@ -147,10 +147,8 @@ ApproveAssignStatutoryBulkUpload.prototype.initialize = function() {
 }
 
 ApproveAssignStatutoryBulkUpload.prototype.possibleFailures = function(error) {
-  if (error == 'DomainNameAlreadyExists') {
-    displayMessage(message.domainname_exists);
-  } else if (error == "ExportToCSVEmpty") {
-    displayMessage(message.empty_export);
+  if (error == 'InvalidPassword') {
+    displayMessage(message.invalid_password);
   } else {
     displayMessage(error);
   }
@@ -223,12 +221,12 @@ function PageControls() {
 
   checkAllApprove.click(function() {
     if ($(this).prop("checked") == true) {
-      $('.single-approve').removeAttr("checked");
-      $('.single-approve').trigger('click');
+      dataDetailsTableTbody.find('.single-approve').removeAttr("checked");
+      dataDetailsTableTbody.find('.single-approve').trigger('click');
     } else {
-      $('.single-approve').removeAttr("checked");
-      $('.single-reject').removeAttr("disabled");
-      checkAllReject.removeAttr("disabled");
+      dataDetailsTableTbody.find('.single-approve').removeAttr("checked");
+      // dataDetailsTableTbody.find('.single-reject').removeAttr("disabled");
+      // checkAllReject.removeAttr("disabled");
     }
   });
 
@@ -236,9 +234,9 @@ function PageControls() {
     if ($(this).prop("checked") == true) {
       confirmationAction(0, 'single-reject');
     } else {
-      $('.single-reject').removeAttr("checked");
-      $('.single-approve').removeAttr("disabled");
-      checkAllApprove.removeAttr("disabled");
+      dataDetailsTableTbody.find('.single-reject').removeAttr("checked");
+      // dataDetailsTableTbody.find('.single-approve').removeAttr("disabled");
+      // checkAllApprove.removeAttr("disabled");
     }
   });
 
@@ -255,8 +253,8 @@ function PageControls() {
     } else {
       Custombox.close();
       if (checkAllReject.prop("checked") == true) {
-        $('.single-reject').removeAttr("checked");
-        $('.single-reject').trigger('click');
+        dataDetailsTableTbody.find('.single-reject').removeAttr("checked");
+        dataDetailsTableTbody.find('.single-reject').trigger('click');
       } else {
         singleReject(singleRejectId.val(), true);
       }
@@ -359,7 +357,23 @@ function PageControls() {
       filteredData.empty();
       clearFiltered.hide();
     }
-    viewListDetailsPage(ASID.val());
+    if (acSecondaryLegislation.is(':visible') == true) {
+      displayMessage(message.secondary_legislation_required);
+      return false;
+    } else if (acStatutoryProvision.is(':visible') == true) {
+      displayMessage(message.statutory_provision_required);
+      return false;
+    } else if (acComplianceTask.is(':visible') == true) {
+      displayMessage(message.compliance_task_required);
+      return false;
+    } else if (acComplianceDescription.is(':visible') == true) {
+      displayMessage(message.compliance_description_required);
+      return false;
+    } else {
+      sno = 0;
+      currentPage = 1;
+      viewListDetailsPage(ASID.val());
+    }
   });
 
   clearFiltered.click(function() {
@@ -367,12 +381,13 @@ function PageControls() {
   });
 
   submit.click(function() {
-    var approveCount = $('.single-approve:checked').length;
-    var rejectCount = $('.single-reject:checked').length;
+    var approveCount = dataDetailsTableTbody.find('.single-approve:checked').length;
+    var rejectCount = dataDetailsTableTbody.find('.single-reject:checked').length;
     if(approveCount == 0 || rejectCount) {
       displayMessage(message.action_selection_required);
     } else {
       // to check the record checked all the action need to check temp db
+      // REPORT.submitProcess();
     }
     // REPORT.submitProcess();
   });
@@ -730,6 +745,8 @@ goToDetailsPage = function(id) {
   statutoryStatus.val("");
   complianceStatus.val("");
   complianceDescriptionName.val("");
+  sno = 0;
+  currentPage = 1;
   viewListDetailsPage(id);
 }
 
@@ -763,16 +780,12 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function(data, p
   if (pageFlag == false)
     var showFrom = sno + 1;
   dataDetailsTableTbody.empty();
-  var no = 0;
   if (data.length > 0) {
-    var approvedStatus = 0;
-    var rejectedStatus = 0;
     $.each(data, function(k, v) {
       if (pageFlag == false)
         sno = parseInt(sno) + 1;
-      no++;
       var clone = $('#template #report-details-table tr').clone();
-      $('.sno', clone).text(no);
+      $('.sno', clone).text(sno);
       $('.single-approve', clone).val(v.as_id).attr({
         id: "approve" + v.as_id,
         onClick: "singleApprove(" + v.as_id + ")",
@@ -783,22 +796,20 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function(data, p
         onClick: "singleReject(" + v.as_id + ", false)",
         name: "action" + v.as_id
       });
-
+      $('.rejected-reason', clone).attr("id", "rejected-reason" + v.as_id);
       if (v.bu_action == 1) {
         $('.single-approve', clone).prop('checked', true);
         $('.single-reject', clone).prop('checked', false);
-        approvedStatus++;
       } else if (v.bu_action == 2) {
         $('.single-reject', clone).prop('checked', true);
         $('.single-approve', clone).prop('checked', false);
-        rejectedStatus++;
         if (v.remarks != "") {
           $('.rejected-reason', clone)
             .html('<i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer" ' +
               'data-toggle="tooltip" data-original-title="' + v.remarks + '"></i>');
         }
       } else {
-        $('.single-reject', clone).prop('checked', false);
+        $('.single-approve', clone).prop('checked', false);
         $('.single-reject', clone).prop('checked', false);
       }
       $('.domain-name', clone).html(v.d_name);
@@ -852,16 +863,7 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function(data, p
       $('.compliance-description', clone).html(v.c_desc);
       dataDetailsTableTbody.append(clone);
     });
-    if (rejectedStatus == no) {
-      checkAllReject.prop('checked', true);
-      checkAllApprove.prop('checked', false);
-    } else if (approvedStatus == no) {
-      checkAllApprove.prop('checked', true);
-      checkAllReject.prop('checked', false);
-    } else {
-      checkAllReject.prop('checked', false);
-      checkAllApprove.prop('checked', false);
-    }
+    checkAllEnableDisable();
     PaginationView.show();
     if (pageFlag == false)
       showPagePan(showFrom, sno, totalRecord);
@@ -876,9 +878,12 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function(data, p
 
 singleApprove = function(id) {
   if ($('#approve' + id).prop("checked") == true) {
+    $('#reject' + id).removeAttr("checked");
+    $('#rejected-reason' + id + ' i').remove();
     tempAction(id, 1);
+    checkAllEnableDisable();
   } else {
-    $('#reject' + id).removeAttr("disabled");
+    checkAllEnableDisable();
   }
 }
 
@@ -889,17 +894,30 @@ singleReject = function(id, flag) {
         singleRejectId.val(id);
         confirmationAction(0, 'single-reject');
       } else {
+        $('#approve' + id).removeAttr("checked");
+        $('#rejected-reason' + id ).html('<i class="fa fa-info-circle ' + 
+        ' fa-1-2x l-h-51 text-primary c-pointer" data-toggle="tooltip" ' + 
+        ' data-original-title="' + singleRejectReason.val() + '"></i>');
         tempAction(id, 2);
+        checkAllEnableDisable();
       }
     } else {
+      $('#approve' + id).removeAttr("checked");
+      $('#rejected-reason' + id ).html('<i class="fa fa-info-circle ' + 
+      ' fa-1-2x l-h-51 text-primary c-pointer" data-toggle="tooltip" ' + 
+      ' data-original-title="' + singleRejectReason.val() + '"></i>');
       tempAction(id, 2);
+      // checkAllEnableDisable();
+      checkAllApprove.removeAttr("checked");
     }
   } else {
-    $('#approve' + id).removeAttr("disabled");
+    checkAllEnableDisable();
+    $('#rejected-reason' + id + ' i').remove();
   }
 }
 
 tempAction = function(id, action) {
+  console.log(id);
   var csvid = ASID.val();
   var reason = singleRejectReason.val();
   displayLoader();
@@ -907,13 +925,30 @@ tempAction = function(id, action) {
     parseInt(action), reason,
     function(error, response) {
       if (error == null) {
-        viewListDetailsPage(csvid);
         hideLoader();
       } else {
         REPORT.possibleFailures(error);
         hideLoader();
       }
     });
+}
+
+checkAllEnableDisable = function(id, action) {
+  var approveTotalCount = dataDetailsTableTbody.find('.single-approve').length;
+  var rejectTotalCount = dataDetailsTableTbody.find('.single-reject').length;
+  var approveCount = dataDetailsTableTbody.find('.single-approve:checked').length;
+  var rejectCount = dataDetailsTableTbody.find('.single-reject:checked').length;
+  // alert(rejectTotalCount+' - '+rejectCount);
+  if(approveCount == approveTotalCount) {
+    checkAllApprove.prop('checked', true);
+    checkAllReject.removeAttr("checked");
+  } else if(rejectCount == rejectTotalCount) {
+    checkAllApprove.removeAttr("checked");
+    checkAllReject.prop('checked', true);
+  } else {
+    checkAllApprove.removeAttr("checked");
+    checkAllReject.removeAttr("checked");
+  }
 }
 
 ApproveAssignStatutoryBulkUpload.prototype.loadFilterPage = function(id) {
@@ -1016,7 +1051,7 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
         t_this._data_list_details = response.assign_statutory_data_list;
         // totalRecord = 32;
         totalRecord = response.count;
-        
+        // alert(response.count);
         if (sno == 0)
           createPageView(totalRecord);
         t_this.displayDetailsPage(t_this._data_list_details, false);
@@ -1088,7 +1123,9 @@ $(document).ready(function() {
   REPORT.pageLoad();
   PageControls();
   loadItemsPerPage();
-  viewListDetailsPage(33);
+  // goToDetailsPage(33);
   // listView.show();
   // REPORT.fetchStatutoryValues(1,1);
+
+  $(".nicescroll").niceScroll();
 });

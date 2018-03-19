@@ -543,7 +543,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_bu_compliance_info`()
 BEGIN
-  SELECT compliance_id, statutory_provision, compliance_task, compliance_description, 
+  SELECT compliance_id, statutory_provision, compliance_task, compliance_description,
   is_active from tbl_compliances;
 END //
 
