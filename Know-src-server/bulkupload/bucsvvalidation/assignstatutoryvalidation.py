@@ -315,7 +315,7 @@ class SourceDB(object):
         comp_id = c_ids[0]["compliance_id"]
 
         data = self._source_db.call_proc("sp_bu_check_duplicate_compliance_for_unit", [
-            domain_id, domain_id, comp_id
+            domain_id, unit_id, comp_id
         ])
         if len(data) > 0 :
             return False
@@ -493,7 +493,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     data.get("Compliance_Description"),
                 ) :
                     self._error_summary["duplicate_error"] += 1
-                    dup_error = "Compliance_Task - Duplicate data"
+                    dup_error = "Compliance_Task - DDuplicate data"
                     res = make_error_desc(res, dup_error)
 
 
