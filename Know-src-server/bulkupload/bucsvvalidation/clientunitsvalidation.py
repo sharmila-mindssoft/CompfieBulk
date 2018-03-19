@@ -558,99 +558,101 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         self.check_duplicate_unit_code_in_csv()
         self.get_tempDB_data()
         self.init_values(self._session_user_obj.user_id(), self._client_id)
+        if len(self._source_data) > 0:
+            for row_idx, data in enumerate(self._source_data):
 
-        for row_idx, data in enumerate(self._source_data):
+                for key in self._csv_column_name:
+                    value = data.get(key)
+                    isFound = ""
+                    values = value.strip().split(CSV_DELIMITER)
+                    csvParam = csv_params.get(key)
+                    res = True
+                    unitCodeRes = True
+                    unitCodeErr = None
+                    unitCountErr = None
+                    unitCountRes = True
+                    error_count = {
+                        "mandatory": 0,
+                        "max_length": 0,
+                        "invalid_char": 0
+                    }
+                    if (key == "Format" and value != ''):
+                        self._doc_names.append(value)
+                    for v in values :
+                        v = v.strip()
+                        if key == "Legal_Entity":
+                            self._legal_entity_name = v
+                        elif key == "Unit_Code" and v != "auto_gen":
+                            unitCodeErr = self.check_duplicate_unit_code_in_tempDB(v)
+                            if len(unitCodeErr) > 0:
+                                unitCodeRes = False
+                                self._error_summary["duplicate_error"] += 1
+                        elif key == "Organization":
+                            unitCountErr = self.check_organization_unit_count_in_tempDB(value)
+                            if len(unitCountErr) > 0:
+                                unitCountRes = False
 
-            for key in self._csv_column_name:
-                value = data.get(key)
-                isFound = ""
-                values = value.strip().split(CSV_DELIMITER)
-                csvParam = csv_params.get(key)
-                res = True
-                unitCodeRes = True
-                unitCodeErr = None
-                unitCountErr = None
-                unitCountRes = True
-                error_count = {
-                    "mandatory": 0,
-                    "max_length": 0,
-                    "invalid_char": 0
-                }
-                if (key == "Format" and value != ''):
-                    self._doc_names.append(value)
-                for v in values :
-                    v = v.strip()
-                    if key == "Legal_Entity":
-                        self._legal_entity_name = v
-                    elif key == "Unit_Code" and v != "auto_gen":
-                        unitCodeErr = self.check_duplicate_unit_code_in_tempDB(v)
-                        if len(unitCodeErr) > 0:
-                            unitCodeRes = False
-                            self._error_summary["duplicate_error"] += 1
-                    elif key == "Organization":
-                        unitCountErr = self.check_organization_unit_count_in_tempDB(value)
-                        if len(unitCountErr) > 0:
-                            unitCountRes = False
-
-                    valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
-                    if valid_failed is not True :
-                        res = valid_failed
-                        error_count = error_cnt
-                    if v != "" :
-                        if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
-                            unboundMethod = self._validation_method_maps.get(key)
-                            if unboundMethod is not None :
-                                isFound = unboundMethod(v)
-                        if isFound is not True and isFound != "" :
-                            if valid_failed is not True :
-                                valid_failed.append(key + ' - ' + isFound)
-                            else :
-                                valid_failed = [key + ' - ' + isFound]
+                        valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
+                        if valid_failed is not True :
                             res = valid_failed
-                            if "Status" in isFound :
-                                self._error_summary["inactive_error"] += 1
-                            else :
-                                if key != "Division" and key != "Category" and key != "Unit_Code":
-                                    self._error_summary["invalid_data_error"] += 1
+                            error_count = error_cnt
+                        if v != "" :
+                            if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
+                                unboundMethod = self._validation_method_maps.get(key)
+                                if unboundMethod is not None :
+                                    isFound = unboundMethod(v)
+                            if isFound is not True and isFound != "" :
+                                if valid_failed is not True :
+                                    valid_failed.append(key + ' - ' + isFound)
+                                else :
+                                    valid_failed = [key + ' - ' + isFound]
+                                res = valid_failed
+                                if "Status" in isFound :
+                                    self._error_summary["inactive_error"] += 1
+                                else :
+                                    if key != "Division" and key != "Category" and key != "Unit_Code":
+                                        self._error_summary["invalid_data_error"] += 1
 
-                if (res is not True or unitCountRes is not True or unitCodeRes is not True) and key != "Division" and key != "Category":
-                    # mapped_error_dict[row_idx] = CSV_DELIMITER.join(res)
-                    error_list = mapped_error_dict.get(row_idx)
+                    if (res is not True or unitCountRes is not True or unitCodeRes is not True) and key != "Division" and key != "Category":
+                        # mapped_error_dict[row_idx] = CSV_DELIMITER.join(res)
+                        error_list = mapped_error_dict.get(row_idx)
 
-                    if error_list is None:
-                        if unitCodeErr is not None:
-                            error_list = unitCodeErr
-                        elif unitCountErr is not None:
-                            error_list = unitCountErr
-                        else:
-                            if key != "Unit_Code":
-                                error_list = res
-                    else :
-                        if unitCodeErr is not None:
-                            error_list.extend(unitCodeErr)
-                        elif unitCountErr is not None:
-                            error_list.extend(unitCountErr)
-                        else:
-                            if key != "Unit_Code":
-                                error_list.extend(res)
+                        if error_list is None:
+                            if unitCodeErr is not None:
+                                error_list = unitCodeErr
+                            elif unitCountErr is not None:
+                                error_list = unitCountErr
+                            else:
+                                if key != "Unit_Code":
+                                    error_list = res
+                        else :
+                            if unitCodeErr is not None:
+                                error_list.extend(unitCodeErr)
+                            elif unitCountErr is not None:
+                                error_list.extend(unitCountErr)
+                            else:
+                                if key != "Unit_Code":
+                                    error_list.extend(res)
 
-                    mapped_error_dict[row_idx] = error_list
+                        mapped_error_dict[row_idx] = error_list
 
-                    head_idx = mapped_header_dict.get(key)
-                    if head_idx is None :
-                        head_idx = [row_idx]
-                    else :
-                        head_idx.append(row_idx)
-                    mapped_header_dict[key] = head_idx
-                    invalid += 1
-                    self._error_summary["mandatory_error"] += error_count["mandatory"]
-                    self._error_summary["max_length_error"] += error_count["max_length"]
-                    self._error_summary["invalid_char_error"] += error_count["invalid_char"]
-                    self._error_summary["max_unit_count_error"] += 1
-        if invalid > 0 :
-            return self.make_invalid_return(mapped_error_dict, mapped_header_dict)
-        else :
-            return self.make_valid_return(mapped_error_dict, mapped_header_dict)
+                        head_idx = mapped_header_dict.get(key)
+                        if head_idx is None :
+                            head_idx = [row_idx]
+                        else :
+                            head_idx.append(row_idx)
+                        mapped_header_dict[key] = head_idx
+                        invalid += 1
+                        self._error_summary["mandatory_error"] += error_count["mandatory"]
+                        self._error_summary["max_length_error"] += error_count["max_length"]
+                        self._error_summary["invalid_char_error"] += error_count["invalid_char"]
+                        self._error_summary["max_unit_count_error"] += 1
+            if invalid > 0 :
+                return self.make_invalid_return(mapped_error_dict, mapped_header_dict)
+            else :
+                return self.make_valid_return(mapped_error_dict, mapped_header_dict)
+        else:
+            return "Empty CSV File Uploaded"
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
         fileString = self._csv_name.split('.')
