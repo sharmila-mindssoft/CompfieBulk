@@ -9,7 +9,7 @@ var PasswordSubmitButton = $('.password-submit');
 var CancelButton = $("#btn-sm-view-cancel");
 var ViewListContainer = $('#tbody-sm-approve-view');
 var ViewListRowTemplate = $('#templates .table-sm-approve-info .clone-row');
-
+var FinalSubmit = $('#btn-final-submit')
 // auto complete - country
 var country_val = $('#countryid');
 var country_ac = $("#countryname");
@@ -28,21 +28,22 @@ var AcUser = $('#ac-user');
 var searchFileName = $('.search-file-name');
 var searchUploadBy = $('.search-upload-by');
 var searchTotRecords = $('.search-tot-records');
+var searchUploadOn = $('.search-upload-on');
 
-var searchStatutory = $('.search-statutory');
-var searchOrganization = $('.search-organization');
-var searchNature = $('.search-nature');
-var searchProvision = $('.search-provision');
-var searchCTask = $('.search-c-task');
-var searchCDoc = $('.search-c-doc');
-var searchTaskId = $('.search-task-id');
-var searchCDesc = $('.search-c-desc');
-var searchPCons = $('.search-p-cons');
-var searchTaskType = $('.search-task-type');
-var searchReferLink = $('.search-refer-link');
-var searchFreq = $('.search-frequency');
-var searchFormat = $('.search-fromat');
-var searchGeography = $('.search-geo');
+var searchStatutory = $('#search-statutory');
+var searchOrganization = $('#search-organization');
+var searchNature = $('#search-nature');
+var searchProvision = $('#search-provision');
+var searchCTask = $('#search-c-task');
+var searchCDoc = $('#search-c-doc');
+var searchTaskId = $('#search-task-id');
+var searchCDesc = $('#search-c-desc');
+var searchPCons = $('#search-p-cons');
+var searchTaskType = $('#search-task-type');
+var searchReferLink = $('#search-refer-link');
+var searchFreq = $('#search-frequency');
+var searchFormat = $('#search-format');
+var searchGeography = $('#search-geo');
 
 // filter controls
 
@@ -73,6 +74,7 @@ var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
 var _on_current_page = 1;
 var STATU_TOTALS;
+var j = 1;
 
 
 
@@ -105,10 +107,12 @@ function displayPopUp(TYPE, csv_id, smid){
     if (TYPE == "reject") {
         targetid = "#custom-modal";
         CurrentPassword = $('#current-password-reject');
+        $('.reject-reason-txt').val('')
     }
     else if (TYPE == "view-reject") {
         targetid = "#custom-modal-remarks";
         CurrentPassword = null;
+        $('.view-reason').val('')
     }
     else {
         targetid = "#custom-modal-approve"
@@ -135,7 +139,7 @@ function displayPopUp(TYPE, csv_id, smid){
                         bu_approve_page.actionFromList(csv_id, 2, $('.reject-reason-txt').val(), CurrentPassword.val());
                     }
                     else if (TYPE == "submit") {
-
+                        bu_approve_page.finalSubmit(csv_id, CurrentPassword.val());
                     }
                     else if (TYPE == "view-reject") {
                         bu.updateActionFromView(csv_id, smid, 2, $('.view-reason').val(), function(err, res) {
@@ -185,9 +189,13 @@ function ApproveBulkMapping() {
     this._TaskId = [];
     this._TaskType = [];
     this._CSV_ID = null;
+    this.show_map_count = 0;
+    this._Country_id = null;
+    this._domain_id = null;
 }
 ApproveBulkMapping.prototype.possibleFailures = function(error) {
     displayMessage(error);
+    hideLoader();
 };
 ApproveBulkMapping.prototype.showList = function() {
     ListScreen.show();
@@ -195,6 +203,7 @@ ApproveBulkMapping.prototype.showList = function() {
     searchFileName.val('');
     searchUploadBy.val('');
     searchTotRecords.val('');
+    searchUploadOn.val('');
     this.fetchDropDownData();
 
 };
@@ -243,6 +252,7 @@ ApproveBulkMapping.prototype.renderList = function(list_data) {
     else {
         $.each(list_data, function(idx, data) {
 
+
             var cloneRow = ListRowTemplate.clone();
             cname_split = data.csv_name.split("_");
             cname_split.pop();
@@ -267,12 +277,16 @@ ApproveBulkMapping.prototype.renderList = function(list_data) {
             });
             $('.bu-view-mapping', cloneRow).on('click', function(){
                 t_this._CSV_ID = data.csv_id;
+                t_this._Country_id = data.c_id;
+                t_this._domain_id = data.d_id;
                 t_this.showViewScreen(data.csv_id, 0, 25);
             });
-            $('.dl-xls-file',cloneRow).attr("href", "/uplaoded_file/xlsx/"+data.csv_name);
-            $('.dl-csv-file',cloneRow).attr("href", "/uplaoded_file/csv/"+data.csv_name);
-            $('.dl-ods-file',cloneRow).attr("href", "/uplaoded_file/ods/"+data.csv_name);
-            $('.dl-txt-file',cloneRow).attr("href", "/uplaoded_file/txt/"+data.csv_name);
+            flname = data.csv_name.split('.')
+            flname = flname[0]
+            $('.dl-xls-file',cloneRow).attr("href", "/uploaded_file/xlsx/"+flname+'.xlsx');
+            $('.dl-csv-file',cloneRow).attr("href", "/uploaded_file/csv/"+flname+'.csv');
+            $('.dl-ods-file',cloneRow).attr("href", "/uploaded_file/ods/"+flname+ '.ods');
+            $('.dl-txt-file',cloneRow).attr("href", "/uploaded_file/txt/"+flname+'.txt');
             ListContainer.append(cloneRow);
             j += 1;
         });
@@ -307,10 +321,15 @@ ApproveBulkMapping.prototype.fetchDropDownData = function() {
 ApproveBulkMapping.prototype.confirmAction = function() {
     t_this = this;
     displayLoader();
-    bu.confirmUpdateAction(csv_id, country_val.val(), domain_val.val(), function(error, response) {
+    console.log("confirm action called")
+    bu.confirmUpdateAction(t_this._CSV_ID, t_this._Country_id, t_this._domain_id, function(error, response) {
         if (error == null) {
             t_this.showList();
-
+            t_this.fetchListData();
+            displaySuccessMessage(message.confirm_success);
+        }
+        else {
+            bu_approve_page.possibleFailures(error);
         }
     });
 };
@@ -318,38 +337,45 @@ ApproveBulkMapping.prototype.actionFromList = function(
     csv_id, action, remarks, pwd
 ) {
     t_this = this;
+    c_id = parseInt(country_val.val());
+    d_id = parseInt(domain_val.val());
+    t_this._CSV_ID = csv_id;
+    t_this._Country_id = c_id;
+    t_this._domain_id = d_id;
     displayLoader();
     bu.updateActionFromList(
         csv_id, action, remarks, pwd, country_val.val(), domain_val.val(),
         function(error, response){
-        if (error == null) {
-
-            if (response.rej_count > 0) {
-                msg = response.rej_count + " compliance declined, Do you want to continue ?";
-                confirm_alert(msg, function(isConfirm) {
-                    if (isConfirm) {
-                        t_this.confirmAction();
-                        t_this.fetchListData();
+            if (error == null) {
+                if (response.rej_count > 0) {
+                    msg = response.rej_count + " compliance declined, Do you want to continue ?";
+                    confirm_alert(msg, function(isConfirm) {
+                        if (isConfirm) {
+                            t_this.confirmAction();
+                        }
+                        else {
+                            hideLoader();
+                        }
+                    });
+                }else {
+                    if (action == 1) {
+                        displaySuccessMessage(message.approve_success);
                     }
-                });
-            }else {
-                if (action == 1) {
-                    displayMessage(message.approve_success);
-                }
-                else {
-                    displayMessage(message.reject_success);
+                    else {
+                        displaySuccessMessage(message.reject_success);
+                    }
+
+                    t_this.fetchListData()
                 }
 
-                t_this.fetchListData()
+
             }
-
-
+            else {
+                hideLoader();
+                t_this.possibleFailures(error);
+            }
         }
-        else {
-            hideLoader();
-            t_this.possibleFailures(error);
-        }
-    });
+    );
 };
 ApproveBulkMapping.prototype.showViewScreen = function(csv_id, f_count, r_range) {
     ListScreen.hide();
@@ -369,42 +395,67 @@ ApproveBulkMapping.prototype.showViewScreen = function(csv_id, f_count, r_range)
     searchFreq.val('');
     searchFormat.val('');
     searchGeography.val('');
-
+    j = 1;
+    bu_approve_page.show_map_count = 0;
     bu_approve_page.fetchViewData(csv_id, f_count, r_range);
+
+
+// alert();
+
+// setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js");
+
+// $.getScript("/knowledge/css/multifreezer.css");
+ // hideLoader();}, 3000);
+
+     if($("body").hasClass("freezer-active-bu")==false) {
+displayLoader();
+        setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js");  hideLoader();}, 3000);
+    }
+
+// $.getScript("/knowledge/js/multifreezer.js");
 };
 ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) {
     t_this = this;
+
     displayLoader();
     bu.getApproveMappingView(csv_id, f_count, r_range, function(error, response){
         if(error == null) {
             t_this._ViewDataList = response.mapping_data;
-            $('.view-country-name').text(response.c_name);
-            $('.view-domain-name').text(response.d_name)
-            uploaded_name = null
-            for (var i=0; i<t_this._UserList.length; i++) {
-                if (response.uploaded_by == t_this._UserList[i].user_id) {
-                    uploaded_name = t_this._UserList[i].emp_code_name
-                    break;
+            if (t_this._ViewDataList.length > 0) {
+
+                $('.view-country-name').text(response.c_name);
+                $('.view-domain-name').text(response.d_name)
+                uploaded_name = null
+                for (var i=0; i<t_this._UserList.length; i++) {
+                    if (response.uploaded_by == t_this._UserList[i].user_id) {
+                        uploaded_name = t_this._UserList[i].emp_code_name
+                        break;
+                    }
+                }
+                $('.view-uploaded-by').text(uploaded_name);
+                $('.view-uploaded-on').text(response.uploaded_on);
+                cname_split = response.csv_name.split("_");
+                cname_split.pop();
+                cname = cname_split.join("_");
+                $('.view-csv-name').text(cname);
+                $('#view-csv-id').val(response.csv_id);
+                STATU_TOTALS  = response.total;
+                if(t_this._ViewDataList.length == 0) {
+                    _t_this.hidePagePan();
+                    PaginationView.hide();
+                    t_this.hidePageView();
+                }
+                else {
+                    t_this.createPageView();
+                    PaginationView.show();
                 }
             }
-            $('.view-uploaded-by').text(uploaded_name);
-            $('.view-uploaded-on').text(response.uploaded_on);
-            cname_split = response.csv_name.split("_");
-            cname_split.pop();
-            cname = cname_split.join("_");
-            $('.view-csv-name').text(cname);
-            $('#view-csv-id').val(response.csv_id);
-            STATU_TOTALS  = response.total;
-            if(t_this._ViewDataList.length == 0) {
-                _t_this.hidePagePan();
-                PaginationView.hide();
-                t_this.hidePageView();
-            }
-            else {
-                t_this.createPageView();
-                PaginationView.show();
-            }
             t_this.renderViewScreen(t_this._ViewDataList);
+
+            // var onetimejs = $("#tbody-sm-approve-view").html();
+            // alert(onetimejs);
+
+
             hideLoader();
         }
     });
@@ -412,7 +463,9 @@ ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) 
 };
 ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
     t_this = this;
-    var j = 1;
+
+    showFrom = t_this.show_map_count;
+    showFrom += 1;
 
     ViewListContainer.find('tr').remove();
     if(view_data.length == 0) {
@@ -454,6 +507,10 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
                 $('.view-approve-check',cloneRow).attr("checked", true);
                 $('.view-reject-check',cloneRow).attr("checked", false);
             }
+            else if (data.bu_action == null) {
+                $('.view-approve-check',cloneRow).attr("checked", false);
+                $('.view-reject-check',cloneRow).attr("checked", false);
+            }
             else {
                 $('.view-approve-check',cloneRow).attr("checked", false);
                 $('.view-reject-check',cloneRow).attr("checked", true);
@@ -484,7 +541,10 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
             j += 1;
         });
     }
+
+    t_this.show_map_count += view_data.length;
     $('[data-toggle="tooltip"]').tooltip();
+    t_this.showPagePan(showFrom, t_this.show_map_count, STATU_TOTALS);
 };
 
 ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
@@ -516,6 +576,15 @@ ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
 };
 
 ApproveBulkMapping.prototype.renderViewFromFilter = function() {
+    _page_limit = parseInt(ItemsPerPage.val());
+    var showCount = 0;
+    if (_on_current_page == 1) {
+        showCount = 0;
+        t_this.show_map_count = 0;
+    } else {
+        showCount = (_on_current_page - 1) * _page_limit;
+        t_this.show_map_count = showCount;
+    }
     f_types = [];
     $("#frequency option:selected").each(function () {
        var $this = $(this);
@@ -533,8 +602,8 @@ ApproveBulkMapping.prototype.renderViewFromFilter = function() {
         "c_task_name": ac_compTask.val(),
         "c_desc": ac_compDesc.val(),
         "c_doc": ac_compDoc.val(),
-        "f_count": 0,
-        "r_range": 25
+        "f_count": showCount,
+        "r_range": _page_limit
     }
     bu.getApproveMappingViewFromFilter(args, function(err, response){
         displayLoader()
@@ -544,31 +613,33 @@ ApproveBulkMapping.prototype.renderViewFromFilter = function() {
         }
         if(err == null) {
             t_this._ViewDataList = response.mapping_data;
-            $('.view-country-name').text(response.c_name);
-            $('.view-domain-name').text(response.d_name)
-            uploaded_name = null
-            for (var i=0; i<t_this._UserList.length; i++) {
-                if (response.uploaded_by == t_this._UserList[i].user_id) {
-                    uploaded_name = t_this._UserList[i].emp_code_name
-                    break;
+            if (t_this._ViewDataList.length > 0) {
+                $('.view-country-name').text(response.c_name);
+                $('.view-domain-name').text(response.d_name)
+                uploaded_name = null
+                for (var i=0; i<t_this._UserList.length; i++) {
+                    if (response.uploaded_by == t_this._UserList[i].user_id) {
+                        uploaded_name = t_this._UserList[i].emp_code_name
+                        break;
+                    }
                 }
-            }
-            $('.view-uploaded-by').text(uploaded_name);
-            $('.view-uploaded-on').text(response.uploaded_on);
-            cname_split = response.csv_name.split("_");
-            cname_split.pop();
-            cname = cname_split.join("_");
-            $('.view-csv-name').text(cname);
-            $('#view-csv-id').val(response.csv_id);
-            STATU_TOTALS  = response.total;
-            if(t_this._ViewDataList.length == 0) {
-                _t_this.hidePagePan();
-                PaginationView.hide();
-                t_this.hidePageView();
-            }
-            else {
-                t_this.createPageView();
-                PaginationView.show();
+                $('.view-uploaded-by').text(uploaded_name);
+                $('.view-uploaded-on').text(response.uploaded_on);
+                cname_split = response.csv_name.split("_");
+                cname_split.pop();
+                cname = cname_split.join("_");
+                $('.view-csv-name').text(cname);
+                $('#view-csv-id').val(response.csv_id);
+                STATU_TOTALS  = response.total;
+                if(t_this._ViewDataList.length == 0) {
+                    _t_this.hidePagePan();
+                    PaginationView.hide();
+                    t_this.hidePageView();
+                }
+                else {
+                    t_this.createPageView();
+                    PaginationView.show();
+                }
             }
             t_this.renderViewScreen(t_this._ViewDataList);
             hideLoader();
@@ -594,10 +665,20 @@ ApproveBulkMapping.prototype.createPageView = function(page_type) {
             cpage = parseInt(page);
             if (parseInt(_on_current_page) != cpage) {
                 _on_current_page = cpage;
+                _page_limit = parseInt(ItemsPerPage.val());
+                var showCount = 0;
+                if (_on_current_page == 1) {
+                    showCount = 0;
+                    t_this.show_map_count = 0;
+                } else {
+                    showCount = (_on_current_page - 1) * _page_limit;
+                    t_this.show_map_count = showCount;
+                }
                 if(page_type == "show") {
-
+                    t_this.fetchViewData(t_this._CSV_ID, showCount, _page_limit);
                 }
                 else {
+                    t_this.renderViewFromFilter();
 
                 }
             }
@@ -616,20 +697,60 @@ ApproveBulkMapping.prototype.showPagePan = function(showFrom, showTo, total) {
     $('.pagination-view').show();
 };
 
+ApproveBulkMapping.prototype.finalSubmit = function(csvid, pwd) {
+    t_this = this;
+    displayLoader();
+    c_id = parseInt(country_val.val());
+    d_id = parseInt(domain_val.val());
+    t_this._CSV_ID = csvid;
+    t_this._Country_id = c_id;
+    t_this._domain_id = d_id;
+    bu.submitMappingAction(csvid, c_id, d_id, pwd, function(err, res){
+        if(err == null) {
+            if (res.rej_count > 0) {
+                msg = res.rej_count + " compliance declined, Do you want to continue ?";
+                confirm_alert(msg, function(isConfirm) {
+                    if (isConfirm) {
+                        t_this.confirmAction();
+                    }
+                });
+            }else {
+                displaySuccessMessage(message.submit_success);
+                ListScreen.show();
+                ViewScreen.hide();
+                searchFileName.val('');
+                searchUploadBy.val('');
+                searchTotRecords.val('');
+                searchUploadOn.val('');
+                t_this.fetchListData()
+            }
+
+        }
+        else {
+            t_this.possibleFailures(err);
+        }
+    });
+
+};
 
 function key_search(mainList) {
     csv_key = searchFileName.val().toLowerCase();
     upload_by_key = searchUploadBy.val().toLowerCase();
     total = searchTotRecords.val();
+    upload_on_key = searchUploadOn.val().toLowerCase();
+    console.log(upload_on_key)
 
     var fList = [];
     for (var entity in mainList) {
         csvName = mainList[entity].csv_name;
         uploadby = mainList[entity].uploaded_by;
         total_records = mainList[entity].no_of_records;
+        uploadon = mainList[entity].uploaded_on;
+        console.log(uploadon)
 
         if (
             (~csvName.toLowerCase().indexOf(csv_key)) &&
+            (~uploadon.toLowerCase().indexOf(upload_on_key)) &&
             (~uploadby.toLowerCase().indexOf(upload_by_key)) &&
             (~total_records.toString().indexOf(total))
         ){
@@ -654,7 +775,6 @@ function key_view_search(mainList) {
     key_freq = searchFreq.val().toLowerCase();
     key_format = searchFormat.val().toLowerCase();
     key_geo = searchGeography.val().toLowerCase();
-
 
     var fList = [];
     for (var entity in mainList) {
@@ -807,6 +927,10 @@ function PageControls() {
     });
 
     searchUploadBy.keyup(function() {
+        fList = key_search(bu_approve_page._ApproveDataList);
+        bu_approve_page.renderList(fList);
+    });
+    searchUploadOn.keyup(function() {
         fList = key_search(bu_approve_page._ApproveDataList);
         bu_approve_page.renderList(fList);
     });
@@ -1029,10 +1153,14 @@ function PageControls() {
         }
 
         $('.filtered-data').text(filtered);
-        bu_approve_page.renderViewFromFilter()
+
+        bu_approve_page.renderViewFromFilter();
 
     });
 
+    FinalSubmit.click(function(){
+        displayPopUp("submit", parseInt($('#view-csv-id').val()), null);
+    });
 
 
 

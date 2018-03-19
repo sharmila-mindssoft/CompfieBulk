@@ -171,7 +171,7 @@
                                 <div class="col-sm-6 no-padding"
                                 id="bu-data-summary">
                                     <div class="form-group bg-muted">
-                                        <h5 class="col-sm-12 header-title">Uploaded Data Summary</h5>
+                                        <h5 class="col-sm-12 header-title">Uploaded Data - Summary</h5>
                                     </div>
                                     <ul class="p-l-20" >
                                       <li>Total No. Of Records:
@@ -187,33 +187,38 @@
                                 </div>
                                 <div class="col-sm-6 text-danger no-padding" id="bu-error-summary">
                                     <div class="form-group bg-muted">
-                                        <h5 class="col-sm-12 text-danger header-title">Invalid Data Summary</h5>
+                                        <h5 class="col-sm-12 text-danger header-title">Invalid Data - Summary</h5>
                                     </div>
                                     <ul class="p-l-20" >
-                                        <li>Mandatory field validation:
+                                        <li>Mandatory Field Blank:
                                         <b><span id="bu-summary-mandatory"></span></b>
                                         </li>
-                                        <li>Max Length field validation:
-                                        <b><span id="bu-summary-maxlength"></span></b>
-                                        </li>
-                                        <li>Duplicate data validation:
+                                        <li>Duplicate Compliance:
                                         <b><span id="bu-summary-duplicate"></span></b>
                                         </li>
-                                        <li>Invalid Char Validation:
+                                        <li>Master Data Inactive:
+                                        <b><span id="bu-summary-inactive"></span></b>
+                                        </li>
+                                        <li>Frequency Data Invalid:
+                                        <b><span id="bu-frequency-invalid"></span></b>
+                                        </li>
+                                        <li>Max Length Exceeded:
+                                        <b><span id="bu-summary-maxlength"></span></b>
+                                        </li>
+
+                                        <!-- <li>Invalid Char Validation:
                                         <b><span id="bu-summary-invalidchar"></span></b>
                                         </li>
                                         <li>Invaid Data validation:
                                         <b><span id="bu-summary-invaliddata"></span></b>
-                                        </li>
-                                        <li>Status validation:
-                                        <b><span id="bu-summary-inactive"></span></b>
-                                        </li>
+                                        </li> -->
+
                                     </ul>
                                 </div>
                             </div>
                             <div class="clear"></div>
 
-                            <div class="form-group col-sm-12 text-right p-t-0">
+                            <div class="form-group col-sm-12 text-right p-t-0 dwn-template">
                                 <a href="/csv_format/Statutory_Mapping.csv" class="text-primary c-pointer download-file" title="Click here to download"><i class="fa fa-download text-primary"></i> Download Template</a>
                             </div>
 

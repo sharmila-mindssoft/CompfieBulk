@@ -74,11 +74,11 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th class="text-center">Bulk Uploaded File</th>
-                                            <th class="text-center">Uploaded On</th>
-                                            <th class="text-center">Uploaded By</th>
-                                            <th class="text-center">No of records</th>
-                                            <th class="text-center">Approved/Rejected</th>
+                                            <th >Uploaded File Name</th>
+                                            <th >Uploaded On</th>
+                                            <th >Uploaded By</th>
+                                            <th class="text-center">No. of records</th>
+                                            <th class="text-center">Approved / Rejected</th>
                                             <th class="text-center">Download</th>
                                             <th class="text-center">Task Wise Action</th>
                                             <th class="text-center">Approve</th>
@@ -89,11 +89,17 @@
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
                                                 <input type="text" class="form-control input-sm search-file-name"
-                                                placeholder="Bulk Upload File">
+                                                placeholder="Uploaded File Name">
                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                               </div>
                                           </td>
-                                          <td></td>
+                                          <td>
+                                            <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
+                                                <input type="text" class="form-control input-sm search-upload-on"
+                                                placeholder="Uploaded On">
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                          </td>
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
                                                 <input type="text" class="form-control input-sm search-upload-by"
@@ -104,7 +110,7 @@
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
                                                 <input type="text" class="form-control input-sm search-tot-records"
-                                                placeholder="No of records">
+                                                placeholder="No. of records">
                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                               </div>
                                           </td>
@@ -224,172 +230,187 @@
                     <table id="datatable-responsive" class="table table-striped dt-responsive nowrap table-freeze-multi" cellspacing="0" style="width: 3000px; overflow-x: auto;">
                       <thead>
                         <tr>
-                          <th width="1%">#</th>
-                          <th   class="text-left b-b-0 p-l-10" colspan="3" >Action</th>
+                          <th width="1%" rowspan="2">#</th>
+                          <th  width="3%" class="text-left b-b-0 p-l-10" colspan="3" >Action</th>
 
-                          <th class="divider-column">Statutory</th>
+                          <th width="5%" class="divider-column" rowspan="2">Statutory</th>
 
-                          <th >Organization</th>
-                          <th >Statutory Nature</th>
-                          <th >Statutory Provision</th>
-                          <th >Compliance Task</th>
-                          <th >Compliance Document</th>
-                          <th >Task ID</th>
-                          <th >Compliance Description</th>
-                          <th >Penal consequences</th>
-                          <th >Task Type</th>
-                          <th >Reference Link</th>
-                          <th >Compliance Frequency</th>
-                          <th >Statutory Month</th>
-                          <th >Statutory Date</th>
-                          <th >Trigger Before Days</th>
-                          <th >Repeats Every</th>
-                          <th >Repeats Type</th>
-                          <th >Duration</th>
-                          <th >Duration Type</th>
-                          <th >Is Multiple Date</th>
-                          <th >Format File</th>
-                          <th >Geography Location</th>
+                          <th width="1%" rowspan="2" ></th>
+                          <th width="4%" rowspan="2">Organization</th>
+                          <th width="3%" rowspan="2">Statutory Nature</th>
+                          <th width="4%" rowspan="2">Statutory Provision</th>
+                          <th width="3%" rowspan="2">Compliance Task</th>
+                          <th width="3%" rowspan="2">Compliance Document</th>
+                          <th width="3%" rowspan="2">Task ID</th>
+                          <th width="7%" rowspan="2">Compliance Description</th>
+                          <th width="4%" rowspan="2">Penal consequences</th>
+                          <th width="4%" rowspan="2">Task Type</th>
+                          <th width="10%" rowspan="2">Reference Link</th>
+                          <th width="4%" rowspan="2">Compliance Frequency</th>
+                          <th width="3%" rowspan="2">Statutory Month</th>
+                          <th width="3%" rowspan="2">Statutory Date</th>
+                          <th width="3%" rowspan="2">Trigger Before Days</th>
+                          <th width="3%" rowspan="2">Repeats Every</th>
+                          <th width="3%" rowspan="2">Repeats Type</th>
+                          <th width="3%" rowspan="2">Duration</th>
+                          <th width="3%" rowspan="2">Duration Type</th>
+                          <th width="3%" rowspan="2">Is Multiple Date</th>
+                          <th width="4%" rowspan="2">Format File</th>
+                          <th width="5%" rowspan="2">Geography Location</th>
                         </tr>
 
 
                         <tr>
-                          <td class="b-t-0 p-t-0 p-b-0">
+                          <th class="b-t-0 p-t-0 p-b-0">
                           <div class="icon-3x">
                             <i class="fa fa-check-square-o text-primary c-pointer" title="Approve"></i>
                           </div>
-                          </td>
-                          <td class="b-t-0 p-t-0 p-b-0">
+                          </th>
+                          <th class="b-t-0 p-t-0 p-b-0">
                             <div class="icon-3x">
                              <i class="fa fa-check-square-o text-danger c-pointer" title="Reject"></i>
                             </div>
-                          </td>
-                          <!-- <td class="b-t-0 p-t-0 p-b-0"></td> -->
+                          </th>
+                          <th class="b-t-0 p-t-0 p-b-0"></th>
                         </tr>
 
                         <tr>
-                            <td class=" columnfixed" ></td>
-                            <td class="text-center columnfixed">
+                            <th class=" columnfixed" width="2%"></th>
+                            <th class="text-center columnfixed">
                               <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
                                 <input id="singleCheckbox2" value="option2" type="checkbox">
                                 <label></label>
                               </div>
-                            </td>
-                            <td class="text-center columnfixed">
+                            </th>
+                            <th class="text-center columnfixed">
                               <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
                                 <input id="singleCheckbox2" value="option2" type="checkbox" >
                                 <label></label>
                               </div>
-                            </td>
-                            <!-- <td class="columnfixed"></td> -->
+                            </th>
+                            <th class="columnfixed"></th>
 
-                            <td class="columnfixed divider-column">
+                            <th class="columnfixed divider-column">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-statutory"
+                                <input type="text" class="form-control input-sm"
+                                id="search-statutory"
                                 placeholder="Statutory">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed" width="1%"></th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-organization"
+                                <input type="text" class="form-control input-sm "
+                                id="search-organization"
                                 placeholder="Organization">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-nature"
+                                <input type="text" class="form-control input-sm "
+                                id="search-nature"
                                 placeholder="Statutory Nature">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-provision"
+                                <input type="text" class="form-control input-sm "
+                                id="search-provision"
                                 placeholder="Statutory Provision">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-c-task"
+                                <input type="text" class="form-control input-sm "
+                                id="search-c-task"
                                 placeholder="Compliance Task">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-c-doc"
+                                <input type="text" class="form-control input-sm "
+                                id="search-c-doc"
                                 placeholder="Compliance Document">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-task-id"
+                                <input type="text" class="form-control input-sm "
+                                id="search-task-id"
                                 placeholder="Task ID">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-c-desc"
+                                <input type="text" class="form-control input-sm "
+                                id="search-c-desc"
                                 placeholder="Compliance Description">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-p-cons"
+                                <input type="text" class="form-control input-sm "
+                                id="search-p-cons"
                                 placeholder="Penal Consequences">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-task-type"
+                                <input type="text" class="form-control input-sm "
+                                id="search-task-type"
                                 placeholder="Task Type">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-refer-link"
+                                <input type="text" class="form-control input-sm "
+                                id="search-refer-link"
                                 placeholder="Reference Link">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-frequency"
+                                <input type="text" class="form-control input-sm "
+                                id="search-frequency"
                                 placeholder="Frequency">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed"></td>
-                            <td class="columnfixed"></td>
-                            <td class="columnfixed"></td>
-                            <td class="columnfixed"></td>
-                            <td class="columnfixed"></td>
-                            <td class="columnfixed"></td>
-                            <td class="columnfixed"></td>
-                            <td class="columnfixed"></td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed"></th>
+                            <th class="columnfixed"></th>
+                            <th class="columnfixed"></th>
+                            <th class="columnfixed"></th>
+                            <th class="columnfixed"></th>
+                            <th class="columnfixed"></th>
+                            <th class="columnfixed"></th>
+                            <th class="columnfixed"></th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-format"
+                                <input type="text" class="form-control input-sm "
+                                id="search-format"
                                 placeholder="Format File">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
-                            <td class="columnfixed">
+                            </th>
+                            <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-geo"
+                                <input type="text" class="form-control input-sm "
+                                id="search-geo"
                                 placeholder="Geography Location">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
-                            </td>
+                            </th>
                         </tr>
                       </thead>
                       <tbody id="tbody-sm-approve-view">
@@ -435,7 +456,8 @@
               <div class="clearfix"></div>
               <div class="col-sm-12 m-t-10">
                 <div class="form-group text-center">
-                  <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Submit </button>
+                  <button class="btn btn-primary text-center waves-effect waves-light"
+                  id="btn-final-submit" type="button"> Submit </button>
                 </div>
               </div>
               <!-- end col -->
@@ -494,45 +516,46 @@
     </table>
 
     <table class="table-sm-approve-info">
-      <tr class="clone-row">
-        <td class="sno">1</td>
-        <td class="text-center action-approve" >
+      <tr class="clone-row columnfixed">
+        <th class="sno" width="1%">1</th>
+        <th class="text-center action-approve" width="1%">
           <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
             <input id="singleCheckbox2" value="option2" class="view-approve-check" type="checkbox" title="Click here to approve">
             <label></label>
           </div>
-        </td>
-        <td class="text-center action-reject" >
+        </th>
+        <th class="text-center action-reject" width="1%">
           <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
             <input id="singleCheckbox2" value="option2" class="view-reject-check" type="checkbox" title="Click here to reject">
             <label></label>
           </div>
-        </td>
-        <td class="text-center reject-reason"></td>
+        </th>
+        <th class="text-center reject-reason" width="1%"></th>
 
-        <td class="divider-column statutory"></td>
+        <th class="divider-column statutory" width="5%"></th>
+        <th width="1%"></th>
 
-        <td class="organization"></td>
-        <td class="nature"></td>
-        <td class="provision"></td>
-        <td class="task"></td>
-        <td class="doc-name"></td>
-        <td class="task-id"></td>
-        <td class="comp-desc"></td>
-        <td class="penal"></td>
-        <td class="task-type"></td>
-        <td class="refer-link"></td>
-        <td class="freq"></td>
-        <td class="statu-month"></td>
-        <td class="statu-date"></td>
-        <td class="trigger-before"></td>
-        <td class=repeats-every></td>
-        <td class="repeats-type"></td>
-        <td class="duration"></td>
-        <td class="duration-type"></td>
-        <td class="multiple"></td>
-        <td class="format"></td>
-        <td class="geography"></td>
+        <td class="organization" width="4%"></td>
+        <td class="nature" width="3%"></td>
+        <td class="provision" width="4%"></td>
+        <td class="task" width="3%"></td>
+        <td class="doc-name" width="3%"></td>
+        <td class="task-id" width="3%"></td>
+        <td class="comp-desc" width="7%"></td>
+        <td class="penal" width="4%"></td>
+        <td class="task-type" width="4%"></td>
+        <td class="refer-link" width="10%"></td>
+        <td class="freq" width="4%"></td>
+        <td class="statu-month" width="3%"></td>
+        <td class="statu-date" width="3%"></td>
+        <td class="trigger-before" width="3%"></td>
+        <td class=repeats-every width="3%"></td>
+        <td class="repeats-type" width="3%"></td>
+        <td class="duration" width="3%"></td>
+        <td class="duration-type" width="3%"></td>
+        <td class="multiple" width="3%"></td>
+        <td class="format" width="4%"></td>
+        <td class="geography" width="5%"></td>
     </table>
 </div>
 
@@ -560,7 +583,7 @@
             </div>
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
-                <textarea class="form-control input-sm inp_reason reject-reason-txt"  rows="2" placeholder="Enter Reason"></textarea>
+                <textarea class="form-control input-sm inp_reason reject-reason-txt"  rows="2" maxlength="500" placeholder="Enter Reason"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
             >Submit</button>
@@ -593,7 +616,7 @@
         <form role="form">
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
-                <textarea class="form-control input-sm view-reason" rows="2" placeholder="Enter Reason"></textarea>
+                <textarea class="form-control input-sm view-reason" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
             >Submit</button>
@@ -742,7 +765,8 @@
 {% endblock %}
 
 {% block contentscript %}
-<script type="text/javascript" src="/js/multifreezer.js"></script>
+
     <script type="text/javascript" src="/script/bulk-upload/statutory-mapping-bulk-upload-approve/approve-mapping-bulk-upload.js"></script>
+    <!-- <script type="text/javascript" src="/js/multifreezer.js"></script> -->
 {% endblock %}
 

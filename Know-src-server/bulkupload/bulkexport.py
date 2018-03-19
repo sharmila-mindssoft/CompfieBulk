@@ -7,7 +7,7 @@ import mysql.connector
 from server.constants import (
     CSV_DOWNLOAD_URL, KNOWLEDGE_DB_HOST,
     KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
-    KNOWLEDGE_DATABASE_NAME)
+    KNOWLEDGE_DATABASE_NAME, CSV_DELIMITER)
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
@@ -79,7 +79,7 @@ class ConvertJsonToCSV(object):
                 client_group = ac["client_group"]
                 legal_entity = ac["legal_entity"]
                 domain = ac["domain"]
-                organization = ac["organization"]
+                organization = ac["organization"].replace(",", CSV_DELIMITER)
                 unit_code = ac["unit_code"]
                 unit_name = ac["unit_name"]
                 unit_location = ac["unit_location"]
@@ -96,10 +96,10 @@ class ConvertJsonToCSV(object):
                         "Unit_Location", "Primary_Legislation_",
                         "Secondary_Legislaion", "Statutory_Provision_",
                         "Compliance_Task_", "Compliance_Description_",
-                        "Statutory_Applicable_Status*", "Statutory_remarks",
-                        "Compliance_Applicable_Status*"
+                        "Statutory_Applicable_Status_*", "Statutory_remarks",
+                        "Compliance_Applicable_Status_*"
                     ]
-                    
+
                     self.write_csv(csv_headers, None)
                     is_header = True
                 csv_values = [
@@ -438,6 +438,7 @@ def getUserNameAndCode(cnx_pool, userId):
     query = "select employee_code, employee_name " + \
            "from tbl_users  as t1 where t1.user_id = %s ;"
     condition_val = []
+    user_name_res = ''
     condition_val.append(userId)
     c = cnx_pool.cursor(dictionary=True, buffered=True)
     result = c.execute(query, condition_val)

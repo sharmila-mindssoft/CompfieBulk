@@ -661,7 +661,7 @@ class PendingCsvListAssignStatutory(object):
 
 class AssignStatutoryData(object):
     def __init__(
-        self, as_id, u_location, u_code, u_name, d_name, org_name, p_leg,
+        self, as_id, u_location, u_code, u_name, d_name, org_names, p_leg,
         s_leg, s_prov, c_task, c_desc, s_status, s_remarks, c_status,
         bu_action, remarks
     ):
@@ -670,7 +670,7 @@ class AssignStatutoryData(object):
         self.u_code = u_code
         self.u_name = u_name
         self.d_name = d_name
-        self.org_name = org_name
+        self.org_names = org_names
         self.p_leg = p_leg
         self.s_leg = s_leg
         self.s_prov = s_prov
@@ -690,7 +690,7 @@ class AssignStatutoryData(object):
             "u_code",
             "u_name",
             "d_name",
-            "org_name",
+            "org_names",
             "p_leg",
             "s_leg",
             "s_prov",
@@ -709,7 +709,7 @@ class AssignStatutoryData(object):
             data.get("u_code"),
             data.get("u_name"),
             data.get("d_name"),
-            data.get("org_name"),
+            data.get("org_names"),
             data.get("p_leg"),
             data.get("s_leg"),
             data.get("s_prov"),
@@ -729,7 +729,7 @@ class AssignStatutoryData(object):
             "u_code": self.u_code,
             "u_name": self.u_name,
             "d_name": self.d_name,
-            "org_name": self.org_name,
+            "org_names": self.org_names,
             "p_leg": self.p_leg,
             "s_leg": self.s_leg,
             "s_prov": self.s_prov,
@@ -1180,7 +1180,7 @@ class AssignStatutoryMappingRejectData(object):
         uploaded_on, csv_name, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
         is_fully_rejected, approve_status, file_download_count, remarks,
-        statutory_action, declined_count
+        statutory_action, declined_count, rejected_reason
         ):
         self.csv_id = csv_id
         self.uploaded_by = uploaded_by
@@ -1198,6 +1198,7 @@ class AssignStatutoryMappingRejectData(object):
         self.remarks = remarks
         self.statutory_action = statutory_action
         self.declined_count = declined_count
+        self.rejected_reason = rejected_reason
 
     @staticmethod
     def parse_structure(data):
@@ -1205,7 +1206,7 @@ class AssignStatutoryMappingRejectData(object):
             "csv_id","uploaded_by","uploaded_on", "csv_name", "total_records",
             "total_rejected_records", "approved_by", "rejected_by", "approved_on",
             "rejected_on", "is_fully_rejected", "approve_status", "file_download_count",
-            "remarks", "statutory_action", "declined_count"
+            "remarks", "statutory_action", "declined_count", "rejected_reason"
         ])
         return AssignStatutoryMappingRejectData(
             data.get("csv_id"),
@@ -1223,7 +1224,8 @@ class AssignStatutoryMappingRejectData(object):
             data.get("file_download_count"),
             data.get("remarks"),
             data.get("statutory_action"),
-            data.get("declined_count")
+            data.get("declined_count"),
+            data.get("rejected_reason")
         )
 
     def to_structure(self):
@@ -1243,7 +1245,8 @@ class AssignStatutoryMappingRejectData(object):
             "file_download_count"    : self.file_download_count,
             "remarks"    : self.remarks,
             "statutory_action"    : self.statutory_action,
-            "declined_count"    : self.declined_count
+            "declined_count"    : self.declined_count,
+            "rejected_reason"    : self.rejected_reason
             }
 
 

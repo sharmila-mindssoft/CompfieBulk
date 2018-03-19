@@ -256,7 +256,7 @@ CREATE TABLE `tbl_notifications_log` (
   `notification_type_id` int(11) DEFAULT NULL,
   `notification_text` longtext,
   `extra_details` longtext,
-  `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `created_on` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE tbl_notifications_user_log(
   `notification_id` int(11) NOT NULL,
@@ -283,7 +283,7 @@ CREATE TABLE `tbl_service_providers` (
   `blocked_on` timestamp NULL DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `created_by` int(11) NOT NULL,
-  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) NOT NULL,
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`service_provider_id`)

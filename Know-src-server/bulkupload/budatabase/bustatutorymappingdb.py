@@ -4,6 +4,7 @@ from server import logger
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 import datetime
 
+
 __all__ = [
     "get_uploaded_statutory_mapping_csv_list",
     "save_mapping_csv",
@@ -13,43 +14,47 @@ __all__ = [
     "get_pending_mapping_list",
     "get_filters_for_approve",
     "get_statutory_mapping_by_filter",
-
     "update_approve_action_from_list",
     "get_statutory_mapping_by_csv_id",
-
     "fetch_rejected_statutory_mapping_bulk_report",
-    "get_list_and_delete_rejected_statutory_mapping_by_csv_id",
+    "process_delete_rejected_sm_csv_id",
     "update_download_count_by_csvid",
     "fetch_rejected_sm_download_csv_report",
     "get_sm_csv_file_name_by_id",
     "save_action_from_view",
+    "get_pending_action"
 ]
+
 # transaction method begin
 ########################################################
 # Return the uploaded statutory mapping csv list
-# :param db : database class object
-# :type db  : Object
-# :param session_user : user id who currently logged in
-# :type session_user : String
-# :returns : upload_mmore : flag which defines user upload rights
-# :returns : csv_data: list of uploaded csv_data
+#:param db: database class object
+#:type db : Object
+#:param session_user: user id who currently logged in
+#:type session_user: String
+#:returns: upload_mmore: flag which defines user upload rights
+#:returns: csv_data: list of uploaded csv_data
 # rtypes: Boolean, lsit of Object
 ########################################################
+
+
 def get_uploaded_statutory_mapping_csv_list(db, session_user):
     csv_data = []
     data = db.call_proc("sp_statutory_mapping_csv_list", [session_user])
-    if len(data) > 5 :
+    if len(data) > 5:
         upload_more = False
-    else :
+    else:
         upload_more = True
-    for d in data :
+    for d in data:
         # csv_name = d.get("csv_name").split('_')
         # csvname = "_".join(csv_name[:-1])
         upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
 
         csv_data.append(bu_sm.CsvList(
-            d.get("country_id"), d.get("country_name"), d.get("domain_id"), d.get("domain_name"),
-            d.get("csv_id"), d.get("csv_name"), d.get("total_records"), d.get("total_documents"),
+            d.get("country_id"), d.get("country_name"), d.get("domain_id"),
+            d.get("domain_name"),
+            d.get("csv_id"), d.get("csv_name"), d.get("total_records"),
+            d.get("total_documents"),
             d.get("uploaded_documents"), upload_on
         ))
 
@@ -59,13 +64,13 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
 ########################################################
 '''
     returns new primary key from table
-    :param
+   :param
         db: database object
         args: list of procedure params
-    :type
+   :type
         db: Object
         args: List
-    :returns
+   :returns
         result: return new id
     rtype:
         result: Integer
@@ -80,55 +85,60 @@ def save_mapping_csv(db, args):
 ########################################################
 '''
     returns true if the data save properply
-    :param
+   :param
         db: database object
         csv_id: parent table id
         csv_data: list of data to save
-    :type
+   :type
         db: Object
         csv_id: Integer
         csv_data: List
-    :returns
+   :returns
         result: return boolean
     rtype:
         result: Boolean
 '''
 ########################################################
 
-def save_mapping_data(db, csv_id, csv_data) :
+def save_mapping_data(db, csv_id, csv_data):
     try:
         columns = [
             "csv_id", "s_no", "organization", "geography_location",
             "statutory_nature", "statutory", "statutory_provision",
-            "compliance_task", "compliance_document", "compliance_description",
+            "compliance_task", "compliance_document",
+            "compliance_description",
             "penal_consequences", "reference_link", "compliance_frequency",
             "statutory_month", "statutory_date", "trigger_before",
-            "repeats_every", "repeats_type", "repeat_by", "duration", "duration_type",
+            "repeats_every", "repeats_type", "repeat_by", "duration",
+            "duration_type",
             "multiple_input", "format_file", "task_id", "task_type"
         ]
         values = []
 
-        for idx, d in enumerate(csv_data) :
+        for idx, d in enumerate(csv_data):
 
             values.append((
                 csv_id, idx + 1, d["Organization"], d["Applicable_Location"],
-                d["Statutory_Nature"], d["Statutory"], d["Statutory_Provision"],
+                d["Statutory_Nature"], d["Statutory"],
+                d["Statutory_Provision"],
                 d["Compliance_Task"], d["Compliance_Document"],
                 d["Compliance_Description"], d["Penal_Consequences"],
-                d["Reference_Link"], d["Compliance_Frequency"], d["Statutory_Month"],
+                d["Reference_Link"], d["Compliance_Frequency"],
+                d["Statutory_Month"],
                 d["Statutory_Date"], d["Trigger_Days"],
                 None if d["Repeats_Every"] == '' else d["Repeats_Every"],
                 d["Repeats_Type"],
-                None if d["Repeats_By (DOM/EOM)"] == '' else d["Repeats_By (DOM/EOM)"],
+                None if d["Repeats_By (DOM/EOM)"] == '' else
+                d["Repeats_By (DOM/EOM)"],
                 None if d["Duration"] == '' else d["Duration"],
                 d["Duration_Type"], d["Multiple_Input_Section"],
                 d["Format"], d["Task_ID"], d["Task_Type"],
             ))
 
-        if values :
+        if values:
             db.bulk_insert("tbl_bulk_statutory_mapping", columns, values)
             return True
-        else :
+        else:
             return False
     except Exception, e:
         print str(e)
@@ -137,13 +147,13 @@ def save_mapping_data(db, csv_id, csv_data) :
 ########################################################
 '''
     returns statutory mapping csv list which waiting for approval
-    :param
+   :param
         db: database object
         session_user: logged in user details
-    :type
+   :type
         db: Object
         session_user: Object
-    :returns
+   :returns
         result: list of pending csv data Object
     rtype:
         result: List
@@ -152,14 +162,14 @@ def save_mapping_data(db, csv_id, csv_data) :
 
 def get_pending_mapping_list(db, cid, did, uploaded_by):
     csv_data = []
-    if uploaded_by is None :
+    if uploaded_by is None:
         uploaded_by = '%'
 
     data = db.call_proc("sp_pending_statutory_mapping_csv_list", [
         uploaded_by, cid, did
     ])
 
-    for d in data :
+    for d in data:
         # file_name = d["csv_name"].split('.')
         # remove_code = file_name[0].split('_')
         # csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
@@ -176,13 +186,13 @@ def get_pending_mapping_list(db, cid, did, uploaded_by):
 ########################################################
 '''
     returns select fileds in list for the given csv id
-    :param
+   :param
         db: database object
         csv_id: viewed csv id
-    :type
+   :type
         db: Object
         csv_id: INT
-    :returns
+   :returns
         result: return filtered list in Api Object
     rtype:
         result: Object
@@ -190,7 +200,9 @@ def get_pending_mapping_list(db, cid, did, uploaded_by):
 ########################################################
 
 def get_filters_for_approve(db, csv_id):
-    data = db.call_proc_with_multiresult_set("sp_statutory_mapping_filter_list", [csv_id], 10)
+    data = db.call_proc_with_multiresult_set(
+        "sp_statutory_mapping_filter_list", [csv_id], 10
+    )
     org_names = []
     s_natures = []
     statutories = []
@@ -201,7 +213,7 @@ def get_filters_for_approve(db, csv_id):
     c_docs = []
     task_ids = []
     task_types = []
-    if len(data) > 0 :
+    if len(data) > 0:
         if len(data[0]) > 0:
             for d in data[0]:
                 org_names.append(d["organization"])
@@ -221,7 +233,9 @@ def get_filters_for_approve(db, csv_id):
 
         if len(data[4]) > 0:
             for d in data[4]:
-                geo_locations.extend(d["geography_location"].strip().split('|;|'))
+                geo_locations.extend(
+                    d["geography_location"].strip().split('|;|')
+                )
                 geo_locations = list(set(geo_locations))
 
         if len(data[5]) > 0:
@@ -269,9 +283,9 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     if s_nature is None or s_nature == "":
         s_nature = '%'
 
-    if frequency is None or frequency == "" or len(frequency) == 0 :
+    if frequency is None or frequency == "" or len(frequency) == 0:
         frequency = '%'
-    else :
+    else:
         frequency = ",".join(frequency)
 
     if statutory is None or statutory == "":
@@ -302,15 +316,16 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     csv_name = None
     upload_by = None
     upload_on = None
-    total = None
+    total = 0
     mapping_data = []
-    if len(data) > 0 :
+    print data
+    if len(data) > 0:
         if len(data[1]) > 0:
             total = data[1][0]["total"]
-        if len(data[0] > 0) :
+        if len(data[0]) > 0:
             compliance = data[0]
-            for idx, d in enumerate(compliance) :
-                if idx == 0 :
+            for idx, d in enumerate(compliance):
+                if idx == 0:
                     country_name = d["country_name"]
                     domain_name = d["domain_name"]
                     csv_name = d["csv_name"]
@@ -325,8 +340,10 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
                     d["compliance_document"], d["compliance_description"],
                     d["penal_consequences"], d["reference_link"],
                     d["compliance_frequency"], d["statutory_month"],
-                    d["statutory_date"], d["trigger_before"], d["repeats_every"],
-                    d["repeats_type"], d["repeat_by"], d["duration"], d["duration_type"],
+                    d["statutory_date"], d["trigger_before"],
+                    d["repeats_every"],
+                    d["repeats_type"], d["repeat_by"], d["duration"],
+                    d["duration_type"],
                     d["multiple_input"], d["format_file"],
                     d["action"], d["remarks"],
                     d["task_id"], d["task_type"],
@@ -351,9 +368,9 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     upload_on = None
     total = None
     mapping_data = []
-    if len(data) > 0 :
-        for idx, d in enumerate(data) :
-            if idx == 0 :
+    if len(data) > 0:
+        for idx, d in enumerate(data):
+            if idx == 0:
                 country_name = d["country_name"]
                 domain_name = d["domain_name"]
                 csv_name = d["csv_name"]
@@ -380,109 +397,132 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     )
 
 def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
-    try :
+    try:
         args = [csv_id, action, remarks, session_user.user_id()]
-        print args
         data = db.call_proc("sp_statutory_mapping_update_action", args)
         print data
         return True
 
     except Exception, e:
-        logger.logKnowledge("error", "update action from list", str(traceback.format_exc()))
+        logger.logKnowledge(
+            "error", "update action from list", str(traceback.format_exc())
+        )
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
 
 
 def save_action_from_view(db, csv_id, sm_id, action, remarks, session_user):
-    try :
+    try:
         args = [csv_id, sm_id, action, remarks]
         data = db.call_proc("sp_approve_mapping_action_save", args)
         print data
         return True
 
     except Exception, e:
-        logger.logKnowledge("error", "update action from view", str(traceback.format_exc()))
+        logger.logKnowledge(
+            "error", "update action from view", str(traceback.format_exc())
+        )
         logger.logKnowledge("error", "update action from view", str(e))
         raise fetch_error()
+
+def get_pending_action(db, csv_id):
+    data = db.call_proc("sp_statutory_action_pending_count", [csv_id])
+    print data
+    if data[0].get("pending_count") > 0:
+        return True
+    else:
+        return False
 
 #  transaction method end
 
 
+# Fetch Statutory Mapping Report Data
+def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
+                                domain_ids, from_date, to_date, record_count,
+                                page_count, child_ids, user_category_id):
+    reportdatalist = []
+    expected_result = 2
+    domain_id_list = convertArrayToString(domain_ids)
+    country_id_list = convertArrayToString(country_ids)
 
-
-#
-# report methods
-def fetch_statutory_bulk_report(db, session_user,
-    user_id, country_ids, domain_ids, from_date, to_date,
-    record_count, page_count, child_ids, user_category_id):
-    reportdatalist=[]
-    expected_result=2
-
-    domain_id_list=convertArrayToString(domain_ids)
-    country_id_list=convertArrayToString(country_ids)
-
-    if(user_category_id==3):
-        user_ids=convertArrayToString(child_ids)
-    elif(user_category_id==5 and user_category_id!=3):
-        user_ids=convertArrayToString(child_ids)
+    if(user_category_id == 3):
+        user_ids = convertArrayToString(child_ids)
+    elif(user_category_id == 5 and user_category_id != 3):
+        user_ids = convertArrayToString(child_ids)
     else:
-        user_ids=user_id
+        user_ids = user_id
+    args = [user_ids, country_id_list, domain_id_list, from_date, to_date,
+            record_count, page_count]
+    data = db.call_proc_with_multiresult_set(
+        'sp_tbl_statutory_mappings_bulk_reportdata', args, expected_result)
 
-    args = [user_ids, country_id_list, domain_id_list, from_date, to_date, record_count, page_count]
-    data = db.call_proc_with_multiresult_set('sp_tbl_statutory_mappings_bulk_reportdata', args, expected_result)
-    reportdata=data[0]
-    total_record=data[1][0]["total"]
+    reportdata = data[0]
+    total_record = data[1][0]["total"]
 
-    for d in reportdata :
-        bu_action=0
+    uploaded_on = None
+    approved_on = None
+    rejected_on = None
+    for d in reportdata:
+        bu_action = None
+        if(d["uploaded_on"] is not None):
+            uploaded_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+
+        if(d["approved_on"] is not None):
+            approved_on = d["approved_on"].strftime("%d-%b-%Y %H:%M")
+
+        if(d["rejected_on"] is not None):
+            rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
+
         if (d["action"] is not None):
-            bu_action=d["action"]
+            bu_action = d["action"]
+
+        d["csv_name"]
         reportdatalist.append(bu_sm.ReportData(
-             str(d["country_name"]),
-             str(d["domain_name"]),
-             int(d["uploaded_by"]),
-             str(d["uploaded_on"]),
-             str(d["csv_name"]),
-             int(d["total_records"]),
-             int(d["total_rejected_records"]),
-             int(d["approved_by"]),
-             int(d["rejected_by"]),
-             str(d["approved_on"]),
-             str(d["rejected_on"]),
-             int(d["is_fully_rejected"]),
-             int(d["approve_status"]),
-             int(bu_action),
-             str(d["rejected_reason"])
-
-        ))
-
+             d["country_name"], d["domain_name"],
+             d["uploaded_by"], uploaded_on, d["csv_name"],
+             d["total_records"], d["total_rejected_records"],
+             d["approved_by"], d["rejected_by"], approved_on,
+             rejected_on, d["is_fully_rejected"],
+             int(d["total_approve_records"]), bu_action,
+             str(d["rejected_reason"])))
     return reportdatalist, total_record
 
-def convertArrayToString(array_ids):
-    existing_id=[]
-    id_list=""
-    if(len(array_ids)>1):
-        for d in array_ids :
-         if d in existing_id:
-           break
-         id_list+=str(d)+","
-         existing_id.append(d)
-        id_list=id_list.rstrip(',');
-    else :
-        id_list=array_ids[0]
+
+###############################################################################
+''''
+When multiple domains & users are selecting, the convertArrayToString()
+function will convert the comma separated string from LIST and pass the string
+value to StoredProcedure
+'''
+###############################################################################
+
+
+def convertArrayToString(multiple_ids):
+    existing_id = []
+    id_list = ""
+    if(len(multiple_ids) > 1):
+        for d in multiple_ids:
+            if d in existing_id:
+                break
+
+            id_list += str(d)+","
+            existing_id.append(d)
+        id_list = id_list.rstrip(',')
+    else:
+        id_list = multiple_ids[0]
     return id_list
 
 
 ########################################################
 '''
     returns statutory mapping bulk report list
-    :param
+   :param
         db: database object
         session_user: logged in user details
-    :type
+   :type
         db: Object
         session_user: Object
-    :returns
+   :returns
         result: list of bulk data records by mulitple country,
         domain, KnowledgeExecutives selections based.
     rtype:
@@ -490,60 +530,59 @@ def convertArrayToString(array_ids):
 '''
 ########################################################
 
-def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
-    user_id, country_id, domain_id):
 
-    rejectdatalist=[]
+def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
+                                                 country_id, domain_id):
+
+    rejectdatalist = []
     args = [country_id, domain_id, user_id]
     data = db.call_proc('sp_rejected_statutory_mapping_reportdata', args)
-
-
+    approved_on = ''
+    uploaded_on = ''
+    rejected_on = ''
     for d in data:
-        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-            '%Y-%m-%d').strftime('%d-%b-%Y %H:%M');
-
-        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
+        if(d["uploaded_on"] is not None):
+            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+                                                     '%Y-%m-%d %H:%M:%S'
+                                                     ).strftime(
+                                                     '%d-%b-%Y %H:%M')
+        if(d["approved_on"] is not None):
+            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+                                                     '%Y-%m-%d %H:%M:%S'
+                                                     ).strftime(
+                                                     '%d-%b-%Y %H:%M')
+        if(d["rejected_on"] is not None):
+            rejected_on = datetime.datetime.strptime(
+                                                     str(d["rejected_on"]),
+                                                     '%Y-%m-%d %H:%M:%S'
+                                                     ).strftime(
+                                                     '%d-%b-%Y %H:%M')
         if (d["rejected_file_download_count"] is None):
-            download_count=0
+            download_count = 0
         else:
-            download_count=d["rejected_file_download_count"]
+            download_count = d["rejected_file_download_count"]
 
         rejectdatalist.append(bu_sm.StatutoryMappingRejectData(
-             int(d["csv_id"]),
-             int(d["uploaded_by"]),
-             str(uploaded_on),
-             str(d["csv_name"]),
-             int(d["total_records"]),
-             int(d["total_rejected_records"]),
-             int(d["approved_by"]),
-             int(d["rejected_by"]),
-             str(approved_on),
-             str(rejected_on),
-             int(d["is_fully_rejected"]),
-             int(d["approve_status"]),
-             int(download_count),
-             str(d["remarks"]),
-             d["action"],
-             int(d["declined_count"]),
-             str(d["rejected_reason"])
+             int(d["csv_id"]), int(d["uploaded_by"]), str(uploaded_on),
+             str(d["csv_name"]), int(d["total_records"]),
+             d["total_rejected_records"], d["approved_by"],
+             d["rejected_by"], str(approved_on), str(rejected_on),
+             d["is_fully_rejected"], int(d["approve_status"]),
+             int(download_count), str(d["remarks"]), d["action"],
+             int(d["declined_count"]), str(d["rejected_reason"])
         ))
     return rejectdatalist
 
 ########################################################
 '''
     returns statutory mapping bulk report list
-    :param
+   :param
         db: database object
         session_user: logged in user details
-    :type
+   :type
         db: Object
         session_user: Object
-    :returns
+   :returns
         result: list of bulk data records by mulitple country,
         domain, KnowledgeExecutives selections based.
     rtype:
@@ -551,29 +590,38 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user,
 '''
 ########################################################
 
-def fetch_rejected_sm_download_csv_report(db, session_user,
-    user_id, country_id, domain_id, csv_id):
 
-    rejectdatalist=[]
+def fetch_rejected_sm_download_csv_report(db, session_user, user_id,
+                                          country_id, domain_id, csv_id):
+
+    rejectdatalist = []
     args = [country_id, domain_id, user_id, csv_id]
     data = db.call_proc('sp_rejected_sm_csv_report', args)
 
-
+    uploaded_on = ''
+    approved_on = ''
+    rejected_on = ''
     for d in data:
-        uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-            '%Y-%m-%d').strftime('%d-%b-%Y %H:%M');
 
-        approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
+        if(d["uploaded_on"] is not None):
+            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
+                                                     '%Y-%m-%d %H:%M:%S'
+                                                     ).strftime(
+                                                     '%d-%b-%Y %H:%M')
+        if(d["approved_on"] is not None):
+            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
+                                                     '%Y-%m-%d %H:%M:%S'
+                                                     ).strftime(
+                                                     '%d-%b-%Y %H:%M')
+        if(d["rejected_on"] is not None):
+            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
+                                                     '%Y-%m-%d %H:%M:%S'
+                                                     ).strftime(
+                                                     '%d-%b-%Y %H:%M')
         if (d["rejected_file_download_count"] is None):
-            download_count=0
+            download_count = 0
         else:
-            download_count=d["rejected_file_download_count"]
-
+            download_count = d["rejected_file_download_count"]
         rejectdatalist.append({
              str(d["csv_id"]),
              str(d["uploaded_by"]),
@@ -584,7 +632,7 @@ def fetch_rejected_sm_download_csv_report(db, session_user,
              str(d["approved_by"]),
              str(d["rejected_by"]),
              str(approved_on),
-             str(d["rejected_on"]),
+             str(rejected_on),
              str(d["is_fully_rejected"]),
              str(d["approve_status"]),
              str(download_count),
@@ -594,19 +642,18 @@ def fetch_rejected_sm_download_csv_report(db, session_user,
         })
     return data
 
-def get_list_and_delete_rejected_statutory_mapping_by_csv_id(db, session_user,
-    user_id, country_id, domain_id, csv_id):
 
+def process_delete_rejected_sm_csv_id(db, session_user, user_id, country_id,
+                                      domain_id, csv_id):
     args = [csv_id]
-    data = db.call_proc('sp_delete_reject_sm_by_csvid', args)
-
-    rejectdatalist=fetch_rejected_statutory_mapping_bulk_report(db, session_user,
-    user_id, country_id, domain_id)
-
+    rejectdatalist = ''
+    db.call_proc('sp_delete_reject_sm_by_csvid', args)
+    rejectdatalist = fetch_rejected_statutory_mapping_bulk_report(
+            db, session_user, user_id, country_id, domain_id)
     return rejectdatalist
 
 def update_download_count_by_csvid(db, session_user, csv_id):
-    updated_count=[];
+    updated_count = []
     args = [csv_id]
     data = db.call_proc('sp_update_download_count_by_csvid', args)
     for d in data:
@@ -615,8 +662,8 @@ def update_download_count_by_csvid(db, session_user, csv_id):
         ))
     return updated_count
 
+
 def get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id):
     args = [csv_id]
     data = db.call_proc('sp_get_sm_csv_file_name_by_id', args)
-    print data[0]["csv_name"]
     return data[0]["csv_name"]

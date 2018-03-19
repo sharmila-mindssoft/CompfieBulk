@@ -149,6 +149,11 @@ def process_client_transaction_requests(request, db, session_user, session_categ
             db, request, session_user
         )
 
+    elif type(request) is clienttransactions.GetPastRecordsFormData_bulk:
+        result = process_get_past_records_form_data_bulk(
+        db, request, session_user, session_category
+        )
+
     return result
 
 def process_get_statutory_settings(db, request, session_user):
@@ -437,7 +442,7 @@ def process_approve_compliance(db, request, session_user):
 
     elif status == "Rectify Approval":
         approve_status = 2
-        current_status = 0        
+        current_status = 0
         reject_compliance_approval(db, compliance_history_id, remarks, next_due_date,
                                    validity_date, session_user, approve_status, current_status)
 
@@ -683,7 +688,7 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
 def process_have_compliances(db, request, session_user):
     user_id = request.user_id
     compliance_available = have_compliances(db, user_id)
-    
+
     if compliance_available:
         return clienttransactions.HaveComplianceFailed()
     else:
@@ -703,3 +708,35 @@ def process_change_theme(db, request, session_user):
         theme_value = update_themes_for_user(db, session_user, theme_id, theme_name)
 
     return clienttransactions.ChangeThemeSuccess(theme_value)
+
+
+########################################################
+# To generate the completed task - past records
+########################################################
+def process_get_past_records_form_data_bulk(db, request, session_user, session_category):
+    countries = get_countries_for_user(db, session_user)
+    row = get_user_company_details(db, session_user)
+    business_groups = get_business_groups_for_user(db, row[3])
+    legal_entities = get_legal_entities_for_user(db, row[2])
+    divisions = get_divisions_for_user(db, row[1])
+    category = get_categories_for_user(db, row[4])
+    units = get_user_based_units(db, session_user, session_category)
+    domains = get_domains_for_user(db, session_user, session_category)
+    level1_statutories = get_level_1_statutories_for_user_with_domain(
+        db, session_user
+    )
+    compliance_frequency = get_compliance_frequency(
+        db, "frequency_id in (1,2,3)"
+    )
+
+    return clienttransactions.GetPastRecordsFormDataSuccess(
+        countries=countries,
+        business_groups=business_groups,
+        legal_entities=legal_entities,
+        divisions=divisions,
+        category=category,
+        units=units,
+        domains=domains,
+        level_1_statutories=level1_statutories,
+        compliance_frequency=compliance_frequency
+    )

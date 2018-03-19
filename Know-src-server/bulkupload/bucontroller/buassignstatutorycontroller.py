@@ -273,6 +273,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
             else :
                 if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
                     cObj.frame_data_for_main_db_insert()
+                    cObj.source_commit()
                     return bu_as.AssignStatutoryApproveActionInListSuccess()
         else :
             cObj = ValidateAssignStatutoryForApprove(
@@ -358,22 +359,24 @@ def delete_rejected_asm_data(db, request_frame, session_user):
         request_frame: Object
         session_user: Object
     :returns
-        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+        result: returns processed api response
+        GetRejectedASMBulkUploadDataSuccess class Object
     rtype:
         result: Object
 '''
 ########################################################
+
+
 def get_rejected_assign_sm_data(db, request_frame, session_user):
 
-    client_id=request_frame.client_id
-    le_id=request_frame.le_id
-    domain_ids=request_frame.domain_ids
-    unit_code=request_frame.asm_unit_code
+    client_id = request_frame.client_id
+    le_id = request_frame.le_id
+    domain_ids = request_frame.domain_ids
+    unit_code = request_frame.asm_unit_code
+    user_id = session_user.user_id()
 
-    user_id=session_user.user_id()
-
-    asm_rejected_data = fetch_rejected_assign_sm_data(db, session_user, user_id,
-        client_id, le_id, domain_ids, unit_code)
+    asm_rejected_data = fetch_rejected_assign_sm_data(
+        db, session_user, user_id, client_id, le_id, domain_ids, unit_code)
     result = bu_as.GetRejectedASMBulkUploadDataSuccess(asm_rejected_data)
     return result
 
@@ -500,6 +503,7 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
     is_declined = cObj.perform_validation_before_submit()
     if len(is_declined) > 0 :
         cObj.frame_data_for_main_db_insert()
+        cObj.source_commit()
         cObj.make_rejection(is_declined)
         # cObj.save_manager_message(1, cObj._csv_name, cObj._country_name, cObj._domain_name, session_user.user_id())
         return bu_as.SubmitAssignStatutorySuccess()

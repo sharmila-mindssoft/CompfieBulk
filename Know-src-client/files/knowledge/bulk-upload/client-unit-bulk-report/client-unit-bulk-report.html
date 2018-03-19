@@ -1,5 +1,4 @@
-{% extends "files/knowledge/common/html/container.html" %}
-{% block content %}
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="container">
     <div class="row" id="animationSandbox">
         <div class="col-sm-12">
@@ -7,60 +6,48 @@
                 <div class="portlet-heading bg-info">
                     <h3 class="portlet-title">Client Unit - Bulk Upload Report</h3>
                     <div class="portlet-widgets">
-                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
-                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-                        </a> -->
                     </div>
                     <div class="clearfix"></div>
                 </div>
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
-                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+                        <div class="form-horizontal group-border-dashed">
                             <div class="col-sm-6">
-                            	<!---	Country -->
-								<div class="form-group">
-									<label class=" col-sm-offset-1 col-sm-3 control-label">
-										Client Group: <span class="mandatory">*</span>
-									</label>
-									 <div class="col-sm-6 has-feedback">
+                                <!---   Country -->
+                                <div class="form-group">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                        Client Group: <span class="mandatory">*</span>
+                                    </label>
+                                    <div class="col-sm-6 has-feedback">
                                         <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="1" placeholder="Client Group">
                                         <input type="hidden" id="group-id">
                                         <div id="ac-group" class="ac-textbox default-display-none">
-                                            <ul style="width:85%;"></ul>
+                                            <ul class="width-85"></ul>
                                         </div>
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                     </div>
-								</div>
-
-								<!---	From -->
-                                 <div class="form-group has-feedback">
+                                </div>
+                                <!---   From -->
+                                <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">
-                                    	From: <span class="mandatory">*</span>
+                                        From: <span class="mandatory">*</span>
                                     </label>
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm from-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="from-date" tabindex="8">
                                         <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
-	                             
-	                           
-
-
-
-
-
                             </div>
                             <div class="col-sm-6">
-        <!---TE Name -->
-                                 <div class="form-group active-techno-executive" style="display: none">
-                                     <label class=" col-sm-offset-1 col-sm-3 control-label">TE Name: </label>
-                                    <div  class="col-sm-6 has-feedback">
+                                <!---TE Name -->
+                                <div class="form-group active-techno-executive default-display-none">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">TE Name: </label>
+                                    <div class="col-sm-6 has-feedback">
                                         <p id="techno-name" class="form-control-static"></p>
                                     </div>
-                                </div> 
-
+                                </div>
                                 <!---   KE Name -->
-                                <div class="form-group form-group-tename-tmanager" style="display: none;">
+                                <div class="form-group form-group-tename-tmanager default-display-none">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">
                                         TE Name:
                                     </label>
@@ -69,77 +56,69 @@
                                         </select>
                                     </div>
                                 </div>
-
-
-
-								<div class="form-group has-feedback">
-	                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
-	                                    	To Date: <span class="mandatory">*</span>
-	                                    </label>
-	                                    <div class="col-sm-6">
-	                                        <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to-date" tabindex="10">
-	                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
-	                                    </div>
-	                             </div>
-                            </div>
-
-                            <div class="col-sm-12">
-                                <center>
-                                    <div class="form-group m-t-5 m-b-0">                               
-                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="8"> Show </button>
-                                        <button id="export" class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                        To Date: <span class="mandatory">*</span>
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to-date" tabindex="10">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
-                                </center>
+                                </div>
                             </div>
-
-
-
+                            <div class="col-sm-12">
+                                <div class="form-group m-t-5 m-b-0 text-center">
+                                    <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="8"> Show </button>
+                                    <button id="export" class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                </div>
+                            </div>
                             <div class="clear"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="mapping_animation" class="grid-table-rpt default-display-none" style="padding-bottom:0em;">
+            <div id="mapping_animation" class="grid-table-rpt default-display-none">
                 <div class="card-box details">
                     <div class="table-responsive">
                         <div class="col-sm-12">
-                            <div class="col-sm-12 text-center"><h4>Client Unit - Bulk Upload Report</h4></div>
+                            <div class="col-sm-12 text-center">
+                                <h4>Client Unit - Bulk Upload Report</h4></div>
                         </div>
                         <div class="clearfix"></div>
-                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" cellpadding="0" width="100%">
+                        <table id="datatable-responsive" class="table dt-responsive nowrap">
                             <thead>
                                 <tr>
-                                    <th width="2%">#</th>
-                                    <th width="7%">Uploaded By</th>
-                                    <th width="7%">Uploaded On</th>
-                                    <th width="10%">Uploaded File Name</th>
-                                    <th width="7%" class="text-center">No.of Units</th>
-                                    <th width="7%" class="text-center">Approved / Rejected Units</th>
-                                    <th width="7%">Approved / Rejected On</th>
-                                    <th width="8%">Approved / Rejected By</th>
-                                    <th width="8%">Reason for Rejection</th>
+                                    <th class="width-2">#</th>
+                                    <th class="width-7">Uploaded By</th>
+                                    <th class="width-7">Uploaded On</th>
+                                    <th class="width-10">Uploaded File Name</th>
+                                    <th class="width-7 text-center">No.of Units</th>
+                                    <th class="width-7 text-center">Approved / Rejected Units</th>
+                                    <th class="width-7">Approved / Rejected On</th>
+                                    <th class="width-8">Approved / Rejected By</th>
+                                    <th class="width-8">Reason for Rejection</th>
                                 </tr>
                             </thead>
                             <tbody class="tbody-compliance">
                             </tbody>
                         </table>
                         <table class="pagination-view default-display-none">
-                          <tr>
-                            <td>
-                              <span class="compliance_count"> </span>
-                              <span class="divider-view"> | </span>
-                              <span class="items-per-page">
+                            <tr>
+                                <td>
+                                    <span class="compliance_count"> </span>
+                                    <span class="divider-view"> | </span>
+                                    <span class="items-per-page">
                               Show
                               <select id="items_per_page">
                               </select>
                               entries
                               </span>
-                            </td>
-                            <td style="width:650px;"></td>
-                            <td style="text-align:right;padding-right:10px;">
-                              <ul id="pagination-rpt"></ul>
-                            </td>
-                          </tr>
+                                </td>
+                                <td class="pagination-space"></td>
+                                <td class="pagination-right-side">
+                                    <ul id="pagination-rpt"></ul>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -149,90 +128,42 @@
     </div>
 </div>
 <div id="act-templates" class="default-display-none">
-    <table class="font1 table-act-list" style="width:100%;height:30px; ">
-            <tr class="table-row-act-list">
-                <td class="tbl_sno"></td>
-                <!-- <td class="tbl_country"></td>
-                <td class="tbl_domain"> </td> -->
-                <td class="tbl_uploaded_by"></td>
-                <td class="tbl_uploaded_on"></td>
-                <td class="tbl_uploaded_file_name"></td>
-                <td class="tbl_no_of_tasks"></td>
-                <td class="tbl_approved_rejected_tasks"></td>
-                <td class="tbl_approved_rejected_on"></td>
-                <td class="tbl_approved_rejected_by"></td>
-                <td class="tbl_reason_for_rejection"></td>
+    <table class="font1 table-act-list">
+        <tr class="table-row-act-list">
+            <td class="tbl_sno"></td>
+            <td class="tbl_uploaded_by"></td>
+            <td class="tbl_uploaded_on"></td>
+            <td class="tbl_uploaded_file_name"></td>
+            <td class="tbl_no_of_tasks"></td>
+            <td class="tbl_approved_rejected_tasks"></td>
+            <td class="tbl_approved_rejected_on"></td>
+            <td class="tbl_approved_rejected_by"></td>
+            <td class="tbl_reason_for_rejection"></td>
         </tr>
     </table>
 </div>
-
 <div id="head-templates">
     <table class="table-compliance-frequency-list">
         <tr class="table-row-com-frequency">
-            <td colspan="100%">
+            <!-- <td colspan="100%"> -->
+            <td>
                 <div class="col-sm-12 no-padding">
-                    <mark class="p-l-10 p-r-10 tbl_heading"></mark>
+                    <mark class="p-l-10 p-r-10 tbl-heading"></mark>
                 </div>
             </td>
         </tr>
     </table>
     <div class="clearfix"></div>
 </div>
-
-<!-- <div id="compliance-templates" style="display:none;">
-    <table width="100%" class="table-compliances-list">
-    </table>
-</div>
- -->
-<div id="nocompliance-templates" style="display:none;">
-    <table width="100%" style="border:1px dotted #CCCCCC;" class="table-nocompliances-list">
-        <tr class="table-row" >
-            <td align="center" colspan="9" class="tbl_norecords"></td>
+<div id="nocompliance-templates" class="default-display-none">
+    <table class="table-nocompliances-list">
+        <tr class="table-row">
+            <td colspan="9" class="tbl-norecords text-center"></td>
         </tr>
     </table>
 </div>
-{% endblock %}
-{% block contentscript %}
-    <script type="text/javascript" src="/script/bulk-upload/client-unit-bulk-report/client-unit-bulk-report.js"></script>
-	<script src="/js/multiselect/bootstrap-multiselect.js"></script>
-
-	<script type="text/javascript">
-    $(function() {
-        $("#from-date").datepicker({
-            showButtonPanel: true,
-            closeText: 'Clear',
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: "dd-M-yy",
-            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-            ],
-            maxDate: new Date(),
-            onClose: function(selectedDate) {
-                $("#to-date").datepicker("option", "minDate", selectedDate);
-                var event = arguments.callee.caller.caller.arguments[0];
-                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
-                    $(this).val('');
-                }
-            }
-
-        });
-
-        $("#to-date").datepicker({
-            showButtonPanel: true,
-            closeText: 'Clear',
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1,
-            dateFormat: "dd-M-yy",
-            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-            ],
-            maxDate: new Date(),
-        });
-    });
-</script>
-
-
+{% endblock %} {% block contentscript %}
+<script src="/script/bulk-upload/client-unit-bulk-report/client-unit-bulk-report.js"></script>
+<script src="/js/multiselect/bootstrap-multiselect.js"></script>
+<script src="/js/datepicker.js"></script>
 {% endblock %}

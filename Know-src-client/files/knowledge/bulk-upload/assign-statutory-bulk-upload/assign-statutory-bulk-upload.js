@@ -121,7 +121,7 @@ function pageControls() {
         le_name = LegalEntityName.val();
         
         if (cl_id.trim().length <= 0) {
-            displayMessage(message.client_required);
+            displayMessage('Client Group Required');
             return false;
         } else if (le_id.trim().length <= 0) {
             displayMessage(message.legalentity_required);
@@ -166,7 +166,7 @@ function pageControls() {
                         hideLoader();
                     }
                     else{
-                        displayMessage("message.empty_export");
+                        displayMessage("No Compliance Available for Assign Statutory");
                         hideLoader();
                     }
                 } else {
@@ -227,9 +227,9 @@ function pageControls() {
         cl_id = GroupId.val();
         le_id = LegalEntityId.val();
         le_name = LegalEntityName.val();
-        
+
         if (cl_id.trim().length <= 0) {
-            displayMessage(message.client_required);
+            displayMessage('Client Group Required');
             return false;
         } else if (le_id.trim().length <= 0) {
             displayMessage(message.legalentity_required);
@@ -237,8 +237,8 @@ function pageControls() {
         } else if (MultiSelect_Domain.val() == null) {
             displayMessage(message.domain_required);
             return false;
-        } else if (UploadFile.val() == null) {
-            displayMessage("Upload file required");
+        } else if (UploadFile.val() == '') {
+            displayMessage("Upload File Required");
             return false;
         } else {
             d_ids = MultiSelect_Domain.val().map(Number);
@@ -276,30 +276,48 @@ function pageControls() {
                     $('.view-summary').show();
                     $('.invaliddata').hide();
                     displaySuccessMessage("Records uploaded successfully for approval");
+                    GroupName.val('');
+                    GroupId.val('');
+                    LegalEntityName.val('');
+                    LegalEntityId.val('');
+                    u_names = [];
+                    u_ids = [];
+                    d_names = [];
+                    d_ids = [];
+                    fetchDomainMultiselect()
+                    MultiSelect_Domain.multiselect('rebuild');
+                    fetchUnitMultiselect()
+                    MultiSelect_Unit.multiselect('rebuild');
+                    UploadFile.val('');
                     hideLoader();
                 } else {
-                    InvalidFileName = data.invalid_file.split('.');;
-                    TotalRecordsCount.text(data.total);
-                    var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
-                    ValidRecordsCount.text(getValidCount);
-                    InvalidRecordsCount.text(data.invalid);
-                    MandatoryErrorsCount.text(data.mandatory_error);
-                    DuplicateErrorsCount.text(data.duplicate_error);
-                    StatusErrorsCount.text(data.inactive_error);
-                    LengthErrorsCount.text(data.max_length_error);
-                    getInvaliddataCount = parseInt(data.invalid_char_error) + parseInt(data.invalid_data_error);
-                    InvalidErrorsCount.text(getInvaliddataCount);
-                    $('.invaliddata').show();
-                    $('.view-summary').show();
-                    
-                    csv_path = "/invalid_file/csv/" + InvalidFileName[0] + '.csv';
-                    xls_path = "/invalid_file/xlsx/" + InvalidFileName[0] + '.xlsx';
-                    ods_path = "/invalid_file/ods/" + InvalidFileName[0] + '.ods';
-                    txt_path = "/invalid_file/txt/" + InvalidFileName[0] + '.txt';
-                    $('#csv').attr("href", csv_path);
-                    $('#excel').attr("href", xls_path);
-                    $('#ods').attr("href", ods_path);
-                    $('#txt').attr("href", txt_path);
+                    if(error == 'Invalid Csv file'){
+                        displayMessage(error);
+                    }else{
+                        displayMessage(error);
+                        InvalidFileName = data.invalid_file.split('.');;
+                        TotalRecordsCount.text(data.total);
+                        var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
+                        ValidRecordsCount.text(getValidCount);
+                        InvalidRecordsCount.text(data.invalid);
+                        MandatoryErrorsCount.text(data.mandatory_error);
+                        DuplicateErrorsCount.text(data.duplicate_error);
+                        StatusErrorsCount.text(data.inactive_error);
+                        LengthErrorsCount.text(data.max_length_error);
+                        getInvaliddataCount = parseInt(data.invalid_char_error) + parseInt(data.invalid_data_error);
+                        InvalidErrorsCount.text(getInvaliddataCount);
+                        $('.invaliddata').show();
+                        $('.view-summary').show();
+                        
+                        csv_path = "/invalid_file/csv/" + InvalidFileName[0] + '.csv';
+                        xls_path = "/invalid_file/xlsx/" + InvalidFileName[0] + '.xlsx';
+                        ods_path = "/invalid_file/ods/" + InvalidFileName[0] + '.ods';
+                        txt_path = "/invalid_file/txt/" + InvalidFileName[0] + '.txt';
+                        $('#csv').attr("href", csv_path);
+                        $('#excel').attr("href", xls_path);
+                        $('#ods').attr("href", ods_path);
+                        $('#txt').attr("href", txt_path);
+                    }
                     hideLoader();
                 }
             });
