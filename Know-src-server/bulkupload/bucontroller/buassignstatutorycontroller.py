@@ -175,18 +175,20 @@ def get_download_assing_statutory(db, request_frame, session_user):
 
 def upload_assign_statutory_csv(db, request_frame, session_user):
 
-    if request_frame.csv_size > 0 :
-        pass
-    # save csv file
-    csv_name = convert_base64_to_file(
-            BULKUPLOAD_CSV_PATH, request_frame.csv_name,
-            request_frame.csv_data
-        )
-    # read data from csv file
-    header, assign_statutory_data = read_data_from_csv(csv_name)
+    try:
+        if request_frame.csv_size > 0 :
+            pass
+        # save csv file
+        csv_name = convert_base64_to_file(
+                BULKUPLOAD_CSV_PATH, request_frame.csv_name,
+                request_frame.csv_data
+            )
+        # read data from csv file
+        header, assign_statutory_data = read_data_from_csv(csv_name)
 
+        if len(assign_statutory_data) == 0:
+                raise ValueError("CSV file cannot be blank")
 
-    if len(assign_statutory_data) > 0 :
         # csv data validation
         cObj = ValidateAssignStatutoryCsvData(
             db, assign_statutory_data, session_user, request_frame.csv_name, header, 1
@@ -212,7 +214,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
                         res_data["total"], res_data["valid"], res_data["invalid"]
                     )
 
-            # csv data save to temp db
+        # csv data save to temp db
         else :
             result = bu_as.UploadAssignStatutoryCSVFailed(
                 res_data["invalid_file"], res_data["mandatory_error"],
@@ -220,10 +222,12 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
                 res_data["invalid_char_error"], res_data["invalid_data_error"],
                 res_data["inactive_error"], res_data["total"], res_data["invalid"]
             )
-    else :
-        raise ValueError("Invalid Csv file")
+        
+        return result
 
-    return result
+    except Exception, e:
+        print e
+        raise e
 
 ########################################################
 '''

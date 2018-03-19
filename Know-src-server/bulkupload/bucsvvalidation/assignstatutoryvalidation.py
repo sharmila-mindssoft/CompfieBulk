@@ -542,7 +542,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         # make ods file
         rename_file_type(file_name, "ods")
         # make text file
-        # rename_file_type(file_name, "txt")
+        rename_file_type(file_name, "txt")
         return {
             "return_status": False,
             "invalid_file": file_name,
@@ -658,5 +658,17 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             self.save_client_compliances_data(self._client_id, self._legal_entity_id, unit_id, domain_id, cs_id, grouped_list, user_id)
 
     def make_rejection(self, declined_info):
-        q = "update tbl_bulk_assign_statutory set action = 3 where bulk_assign_statutory_id in %s"
-        self._source_db.execute_insert(q, [",".join(declined_info)])
+        try :
+            q = "update tbl_bulk_assign_statutory set " + \
+                " action = 3 where bulk_assign_statutory_id in (%s)" % (
+                    ",".join(map(str, declined_info))
+                )
+            self._db.execute(q)
+
+            q1 = "update tbl_bulk_assign_statutory_csv set " + \
+                " approve_status = 1 where csv_assign_statutory_id = %s"
+            self._db.execute(q1, [self._csv_id])
+
+        except Exception, e :
+            print str(traceback.format_exc())
+            raise (e)

@@ -1328,7 +1328,7 @@ CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
     view_data INT, s_status INT, c_status INT
 )
 BEGIN
-    
+
     select distinct t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
@@ -1716,7 +1716,7 @@ BEGIN
     where action = 2 and csv_assign_statutory_id = csv_id;
 
     select count(1) as un_saved from tbl_bulk_assign_statutory
-    where action = null and csv_assign_statutory_id = csv_id;
+    where action is null and csv_assign_statutory_id = csv_id;
 
 END //
 
