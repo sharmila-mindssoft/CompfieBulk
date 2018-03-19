@@ -393,7 +393,10 @@ BEGIN
     t1.csv_unit_id and action = 3) AS declined_count
  FROM
     tbl_bulk_units_csv as t1 WHERE t1.client_id = _clientId AND
-    t1.client_group = _groupName ORDER BY t1.uploaded_on desc;
+    t1.client_group = _groupName and
+    (t1.is_fully_rejected = 0 or t1.is_fully_rejected is null) and
+    (t1.approve_status = 0 or t1.approve_status is null)
+    ORDER BY t1.uploaded_on desc;
 END //
 
 DELIMITER ;
@@ -1499,6 +1502,7 @@ BEGIN
         is_fully_rejected = 1,
         rejected_by = _user_id,
         rejected_on = current_ist_datetime(),
+        rejected_reason = _remarks,
         total_rejected_records = (select count(0) from
         tbl_bulk_units as t1 WHERE t1.csv_unit_id = _csv_unit_id)
         WHERE csv_unit_id = _csv_unit_id;
