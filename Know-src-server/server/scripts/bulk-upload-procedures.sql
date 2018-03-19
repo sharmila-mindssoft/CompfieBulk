@@ -1698,3 +1698,22 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_as_validation_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_as_validation_info`(
+    IN csv_id INT(11)
+)
+BEGIN
+    select count(1) as approved from tbl_bulk_assign_statutory
+    where action = 1 and csv_assign_statutory_id = csv_id;
+
+    select count(1) as un_saved from tbl_bulk_assign_statutory
+    where action = null and csv_assign_statutory_id = csv_id;
+
+END //
+
+DELIMITER ;

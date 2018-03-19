@@ -28,7 +28,8 @@ __all__ = [
     "fetch_assigned_statutory_bulk_report",
     "fetch_rejected_asm_download_csv_report",
     "get_asm_csv_file_name_by_id",
-    "save_action_from_view"
+    "save_action_from_view",
+    "get_validation_info"
     ]
 
 ########################################################
@@ -668,3 +669,13 @@ def save_action_from_view(db, csv_id, as_id, action, remarks, session_user):
         logger.logKnowledge("error", "update action from view", str(traceback.format_exc()))
         logger.logKnowledge("error", "update action from view", str(e))
         raise fetch_error()
+
+def get_validation_info(db, csv_id):
+
+    approved_count = []
+    un_saved_count = []
+    result = db.call_proc_with_multiresult_set("sp_as_validation_info", [csv_id], 2)
+    approved_count = result[0][0]["approved"]
+    un_saved_count = result[1][0]["un_saved"]
+    
+    return approved_count, un_saved_count

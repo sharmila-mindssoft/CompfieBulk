@@ -84,6 +84,10 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.ConfirmAssignStatutorySubmit:
         result = confirm_submit_assign_statutory(db, request_frame, session_user)
 
+    if type(request_frame) is bu_as.AssignStatutoryValidate:
+        result = validate_assign_statutory(db, request_frame, session_user)
+
+        
     return result
 
 ########################################################
@@ -516,3 +520,13 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
     else :
         cObj.frame_data_for_main_db_insert(user_id)
         return bu_as.SubmitAssignStatutorySuccess(user_id)
+
+def validate_assign_statutory(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    
+    approved_count, un_saved_count = get_validation_info(db, csv_id)
+
+    result = bu_as.AssignStatutoryValidateSuccess(
+        approved_count, un_saved_count
+    )
+    return result
