@@ -337,6 +337,11 @@ ApproveBulkMapping.prototype.actionFromList = function(
     csv_id, action, remarks, pwd
 ) {
     t_this = this;
+    c_id = parseInt(country_val.val());
+    d_id = parseInt(domain_val.val());
+    t_this._CSV_ID = csv_id;
+    t_this._Country_id = c_id;
+    t_this._domain_id = d_id;
     displayLoader();
     bu.updateActionFromList(
         csv_id, action, remarks, pwd, country_val.val(), domain_val.val(),
