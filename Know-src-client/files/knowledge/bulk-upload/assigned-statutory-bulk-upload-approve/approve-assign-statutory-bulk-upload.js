@@ -709,24 +709,37 @@ function validateAuthentication(id, passwordField, reasonField) {
       return false;
     }
   }
+
   displayLoader();
+  bu.validateAssignStatutory(parseInt(id), function(error, res1) {
+    hideLoader();
+    Custombox.close();
+    if (res1.rej_count == 0) {
+      approveOrRejectAction(id, cl_id, le_id, action, reason, password);
+    } else {
+      var statusmsg = message.manuval_rejected_confirm;
+      confirm_alert(statusmsg, function(isConfirm) {
+        if (isConfirm) {
+          approveOrRejectAction(id, cl_id, le_id, action, reason, password);
+        }
+      });
+    }
+  });
+}
+
+approveOrRejectAction = function(id, cl_id, le_id, action, reason, password) {
   bu.assignStatutoryActionInList(parseInt(cl_id), parseInt(le_id), parseInt(id),
-    parseInt(action), reason, password,
-    function(error, response) {
-      console.log(error, response);
+    parseInt(action), reason, password, function(error, res2) {
+      console.log(error, res2);
       if (error == null) {
-        if (response.hasOwnProperty("rej_count")) {
-          hideLoader();
-          Custombox.close();
-          var statusmsg = message.system_rejected_confirmation + ' - ' + response.rej_count;
+        if (res2.hasOwnProperty("rej_count")) {
+          var statusmsg = res2.rej_count+' '+message.sys_rejected_confirm;
           confirm_alert(statusmsg, function(isConfirm) {
             if (isConfirm) {
               alert("Status change");
             }
           });
         } else {
-          hideLoader();
-          Custombox.close();
           if (action == 1)
             displaySuccessMessage(message.assign_statutory_approved_success);
           else
@@ -1139,25 +1152,27 @@ ApproveAssignStatutoryBulkUpload.prototype.submitProcess = function() {
   var csvid = ASID.val();
   var cl_id = clientGroupId.val();
   var le_id = legalEntityId.val();
-
   displayLoader();
   bu.validateAssignStatutory(parseInt(csvid), function(error, response) {
-    alert(response.un_saved_count);
+    if (response.un_saved_count > 0) {
+      displayMessage(message.un_saved_compliance);
+      hideLoader();
+    } else {
+      bu.confirmAssignStatutoryUpdateAction(parseInt(csvid), parseInt(cl_id),
+        parseInt(le_id),
+        function(error, response) {
+          if (error == null) {
+            displaySuccessMessage(message.assign_statutory_submit_success);
+            REPORT.pageLoad();
+            PageControls();
+            hideLoader();
+          } else {
+            t_this.possibleFailures(error);
+            hideLoader();
+          }
+        });
+    }
   });
-  /*bu.confirmAssignStatutoryUpdateAction(parseInt(csvid), parseInt(cl_id),
-    parseInt(le_id),
-    function(error, response) {
-      if (error == null) {
-        displaySuccessMessage(message.assign_statutory_submit_success);
-        REPORT.pageLoad();
-        PageControls();
-        hideLoader();
-      } else {
-        t_this.possibleFailures(error);
-        hideLoader();
-      }
-  });*/
-
 }
 
 REPORT = new ApproveAssignStatutoryBulkUpload();

@@ -30,20 +30,20 @@ var searchUploadBy = $('.search-upload-by');
 var searchTotRecords = $('.search-tot-records');
 var searchUploadOn = $('.search-upload-on');
 
-var searchStatutory = $('.search-statutory');
-var searchOrganization = $('.search-organization');
-var searchNature = $('.search-nature');
-var searchProvision = $('.search-provision');
-var searchCTask = $('.search-c-task');
-var searchCDoc = $('.search-c-doc');
-var searchTaskId = $('.search-task-id');
-var searchCDesc = $('.search-c-desc');
-var searchPCons = $('.search-p-cons');
-var searchTaskType = $('.search-task-type');
-var searchReferLink = $('.search-refer-link');
-var searchFreq = $('.search-frequency');
-var searchFormat = $('.search-format');
-var searchGeography = $('.search-geo');
+var searchStatutory = $('#search-statutory');
+var searchOrganization = $('#search-organization');
+var searchNature = $('#search-nature');
+var searchProvision = $('#search-provision');
+var searchCTask = $('#search-c-task');
+var searchCDoc = $('#search-c-doc');
+var searchTaskId = $('#search-task-id');
+var searchCDesc = $('#search-c-desc');
+var searchPCons = $('#search-p-cons');
+var searchTaskType = $('#search-task-type');
+var searchReferLink = $('#search-refer-link');
+var searchFreq = $('#search-frequency');
+var searchFormat = $('#search-format');
+var searchGeography = $('#search-geo');
 
 // filter controls
 
@@ -107,10 +107,12 @@ function displayPopUp(TYPE, csv_id, smid){
     if (TYPE == "reject") {
         targetid = "#custom-modal";
         CurrentPassword = $('#current-password-reject');
+        $('.reject-reason-txt').val('')
     }
     else if (TYPE == "view-reject") {
         targetid = "#custom-modal-remarks";
         CurrentPassword = null;
+        $('.view-reason').val('')
     }
     else {
         targetid = "#custom-modal-approve"
@@ -319,9 +321,12 @@ ApproveBulkMapping.prototype.fetchDropDownData = function() {
 ApproveBulkMapping.prototype.confirmAction = function() {
     t_this = this;
     displayLoader();
-    bu.confirmUpdateAction(bu_approve_page._CSV_ID, bu_approve_page._Country_id, bu_approve_page._domain_id, function(error, response) {
+    console.log("confirm action called")
+    bu.confirmUpdateAction(t_this._CSV_ID, t_this._Country_id, t_this._domain_id, function(error, response) {
         if (error == null) {
             t_this.showList();
+            t_this.fetchListData();
+            displaySuccessMessage(message.confirm_success);
         }
         else {
             bu_approve_page.possibleFailures(error);
@@ -332,38 +337,45 @@ ApproveBulkMapping.prototype.actionFromList = function(
     csv_id, action, remarks, pwd
 ) {
     t_this = this;
+    c_id = parseInt(country_val.val());
+    d_id = parseInt(domain_val.val());
+    t_this._CSV_ID = csv_id;
+    t_this._Country_id = c_id;
+    t_this._domain_id = d_id;
     displayLoader();
     bu.updateActionFromList(
         csv_id, action, remarks, pwd, country_val.val(), domain_val.val(),
         function(error, response){
-        if (error == null) {
-
-            if (response.rej_count > 0) {
-                msg = response.rej_count + " compliance declined, Do you want to continue ?";
-                confirm_alert(msg, function(isConfirm) {
-                    if (isConfirm) {
-                        t_this.confirmAction();
-                        t_this.fetchListData();
+            if (error == null) {
+                if (response.rej_count > 0) {
+                    msg = response.rej_count + " compliance declined, Do you want to continue ?";
+                    confirm_alert(msg, function(isConfirm) {
+                        if (isConfirm) {
+                            t_this.confirmAction();
+                        }
+                        else {
+                            hideLoader();
+                        }
+                    });
+                }else {
+                    if (action == 1) {
+                        displaySuccessMessage(message.approve_success);
                     }
-                });
-            }else {
-                if (action == 1) {
-                    confirmUpdateAction(message.approve_success);
-                }
-                else {
-                    confirmUpdateAction(message.reject_success);
+                    else {
+                        displaySuccessMessage(message.reject_success);
+                    }
+
+                    t_this.fetchListData()
                 }
 
-                t_this.fetchListData()
+
             }
-
-
+            else {
+                hideLoader();
+                t_this.possibleFailures(error);
+            }
         }
-        else {
-            hideLoader();
-            t_this.possibleFailures(error);
-        }
-    });
+    );
 };
 ApproveBulkMapping.prototype.showViewScreen = function(csv_id, f_count, r_range) {
     ListScreen.hide();
@@ -383,7 +395,8 @@ ApproveBulkMapping.prototype.showViewScreen = function(csv_id, f_count, r_range)
     searchFreq.val('');
     searchFormat.val('');
     searchGeography.val('');
-
+    j = 1;
+    bu_approve_page.show_map_count = 0;
     bu_approve_page.fetchViewData(csv_id, f_count, r_range);
 
 
@@ -403,38 +416,41 @@ displayLoader();
 };
 ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) {
     t_this = this;
+
     displayLoader();
     bu.getApproveMappingView(csv_id, f_count, r_range, function(error, response){
         if(error == null) {
             t_this._ViewDataList = response.mapping_data;
-            $('.view-country-name').text(response.c_name);
-            $('.view-domain-name').text(response.d_name)
-            uploaded_name = null
-            for (var i=0; i<t_this._UserList.length; i++) {
-                if (response.uploaded_by == t_this._UserList[i].user_id) {
-                    uploaded_name = t_this._UserList[i].emp_code_name
-                    break;
+            if (t_this._ViewDataList.length > 0) {
+
+                $('.view-country-name').text(response.c_name);
+                $('.view-domain-name').text(response.d_name)
+                uploaded_name = null
+                for (var i=0; i<t_this._UserList.length; i++) {
+                    if (response.uploaded_by == t_this._UserList[i].user_id) {
+                        uploaded_name = t_this._UserList[i].emp_code_name
+                        break;
+                    }
+                }
+                $('.view-uploaded-by').text(uploaded_name);
+                $('.view-uploaded-on').text(response.uploaded_on);
+                cname_split = response.csv_name.split("_");
+                cname_split.pop();
+                cname = cname_split.join("_");
+                $('.view-csv-name').text(cname);
+                $('#view-csv-id').val(response.csv_id);
+                STATU_TOTALS  = response.total;
+                if(t_this._ViewDataList.length == 0) {
+                    _t_this.hidePagePan();
+                    PaginationView.hide();
+                    t_this.hidePageView();
+                }
+                else {
+                    t_this.createPageView();
+                    PaginationView.show();
                 }
             }
-            $('.view-uploaded-by').text(uploaded_name);
-            $('.view-uploaded-on').text(response.uploaded_on);
-            cname_split = response.csv_name.split("_");
-            cname_split.pop();
-            cname = cname_split.join("_");
-            $('.view-csv-name').text(cname);
-            $('#view-csv-id').val(response.csv_id);
-            STATU_TOTALS  = response.total;
-            if(t_this._ViewDataList.length == 0) {
-                _t_this.hidePagePan();
-                PaginationView.hide();
-                t_this.hidePageView();
-            }
-            else {
-                t_this.createPageView();
-                PaginationView.show();
-            }
             t_this.renderViewScreen(t_this._ViewDataList);
-
 
             // var onetimejs = $("#tbody-sm-approve-view").html();
             // alert(onetimejs);
@@ -597,31 +613,33 @@ ApproveBulkMapping.prototype.renderViewFromFilter = function() {
         }
         if(err == null) {
             t_this._ViewDataList = response.mapping_data;
-            $('.view-country-name').text(response.c_name);
-            $('.view-domain-name').text(response.d_name)
-            uploaded_name = null
-            for (var i=0; i<t_this._UserList.length; i++) {
-                if (response.uploaded_by == t_this._UserList[i].user_id) {
-                    uploaded_name = t_this._UserList[i].emp_code_name
-                    break;
+            if (t_this._ViewDataList.length > 0) {
+                $('.view-country-name').text(response.c_name);
+                $('.view-domain-name').text(response.d_name)
+                uploaded_name = null
+                for (var i=0; i<t_this._UserList.length; i++) {
+                    if (response.uploaded_by == t_this._UserList[i].user_id) {
+                        uploaded_name = t_this._UserList[i].emp_code_name
+                        break;
+                    }
                 }
-            }
-            $('.view-uploaded-by').text(uploaded_name);
-            $('.view-uploaded-on').text(response.uploaded_on);
-            cname_split = response.csv_name.split("_");
-            cname_split.pop();
-            cname = cname_split.join("_");
-            $('.view-csv-name').text(cname);
-            $('#view-csv-id').val(response.csv_id);
-            STATU_TOTALS  = response.total;
-            if(t_this._ViewDataList.length == 0) {
-                _t_this.hidePagePan();
-                PaginationView.hide();
-                t_this.hidePageView();
-            }
-            else {
-                t_this.createPageView();
-                PaginationView.show();
+                $('.view-uploaded-by').text(uploaded_name);
+                $('.view-uploaded-on').text(response.uploaded_on);
+                cname_split = response.csv_name.split("_");
+                cname_split.pop();
+                cname = cname_split.join("_");
+                $('.view-csv-name').text(cname);
+                $('#view-csv-id').val(response.csv_id);
+                STATU_TOTALS  = response.total;
+                if(t_this._ViewDataList.length == 0) {
+                    _t_this.hidePagePan();
+                    PaginationView.hide();
+                    t_this.hidePageView();
+                }
+                else {
+                    t_this.createPageView();
+                    PaginationView.show();
+                }
             }
             t_this.renderViewScreen(t_this._ViewDataList);
             hideLoader();
@@ -684,6 +702,9 @@ ApproveBulkMapping.prototype.finalSubmit = function(csvid, pwd) {
     displayLoader();
     c_id = parseInt(country_val.val());
     d_id = parseInt(domain_val.val());
+    t_this._CSV_ID = csvid;
+    t_this._Country_id = c_id;
+    t_this._domain_id = d_id;
     bu.submitMappingAction(csvid, c_id, d_id, pwd, function(err, res){
         if(err == null) {
             if (res.rej_count > 0) {
@@ -691,11 +712,10 @@ ApproveBulkMapping.prototype.finalSubmit = function(csvid, pwd) {
                 confirm_alert(msg, function(isConfirm) {
                     if (isConfirm) {
                         t_this.confirmAction();
-                        t_this.fetchListData();
                     }
                 });
             }else {
-                confirmUpdateAction(message.submit_success);
+                displaySuccessMessage(message.submit_success);
                 ListScreen.show();
                 ViewScreen.hide();
                 searchFileName.val('');
@@ -718,6 +738,7 @@ function key_search(mainList) {
     upload_by_key = searchUploadBy.val().toLowerCase();
     total = searchTotRecords.val();
     upload_on_key = searchUploadOn.val().toLowerCase();
+    console.log(upload_on_key)
 
     var fList = [];
     for (var entity in mainList) {
@@ -725,6 +746,7 @@ function key_search(mainList) {
         uploadby = mainList[entity].uploaded_by;
         total_records = mainList[entity].no_of_records;
         uploadon = mainList[entity].uploaded_on;
+        console.log(uploadon)
 
         if (
             (~csvName.toLowerCase().indexOf(csv_key)) &&
@@ -753,7 +775,6 @@ function key_view_search(mainList) {
     key_freq = searchFreq.val().toLowerCase();
     key_format = searchFormat.val().toLowerCase();
     key_geo = searchGeography.val().toLowerCase();
-
 
     var fList = [];
     for (var entity in mainList) {
@@ -906,6 +927,10 @@ function PageControls() {
     });
 
     searchUploadBy.keyup(function() {
+        fList = key_search(bu_approve_page._ApproveDataList);
+        bu_approve_page.renderList(fList);
+    });
+    searchUploadOn.keyup(function() {
         fList = key_search(bu_approve_page._ApproveDataList);
         bu_approve_page.renderList(fList);
     });

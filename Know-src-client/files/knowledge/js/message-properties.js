@@ -481,9 +481,15 @@ var message = {
   'client_group_50': 'More than 50 characters are not allowed for Client Group Name',
   'secondary_legislation_required': 'Please select any one of the Secondary Legislation',
   'statutory_provision_required': 'Please select any one of the Statutory Provision',
+  'un_saved_compliance': 'All compliance should be selected before submit',
   'compliance_task_required': 'Please select any one of the Compliance Task',
   'compliance_description_required': 'Please select any one of the Compliance Description',
-  'system_rejected_confirmation': 'System Rejected Compliance',
+  'sys_rejected_confirm': 'compliance declined, Do you want to continue ?',
+  'manuval_rejected_confirm': 'Some manual rejections are inside, Do you want to continue?',
+  'un_saved_compliance': 'All compliance should be selected before submit',
+  "confirm_success": "Action taken successfully",
+  "client_unit_upload_success": "Client Units uploaded successfully",
+  "client_unit_upload_failed": "Errors in uploading Client Units",
 }
 
 function clearMessage() {

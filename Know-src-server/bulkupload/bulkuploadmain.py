@@ -1,7 +1,8 @@
 import os
 from functools import wraps
-from buapiprotocol import (
-    bustatutorymappingprotocol, buassignstatutoryprotocol, buclientunitsprotocol
+from buapiprotocol import(
+    bustatutorymappingprotocol, buassignstatutoryprotocol,
+    buclientunitsprotocol
 )
 import bucontroller
 # from server.main import api_request
@@ -15,11 +16,15 @@ __all__ = [
 #
 # api_request
 #
+
+
 def api_request(request_data_type, need_session_id=False):
     def wrapper(f):
         @wraps(f)
         def wrapped(self):
-            return self.handle_api_request(f, request_data_type, need_session_id)
+            return self.handle_api_request(
+                f, request_data_type, need_session_id
+            )
         return wrapped
     return wrapper
 
@@ -31,19 +36,42 @@ class BulkAPI(object):
     def bulk_upload_api_urls(self):
         print("bulk_upload_api_urls")
         return [
-            ("/knowledge/api/bu/statutory_mapping", self.handle_statutory_mapping),
-            ("/knowledge/api/bu/assign_statutory", self.handle_assign_statutory),
-            ("/knowledge/api/bu/client_units", self.handle_client_units),
+            (
+                "/knowledge/api/bu/statutory_mapping",
+                self.handle_statutory_mapping
+            ),
+            (
+                "/knowledge/api/bu/assign_statutory",
+                self.handle_assign_statutory
+            ),
+            (
+                "/knowledge/api/bu/client_units",
+                self.handle_client_units
+            ),
         ]
 
-    @api_request(bustatutorymappingprotocol.RequestFormat, need_session_id=True)
+    @api_request(
+        bustatutorymappingprotocol.RequestFormat,
+        need_session_id=True
+    )
     def handle_statutory_mapping(self, request, db, session_user):
-        return bucontroller.process_bu_statutory_mapping_request(request, db, session_user)
+        return bucontroller.process_bu_statutory_mapping_request(
+            request, db, session_user
+        )
 
-    @api_request(buassignstatutoryprotocol.RequestFormat, need_session_id=True)
+    @api_request(
+        buassignstatutoryprotocol.RequestFormat,
+        need_session_id=True
+    )
     def handle_assign_statutory(self, request, db, session_user):
-        return bucontroller.process_bu_assign_statutory_request(request, db, session_user)
+        return bucontroller.process_bu_assign_statutory_request(
+            request, db, session_user
+        )
 
-    @api_request(buclientunitsprotocol.RequestFormat, need_session_id=True)
+    @api_request(
+        buclientunitsprotocol.RequestFormat, need_session_id=True
+    )
     def handle_client_units(self, request, db, session_user):
-        return bucontroller.process_bu_client_units_request(request, db, session_user)
+        return bucontroller.process_bu_client_units_request(
+            request, db, session_user
+        )

@@ -74,10 +74,10 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th class="text-center">Bulk Uploaded File</th>
-                                            <th class="text-center">Uploaded On</th>
-                                            <th class="text-center">Uploaded By</th>
-                                            <th class="text-center">No of records</th>
+                                            <th >Uploaded File Name</th>
+                                            <th >Uploaded On</th>
+                                            <th >Uploaded By</th>
+                                            <th class="text-center">No. of records</th>
                                             <th class="text-center">Approved / Rejected</th>
                                             <th class="text-center">Download</th>
                                             <th class="text-center">Task Wise Action</th>
@@ -89,7 +89,7 @@
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
                                                 <input type="text" class="form-control input-sm search-file-name"
-                                                placeholder="Bulk Upload File">
+                                                placeholder="Uploaded File Name">
                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                               </div>
                                           </td>
@@ -110,7 +110,7 @@
                                           <td>
                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
                                                 <input type="text" class="form-control input-sm search-tot-records"
-                                                placeholder="No of records">
+                                                placeholder="No. of records">
                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                               </div>
                                           </td>
@@ -292,7 +292,8 @@
 
                             <th class="columnfixed divider-column">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-statutory"
+                                <input type="text" class="form-control input-sm"
+                                id="search-statutory"
                                 placeholder="Statutory">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
@@ -300,77 +301,88 @@
                             <th class="columnfixed" width="1%"></th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-organization"
+                                <input type="text" class="form-control input-sm "
+                                id="search-organization"
                                 placeholder="Organization">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-nature"
+                                <input type="text" class="form-control input-sm "
+                                id="search-nature"
                                 placeholder="Statutory Nature">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-provision"
+                                <input type="text" class="form-control input-sm "
+                                id="search-provision"
                                 placeholder="Statutory Provision">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-c-task"
+                                <input type="text" class="form-control input-sm "
+                                id="search-c-task"
                                 placeholder="Compliance Task">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-c-doc"
+                                <input type="text" class="form-control input-sm "
+                                id="search-c-doc"
                                 placeholder="Compliance Document">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-task-id"
+                                <input type="text" class="form-control input-sm "
+                                id="search-task-id"
                                 placeholder="Task ID">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-c-desc"
+                                <input type="text" class="form-control input-sm "
+                                id="search-c-desc"
                                 placeholder="Compliance Description">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-p-cons"
+                                <input type="text" class="form-control input-sm "
+                                id="search-p-cons"
                                 placeholder="Penal Consequences">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-task-type"
+                                <input type="text" class="form-control input-sm "
+                                id="search-task-type"
                                 placeholder="Task Type">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-refer-link"
+                                <input type="text" class="form-control input-sm "
+                                id="search-refer-link"
                                 placeholder="Reference Link">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-frequency"
+                                <input type="text" class="form-control input-sm "
+                                id="search-frequency"
                                 placeholder="Frequency">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
@@ -385,14 +397,16 @@
                             <th class="columnfixed"></th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-format"
+                                <input type="text" class="form-control input-sm "
+                                id="search-format"
                                 placeholder="Format File">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm search-geo"
+                                <input type="text" class="form-control input-sm "
+                                id="search-geo"
                                 placeholder="Geography Location">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                               </div>
@@ -569,7 +583,7 @@
             </div>
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
-                <textarea class="form-control input-sm inp_reason reject-reason-txt"  rows="2" placeholder="Enter Reason"></textarea>
+                <textarea class="form-control input-sm inp_reason reject-reason-txt"  rows="2" maxlength="500" placeholder="Enter Reason"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
             >Submit</button>
@@ -602,7 +616,7 @@
         <form role="form">
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
-                <textarea class="form-control input-sm view-reason" rows="2" placeholder="Enter Reason"></textarea>
+                <textarea class="form-control input-sm view-reason" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
             >Submit</button>
