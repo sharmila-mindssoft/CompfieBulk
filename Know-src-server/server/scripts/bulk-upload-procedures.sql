@@ -1328,7 +1328,7 @@ CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
     view_data INT, s_status INT, c_status INT
 )
 BEGIN
-    
+
     select distinct t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
@@ -1412,6 +1412,10 @@ userid INT
 )
 BEGIN
     IF action = 2 then
+        UPDATE tbl_bulk_assign_statutory SET
+        action = 2, remarks = _remarks
+        WHERE csv_assign_statutory_id = csvid;
+
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 2,
         rejected_reason = remarks, is_fully_rejected = 1,
@@ -1421,15 +1425,14 @@ BEGIN
         tbl_bulk_assign_statutory as t WHERE t.csv_assign_statutory_id = csvid)
         WHERE csv_assign_statutory_id = csvid;
     else
+        UPDATE tbl_bulk_assign_statutory SET
+        action = 1, remarks = _remarks
+        WHERE csv_assign_statutory_id = csvid;
+
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
         approved_by = userid, is_fully_rejected = 0
         WHERE csv_assign_statutory_id = csvid;
-    end if;
-
-    IF action = 3 then
-        UPDATE tbl_bulk_assign_statutory set action = 3;
-
     end if;
 END //
 
@@ -1716,7 +1719,7 @@ BEGIN
     where action = 2 and csv_assign_statutory_id = csv_id;
 
     select count(1) as un_saved from tbl_bulk_assign_statutory
-    where action = null and csv_assign_statutory_id = csv_id;
+    where action is null and csv_assign_statutory_id = csv_id;
 
 END //
 

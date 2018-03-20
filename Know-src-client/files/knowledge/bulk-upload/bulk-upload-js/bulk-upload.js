@@ -584,3 +584,15 @@ function validateAssignStatutory(csvid, callback){
 }
 
 
+function submitAssignStatutoryAction(csvid, cl_id, le_id, pwd, callback){
+  var request = [
+    'SubmitAssignStatutory',
+    {
+        "csv_id": csvid,
+        "cl_id": cl_id,
+        "le_id": le_id,
+        "password": pwd
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}

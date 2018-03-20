@@ -53,6 +53,7 @@ function initMethods() {
         submitClientUnitActionFromView: submitClientUnitActionFromView,
         confirmSubmitClientUnitFromView: confirmSubmitClientUnitFromView,
         validateAssignStatutory: validateAssignStatutory,
+        submitAssignStatutoryAction: submitAssignStatutoryAction,
     };
 }
 

@@ -514,6 +514,30 @@ class AssignStatutoryValidate(Request):
             "csv_id": self.csv_id
         }
 
+class SubmitAssignStatutory(Request):
+    def __init__(self, csv_id, cl_id, le_id, password):
+        self.csv_id = csv_id
+        self.cl_id = cl_id
+        self.le_id = le_id
+        self.password = password
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id", "cl_id", "le_id", "password"])
+        return SubmitAssignStatutory(
+            data.get("csv_id"), data.get("cl_id"), data.get("le_id"),
+            data.get("password")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "cl_id": self.cl_id,
+            "le_id": self.d_id,
+            "password": self.password
+        }
+
+
 def _init_Request_class_map():
     classes = [
 
@@ -525,7 +549,7 @@ def _init_Request_class_map():
         UpdateASMClickCount, DeleteRejectedASMByCsvID,
         GetAssignedStatutoryBulkReportData, DownloadRejectedASMReport,
         ExportASBulkReportData, SaveAction, ConfirmAssignStatutorySubmit,
-        AssignStatutoryValidate
+        AssignStatutoryValidate, SubmitAssignStatutory
     ]
 
     class_map = {}
