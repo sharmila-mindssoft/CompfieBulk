@@ -1,19 +1,16 @@
 var FULLYREJECTED = "Fully Rejected";
 var SYSTEMREJECTED = "COMPFIE";
-
-var GROUPNAME = $('#countryval');
-var GROUPID = $('#country');
-var ACGROUP = $('#ac-country');
-
-
-var SHOWBTN = $('#show');
-var REPORTVIEW = $('.grid-table-rpt');
-var PASSWORDSUBMITBUTTON = $('#password-submit');
-var CURRENTPASSWORD = $('#current-password');
-var REMOVEUNITCSVID;
-var EXISTINGUSERID = [];
-var ALLUSERINFO = '';
-var USERCATEGORYID = 0;
+var GROUP_NAME = $('#countryval');
+var GROUP_ID = $('#country');
+var AC_GROUP = $('#ac-country');
+var SHOW_BTN = $('#show');
+var REPORT_VIEW = $('.grid-table-rpt');
+var PASSWORD_SUBMIT_BUTTON = $('#password-submit');
+var CURRENT_PASWORD = $('#current-password');
+var REMOVE_UNIT_CSV_ID;
+var EXISTING_USER_ID = [];
+var ALL_USER_INFO = '';
+var USER_CATEGORY_ID = 0;
 
 var rejClientUnit = new RejectedClientUnitBulk();
 
@@ -22,20 +19,20 @@ function RejectedClientUnitBulk() {}
 // Handle All Page Controls like Button submit
 function pageControls() {
     //load group form list in autocomplete text box
-    GROUPNAME.keyup(function(e) {
+    GROUP_NAME.keyup(function(e) {
         console.log("Groups");
         var textVal = $(this).val();
         commonAutoComplete(
-            e, ACGROUP, GROUPID, textVal,
+            e, AC_GROUP, GROUP_ID, textVal,
             _clients, "group_name", "client_id",
             function(val) {
-                onAutoCompleteSuccess(GROUPNAME, GROUPID, val);
+                onAutoCompleteSuccess(GROUP_NAME, GROUP_ID, val);
             });
 
         resetFilter();
     });
 
-    SHOWBTN.click(function() {
+    SHOW_BTN.click(function() {
         isValid = rejClientUnit.validateMandatory();
         if (isValid == true) {
             $('#mapping_animation')
@@ -79,7 +76,7 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
 
 // Get Client Unit Rejected report data from api
 function processSubmit() {
-    var groupId = parseInt(GROUPID.val());
+    var groupId = parseInt(GROUP_ID.val());
 
     displayLoader();
     filterdata = {
@@ -105,11 +102,11 @@ function processSubmit() {
             var clone4 = tableRow4.clone();
             $('.tbl_norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
-            REPORTVIEW.show();
+            REPORT_VIEW.show();
             hideLoader();
         } else {
             hideLoader();
-            REPORTVIEW.show();
+            REPORT_VIEW.show();
             loadCountwiseResult(rejClientUnitData);
         }
     }
@@ -160,7 +157,7 @@ function loadCountwiseResult(filterList) {
         if (parseInt(isFullyRejected) == 1) {
             removeHrefTag = '';
             reasonForRejection = FULLYREJECTED;
-            $(ALLUSERINFO).each(function(key, value) {
+            $(ALL_USER_INFO).each(function(key, value) {
                 if (parseInt(rejectedBy) == value["user_id"]) {
                     EmpCode = value["employee_code"];
                     EmpName = value["employee_name"];
@@ -220,7 +217,7 @@ function loadCountwiseResult(filterList) {
 RejectedClientUnitBulk.prototype.validateMandatory = function() {
     isValid = true;
 
-    if (GROUPNAME.val().trim().length == 0) {
+    if (GROUP_NAME.val().trim().length == 0) {
         displayMessage(message.group_required);
         isValid = false;
     }
@@ -230,7 +227,7 @@ RejectedClientUnitBulk.prototype.validateMandatory = function() {
 //Initialize the page load user list
 function initialize() {
     function onSuccess(data) {
-        ALLUSERINFO = data.user_details;
+        ALL_USER_INFO = data.user_details;
         userDetails = data.user_details[0];
         loadCurrentUserDetails();
         hideLoader();
@@ -253,22 +250,22 @@ function loadCurrentUserDetails() {
     //alert('load Current User Details');
     var user = mirror.getUserInfo();
     var loggedUserId = 0;
-    if (ALLUSERINFO) {
-        $.each(ALLUSERINFO, function(key, value) {
+    if (ALL_USER_INFO) {
+        $.each(ALL_USER_INFO, function(key, value) {
             if (user.user_id == value["user_id"]) {
-                USERCATEGORYID = value["user_category_id"];
+                USER_CATEGORY_ID = value["user_category_id"];
                 loggedUserId = value["user_id"];
             }
         });
     }
 
-    if (USERCATEGORYID == 6) {
+    if (USER_CATEGORY_ID == 6) {
         // TE-Name  : Techno-Executive
         $('.active-techno-executive').attr('style', 'display:block');
         $('#techno-name').text(user.employee_code + " - " +
             user.employee_name.toUpperCase());
-        EXISTINGUSERID.push(loggedUserId);
-    } else if (USERCATEGORYID == 5 && USERCATEGORYID != 6 
+        EXISTING_USER_ID.push(loggedUserId);
+    } else if (USER_CATEGORY_ID == 5 && USER_CATEGORY_ID != 6 
                                    && loggedUserId > 0) {
         // TE-Name  : Techno-Manager
         getUserMappingsList(loggedUserId);
@@ -277,10 +274,10 @@ function loadCurrentUserDetails() {
 
 //validate password
 function validateAuthentication() {
-    var password = CURRENTPASSWORD.val().trim();
+    var password = CURRENT_PASWORD.val().trim();
     if (password.length == 0) {
         displayMessage(message.password_required);
-        CURRENTPASSWORD.focus();
+        CURRENT_PASWORD.focus();
         return false;
     } else if (validateMaxLength('password', password, "Password") == false) {
         return false;
@@ -292,7 +289,7 @@ function validateAuthentication() {
             isAuthenticate = true;
             Custombox.close();
             displaySuccessMessage(message.password_authentication_success);
-            CURRENTPASSWORD.empty();
+            CURRENT_PASWORD.empty();
         } else {
             hideLoader();
             if (error == 'InvalidPassword') {
@@ -302,12 +299,12 @@ function validateAuthentication() {
     });
 }
 
-PASSWORDSUBMITBUTTON.click(function() {
+PASSWORD_SUBMIT_BUTTON.click(function() {
     validateAuthentication();
 });
 
 function confirm_alert(event) {
-    var groupId = GROUPID.val();
+    var groupId = GROUP_ID.val();
 
     swal({
         title: "Are you sure",
@@ -322,13 +319,13 @@ function confirm_alert(event) {
                 target: '#custom-modal-approve',
                 effect: 'contentscale',
                 complete: function() {
-                    CURRENTPASSWORD.focus();
+                    CURRENT_PASWORD.focus();
                     isAuthenticate = false;
                 },
                 close: function() {
                     if (isAuthenticate) {
-                        REMOVEUNITCSVID = $(event).attr("data-csv-id");
-                        removeClientUnitCsvData(REMOVEUNITCSVID, groupId);
+                        REMOVE_UNIT_CSV_ID = $(event).attr("data-csv-id");
+                        removeClientUnitCsvData(REMOVE_UNIT_CSV_ID, groupId);
                     }
                 }
             });
@@ -336,7 +333,7 @@ function confirm_alert(event) {
     })
 }
 
-function removeClientUnitCsvData(REMOVEUNITCSVID, groupId) {
+function removeClientUnitCsvData(REMOVE_UNIT_CSV_ID, groupId) {
     displayLoader();
 
     function onSuccess(data) {
@@ -359,11 +356,11 @@ function removeClientUnitCsvData(REMOVEUNITCSVID, groupId) {
             var clone4 = tblR4.clone();
             $('.tbl_norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
-            REPORTVIEW.show();
+            REPORT_VIEW.show();
             hideLoader();
         } else {
             hideLoader();
-            REPORTVIEW.show();
+            REPORT_VIEW.show();
             loadCountwiseResult(rejectedUnitData);
         }
         displaySuccessMessage(message.record_deleted);
@@ -376,7 +373,7 @@ function removeClientUnitCsvData(REMOVEUNITCSVID, groupId) {
     }
 
     filterdata = {
-        "csv_id": parseInt(REMOVEUNITCSVID),
+        "csv_id": parseInt(REMOVE_UNIT_CSV_ID),
         "bu_client_id": parseInt(groupId)
     };
 
@@ -393,7 +390,7 @@ function removeClientUnitCsvData(REMOVEUNITCSVID, groupId) {
 
 function downloadClick(csvId, event) {
     var downloadFileFormat = $(event).attr("data-format");
-    var grpId = GROUPID.val();
+    var grpId = GROUP_ID.val();
 
     displayLoader();
 
@@ -484,7 +481,7 @@ function rejectedFiles(event) {
 
 function resetFilter() {
     $('.tbody-usermappingdetails-list').empty();
-    REPORTVIEW.hide();
+    REPORT_VIEW.hide();
     $('.details').hide();
 }
 
@@ -503,7 +500,7 @@ window.onclick = function(event) {
 }
 
 $(function() {
-    REPORTVIEW.hide();
+    REPORT_VIEW.hide();
     initialize();
     fetchFiltersData();
     pageControls();
@@ -515,6 +512,6 @@ $(function() {
   $('#domainval').val("Industrial Law");
   $('#country').val(1);
   $('#domain').val(3);
-  SHOWBTN.click();
+  SHOW_BTN.click();
 }
 */
