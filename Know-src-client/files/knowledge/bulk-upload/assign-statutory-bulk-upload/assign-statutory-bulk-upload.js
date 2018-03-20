@@ -276,7 +276,7 @@ function pageControls() {
                     LengthErrorsCount.text("0");
                     InvalidErrorsCount.text("0");
                     $('.view-summary').hide();
-                    $('.invaliddata').hide();
+                    $('.dropbtn').hide();
                     displaySuccessMessage("Records uploaded successfully for approval");
                     GroupName.val('');
                     GroupId.val('');
@@ -308,7 +308,7 @@ function pageControls() {
                         LengthErrorsCount.text(data.max_length_error);
                         getInvaliddataCount = parseInt(data.invalid_char_error) + parseInt(data.invalid_data_error);
                         InvalidErrorsCount.text(getInvaliddataCount);
-                        $('.invaliddata').show();
+                        $('.dropbtn').show();
                         $('.view-summary').show();
                         
                         csv_path = "/invalid_file/csv/" + InvalidFileName[0] + '.csv';

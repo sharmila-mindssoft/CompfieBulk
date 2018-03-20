@@ -1359,13 +1359,24 @@ CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
 )
 BEGIN
 
-    select t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
+    select distinct t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
     (select distinct client_group from tbl_bulk_assign_statutory where csv_assign_statutory_id = t1.csv_assign_statutory_id) as client_group,
     (select count(0) from tbl_bulk_assign_statutory where csv_assign_statutory_id = t1.csv_assign_statutory_id) as total_count
     from tbl_bulk_assign_statutory_csv as t1
-    where t1.csv_assign_statutory_id = csvid;
+    inner join tbl_bulk_assign_statutory as t2 on
+    t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id where t1.csv_assign_statutory_id = csvid
+    and IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
+    and IF(unit_code IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_code), 1)
+    and IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
+    and IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
+    and IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
+    and IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
+    and IF(c_desc IS NOT NULL, t2.compliance_description = c_desc, 1)
+    and IF(view_data IS NOT NULL, t2.action = view_data, 1)
+    and IF(s_status IS NOT NULL, t2.statutory_applicable_status = s_status, 1)
+    and IF(c_status IS NOT NULL, t2.compliance_applicable_status = c_status, 1);
 
     select t2.bulk_assign_statutory_id,
     t2.unit_code, t2.unit_name, t2.unit_location,
@@ -1431,6 +1442,10 @@ userid INT
 )
 BEGIN
     IF action = 2 then
+        UPDATE tbl_bulk_assign_statutory SET
+        action = 2, remarks = _remarks
+        WHERE csv_assign_statutory_id = csvid;
+
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 2,
         rejected_reason = remarks, is_fully_rejected = 1,
@@ -1440,15 +1455,14 @@ BEGIN
         tbl_bulk_assign_statutory as t WHERE t.csv_assign_statutory_id = csvid)
         WHERE csv_assign_statutory_id = csvid;
     else
+        UPDATE tbl_bulk_assign_statutory SET
+        action = 1, remarks = _remarks
+        WHERE csv_assign_statutory_id = csvid;
+
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
         approved_by = userid, is_fully_rejected = 0
         WHERE csv_assign_statutory_id = csvid;
-    end if;
-
-    IF action = 3 then
-        UPDATE tbl_bulk_assign_statutory set action = 3;
-
     end if;
 END //
 
@@ -1718,6 +1732,25 @@ IN domain_ VARCHAR(50), unitcode_ VARCHAR(50)
 BEGIN
   select count(1) as count from tbl_download_assign_statutory_template where
     domain = domain_ and unit_code = unitcode_;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_as_validation_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_as_validation_info`(
+    IN csv_id INT(11)
+)
+BEGIN
+    select count(1) as rejected from tbl_bulk_assign_statutory
+    where action = 2 and csv_assign_statutory_id = csv_id;
+
+    select count(1) as un_saved from tbl_bulk_assign_statutory
+    where action is null and csv_assign_statutory_id = csv_id;
+
 END //
 
 DELIMITER ;

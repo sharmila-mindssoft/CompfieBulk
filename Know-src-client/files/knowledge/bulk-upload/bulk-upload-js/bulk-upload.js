@@ -572,3 +572,27 @@ function submitMappingAction(csvid, country_id, domain_id, pwd, callback){
   ];
   apiRequest("bu/statutory_mapping", request, callback);
 }
+
+function validateAssignStatutory(csvid, callback){
+  var request = [
+    'AssignStatutoryValidate',
+    {
+        "csv_id": csvid
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+
+function submitAssignStatutoryAction(csvid, cl_id, le_id, pwd, callback){
+  var request = [
+    'SubmitAssignStatutory',
+    {
+        "csv_id": csvid,
+        "cl_id": cl_id,
+        "le_id": le_id,
+        "password": pwd
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
