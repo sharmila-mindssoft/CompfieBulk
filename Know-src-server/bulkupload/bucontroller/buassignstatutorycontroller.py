@@ -563,7 +563,7 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
         #     session_user.user_id()
         # )
         cObj.source_commit()
-        return bu_as.SubmitStatutoryMappingSuccess(user_id)        
+        return bu_as.SubmitAssignStatutorySuccess()        
    
 def validate_assign_statutory(db, request_frame, session_user):
     csv_id = request_frame.csv_id

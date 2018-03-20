@@ -709,11 +709,11 @@ function validateAuthentication(id, passwordField, reasonField) {
       return false;
     }
   }
-
   displayLoader();
   bu.validateAssignStatutory(parseInt(id), function(error, res1) {
     hideLoader();
     Custombox.close();
+    // alert(" System rejected & un_saved_count details =====> "+res1.toSource());
     if (res1.rej_count == 0) {
       approveOrRejectAction(id, cl_id, le_id, action, reason, password);
     } else {
@@ -737,8 +737,8 @@ approveOrRejectAction = function(id, cl_id, le_id, action, reason, password) {
           confirm_alert(statusmsg, function(isConfirm) {
             if (isConfirm) {
               alert("Status change");
-              bu.submitAssignStatutoryAction(parseInt(id), parseInt(cl_id), 
-                parseInt(le_id), password, function(error, res3) {
+              bu.confirmAssignStatutoryUpdateAction(parseInt(id), parseInt(cl_id), 
+                parseInt(le_id), function(error, res3) {
                   if (error == null) {
                     if (action == 1)
                       displaySuccessMessage(message.assign_statutory_approved_success);
