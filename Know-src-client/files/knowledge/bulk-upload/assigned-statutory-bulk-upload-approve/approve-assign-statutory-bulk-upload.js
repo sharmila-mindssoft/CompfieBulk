@@ -713,7 +713,6 @@ function validateAuthentication(id, passwordField, reasonField) {
   bu.validateAssignStatutory(parseInt(id), function(error, res1) {
     hideLoader();
     Custombox.close();
-    // alert(" System rejected & un_saved_count details =====> "+res1.toSource());
     if (res1.rej_count == 0) {
       approveOrRejectAction(id, cl_id, le_id, action, reason, password);
     } else {
@@ -1021,7 +1020,6 @@ ApproveAssignStatutoryBulkUpload.prototype.loadFilterPage = function(id) {
   t_this = this;
   displayLoader();
   bu.getAssignStatutoryFilters(parseInt(id), function(error, response) {
-    // alert(response.toSource());
     if (error == null) {
       t_this._filter_domain = response.d_names;
       t_this._filter_unit = response.u_names;
@@ -1103,7 +1101,6 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
     parseInt(pageLimits), d_names, u_names, p_leg, s_leg, s_pro, c_task,
     c_des, v_data, s_status, c_status,
     function(error, response) {
-      // alert(response.toSource());
       clientGroupName.html(response.cl_name);
       legalEntityName.html(response.le_name);
       uploadedFileName.html(response.csv_name);
@@ -1175,20 +1172,16 @@ ApproveAssignStatutoryBulkUpload.prototype.submitProcess = function() {
       bu.submitAssignStatutoryAction(parseInt(csvid), 1, 1, "pass@123",
         function(error, response) {
           if (error == null) {
-            alert(response.toSource());
-            if (res2.hasOwnProperty("rej_count")) {
-              var statusmsg = res2.rej_count+' '+message.sys_rejected_confirm;
+            if (response.hasOwnProperty("rej_count")) {
+              var statusmsg = response.rej_count+' '+message.sys_rejected_confirm;
               confirm_alert(statusmsg, function(isConfirm) {
                 if (isConfirm) {
-                  alert("Status change");
                   bu.confirmAssignStatutoryUpdateAction(parseInt(csvid), parseInt(cl_id), 
                     parseInt(le_id), function(error, res3) {
                       if (error == null) {
-                        if (action == 1)
-                          displaySuccessMessage(message.assign_statutory_approved_success);
-                        else
-                          displaySuccessMessage(message.assign_statutory_rejected_success);
-                        REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
+                        displaySuccessMessage(message.assign_statutory_submit_success);
+                        // REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
+                        REPORT.pageLoad();
                       } else {
                         REPORT.possibleFailures(error);
                         hideLoader();
@@ -1197,11 +1190,8 @@ ApproveAssignStatutoryBulkUpload.prototype.submitProcess = function() {
                 }
               });
             } else {
-              if (action == 1)
-                displaySuccessMessage(message.assign_statutory_approved_success);
-              else
-                displaySuccessMessage(message.assign_statutory_rejected_success);
-              REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
+              displaySuccessMessage(message.assign_statutory_submit_success);
+              REPORT.pageLoad();
             }
           } else {
             t_this.possibleFailures(error);
