@@ -8,7 +8,8 @@ from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 from ..budatabase.buassignstatutorydb import *
 from ..bulkuploadcommon import (
     convert_base64_to_file,
-    read_data_from_csv
+    read_data_from_csv,
+    generate_valid_file
 )
 from ..bulkexport import ConvertJsonToCSV
 from server.constants import BULKUPLOAD_CSV_PATH
@@ -199,7 +200,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
         res_data = cObj.perform_validation()
 
         if res_data["return_status"] is True :
-
+            generate_valid_file(csv_name)
             d_ids = ",".join(str(e) for e in request_frame.d_ids)
             d_names = ",".join(str(e) for e in request_frame.d_names)
 
