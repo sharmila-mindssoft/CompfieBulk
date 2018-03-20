@@ -1171,19 +1171,44 @@ ApproveAssignStatutoryBulkUpload.prototype.submitProcess = function() {
       displayMessage(message.un_saved_compliance);
       hideLoader();
     } else {
-      bu.confirmAssignStatutoryUpdateAction(parseInt(csvid), parseInt(cl_id),
-        parseInt(le_id),
+
+      bu.submitAssignStatutoryAction(parseInt(csvid), 1, 1, "pass@123",
         function(error, response) {
           if (error == null) {
-            displaySuccessMessage(message.assign_statutory_submit_success);
-            REPORT.pageLoad();
-            PageControls();
-            hideLoader();
+            alert(response.toSource());
+            if (res2.hasOwnProperty("rej_count")) {
+              var statusmsg = res2.rej_count+' '+message.sys_rejected_confirm;
+              confirm_alert(statusmsg, function(isConfirm) {
+                if (isConfirm) {
+                  alert("Status change");
+                  bu.confirmAssignStatutoryUpdateAction(parseInt(csvid), parseInt(cl_id), 
+                    parseInt(le_id), function(error, res3) {
+                      if (error == null) {
+                        if (action == 1)
+                          displaySuccessMessage(message.assign_statutory_approved_success);
+                        else
+                          displaySuccessMessage(message.assign_statutory_rejected_success);
+                        REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
+                      } else {
+                        REPORT.possibleFailures(error);
+                        hideLoader();
+                      }
+                  });
+                }
+              });
+            } else {
+              if (action == 1)
+                displaySuccessMessage(message.assign_statutory_approved_success);
+              else
+                displaySuccessMessage(message.assign_statutory_rejected_success);
+              REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
+            }
           } else {
             t_this.possibleFailures(error);
             hideLoader();
           }
         });
+
     }
   });
 }
@@ -1194,7 +1219,7 @@ $(document).ready(function() {
   REPORT.pageLoad();
   PageControls();
   loadItemsPerPage();
-  // goToDetailsPage(33);
+  // goToDetailsPage(38);
   // listView.show();
   // REPORT.fetchStatutoryValues(1,1);
 
