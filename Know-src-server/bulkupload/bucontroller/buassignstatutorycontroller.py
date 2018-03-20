@@ -140,8 +140,8 @@ def get_download_assing_statutory(db, request_frame, session_user):
     d_names = request_frame.d_names
     u_names = request_frame.u_names
 
-    res = get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, session_user)    
-    
+    res = get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, session_user)
+
     converter = ConvertJsonToCSV(
             db, request_frame, session_user, "DownloadAssignStatutory"
         )

@@ -156,7 +156,7 @@ bu_api_params = {
 
     'bu_legal_entity_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'bu_unit_id': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'assign_statutory_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "StatutoryReportData"},
+    'assign_statutory_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "AssignStatutoryReportData"},
 
     'rejected_unit_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "ClientUnitRejectData"},
     'updated_unit_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "UpdateUnitDownloadCount"},
@@ -181,7 +181,7 @@ bu_api_params = {
     'asm_unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'asm_updated_count': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "ASMRejectUpdateDownloadCount"},
     'csv_name_text': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'rejected_reason': {'type': 'STRING', 'length': 500, 'validation_method': is_alphabet, 'is_optional': True},
+    'rejected_reason': {'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
 
     "c_names": {'type': 'VECTOR_TYPE_SRTING', 'length': 100,
                 'validation_method': is_alpha_numeric, 'is_optional': True},
