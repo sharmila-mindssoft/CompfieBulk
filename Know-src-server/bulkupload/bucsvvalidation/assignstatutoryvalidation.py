@@ -10,6 +10,11 @@ from server.constants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
 
 )
+from server.database.forms import (
+    frmAssignStatutoryBulkUpload,
+    frmApproveAssignStatutoryBulkUpload
+)
+
 from keyvalidationsettings import csv_params, parse_csv_dictionary_values, csv_params_as, parse_csv_dictionary_values_as
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type
@@ -322,6 +327,53 @@ class SourceDB(object):
         else:
             return True
 
+    # def save_executive_message(
+    #     self, csv_name, countryname, domainname, createdby
+    # ):
+
+    #     text = "Assign statutory file %s of %s - %s uploaded for your %s" % (
+    #             csv_name, countryname, domainname, 'approval'
+    #         )
+    #     link = "/knowledge/approve-assign-statutory-bu"
+    #     save_messages(
+    #         self._source_db, 3, "Assign Statutory Bulk Upload",
+    #         text, link, createdby
+    #     )
+
+    #     action = "Statutory mapping csv file uploaded %s of %s - %s" % (
+    #         csv_name, countryname, domainname
+    #     )
+    #     if csv_name and countryname and domainname:
+    #         self._source_db.save_activity(
+    #             createdby, frmStatutoryMappingBulkUpload, action
+    #         )
+
+    # def save_manager_message(
+    #     self, a_type, csv_name, domainname, unitname, createdby
+    # ):
+    #     if a_type == 1:
+    #         action_type = "approved"
+
+    #     else:
+    #         action_type = "rejected"
+
+    #     text = "Assign statutory file %s of %s - %s has been %s" % (
+    #             csv_name, domainname, unitname, action_type
+    #         )
+    #     link = "/knowledge/assign-statutory-bu"
+    #     save_messages(
+    #         self._source_db, 4, "Approve Assign Statutory Bulk Upload",
+    #         text, link, createdby
+    #     )
+
+    #     action = "Statutory mapping file  %s of %s - %s has been %s" % (
+    #         csv_name, countryname, domainname, action_type
+    #     )
+    #     if csv_name and countryname and domainname:
+    #         self._source_db.save_activity(
+    #             createdby, frmApproveStatutoryMappingBulkUpload, action
+    #         )
+
     def source_commit(self):
         self._source_db.commit()
         
@@ -614,24 +666,17 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
                             if isFound is not True and isFound != "" :
                                 declined_count += 1
-
-            # if not self.check_compliance_task_name_duplicate(
-            #     self._country_id, self._domain_id, data.get("Statutory"),
-            #     data.get("Statutory_Provision"), data.get("Compliance_Task")
-            # ) :
-            #     print "compliance task name dulicate"
-            #     declined_count += 1
-
-            # if not self.check_task_id_duplicate(
-            #     self._country_id, self._domain_id, data.get("Statutory"),
-            #     data.get("Statutory_Provision"), data.get("Compliance_Task"),
-            #     data.get("Task_ID")
-            # ):
-            #     print "Task id duplicate"
-            #     declined_count += 1
+            
+            if not self.check_compliance_task_name_duplicate_in_knowledge(
+                data.get("Domain"), data.get("Unit_Code"),
+                data.get("Statutory_Provision"), data.get("Compliance_Task"),
+                data.get("Compliance_Description"),
+            ) :
+                declined_count += 1
 
             if declined_count > 0 :
                 self._declined_row_idx.append(data.get("bulk_assign_statutory_id"))
+        
         return self._declined_row_idx
 
     def frame_data_for_main_db_insert(self, user_id):
