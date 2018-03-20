@@ -15,8 +15,7 @@ from server.database.forms import (
     frmApproveAssignStatutoryBulkUpload
 )
 
-from keyvalidationsettings import csv_params, parse_csv_dictionary_values, 
-csv_params_as, parse_csv_dictionary_values_as
+from keyvalidationsettings import csv_params, parse_csv_dictionary_values, csv_params_as, parse_csv_dictionary_values_as
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type
 )
@@ -699,7 +698,6 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 data.get("Compliance_Description"),
             ) :
                 declined_count += 1
-
             if declined_count > 0 :
                 self._declined_row_idx.append(data.get("bulk_assign_statutory_id"))
         
