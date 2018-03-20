@@ -29,15 +29,16 @@ var REPORTVIEW = $('.grid-table-rpt');
 // Instance Creation of the page class
 var clientUnitBulkReport = new ClientUnitBulkReport();
 
-function ClientUnitBulkReport() {
-}
+function ClientUnitBulkReport() {}
 
+// Pagination Data 
 function pageData(onCurrentPage) {
     data = [];
     PAGELIMIT = parseInt(ITEMSPERPAGE.val());
     recordLength = (parseInt(onCurrentPage) * PAGELIMIT);
     var showFrom = SNO + 1;
     var isNull = true;
+    var i = 0;
     for (i = SNO; i < mappedUserList.length; i++) {
         isNull = false;
         data.push(mappedUserList[i]);
@@ -56,19 +57,22 @@ function pageData(onCurrentPage) {
     return data;
 }
 
+// Show Pagination Pane
 function showPagePan(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom;
-        showText += ' to ' + showTo + ' of '; 
-        showText += total + ' entries ';
+    showText += ' to ' + showTo + ' of ';
+    showText += total + ' entries ';
     UNITSCOUNT.text(showText);
     PAGINATIONVIEW.show();
 }
 
+//Hide Pagination Pane
 function hidePagePan() {
     UNITSCOUNT.text('');
     PAGINATIONVIEW.hide();
 }
 
+// To Create Pagination View
 function createPageView(totalRecords) {
     perPage = parseInt(ITEMSPERPAGE.val());
     PAGINATION.empty();
@@ -88,12 +92,14 @@ function createPageView(totalRecords) {
     });
 };
 
+// Reset Common Fields
 function resetFields() {
     $('#group-id').val('');
     $('#legalentityid').val('');
     $('#unitid').val('');
 }
 
+// Pagination Processing
 function processPaging() {
     PAGELIMIT = parseInt(ITEMSPERPAGE.val());
     showFrom = SNO + 1;
@@ -103,13 +109,13 @@ function processPaging() {
         SNO = (ONCURRENTPAGE - 1) * PAGELIMIT;
     }
     SNO = SNO;
-    
+
     if (TOTALRECORD == 0) {
         /*loadHeader();*/
         hideLoader();
         $('.tbody-usermappingdetails-list').empty();
         var tableRow4 = $('#no-record-templates .table-no-content ' +
-                          ' .table-row-no-content');
+            ' .table-row-no-content');
         var clone4 = tableRow4.clone();
         $('.tbl-norecords', clone4).text('No Records Found');
         $('.tbody-usermappingdetails-list').append(clone4);
@@ -129,7 +135,7 @@ function processPaging() {
     }
 }
 
-// get statutory mapping report data from api
+// Get Client Unit report data from api
 function processSubmit() {
     var clientGroup = parseInt(GROUPID.val());
     var teIds = TENAME.val();
@@ -171,19 +177,20 @@ function processSubmit() {
         $('#mapping_animation')
             .removeClass()
             .addClass('bounceInLeft animated')
-            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd '+
-                'oanimationend animationend', function() {
-                $(this).removeClass();
-                $(this).show();
-            });
+            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd ' +
+                'oanimationend animationend',
+                function() {
+                    $(this).removeClass();
+                    $(this).show();
+                });
         SNO = SNO;
         CLIENTUNITDATA = data.clientdata;
         TOTALRECORD = data.total;
         hideLoader();
         if (TOTALRECORD == 0) {
             $('.tbody-compliance').empty();
-            var tableRow4 = $('#nocompliance-templates '+
-                              '.table-nocompliances-list .table-row');
+            var tableRow4 = $('#nocompliance-templates ' +
+                '.table-nocompliances-list .table-row');
             var clone4 = tableRow4.clone();
             $('.tbl-norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
@@ -216,6 +223,7 @@ function processSubmit() {
     //}
 }
 
+// Handle All Page Controls like Button submit
 function PageControls() {
     GROUPNAME.keyup(function(e) {
         var textval = $(this).val();
@@ -234,12 +242,13 @@ function PageControls() {
                 clientUnitBulkReport.fetchData();
                 clientUnitBulkReport.renderPageControls();*/
             $('#mapping_animation')
-            .removeClass()
-            .addClass('bounceInLeft animated')
-            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd '+
-                'oanimationend animationend', function() {
-                    $(this).removeClass();
-            });
+                .removeClass()
+                .addClass('bounceInLeft animated')
+                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd ' +
+                    'oanimationend animationend',
+                    function() {
+                        $(this).removeClass();
+                    });
             ONCURRENTPAGE = 1;
             /*$('.country').text("Country: " + Country.val());
             $('.domain').text("Domain: " + Domain.val());*/
@@ -262,6 +271,7 @@ function PageControls() {
     });
 }
 
+//
 function fetchFiltersData() {
     displayLoader();
     mirror.getClientLoginTraceFilter(
@@ -280,6 +290,7 @@ function fetchFiltersData() {
     );
 }
 
+// Loading Page according to Current User ie., Techno exec or Techno Manager 
 function loadCurrentUserDetails() {
     var user = mirror.getUserInfo();
     var loggedUserId = 0;
@@ -293,9 +304,11 @@ function loadCurrentUserDetails() {
     if (USERCATEGORYID == 6) {
         // TE-Name  : Techno-Executive 
         $('.active-techno-executive').attr('style', 'display:block');
-        $('#techno-name').text(user.employee_code + " - " + user.employee_name.toUpperCase());
+        $('#techno-name').text(user.employee_code + " - " + 
+                               user.employee_name.toUpperCase());
         EXISTINGUSERID.push(loggedUserId);
-    } else if (USERCATEGORYID == 5 && USERCATEGORYID != 6 && loggedUserId > 0) {
+    } else if (USERCATEGORYID == 5 && USERCATEGORYID != 6 
+                                   && loggedUserId > 0) {
         // TE-Name  : Techno-Manager 
         getUserMappingsList(loggedUserId);
     }
@@ -312,9 +325,8 @@ function getUserMappingsList(loggedUserId) {
         var d;
         $.each(userMappingData.user_mappings, function(key, value) {
             if (loggedUserId == value.parent_user_id) {
-                console.log("value.child_user_id-> " + value.child_user_id);
-                console.log("inaary-> " + jQuery.inArray(value.child_user_id, TECHNOEXECUTIVES));
-                if (jQuery.inArray(value.child_user_id, TECHNOEXECUTIVES) == -1) {
+                var childUserId = value.parent_user_id
+                if (jQuery.inArray(childUserId, TECHNOEXECUTIVES) == -1) {
                     console.log("inif");
                     TECHNOEXECUTIVES.push(value.child_user_id);
                     childUsersDetails(loggedUserId, value.child_user_id)
@@ -330,7 +342,8 @@ function getUserMappingsList(loggedUserId) {
                     value["is_active"] == true) {
                     var option = $('<option></option>');
                     option.val(value["user_id"]);
-                    option.text(value["employee_code"] + " - " + value["employee_name"]);
+                    option.text(value["employee_code"] + " - " +
+                        value["employee_name"]);
                     console.log(option)
                     $('#tename-tmanager').append(option);
                     EXISTINGUSERID.push(parseInt(child_user_id));
@@ -353,7 +366,7 @@ function getUserMappingsList(loggedUserId) {
     });
 }
 
-//callback for autocomplete success
+//Callback for autocomplete success
 function onAutoCompleteSuccess(valueElement, idElement, val) {
     valueElement.val(val[1]);
     idElement.val(val[0]);
@@ -365,7 +378,7 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
     // }
 }
 
-//get client unit bulk report filter details from api
+//To get the client unit bulk report filter details from api
 function getClientUnits() {
     function onSuccess(data) {
         ALLUSERINFO = data.user_details;
@@ -386,7 +399,7 @@ function getClientUnits() {
     });
 }
 
-// Fields Manadory validation 
+// Fields mandatory validation 
 ClientUnitBulkReport.prototype.validateMandatory = function() {
     var isValid = true;
     if (GROUPID.val().trim() == '' || GROUPID.val().trim() == null) {
@@ -414,7 +427,7 @@ ClientUnitBulkReport.prototype.getValue = function(fieldName, fId) {
     }
 };
 
-//display client unit bulk upload details according to count
+//Display client unit bulk upload details according to count
 function loadCountwiseResult(filterList) {
     $('.tbody-compliance').empty();
     lastActName = '';
@@ -452,15 +465,15 @@ function loadCountwiseResult(filterList) {
         }
         var occurance = '';
         var occuranceid;
-        var tableRow1 = $('#act-templates .table-act-list .table-row-act-list');
-        var clone1 = tableRow1.clone();
+        var tblRow1 = $('#act-templates .table-act-list .table-row-act-list');
+        var clone1 = tblRow1.clone();
         $('.tbl_sno', clone1).text(SNO);
         $('.tbl_uploaded_file_name', clone1).text(csvName);
         $(".tbl_uploaded_by", clone1).text(uploadedBy);
         $('.tbl_uploaded_on', clone1).text(uploadedOn);
         $('.tbl_no_of_tasks', clone1).text(tblNoOfTasks);
         $('.tbl_approved_rejected_tasks', clone1)
-                        .text(approve_status + " / " + totalRejectedRecords);
+            .text(approve_status + " / " + totalRejectedRecords);
         $('.tbl_approved_rejected_on', clone1).text(rejectedOn);
         $('.tbl_approved_rejected_by', clone1).text(rejectedBy);
         $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
