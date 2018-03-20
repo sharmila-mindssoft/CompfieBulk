@@ -33,6 +33,7 @@ var COMPLIANCE_COUNT = 0;
 var DENAME=$('#dename-dmanager');
 var ON_CURRENT_PAGE = 1;
 var SNO = 0;
+
 var _page_limit = 25;
 
 
@@ -660,7 +661,7 @@ AssignStatutoryBulkReport.prototype.validateMandatory = function()
 
     if (Group.val().trim().length == 0)
     {
-        displayMessage(message.usergroup_required);
+        displayMessage(message.clientgroup_required);
         is_valid = false;
     }
     else if (LegalEntity.val().trim().length == 0)
@@ -889,8 +890,10 @@ function loadCountwiseResult(filterList) {
     for (var entity in filterList) {
 
         is_null = false;
+
         SNO = parseInt(SNO) + 1;
         
+
         var domain = filterList[entity].domain;
         //alert(domain);
         var csv_name = filterList[entity].csv_name;
@@ -901,7 +904,16 @@ function loadCountwiseResult(filterList) {
         var rejected_on = filterList[entity].rejected_on;
         var rejected_by = filterList[entity].rejected_by;
         var reason_for_rejection = filterList[entity].is_fully_rejected;
-        var approve_status = filterList[entity].approve_status;
+        var total_approve_records = filterList[entity].total_approve_records;
+        var rejected_reason = filterList[entity].rejected_reason;
+        var domain_name = filterList[entity].domain_name;
+        var approved_on = filterList[entity].approved_on;
+        var approved_by = filterList[entity].approved_by;
+        approved_rejected_on = '';
+        approved_rejected_by = '';
+        approved_rejected_tasks = '-';
+
+
 
 
         $(ALLUSERINFO).each(function(key,value)
@@ -918,18 +930,34 @@ function loadCountwiseResult(filterList) {
                 EmpName = value["employee_name"];
                 rejected_by=EmpCode+" - "+ EmpName.toUpperCase();
             }
+            else if(parseInt(approved_by)==value["user_id"])
+            {
+                EmpCode = value["employee_code"];
+                EmpName = value["employee_name"];
+                approved_by=EmpCode+" - "+ EmpName.toUpperCase();
+            }
         });
 
-        if(parseInt(reason_for_rejection)==1){
-            reason_for_rejection="Fully Rejected";
+        if (parseInt(reason_for_rejection) == 1) {
+            reason_for_rejection = rejected_reason;
+        } else {
+            reason_for_rejection = "";
+            approved_rejected_tasks =  total_approve_records;
+            approved_rejected_tasks += " / ";
+            approved_rejected_tasks += total_rejected_records;
         }
-        else{
-            reason_for_rejection="- -";
+
+        if (String(approved_on) != null && String(approved_on) != '') {
+            approved_rejected_on = approved_on;
+            approved_rejected_by = approved_by;
+        }
+        else if (String(rejected_on) != null && String(rejected_on) != '') {
+            approved_rejected_on = rejected_on;
+            approved_rejected_by = rejected_by;
         }
 
         var occurance = '';
         var occuranceid;
-
         var tableRow1 = $('#act-templates .table-act-list .table-row-act-list');
         var clone1 = tableRow1.clone();
 
@@ -938,15 +966,12 @@ function loadCountwiseResult(filterList) {
         $(".tbl_uploaded_by", clone1).text(uploaded_by);
         $('.tbl_uploaded_on', clone1).text(uploaded_on);
         $('.tbl_no_of_tasks', clone1).text(tbl_no_of_tasks);
-        $('.tbl_approved_rejected_tasks', clone1).text(approve_status+" / "+total_rejected_records);
-        $('.tbl_approved_rejected_on', clone1).text(rejected_on);
-        $('.tbl_approved_rejected_by', clone1).text(rejected_by);
+        $('.tbl_approved_rejected_tasks', clone1).text(approved_rejected_tasks);
+        $('.tbl_approved_rejected_on', clone1).text(approved_rejected_on);
+        $('.tbl_approved_rejected_by', clone1).text(approved_rejected_by);
         $('.tbl_reason_for_rejection', clone1).text(reason_for_rejection);
-        $('.tbl_domain', clone1).text(domain);
+        $('.tbl_domain', clone1).text(domain_name);
         $('#datatable-responsive .tbody-compliance').append(clone1);
-
-        COMPLIANCE_COUNT = COMPLIANCE_COUNT + 1;
-        //lastActName = country_name;
     }
 
     if (is_null == true) {

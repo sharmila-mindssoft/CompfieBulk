@@ -28,7 +28,8 @@ __all__ = [
     "fetch_assigned_statutory_bulk_report",
     "fetch_rejected_asm_download_csv_report",
     "get_asm_csv_file_name_by_id",
-    "save_action_from_view"
+    "save_action_from_view",
+    "get_validation_info"
     ]
 
 ########################################################
@@ -473,7 +474,7 @@ def fetch_rejected_assign_sm_data(db, session_user, user_id, client_id,
              str(uploaded_on),
              str(d["csv_name"]),
              int(d["total_records"]),
-             int(d["total_rejected_records"]),
+             d["total_rejected_records"] if d["total_rejected_records"] is not None else 0,
              d["approved_by"],
              d["rejected_by"],
              str(approved_on),
@@ -540,52 +541,62 @@ def convertArrayToString(array_ids):
 '''
 ########################################################
 
+
 def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
-    clientGroupId, legalEntityId, unitId, domainIds, from_date, to_date,
-    record_count, page_count, child_ids, user_category_id):
-    reportdatalist=[]
-    expected_result=2
-    domain_ids=''
+                                         clientGroupId, legalEntityId, unitId,
+                                         domainIds, from_date, to_date,
+                                         record_count, page_count, child_ids,
+                                         user_category_id):
+    reportdatalist = []
+    expected_result = 2
+    domain_ids = ''
 
     if(domainIds is not None):
-        domain_ids=convertArrayToString(domainIds)
+        domain_ids = convertArrayToString(domainIds)
+    if(unitId is None):
+        unitId = ''
 
-    if(len(child_ids)>0):
-        if(user_category_id==7):
-            user_ids=convertArrayToString(child_ids)
-        elif(user_category_id==8 and user_category_id!=7):
-            user_ids=convertArrayToString(child_ids)
+    if(len(child_ids) > 0):
+        if(user_category_id == 7):
+            user_ids = convertArrayToString(child_ids)
+        elif(user_category_id == 8 and user_category_id != 7):
+            user_ids = convertArrayToString(child_ids)
         else:
-            user_ids=user_id
+            user_ids = user_id
 
-    args = [clientGroupId, legalEntityId, unitId, from_date, to_date, record_count, page_count, str(user_ids), domain_ids]
-    data = db.call_proc_with_multiresult_set('sp_assgined_statutory_bulk_reportdata', args, expected_result)
-    print ">>>>"
-    print data
-    if data is not None:
-        reportdata=data[0]
-        total_record=data[1][0]["total"]
+    args = [clientGroupId, legalEntityId, unitId, from_date, to_date,
+            record_count, page_count, str(user_ids), domain_ids]
 
-        approved_on=''
-        uploaded_on=''
-        rejected_on=''
+    procedure = 'sp_assgined_statutory_bulk_reportdata'
+    data = db.call_proc_with_multiresult_set(procedure, args, expected_result)
 
-
+    if(data):
+        reportdata = data[0]
+        total_record = data[1][0]["total"]
+        approved_on = ''
+        uploaded_on = ''
+        rejected_on = ''
         for d in reportdata:
 
-            if(d["uploaded_on"]!=''):
+            if(d["uploaded_on"] != ''):
                 uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+                                                         '%Y-%m-%d %H:%M:%S'
+                                                         ).strftime(
+                                                         '%d-%b-%Y %H:%M')
 
             if(d["approved_on"] is not None):
                 approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+                                                         '%Y-%m-%d %H:%M:%S'
+                                                         ).strftime(
+                                                         '%d-%b-%Y %H:%M')
 
             if(d["rejected_on"] is not None):
                 rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+                                                         '%Y-%m-%d %H:%M:%S'
+                                                         ).strftime(
+                                                         '%d-%b-%Y %H:%M')
 
-            reportdatalist.append(bu_as.StatutoryReportData(
+            reportdatalist.append(bu_as.AssignStatutoryReportData(
                  int(d["uploaded_by"]),
                  uploaded_on,
                  str(d["csv_name"]),
@@ -595,12 +606,13 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
                  d["rejected_by"],
                  approved_on,
                  rejected_on,
-                 d["is_fully_rejected"],
-                 d["approve_status"]
+                 d["is_fully_rejected"] if d["is_fully_rejected"] is not None else 0,
+                 d["total_approve_records"] if d["total_approve_records"] is not None else 0,
+                 d["rejected_reason"],
+                 d["domain_names"],
             ))
     else:
-        reportdata=[]
-        total_record=0
+        total_record = 0
 
     return reportdatalist, total_record
 
@@ -672,3 +684,13 @@ def save_action_from_view(db, csv_id, as_id, action, remarks, session_user):
         logger.logKnowledge("error", "update action from view", str(traceback.format_exc()))
         logger.logKnowledge("error", "update action from view", str(e))
         raise fetch_error()
+
+def get_validation_info(db, csv_id):
+
+    rej_count = []
+    un_saved_count = []
+    result = db.call_proc_with_multiresult_set("sp_as_validation_info", [csv_id], 2)
+    rej_count = result[0][0]["rejected"]
+    un_saved_count = result[1][0]["un_saved"]
+
+    return rej_count, un_saved_count
