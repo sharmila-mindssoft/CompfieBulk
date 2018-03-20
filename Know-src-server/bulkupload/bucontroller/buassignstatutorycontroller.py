@@ -517,6 +517,7 @@ def submit_assign_statutory(db, request_frame, session_user):
         csv_id = request_frame.csv_id
         client_id = request_frame.cl_id
         legal_entity_id = request_frame.le_id
+        user_id = session_user.user_id()
         # csv data validation
 
         approved_count, un_saved_count = get_validation_info(db, csv_id)
@@ -536,7 +537,7 @@ def submit_assign_statutory(db, request_frame, session_user):
             #     1, cObj._csv_name, cObj._country_name, cObj._domain_name,
             #     session_user.user_id()
             # )
-            cObj.frame_data_for_main_db_insert()
+            cObj.frame_data_for_main_db_insert(user_id)
             cObj.source_commit()
             update_approve_action_from_list(db, csv_id, 1, None, session_user)
             return bu_as.SubmitAssignStatutorySuccess()
