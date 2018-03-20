@@ -58,7 +58,7 @@ function pageData(onCurrentPage) {
 
 function showPagePan(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom;
-        showText += ' to ' + showTo + ' of '; 
+        showText += ' to ' + showTo + ' of ';
         showText += total + ' entries ';
     UNITSCOUNT.text(showText);
     PAGINATIONVIEW.show();
@@ -103,7 +103,7 @@ function processPaging() {
         SNO = (ONCURRENTPAGE - 1) * PAGELIMIT;
     }
     SNO = SNO;
-    
+
     if (TOTALRECORD == 0) {
         /*loadHeader();*/
         hideLoader();
@@ -291,12 +291,12 @@ function loadCurrentUserDetails() {
         }
     });
     if (USERCATEGORYID == 6) {
-        // TE-Name  : Techno-Executive 
+        // TE-Name  : Techno-Executive
         $('.active-techno-executive').attr('style', 'display:block');
         $('#techno-name').text(user.employee_code + " - " + user.employee_name.toUpperCase());
         EXISTINGUSERID.push(loggedUserId);
     } else if (USERCATEGORYID == 5 && USERCATEGORYID != 6 && loggedUserId > 0) {
-        // TE-Name  : Techno-Manager 
+        // TE-Name  : Techno-Manager
         getUserMappingsList(loggedUserId);
     }
 }
@@ -386,7 +386,7 @@ function getClientUnits() {
     });
 }
 
-// Fields Manadory validation 
+// Fields Manadory validation
 ClientUnitBulkReport.prototype.validateMandatory = function() {
     var isValid = true;
     if (GROUPID.val().trim() == '' || GROUPID.val().trim() == null) {
