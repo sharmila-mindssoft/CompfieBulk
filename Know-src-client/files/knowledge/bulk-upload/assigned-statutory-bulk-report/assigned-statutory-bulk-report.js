@@ -925,6 +925,12 @@ function loadCountwiseResult(filterList) {
                 EmpName = value["employee_name"];
                 rejected_by=EmpCode+" - "+ EmpName.toUpperCase();
             }
+            else if(parseInt(approved_by)==value["user_id"])
+            {
+                EmpCode = value["employee_code"];
+                EmpName = value["employee_name"];
+                approved_by=EmpCode+" - "+ EmpName.toUpperCase();
+            }
         });
 
         if (parseInt(reason_for_rejection) == 1) {
@@ -935,18 +941,18 @@ function loadCountwiseResult(filterList) {
             approved_rejected_tasks += " / ";
             approved_rejected_tasks += total_rejected_records;
         }
-        if (String(approved_on) != "null" || String(approved_on) != "") {
+
+        if (String(approved_on) != null && String(approved_on) != '') {
             approved_rejected_on = approved_on;
             approved_rejected_by = approved_by;
         }
-        if (String(rejected_on) != "null" || String(rejected_on) != "") {
+        else if (String(rejected_on) != null && String(rejected_on) != '') {
             approved_rejected_on = rejected_on;
             approved_rejected_by = rejected_by;
         }
 
         var occurance = '';
         var occuranceid;
-
         var tableRow1 = $('#act-templates .table-act-list .table-row-act-list');
         var clone1 = tableRow1.clone();
 

@@ -90,7 +90,7 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.AssignStatutoryValidate:
         result = validate_assign_statutory(db, request_frame, session_user)
 
-        
+
     return result
 
 ########################################################
@@ -225,7 +225,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
                 res_data["invalid_char_error"], res_data["invalid_data_error"],
                 res_data["inactive_error"], res_data["total"], res_data["invalid"]
             )
-        
+
         return result
 
     except Exception, e:
@@ -412,7 +412,8 @@ def get_rejected_assign_sm_data(db, request_frame, session_user):
         request_frame: Object
         session_user: Object
     :returns
-        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+        result: returns processed api response
+        GetApproveStatutoryMappingListSuccess class Object
     rtype:
         result: Object
 '''
@@ -431,16 +432,16 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     page_count = request_frame.p_count
     child_ids = request_frame.child_ids
     user_category_id = request_frame.user_category_id
-    user_id = session_user.user_id()
 
     from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
     to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
-    asm_reportdata, total_record = fetch_assigned_statutory_bulk_report(db,
-            session_user, session_user.user_id(), clientGroupId, legalEntityId, unitId,
-    domainIds, from_date, to_date,
-    record_count, page_count, child_ids, user_category_id)
+    asm_reportdata, total_record = fetch_assigned_statutory_bulk_report(
+        db, session_user, session_user.user_id(), clientGroupId, legalEntityId,
+        unitId, domainIds, from_date, to_date, record_count, page_count,
+        child_ids, user_category_id)
 
-    result = bu_as.GetAssignedStatutoryReportDataSuccess(asm_reportdata,total_record)
+    result = bu_as.GetAssignedStatutoryReportDataSuccess(asm_reportdata,
+                                                         total_record)
     return result
 
 ########################################################
@@ -563,8 +564,8 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
         #     session_user.user_id()
         # )
         cObj.source_commit()
-        return bu_as.SubmitStatutoryMappingSuccess(user_id)        
-   
+        return bu_as.SubmitStatutoryMappingSuccess(user_id)
+
 def validate_assign_statutory(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     approved_count, un_saved_count = get_validation_info(db, csv_id)
