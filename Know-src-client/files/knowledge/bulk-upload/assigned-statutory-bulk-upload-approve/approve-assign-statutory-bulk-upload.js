@@ -729,14 +729,27 @@ function validateAuthentication(id, passwordField, reasonField) {
 
 approveOrRejectAction = function(id, cl_id, le_id, action, reason, password) {
   bu.assignStatutoryActionInList(parseInt(cl_id), parseInt(le_id), parseInt(id),
-    parseInt(action), reason, password, function(error, res2) {
-      console.log(error, res2);
-      if (error == null) {
+    parseInt(action), reason, password, function(err1, res2) {
+      console.log(err1, res2);
+      if (err1 == null) {
         if (res2.hasOwnProperty("rej_count")) {
           var statusmsg = res2.rej_count+' '+message.sys_rejected_confirm;
           confirm_alert(statusmsg, function(isConfirm) {
             if (isConfirm) {
               alert("Status change");
+              bu.submitAssignStatutoryAction(parseInt(id), parseInt(cl_id), 
+                parseInt(le_id), password, function(error, res3) {
+                  if (error == null) {
+                    if (action == 1)
+                      displaySuccessMessage(message.assign_statutory_approved_success);
+                    else
+                      displaySuccessMessage(message.assign_statutory_rejected_success);
+                    REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
+                  } else {
+                    REPORT.possibleFailures(error);
+                    hideLoader();
+                  }
+              });
             }
           });
         } else {
@@ -747,7 +760,7 @@ approveOrRejectAction = function(id, cl_id, le_id, action, reason, password) {
           REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
         }
       } else {
-        REPORT.possibleFailures(error);
+        REPORT.possibleFailures(err1);
         hideLoader();
       }
     });

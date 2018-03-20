@@ -1,3 +1,4 @@
+import traceback
 from ..bucsvvalidation.assignstatutoryvalidation import (
     ValidateAssignStatutoryCsvData, ValidateAssignStatutoryForApprove
     )
@@ -13,7 +14,6 @@ from ..bulkexport import ConvertJsonToCSV
 from server.constants import BULKUPLOAD_CSV_PATH
 import datetime
 from protocol import generalprotocol, technoreports
-
 __all__ = [
     "process_bu_assign_statutory_request"
 ]

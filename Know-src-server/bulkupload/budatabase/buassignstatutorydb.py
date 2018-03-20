@@ -11,6 +11,7 @@ from server.constants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
 )
 from server import logger
+from server.exceptionmessage import fetch_error
 
 __all__ = [
     "get_client_list",
