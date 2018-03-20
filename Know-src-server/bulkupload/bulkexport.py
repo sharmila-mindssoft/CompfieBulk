@@ -321,7 +321,7 @@ class ConvertJsonToCSV(object):
                 csv_name = asr["csv_name"]
                 total_records = asr["total_records"]
                 total_rejected_records = asr["total_rejected_records"]
-                result_domain = asr["domain"]
+                result_domain = asr["domain_ids"]
                 # approved_by = asr["approved_by"]
                 rejected_by = asr["rejected_by"]
                 rejected_by_name = getUserNameAndCode(cnx_pool, rejected_by)
