@@ -32,6 +32,7 @@ var clientUnitBulkReport = new ClientUnitBulkReport();
 function ClientUnitBulkReport() {}
 
 // Pagination Data 
+// Unused
 function pageData(onCurrentPage) {
     data = [];
     PAGE_LIMIT = parseInt(ITEMS_PER_PAGE.val());
