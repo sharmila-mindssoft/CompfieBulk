@@ -1,19 +1,19 @@
-
+//button variable declaration
 var DOWNLOADFILEBUTTON = $(".btn-download-file");
 var UPLOADFILEBUTTON = $(".btn-upload-file");
 
+//autocomplte variable declaration
 var GROUPNAME = $('#group_name');
 var GROUPID = $("#group_id");
 var ACGROUP = $("#ac-group");
-
 var LEGALENTITYNAME = $("#legal_entity_name");
 var LEGALENTITYID = $("#legal_entity_id");
 var ACLEGALENTITY = $("#ac-entity");
-
 var MULTISELECTDOMAIN = $('#domains');
 var MULTISELECTUNIT = $('#units');
 var UPLOADFILE = $("#upload_file");
 
+//error description variable declaration
 var TOTALRECORD = $('.totalRecords');
 var VALIDRECORD = $('.validRecords');
 var INVALIDRECORD = $('.invalidRecords');
@@ -24,11 +24,13 @@ var LENGTHERROR = $('.lengthErrors');
 var INVALIDERROR = $('.invalidErrors');
 var INVALIDFILENAME = null;
 
+//api variable declaration
 var GROUPS = null;
 var LEGAL_ENTITIES = null;
 var UNITS = null;
 var DOMAINS = null;
 
+//other variable declaration
 var UNITNAMES = [];
 var UNITIDS = [];
 var DOMAINNAMES = [];
@@ -36,6 +38,7 @@ var DOMAINIDS = [];
 var CSVINFO = null;
 
 
+//Autocomplete success function
 function onAutoCompleteSuccess(valueElement, idElement, val) {
     valueElement.val(val[1]);
     idElement.val(val[0]);
@@ -63,6 +66,7 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
     }
 }
 
+//load domains into multi select box
 function fetchDomainMultiselect() {
     var str = '';
     if (LEGAL_ENTITIES.length > 0) {
@@ -79,6 +83,7 @@ function fetchDomainMultiselect() {
     }
 }
 
+//load units into multi select box
 function fetchUnitMultiselect() {
     var str = '';
     if(MULTISELECTDOMAIN.val() != null){
@@ -100,7 +105,7 @@ function fetchUnitMultiselect() {
     
 }
 
-
+//get information from api for filters 
 function fetchData(){
 	displayLoader();
 	
@@ -120,6 +125,7 @@ function fetchData(){
 
 function pageControls() {
     
+    //download file button process
     DOWNLOADFILEBUTTON.click(function() {
         clientId = GROUPID.val();
         legalentityId = LEGALENTITYID.val();
@@ -190,6 +196,7 @@ function pageControls() {
         }
     });
 
+    //domain multiselect box change process
     MULTISELECTDOMAIN.change(function(e) {
         UNITNAMES = [];
         UNITIDS = [];
@@ -197,6 +204,7 @@ function pageControls() {
         MULTISELECTUNIT.multiselect('rebuild');
     });
 
+    //group autocomplte textbox process
     GROUPNAME.keyup(function(e) {
         var text_val = $(this).val();
         commonAutoComplete(
@@ -207,6 +215,7 @@ function pageControls() {
             });
     });
 
+    //legal entity autocomplte textbox process
     LEGALENTITYNAME.keyup(function(e) {
         if (GROUPID.val() != '') {
             var condetionFields = ["cl_id"];
@@ -222,20 +231,22 @@ function pageControls() {
         }
     });
 
+    //upload file change event
     UPLOADFILE.change(function(e) {
-    if ($(this).val() != '') {
-        bu.uploadCSVFile(e, function(status, response) {
-            if (status == false) {
-                displayMessage(response);
-            }
-            else {
-                CSVINFO = response
-            }
+        if ($(this).val() != '') {
+            bu.uploadCSVFile(e, function(status, response) {
+                if (status == false) {
+                    displayMessage(response);
+                }
+                else {
+                    CSVINFO = response
+                }
 
-        })
-    }
-  });
+            })
+        }
+    });
 
+    //upload file button process
     UPLOADFILEBUTTON.click(function() {
         clientId = GROUPID.val();
         legalentityId = LEGALENTITYID.val();
@@ -352,11 +363,13 @@ function pageControls() {
     });
 }
 
+//initialize function
 function initialize() {
 	fetchData();
     pageControls();
     
 }
+
 $(function() {
     MULTISELECTDOMAIN.multiselect({
         buttonWidth: '100%'

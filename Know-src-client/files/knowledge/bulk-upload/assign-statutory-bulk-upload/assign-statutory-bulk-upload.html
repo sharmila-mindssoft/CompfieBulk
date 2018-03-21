@@ -16,18 +16,21 @@
         </div>
         <div id="bg-primary1" class="panel-collapse collapse in">
             <div class="portlet-body">
-        <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+        <form class="form-horizontal group-border-dashed" action="#" 
+        novalidate="">
         <div style="border:1px solid #F5F5F5" class="col-sm-12">
           <div class="form-group bg-muted">
               <div class="col-sm-12">
                   <h4 class="header-title">Download File</h4>
               </div>
           </div>
-          
           <div class="form-group">
-            <label class="col-sm-4 control-label">Client Group:<span class="mandatory">*</span></label>
+            <label class="col-sm-4 control-label">Client Group:
+            <span class="mandatory">*</span></label>
             <div class="col-sm-6 has-feedback">
-              <input class="form-control input-sm" type="text" placeholder="Enter Client Grouo" value="" id="group_name" tabindex="1">
+              <input class="form-control input-sm" type="text" 
+              placeholder="Enter Client Grouo" value="" id="group_name" 
+              tabindex="1">
               <i class="form-control-feedback fa fa-search"></i>
               <input type="hidden" id="group_id" value="">
               <div id="ac-group" class="ac-textbox default-display-none">
@@ -35,11 +38,13 @@
               </div>
             </div>
           </div>
-          
           <div class="form-group">
-            <label class="col-sm-4 control-label">Legal Entity:<span class="mandatory">*</span></label>
+            <label class="col-sm-4 control-label">Legal Entity:
+            <span class="mandatory">*</span></label>
             <div class="col-sm-6 has-feedback">
-            <input class="form-control input-sm" type="text" placeholder="Enter Legal Entity" value="" id="legal_entity_name" tabindex="2">
+            <input class="form-control input-sm" type="text" 
+            placeholder="Enter Legal Entity" value="" id="legal_entity_name" 
+            tabindex="2">
             <i class="form-control-feedback fa fa-search"></i>
             <input type="hidden" id="legal_entity_id" value="">
             <div id="ac-entity" class="ac-textbox default-display-none">
@@ -47,43 +52,48 @@
             </div> 
             </div>
           </div>
-          
           <div class="form-group">
-            <label class="col-sm-4 control-label">Domain:<span class="mandatory">*</span></label>
+            <label class="col-sm-4 control-label">Domain:
+            <span class="mandatory">*</span></label>
             <div class="col-sm-6">
-                  <select  id="domains" class="form-control input-sm" multiple="multiple" tabindex="3"></select>
+                  <select  id="domains" class="form-control input-sm" 
+                  multiple="multiple" tabindex="3"></select>
             </div>
           </div>
           <div class="form-group">
             <label class="col-sm-4 control-label">Unit:</label>
            <div class="col-sm-6">
-               <select  id="units" class="form-control input-sm" multiple="multiple" tabindex="4"></select>
+               <select  id="units" class="form-control input-sm" 
+               multiple="multiple" tabindex="4"></select>
             </div>
           </div>
-          <div class="form-group">
-            <center>
-             <button class="btn btn-primary waves-effect waves-light btn-download-file" type="button"> Download File </button>
-             </center>
+          <div class="form-group text-center">
+             <button class="btn btn-primary waves-effect waves-light 
+             btn-download-file" type="button"> Download File </button>
           </div>
-
           <div class="form-group bg-muted">
             <div class="col-sm-12">
                 <h4 class="header-title">Upload Bulk Assign Statutory</h4>
             </div>
           </div>
-        
           <div class="form-group has-feedback">
-              <label class="col-sm-4 control-label">Select File: <span class="mandatory">*</span></label>
+              <label class="col-sm-4 control-label">Select File: 
+              <span class="mandatory">*</span></label>
                <div class="col-sm-6">
-                  <input class="form-control input-sm" id="upload_file" type="file" />
-                  <small class="" style="text-align: left;">[ Accepted file format <span style="color: #E64C3D !important;">.csv</span> ]</small>
+                  <input class="form-control input-sm" id="upload_file" 
+                  type="file" />
+                  <small class="text-left">[ Accepted file format 
+                  <span class="mandatory">.csv</span> ]</small>
               </div>
           </div>
-
           <div class="form-group col-sm-12 text-center">
             <div class="col-sm-12 col-sm-offset-1">
-             <button class="btn btn-primary waves-effect waves-light animateprogress btn-upload-file" type="button" data-toggle="modal" data-target="#myModal" id="showtoast"> Upload </button>
-            <a class="btn btn-primary default-display-none btn-trans dropbtn" id="invalid_dwnload" onclick="showDownloadList()">  <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
+             <button class="btn btn-primary waves-effect waves-light 
+             animateprogress btn-upload-file" type="button" data-toggle="modal" 
+             data-target="#myModal" id="showtoast"> Upload </button>
+            <a class="btn btn-primary default-display-none btn-trans dropbtn" 
+            id="invalid_dwnload" onclick="showDownloadList()">  
+            <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
               <div id="myDropdown" class="dropdown-content">
                 <a id="excel">Download Excel</a>
                 <a id="csv">Download CSV</a>
@@ -93,20 +103,26 @@
             </div>
           </div>
           <div class="clear"></div>
-          <div class="view-summary" style="display: none;">
+          <div class="view-summary default-display-none">
             <div class="col-sm-6 no-padding">
               <div class="form-group bg-muted">
                <h5 class="col-sm-12 header-title">Uploaded Data - Summary</h5>
               </div>
               <ul class="p-l-20">
-                <li>Total No. Of Records: <b><span class="totalRecords"></span></b> </li>
-                <li>Valid Records: <b> <span class="validRecords"></span> </b> </li>
-                <li>Invalid Records: <b> <span class="invalidRecords"></span></b></li>
+                <li>Total No. Of Records: <b><span class="totalRecords">
+                </span></b> </li>
+                <li>Valid Records: <b> <span class="validRecords">
+                  
+                </span> </b> </li>
+                <li>Invalid Records: <b> <span class="invalidRecords">
+                  
+                </span></b></li>
               </ul>
             </div>
             <div class="col-sm-6 text-danger no-padding">
               <div class="form-group bg-muted">
-                <h5 class="col-sm-12 text-danger header-title">Invalid Data Summary</h5>
+                <h5 class="col-sm-12 text-danger header-title">
+                Invalid Data Summary</h5>
               </div>
               <ul class="p-l-20">
                 <li>Mandatory field validation:
