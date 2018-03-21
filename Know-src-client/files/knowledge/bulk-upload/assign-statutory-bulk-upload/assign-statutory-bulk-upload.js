@@ -70,7 +70,8 @@ function fetchDomainMultiselect() {
             if(LEGAL_ENTITIES[i].le_id == LegalEntityId.val()){
                 DOMAINS = LEGAL_ENTITIES[i].bu_domains;
                 for (var j in DOMAINS) {
-                    str += '<option value="'+ DOMAINS[j].d_id +'">'+ DOMAINS[j].d_name +'</option>';
+                    str += '<option value="'+ DOMAINS[j].d_id +'">'+ 
+                    DOMAINS[j].d_name +'</option>';
                 }
             }                
         }
@@ -87,7 +88,8 @@ function fetchUnitMultiselect() {
                 if(UNITS[i].le_id == LegalEntityId.val() &&
                     containsAll(c_d_ids, UNITS[i].d_ids)
                     ){
-                    str += '<option value="'+ UNITS[i].u_id +'">'+ UNITS[i].u_name +'</option>';
+                    str += '<option value="'+ UNITS[i].u_id +'">'+ 
+                UNITS[i].u_name +'</option>';
                 }
             }
             MultiSelect_Unit.html(str).multiselect('rebuild');
@@ -112,9 +114,6 @@ function fetchData(){
             hideLoader();
         }
     });
-
-    // bu.confirmAssignStatutoryUpdateAction(1, 1, 1, function(error, data) {  
-    // });
 }
 
 function pageControls() {
@@ -166,7 +165,9 @@ function pageControls() {
             }
 
             displayLoader();
-            bu.getDownloadAssignStatutory(parseInt(cl_id), parseInt(le_id), d_ids, u_ids, cl_name, le_name, d_names, u_names, function(error, data) {
+            bu.getDownloadAssignStatutory(parseInt(cl_id), parseInt(le_id), 
+                d_ids, u_ids, cl_name, le_name, d_names, u_names, 
+                function(error, data) {
                 if (error == null) {
                     var download_url = data.link;
                     if (download_url != null){
@@ -276,7 +277,8 @@ function pageControls() {
             bu.getUploadAssignStatutoryCSV(args, function(error, data) {
                 if (error == null) {
                     TotalRecordsCount.text(data.total);
-                    ValidRecordsCount.text( parseInt(data.valid) - parseInt(data.invalid) );
+                    ValidRecordsCount.text( parseInt(data.valid) - 
+                        parseInt(data.invalid) );
                     InvalidRecordsCount.text(data.invalid);
                     InvalidFileName = null;
                     MandatoryErrorsCount.text("0");
@@ -308,22 +310,28 @@ function pageControls() {
                         displayMessage('Records not uploaded successfully');
                         InvalidFileName = data.invalid_file.split('.');;
                         TotalRecordsCount.text(data.total);
-                        var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
+                        var getValidCount = (parseInt(data.total) - 
+                            parseInt(data.invalid));
                         ValidRecordsCount.text(getValidCount);
                         InvalidRecordsCount.text(data.invalid);
                         MandatoryErrorsCount.text(data.mandatory_error);
                         DuplicateErrorsCount.text(data.duplicate_error);
                         StatusErrorsCount.text(data.inactive_error);
                         LengthErrorsCount.text(data.max_length_error);
-                        getInvaliddataCount = parseInt(data.invalid_char_error) + parseInt(data.invalid_data_error);
+                        getInvaliddataCount = parseInt(data.invalid_char_error) 
+                            + parseInt(data.invalid_data_error);
                         InvalidErrorsCount.text(getInvaliddataCount);
                         $('.dropbtn').show();
                         $('.view-summary').show();
                         
-                        csv_path = "/invalid_file/csv/" + InvalidFileName[0] + '.csv';
-                        xls_path = "/invalid_file/xlsx/" + InvalidFileName[0] + '.xlsx';
-                        ods_path = "/invalid_file/ods/" + InvalidFileName[0] + '.ods';
-                        txt_path = "/invalid_file/txt/" + InvalidFileName[0] + '.txt';
+                        csv_path = "/invalid_file/csv/" + InvalidFileName[0] + 
+                        '.csv';
+                        xls_path = "/invalid_file/xlsx/" + InvalidFileName[0] + 
+                        '.xlsx';
+                        ods_path = "/invalid_file/ods/" + InvalidFileName[0] + 
+                        '.ods';
+                        txt_path = "/invalid_file/txt/" + InvalidFileName[0] + 
+                        '.txt';
                         $('#csv').attr("href", csv_path);
                         $('#excel').attr("href", xls_path);
                         $('#ods').attr("href", ods_path);
