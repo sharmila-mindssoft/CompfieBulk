@@ -29,9 +29,11 @@ txtdomain.keyup(function(e) {
     var condition_fields = [];
     var condition_values = [];
     var text_val = $(this).val();
-    commonAutoComplete(e, divDomain, hdnDomain, text_val, domainList, "d_name", "d_id", function(val) {
-        onAutoCompleteSuccess(txtdomain, hdnDomain, val);
-    }, condition_fields, condition_values);
+    commonAutoComplete(e, divDomain, hdnDomain, text_val, domainList,
+        "d_name", "d_id",
+        function(val) {
+            onAutoCompleteSuccess(txtdomain, hdnDomain, val);
+        }, condition_fields, condition_values);
 });
 
 //Unit Auto Complete
@@ -108,10 +110,21 @@ function downloadData() {
         displayMessage(message.unit_required);
         txtUnit.focus();
         return false;
-    } else if (txtUnit.val().trim() == "South Unit 15" && txtdomain.val().trim() == "Labour Law") {
-        $('#downloadFormatFile').attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
-        $('#downloadFormatFile').attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
+    }
+    // else if (txtUnit.val().trim() == "South Unit 15" && txtdomain.val().trim() == "Labour Law") {
+    //     $('#downloadFormatFile').
+    //     attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
+    //     $('#downloadFormatFile').
+    //     attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
+    //     DIVUPLOAD.show();
+    // }
+    else {
+        $('#downloadFormatFile').
+        attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
+        $('#downloadFormatFile').
+        attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
         DIVUPLOAD.show();
+
     }
 }
 
@@ -137,7 +150,6 @@ function pageControls() {
     DOWNLOADBUTTON.click(function() {
         downloadData();
     });
-
 }
 
 //initialization & master list filter
