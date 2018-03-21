@@ -94,6 +94,8 @@ function fetchUnitMultiselect() {
             }
             MultiSelect_Unit.html(str).multiselect('rebuild');
         }
+    }else{
+        MultiSelect_Unit.html(str).multiselect('rebuild');
     }
     
 }
@@ -291,6 +293,7 @@ function pageControls() {
                     displaySuccessMessage("Records uploaded successfully for approval");
                     hideLoader();
                     GroupId.val('');
+                    GroupName.val('');
                     LegalEntityName.val('');
                     LegalEntityId.val('');
                     u_names = [];
