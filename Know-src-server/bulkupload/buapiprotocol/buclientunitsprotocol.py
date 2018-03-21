@@ -634,7 +634,7 @@ class ClientUnitRejectData(object):
     def __init__(self, csv_id, uploaded_by,
         uploaded_on, csv_name, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
-        is_fully_rejected, approve_status, file_download_count, remarks,
+        is_fully_rejected, total_approve_records, file_download_count, remarks,
         statutory_action, declined_count
         ):
         self.csv_id = csv_id
@@ -648,7 +648,7 @@ class ClientUnitRejectData(object):
         self.approved_on = approved_on
         self.rejected_on = rejected_on
         self.is_fully_rejected = is_fully_rejected
-        self.approve_status = approve_status
+        self.total_approve_records = total_approve_records
         self.file_download_count = file_download_count
         self.remarks = remarks
         self.statutory_action = statutory_action
@@ -659,7 +659,7 @@ class ClientUnitRejectData(object):
         data = parse_dictionary(data, [
             "csv_id","uploaded_by","uploaded_on", "csv_name", "total_records",
             "total_rejected_records", "approved_by", "rejected_by", "approved_on",
-            "rejected_on", "is_fully_rejected", "approve_status", "file_download_count",
+            "rejected_on", "is_fully_rejected", "total_approve_records", "file_download_count",
             "remarks", "statutory_action", "declined_count"
         ])
         return ClientUnitRejectData(
@@ -674,7 +674,7 @@ class ClientUnitRejectData(object):
             data.get("approved_on"),
             data.get("rejected_on"),
             data.get("is_fully_rejected"),
-            data.get("approve_status"),
+            data.get("total_approve_records"),
             data.get("file_download_count"),
             data.get("remarks"),
             data.get("statutory_action"),
@@ -694,7 +694,7 @@ class ClientUnitRejectData(object):
             "approved_by" : self.approved_by,
             "rejected_on" : self.rejected_on,
             "is_fully_rejected" : self.is_fully_rejected,
-            "approve_status"    : self.approve_status,
+            "total_approve_records"    : self.total_approve_records,
             "file_download_count"    : self.file_download_count,
             "remarks"    : self.remarks,
             "statutory_action"    : self.statutory_action,

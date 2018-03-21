@@ -11,6 +11,7 @@ from server.constants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
 )
 from server import logger
+from server.exceptionmessage import fetch_error
 
 __all__ = [
     "get_client_list",
@@ -474,7 +475,7 @@ def fetch_rejected_assign_sm_data(db, session_user, user_id, client_id,
              str(uploaded_on),
              str(d["csv_name"]),
              int(d["total_records"]),
-             int(d["total_rejected_records"]),
+             d["total_rejected_records"] if d["total_rejected_records"] is not None else 0,
              d["approved_by"],
              d["rejected_by"],
              str(approved_on),

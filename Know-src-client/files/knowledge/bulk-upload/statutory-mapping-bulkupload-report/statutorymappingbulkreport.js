@@ -120,6 +120,7 @@ function loadCountwiseResult(data) {
     var entity;
     var tableRow;
     var showFrom = SNO + 1;
+    var approvedByName, rejectedByName, uploadedByName;
 
     for (var entity in data) {
         isNull = false;
@@ -146,15 +147,15 @@ function loadCountwiseResult(data) {
             if (parseInt(uploadedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
-                uploadedBy = EMP_CODE + " - " + EMP_NAME;
+                uploadedByName = EMP_CODE + " - " + EMP_NAME;
             } else if (parseInt(rejectedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
-                rejectedBy = EMP_CODE + " - " + EMP_NAME;
+                rejectedByName = EMP_CODE + " - " + EMP_NAME;
             } else if (parseInt(approvedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
-                approvedBy = EMP_CODE + " - " + EMP_NAME;
+                approvedByName = EMP_CODE + " - " + EMP_NAME;
             }
         });
         if (parseInt(isFullyRejected) == 1) {
@@ -165,15 +166,15 @@ function loadCountwiseResult(data) {
             approvedRejectedTasks += " / ";
             approvedRejectedTasks += totalRejectedRecords;
         }
-        if (String(approvedOn) != "null") {
-            approvedRejectedOn = approvedOn;
-            approvedRejectedBy = approvedBy;
-        }
-        if (String(rejectedOn) != "null") {
-            approvedRejectedOn = rejectedOn;
-            approvedRejectedBy = rejectedBy;
-        }
 
+        if (rejected_on != null && rejected_on != '') {
+            approvedRejectedOn = String(rejected_on);
+            approvedRejectedBy = rejectedByName;
+        }
+        if (approved_on != null && approved_on != '') {
+            approvedRejectedOn = String(approved_on);
+            approvedRejectedBy = approvedByName;
+        }
 
         tableRow = $('#act_templates .table-act-list .table-row-act-list');
         var trClone = tableRow.clone();
@@ -181,7 +182,7 @@ function loadCountwiseResult(data) {
         $('.tbl-country', trClone).text(countryName);
         $('.tbl-domain', trClone).text(domainName);
         $('.tbl-uploaded-file-name', trClone).text(csvName);
-        $(".tbl-uploaded-by", trClone).text(uploadedBy);
+        $(".tbl-uploaded-by", trClone).text(uploadedByName);
         $('.tbl-uploaded-on', trClone).text(uploadedOn);
         $('.tbl-no-of-tasks', trClone).text(totalTasks);
         $('.tbl-approved-rejected-tasks', trClone).text(approvedRejectedTasks);
@@ -324,7 +325,7 @@ function loadDomains() {
                         flag = false;
                     }
                 });
-                if (flag == false) 
+                if (flag == false)
                     str += '</optgroup>';
             }
         });
@@ -432,7 +433,7 @@ function loadCurrentUserDetails() {
         }
         ALLUSERS.push(knowledgeUserDetails);
         KNOWLEDGE_EXECUTIVES.push(user.user_id);
-    } else if (USER_CATEGORY_ID == KM_USER_CATEGORY 
+    } else if (USER_CATEGORY_ID == KM_USER_CATEGORY
         && USER_CATEGORY_ID != KE_USER_CATEGORY && loggedUserId > 0) {
         // KE-Name  : Knowledge-Manager
         getUserMappingsList(loggedUserId);
@@ -466,7 +467,7 @@ function getUserMappingsList(loggedUserId) {
             if (childUsrId == value["user_id"] && value["is_active"] == true) {
                 var option = $('<option></option>');
                 option.val(value["user_id"]);
-                option.text(value["employee_code"] + " - " 
+                option.text(value["employee_code"] + " - "
                     + value["employee_name"]);
                 $('#kename_kmanager').append(option);
                 knowledgeName = value["employee_code"] + " - " +

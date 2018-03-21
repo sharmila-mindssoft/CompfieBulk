@@ -501,7 +501,7 @@ class ConfirmAssignStatutorySubmit(Request):
 class AssignStatutoryValidate(Request):
     def __init__(self, csv_id):
         self.csv_id = csv_id
-        
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["csv_id"])
