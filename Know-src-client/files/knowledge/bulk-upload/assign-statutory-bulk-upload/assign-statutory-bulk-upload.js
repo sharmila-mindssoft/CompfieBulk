@@ -177,7 +177,7 @@ function pageControls() {
                         hideLoader();
                     }
                     else{
-                        displayMessage("No Compliance Available for Assign Statutory");
+                        displayMessage(message.no_compliance_assign_statutory);
                         hideLoader();
                     }
                 } else {
@@ -240,7 +240,7 @@ function pageControls() {
         le_name = LegalEntityName.val();
 
         if (cl_id.trim().length <= 0) {
-            displayMessage('Client Group Required');
+            displayMessage(message.client_group_required);
             return false;
         } else if (le_id.trim().length <= 0) {
             displayMessage(message.legalentity_required);
@@ -249,10 +249,10 @@ function pageControls() {
             displayMessage(message.domain_required);
             return false;
         } else if (UploadFile.val() == '') {
-            displayMessage("Upload File Required");
+            displayMessage(message.upload_csv);
             return false;
         } else if (csvInfo == null) {
-            displayMessage("Invalid file format");
+            displayMessage(message.invalid_file_format);
             return false;
         } else {
             d_ids = MultiSelect_Domain.val().map(Number);
@@ -290,7 +290,7 @@ function pageControls() {
                     InvalidErrorsCount.text("0");
                     $('.view-summary').hide();
                     $('.dropbtn').hide();
-                    displaySuccessMessage("Records uploaded successfully for approval");
+                    displaySuccessMessage(message.upload_success);
                     hideLoader();
                     GroupId.val('');
                     GroupName.val('');
@@ -310,7 +310,7 @@ function pageControls() {
                     if(error == 'Invalid Csv file'){
                         displayMessage(error);
                     }else if(error == 'UploadAssignStatutoryCSVFailed'){
-                        displayMessage('Records not uploaded successfully');
+                        displayMessage(message.upload_failed);
                         InvalidFileName = data.invalid_file.split('.');;
                         TotalRecordsCount.text(data.total);
                         var getValidCount = (parseInt(data.total) - 
