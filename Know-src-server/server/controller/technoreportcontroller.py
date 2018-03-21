@@ -156,7 +156,7 @@ def process_techno_report_request(request, db, user_id):
         result = process_get_ComplianceStatutoriesList(db, request_frame, user_id)
 
     elif type(request_frame) is technoreports.GetUserMappingStatutoryFilters:
-        result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)    
+        result = process_get_user_mapping_statutory_filter(db, request_frame, user_id)
     return result
 
 ######################################################################################

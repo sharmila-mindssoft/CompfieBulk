@@ -205,5 +205,4 @@ class ValidateRejectedSMBulkCsvData():
             "csv_link": csv_link,
             "ods_link": ods_link,
             "txt_link": txt_link
-
         }

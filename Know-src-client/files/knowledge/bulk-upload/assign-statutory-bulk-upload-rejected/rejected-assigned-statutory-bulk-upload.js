@@ -116,7 +116,6 @@ function pageControls()
         });
       }
 
-
       if(client_id > 0 && le_id > 0 && domain_ids.length > 0)
       {
         for(var i =0; i < assignedUnitList.length; i++)
@@ -145,41 +144,6 @@ function pageControls()
       }
    });
 
-/*    //load legalentity form list in autocomplete text box
-  $('#unitval').keyup(function (e)
-  {
-    resetfilter('unit');
-    var textval = $(this).val();
-    var unit_list = [];
-    var client_id = $('#cgroup-id').val();
-    var le_id = $('#legalentityid').val();
-    var d_id = $('#domain').val();
-    var unit_code_name;
-
-    if(client_id > 0 && le_id > 0)
-    {
-      for(var i =0; i < assignedUnitList.length; i++)
-      {
-        if(assignedUnitList[i].client_id == client_id && assignedUnitList[i].legal_entity_id == le_id)
-        {
-          unit_code_name=assignedUnitList[i].unit_code_name;
-          unit_code=unit_code_name.split("-");
-          unit_code=unit_code[0];
-
-          unit_list.push({
-            "unit_id": unit_code,
-            "unit_name": assignedUnitList[i].unit_code_name
-          });
-        }
-      }
-      commonAutoComplete(
-        e, ACUnit, Unit, textval,
-        unit_list, "unit_name", "unit_id", function (val) {
-            onAutoCompleteSuccess(UnitVal, Unit, val);
-      });
-    }
-  });
-*/
   Show_btn.click(function() {
     is_valid = rsm_page.validateMandatory();
     if (is_valid == true)
@@ -506,18 +470,17 @@ function AssignStatutoryBulkReport() {}
 AssignStatutoryBulkReport.prototype.validateMandatory = function()
 {
     is_valid = true;
-
     if (GroupName.val().trim().length == 0)
     {
-        displayMessage(message.group_required);
+        displayMessage(message.client_group_required);
         is_valid = false;
     }
-    if (LegalEntity.val().trim().length == 0)
+    else if (LegalEntity.val().trim().length == 0)
     {
         displayMessage(message.legalentity_required);
         is_valid = false;
     }
-    if ($('#domain option:selected').text() == "")
+    else if ($('#domain option:selected').text() == "")
     {
         displayMessage(message.domain_required);
         is_valid = false;
@@ -644,7 +607,7 @@ PasswordSubmitButton.click(function() {
 
 function confirm_alert(event) {
   var Group_id=GroupId.val();
-
+  CurrentPassword.val("");
    swal({
         title: "Are you sure",
         text: "You want to permanently delete the file?",
@@ -658,6 +621,7 @@ function confirm_alert(event) {
           target: '#custom-modal-approve',
           effect: 'contentscale',
           complete:   function() {
+
              CurrentPassword.focus();
              isAuthenticate = false;
           },
