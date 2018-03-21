@@ -635,7 +635,7 @@ class ClientUnitRejectData(object):
         uploaded_on, csv_name, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
         is_fully_rejected, total_approve_records, file_download_count, remarks,
-        statutory_action, declined_count
+        statutory_action, declined_count, rejected_file
         ):
         self.csv_id = csv_id
         self.uploaded_by = uploaded_by
@@ -653,6 +653,8 @@ class ClientUnitRejectData(object):
         self.remarks = remarks
         self.statutory_action = statutory_action
         self.declined_count = declined_count
+        self.rejected_file = rejected_file
+
 
     @staticmethod
     def parse_structure(data):
@@ -660,7 +662,7 @@ class ClientUnitRejectData(object):
             "csv_id","uploaded_by","uploaded_on", "csv_name", "total_records",
             "total_rejected_records", "approved_by", "rejected_by", "approved_on",
             "rejected_on", "is_fully_rejected", "total_approve_records", "file_download_count",
-            "remarks", "statutory_action", "declined_count"
+            "remarks", "statutory_action", "declined_count", "rejected_file"
         ])
         return ClientUnitRejectData(
             data.get("csv_id"),
@@ -678,7 +680,8 @@ class ClientUnitRejectData(object):
             data.get("file_download_count"),
             data.get("remarks"),
             data.get("statutory_action"),
-            data.get("declined_count")
+            data.get("declined_count"),
+            data.get("rejected_file")
         )
 
     def to_structure(self):
@@ -698,7 +701,8 @@ class ClientUnitRejectData(object):
             "file_download_count"    : self.file_download_count,
             "remarks"    : self.remarks,
             "statutory_action"    : self.statutory_action,
-            "declined_count"    : self.declined_count
+            "declined_count"    : self.declined_count,
+            "rejected_file"    : self.rejected_file
             }
 
 class UpdateUnitDownloadCount(object):

@@ -222,5 +222,6 @@ bu_api_params = {
     'unit_codes': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'client_unit_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "BulkClientUnitList"},
     'un_saved_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'rejected_file': {'type': 'STRING', 'length': 200, 'validation_method': is_alpha_numeric, 'is_optional': True},
 
 }

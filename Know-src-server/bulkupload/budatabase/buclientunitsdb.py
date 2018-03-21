@@ -181,8 +181,8 @@ def fetch_rejected_client_unit_report(db, session_user, user_id,
              int(download_count),
              str(d["remarks"]),
              d["action"],
-             int(d["declined_count"])
-
+             d["declined_count"],
+             d["rejected_file_name"]
         ))
     return rejectdatalist
 

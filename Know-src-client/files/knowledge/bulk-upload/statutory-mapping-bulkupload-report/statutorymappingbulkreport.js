@@ -165,12 +165,12 @@ function loadCountwiseResult(data) {
             approvedRejectedTasks += totalRejectedRecords;
         }
 
-        if (rejected_on != null && rejected_on != '') {
-            approvedRejectedOn = String(rejected_on);
+        if (rejectedOn != null && rejectedOn != '') {
+            approvedRejectedOn = String(rejectedOn);
             approvedRejectedBy = rejectedByName;
         }
-        if (approved_on != null && approved_on != '') {
-            approvedRejectedOn = String(approved_on);
+        if (approvedOn != null && approvedOn != '') {
+            approvedRejectedOn = String(approvedOn);
             approvedRejectedBy = approvedByName;
         }
 
@@ -186,7 +186,7 @@ function loadCountwiseResult(data) {
         $('.tbl-approved-rejected-tasks', trClone).text(approvedRejectedTasks);
         $('.tbl-approved-rejected-on', trClone).text(approvedRejectedOn);
         $('.tbl-approved-rejected-by', trClone).text(approvedRejectedBy);
-        $('.tbl-reason-for-rejection', trClone).text(isFullyRejected);
+        $('.tbl-reason-for-rejection', trClone).text(reasonForRejection);
         $('#datatable_responsive .tbody-compliance').append(trClone);
     }
     if (isNull == true) {
