@@ -108,7 +108,7 @@ function downloadData() {
         displayMessage(message.unit_required);
         txtUnit.focus();
         return false;
-    } else {
+    } else if (txtUnit.val().trim() == "South Unit 15" && txtdomain.val().trim() == "Labour Law") {
         $('#downloadFormatFile').attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
         $('#downloadFormatFile').attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
         DIVUPLOAD.show();

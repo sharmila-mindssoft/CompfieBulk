@@ -1310,12 +1310,12 @@ class AssignStatutoryMappingRejectData(object):
             }
 
 
-class StatutoryReportData(object):
+class AssignStatutoryReportData(object):
 
     def __init__(self, uploaded_by,
         uploaded_on, csv_name, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
-        is_fully_rejected, approve_status
+        is_fully_rejected, total_approve_records, rejected_reason, domain_name
         ):
         self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
@@ -1327,7 +1327,9 @@ class StatutoryReportData(object):
         self.approved_on = approved_on
         self.rejected_on = rejected_on
         self.is_fully_rejected = is_fully_rejected
-        self.approve_status = approve_status
+        self.total_approve_records = total_approve_records
+        self.rejected_reason = rejected_reason
+        self.domain_name = domain_name
 
     @staticmethod
     def parse_structure(data):
@@ -1335,9 +1337,9 @@ class StatutoryReportData(object):
             "uploaded_by",
         "uploaded_on", "csv_name", "total_records", "total_rejected_records",
         "approved_by", "rejected_by", "approved_on", "rejected_on",
-        "is_fully_rejected", "approve_status"
+        "is_fully_rejected", "total_approve_records", "rejected_reason", "domain_name"
         ])
-        return StatutoryReportData(
+        return AssignStatutoryReportData(
             data.get("uploaded_by"),
             data.get("uploaded_on"),
             data.get("csv_name"),
@@ -1348,7 +1350,9 @@ class StatutoryReportData(object):
             data.get("approved_on"),
             data.get("rejected_on"),
             data.get("is_fully_rejected"),
-            data.get("approve_status")
+            data.get("total_approve_records"),
+            data.get("rejected_reason"),
+            data.get("domain_name")
         )
 
     def to_structure(self):
@@ -1358,9 +1362,12 @@ class StatutoryReportData(object):
             "csv_name" : self.csv_name,
             "total_records" : self.total_records,
             "total_rejected_records" : self.total_rejected_records,
+            "approved_by" : self.approved_by,
             "rejected_by" : self.rejected_by,
             "approved_on" : self.approved_on,
             "rejected_on" : self.rejected_on,
             "is_fully_rejected" : self.is_fully_rejected,
-            "approve_status"    : self.approve_status
+            "total_approve_records"    : self.total_approve_records,
+            "rejected_reason"    : self.rejected_reason,
+            "domain_name"    : self.domain_name
             }

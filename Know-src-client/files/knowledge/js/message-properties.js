@@ -182,7 +182,6 @@ var message = {
   'cannot_deactivate_sp': 'User(s) Exists. Cannot Deactivate Service Provider.',
   'seatingunit_required': 'Seating Unit Required',
   'employeecode_required': 'Employee Code Required',
-  'usergroup_required': 'User Group Required',
   'userlevel_required': 'User Level Required',
   'usertype_required': 'User Type Required',
   'add_one_form': 'Select atleast one form from list',
@@ -490,6 +489,7 @@ var message = {
   "confirm_success": "Action taken successfully",
   "client_unit_upload_success": "Client Units uploaded successfully",
   "client_unit_upload_failed": "Errors in uploading Client Units",
+  'clientgroup_required': 'Client Group Name Required',
 }
 
 function clearMessage() {

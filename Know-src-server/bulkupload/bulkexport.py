@@ -119,42 +119,24 @@ class ConvertJsonToCSV(object):
         is_header = False
         # try:
         cnx_pool = connectKnowledgeDB()
-
-        # c_ids = request.c_ids
         country_id_list = ",".join(str(e) for e in request.c_ids)
-        print "country_id_list-> ", country_id_list
-        # country_name_list = ",".join(
-        #     getCountryName(cnx_pool, e) for e in request.c_ids)
-
         country_name_list = request.c_names
-        print country_name_list
-        # d_ids = request.c_ids
         domain_id_list = ",".join(str(e) for e in request.d_ids)
-        print "domain_id_list-> ", domain_id_list
-        # domain_name_list = ",".join(
-        #     getDomainName(cnx_pool, e) for e in request.d_ids)
         domain_name_list = request.d_names
         child_ids = request.child_ids
         if(child_ids is not None):
             user_ids = ",".join(str(e) for e in request.child_ids)
         else:
             user_ids = session_user.user_id()
-
         print "user_ids->", user_ids
         user_name_list = ",".join(
             getUserNameAndCode(cnx_pool, e) for e in request.child_ids)
-
-        from_date = request.from_date
-        print from_date
-        from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
-
-        to_date = request.to_date
-        to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
+        from_date = datetime.datetime.strptime(request.from_date, '%d-%b-%Y')
+        to_date = datetime.datetime.strptime(request.to_date, '%d-%b-%Y')
 
         export_bu_statutory_list = db.call_proc(
             'sp_export_statutory_mappings_bulk_reportdata',
-            [user_ids, country_id_list, domain_id_list, from_date, to_date]
-            )
+            [user_ids, country_id_list, domain_id_list, from_date, to_date])
         sno = 0
         if len(export_bu_statutory_list) > 0:
             for ac in export_bu_statutory_list:
@@ -164,24 +146,19 @@ class ConvertJsonToCSV(object):
                 uploaded_by = ac["uploaded_by"]
                 uploaded_by_name = getUserNameAndCode(cnx_pool, uploaded_by)
                 print "uploaded_by_name-> ", uploaded_by_name
-
                 uploaded_on = ac["uploaded_on"]
                 domain_name = ac["domain_name"]
                 csv_name = ac["csv_name"]
                 total_records = ac["total_records"]
                 total_rejected_records = ac["total_rejected_records"]
-                # approved_by = ac["approved_by"]
                 rejected_by = ac["rejected_by"]
                 rejected_by_name = getUserNameAndCode(cnx_pool, rejected_by)
-                # approved_on = ac["approved_on"]
                 rejected_on = ac["rejected_on"]
                 reason_for_rejection = ac["rejected_reason"]
-                # is_fully_rejected = ac["is_fully_rejected"]
-                approve_status = ac["approve_status"]
+                approve_status = ac["total_approve_records"]
                 approve_reject_task = str(approve_status) + " / " + str(
                                                     total_rejected_records)
                 exported_time = datetime.datetime.now()
-
                 if not is_header:
                     text = "Statutory Mapping - Bulk Report"
                     csv_header_line1 = [
@@ -225,31 +202,21 @@ class ConvertJsonToCSV(object):
 
     def generate_export_client_unit_bulk(self, db, request, session_user):
         is_header = False
-
+        # try:
         cnx_pool = connectKnowledgeDB()
-
         clientGroupId = request.bu_client_id
         clientGroupName = request.bu_group_name
         child_ids = request.child_ids
-        # user_category_id = request.user_category_id
-
-        from_date = request.from_date
-        print from_date
-        from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
-
-        to_date = request.to_date
-        to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
-
+        from_date = datetime.datetime.strptime(request.from_date, '%d-%b-%Y')
+        to_date = datetime.datetime.strptime(request.to_date, '%d-%b-%Y')
         child_ids = request.child_ids
         if(child_ids is not None):
             user_ids = ",".join(str(e) for e in request.child_ids)
         else:
             user_ids = session_user.user_id()
-
         print "user_ids->", user_ids
         user_name_list = ",".join(
             getUserNameAndCode(cnx_pool, e) for e in request.child_ids)
-
         export_bu_client_unit_report = db.call_proc(
             'sp_export_client_unit_bulk_reportdata',
             [clientGroupId, from_date, to_date, str(user_ids)]
@@ -315,7 +282,8 @@ class ConvertJsonToCSV(object):
                 os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
 
-    def generate_export_assigned_statutory_bulk(self, db, request, session_user):
+    def generate_export_assigned_statutory_bulk(self, db, request,
+                                                session_user):
         is_header = False
         cnx_pool = connectKnowledgeDB()
         clientGroupId = request.bu_client_id
@@ -329,30 +297,20 @@ class ConvertJsonToCSV(object):
         from_date = request.from_date
         to_date = request.to_date
         child_ids = request.child_ids
-        # user_category_id = request.user_category_id
-
-        from_date = request.from_date
-        print from_date
-        from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
-
-        to_date = request.to_date
-        to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
-
+        from_date = datetime.datetime.strptime(request.from_date, '%d-%b-%Y')
+        to_date = datetime.datetime.strptime(request.to_date, '%d-%b-%Y')
         child_ids = request.child_ids
         if(child_ids is not None):
             user_ids = ",".join(str(e) for e in request.child_ids)
         else:
             user_ids = session_user.user_id()
-
         print "user_ids->", user_ids
         user_name_list = ",".join(
             getUserNameAndCode(cnx_pool, e) for e in request.child_ids)
-
         export_bu_assigned_statutory_report = db.call_proc(
             'sp_export_assigned_statutory_bulk_reportdata',
             [clientGroupId, legalEntityId, unitId, from_date, to_date,
-                str(user_ids), domainIds]
-            )
+                str(user_ids), domainIds])
         sno = 0
         if len(export_bu_assigned_statutory_report) > 0:
             for asr in export_bu_assigned_statutory_report:
@@ -363,7 +321,7 @@ class ConvertJsonToCSV(object):
                 csv_name = asr["csv_name"]
                 total_records = asr["total_records"]
                 total_rejected_records = asr["total_rejected_records"]
-                result_domain = asr["domain"]
+                result_domain = asr["domain_ids"]
                 # approved_by = asr["approved_by"]
                 rejected_by = asr["rejected_by"]
                 rejected_by_name = getUserNameAndCode(cnx_pool, rejected_by)
@@ -423,15 +381,19 @@ class ConvertJsonToCSV(object):
 
 
 def connectKnowledgeDB():
-    cnx = mysql.connector.connect(
-        user=KNOWLEDGE_DB_USERNAME,
-        password=KNOWLEDGE_DB_PASSWORD,
-        host=KNOWLEDGE_DB_HOST,
-        database=KNOWLEDGE_DATABASE_NAME,
-        port=KNOWLEDGE_DB_PORT,
-        autocommit=False,
-    )
-    return cnx
+    try:
+        cnx = mysql.connector.connect(
+            user=KNOWLEDGE_DB_USERNAME,
+            password=KNOWLEDGE_DB_PASSWORD,
+            host=KNOWLEDGE_DB_HOST,
+            database=KNOWLEDGE_DATABASE_NAME,
+            port=KNOWLEDGE_DB_PORT,
+            autocommit=False,
+        )
+        return cnx
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
 
 
 def getUserNameAndCode(cnx_pool, userId):
@@ -443,6 +405,7 @@ def getUserNameAndCode(cnx_pool, userId):
     c = cnx_pool.cursor(dictionary=True, buffered=True)
     result = c.execute(query, condition_val)
     result = c.fetchall()
+    user_name_res = ""
     for row in result:
         if row["employee_code"] is not None:
             user_name_res = row["employee_code"] + " - "+row["employee_name"]
@@ -465,6 +428,7 @@ def getCountryName(cnx_pool, countryId):
         countryName = row["country_name"]
     print "countryName ", countryName
     return countryName
+
 
 def getDomainName(cnx_pool, domainId):
     query = "select domain_name " + \
