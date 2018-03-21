@@ -348,52 +348,59 @@ class SourceDB(object):
         else:
             return True
 
-    # def save_executive_message(
-    #     self, csv_name, countryname, domainname, createdby
-    # ):
+    def save_executive_message(
+        self, a_type, csv_name, clientgroup, legalentity, createdby, unitid
+    ):  
+        admin_users_id = []
+        res = self._source_db.call_proc("sp_users_under_user_category", (1,))
+        for user in res:
+            admin_users_id.append(user["user_id"])
 
-    #     text = "Assign statutory file %s of %s - %s uploaded for your %s" % (
-    #             csv_name, countryname, domainname, 'approval'
-    #         )
-    #     link = "/knowledge/approve-assign-statutory-bu"
-    #     save_messages(
-    #         self._source_db, 3, "Assign Statutory Bulk Upload",
-    #         text, link, createdby
-    #     )
+        domain_users_id = []
+        res = self._source_db.call_proc("sp_user_by_unit_id", (8, unitid))
+        for user in res:
+            domain_users_id.append(user["user_id"])
 
-    #     action = "Statutory mapping csv file uploaded %s of %s - %s" % (
-    #         csv_name, countryname, domainname
-    #     )
-    #     if csv_name and countryname and domainname:
-    #         self._source_db.save_activity(
-    #             createdby, frmStatutoryMappingBulkUpload, action
-    #         )
+        if a_type == 1:
+            action_type = "approved"
+        else:
+            action_type = "rejected"
 
-    # def save_manager_message(
-    #     self, a_type, csv_name, domainname, unitname, createdby
-    # ):
-    #     if a_type == 1:
-    #         action_type = "approved"
+        msg = "Assign statutory file %s of %s - %s has been %s" % (
+                csv_name, clientgroup, legalentity, action_type
+            )
+        
+        if len(domain_users_id) > 0:
+            self._source_db.save_toast_messages(8, "Approve Assign Statutory Bulk Upload", msg, None, domain_users_id, createdby)
+        if len(admin_users_id) > 0:
+            self._source_db.save_toast_messages(1, "Approve Assign Statutory Bulk Upload", msg, None, admin_users_id, createdby)
+        
+        self._source_db.save_activity(createdby, frmApproveAssignStatutoryBulkUpload, msg)
 
-    #     else:
-    #         action_type = "rejected"
 
-    #     text = "Assign statutory file %s of %s - %s has been %s" % (
-    #             csv_name, domainname, unitname, action_type
-    #         )
-    #     link = "/knowledge/assign-statutory-bu"
-    #     save_messages(
-    #         self._source_db, 4, "Approve Assign Statutory Bulk Upload",
-    #         text, link, createdby
-    #     )
 
-    #     action = "Statutory mapping file  %s of %s - %s has been %s" % (
-    #         csv_name, countryname, domainname, action_type
-    #     )
-    #     if csv_name and countryname and domainname:
-    #         self._source_db.save_activity(
-    #             createdby, frmApproveStatutoryMappingBulkUpload, action
-    #         )
+    def save_manager_message(
+        self, csv_name, domainname, unitname, createdby, unitid
+    ):
+        admin_users_id = []
+        res = self._source_db.call_proc("sp_users_under_user_category", (1,))
+        for user in res:
+            admin_users_id.append(user["user_id"])
+
+        domain_users_id = []
+        res = self._source_db.call_proc("sp_user_by_unit_id", (7, unitid))
+        for user in res:
+            domain_users_id.append(user["user_id"])
+
+        msg = "Assign statutory file %s of %s - %s uploaded for your %s " % (
+            csv_name, unitname, domainname, 'approval'
+        )
+
+        if len(domain_users_id) > 0:
+            self._source_db.save_toast_messages(7, "Assign Statutory Bulk Upload", msg, None, domain_users_id, createdby)
+        if len(admin_users_id) > 0:
+            self._source_db.save_toast_messages(1, "Assign Statutory Bulk Upload", msg, None, admin_users_id, createdby)
+        self._source_db.save_activity(createdby, frmAssignStatutoryBulkUpload, msg)
 
     def source_commit(self):
         self._source_db.commit()
@@ -410,7 +417,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         self._client_id = client_id
         self._error_summary = {}
         self.errorSummary()
-
+        self._client_group = None
+        self._unit_id = None
         self._sheet_name = "Assign Statutory"
 
     # error summary mapped with initial count
@@ -500,7 +508,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         invalid = 0
         self.compare_csv_columns()
         self.check_duplicate_in_csv()
-        self.check_duplicate_compliance_for_same_unit_in_csv()
+        # self.check_duplicate_compliance_for_same_unit_in_csv()
         self.check_uploaded_count_in_csv()
         self.init_values(self._session_user_obj.user_id(), self._client_id)
 
@@ -515,6 +523,10 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             return res
 
         for row_idx, data in enumerate(self._source_data):
+            if row_idx == 0:
+                self._client_group = data.get("Client_Group")
+                self._unit_id = self.Unit_Code.get(data.get("Unit_Code")).get("unit_id")
+
             res = True
             error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
             for key in self._csv_column_name:
@@ -656,6 +668,10 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self._source_data = None
         self._declined_row_idx = []
         self.get_source_data()
+        self._legal_entity = None
+        self._client_group = None
+        self._csv_name = None
+        self._unit_id = None
 
     def get_source_data(self):
         self._source_data = self._db.call_proc("sp_assign_statutory_by_csvid", [self._csv_id])
@@ -666,6 +682,12 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self.init_values(self._session_user_obj.user_id(), self._client_id)
 
         for row_idx, data in enumerate(self._source_data):
+            if row_idx == 0:
+                self._legal_entity = data.get("Legal_Entity")
+                self._client_group = data.get("Client_Group")
+                self._csv_name = data.get("Csv_Name")
+                self._unit_id = self.Unit_Code.get(data.get("Unit_Code")).get("unit_id")
+
             for key in self._csv_column_name:
                 value = data.get(key)
                 isFound = ""

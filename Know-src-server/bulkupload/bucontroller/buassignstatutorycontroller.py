@@ -214,6 +214,12 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
             new_csv_id = save_assign_statutory_csv(db, csv_args)
             if new_csv_id :
                 if save_assign_statutory_data(db, new_csv_id, res_data["data"]) is True :
+                    cObj.save_manager_message(
+                        csv_name, cObj._client_group,
+                        request_frame.le_name, session_user.user_id(),
+                        cObj._unit_id
+                    )
+                    cObj.source_commit()
                     result = bu_as.UploadAssignStatutoryCSVSuccess(
                         res_data["total"], res_data["valid"], res_data["invalid"]
                     )
@@ -289,18 +295,20 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
             else :
                 if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
                     cObj.frame_data_for_main_db_insert(user_id)
-                    # cObj.save_manager_message(
-                    #     action, cObj._csv_name, cObj._country_name,
-                    #     cObj._domain_name, session_user.user_id()
-                    # )
+                    cObj.save_executive_message(
+                        action, cObj._csv_name, cObj._client_group,
+                        cObj._legal_entity, session_user.user_id(),
+                        cObj._unit_id
+                    )
                     cObj.source_commit()
                     return bu_as.AssignStatutoryApproveActionInListSuccess()
         else :
             if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
-                # cObj.save_manager_message(
-                #     action, cObj._csv_name, cObj._country_name,
-                #     cObj._domain_name, session_user.user_id()
-                # )
+                cObj.save_executive_message(
+                    action, cObj._csv_name, cObj._client_group,
+                    cObj._legal_entity, session_user.user_id(),
+                    cObj._unit_id
+                )
                 cObj.source_commit()
                 return bu_as.AssignStatutoryApproveActionInListSuccess()
 
@@ -534,10 +542,11 @@ def submit_assign_statutory(db, request_frame, session_user):
         if len(is_declined) > 0:
             return bu_as.ValidationSuccess(len(is_declined))
         else:
-            # cObj.save_manager_message(
-            #     1, cObj._csv_name, cObj._country_name, cObj._domain_name,
-            #     session_user.user_id()
-            # )
+            cObj.save_executive_message(
+                1, cObj._csv_name, cObj._client_group,
+                cObj._legal_entity, session_user.user_id(),
+                cObj._unit_id
+            )
             cObj.frame_data_for_main_db_insert(user_id)
             cObj.source_commit()
             update_approve_action_from_list(db, csv_id, 1, None, session_user)
@@ -560,10 +569,11 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
     if len(is_declined) > 0 :
         cObj.frame_data_for_main_db_insert(user_id)
         cObj.make_rejection(is_declined)
-        # cObj.save_manager_message(
-        #     1, cObj._csv_name, cObj._country_name, cObj._domain_name,
-        #     session_user.user_id()
-        # )
+        cObj.save_executive_message(
+            1, cObj._csv_name, cObj._client_group,
+            cObj._legal_entity, session_user.user_id(),
+            cObj._unit_id
+        )
         cObj.source_commit()
         return bu_as.SubmitAssignStatutorySuccess()        
    

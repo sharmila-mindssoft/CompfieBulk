@@ -80,9 +80,12 @@ function fetchDomainMultiselect() {
 
 function fetchUnitMultiselect() {
     var str = '';
-    if (UNITS.length > 0) {
+    c_d_ids = MultiSelect_Domain.val().map(Number);
+    if (UNITS.length > 0 && c_d_ids.length > 0) {
         for (var i in UNITS) {
-            if(UNITS[i].le_id == LegalEntityId.val()){
+            if(UNITS[i].le_id == LegalEntityId.val() &&
+                containsAll(c_d_ids, UNITS[i].d_ids)
+                ){
                 str += '<option value="'+ UNITS[i].u_id +'">'+ UNITS[i].u_name +'</option>';
             }
         }
@@ -142,8 +145,11 @@ function pageControls() {
             u_ids = [];
             if(MultiSelect_Unit.val() == null){
                 for (var i in UNITS) {
-                    u_names.push(UNITS[i].u_name.split('-').pop());
-                    u_ids.push(UNITS[i].u_id)
+                    if(UNITS[i].le_id == LegalEntityId.val() &&
+                        containsAll(d_ids, UNITS[i].d_ids)){
+                        u_names.push(UNITS[i].u_name.split('-').pop());
+                        u_ids.push(UNITS[i].u_id);
+                    }
                 }
             }else{
                 $("#units option:selected").each(function () {
