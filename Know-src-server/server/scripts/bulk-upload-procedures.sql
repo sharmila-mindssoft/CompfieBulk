@@ -1433,7 +1433,10 @@ BEGIN
 
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
-        approved_by = userid, is_fully_rejected = 0
+        approved_by = userid, is_fully_rejected = 0,
+        total_rejected_records = (select count(0) from
+        tbl_bulk_assign_statutory as t WHERE t.action = 2 and 
+        t.csv_assign_statutory_id = csvid)
         WHERE csv_assign_statutory_id = csvid;
     end if;
 END //

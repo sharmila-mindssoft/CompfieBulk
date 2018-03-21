@@ -756,9 +756,9 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 )
             self._db.execute(q)
 
-            q1 = "update tbl_bulk_assign_statutory_csv set " + \
+            q1 = "update tbl_bulk_assign_statutory_csv set declined_count = %s," + \
                 " approve_status = 1 where csv_assign_statutory_id = %s"
-            self._db.execute(q1, [self._csv_id])
+            self._db.execute(q1, [len(declined_info), self._csv_id])
 
         except Exception, e :
             print str(traceback.format_exc())
