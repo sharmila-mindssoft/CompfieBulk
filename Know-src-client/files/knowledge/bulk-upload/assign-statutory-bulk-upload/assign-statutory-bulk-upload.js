@@ -1,65 +1,65 @@
 
-var DownloaFileButton = $(".btn-download-file");
-var UploadFileButton = $(".btn-upload-file");
+var DOWNLOADFILEBUTTON = $(".btn-download-file");
+var UPLOADFILEBUTTON = $(".btn-upload-file");
 
-var GroupName = $('#group_name');
-var GroupId = $("#group_id");
-var ACGroup = $("#ac-group");
+var GROUPNAME = $('#group_name');
+var GROUPID = $("#group_id");
+var ACGROUP = $("#ac-group");
 
-var LegalEntityName = $("#legal_entity_name");
-var LegalEntityId = $("#legal_entity_id");
-var ACLegalEntity = $("#ac-entity");
+var LEGALENTITYNAME = $("#legal_entity_name");
+var LEGALENTITYID = $("#legal_entity_id");
+var ACLEGALENTITY = $("#ac-entity");
 
-var MultiSelect_Domain = $('#domains');
-var MultiSelect_Unit = $('#units');
-var UploadFile = $("#upload_file");
+var MULTISELECTDOMAIN = $('#domains');
+var MULTISELECTUNIT = $('#units');
+var UPLOADFILE = $("#upload_file");
 
-var TotalRecordsCount = $('.totalRecords');
-var ValidRecordsCount = $('.validRecords');
-var InvalidRecordsCount = $('.invalidRecords');
-var MandatoryErrorsCount = $('.mandatoryErrors');
-var DuplicateErrorsCount = $('.duplicateErrors');
-var StatusErrorsCount = $('.statusErrors');
-var LengthErrorsCount = $('.lengthErrors');
-var InvalidErrorsCount = $('.invalidErrors');
-var InvalidFileName = null;
+var TOTALRECORD = $('.totalRecords');
+var VALIDRECORD = $('.validRecords');
+var INVALIDRECORD = $('.invalidRecords');
+var MANDATORYERROR = $('.mandatoryErrors');
+var DUPLICATEERROR = $('.duplicateErrors');
+var STATUSERROR = $('.statusErrors');
+var LENGTHERROR = $('.lengthErrors');
+var INVALIDERROR = $('.invalidErrors');
+var INVALIDFILENAME = null;
 
 var GROUPS = null;
 var LEGAL_ENTITIES = null;
 var UNITS = null;
 var DOMAINS = null;
 
-var u_names = [];
-var u_ids = [];
-var d_names = [];
-var d_ids = [];
-var csvInfo = null;
+var UNITNAMES = [];
+var UNITIDS = [];
+var DOMAINNAMES = [];
+var DOMAINIDS = [];
+var CSVINFO = null;
 
 
-function onAutoCompleteSuccess(value_element, id_element, val) {
-    value_element.val(val[1]);
-    id_element.val(val[0]);
-    var current_id = id_element[0].id;
-    if (current_id == 'group_id') {
-        LegalEntityName.val('');
-        LegalEntityId.val('');
-        u_names = [];
-        u_ids = [];
-        d_names = [];
-        d_ids = [];
+function onAutoCompleteSuccess(valueElement, idElement, val) {
+    valueElement.val(val[1]);
+    idElement.val(val[0]);
+    var currentId = idElement[0].id;
+    if (currentId == 'group_id') {
+        LEGALENTITYNAME.val('');
+        LEGALENTITYID.val('');
+        UNITNAMES = [];
+        UNITIDS = [];
+        DOMAINNAMES = [];
+        DOMAINIDS = [];
         fetchDomainMultiselect()
-        MultiSelect_Domain.multiselect('rebuild');
+        MULTISELECTDOMAIN.multiselect('rebuild');
         fetchUnitMultiselect()
-        MultiSelect_Unit.multiselect('rebuild');
-    } else if (current_id == 'legal_entity_id') {
-        u_names = [];
-        u_ids = [];
-        d_names = [];
-        d_ids = [];
+        MULTISELECTUNIT.multiselect('rebuild');
+    } else if (currentId == 'legal_entity_id') {
+        UNITNAMES = [];
+        UNITIDS = [];
+        DOMAINNAMES = [];
+        DOMAINIDS = [];
         fetchDomainMultiselect()
-        MultiSelect_Domain.multiselect('rebuild');
+        MULTISELECTDOMAIN.multiselect('rebuild');
         fetchUnitMultiselect()
-        MultiSelect_Unit.multiselect('rebuild');
+        MULTISELECTUNIT.multiselect('rebuild');
     }
 }
 
@@ -67,7 +67,7 @@ function fetchDomainMultiselect() {
     var str = '';
     if (LEGAL_ENTITIES.length > 0) {
         for (var i in LEGAL_ENTITIES) {
-            if(LEGAL_ENTITIES[i].le_id == LegalEntityId.val()){
+            if(LEGAL_ENTITIES[i].le_id == LEGALENTITYID.val()){
                 DOMAINS = LEGAL_ENTITIES[i].bu_domains;
                 for (var j in DOMAINS) {
                     str += '<option value="'+ DOMAINS[j].d_id +'">'+ 
@@ -75,27 +75,27 @@ function fetchDomainMultiselect() {
                 }
             }                
         }
-        MultiSelect_Domain.html(str).multiselect('rebuild');
+        MULTISELECTDOMAIN.html(str).multiselect('rebuild');
     }
 }
 
 function fetchUnitMultiselect() {
     var str = '';
-    if(MultiSelect_Domain.val() != null){
-        c_d_ids = MultiSelect_Domain.val().map(Number);
+    if(MULTISELECTDOMAIN.val() != null){
+        c_d_ids = MULTISELECTDOMAIN.val().map(Number);
         if (UNITS.length > 0 && c_d_ids.length > 0) {
             for (var i in UNITS) {
-                if(UNITS[i].le_id == LegalEntityId.val() &&
+                if(UNITS[i].le_id == LEGALENTITYID.val() &&
                     containsAll(c_d_ids, UNITS[i].d_ids)
                     ){
                     str += '<option value="'+ UNITS[i].u_id +'">'+ 
                 UNITS[i].u_name +'</option>';
                 }
             }
-            MultiSelect_Unit.html(str).multiselect('rebuild');
+            MULTISELECTUNIT.html(str).multiselect('rebuild');
         }
     }else{
-        MultiSelect_Unit.html(str).multiselect('rebuild');
+        MULTISELECTUNIT.html(str).multiselect('rebuild');
     }
     
 }
@@ -106,7 +106,7 @@ function fetchData(){
 	
 	bu.getClientInfo(function(error, data) {
         if (error == null) {
-            GroupName.focus();
+            GROUPNAME.focus();
             GROUPS = data.bu_clients;
             LEGAL_ENTITIES = data.bu_legalentites;
             UNITS = data.bu_units;
@@ -120,39 +120,39 @@ function fetchData(){
 
 function pageControls() {
     
-    DownloaFileButton.click(function() {
-        cl_id = GroupId.val();
-        le_id = LegalEntityId.val();
-        cl_name = GroupName.val();
-        le_name = LegalEntityName.val();
+    DOWNLOADFILEBUTTON.click(function() {
+        clientId = GROUPID.val();
+        legalentityId = LEGALENTITYID.val();
+        clientName = GROUPNAME.val();
+        legalentityName = LEGALENTITYNAME.val();
         
-        if (cl_id.trim().length <= 0) {
+        if (clientId.trim().length <= 0) {
             displayMessage('Client Group Required');
             return false;
-        } else if (le_id.trim().length <= 0) {
+        } else if (legalentityId.trim().length <= 0) {
             displayMessage(message.legalentity_required);
             return false;
-        } else if (MultiSelect_Domain.val() == null) {
+        } else if (MULTISELECTDOMAIN.val() == null) {
             displayMessage(message.domain_required);
             return false;
         } else {
-            d_ids = MultiSelect_Domain.val().map(Number);
-            d_names = [];
+            DOMAINIDS = MULTISELECTDOMAIN.val().map(Number);
+            DOMAINNAMES = [];
             $("#domains option:selected").each(function () {
                var $this = $(this);
                if ($this.length) {
-                d_names.push($this.text());
+                DOMAINNAMES.push($this.text());
                }
             });
 
-            u_names = [];
-            u_ids = [];
-            if(MultiSelect_Unit.val() == null){
+            UNITNAMES = [];
+            UNITIDS = [];
+            if(MULTISELECTUNIT.val() == null){
                 for (var i in UNITS) {
-                    if(UNITS[i].le_id == LegalEntityId.val() &&
-                        containsAll(d_ids, UNITS[i].d_ids)){
-                        u_names.push(UNITS[i].u_name.split('-').pop());
-                        u_ids.push(UNITS[i].u_id);
+                    if(UNITS[i].le_id == LEGALENTITYID.val() &&
+                        containsAll(DOMAINIDS, UNITS[i].d_ids)){
+                        UNITNAMES.push(UNITS[i].u_name.split('-').pop());
+                        UNITIDS.push(UNITS[i].u_id);
                     }
                 }
             }else{
@@ -160,20 +160,22 @@ function pageControls() {
                    var $this = $(this);
                    if ($this.length) {
                     var selText = $this.text().split('-').pop();
-                    u_names.push(selText);
+                    UNITNAMES.push(selText);
                    }
                 });
-                u_ids = MultiSelect_Unit.val().map(Number);
+                UNITIDS = MULTISELECTUNIT.val().map(Number);
             }
 
             displayLoader();
-            bu.getDownloadAssignStatutory(parseInt(cl_id), parseInt(le_id), 
-                d_ids, u_ids, cl_name, le_name, d_names, u_names, 
+            bu.getDownloadAssignStatutory(parseInt(clientId), 
+                parseInt(legalentityId), 
+                DOMAINIDS, UNITIDS, clientName, 
+                legalentityName, DOMAINNAMES, UNITNAMES, 
                 function(error, data) {
                 if (error == null) {
-                    var download_url = data.link;
-                    if (download_url != null){
-                        window.open(download_url, '_blank');
+                    var downloadURL = data.link;
+                    if (downloadURL != null){
+                        window.open(downloadURL, '_blank');
                         hideLoader();
                     }
                     else{
@@ -188,152 +190,152 @@ function pageControls() {
         }
     });
 
-    MultiSelect_Domain.change(function(e) {
-        u_names = [];
-        u_ids = [];
+    MULTISELECTDOMAIN.change(function(e) {
+        UNITNAMES = [];
+        UNITIDS = [];
         fetchUnitMultiselect()
-        MultiSelect_Unit.multiselect('rebuild');
+        MULTISELECTUNIT.multiselect('rebuild');
     });
 
-    GroupName.keyup(function(e) {
+    GROUPNAME.keyup(function(e) {
         var text_val = $(this).val();
         commonAutoComplete(
-            e, ACGroup, GroupId, text_val,
+            e, ACGROUP, GROUPID, text_val,
             GROUPS, "cl_name", "cl_id",
             function(val) {
-                onAutoCompleteSuccess(GroupName, GroupId, val);
+                onAutoCompleteSuccess(GROUPNAME, GROUPID, val);
             });
     });
 
-    LegalEntityName.keyup(function(e) {
-        if (GroupId.val() != '') {
-            var condition_fields = ["cl_id"];
-            var condition_values = [GroupId.val()];
+    LEGALENTITYNAME.keyup(function(e) {
+        if (GROUPID.val() != '') {
+            var condetionFields = ["cl_id"];
+            var condetionValues = [GROUPID.val()];
             
             var text_val = $(this).val();
             commonAutoComplete(
-                e, ACLegalEntity, LegalEntityId, text_val,
+                e, ACLEGALENTITY, LEGALENTITYID, text_val,
                 LEGAL_ENTITIES, "le_name", "le_id",
                 function(val) {
-                    onAutoCompleteSuccess(LegalEntityName, LegalEntityId, val);
-                }, condition_fields, condition_values);
+                    onAutoCompleteSuccess(LEGALENTITYNAME, LEGALENTITYID, val);
+                }, condetionFields, condetionValues);
         }
     });
 
-    UploadFile.change(function(e) {
+    UPLOADFILE.change(function(e) {
     if ($(this).val() != '') {
         bu.uploadCSVFile(e, function(status, response) {
             if (status == false) {
                 displayMessage(response);
             }
             else {
-                csvInfo = response
+                CSVINFO = response
             }
 
         })
     }
   });
 
-    UploadFileButton.click(function() {
-        cl_id = GroupId.val();
-        le_id = LegalEntityId.val();
-        le_name = LegalEntityName.val();
+    UPLOADFILEBUTTON.click(function() {
+        clientId = GROUPID.val();
+        legalentityId = LEGALENTITYID.val();
+        legalentityName = LEGALENTITYNAME.val();
 
-        if (cl_id.trim().length <= 0) {
+        if (clientId.trim().length <= 0) {
             displayMessage(message.client_group_required);
             return false;
-        } else if (le_id.trim().length <= 0) {
+        } else if (legalentityId.trim().length <= 0) {
             displayMessage(message.legalentity_required);
             return false;
-        } else if (MultiSelect_Domain.val() == null) {
+        } else if (MULTISELECTDOMAIN.val() == null) {
             displayMessage(message.domain_required);
             return false;
-        } else if (UploadFile.val() == '') {
+        } else if (UPLOADFILE.val() == '') {
             displayMessage(message.upload_csv);
             return false;
-        } else if (csvInfo == null) {
+        } else if (CSVINFO == null) {
             displayMessage(message.invalid_file_format);
             return false;
         } else {
-            d_ids = MultiSelect_Domain.val().map(Number);
-            d_names = [];
+            DOMAINIDS = MULTISELECTDOMAIN.val().map(Number);
+            DOMAINNAMES = [];
             $("#domains option:selected").each(function () {
                var $this = $(this);
                if ($this.length) {
-                d_names.push($this.text());
+                DOMAINNAMES.push($this.text());
                }
             });
 
             var args = {
-                "csv_name": csvInfo["file_name"],
-                "csv_data": csvInfo["file_content"],
-                "csv_size": csvInfo["file_size"],
-                "cl_id": parseInt(cl_id), 
-                "le_id": parseInt(le_id), 
-                "d_ids": d_ids,
-                "le_name": le_name, 
-                "d_names": d_names
+                "csv_name": CSVINFO["file_name"],
+                "csv_data": CSVINFO["file_content"],
+                "csv_size": CSVINFO["file_size"],
+                "cl_id": parseInt(clientId), 
+                "le_id": parseInt(legalentityId), 
+                "d_ids": DOMAINIDS,
+                "le_name": legalentityName, 
+                "d_names": DOMAINNAMES
             };
             
             displayLoader();
             bu.getUploadAssignStatutoryCSV(args, function(error, data) {
                 if (error == null) {
-                    TotalRecordsCount.text(data.total);
-                    ValidRecordsCount.text( parseInt(data.valid) - 
+                    TOTALRECORD.text(data.total);
+                    VALIDRECORD.text( parseInt(data.valid) - 
                         parseInt(data.invalid) );
-                    InvalidRecordsCount.text(data.invalid);
-                    InvalidFileName = null;
-                    MandatoryErrorsCount.text("0");
-                    DuplicateErrorsCount.text("0");
-                    StatusErrorsCount.text("0");
-                    LengthErrorsCount.text("0");
-                    InvalidErrorsCount.text("0");
+                    INVALIDRECORD.text(data.invalid);
+                    INVALIDFILENAME = null;
+                    MANDATORYERROR.text("0");
+                    DUPLICATEERROR.text("0");
+                    STATUSERROR.text("0");
+                    LENGTHERROR.text("0");
+                    INVALIDERROR.text("0");
                     $('.view-summary').hide();
                     $('.dropbtn').hide();
                     displaySuccessMessage(message.upload_success);
                     hideLoader();
-                    GroupId.val('');
-                    GroupName.val('');
-                    LegalEntityName.val('');
-                    LegalEntityId.val('');
-                    u_names = [];
-                    u_ids = [];
-                    d_names = [];
-                    d_ids = [];
+                    GROUPID.val('');
+                    GROUPNAME.val('');
+                    LEGALENTITYNAME.val('');
+                    LEGALENTITYID.val('');
+                    UNITNAMES = [];
+                    UNITIDS = [];
+                    DOMAINNAMES = [];
+                    DOMAINIDS = [];
                     fetchDomainMultiselect()
-                    MultiSelect_Domain.multiselect('rebuild');
+                    MULTISELECTDOMAIN.multiselect('rebuild');
                     fetchUnitMultiselect()
-                    MultiSelect_Unit.multiselect('rebuild');
-                    UploadFile.val('');
+                    MULTISELECTUNIT.multiselect('rebuild');
+                    UPLOADFILE.val('');
                     
                 } else {
                     if(error == 'Invalid Csv file'){
                         displayMessage(error);
                     }else if(error == 'UploadAssignStatutoryCSVFailed'){
                         displayMessage(message.upload_failed);
-                        InvalidFileName = data.invalid_file.split('.');;
-                        TotalRecordsCount.text(data.total);
+                        INVALIDFILENAME = data.invalid_file.split('.');;
+                        TOTALRECORD.text(data.total);
                         var getValidCount = (parseInt(data.total) - 
                             parseInt(data.invalid));
-                        ValidRecordsCount.text(getValidCount);
-                        InvalidRecordsCount.text(data.invalid);
-                        MandatoryErrorsCount.text(data.mandatory_error);
-                        DuplicateErrorsCount.text(data.duplicate_error);
-                        StatusErrorsCount.text(data.inactive_error);
-                        LengthErrorsCount.text(data.max_length_error);
+                        VALIDRECORD.text(getValidCount);
+                        INVALIDRECORD.text(data.invalid);
+                        MANDATORYERROR.text(data.mandatory_error);
+                        DUPLICATEERROR.text(data.duplicate_error);
+                        STATUSERROR.text(data.inactive_error);
+                        LENGTHERROR.text(data.max_length_error);
                         getInvaliddataCount = parseInt(data.invalid_char_error) 
                             + parseInt(data.invalid_data_error);
-                        InvalidErrorsCount.text(getInvaliddataCount);
+                        INVALIDERROR.text(getInvaliddataCount);
                         $('.dropbtn').show();
                         $('.view-summary').show();
                         
-                        csv_path = "/invalid_file/csv/" + InvalidFileName[0] + 
+                        csv_path = "/invalid_file/csv/" + INVALIDFILENAME[0] + 
                         '.csv';
-                        xls_path = "/invalid_file/xlsx/" + InvalidFileName[0] + 
+                        xls_path = "/invalid_file/xlsx/" + INVALIDFILENAME[0] + 
                         '.xlsx';
-                        ods_path = "/invalid_file/ods/" + InvalidFileName[0] + 
+                        ods_path = "/invalid_file/ods/" + INVALIDFILENAME[0] + 
                         '.ods';
-                        txt_path = "/invalid_file/txt/" + InvalidFileName[0] + 
+                        txt_path = "/invalid_file/txt/" + INVALIDFILENAME[0] + 
                         '.txt';
                         $('#csv').attr("href", csv_path);
                         $('#excel').attr("href", xls_path);
@@ -356,10 +358,10 @@ function initialize() {
     
 }
 $(function() {
-    MultiSelect_Domain.multiselect({
+    MULTISELECTDOMAIN.multiselect({
         buttonWidth: '100%'
     });
-    MultiSelect_Unit.multiselect({
+    MULTISELECTUNIT.multiselect({
         buttonWidth: '100%'
     });
     initialize();
