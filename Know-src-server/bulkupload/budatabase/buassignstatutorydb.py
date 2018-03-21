@@ -31,7 +31,8 @@ __all__ = [
     "get_asm_csv_file_name_by_id",
     "save_action_from_view",
     "get_validation_info",
-    "get_rejected_file_count"
+    "get_rejected_file_count",
+    "delete_action_after_approval"
     ]
 
 ########################################################
@@ -410,7 +411,6 @@ def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
     try :
         args = [csv_id, action, remarks, session_user.user_id()]
         data = db.call_proc("sp_assign_statutory_update_action", args)
-        print data
         return True
 
     except Exception, e:
@@ -684,3 +684,14 @@ def get_rejected_file_count(db, session_user):
     rej_count = result[0]["rejected"]
 
     return rej_count
+
+def delete_action_after_approval(db, csv_id):
+    try :
+        args = [csv_id]
+        data = db.call_proc("sp_assign_statutory_delete", args)
+        return True
+
+    except Exception, e:
+        logger.logKnowledge("error", "update action from list", str(traceback.format_exc()))
+        logger.logKnowledge("error", "update action from list", str(e))
+        raise fetch_error()

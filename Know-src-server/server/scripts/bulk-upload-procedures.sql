@@ -1740,3 +1740,17 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_assign_statutory_delete`(
+IN csvid INT
+)
+BEGIN
+    delete from tbl_bulk_assign_statutory
+    WHERE csv_assign_statutory_id = csvid and action = 1;
+END //
+
+DELIMITER ;

@@ -305,6 +305,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                         cObj._unit_id
                     )
                     cObj.source_commit()
+                    delete_action_after_approval(db, csv_id)
                     return bu_as.AssignStatutoryApproveActionInListSuccess()
         else :
             if (update_approve_action_from_list(db, csv_id, action, remarks, session_user)) :
