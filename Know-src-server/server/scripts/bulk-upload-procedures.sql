@@ -1726,3 +1726,17 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_as_rejected_file_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_as_rejected_file_count`(
+    IN user_ INT(11)
+)
+BEGIN
+    select count(1) as rejected from tbl_bulk_assign_statutory_csv
+    where approve_status = 2 and uploaded_by = user_;
+END //
+
+DELIMITER ;

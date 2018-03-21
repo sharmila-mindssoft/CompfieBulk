@@ -182,6 +182,10 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
     try:
         if request_frame.csv_size > 0 :
             pass
+        
+        if get_rejected_file_count(db, session_user) > 5:
+            raise ValueError("Already reached the maximum count of rejected files")
+
         # save csv file
         csv_name = convert_base64_to_file(
                 BULKUPLOAD_CSV_PATH, request_frame.csv_name,
