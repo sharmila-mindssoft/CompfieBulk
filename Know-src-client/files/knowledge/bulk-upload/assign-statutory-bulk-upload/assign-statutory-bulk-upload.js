@@ -80,17 +80,20 @@ function fetchDomainMultiselect() {
 
 function fetchUnitMultiselect() {
     var str = '';
-    c_d_ids = MultiSelect_Domain.val().map(Number);
-    if (UNITS.length > 0 && c_d_ids.length > 0) {
-        for (var i in UNITS) {
-            if(UNITS[i].le_id == LegalEntityId.val() &&
-                containsAll(c_d_ids, UNITS[i].d_ids)
-                ){
-                str += '<option value="'+ UNITS[i].u_id +'">'+ UNITS[i].u_name +'</option>';
+    if(MultiSelect_Domain.val() != null){
+        c_d_ids = MultiSelect_Domain.val().map(Number);
+        if (UNITS.length > 0 && c_d_ids.length > 0) {
+            for (var i in UNITS) {
+                if(UNITS[i].le_id == LegalEntityId.val() &&
+                    containsAll(c_d_ids, UNITS[i].d_ids)
+                    ){
+                    str += '<option value="'+ UNITS[i].u_id +'">'+ UNITS[i].u_name +'</option>';
+                }
             }
+            MultiSelect_Unit.html(str).multiselect('rebuild');
         }
-        MultiSelect_Unit.html(str).multiselect('rebuild');
     }
+    
 }
 
 
@@ -284,7 +287,7 @@ function pageControls() {
                     $('.view-summary').hide();
                     $('.dropbtn').hide();
                     displaySuccessMessage("Records uploaded successfully for approval");
-                    GroupName.val('');
+                    hideLoader();
                     GroupId.val('');
                     LegalEntityName.val('');
                     LegalEntityId.val('');
@@ -297,7 +300,7 @@ function pageControls() {
                     fetchUnitMultiselect()
                     MultiSelect_Unit.multiselect('rebuild');
                     UploadFile.val('');
-                    hideLoader();
+                    
                 } else {
                     if(error == 'Invalid Csv file'){
                         displayMessage(error);
