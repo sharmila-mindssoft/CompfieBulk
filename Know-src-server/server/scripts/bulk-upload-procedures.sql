@@ -484,6 +484,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(IN `client_group_id` int(11), IN `legal_entity_id` int(11), IN `unit_id` varchar(100), IN `from_date` date, IN `to_date` date, IN `from_limit` int, IN `to_limit` int, IN `user_ids` varchar(100), IN `domain_ids` varchar(100))
 BEGIN
 IF (unit_id='') THEN
+
   SELECT t1.csv_assign_statutory_id, t1.domain_names,
     t1.uploaded_by,
     t1.uploaded_on,
@@ -498,6 +499,7 @@ IF (unit_id='') THEN
     (CASE WHEN t1.total_rejected_records IS NOT NULL THEN (t1.total_records - t1.total_rejected_records) ELSE 0 END) AS total_approve_records,
     t1.approve_status,
     t1.rejected_reason
+
   FROM tbl_bulk_assign_statutory_csv AS t1
   WHERE
   t1.client_id = client_group_id AND
@@ -518,6 +520,7 @@ IF (unit_id='') THEN
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
 ELSE
+
   SELECT DISTINCT t2.csv_assign_statutory_id, t1.domain_names,
     t1.uploaded_by,
     t1.uploaded_on,
@@ -532,6 +535,7 @@ ELSE
     (CASE WHEN t1.total_rejected_records IS NOT NULL THEN (t1.total_records - t1.total_rejected_records) ELSE 0 END) AS total_approve_records,
     t1.approve_status,
     t1.rejected_reason
+
   FROM tbl_bulk_assign_statutory_csv AS t1
   INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
   WHERE

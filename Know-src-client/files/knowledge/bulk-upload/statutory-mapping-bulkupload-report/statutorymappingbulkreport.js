@@ -6,7 +6,6 @@ var DOMAIN_LIST = [];
 var ON_CURRENT_PAGE = 1;
 var SNO = 0;
 var TOTAL_RECORD = 0;
-
 var ITEMS_PER_PAGE = $('#items_per_page');
 var SHOW_BTN = $('#show');
 var EXPORT_BTN = $('#export');
@@ -27,7 +26,6 @@ var USER_CATEGORY_ID = 0;
 var CSV = false;
 var ALL_USER_INFO;
 var USER_DETAILS;
-
 /**** User Level Category ***********/
 var KM_USER_CATEGORY = 3;
 var KE_USER_CATEGORY = 4;
@@ -35,7 +33,6 @@ var TM_USER_CATEGORY = 5;
 var TE_USER_CATEGORY = 6;
 var DM_USER_CATEGORY = 7;
 var DE_USER_CATEGORY = 8;
-
 // Creating StatutoryMappingBulkReport Class
 StatutoryMappingBulkReport = function() {}
 
@@ -143,6 +140,7 @@ function loadCountwiseResult(data) {
         approvedRejectedBy = '';
         approvedRejectedTasks = '-';
 
+
         $(ALL_USER_INFO).each(function(key, value) {
             if (parseInt(uploadedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
@@ -214,13 +212,11 @@ function processSubmit() {
     $.each(country, function(key, value) {
         selectedCountryId.push(parseInt(value));
     });
-
     /* multiple DOMAIN selection */
     $.each(domain, function(key, value) {
         splitDomainName = value.split("-");
         selectedDomainId.push(parseInt(splitDomainName[1]));
     });
-
     if ($('#kename-kmanager').val() == null) {
         selectedKe = KNOWLEDGE_EXECUTIVES;
     } else {
@@ -245,16 +241,13 @@ function processSubmit() {
         "child_ids": selectedKe,
         "user_category_id": USER_CATEGORY_ID
     };
-
     /******** API Response Data Sucess process *****/
     function onSuccess(data) {
         var tr;
         var div_class = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd';
         div_class += 'oanimationend animationend';
-
         var table = '#nocompliance_templates .table-nocompliances-list';
         table += " .table-row";
-
         $('.details').show();
         $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
             .one(div_class, function() {
@@ -333,7 +326,6 @@ function loadDomains() {
         DOMAIN.multiselect('rebuild');
     }
 }
-
 /****** Pagination ***********/
 function showPagePan(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ';
@@ -341,13 +333,11 @@ function showPagePan(showFrom, showTo, total) {
     COMPLIANCE_CLASS.text(showText);
     PAGINATION_VIEW.show();
 };
-
 /****** Pagination ***********/
 function hidePagePan() {
     COMPLIANCE_CLASS.text('');
     PAGINATION_VIEW.hide();
 }
-
 /****** Pagination ***********/
 function createPageView(total_records) {
     var perPage = parseInt(ITEMS_PER_PAGE.val());
@@ -366,7 +356,6 @@ function createPageView(total_records) {
         }
     });
 };
-
 /****** StatutoryMapping Report Page Actions ***********/
 function pageControls() {
     /**** Load Domain List When MultiSelecting The Countries **********/
@@ -409,7 +398,6 @@ function pageControls() {
         }
     });
 }
-
 /****** Get Current User Employee Name & Code ***********/
 function loadCurrentUserDetails() {
     var user = mirror.getUserInfo();
