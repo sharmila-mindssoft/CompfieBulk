@@ -383,11 +383,11 @@ function PageControls() {
   submit.click(function() {
     var approveCount = dataDetailsTableTbody.find('.single-approve:checked').length;
     var rejectCount = dataDetailsTableTbody.find('.single-reject:checked').length;
-    if(approveCount == 0 || rejectCount) {
+    if (approveCount == 0 || rejectCount) {
       displayMessage(message.action_selection_required);
     } else {
       // to check the record checked all the action need to check temp db
-      // REPORT.submitProcess();
+      REPORT.submitProcess();
     }
     // REPORT.submitProcess();
   });
@@ -576,12 +576,12 @@ ApproveAssignStatutoryBulkUpload.prototype.fetchStatutoryValues = function(c_id,
         mirror.getDomainUserInfo(function(err, resp) {
           if (err == null) {
             t_this._UserList = resp.domain_executive_info;
-            for (var i=0; i<t_this._data_list.length; i++) {
-              for (var j=0; j<t_this._UserList.length; j++) {
-                  if (t_this._data_list[i].uploaded_by == t_this._UserList[j].user_id) {
-                      t_this._data_list[i].uploaded_by = t_this._UserList[j].emp_code_name;
-                      break;
-                  }
+            for (var i = 0; i < t_this._data_list.length; i++) {
+              for (var j = 0; j < t_this._UserList.length; j++) {
+                if (t_this._data_list[i].uploaded_by == t_this._UserList[j].user_id) {
+                  t_this._data_list[i].uploaded_by = t_this._UserList[j].emp_code_name;
+                  break;
+                }
               }
             }
             t_this.displayListPage(t_this._data_list);
@@ -710,24 +710,89 @@ function validateAuthentication(id, passwordField, reasonField) {
     }
   }
   displayLoader();
+  bu.validateAssignStatutory(parseInt(id), function(error, res1) {
+    hideLoader();
+    Custombox.close();
+    if (res1.rej_count == 0) {
+      approveOrRejectAction(id, cl_id, le_id, action, reason, password);
+    } else {
+      var statusmsg = message.manuval_rejected_confirm;
+      confirm_alert(statusmsg, function(isConfirm) {
+        if (isConfirm) {
+          approveOrRejectAction(id, cl_id, le_id, action, reason, password);
+        }
+      });
+    }
+  });
+}
+
+approveOrRejectAction = function(id, cl_id, le_id, action, reason, password) {
   bu.assignStatutoryActionInList(parseInt(cl_id), parseInt(le_id), parseInt(id),
-    parseInt(action), reason, password,
-    function(error, response) {
-      console.log(error, response);
-      if (error == null) {
-        hideLoader();
-        Custombox.close();
-        if (action == 1)
-          displaySuccessMessage(message.assign_statutory_approved_success);
-        else
-          displaySuccessMessage(message.assign_statutory_rejected_success);
-        REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
+    parseInt(action), reason, password, function(err1, res2) {
+      console.log(err1, res2);
+      if (err1 == null) {
+        if (res2.hasOwnProperty("rej_count")) {
+          var statusmsg = res2.rej_count+' '+message.sys_rejected_confirm;
+          confirm_alert(statusmsg, function(isConfirm) {
+            if (isConfirm) {
+              alert("Status change");
+              bu.confirmAssignStatutoryUpdateAction(parseInt(id), parseInt(cl_id), 
+                parseInt(le_id), function(error, res3) {
+                  if (error == null) {
+                    if (action == 1)
+                      displaySuccessMessage(message.assign_statutory_approved_success);
+                    else
+                      displaySuccessMessage(message.assign_statutory_rejected_success);
+                    REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
+                  } else {
+                    REPORT.possibleFailures(error);
+                    hideLoader();
+                  }
+              });
+            }
+          });
+        } else {
+          if (action == 1)
+            displaySuccessMessage(message.assign_statutory_approved_success);
+          else
+            displaySuccessMessage(message.assign_statutory_rejected_success);
+          REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
+        }
       } else {
-        REPORT.possibleFailures(error);
+        REPORT.possibleFailures(err1);
         hideLoader();
       }
     });
 }
+
+/*//open password dialog
+function showModalDialog(domainId, isActive){
+    t_this = this;
+    var passStatus = null;
+    if (isActive == true) {
+        passStatus = false;
+        statusmsg = message.deactive_message;
+    } else {
+        passStatus = true;
+        statusmsg = message.active_message;
+    }
+    confirm_alert(statusmsg, function(isConfirm) {
+    if(isConfirm) {
+        Custombox.open({
+        target: '#custom-modal',
+        effect: 'contentscale',
+        complete:   function() {
+          isAuthenticate = false;
+        },
+        close:   function() {
+          if(isAuthenticate) {
+            t_this.changeStatus(domainId, passStatus);
+          }
+        },
+      });
+    }
+  });
+}*/
 
 goToDetailsPage = function(id) {
   filteredData.empty();
@@ -852,7 +917,7 @@ ApproveAssignStatutoryBulkUpload.prototype.displayDetailsPage = function(data, p
         $('.statutory-not-applicable i', clone).addClass("text-muted");
         $('.statutory-do-not-show i', clone).addClass("text-muted");
       }
-      if(v.s_remarks != "") {
+      if (v.s_remarks != "") {
         $('.statutory-remarks', clone).html(v.s_remarks);
       }
       $('.secondary-legislation', clone).html(v.s_leg);
@@ -895,17 +960,17 @@ singleReject = function(id, flag) {
         confirmationAction(0, 'single-reject');
       } else {
         $('#approve' + id).removeAttr("checked");
-        $('#rejected-reason' + id ).html('<i class="fa fa-info-circle ' + 
-        ' fa-1-2x l-h-51 text-primary c-pointer" data-toggle="tooltip" ' + 
-        ' data-original-title="' + singleRejectReason.val() + '"></i>');
+        $('#rejected-reason' + id).html('<i class="fa fa-info-circle ' +
+          ' fa-1-2x l-h-51 text-primary c-pointer" data-toggle="tooltip" ' +
+          ' data-original-title="' + singleRejectReason.val() + '"></i>');
         tempAction(id, 2);
         checkAllEnableDisable();
       }
     } else {
       $('#approve' + id).removeAttr("checked");
-      $('#rejected-reason' + id ).html('<i class="fa fa-info-circle ' + 
-      ' fa-1-2x l-h-51 text-primary c-pointer" data-toggle="tooltip" ' + 
-      ' data-original-title="' + singleRejectReason.val() + '"></i>');
+      $('#rejected-reason' + id).html('<i class="fa fa-info-circle ' +
+        ' fa-1-2x l-h-51 text-primary c-pointer" data-toggle="tooltip" ' +
+        ' data-original-title="' + singleRejectReason.val() + '"></i>');
       tempAction(id, 2);
       // checkAllEnableDisable();
       checkAllApprove.removeAttr("checked");
@@ -939,10 +1004,10 @@ checkAllEnableDisable = function(id, action) {
   var approveCount = dataDetailsTableTbody.find('.single-approve:checked').length;
   var rejectCount = dataDetailsTableTbody.find('.single-reject:checked').length;
   // alert(rejectTotalCount+' - '+rejectCount);
-  if(approveCount == approveTotalCount) {
+  if (approveCount == approveTotalCount) {
     checkAllApprove.prop('checked', true);
     checkAllReject.removeAttr("checked");
-  } else if(rejectCount == rejectTotalCount) {
+  } else if (rejectCount == rejectTotalCount) {
     checkAllApprove.removeAttr("checked");
     checkAllReject.prop('checked', true);
   } else {
@@ -955,7 +1020,6 @@ ApproveAssignStatutoryBulkUpload.prototype.loadFilterPage = function(id) {
   t_this = this;
   displayLoader();
   bu.getAssignStatutoryFilters(parseInt(id), function(error, response) {
-    // alert(response.toSource());
     if (error == null) {
       t_this._filter_domain = response.d_names;
       t_this._filter_unit = response.u_names;
@@ -1037,15 +1101,14 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
     parseInt(pageLimits), d_names, u_names, p_leg, s_leg, s_pro, c_task,
     c_des, v_data, s_status, c_status,
     function(error, response) {
-      // alert(response.toSource());
       clientGroupName.html(response.cl_name);
       legalEntityName.html(response.le_name);
       uploadedFileName.html(response.csv_name);
       uploadedOn.html(response.uploaded_on);
-      for (var j=0; j<t_this._UserList.length; j++) {
-          if (response.uploaded_by == t_this._UserList[j].user_id) {
-              uploadedBy.html(t_this._UserList[j].emp_code_name);
-          }
+      for (var j = 0; j < t_this._UserList.length; j++) {
+        if (response.uploaded_by == t_this._UserList[j].user_id) {
+          uploadedBy.html(t_this._UserList[j].emp_code_name);
+        }
       }
       if (error == null) {
         t_this._data_list_details = response.assign_statutory_data_list;
@@ -1099,22 +1162,45 @@ ApproveAssignStatutoryBulkUpload.prototype.submitProcess = function() {
   var csvid = ASID.val();
   var cl_id = clientGroupId.val();
   var le_id = legalEntityId.val();
-
   displayLoader();
-  bu.confirmAssignStatutoryUpdateAction(parseInt(csvid), parseInt(cl_id),
-    parseInt(le_id),
-    function(error, response) {
-      if (error == null) {
-        displaySuccessMessage(message.assign_statutory_submit_success);
-        REPORT.pageLoad();
-        PageControls();
-        hideLoader();
-      } else {
-        t_this.possibleFailures(error);
-        hideLoader();
-      }
-    });
+  bu.validateAssignStatutory(parseInt(csvid), function(error, response) {
+    if (response.un_saved_count > 0) {
+      displayMessage(message.un_saved_compliance);
+      hideLoader();
+    } else {
 
+      bu.submitAssignStatutoryAction(parseInt(csvid), 1, 1, "pass@123",
+        function(error, response) {
+          if (error == null) {
+            if (response.hasOwnProperty("rej_count")) {
+              var statusmsg = response.rej_count+' '+message.sys_rejected_confirm;
+              confirm_alert(statusmsg, function(isConfirm) {
+                if (isConfirm) {
+                  bu.confirmAssignStatutoryUpdateAction(parseInt(csvid), parseInt(cl_id), 
+                    parseInt(le_id), function(error, res3) {
+                      if (error == null) {
+                        displaySuccessMessage(message.assign_statutory_submit_success);
+                        // REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
+                        REPORT.pageLoad();
+                      } else {
+                        REPORT.possibleFailures(error);
+                        hideLoader();
+                      }
+                  });
+                }
+              });
+            } else {
+              displaySuccessMessage(message.assign_statutory_submit_success);
+              REPORT.pageLoad();
+            }
+          } else {
+            t_this.possibleFailures(error);
+            hideLoader();
+          }
+        });
+
+    }
+  });
 }
 
 REPORT = new ApproveAssignStatutoryBulkUpload();
@@ -1123,7 +1209,7 @@ $(document).ready(function() {
   REPORT.pageLoad();
   PageControls();
   loadItemsPerPage();
-  // goToDetailsPage(33);
+  // goToDetailsPage(38);
   // listView.show();
   // REPORT.fetchStatutoryValues(1,1);
 

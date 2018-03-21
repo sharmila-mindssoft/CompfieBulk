@@ -1,3 +1,4 @@
+import traceback
 from ..bucsvvalidation.assignstatutoryvalidation import (
     ValidateAssignStatutoryCsvData, ValidateAssignStatutoryForApprove
     )
@@ -7,13 +8,13 @@ from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 from ..budatabase.buassignstatutorydb import *
 from ..bulkuploadcommon import (
     convert_base64_to_file,
-    read_data_from_csv
+    read_data_from_csv,
+    generate_valid_file
 )
 from ..bulkexport import ConvertJsonToCSV
 from server.constants import BULKUPLOAD_CSV_PATH
 import datetime
 from protocol import generalprotocol, technoreports
-
 __all__ = [
     "process_bu_assign_statutory_request"
 ]
@@ -199,7 +200,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
         res_data = cObj.perform_validation()
 
         if res_data["return_status"] is True :
-
+            generate_valid_file(csv_name)
             d_ids = ",".join(str(e) for e in request_frame.d_ids)
             d_names = ",".join(str(e) for e in request_frame.d_names)
 
@@ -518,6 +519,7 @@ def submit_assign_statutory(db, request_frame, session_user):
         csv_id = request_frame.csv_id
         client_id = request_frame.cl_id
         legal_entity_id = request_frame.le_id
+        user_id = session_user.user_id()
         # csv data validation
 
         approved_count, un_saved_count = get_validation_info(db, csv_id)
@@ -537,7 +539,7 @@ def submit_assign_statutory(db, request_frame, session_user):
             #     1, cObj._csv_name, cObj._country_name, cObj._domain_name,
             #     session_user.user_id()
             # )
-            cObj.frame_data_for_main_db_insert()
+            cObj.frame_data_for_main_db_insert(user_id)
             cObj.source_commit()
             update_approve_action_from_list(db, csv_id, 1, None, session_user)
             return bu_as.SubmitAssignStatutorySuccess()
@@ -564,8 +566,8 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
         #     session_user.user_id()
         # )
         cObj.source_commit()
-        return bu_as.SubmitStatutoryMappingSuccess(user_id)
-
+        return bu_as.SubmitAssignStatutorySuccess()        
+   
 def validate_assign_statutory(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     approved_count, un_saved_count = get_validation_info(db, csv_id)
