@@ -548,6 +548,7 @@ def submit_assign_statutory(db, request_frame, session_user):
         if len(is_declined) > 0:
             return bu_as.ValidationSuccess(len(is_declined))
         else:
+            update_approve_action_from_list(db, csv_id, 1, None, session_user)
             cObj.save_executive_message(
                 1, cObj._csv_name, cObj._client_group,
                 cObj._legal_entity, session_user.user_id(),
@@ -555,7 +556,8 @@ def submit_assign_statutory(db, request_frame, session_user):
             )
             cObj.frame_data_for_main_db_insert(user_id)
             cObj.source_commit()
-            update_approve_action_from_list(db, csv_id, 1, None, session_user)
+            delete_action_after_approval(db, csv_id)
+            
             return bu_as.SubmitAssignStatutorySuccess()
     except Exception, e:
         print e
@@ -573,14 +575,18 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
     )
     is_declined = cObj.perform_validation_before_submit()
     if len(is_declined) > 0 :
-        cObj.frame_data_for_main_db_insert(user_id)
         cObj.make_rejection(is_declined)
+
         cObj.save_executive_message(
             1, cObj._csv_name, cObj._client_group,
             cObj._legal_entity, session_user.user_id(),
             cObj._unit_id
         )
+        cObj.frame_data_for_main_db_insert(user_id)
         cObj.source_commit()
+
+        delete_action_after_approval(db, csv_id)
+
         return bu_as.SubmitAssignStatutorySuccess()        
    
 def validate_assign_statutory(db, request_frame, session_user):

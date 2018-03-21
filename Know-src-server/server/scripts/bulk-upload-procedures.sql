@@ -1410,7 +1410,7 @@ BEGIN
     from tbl_bulk_assign_statutory as t2
     inner join tbl_bulk_assign_statutory_csv as t1
     on t1.csv_assign_statutory_id = t2.csv_assign_statutory_id
-    where t2.csv_assign_statutory_id = csvid;
+    where t2.action != 3 and t2.csv_assign_statutory_id = csvid;
 
 END //
 
@@ -1752,7 +1752,8 @@ CREATE PROCEDURE `sp_as_rejected_file_count`(
 )
 BEGIN
     select count(1) as rejected from tbl_bulk_assign_statutory_csv
-    where approve_status = 2 and uploaded_by = user_;
+    where (is_fully_rejected = 1 or declined_count > 0) and approve_status < 4 
+    and uploaded_by = user_;
 END //
 
 DELIMITER ;
@@ -1766,7 +1767,7 @@ IN csvid INT
 )
 BEGIN
     delete from tbl_bulk_assign_statutory
-    WHERE csv_assign_statutory_id = csvid and action = 1;
+    WHERE (action = 1 or action = 2) and csv_assign_statutory_id = csvid;
 END //
 
 DELIMITER ;
