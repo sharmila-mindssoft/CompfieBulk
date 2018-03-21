@@ -112,6 +112,7 @@ function loadCountwiseResult(data) {
     var last_act_name = '';
     var entity;
     var table_row;
+    var approved_by_name, rejected_by_name, uploaded_by_name;
     SHOW_FROM = SNO + 1;
 
     for (var entity in data) {
@@ -139,15 +140,15 @@ function loadCountwiseResult(data) {
             if (parseInt(uploaded_by) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
-                uploaded_by = EMP_CODE + " - " + EMP_NAME;
+                uploaded_by_name = EMP_CODE + " - " + EMP_NAME;
             } else if (parseInt(rejected_by) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
-                rejected_by = EMP_CODE + " - " + EMP_NAME;
+                rejected_by_name = EMP_CODE + " - " + EMP_NAME;
             } else if (parseInt(approved_by) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
-                approved_by = EMP_CODE + " - " + EMP_NAME;
+                approved_by_name = EMP_CODE + " - " + EMP_NAME;
             }
         });
         if (parseInt(reason_for_rejection) == 1) {
@@ -158,15 +159,22 @@ function loadCountwiseResult(data) {
             approved_rejected_tasks += " / ";
             approved_rejected_tasks += total_rejected_records;
         }
-        if (String(approved_on) != "null") {
-            approved_rejected_on = approved_on;
-            approved_rejected_by = approved_by;
+        if (rejected_on != null && rejected_on != '') {
+            approved_rejected_on = String(rejected_on);
+            approved_rejected_by = rejected_by_name;
         }
-        if (String(rejected_on) != "null") {
-            approved_rejected_on = rejected_on;
-            approved_rejected_by = rejected_by;
+        if (approved_on != null && approved_on != '') {
+            approved_rejected_on = String(approved_on);
+            approved_rejected_by = approved_by_name;
         }
 
+        console.log("approved_on >>>>>>>>>>>>>");
+        console.log(approved_on);
+        console.log(approved_by);
+        console.log(approved_on);
+        console.log(rejected_by);
+        console.log(approved_rejected_on);
+        console.log("approved_on >>>>>>>>>>>>>");
 
         table_row = $('#act_templates .table-act-list .table-row-act-list');
         var tr_clone = table_row.clone();
@@ -174,7 +182,7 @@ function loadCountwiseResult(data) {
         $('.tbl-country', tr_clone).text(country_name);
         $('.tbl-domain', tr_clone).text(domain_name);
         $('.tbl-uploaded-file-name', tr_clone).text(csv_name);
-        $(".tbl-uploaded-by", tr_clone).text(uploaded_by);
+        $(".tbl-uploaded-by", tr_clone).text(uploaded_by_name);
         $('.tbl-uploaded-on', tr_clone).text(uploaded_on);
         $('.tbl-no-of-tasks', tr_clone).text(tbl_no_of_tasks);
         $('.tbl-approved-rejected-tasks', tr_clone).text(approved_rejected_tasks);
