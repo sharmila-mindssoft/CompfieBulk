@@ -129,6 +129,7 @@ function processPaging() {
         }
         PAGINATION_VIEW.show();
         REPORT_VIEW.show();
+        //Called but function not defined
         loadUserMappingDetailsList();
     }
 }
