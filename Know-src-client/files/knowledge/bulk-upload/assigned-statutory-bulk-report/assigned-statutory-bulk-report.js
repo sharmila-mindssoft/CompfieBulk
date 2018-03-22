@@ -892,7 +892,7 @@ function loadCountwiseResult(filterList) {
         is_null = false;
 
         SNO = parseInt(SNO) + 1;
-        
+
 
         var domain = filterList[entity].domain;
         //alert(domain);

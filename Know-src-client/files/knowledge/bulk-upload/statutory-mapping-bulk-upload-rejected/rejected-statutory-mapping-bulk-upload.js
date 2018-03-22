@@ -193,7 +193,7 @@ function loadCountwiseResult(data) {
     var statutory_action;
     var remove_action;
     var rejected_by;
-    var decliened_count;
+    var decliened_count = '-';
     var file_download_count;
     var download_rejected_files;
     var delete_status;
@@ -334,7 +334,7 @@ function validateAuthentication(){
     if (error == null) {
       hideLoader();
       isAuthenticate = true;
-      Custombox.close();
+      Custombox.close('#custom-modal-approve');
       displaySuccessMessage(message.password_authentication_success);
     } else {
       hideLoader();
@@ -350,7 +350,7 @@ PASSWORD_SUBMIT_BTN.click(function() {
 });
 
 function confirm_alert(event) {
-  var country_id=Country.val();
+  var country_id=COUNTRY.val();
   var DomainId=DOMAIN.val();
    swal({
         title: "Are you sure",
@@ -364,22 +364,31 @@ function confirm_alert(event) {
           Custombox.open({
           target: '#custom-modal-approve',
           effect: 'contentscale',
-          complete:   function() {
-             CURRENT_PASSWORD.focus();
-             isAuthenticate = false;
-             COUNTRY.val(country_id);
-             DOMAIN.val(DomainId);
-          },
+          complete: function() {
+            if (CURRENT_PASSWORD != null) {
+                CURRENT_PASSWORD.focus();
+                CURRENT_PASSWORD.val('');
+            }
+            isAuthenticate = false;
+            COUNTRY.val(country_id);
+            DOMAIN.val(DomainId);
+        },
           close:   function() {
             COUNTRY.val(country_id);
             DOMAIN.val(DomainId);
              if(isAuthenticate){
-                REMOVE_STATUTORY_CSV_ID=$(event).attr("data-csv-id");
-                RemoveStatutoryCsv(REMOVE_STATUTORY_CSV_ID, country_id,
-                  DomainId);
+                displayLoader();
+                setTimeout(function() {
+                  REMOVE_STATUTORY_CSV_ID=$(event).attr("data-csv-id");
+                  RemoveStatutoryCsv(REMOVE_STATUTORY_CSV_ID, country_id,
+                    DomainId);
+                  hideLoader();
+                }, 500);
              }
+
           }
         });
+        return false;
       }
     })
 }

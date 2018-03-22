@@ -458,7 +458,7 @@ function loadCountwiseResult(filterList) {
             if (parseInt(uploadedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
-                approvedByName = EMP_CODE + " - " + EMP_NAME;
+                uploadedBy = EMP_CODE + " - " + EMP_NAME;
             } else if (parseInt(rejectedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
@@ -491,7 +491,7 @@ function loadCountwiseResult(filterList) {
         var clone1 = tblRow1.clone();
         $('.tbl_sno', clone1).text(SNO);
         $('.tbl_uploaded_file_name', clone1).text(csvName);
-        $(".tbl_uploaded_by", clone1).text(approvedByName);
+        $(".tbl_uploaded_by", clone1).text(uploadedBy);
         $('.tbl_uploaded_on', clone1).text(uploadedOn);
         $('.tbl_no_of_tasks', clone1).text(tblNoOfTasks);
 
