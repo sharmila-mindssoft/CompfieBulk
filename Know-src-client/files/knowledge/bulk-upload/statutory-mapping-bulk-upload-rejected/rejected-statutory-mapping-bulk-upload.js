@@ -242,8 +242,6 @@ function loadCountwiseResult(data) {
             onClick: "confirm_alert(this)",
         });
 
-        alert(fileDownloadCount);
-
         /***** Rejected File Downloads ********/
         if (parseInt(fileDownloadCount) < 2) {
             $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
@@ -259,7 +257,7 @@ function loadCountwiseResult(data) {
                 onclick: "downloadClick(" + csvId + ",this)"
             });
         }
-        else if (parseInt(fileDownloadCount) < 1){
+        else if (parseInt(fileDownloadCount) < 1 && parseInt(fileDownloadCount)){
             $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
         }
         else{
