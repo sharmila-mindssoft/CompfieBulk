@@ -789,6 +789,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         return self._declined_row_idx
 
     def frame_data_for_main_db_insert(self, user_id):
+        self.get_source_data()
         self._source_data.sort(key=lambda x: (
              x["Domain"], x["Unit_Name"]
         ))
