@@ -84,7 +84,7 @@ def get_client_list(db, session_user):
                 d["domain_id"], d["domain_name"]))
 
         entitys_data.append(bu_as.LegalEntites(
-            e["client_id"], e["legal_entity_id"], e["legal_entity_name"], 
+            e["client_id"], e["legal_entity_id"], e["legal_entity_name"],
             domains_data)
         )
 
@@ -93,7 +93,7 @@ def get_client_list(db, session_user):
 
         domain_ids = [int(x) for x in u["domain_ids"].split(',') if x != '']
         units_data.append(bu_as.Units(
-            u["client_id"], u["legal_entity_id"], u["unit_id"], 
+            u["client_id"], u["legal_entity_id"], u["unit_id"],
             (u["unit_code"] + '-' +u["unit_name"]) , domain_ids
         ))
 
@@ -110,7 +110,7 @@ def get_client_list(db, session_user):
 # rtypes: lsit of Object
 ########################################################
 
-def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, 
+def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name,
     le_name, d_names, u_names, session_user):
     _source_db_con = mysql.connector.connect(
         user=KNOWLEDGE_DB_USERNAME,
@@ -129,8 +129,8 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name,
     domain_names = ",".join(str(e) for e in d_names)
     unit_names = ",".join(str(e) for e in u_names)
 
-    column = ["client_group", "legal_entity", "domain", "organization", 
-    "unit_code", "unit_name", "unit_location", "perimary_legislation", 
+    column = ["client_group", "legal_entity", "domain", "organization",
+    "unit_code", "unit_name", "unit_location", "perimary_legislation",
     "secondary_legislation", "statutory_provision", "compliance_task_name",
     "compliance_description"]
 
@@ -139,10 +139,10 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name,
     ac_list = []
     for r in result :
         ac_tuple = (
-            cl_name, le_name, r["domain_name"], r["organizations"], 
-            r["unit_code"], r["unit_name"], r["location"] , 
+            cl_name, le_name, r["domain_name"], r["organizations"],
+            r["unit_code"], r["unit_name"], r["location"] ,
             r["primary_legislation"], r["secondary_legislation"],
-            r["statutory_provision"], r["compliance_task_name"], 
+            r["statutory_provision"], r["compliance_task_name"],
             r["compliance_description"]
             )
         ac_list.append(ac_tuple)
@@ -199,11 +199,11 @@ def save_assign_statutory_csv(db, args):
 
 def save_assign_statutory_data(db, csv_id, csv_data) :
     try:
-        columns = ["csv_assign_statutory_id", "client_group", "legal_entity", 
+        columns = ["csv_assign_statutory_id", "client_group", "legal_entity",
         "domain", "organization", "unit_code", "unit_name",
-            "unit_location", "perimary_legislation", "secondary_legislation", 
+            "unit_location", "perimary_legislation", "secondary_legislation",
             "statutory_provision", "compliance_task_name",
-            "compliance_description", "statutory_applicable_status", 
+            "compliance_description", "statutory_applicable_status",
             "statytory_remarks", "compliance_applicable_status"
         ]
 
@@ -237,7 +237,7 @@ def save_assign_statutory_data(db, csv_id, csv_data) :
                 d["Domain"], org, d["Unit_Code"],
                 d["Unit_Name"], d["Unit_Location"],
                 d["Primary_Legislation"], d["Secondary_Legislaion"],
-                d["Statutory_Provision"], d["Compliance_Task"], 
+                d["Statutory_Provision"], d["Compliance_Task"],
                 d["Compliance_Description"],
                 s_status, d["Statutory_remarks"], c_status
             ))
@@ -433,7 +433,7 @@ def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
         return True
 
     except Exception, e:
-        logger.logKnowledge("error", "update action from list", 
+        logger.logKnowledge("error", "update action from list",
             str(traceback.format_exc()))
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
@@ -506,7 +506,7 @@ def fetch_rejected_assign_sm_data(db, session_user, user_id, client_id,
              int(download_count),
              str(d["remarks"]),
              d["action"],
-             int(d["declined_count"]),
+             d["declined_count"],
              d["rejected_reason"]
         ))
     return rejectdatalist
@@ -517,7 +517,7 @@ def update_asm_download_count_by_csvid(db, session_user, csv_id):
     data = db.call_proc('sp_update_asm_download_count', args)
     for d in data:
         asm_updated_count.append(bu_as.ASMRejectUpdateDownloadCount(
-             int(d["csv_assign_statutory_id"]), 
+             int(d["csv_assign_statutory_id"]),
              int(d["rejected_file_download_count"])
         ))
     return asm_updated_count
@@ -704,13 +704,13 @@ def save_action_from_view(db, csv_id, as_id, action, remarks, session_user):
         return True
 
     except Exception, e:
-        logger.logKnowledge("error", "update action from view", 
+        logger.logKnowledge("error", "update action from view",
             str(traceback.format_exc()))
         logger.logKnowledge("error", "update action from view", str(e))
         raise fetch_error()
 
 def get_validation_info(db, csv_id):
-    result = db.call_proc_with_multiresult_set("sp_as_validation_info", 
+    result = db.call_proc_with_multiresult_set("sp_as_validation_info",
         [csv_id], 2)
     rej_count = result[0][0]["rejected"]
     un_saved_count = result[1][0]["un_saved"]
@@ -718,7 +718,7 @@ def get_validation_info(db, csv_id):
     return rej_count, un_saved_count
 
 def get_rejected_file_count(db, session_user):
-    result = db.call_proc("sp_as_rejected_file_count", 
+    result = db.call_proc("sp_as_rejected_file_count",
         [session_user.user_id()])
     rej_count = result[0]["rejected"]
 
@@ -731,7 +731,7 @@ def delete_action_after_approval(db, csv_id):
         return True
 
     except Exception, e:
-        logger.logKnowledge("error", "update action from list", 
+        logger.logKnowledge("error", "update action from list",
             str(traceback.format_exc()))
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
