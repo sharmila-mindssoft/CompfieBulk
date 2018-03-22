@@ -1410,7 +1410,7 @@ BEGIN
     from tbl_bulk_assign_statutory as t2
     inner join tbl_bulk_assign_statutory_csv as t1
     on t1.csv_assign_statutory_id = t2.csv_assign_statutory_id
-    where t2.action != 3 and t2.csv_assign_statutory_id = csvid;
+    where (t2.action is null or t2.action != 3) and t2.csv_assign_statutory_id = csvid;
 
 END //
 

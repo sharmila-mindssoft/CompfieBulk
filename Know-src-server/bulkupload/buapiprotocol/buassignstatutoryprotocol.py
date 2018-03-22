@@ -45,7 +45,8 @@ class GetClientInfo(Request):
         }
 
 class DownloadAssignStatutory(Request):
-    def __init__( self, cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names):
+    def __init__( self, cl_id, le_id, d_ids, u_ids, cl_name, le_name, 
+        d_names, u_names):
         self.cl_id = cl_id
         self.le_id = le_id
         self.d_ids = d_ids
@@ -57,10 +58,12 @@ class DownloadAssignStatutory(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["cl_id", "le_id", "d_ids", "u_ids", "cl_name", "le_name", "d_names", "u_names"])
+        data = parse_dictionary(data, ["cl_id", "le_id", "d_ids", "u_ids", 
+            "cl_name", "le_name", "d_names", "u_names"])
         return DownloadAssignStatutory(
-            data.get("cl_id"), data.get("le_id"), data.get("d_ids"), data.get("u_ids"),
-            data.get("cl_name"), data.get("le_name"), data.get("d_names"), data.get("u_names")
+            data.get("cl_id"), data.get("le_id"), data.get("d_ids"), 
+            data.get("u_ids"), data.get("cl_name"), data.get("le_name"), 
+            data.get("d_names"), data.get("u_names")
         )
 
     def to_inner_structure(self):
@@ -76,7 +79,8 @@ class DownloadAssignStatutory(Request):
         }
 
 class UploadAssignStatutoryCSV(Request):
-    def __init__(self, csv_name, csv_data, csv_size, cl_id, le_id, d_ids, le_name, d_names):
+    def __init__(self, csv_name, csv_data, csv_size, cl_id, le_id, d_ids, 
+        le_name, d_names):
         self.csv_name = csv_name
         self.csv_data = csv_data
         self.csv_size = csv_size
@@ -88,9 +92,11 @@ class UploadAssignStatutoryCSV(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["csv_name", "csv_data", "csv_size", "cl_id", "le_id", "d_ids", "le_name", "d_names"])
+        data = parse_dictionary(data, ["csv_name", "csv_data", "csv_size", 
+            "cl_id", "le_id", "d_ids", "le_name", "d_names"])
         return UploadAssignStatutoryCSV(
-            data.get("csv_name"), data.get("csv_data"), data.get("csv_size"), data.get("cl_id"), data.get("le_id"), data.get("d_ids"),
+            data.get("csv_name"), data.get("csv_data"), data.get("csv_size"), 
+            data.get("cl_id"), data.get("le_id"), data.get("d_ids"),
             data.get("le_name"), data.get("d_names")
         )
 
@@ -133,7 +139,8 @@ class GetRejectedAssignSMData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_id", "le_id", "domain_ids", "asm_unit_code"])
+        data = parse_dictionary(data, ["client_id", "le_id", "domain_ids", 
+            "asm_unit_code"])
         return GetRejectedAssignSMData(
             data.get("client_id"),
             data.get("le_id"),
@@ -173,7 +180,8 @@ class DeleteRejectedASMByCsvID(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_id", "le_id", "domain_ids", "asm_unit_code", "csv_id"])
+        data = parse_dictionary(data, ["client_id", "le_id", "domain_ids", 
+            "asm_unit_code", "csv_id"])
         return DeleteRejectedASMByCsvID(
             data.get("client_id"),
             data.get("le_id"),
@@ -193,8 +201,9 @@ class DeleteRejectedASMByCsvID(Request):
 
 
 class GetAssignedStatutoryBulkReportData(Request):
-    def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id, domain_ids,
-     from_date, to_date, r_count, p_count, child_ids, user_category_id):
+    def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id, 
+        domain_ids,from_date, to_date, r_count, p_count, child_ids, 
+        user_category_id):
         self.bu_client_id = bu_client_id
         self.bu_legal_entity_id = bu_legal_entity_id
         self.bu_unit_id = bu_unit_id
@@ -209,8 +218,8 @@ class GetAssignedStatutoryBulkReportData(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["bu_client_id", "bu_legal_entity_id",
-            "bu_unit_id", "domain_ids", "from_date", "to_date", "r_count", "p_count",
-            "child_ids", "user_category_id"])
+            "bu_unit_id", "domain_ids", "from_date", "to_date", "r_count", 
+            "p_count", "child_ids", "user_category_id"])
         return GetAssignedStatutoryBulkReportData(
             data.get("bu_client_id"),
             data.get("bu_legal_entity_id"),
@@ -364,8 +373,9 @@ class ViewAssignStatutoryData(Request):
         }
 
 class ViewAssignStatutoryDataFromFilter(Request):
-    def __init__(self, csv_id, f_count, r_range, filter_d_name, filter_u_name, filter_p_leg,
-        s_leg, s_prov, c_task, c_desc, filter_view_data, s_status, c_status):
+    def __init__(self, csv_id, f_count, r_range, filter_d_name, filter_u_name, 
+        filter_p_leg, s_leg, s_prov, c_task, c_desc, filter_view_data, s_status, 
+        c_status):
         self.csv_id = csv_id
         self.f_count = f_count
         self.r_range = r_range
@@ -383,9 +393,9 @@ class ViewAssignStatutoryDataFromFilter(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["csv_id", "f_count", "r_range", "filter_d_name",
-        "filter_u_name", "filter_p_leg", "s_leg", "s_prov", "c_task", "c_desc",
-        "filter_view_data", "s_status", "c_status"])
+        data = parse_dictionary(data, ["csv_id", "f_count", "r_range", 
+        "filter_d_name", "filter_u_name", "filter_p_leg", "s_leg", "s_prov", 
+        "c_task", "c_desc", "filter_view_data", "s_status", "c_status"])
         return ViewAssignStatutoryDataFromFilter(
             data.get("csv_id"),
             data.get("f_count"),
@@ -599,7 +609,8 @@ class LegalEntites(object):
             "cl_id", "le_id", "le_name", "bu_domains"
         ])
         return LegalEntites(
-            data.get("cl_id"), data.get("le_id"), data.get("le_name"), data.get("bu_domains")
+            data.get("cl_id"), data.get("le_id"), data.get("le_name"), 
+            data.get("bu_domains")
         )
 
     def to_structure(self):
@@ -626,7 +637,8 @@ class Units(object):
             "cl_id", "le_id", "u_id", "u_name", "d_ids"
         ])
         return Units(
-            data.get("cl_id"), data.get("le_id"), data.get("u_id"), data.get("u_name"), data.get("d_ids")
+            data.get("cl_id"), data.get("le_id"), data.get("u_id"), 
+            data.get("u_name"), data.get("d_ids")
         )
 
     def to_structure(self):
@@ -684,7 +696,8 @@ class PendingCsvListAssignStatutory(object):
         ])
         return PendingCsvListAssignStatutory(
             data.get("csv_id"), data.get("csv_name"), data.get("uploaded_by"),
-            data.get("uploaded_on"), data.get("no_of_records"), data.get("approved_count"),
+            data.get("uploaded_on"), data.get("no_of_records"), 
+            data.get("approved_count"),
             data.get("rej_count"), data.get("download_file")
         )
 
@@ -898,7 +911,8 @@ class UploadAssignStatutoryCSVFailed(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "invalid_file", "mandatory_error", "max_length_error", "duplicate_error",
+            "invalid_file", "mandatory_error", "max_length_error", 
+            "duplicate_error",
             "invalid_char_error", "invalid_data_error", "inactive_error",
             "total", "invalid"
         ])
@@ -982,7 +996,8 @@ class GetAssignStatutoryFiltersSuccess(Response):
         }
 
 class ViewAssignStatutoryDataSuccess(Response):
-    def __init__(self, csv_id, csv_name, cl_name, le_name, uploaded_by, uploaded_on, assign_statutory_data_list, count):
+    def __init__(self, csv_id, csv_name, cl_name, le_name, uploaded_by, 
+        uploaded_on, assign_statutory_data_list, count):
         self.csv_id = csv_id
         self.csv_name = csv_name
         self.cl_name = cl_name
@@ -995,7 +1010,8 @@ class ViewAssignStatutoryDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "csv_id", "csv_name", "cl_name", "le_name", "uploaded_by", "uploaded_on", "assign_statutory_data_list", "count"
+            "csv_id", "csv_name", "cl_name", "le_name", "uploaded_by", 
+            "uploaded_on", "assign_statutory_data_list", "count"
         ])
         return ViewAssignStatutoryDataSuccess(
             data.get("csv_id"),
@@ -1264,8 +1280,9 @@ class AssignStatutoryMappingRejectData(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "csv_id","uploaded_by","uploaded_on", "csv_name", "total_records",
-            "total_rejected_records", "approved_by", "rejected_by", "approved_on",
-            "rejected_on", "is_fully_rejected", "approve_status", "file_download_count",
+            "total_rejected_records", "approved_by", "rejected_by", 
+            "approved_on", "rejected_on", "is_fully_rejected", 
+            "approve_status", "file_download_count",
             "remarks", "statutory_action", "declined_count", "rejected_reason"
         ])
         return AssignStatutoryMappingRejectData(
@@ -1337,7 +1354,8 @@ class AssignStatutoryReportData(object):
             "uploaded_by",
         "uploaded_on", "csv_name", "total_records", "total_rejected_records",
         "approved_by", "rejected_by", "approved_on", "rejected_on",
-        "is_fully_rejected", "total_approve_records", "rejected_reason", "domain_name"
+        "is_fully_rejected", "total_approve_records", "rejected_reason", 
+        "domain_name"
         ])
         return AssignStatutoryReportData(
             data.get("uploaded_by"),
