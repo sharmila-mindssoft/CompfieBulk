@@ -185,6 +185,9 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         res_data = cObj.perform_validation()
         print res_data
 
+        if res_data is None :
+            raise RuntimeError("Invalid Csv File")
+
         if res_data["return_status"] is True:
             generate_valid_file(csv_name)
             if res_data["doc_count"] == 0:
@@ -227,6 +230,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         return result
     except Exception, e:
         print e
+        print str(traceback.format_exc())
         raise e
 
 ########################################################

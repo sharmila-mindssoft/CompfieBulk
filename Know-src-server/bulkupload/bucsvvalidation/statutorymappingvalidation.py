@@ -778,7 +778,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         duplicate = self.check_duplicate_task_name_in_csv()
         duplicate_compliance_in_csv = duplicate[0]
         duplicate_compliance_row = duplicate[1]
-        print duplicate_compliance_in_csv, duplicate_compliance_row
         self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
         duplicate_task_ids = self.check_duplicate_task_id_in_csv()
 
@@ -807,12 +806,9 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     self._doc_names.append(value)
 
                 for v in [v.strip() for v in values]:
-                        print key
                         valid_failed, error_cnt = parse_csv_dictionary_values(
                             key, v
                         )
-                        print valid_failed
-                        print error_cnt
                         if valid_failed is not True:
                             if res is True:
                                 res = valid_failed
@@ -897,6 +893,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
                         mapped_header_dict[key] = head_idx
 
+                print res
+                print data.get("Task_ID")
                 if key == "Format" and res is True:
                     if not self.check_compliance_task_name_duplicate(
                         self._country_id, self._domain_id,
@@ -950,40 +948,43 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             )
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
-
-        fileString = self._csv_name.split('.')
-        file_name = "%s_%s.%s" % (
-            fileString[0], "invalid", "xlsx"
-        )
-        final_hearder = self._csv_column_name_with_mandatory
-        final_hearder.append("Error Description")
-        write_data_to_excel(
-            os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"),
-            file_name, final_hearder,
-            self._source_data, mapped_error_dict,
-            mapped_header_dict, self._sheet_name
-        )
-        invalid = len(mapped_error_dict.keys())
-        total = len(self._source_data)
-        # make csv file
-        rename_file_type(file_name, "csv")
-        # make ods file
-        rename_file_type(file_name, "ods")
-        # make text file
-        rename_file_type(file_name, "txt")
-        return {
-            "return_status": False,
-            "invalid_file": file_name,
-            "mandatory_error": self._error_summary["mandatory_error"],
-            "max_length_error": self._error_summary["max_length_error"],
-            "duplicate_error": self._error_summary["duplicate_error"],
-            "invalid_char_error": self._error_summary["invalid_char_error"],
-            "invalid_data_error": self._error_summary["invalid_data_error"],
-            "inactive_error": self._error_summary["inactive_error"],
-            "total": total,
-            "invalid": invalid,
-            "doc_count": len(set(self._doc_names))
-        }
+        try :
+            fileString = self._csv_name.split('.')
+            file_name = "%s_%s.%s" % (
+                fileString[0], "invalid", "xlsx"
+            )
+            final_hearder = self._csv_column_name_with_mandatory
+            final_hearder.append("Error Description")
+            write_data_to_excel(
+                os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"),
+                file_name, final_hearder,
+                self._source_data, mapped_error_dict,
+                mapped_header_dict, self._sheet_name
+            )
+            invalid = len(mapped_error_dict.keys())
+            total = len(self._source_data)
+            # make csv file
+            rename_file_type(file_name, "csv")
+            # make ods file
+            rename_file_type(file_name, "ods")
+            # make text file
+            rename_file_type(file_name, "txt")
+            return {
+                "return_status": False,
+                "invalid_file": file_name,
+                "mandatory_error": self._error_summary["mandatory_error"],
+                "max_length_error": self._error_summary["max_length_error"],
+                "duplicate_error": self._error_summary["duplicate_error"],
+                "invalid_char_error": self._error_summary["invalid_char_error"],
+                "invalid_data_error": self._error_summary["invalid_data_error"],
+                "inactive_error": self._error_summary["inactive_error"],
+                "total": total,
+                "invalid": invalid,
+                "doc_count": len(set(self._doc_names))
+            }
+        except Exception, e :
+            print e
+            print str(traceback.format_exc())
 
     def make_valid_return(self, mapped_error_dict, mapped_header_dict):
         invalid = len(mapped_error_dict.keys())
@@ -1062,15 +1063,12 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
                             if isFound is not True and isFound != "":
                                 declined_count += 1
-                                print "Not Found Error"
-                                print key, v
 
             if not self.check_compliance_task_name_duplicate(
                 self._country_id, self._domain_id, data.get("Statutory"),
                 data.get("Statutory_Provision"), data.get("Compliance_Task")
             ):
                 declined_count += 1
-                print "duplicate task_name"
 
             if not self.check_task_id_duplicate(
                 self._country_id, self._domain_id, data.get("Statutory"),
@@ -1078,7 +1076,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 data.get("Task_ID")
             ):
                 declined_count += 1
-                print "duplicate task id"
 
             if declined_count > 0:
                 self._declined_row_idx.append(
@@ -1110,10 +1107,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     "Organization"
                 ).strip().split(CSV_DELIMITER):
                     org_info = self.Organization.get(org)
-                    print org_info
-                    print self.Organization
-                    print org
-                    print "------------------------------------------------"
                     if org_info is not None :
                         org_ids.append(
                             org_info.get("organisation_id")
