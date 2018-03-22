@@ -18,7 +18,7 @@ from ..bulkuploadcommon import (
 from ..bulkexport import ConvertJsonToCSV
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
-from server.exceptionmessage import fetch_error, fetch_run_error
+# from server.exceptionmessage import fetch_run_error
 
 from protocol import generalprotocol, technoreports
 

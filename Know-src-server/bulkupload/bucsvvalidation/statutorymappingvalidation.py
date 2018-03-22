@@ -719,6 +719,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             x["Statutory"], x["Statutory_Provision"], x["Compliance_Task"]
         ))
         duplicate_compliance = 0
+        duplicate_compliance_row = []
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Statutory"], s["Statutory_Provision"], s["Compliance_Task"]
         )):
@@ -726,8 +727,13 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             if len(grouped_list) > 1:
                 # msg.append(grouped_list[0].get("Compliance_Task"))
                 duplicate_compliance += len(grouped_list)
+                duplicate_compliance_row.append([
+                    grouped_list[0].get("Compliance_Task"),
+                    grouped_list[0].get("Statutory"),
+                    grouped_list[0].get("Statutory_Provision"),
+                ])
 
-        return duplicate_compliance
+        return duplicate_compliance, duplicate_compliance_row
 
         # if len(msg) > 0:
         #     error_msg = "Duplicate compliance task found in csv %s" % (
@@ -769,7 +775,10 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         self.compare_csv_columns()
         # duplicate_row_in_csv = self.check_duplicate_in_csv()
         # self._error_summary["duplicate_error"] += duplicate_row_in_csv
-        duplicate_compliance_in_csv = self.check_duplicate_task_name_in_csv()
+        duplicate = self.check_duplicate_task_name_in_csv()
+        duplicate_compliance_in_csv = duplicate[0]
+        duplicate_compliance_row = duplicate[1]
+        print duplicate_compliance_in_csv, duplicate_compliance_row
         self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
         duplicate_task_ids = self.check_duplicate_task_id_in_csv()
 
@@ -850,6 +859,15 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     if v in duplicate_task_ids :
                         dup_error = "Task_ID - Duplicate data"
                         res = make_error_desc(res, dup_error)
+                if key == "Compliance_Task":
+                    for x in duplicate_compliance_row:
+                        if (
+                            x[0] == v and
+                            x[1] == data.get("Statutory") and
+                            x[2] == data.get("Statutory_Provision")
+                        ):
+                            dup_err = "Compliance_Task - Duplicate data"
+                            res = make_error_desc(res, dup_err)
 
                 if key == "Compliance_Frequency" and res is True:
                     msg = []
