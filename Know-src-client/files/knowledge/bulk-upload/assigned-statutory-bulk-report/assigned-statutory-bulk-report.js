@@ -172,7 +172,7 @@ function createPageView(totalRecords) {
     PAGINATION.empty();
     PAGINATION.removeData('twbs-pagination');
     PAGINATION.unbind('page');
-    PAGINATION.twbsPAGINATION({
+    PAGINATION.twbsPagination({
         totalPages: Math.ceil(totalRecords / perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {

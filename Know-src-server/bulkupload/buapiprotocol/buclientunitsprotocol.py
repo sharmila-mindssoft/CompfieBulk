@@ -469,7 +469,7 @@ class StatutoryReportData(object):
     def __init__(self, uploaded_by,
                  uploaded_on, csv_name, total_records, total_rejected_records,
                  approved_by, rejected_by, approved_on, rejected_on,
-                 is_fully_rejected, total_approve_records, statutory_action,
+                 is_fully_rejected, total_approve_records,
                  rejected_reason
                  ):
         self.uploaded_by = uploaded_by
@@ -483,7 +483,6 @@ class StatutoryReportData(object):
         self.rejected_on = rejected_on
         self.is_fully_rejected = is_fully_rejected
         self.total_approve_records = total_approve_records
-        self.statutory_action = statutory_action
         self.rejected_reason = rejected_reason
 
     @staticmethod
@@ -492,7 +491,7 @@ class StatutoryReportData(object):
             "uploaded_by", "uploaded_on", "csv_name", "total_records",
             "total_rejected_records", "approved_by", "rejected_by",
             "approved_on", "rejected_on", "is_fully_rejected",
-            "total_approve_records", "statutory_action", "rejected_reason"
+            "total_approve_records", "rejected_reason"
         ])
         return StatutoryReportData(
                           data.get("uploaded_by"),
@@ -503,7 +502,6 @@ class StatutoryReportData(object):
                           data.get("approved_on"), data.get("rejected_on"),
                           data.get("is_fully_rejected"),
                           data.get("total_approve_records"),
-                          data.get("statutory_action"),
                           data.get("rejected_reason"),
                           )
 
@@ -520,7 +518,6 @@ class StatutoryReportData(object):
             "rejected_on": self.rejected_on,
             "is_fully_rejected": self.is_fully_rejected,
             "total_approve_records": self.total_approve_records,
-            "statutory_action": self.statutory_action,
             "rejected_reason": self.rejected_reason
             }
 

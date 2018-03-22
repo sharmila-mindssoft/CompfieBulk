@@ -490,6 +490,7 @@ var message = {
   "client_unit_upload_success": "Client Units uploaded successfully",
   "client_unit_upload_failed": "Errors in uploading Client Units",
   'clientgroup_required': 'Client Group Name Required',
+  "no_compliance_assign_statutory": "No Compliance Available for Assign Statutory",
 }
 
 function clearMessage() {
