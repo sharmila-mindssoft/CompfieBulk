@@ -594,8 +594,12 @@ csv_params = {
 
 csv_params_as = {
     'Statutory_remarks': make_required_validation(
-        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        keyType='STRING', maxLengthCheck=500, 
+        isValidCharCheck=True, validation_method=is_alpha_numeric
+    ),
+    'Statutory_remarks_': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, 
+        isValidCharCheck=True, validation_method=is_alpha_numeric
     ),
     'S.No': make_required_validation(
         keyType='INT', isValidCharCheck=True, validation_method=is_numeric

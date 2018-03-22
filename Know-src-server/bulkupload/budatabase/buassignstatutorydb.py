@@ -30,7 +30,9 @@ __all__ = [
     "fetch_rejected_asm_download_csv_report",
     "get_asm_csv_file_name_by_id",
     "save_action_from_view",
-    "get_validation_info"
+    "get_validation_info",
+    "get_rejected_file_count",
+    "delete_action_after_approval"
     ]
 
 ########################################################
@@ -59,7 +61,9 @@ def get_client_list(db, session_user):
     clients_data = []
     entitys_data = []
     units_data = []
-    result = _source_db.call_proc_with_multiresult_set("sp_client_info", [session_user.user_id()], 4)
+    result = _source_db.call_proc_with_multiresult_set("sp_client_info", [
+        session_user.user_id()
+        ], 4)
     clients = result[0]
     entitys = result[1]
     domains = result[2]
@@ -80,7 +84,8 @@ def get_client_list(db, session_user):
                 d["domain_id"], d["domain_name"]))
 
         entitys_data.append(bu_as.LegalEntites(
-            e["client_id"], e["legal_entity_id"], e["legal_entity_name"], domains_data)
+            e["client_id"], e["legal_entity_id"], e["legal_entity_name"],
+            domains_data)
         )
 
 
@@ -88,7 +93,8 @@ def get_client_list(db, session_user):
 
         domain_ids = [int(x) for x in u["domain_ids"].split(',') if x != '']
         units_data.append(bu_as.Units(
-            u["client_id"], u["legal_entity_id"], u["unit_id"], (u["unit_code"] + '-' +u["unit_name"]) , domain_ids
+            u["client_id"], u["legal_entity_id"], u["unit_id"],
+            (u["unit_code"] + '-' +u["unit_name"]) , domain_ids
         ))
 
     return clients_data, entitys_data, units_data
@@ -104,7 +110,8 @@ def get_client_list(db, session_user):
 # rtypes: lsit of Object
 ########################################################
 
-def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, session_user):
+def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name,
+    le_name, d_names, u_names, session_user):
     _source_db_con = mysql.connector.connect(
         user=KNOWLEDGE_DB_USERNAME,
         password=KNOWLEDGE_DB_PASSWORD,
@@ -122,8 +129,9 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, 
     domain_names = ",".join(str(e) for e in d_names)
     unit_names = ",".join(str(e) for e in u_names)
 
-    column = ["client_group", "legal_entity", "domain", "organization", "unit_code", "unit_name",
-    "unit_location", "perimary_legislation", "secondary_legislation", "statutory_provision", "compliance_task_name",
+    column = ["client_group", "legal_entity", "domain", "organization",
+    "unit_code", "unit_name", "unit_location", "perimary_legislation",
+    "secondary_legislation", "statutory_provision", "compliance_task_name",
     "compliance_description"]
 
     result = _source_db.call_proc("sp_get_assign_statutory_compliance", [u, d])
@@ -131,15 +139,21 @@ def get_download_assing_statutory_list(db, cl_id, le_id, d_ids, u_ids, cl_name, 
     ac_list = []
     for r in result :
         ac_tuple = (
-            cl_name, le_name, r["domain_name"], r["organizations"], r["unit_code"],
-            r["unit_name"], r["location"] , r["primary_legislation"], r["secondary_legislation"],
-            r["statutory_provision"], r["compliance_task_name"], r["compliance_description"]
+            cl_name, le_name, r["domain_name"], r["organizations"],
+            r["unit_code"], r["unit_name"], r["location"] ,
+            r["primary_legislation"], r["secondary_legislation"],
+            r["statutory_provision"], r["compliance_task_name"],
+            r["compliance_description"]
             )
         ac_list.append(ac_tuple)
 
-    db.call_proc("sp_delete_assign_statutory_template", (domain_names, unit_names))
+    db.call_proc("sp_delete_assign_statutory_template", (
+        domain_names, unit_names
+        ))
     if len(ac_list) > 0:
-        db.bulk_insert("tbl_download_assign_statutory_template", column, ac_list)
+        db.bulk_insert(
+            "tbl_download_assign_statutory_template", column, ac_list
+            )
     return ac_list
 
 
@@ -185,9 +199,12 @@ def save_assign_statutory_csv(db, args):
 
 def save_assign_statutory_data(db, csv_id, csv_data) :
     try:
-        columns = ["csv_assign_statutory_id", "client_group", "legal_entity", "domain", "organization", "unit_code", "unit_name",
-            "unit_location", "perimary_legislation", "secondary_legislation", "statutory_provision", "compliance_task_name",
-            "compliance_description", "statutory_applicable_status", "statytory_remarks", "compliance_applicable_status"
+        columns = ["csv_assign_statutory_id", "client_group", "legal_entity",
+        "domain", "organization", "unit_code", "unit_name",
+            "unit_location", "perimary_legislation", "secondary_legislation",
+            "statutory_provision", "compliance_task_name",
+            "compliance_description", "statutory_applicable_status",
+            "statytory_remarks", "compliance_applicable_status"
         ]
 
         values = []
@@ -220,7 +237,8 @@ def save_assign_statutory_data(db, csv_id, csv_data) :
                 d["Domain"], org, d["Unit_Code"],
                 d["Unit_Name"], d["Unit_Location"],
                 d["Primary_Legislation"], d["Secondary_Legislaion"],
-                d["Statutory_Provision"], d["Compliance_Task"], d["Compliance_Description"],
+                d["Statutory_Provision"], d["Compliance_Task"],
+                d["Compliance_Description"],
                 s_status, d["Statutory_remarks"], c_status
             ))
 
@@ -267,7 +285,9 @@ def get_pending_list(db, cl_id, le_id, session_user):
     return csv_data
 
 def get_assign_statutory_filters_for_approve(db, csv_id):
-    data = db.call_proc_with_multiresult_set("sp_assign_statutory_filter_list", [csv_id], 7)
+    data = db.call_proc_with_multiresult_set(
+        "sp_assign_statutory_filter_list", [csv_id], 7
+    )
     d_names = []
     u_names = []
     p_legis = []
@@ -364,7 +384,8 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
     c_status = request_frame.c_status
 
 
-    result = db.call_proc_with_multiresult_set("sp_assign_statutory_view_by_filter",
+    result = db.call_proc_with_multiresult_set(
+        "sp_assign_statutory_view_by_filter",
         [
             csv_id, domain_name, unit_name, p_legis,
             s_legis, s_prov, c_task, c_desc, f_count, r_range,
@@ -409,11 +430,11 @@ def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
     try :
         args = [csv_id, action, remarks, session_user.user_id()]
         data = db.call_proc("sp_assign_statutory_update_action", args)
-        print data
         return True
 
     except Exception, e:
-        logger.logKnowledge("error", "update action from list", str(traceback.format_exc()))
+        logger.logKnowledge("error", "update action from list",
+            str(traceback.format_exc()))
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
 
@@ -485,7 +506,7 @@ def fetch_rejected_assign_sm_data(db, session_user, user_id, client_id,
              int(download_count),
              str(d["remarks"]),
              d["action"],
-             int(d["declined_count"]),
+             d["declined_count"],
              d["rejected_reason"]
         ))
     return rejectdatalist
@@ -496,7 +517,8 @@ def update_asm_download_count_by_csvid(db, session_user, csv_id):
     data = db.call_proc('sp_update_asm_download_count', args)
     for d in data:
         asm_updated_count.append(bu_as.ASMRejectUpdateDownloadCount(
-             int(d["csv_assign_statutory_id"]), int(d["rejected_file_download_count"])
+             int(d["csv_assign_statutory_id"]),
+             int(d["rejected_file_download_count"])
         ))
     return asm_updated_count
 
@@ -682,16 +704,34 @@ def save_action_from_view(db, csv_id, as_id, action, remarks, session_user):
         return True
 
     except Exception, e:
-        logger.logKnowledge("error", "update action from view", str(traceback.format_exc()))
+        logger.logKnowledge("error", "update action from view",
+            str(traceback.format_exc()))
         logger.logKnowledge("error", "update action from view", str(e))
         raise fetch_error()
 
 def get_validation_info(db, csv_id):
-
-    rej_count = []
-    un_saved_count = []
-    result = db.call_proc_with_multiresult_set("sp_as_validation_info", [csv_id], 2)
+    result = db.call_proc_with_multiresult_set("sp_as_validation_info",
+        [csv_id], 2)
     rej_count = result[0][0]["rejected"]
     un_saved_count = result[1][0]["un_saved"]
 
     return rej_count, un_saved_count
+
+def get_rejected_file_count(db, session_user):
+    result = db.call_proc("sp_as_rejected_file_count",
+        [session_user.user_id()])
+    rej_count = result[0]["rejected"]
+
+    return rej_count
+
+def delete_action_after_approval(db, csv_id):
+    try :
+        args = [csv_id]
+        data = db.call_proc("sp_assign_statutory_delete", args)
+        return True
+
+    except Exception, e:
+        logger.logKnowledge("error", "update action from list",
+            str(traceback.format_exc()))
+        logger.logKnowledge("error", "update action from list", str(e))
+        raise fetch_error()

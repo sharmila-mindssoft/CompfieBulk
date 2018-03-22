@@ -15,7 +15,10 @@ from server.database.forms import (
     frmApproveAssignStatutoryBulkUpload
 )
 
-from keyvalidationsettings import csv_params, parse_csv_dictionary_values, csv_params_as, parse_csv_dictionary_values_as
+from keyvalidationsettings import ( 
+    csv_params, parse_csv_dictionary_values, 
+    csv_params_as, parse_csv_dictionary_values_as
+    )
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type
 )
@@ -267,7 +270,9 @@ class SourceDB(object):
             else :
                 approval_status = 5
 
-            statu_id = self.Statutories.get(d["Primary_Legislation"]).get("statutory_id")
+            statu_id = self.Statutories.get(d["Primary_Legislation"]).get(
+                "statutory_id"
+                )
             comp_id = None
             c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name", 
                 [d["Compliance_Task"], d["Compliance_Description"]])
@@ -340,7 +345,8 @@ class SourceDB(object):
             [task_name, compliance_description])
         comp_id = c_ids[0]["compliance_id"]
 
-        data = self._source_db.call_proc("sp_bu_check_duplicate_compliance_for_unit", [
+        data = self._source_db.call_proc(
+            "sp_bu_check_duplicate_compliance_for_unit", [
             domain_id, unit_id, comp_id
         ])
         if len(data) > 0 :
@@ -348,52 +354,75 @@ class SourceDB(object):
         else:
             return True
 
-    # def save_executive_message(
-    #     self, csv_name, countryname, domainname, createdby
-    # ):
+    def save_executive_message(
+        self, a_type, csv_name, clientgroup, legalentity, createdby, unitid
+    ):  
+        admin_users_id = []
+        res = self._source_db.call_proc("sp_users_under_user_category", (1,))
+        for user in res:
+            admin_users_id.append(user["user_id"])
 
-    #     text = "Assign statutory file %s of %s - %s uploaded for your %s" % (
-    #             csv_name, countryname, domainname, 'approval'
-    #         )
-    #     link = "/knowledge/approve-assign-statutory-bu"
-    #     save_messages(
-    #         self._source_db, 3, "Assign Statutory Bulk Upload",
-    #         text, link, createdby
-    #     )
+        domain_users_id = []
+        res = self._source_db.call_proc("sp_user_by_unit_id", (8, unitid))
+        for user in res:
+            domain_users_id.append(user["user_id"])
 
-    #     action = "Statutory mapping csv file uploaded %s of %s - %s" % (
-    #         csv_name, countryname, domainname
-    #     )
-    #     if csv_name and countryname and domainname:
-    #         self._source_db.save_activity(
-    #             createdby, frmStatutoryMappingBulkUpload, action
-    #         )
+        if a_type == 1:
+            action_type = "approved"
+        else:
+            action_type = "rejected"
 
-    # def save_manager_message(
-    #     self, a_type, csv_name, domainname, unitname, createdby
-    # ):
-    #     if a_type == 1:
-    #         action_type = "approved"
+        msg = "Assign statutory file %s of %s - %s has been %s" % (
+                csv_name, clientgroup, legalentity, action_type
+            )
+        
+        if len(domain_users_id) > 0:
+            self._source_db.save_toast_messages(
+                8, "Approve Assign Statutory Bulk Upload", msg, None,
+                domain_users_id, createdby
+                )
+        if len(admin_users_id) > 0:
+            self._source_db.save_toast_messages(
+                1, "Approve Assign Statutory Bulk Upload", msg, None, 
+                admin_users_id, createdby
+                )
+        
+        self._source_db.save_activity(
+            createdby, frmApproveAssignStatutoryBulkUpload, msg
+            )
 
-    #     else:
-    #         action_type = "rejected"
 
-    #     text = "Assign statutory file %s of %s - %s has been %s" % (
-    #             csv_name, domainname, unitname, action_type
-    #         )
-    #     link = "/knowledge/assign-statutory-bu"
-    #     save_messages(
-    #         self._source_db, 4, "Approve Assign Statutory Bulk Upload",
-    #         text, link, createdby
-    #     )
 
-    #     action = "Statutory mapping file  %s of %s - %s has been %s" % (
-    #         csv_name, countryname, domainname, action_type
-    #     )
-    #     if csv_name and countryname and domainname:
-    #         self._source_db.save_activity(
-    #             createdby, frmApproveStatutoryMappingBulkUpload, action
-    #         )
+    def save_manager_message(
+        self, csv_name, domainname, unitname, createdby, unitid
+    ):
+        admin_users_id = []
+        res = self._source_db.call_proc("sp_users_under_user_category", (1,))
+        for user in res:
+            admin_users_id.append(user["user_id"])
+
+        domain_users_id = []
+        res = self._source_db.call_proc("sp_user_by_unit_id", (7, unitid))
+        for user in res:
+            domain_users_id.append(user["user_id"])
+
+        msg = "Assign statutory file %s of %s - %s uploaded for your %s " % (
+            csv_name, unitname, domainname, 'approval'
+        )
+
+        if len(domain_users_id) > 0:
+            self._source_db.save_toast_messages(
+                7, "Assign Statutory Bulk Upload", msg, None, domain_users_id, 
+                createdby
+                )
+        if len(admin_users_id) > 0:
+            self._source_db.save_toast_messages(
+                1, "Assign Statutory Bulk Upload", msg, None, admin_users_id, 
+                createdby
+                )
+        self._source_db.save_activity(
+            createdby, frmAssignStatutoryBulkUpload, msg
+            )
 
     def source_commit(self):
         self._source_db.commit()
@@ -410,7 +439,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         self._client_id = client_id
         self._error_summary = {}
         self.errorSummary()
-
+        self._client_group = None
+        self._unit_id = None
         self._sheet_name = "Assign Statutory"
 
     # error summary mapped with initial count
@@ -426,7 +456,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
     
     def compare_csv_columns(self):
-        res = collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
+        res = collections.Counter(self._csv_column_name) == collections.Counter(
+            self._csv_header
+            )
         if res is False :
             raise ValueError("Invalid Csv file")
     '''
@@ -469,11 +501,11 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
     def check_uploaded_count_in_csv(self):
         self._source_data.sort(key=lambda x: (
-            x["Domain"], x["Unit_Name"]
+            x["Domain"], x["Unit_Code"]
         ))
         unit_names = []
         for k, v in groupby(self._source_data, key=lambda s: (
-            s["Domain"], s["Unit_Name"]
+            s["Domain"], s["Unit_Code"]
         )):
             grouped_list = list(v)
             if len(grouped_list) > 1 :
@@ -481,7 +513,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 domain = grouped_list[0].get("Domain")
                 unit_names.append(grouped_list[0].get("Unit_Code"))
 
-                data = self._db.call_proc("sp_check_upload_compliance_count_for_unit", [
+                data = self._db.call_proc(
+                    "sp_check_upload_compliance_count_for_unit", [
                     domain, unit_code
                 ])
                 uploaded_count = data[0]["count"]
@@ -500,7 +533,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         invalid = 0
         self.compare_csv_columns()
         self.check_duplicate_in_csv()
-        self.check_duplicate_compliance_for_same_unit_in_csv()
+        # self.check_duplicate_compliance_for_same_unit_in_csv()
         self.check_uploaded_count_in_csv()
         self.init_values(self._session_user_obj.user_id(), self._client_id)
 
@@ -515,6 +548,12 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             return res
 
         for row_idx, data in enumerate(self._source_data):
+            if row_idx == 0:
+                self._client_group = data.get("Client_Group")
+                self._unit_id = self.Unit_Code.get(data.get("Unit_Code")).get(
+                    "unit_id"
+                    )
+
             res = True
             error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
             for key in self._csv_column_name:
@@ -525,20 +564,40 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 csvParam = csv_params_as.get(key)
 
                 for v in [v.strip() for v in values] :
-                    valid_failed, error_cnt = parse_csv_dictionary_values_as(key, v)
+
+                    if (key == 'Statutory_remarks' and 
+                    (data.get('Statutory_Applicable_Status') == 'Not Applicable' 
+                    or data.get('Statutory_Applicable_Status') == 'Do not Show')):
+                        key = 'Statutory_remarks_'
+
+                    valid_failed, error_cnt = parse_csv_dictionary_values_as(
+                        key, v
+                        )
+                
                     if valid_failed is not True :
                         if res is True :
                             res = valid_failed
                             error_count = error_cnt
                         else :
                             res.extend(valid_failed)
-                            error_count["mandatory"] += error_cnt["mandatory"]
-                            error_count["max_length"] += error_cnt["max_length"]
-                            error_count["invalid_char"] += error_cnt["invalid_char"]
+                            error_count["mandatory"] += error_cnt[
+                            "mandatory"
+                            ]
+                            error_count["max_length"] += error_cnt[
+                            "max_length"
+                            ]
+                            error_count["invalid_char"] += error_cnt[
+                            "invalid_char"
+                            ]
 
                     if v != "" :
-                        if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
-                            unboundMethod = self._validation_method_maps.get(key)
+                        if (
+                            csvParam.get("check_is_exists") is True or 
+                            csvParam.get("check_is_active") is True
+                        ) :
+                            unboundMethod = self._validation_method_maps.get(
+                                key
+                            )
                             if unboundMethod is not None :
                                 isFound = unboundMethod(v)
 
@@ -550,9 +609,13 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                                     res = [msg]
                                 print res
                                 if "Status" in isFound :
-                                    self._error_summary["inactive_error"] += 1
+                                    self._error_summary[
+                                    "inactive_error"
+                                    ] += 1
                                 else :
-                                    self._error_summary["invalid_data_error"] += 1
+                                    self._error_summary[
+                                    "invalid_data_error"
+                                    ] += 1
         
 
             if not self.check_compliance_task_name_duplicate(
@@ -566,7 +629,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             else:
                 if not self.check_compliance_task_name_duplicate_in_knowledge(
                     data.get("Domain"), data.get("Unit_Code"),
-                    data.get("Statutory_Provision"), data.get("Compliance_Task"),
+                    data.get("Statutory_Provision"), 
+                    data.get("Compliance_Task"),
                     data.get("Compliance_Description"),
                 ) :
                     self._error_summary["duplicate_error"] += 1
@@ -592,14 +656,22 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                 mapped_header_dict[key] = head_idx
                 invalid += 1
-                self._error_summary["mandatory_error"] += error_count["mandatory"]
-                self._error_summary["max_length_error"] += error_count["max_length"]
-                self._error_summary["invalid_char_error"] += error_count["invalid_char"]
+                self._error_summary["mandatory_error"] += error_count[
+                "mandatory"
+                ]
+                self._error_summary["max_length_error"] += error_count[
+                "max_length"
+                ]
+                self._error_summary["invalid_char_error"] += error_count[
+                "invalid_char"
+                ]
 
         if invalid > 0 :
-            return self.make_invalid_return(mapped_error_dict, mapped_header_dict)
+            return self.make_invalid_return(mapped_error_dict, 
+                mapped_header_dict)
         else :
-            return self.make_valid_return(mapped_error_dict, mapped_header_dict)
+            return self.make_valid_return(mapped_error_dict, 
+                mapped_header_dict)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
         fileString = self._csv_name.split('.')
@@ -609,8 +681,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         final_hearder = self._csv_header
         final_hearder.append("Error Description")
         write_data_to_excel(
-            os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"), file_name, final_hearder,
-            self._source_data, mapped_error_dict, mapped_header_dict, self._sheet_name
+            os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"), file_name, 
+            final_hearder, self._source_data, mapped_error_dict, 
+            mapped_header_dict, self._sheet_name
         )
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
@@ -656,9 +729,14 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self._source_data = None
         self._declined_row_idx = []
         self.get_source_data()
+        self._legal_entity = None
+        self._client_group = None
+        self._csv_name = None
+        self._unit_id = None
 
     def get_source_data(self):
-        self._source_data = self._db.call_proc("sp_assign_statutory_by_csvid", [self._csv_id])
+        self._source_data = self._db.call_proc("sp_assign_statutory_by_csvid", 
+            [self._csv_id])
 
     def perform_validation_before_submit(self):
         declined_count = 0
@@ -666,6 +744,13 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self.init_values(self._session_user_obj.user_id(), self._client_id)
 
         for row_idx, data in enumerate(self._source_data):
+            if row_idx == 0:
+                self._legal_entity = data.get("Legal_Entity")
+                self._client_group = data.get("Client_Group")
+                self._csv_name = data.get("Csv_Name")
+                self._unit_id = self.Unit_Code.get(
+                    data.get("Unit_Code")).get("unit_id")
+
             for key in self._csv_column_name:
                 value = data.get(key)
                 isFound = ""
@@ -684,8 +769,13 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                             v = v.strip()
 
                         if v != "" :
-                            if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
-                                unboundMethod = self._validation_method_maps.get(key)
+                            if (
+                                csvParam.get("check_is_exists") is True or 
+                                csvParam.get("check_is_active") is True 
+                            ) :
+                                unboundMethod = self._validation_method_maps.get(
+                                    key
+                                    )
                                 if unboundMethod is not None :
                                     isFound = unboundMethod(v)
 
@@ -699,11 +789,14 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             ) :
                 declined_count += 1
             if declined_count > 0 :
-                self._declined_row_idx.append(data.get("bulk_assign_statutory_id"))
+                self._declined_row_idx.append(data.get(
+                    "bulk_assign_statutory_id"
+                    ))
         
         return self._declined_row_idx
 
     def frame_data_for_main_db_insert(self, user_id):
+        self.get_source_data()
         self._source_data.sort(key=lambda x: (
              x["Domain"], x["Unit_Name"]
         ))
@@ -723,8 +816,13 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             domain_id = self.Domain.get(value.get("Domain")).get("domain_id")
             uploaded_by = value.get("uploaded_by")
 
-            cs_id = self.save_client_statutories_data(self._client_id, unit_id, domain_id, user_id)
-            self.save_client_compliances_data(self._client_id, self._legal_entity_id, unit_id, domain_id, cs_id, grouped_list, user_id)
+            cs_id = self.save_client_statutories_data(
+                self._client_id, unit_id, domain_id, user_id
+                )
+            self.save_client_compliances_data(
+                self._client_id, self._legal_entity_id, unit_id, domain_id, 
+                cs_id, grouped_list, user_id
+                )
 
     def make_rejection(self, declined_info):
         try :
@@ -735,8 +833,9 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             self._db.execute(q)
 
             q1 = "update tbl_bulk_assign_statutory_csv set " + \
-                " approve_status = 1 where csv_assign_statutory_id = %s"
-            self._db.execute(q1, [self._csv_id])
+                " declined_count = %s, approve_status = 1 where " + \
+                " csv_assign_statutory_id = %s"
+            self._db.execute(q1, [len(declined_info), self._csv_id])
 
         except Exception, e :
             print str(traceback.format_exc())
