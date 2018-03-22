@@ -501,11 +501,11 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
     def check_uploaded_count_in_csv(self):
         self._source_data.sort(key=lambda x: (
-            x["Domain"], x["Unit_Name"]
+            x["Domain"], x["Unit_Code"]
         ))
         unit_names = []
         for k, v in groupby(self._source_data, key=lambda s: (
-            s["Domain"], s["Unit_Name"]
+            s["Domain"], s["Unit_Code"]
         )):
             grouped_list = list(v)
             if len(grouped_list) > 1 :
