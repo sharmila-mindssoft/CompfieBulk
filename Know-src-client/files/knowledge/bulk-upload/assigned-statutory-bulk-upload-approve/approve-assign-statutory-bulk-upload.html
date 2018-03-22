@@ -327,7 +327,7 @@
     <div class="custom-modal-text">
         <div class="form-group">
             <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-            <input type="password" id="approve-password" class="form-control input-sm inp_password_approve" placeholder="Password">
+            <input type="password" id="approve-password" class="form-control input-sm" placeholder="Password">
         </div>
         <input type="hidden" id="approve-id" value="">
         <button type="button" class="btn btn-primary waves-effect waves-light" id="password-approve-submit">Submit</button>
@@ -363,6 +363,20 @@
         </div>
         <input type="hidden" id="single-reject-id" value="">
         <button type="button" class="btn btn-primary waves-effect waves-light" id="password-single-reject-submit">Submit</button>
+    </div>
+</div>
+<div id="custom-modal-submit" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div class="form-group">
+            <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+            <input type="password" id="submit-password" class="form-control input-sm" placeholder="Password">
+        </div>
+        <input type="hidden" id="submit-id" value="">
+        <button type="button" class="btn btn-primary waves-effect waves-light" id="action-password-submit">Submit</button>
     </div>
 </div>
 <div id="template" style="display: none;">
