@@ -459,7 +459,7 @@ function loadCountwiseResult(filterList) {
             if (parseInt(uploadedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
-                approvedByName = EMP_CODE + " - " + EMP_NAME;
+                uploadedBy = EMP_CODE + " - " + EMP_NAME;
             } else if (parseInt(rejectedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];

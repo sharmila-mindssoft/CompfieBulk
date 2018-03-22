@@ -193,12 +193,12 @@ function loadCountwiseResult(data) {
     var reasonForRejection;
     var statutoryAction;
     var rejectedBy;
-    var declinedCount;
+    var declinedCount = '-';
     var fileDownloadCount;
     var downloadRejectedFiles;
     var deleteStatus;
-    $('.tbody-compliance').empty();
 
+    $('.tbody-compliance').empty();
     for (var entity in data) {
         deleteStatus = '';
         sno = parseInt(sno) + 1;
@@ -255,6 +255,21 @@ function loadCountwiseResult(data) {
                 '.rej_ods, .rej_text', clone1).attr({
                 onclick: "downloadClick(" + csvId + ",this)"
             });
+        }
+        else if (parseInt(fileDownloadCount) < 1)
+        {
+            $('.tbl_remove .remove_a', clone1)
+            .addClass("default-display-none");
+        }
+        else
+        {
+            $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
+                'id': "download_icon_" + csvId,
+                'data-id': csvId,
+                onClick: "rejectedFiles(this)",
+            });
+            $('.tbl_rejected_file .rejected_i_cls', clone1)
+            .addClass("default-display-none");
         }
         $('.tbl_remove .remove_a', clone1).attr({
             'id': "delete_action_" + csvId,
@@ -354,6 +369,10 @@ function confirmAlert(event) {
                 target: '#custom-modal-approve',
                 effect: 'contentscale',
                 complete: function() {
+                    if (CURRENT_PASSWORD != null) {
+                                    CURRENT_PASSWORD.focus();
+                                    CURRENT_PASSWORD.val('');
+                                }
                     CURRENT_PASSWORD.focus();
                     isAuthenticate = false;
                     COUNTRY.val(countryId);
@@ -490,7 +509,7 @@ function downloadClick(CSV_ID, event) {
 
 // Download Request
 function requestDownload(requestDownloadData, downloadFileFormat) {
-    bu.downloadRejectedSMReportData(requestDownloadData, 
+    bu.downloadRejectedSMReportData(requestDownloadData,
         function(error, response) {
         if (error == null) {
             if (downloadFileFormat == "csv") {

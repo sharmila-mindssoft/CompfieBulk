@@ -112,7 +112,7 @@ bu_api_params = {
 
     'total_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'total_rejected_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
-    'total_approve_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'total_approve_records': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
     'approved_by': {'type': 'INT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'rejected_by': {'type': 'INT', 'length': 20, 'validation_method': None, 'is_optional': True},
     'approved_on': {'type': 'TEXT', 'length': 20, 'validation_method': None, 'is_optional': True},
@@ -222,5 +222,6 @@ bu_api_params = {
     'unit_codes': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
     'client_unit_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "BulkClientUnitList"},
     'un_saved_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'rejected_file': {'type': 'STRING', 'length': 200, 'validation_method': is_alpha_numeric, 'is_optional': True},
 
 }

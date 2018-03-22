@@ -569,7 +569,7 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
              d["rejected_by"], str(approved_on), str(rejected_on),
              d["is_fully_rejected"], int(d["approve_status"]),
              int(download_count), str(d["remarks"]), d["action"],
-             int(d["declined_count"]), str(d["rejected_reason"])
+             d["declined_count"], d["rejected_reason"]
         ))
     return rejectdatalist
 
