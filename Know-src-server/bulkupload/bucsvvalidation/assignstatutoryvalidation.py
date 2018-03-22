@@ -564,9 +564,16 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 csvParam = csv_params_as.get(key)
 
                 for v in [v.strip() for v in values] :
+
+                    if (key == 'Statutory_remarks' and 
+                    (data.get('Statutory_Applicable_Status') == 'Not Applicable' 
+                    or data.get('Statutory_Applicable_Status') == 'Do not Show')):
+                        key = 'Statutory_remarks_'
+
                     valid_failed, error_cnt = parse_csv_dictionary_values_as(
                         key, v
                         )
+                
                     if valid_failed is not True :
                         if res is True :
                             res = valid_failed
