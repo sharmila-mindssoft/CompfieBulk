@@ -1437,6 +1437,8 @@ BEGIN
     select
     t2.csv_assign_statutory_id,
     t2.bulk_assign_statutory_id,
+    t1.csv_name as Csv_Name,
+    t2.client_group as Client_Group, t2.legal_entity as Legal_Entity,
     t2.domain as Domain, t2.organization as Organization,
     t2.unit_code as Unit_Code, t2.unit_name as Unit_Name, t2.unit_location as Unit_Location,
     t2.perimary_legislation as Primary_Legislation, t2.secondary_legislation as Secondary_Legislaion,
@@ -1449,7 +1451,7 @@ BEGIN
     from tbl_bulk_assign_statutory as t2
     inner join tbl_bulk_assign_statutory_csv as t1
     on t1.csv_assign_statutory_id = t2.csv_assign_statutory_id
-    where t2.csv_assign_statutory_id = csvid;
+    where (t2.action is null or t2.action != 3) and t2.csv_assign_statutory_id = csvid;
 
 END //
 
@@ -1485,7 +1487,10 @@ BEGIN
 
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
-        approved_by = userid, is_fully_rejected = 0
+        approved_by = userid, is_fully_rejected = 0,
+        total_rejected_records = (select count(0) from
+        tbl_bulk_assign_statutory as t WHERE t.action = 2 and 
+        t.csv_assign_statutory_id = csvid)
         WHERE csv_assign_statutory_id = csvid;
     end if;
 END //
@@ -1775,6 +1780,35 @@ BEGIN
     select count(1) as un_saved from tbl_bulk_assign_statutory
     where action is null and csv_assign_statutory_id = csv_id;
 
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_as_rejected_file_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_as_rejected_file_count`(
+    IN user_ INT(11)
+)
+BEGIN
+    select count(1) as rejected from tbl_bulk_assign_statutory_csv
+    where (is_fully_rejected = 1 or declined_count > 0) and approve_status < 4 
+    and uploaded_by = user_;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_assign_statutory_delete`(
+IN csvid INT
+)
+BEGIN
+    delete from tbl_bulk_assign_statutory
+    WHERE (action = 1 or action = 2) and csv_assign_statutory_id = csvid;
 END //
 
 DELIMITER ;
