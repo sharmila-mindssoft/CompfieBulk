@@ -413,6 +413,9 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_by_csvid`;
 DELIMITER //
+CREATE PROCEDURE `sp_statutory_mapping_by_csvid`(
+IN csvid INT
+)
 BEGIN
     select
     t2.bulk_statutory_mapping_id, t2.s_no,
@@ -1489,7 +1492,7 @@ BEGIN
         approve_status = 1, approved_on = current_ist_datetime(),
         approved_by = userid, is_fully_rejected = 0,
         total_rejected_records = (select count(0) from
-        tbl_bulk_assign_statutory as t WHERE t.action = 2 and 
+        tbl_bulk_assign_statutory as t WHERE t.action = 2 and
         t.csv_assign_statutory_id = csvid)
         WHERE csv_assign_statutory_id = csvid;
     end if;
@@ -1793,7 +1796,7 @@ CREATE PROCEDURE `sp_as_rejected_file_count`(
 )
 BEGIN
     select count(1) as rejected from tbl_bulk_assign_statutory_csv
-    where (is_fully_rejected = 1 or declined_count > 0) and approve_status < 4 
+    where (is_fully_rejected = 1 or declined_count > 0) and approve_status < 4
     and uploaded_by = user_;
 END //
 
