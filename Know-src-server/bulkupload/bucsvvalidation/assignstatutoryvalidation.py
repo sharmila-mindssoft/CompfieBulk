@@ -88,17 +88,20 @@ class SourceDB(object):
         self.get_applicable_status()
 
     def get_client_groups(self, user_id):
-        data = self._source_db.call_proc("sp_bu_as_user_groups", [user_id])
+        data = self._source_db.call_proc("sp_bu_as_user_groups", 
+            [user_id])
         for d in data :
             self.Client_Group[d["group_name"]] = d
 
     def get_legal_entities(self, user_id, client_id):
-        data = self._source_db.call_proc("sp_bu_as_user_legal_entities", [client_id, user_id])
+        data = self._source_db.call_proc("sp_bu_as_user_legal_entities", 
+            [client_id, user_id])
         for d in data :
             self.Legal_Entity[d["legal_entity_name"]] = d
 
     def get_domains(self, user_id):
-        data = self._source_db.call_proc("sp_bu_as_user_domains", [user_id])
+        data = self._source_db.call_proc("sp_bu_as_user_domains", 
+            [user_id])
         for d in data :
             self.Domain[d["domain_name"]] = d
 
@@ -108,12 +111,14 @@ class SourceDB(object):
             self.Unit_Location[d["geography_name"]] = d
 
     def get_unit_code(self, client_id):
-        data = self._source_db.call_proc("sp_bu_unit_code_and_name", [client_id])
+        data = self._source_db.call_proc("sp_bu_unit_code_and_name", 
+            [client_id])
         for d in data:
             self.Unit_Code[d["unit_code"]] = d
 
     def get_unit_name(self, client_id):
-        data = self._source_db.call_proc("sp_bu_unit_code_and_name", [client_id])
+        data = self._source_db.call_proc("sp_bu_unit_code_and_name", 
+            [client_id])
         for d in data:
             self.Unit_Name[d["unit_name"]] = d
 
@@ -148,7 +153,8 @@ class SourceDB(object):
             self.Organisation[d["organisation_name"]] = d
 
     def get_applicable_status(self):
-        data = [{'applicable_status' : 'applicable'}, {'applicable_status' : 'not applicable'},
+        data = [{'applicable_status' : 'applicable'}, 
+        {'applicable_status' : 'not applicable'},
         {'applicable_status' : 'do not show'}]
         for d in data :
             self.Applicable_Status[d["applicable_status"]] = d
@@ -176,10 +182,12 @@ class SourceDB(object):
         return True
 
     def check_client_group(self, group_name):
-        return self.check_base(True, self.Client_Group, group_name, None)
+        return self.check_base(True, self.Client_Group, 
+            group_name, None)
 
     def check_legal_entity(self, legal_entity_name):
-        return self.check_base(True, self.Legal_Entity, legal_entity_name, None)
+        return self.check_base(True, self.Legal_Entity, legal_entity_name, 
+            None)
 
     def check_domain(self, domain_name):
         return self.check_base(True, self.Domain, domain_name, None)
@@ -197,22 +205,28 @@ class SourceDB(object):
         return self.check_base(False, self.Statutories, statutories, None)
 
     def check_statutory_provision(self, statutory_provision):
-        return self.check_base(False, self.Statutory_Provision, statutory_provision, None)
+        return self.check_base(False, self.Statutory_Provision, 
+            statutory_provision, None)
 
     def check_compliance_task(self, compliance_task):
-        return self.check_base(True, self.Compliance_Task, compliance_task, None)
+        return self.check_base(True, self.Compliance_Task, compliance_task, 
+            None)
 
     def check_compliance_description(self, compliance_description):
-        return self.check_base(False, self.Compliance_Description, compliance_description, None)
+        return self.check_base(False, self.Compliance_Description, 
+            compliance_description, None)
 
     def check_organisation(self, organisation_name):
-        return self.check_base(True, self.Organisation, organisation_name, None)
+        return self.check_base(True, self.Organisation, organisation_name, 
+            None)
 
     def check_applicable_status(self, applicable_status):
-        return self.check_base(False, self.Applicable_Status, applicable_status.lower(), None)
+        return self.check_base(False, self.Applicable_Status, 
+            applicable_status.lower(), None)
 
     def check_child_statutories(self, child_statutories):
-        return self.check_base(False, self.Child_Statutories, child_statutories, None)
+        return self.check_base(False, self.Child_Statutories, 
+            child_statutories, None)
 
     def save_client_statutories_data(self, cl_id, u_id, d_id, user_id):
         created_on = get_date_time()
@@ -221,8 +235,8 @@ class SourceDB(object):
             int(d_id), 3,
             int(user_id), str(created_on)
         ]
-        q = "INSERT INTO tbl_client_statutories (client_id, unit_id, domain_id, status, " + \
-            " approved_by, approved_on) values " + \
+        q = "INSERT INTO tbl_client_statutories (client_id, unit_id, " + \
+            " domain_id, status, approved_by, approved_on) values " + \
             " (%s, %s, %s, %s, %s, %s)"
         client_statutory_id = self._source_db.execute_insert(
             q, client_statutory_value
@@ -232,7 +246,8 @@ class SourceDB(object):
             raise process_error("E018")
         return client_statutory_id
 
-    def save_client_compliances_data(self, cl_id, le_id, u_id, d_id, cs_id, data, user_id):
+    def save_client_compliances_data(self, cl_id, le_id, u_id, d_id, cs_id, 
+        data, user_id):
         created_on = get_date_time()
         columns = [
             "client_statutory_id",
@@ -254,7 +269,8 @@ class SourceDB(object):
 
             statu_id = self.Statutories.get(d["Primary_Legislation"]).get("statutory_id")
             comp_id = None
-            c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name" , [d["Compliance_Task"], d["Compliance_Description"]])
+            c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name", 
+                [d["Compliance_Task"], d["Compliance_Description"]])
             for c_id in c_ids :
                 comp_id = c_id["compliance_id"]
 
@@ -268,7 +284,8 @@ class SourceDB(object):
             ))
 
         if values :
-            self._source_db.bulk_insert("tbl_client_compliances", columns, values)
+            self._source_db.bulk_insert("tbl_client_compliances", columns, 
+                values)
             return True
         else :
             return False
@@ -303,20 +320,24 @@ class SourceDB(object):
         ]
 
 
-    def check_compliance_task_name_duplicate(self, domain_name, unit_code, statutory_provision, task_name, compliance_description):
+    def check_compliance_task_name_duplicate(self, domain_name, unit_code, 
+        statutory_provision, task_name, compliance_description):
         data = self._db.call_proc("sp_check_duplicate_compliance_for_unit", [
-            domain_name, unit_code, statutory_provision, task_name, compliance_description
+            domain_name, unit_code, statutory_provision, task_name, 
+            compliance_description
         ])
         if len(data) > 0 :
             return False
         else:
             return True
 
-    def check_compliance_task_name_duplicate_in_knowledge(self, domain_name, unit_code, statutory_provision, task_name, compliance_description):
+    def check_compliance_task_name_duplicate_in_knowledge(self, domain_name, 
+        unit_code, statutory_provision, task_name, compliance_description):
         
         unit_id = self.Unit_Code.get(unit_code).get("unit_id")
         domain_id = self.Domain.get(domain_name).get("domain_id")
-        c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name" , [task_name, compliance_description])
+        c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name" , 
+            [task_name, compliance_description])
         comp_id = c_ids[0]["compliance_id"]
 
         data = self._source_db.call_proc("sp_bu_check_duplicate_compliance_for_unit", [
@@ -378,7 +399,8 @@ class SourceDB(object):
         self._source_db.commit()
         
 class ValidateAssignStatutoryCsvData(SourceDB):
-    def __init__(self, db, source_data, session_user, csv_name, csv_header, client_id):
+    def __init__(self, db, source_data, session_user, csv_name, csv_header, 
+        client_id):
         SourceDB.__init__(self)
         self._db = db
         self._source_data = source_data
@@ -425,16 +447,19 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
     def check_duplicate_compliance_for_same_unit_in_csv(self):
         self._source_data.sort(key=lambda x: (
-            x["Domain"], x["Unit_Code"], x["Statutory_Provision"], x["Compliance_Task"]
+            x["Domain"], x["Unit_Code"], x["Statutory_Provision"], 
+            x["Compliance_Task"]
         ))
         comp_name = []
         for k, v in groupby(self._source_data, key=lambda s: (
-            s["Domain"], s["Unit_Code"], s["Statutory_Provision"], s["Compliance_Task"]
+            s["Domain"], s["Unit_Code"], s["Statutory_Provision"], 
+            ["Compliance_Task"]
         )):
 
             grouped_list = list(v)
             if len(grouped_list) > 1 :
-                comp_name.append(grouped_list[0].get("Compliance_Task") + ' for ' + grouped_list[0].get("Unit_Code"))
+                comp_name.append(grouped_list[0].get("Compliance_Task") + 
+                ' for ' + grouped_list[0].get("Unit_Code"))
 
         if len(comp_name) > 0 :
             error_msg = "Duplicate compliance task found in csv %s" % (
@@ -673,7 +698,6 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 data.get("Compliance_Description"),
             ) :
                 declined_count += 1
-
             if declined_count > 0 :
                 self._declined_row_idx.append(data.get("bulk_assign_statutory_id"))
         

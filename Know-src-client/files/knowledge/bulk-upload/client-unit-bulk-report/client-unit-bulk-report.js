@@ -24,14 +24,12 @@ var SNO = 0;
 var TOTAL_RECORD;
 var REPORT_VIEW = $('.grid-table-rpt');
 
-// var clientUnitBulkReport = null;
-
 // Instance Creation of the page class
 var clientUnitBulkReport = new ClientUnitBulkReport();
 
 function ClientUnitBulkReport() {}
 
-// Pagination Data 
+// Pagination setup function
 function pageData(onCurrentPage) {
     data = [];
     PAGE_LIMIT = parseInt(ITEMS_PER_PAGE.val());
@@ -57,7 +55,7 @@ function pageData(onCurrentPage) {
     return data;
 }
 
-// Show Pagination Pane
+// Show Pagination Page
 function showPagePan(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom;
     showText += ' to ' + showTo + ' of ';
@@ -131,6 +129,7 @@ function processPaging() {
         }
         PAGINATION_VIEW.show();
         REPORT_VIEW.show();
+        //Called but function not defined
         loadUserMappingDetailsList();
     }
 }
@@ -290,7 +289,7 @@ function fetchFiltersData() {
     );
 }
 
-// Loading Page according to Current User ie., Techno exec or Techno Manager 
+// Loading Page according to Current User ie., Techno exec or Techno Manager
 function loadCurrentUserDetails() {
     var user = mirror.getUserInfo();
     var loggedUserId = 0;
@@ -302,14 +301,14 @@ function loadCurrentUserDetails() {
         }
     });
     if (USER_CATEGORY_ID == 6) {
-        // TE-Name  : Techno-Executive 
+        // TE-Name  : Techno-Executive
         $('.active-techno-executive').attr('style', 'display:block');
-        $('#techno-name').text(user.employee_code + " - " + 
+        $('#techno-name').text(user.employee_code + " - " +
                                user.employee_name.toUpperCase());
         EXISTING_USER_ID.push(loggedUserId);
-    } else if (USER_CATEGORY_ID == 5 && USER_CATEGORY_ID != 6 
-                                   && loggedUserId > 0) {
-        // TE-Name  : Techno-Manager 
+    } else if (USER_CATEGORY_ID == 5 && USER_CATEGORY_ID != 6
+        && loggedUserId > 0) {
+        // TE-Name  : Techno-Manager
         getUserMappingsList(loggedUserId);
     }
 }
@@ -399,7 +398,7 @@ function getClientUnits() {
     });
 }
 
-// Fields mandatory validation 
+// Fields mandatory validation
 ClientUnitBulkReport.prototype.validateMandatory = function() {
     var isValid = true;
     if (GROUP_ID.val().trim() == '' || GROUP_ID.val().trim() == null) {
@@ -434,6 +433,7 @@ function loadCountwiseResult(filterList) {
     lastOccuranceid = 0;
     var showFrom = SNO + 1;
     var isNull = true;
+    var approvedByName, rejectedByName, uploadedByName;
     for (var entity in filterList) {
         isNull = false;
         SNO = parseInt(SNO) + 1;
@@ -444,24 +444,47 @@ function loadCountwiseResult(filterList) {
         var totalRejectedRecords = filterList[entity].total_rejected_records;
         var rejectedOn = filterList[entity].rejected_on;
         var rejectedBy = filterList[entity].rejected_by;
+        var approvedBy = filterList[entity].approved_by;
+        var approvedOn = filterList[entity].approved_on;
+
         var reasonForRejection = filterList[entity].is_fully_rejected;
         var rejectedReason = filterList[entity].rejected_reason;
-        var approve_status = filterList[entity].approve_status;
+        var totalApproveRecords = filterList[entity].total_approve_records;
+        approvedRejectedOn = '';
+        approvedRejectedBy = '';
+        approvedRejectedTasks = '-';
+
+
         $(ALL_USER_INFO).each(function(key, value) {
             if (parseInt(uploadedBy) == value["user_id"]) {
-                EmpCode = value["employee_code"];
-                EmpName = value["employee_name"];
-                uploadedBy = EmpCode + " - " + EmpName.toUpperCase();
+                EMP_CODE = value["employee_code"];
+                EMP_NAME = value["employee_name"];
+                uploadedBy = EMP_CODE + " - " + EMP_NAME;
             } else if (parseInt(rejectedBy) == value["user_id"]) {
-                EmpCode = value["employee_code"];
-                EmpName = value["employee_name"];
-                rejectedBy = EmpCode + " - " + EmpName.toUpperCase();
+                EMP_CODE = value["employee_code"];
+                EMP_NAME = value["employee_name"];
+                rejectedByName = EMP_CODE + " - " + EMP_NAME;
+            } else if (parseInt(approvedBy) == value["user_id"]) {
+                EMP_CODE = value["employee_code"];
+                EMP_NAME = value["employee_name"];
+                approvedByName = EMP_CODE + " - " + EMP_NAME;
             }
         });
         if (parseInt(reasonForRejection) == 1) {
             reasonForRejection = rejectedReason;
         } else {
-            reasonForRejection = "- -";
+            reasonForRejection = "";
+            approvedRejectedTasks =  totalApproveRecords;
+            approvedRejectedTasks += " / ";
+            approvedRejectedTasks += totalRejectedRecords;
+        }
+        if (rejectedOn != null && rejectedOn != '') {
+            approvedRejectedOn = String(rejectedOn);
+            approvedRejectedBy = rejectedByName;
+        }
+        if (approvedOn != null && approvedOn != '') {
+            approvedRejectedOn = String(approvedOn);
+            approvedRejectedBy = approvedByName;
         }
         var occurance = '';
         var occuranceid;
@@ -472,10 +495,12 @@ function loadCountwiseResult(filterList) {
         $(".tbl_uploaded_by", clone1).text(uploadedBy);
         $('.tbl_uploaded_on', clone1).text(uploadedOn);
         $('.tbl_no_of_tasks', clone1).text(tblNoOfTasks);
+
         $('.tbl_approved_rejected_tasks', clone1)
-            .text(approve_status + " / " + totalRejectedRecords);
-        $('.tbl_approved_rejected_on', clone1).text(rejectedOn);
-        $('.tbl_approved_rejected_by', clone1).text(rejectedBy);
+        .text(approvedRejectedTasks);
+
+        $('.tbl_approved_rejected_on', clone1).text(approvedRejectedOn);
+        $('.tbl_approved_rejected_by', clone1).text(approvedRejectedBy);
         $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
         $('#datatable-responsive .tbody-compliance').append(clone1);
         // compliance_count = compliance_count + 1;
