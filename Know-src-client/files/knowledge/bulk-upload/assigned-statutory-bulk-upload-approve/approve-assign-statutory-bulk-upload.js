@@ -146,7 +146,7 @@ ApproveAssignStatutoryBulkUpload.prototype.initialize = function() {
   });
 }
 
-ApproveAssignStatutoryBulkUpload.prototype.possibleFailures = function(error) {
+ApproveAssignStatutoryBulkUpload.prototype.failuresMessage = function(error) {
   if (error == 'InvalidPassword') {
     displayMessage(message.invalid_password);
   } else {
@@ -588,11 +588,11 @@ ApproveAssignStatutoryBulkUpload.prototype.fetchStatutoryValues = function(c_id,
             hideLoader();
           } else {
             hideLoader();
-            t_this.possibleFailures(err);
+            t_this.failuresMessage(err);
           }
         });
       } else {
-        t_this.possibleFailures(error);
+        t_this.failuresMessage(error);
         hideLoader();
       }
     });
@@ -745,7 +745,7 @@ approveOrRejectAction = function(id, cl_id, le_id, action, reason, password) {
                       displaySuccessMessage(message.assign_statutory_rejected_success);
                     REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
                   } else {
-                    REPORT.possibleFailures(error);
+                    REPORT.failuresMessage(error);
                     hideLoader();
                   }
               });
@@ -759,7 +759,7 @@ approveOrRejectAction = function(id, cl_id, le_id, action, reason, password) {
           REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
         }
       } else {
-        REPORT.possibleFailures(err1);
+        REPORT.failuresMessage(err1);
         hideLoader();
       }
     });
@@ -992,7 +992,7 @@ tempAction = function(id, action) {
       if (error == null) {
         hideLoader();
       } else {
-        REPORT.possibleFailures(error);
+        REPORT.failuresMessage(error);
         hideLoader();
       }
     });
@@ -1031,7 +1031,7 @@ ApproveAssignStatutoryBulkUpload.prototype.loadFilterPage = function(id) {
       t_this.displayFilterList();
       hideLoader();
     } else {
-      t_this.possibleFailures(error);
+      t_this.failuresMessage(error);
       hideLoader();
     }
   });
@@ -1121,7 +1121,7 @@ ApproveAssignStatutoryBulkUpload.prototype.loadDetailsPageWithFilter = function(
         ASID.val(id);
         hideLoader();
       } else {
-        t_this.possibleFailures(error);
+        t_this.failuresMessage(error);
         hideLoader();
       }
     });
@@ -1183,7 +1183,7 @@ ApproveAssignStatutoryBulkUpload.prototype.submitProcess = function() {
                         // REPORT.fetchStatutoryValues(clientGroupId.val(), legalEntityId.val());
                         REPORT.pageLoad();
                       } else {
-                        REPORT.possibleFailures(error);
+                        REPORT.failuresMessage(error);
                         hideLoader();
                       }
                   });
@@ -1194,7 +1194,7 @@ ApproveAssignStatutoryBulkUpload.prototype.submitProcess = function() {
               REPORT.pageLoad();
             }
           } else {
-            t_this.possibleFailures(error);
+            t_this.failuresMessage(error);
             hideLoader();
           }
         });
