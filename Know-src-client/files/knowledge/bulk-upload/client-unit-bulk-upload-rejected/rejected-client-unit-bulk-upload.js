@@ -216,8 +216,8 @@ function loadCountwiseResult(filterList) {
         }
         else if (parseInt(fileDownloadCount) < 1)
         {
-            $('.tbl_remove .remove_a', clone1)
-            .addClass("default-display-none");
+            $('.tbl_remove .remove_a', clone1).addClass(
+                "default-display-none");
         }
         else
         {

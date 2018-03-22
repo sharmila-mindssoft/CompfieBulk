@@ -196,11 +196,9 @@ function loadCountwiseResult(data) {
     var declinedCount = '-';
     var fileDownloadCount;
     var downloadRejectedFiles;
-    var deleteStatus;
 
     $('.tbody-compliance').empty();
     for (var entity in data) {
-        deleteStatus = '';
         sno = parseInt(sno) + 1;
         csvId = data[entity].csv_id;
         csvName = data[entity].csv_name_text;
@@ -227,9 +225,6 @@ function loadCountwiseResult(data) {
             reasonForRejection = '';
         }
 
-        if (parseInt(fileDownloadCount) < 1) {
-            deleteStatus = 'style="display:none;"';
-        }
         var tr = $('#act-templates .table-act-list .table-row-act-list');
         var clone1 = tr.clone();
 
@@ -240,6 +235,14 @@ function loadCountwiseResult(data) {
         $('.tbl_no_of_tasks', clone1).text(totalNoofTasks);
         $('.tbl_declined_count', clone1).text(declinedCount);
         $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
+
+        $('.tbl_remove .remove_a', clone1).attr({
+            'id': "delete_action_" + csvId,
+            'data-csv-id': csvId,
+            onClick: "confirm_alert(this)",
+        });
+
+        alert(fileDownloadCount);
 
         /***** Rejected File Downloads ********/
         if (parseInt(fileDownloadCount) < 2) {
@@ -256,26 +259,17 @@ function loadCountwiseResult(data) {
                 onclick: "downloadClick(" + csvId + ",this)"
             });
         }
-        else if (parseInt(fileDownloadCount) < 1)
-        {
-            $('.tbl_remove .remove_a', clone1)
-            .addClass("default-display-none");
+        else if (parseInt(fileDownloadCount) < 1){
+            $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
         }
-        else
-        {
+        else{
             $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
                 onClick: "rejectedFiles(this)",
             });
-            $('.tbl_rejected_file .rejected_i_cls', clone1)
-            .addClass("default-display-none");
+            $('.tbl_rejected_file .rejected_i_cls', clone1).addClass("default-display-none");
         }
-        $('.tbl_remove .remove_a', clone1).attr({
-            'id': "delete_action_" + csvId,
-            'data-csv-id': csvId,
-            onClick: "confirmAlert(this)"
-        });
         $('#datatable-responsive .tbody-compliance').append(clone1);
     }
     hideLoader();
