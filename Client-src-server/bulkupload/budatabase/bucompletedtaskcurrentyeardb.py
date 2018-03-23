@@ -2,8 +2,13 @@ from server.exceptionmessage import fetch_error
 import traceback
 from server import logger
 from ..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
-
 import datetime
+
+from server.constants import (
+    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    CSV_DELIMITER, CSV_MAX_LINE_ITEM
+)
 
 __all__ = [
     # "get_uploaded_statutory_mapping_csv_list"

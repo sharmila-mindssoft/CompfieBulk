@@ -2,9 +2,9 @@ import traceback
 from ..bucsvvalidation.completedtaskcurrentyearvalidation import (
     ValidateCompletedTaskCurrentYearCsvData
 )
-# from ..bucsvvalidation.rejectedstatutorymapping import ValidateRejectedSMBulkCsvData
+
 from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
-from ..budatabase.bucompletedtaskcurrentyeardb import *
+from..budatabase.bucompletedtaskcurrentyeardb import *
 from ..client_bulkuploadcommon import (
     convert_base64_to_file,
     read_data_from_csv,
@@ -14,13 +14,13 @@ from ..client_bulkexport import ConvertJsonToCSV
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
 from server.exceptionmessage import fetch_error
-# from protocol import generalprotocol, technoreports
+
 __all__ = [
     "process_bu_completed_task_current_year_request"
 ]
 ########################################################
 '''
-    Process all statutory mapping request here
+    Process all completed task current year request here
     :param
         request: api Request class object
         db: database object
@@ -38,19 +38,9 @@ __all__ = [
 def process_bu_completed_task_current_year_request(request, db, session_user):
     request_frame = request.request
 
-    # if type(request_frame) is bu_sm.GetCompletedTask_Domains:
-    #     result = get_completed_task_legal_domains(db, request_frame,
-    #                                             session_user)
-
     if type(request_frame) is bu_ct.UploadCompletedTaskCurrentYearCSV:
         result = upload_completed_task_current_year_csv(db, request_frame, session_user)
 
-########################################################
-def get_completed_task_legal_domains(db, request_frame, session_user):
-
-    domains = get_legal_entity_domains(db, request_frame.le_id)
-    result = bu_ct.GetStatutoryMappingCsvUploadedListSuccess(domains)
-    return result
 ########################################################
 
 def upload_completed_task_current_year_csv(db, request_frame, session_user):
@@ -83,7 +73,7 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
             csv_name,
             res_data["total"]
         ]
-        new_csv_id = save_completed_task_csv(db, csv_args)
+        new_csv_id = save_completed_task_current_year_csv(db, csv_args)
         if new_csv_id :
             if save_completed_task_data(db, new_csv_id, res_data["data"]) is True :
                 result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
