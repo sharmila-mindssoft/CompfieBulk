@@ -71,7 +71,6 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
         values = []
 
         for idx, d in enumerate(csv_data) :
-            print d
             values.append((
                 csv_id, d["Legal_Entity"], d["Division"],
                 d["Category"], d["Geography_Level"], d["Unit_Location"],
@@ -86,7 +85,6 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
         else :
             return False
     except Exception, e:
-        print str(e)
         raise ValueError("Transaction failed")
 
 ########################################################
@@ -108,6 +106,8 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
 def get_ClientUnits_Uploaded_CSVList(db, clientId, groupName):
     csv_list = []
     result = db.call_proc("sp_client_units_csv_list", [clientId, groupName])
+    print "uploaded data"
+    print result
     for row in result:
         csv_list.append(bu_cu.ClientUnitCSVList(
             row["csv_unit_id"], row["csv_name"], row["uploaded_by"],
@@ -133,17 +133,18 @@ def get_ClientUnits_Uploaded_CSVList(db, clientId, groupName):
 '''
 ########################################################
 
-def fetch_rejected_client_unit_report(db, session_user,
-    user_id, client_group_id):
 
-    rejectdatalist=[]
+def fetch_rejected_client_unit_report(db, session_user, user_id,
+                                      client_group_id):
+
+    rejectdatalist = []
+    uploaded_on = ''
+    approved_on = ''
+    rejected_on = ''
+
     args = [client_group_id, user_id]
-    uploaded_on='';
-    approved_on='';
-    rejected_on='';
     data = db.call_proc('sp_rejected_client_unit_data', args)
     for d in data:
-
         if(d["uploaded_on"] is not None):
             uploaded_on = datetime.datetime.strptime(
                 str(d["uploaded_on"]),
@@ -160,9 +161,9 @@ def fetch_rejected_client_unit_report(db, session_user,
                 '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
         if (d["rejected_file_download_count"] is None):
-            download_count=0
+            download_count = 0
         else:
-            download_count=d["rejected_file_download_count"]
+            download_count = d["rejected_file_download_count"]
 
         rejectdatalist.append(bu_cu.ClientUnitRejectData(
              int(d["csv_unit_id"]),
@@ -170,23 +171,24 @@ def fetch_rejected_client_unit_report(db, session_user,
              str(uploaded_on),
              str(d["csv_name"]),
              int(d["total_records"]),
-             int(d["total_rejected_records"]),
-             int(d["approved_by"]),
-             int(d["rejected_by"]),
+             d["total_rejected_records"],
+             d["approved_by"],
+             d["rejected_by"],
              str(approved_on),
              str(rejected_on),
-             int(d["is_fully_rejected"]),
-             int(d["approve_status"]),
+             d["is_fully_rejected"],
+             int(d["total_approve_records"]),
              int(download_count),
              str(d["remarks"]),
              d["action"],
-             int(d["declined_count"])
-
+             d["declined_count"],
+             d["rejected_file_name"]
         ))
     return rejectdatalist
 
+
 def update_unit_count(db, session_user, csv_id):
-    updated_unit_count=[];
+    updated_unit_count = []
     args = [csv_id]
     data = db.call_proc('cu_update_download_count', args)
     for d in data:
@@ -196,34 +198,14 @@ def update_unit_count(db, session_user, csv_id):
     return updated_unit_count
 
 
-def get_list_and_delete_rejected_unit(db, session_user,
-    user_id, csv_id, bu_client_id):
+def get_list_and_delete_rejected_unit(db, session_user, user_id,
+                                      csv_id, bu_client_id):
 
     args = [csv_id]
-    data = db.call_proc('cu_delete_unit_by_csvid', args)
-
-    rejectdatalist=fetch_rejected_client_unit_report(
-        db, session_user, user_id, bu_client_id)
-
+    db.call_proc('sp_delete_reject_cu_by_csvid', args)
+    rejectdatalist = fetch_rejected_client_unit_report(db, session_user,
+                                                       user_id, bu_client_id)
     return rejectdatalist
-
-########################################################
-'''
-    returns statutory mapping bulk report list
-    :param
-        db: database object
-        session_user: logged in user details
-    :type
-        db: Object
-        session_user: Object
-    :returns
-        result: list of bulk data records by mulitple country,
-        domain, KnowledgeExecutives selections based.
-    rtype:
-        result: List
-'''
-########################################################
-
 
 def fetch_client_unit_bulk_report(db, session_user, user_id,
                                   clientGroupId, from_date, to_date,
@@ -245,50 +227,46 @@ def fetch_client_unit_bulk_report(db, session_user, user_id,
     data = db.call_proc_with_multiresult_set('sp_client_unit_bulk_reportdata',
                                              args, expected_result)
 
-    print "sp_client_unit_bulk_reportdata  >>"
-    print data
-    print "Total"
-    print data[1][0]["total"]
-
     clientdata = data[0]
     total_record = data[1][0]["total"]
     approved_on = ""
     rejected_on = ""
+    uploaded_on = ""
     if(clientdata):
         for d in clientdata:
-            uploaded_on = datetime.datetime.strptime(
+
+            if(d["uploaded_on"] is not None):
+                uploaded_on = d["uploaded_on"].strptime(
                           str(d["uploaded_on"]),
                           '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
             if(d["approved_on"] is not None):
-                approved_on = datetime.datetime.strptime(
+                approved_on = d["approved_on"].strptime(
                               str(d["approved_on"]),
                               '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
 
             if(d["rejected_on"] is not None):
-                rejected_on = datetime.datetime.strptime(
+                rejected_on = d["rejected_on"].strptime(
                               str(d["rejected_on"]),
                               '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
-
-            if(d["is_fully_rejected"] is not None):
-                is_fully_rejected = d["is_fully_rejected"]
-            else:
-                is_fully_rejected = 0
 
             clientdatalist.append(bu_cu.StatutoryReportData(
                  int(d["uploaded_by"]),
                  str(uploaded_on),
                  str(d["csv_name"]),
                  int(d["total_records"]),
-                 int(d["total_rejected_records"]),
-                 int(d["approved_by"]),
-                 int(d["rejected_by"]),
+                 d["total_rejected_records"],
+                 d["approved_by"],
+                 d["rejected_by"],
                  str(approved_on),
                  str(rejected_on),
-                 int(is_fully_rejected),
-                 int(d["approve_status"])
+                 d["is_fully_rejected"],
+                 d["total_approve_records"],
+                 d["rejected_reason"]
             ))
-
+    else:
+            clientdatalist = []
+            total_record = 0
     return clientdatalist, total_record
 
 def convertArrayToString(array_ids):
@@ -315,50 +293,55 @@ def fetch_rejected_cu_download_csv_report(db, session_user,
     uploaded_on=''
     rejected_on=''
 
-    for d in data:
-        if(d["uploaded_on"] is not None):
-            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+    if(data):
+        for d in data:
+            if(d["uploaded_on"] is not None):
+                uploaded_on = d["uploaded_on"].strptime(str(d["uploaded_on"]),
+                                                        '%Y-%m-%d %H:%M:%S'
+                                                        ).strftime(
+                                                        '%d-%b-%Y %H:%M')
+            if(d["approved_on"] is not None):
+                approved_on = d["approved_on"].strptime(str(d["approved_on"]),
+                                                        '%Y-%m-%d %H:%M:%S'
+                                                        ).strftime(
+                                                        '%d-%b-%Y %H:%M')
+            if(d["rejected_on"] is not None):
+                rejected_on = d["rejected_on"].strptime(str(d["rejected_on"]),
+                                                        '%Y-%m-%d %H:%M:%S'
+                                                        ).strftime(
+                                                        '%d-%b-%Y %H:%M')
+            download_count = 0
+            if (d["rejected_file_download_count"] is not None):
+                download_count = d["rejected_file_download_count"]
 
-        if(d["approved_on"] is not None):
-            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-        '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+            rejectdatalist.append({
+                 str(d["csv_unit_id"]),
+                 str(d["uploaded_by"]),
+                 str(uploaded_on),
+                 str(d["csv_name"]),
+                 str(d["total_records"]),
+                 str(d["total_rejected_records"]),
+                 str(d["approved_by"]),
+                 str(d["rejected_by"]),
+                 str(approved_on),
+                 str(rejected_on),
+                 str(d["is_fully_rejected"]),
+                 str(d["approve_status"]),
+                 str(download_count),
+                 str(d["remarks"]),
+                 str(d["action"]),
+                 str(d["rejected_reason"])
+            })
+    else:
+        rejectdatalist = []
 
-        if(d["rejected_on"] is not None):
-            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
+    return rejectdatalist
 
-        if (d["rejected_file_download_count"] is None):
-            download_count=0
-        else:
-            download_count=d["rejected_file_download_count"]
-
-        rejectdatalist.append({
-             str(d["csv_unit_id"]),
-             str(d["uploaded_by"]),
-             str(uploaded_on),
-             str(d["csv_name"]),
-             str(d["total_records"]),
-             str(d["total_rejected_records"]),
-             str(d["approved_by"]),
-             str(d["rejected_by"]),
-             str(approved_on),
-             str(d["rejected_on"]),
-             str(d["is_fully_rejected"]),
-             str(d["approve_status"]),
-             str(download_count),
-             str(d["remarks"]),
-             str(d["action"]),
-             str(d["rejected_reason"])
-        })
-    return data
 
 def get_cu_csv_file_name_by_id(db, session_user, user_id, csv_id):
     args = [csv_id]
     data = db.call_proc('sp_get_cu_csv_file_name_by_id', args)
-    print data[0]["csv_name"]
     return data[0]["csv_name"]
-
 
 ########################################################
 '''
@@ -386,6 +369,7 @@ def update_bulk_client_unit_approve_reject_list(db, csv_unit_id, action, remarks
     try :
         args = [csv_unit_id, action, remarks, session_user.user_id()]
         data = db.call_proc("sp_bulk_client_unit_update_action", args)
+        print "here"
         print data
         return True
 
@@ -419,8 +403,6 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
     unit_list = db.call_proc("sp_bulk_client_unit_view_by_csvid", [
         csv_id, f_count, f_range
     ])
-    print "unit_list"
-    print unit_list
 
     group_name = None
     csv_name = None
@@ -436,16 +418,17 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
                 upload_by = d["uploaded_by"]
 
             client_unit_data.append(bu_cu.BulkClientUnitList(
-                d["bulk_unit_id"], d["legal_entity"], d["division"],
+                int(d["bulk_unit_id"]), d["legal_entity"], d["division"],
                 d["category"], d["geography_level"], d["unit_location"],
                 d["unit_code"], d["unit_name"], d["address"], d["city"],
-                d["state"], d["postalcode"], d["domain"], d["organization"],
+                d["state"], int(d["postalcode"]), d["domain"], d["organization"],
                 d["action"], d["remarks"]
             ))
 
     # fetch data for filter
     filter_data = db.call_proc_with_multiresult_set("sp_bulk_client_unit_filter_data", [csv_id], 7)
-
+    print "filtered data"
+    print filter_data
     le_names = []
     div_names = []
     cg_names = []
@@ -485,9 +468,9 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
                             last = domain
                             domain_names.append(domain)
                 else:
-                    if last != domain:
-                        last = domain
-                        domain_names.append(domain)
+                    if last != d["domain"]:
+                        last = d["domain"]
+                        domain_names.append(d["domain"])
 
         last = object()
         if len(filter_data[6]) > 0:
@@ -500,10 +483,15 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
                             last = o[1].strip()
                             orga_names.append(o[1].strip())
                 else:
-                    o = d["organization"].split(">>")
-                    if last != o[1].strip():
-                        last = o[1].strip()
-                        orga_names.append(o[1].strip())
+                    if d["organization"].find(">>") > 0:
+                        o = d["organization"].split(">>")
+                        if last != o[1].strip():
+                            last = o[1].strip()
+                            orga_names.append(o[1].strip())
+                    else:
+                        if last != d["organization"].strip():
+                            last = d["organization"].strip()
+                            orga_names.append(d["organization"].strip())
 
     return bu_cu.GetBulkClientUnitViewAndFilterDataSuccess(
         group_name, csv_name, upload_by, upload_on, csv_id,
@@ -652,8 +640,7 @@ def get_bulk_client_unit_null_action_count(db, request_frame, session_user):
     args = [csv_id]
     data = db.call_proc("sp_bulk_client_unit_action_count", args)
     if len(data) > 0:
-        for d in data[0]:
-            if d["null_action_count"] > 0:
-                return False
-            else:
-                return True
+        if int(data[0].get("null_action_count")) > 0:
+            return False
+        else:
+            return True

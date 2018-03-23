@@ -9,16 +9,22 @@ from server.constants import(
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
     REJECTED_DOWNLOAD_PATH, REJECTED_DOWNLOAD_BASE_PATH
 )
+
 #   returns: unique random string
+
+
 def new_uuid():
         s = str(uuid.uuid4())
         return s.replace("-", "")
 
 
 #    remove the already exists file.
+
+
 def remove_uploaded_file(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
+
 
 def frame_file_name(file_name):
     return "%s_%s.csv" % (
@@ -78,7 +84,7 @@ def read_data_from_csv(file_name):
     csv_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
     file_path = os.path.join(csv_path, file_name)
     if os.path.exists(file_path):
-        with io.FileIO(file_path, "rb") as fn :
+        with open(file_path, "rb") as fn :
             rows = csv.reader(
                 fn, quotechar='"', delimiter=',',
                 quoting=csv.QUOTE_ALL, skipinitialspace=True
@@ -109,7 +115,11 @@ def write_data_to_excel(
     error_format = workbook.add_format({
         'font_color': 'red'
     })
-    cells = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    cells = [
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+        'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
+        'W', 'X', 'Y', 'Z'
+    ]
     for idx, h in enumerate(headers):
         if idx < 26 :
             x = idx
@@ -123,25 +133,26 @@ def write_data_to_excel(
     col = 0
 
     for idx, dat in enumerate(column_data):
-
+        print idx, dat
         for i, h in enumerate(headers):
+            h = h.replace('*', '')
             error_col = header_dict.get(h)
-            d = str(dat.get(h))
+            if error_col is None :
+                error_col = []
+            d = dat.get(h)
             if h == "Error Description" :
                 error_text = data_error_dict.get(idx)
                 if error_text is None :
                     e = ""
                 else :
                     e = "|;|".join(error_text)
-                worksheet.write_string(row, col+i, e)
+                worksheet.write(row, col+i, e)
             else :
-                if error_col is not None :
-                    if i in error_col :
-                        worksheet.write_string(row, col+i, d, error_format)
-                    else :
-                        worksheet.write_string(row, col+i, d)
+                if idx in error_col :
+                    worksheet.write_string(row, col+i, d, error_format)
                 else :
-                        worksheet.write_string(row, col+i, d)
+                    worksheet.write_string(row, col+i, d)
+
         row += 1
 
     # summary sheet
@@ -151,13 +162,14 @@ def write_data_to_excel(
         summarySheet.write(c, h, bold)
 
     srow = 1
-    for i, col in enumerate(headers) :
+    for i, col in enumerate(headers[:-1]) :
         value = 0
+        col = col.replace('*', '')
         error_count = header_dict.get(col)
         if error_count is not None :
             value = len(error_count)
-        summarySheet.write_string(srow, 0, col)
-        summarySheet.write_string(srow, 1, str(value))
+        summarySheet.write(srow, 0, col)
+        summarySheet.write(srow, 1, value)
         srow += 1
 
 def rename_file_type(src_file_name, des_file_type):
@@ -167,17 +179,17 @@ def rename_file_type(src_file_name, des_file_type):
 
     dst_dir = os.path.join(BULKUPLOAD_INVALID_PATH, des_file_type)
     src_file = os.path.join(src_path, src_file_name)
-    # shutil.copy(src_file, dst_dir)
-
-    # dst_file = os.path.join(dst_dir, src_file_name)
 
     new_dst_file_name = os.path.join(dst_dir, new_file)
-    print new_dst_file_name
-    # os.rename(dst_file, new_dst_file_name)
-    pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+    if des_file_type == "txt":
+        general_txt_file(src_file, new_dst_file_name)
+    else :
+        pyexcel.save_as(
+            file_name=src_file, dest_file_name=new_dst_file_name
+        )
 
 def generate_valid_file(src_file_name):
-    f_types = ["xlsx", "ods"]
+    f_types = ["xlsx", "ods", "txt"]
     for f in f_types :
         src_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
         str_split = src_file_name.split('.')
@@ -185,9 +197,15 @@ def generate_valid_file(src_file_name):
 
         dst_dir = os.path.join(BULKUPLOAD_CSV_PATH, f)
         src_file = os.path.join(src_path, src_file_name)
-
         new_dst_file_name = os.path.join(dst_dir, new_file)
-        pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+
+        if f == "txt":
+            general_txt_file(src_file, new_dst_file_name)
+        else :
+            pyexcel.save_as(
+                file_name=src_file, dest_file_name=new_dst_file_name
+            )
+
 
 def rename_download_file_type(src_file_name, des_file_type):
     src_path = os.path.join(REJECTED_DOWNLOAD_PATH, "xlsx")
@@ -199,8 +217,86 @@ def rename_download_file_type(src_file_name, des_file_type):
     src_file = os.path.join(src_path, src_file_name)
 
     new_dst_file_name = os.path.join(dst_dir, new_file)
-    pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+
+    if des_file_type == "txt":
+        general_txt_file(src_file, new_dst_file_name)
+    else:
+        pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
 
     download_path_link = os.path.join(
          REJECTED_DOWNLOAD_BASE_PATH, des_file_type, new_file)
     return download_path_link
+
+
+def general_txt_file(src_file, dst_txt_file_name):
+    src_file = src_file.replace('xlsx', 'csv')
+    with open(dst_txt_file_name, "w") as my_output_file:
+        with open(src_file, "r") as my_input_file:
+            for row in csv.reader(my_input_file):
+                my_output_file.write(" ".join(row)+'\n')
+
+
+def write_download_data_to_excel(
+    file_src_path, file_name, headers, headers_column_data, column_data,
+    data_error_dict, header_dict, sheet_name
+):
+    file_path = os.path.join(file_src_path, file_name)
+    workbook = xlsxwriter.Workbook(file_path)
+    worksheet = workbook.add_worksheet(sheet_name)
+    worksheet.set_column('A:A', 30)
+    bold = workbook.add_format({'bold': 1})
+    error_format = workbook.add_format({
+        'font_color': 'red'
+    })
+    cells = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+
+    for idx, h in enumerate(headers_column_data):
+        if idx < 26:
+            x = idx
+        else:
+            x = idx - 26
+
+        c = "%s%s" % (cells[x], 1)
+        worksheet.write(c, h, bold)
+
+    row = 1
+    col = 0
+
+    for idx, dat in enumerate(column_data):
+
+        for i, h in enumerate(headers):
+            error_col = header_dict.get(h)
+            d = str(dat.get(h))
+            if h == "Error Description":
+                error_text = data_error_dict.get(idx)
+                if error_text is None:
+                    e = ""
+                else:
+                    e = "|;|".join(error_text)
+                worksheet.write_string(row, col+i, e)
+            else:
+                if error_col is not None:
+                    if i in error_col:
+                        worksheet.write_string(row, col+i, d, error_format)
+                    else:
+                        worksheet.write_string(row, col+i, d)
+                else:
+                        worksheet.write_string(row, col+i, d)
+        row += 1
+
+    # summary sheet
+    summarySheet = workbook.add_worksheet("summary")
+    for idx, h in enumerate(["Field Name", "Count"]):
+        c = "%s%s" % (cells[idx], 1)
+        summarySheet.write(c, h, bold)
+
+    srow = 1
+    for i, col in enumerate(headers_column_data):
+        value = 0
+        error_count = header_dict.get(col)
+        if error_count is not None:
+            value = len(error_count)
+        summarySheet.write_string(srow, 0, col)
+        summarySheet.write_string(srow, 1, str(value))
+        srow += 1

@@ -7,6 +7,7 @@ var CancelButton = $("#btn-sm-csv-cancel");
 var SubmitButton = $("#btn-submit");
 var ListRowTemplate = $('#templates .table-sm-csv-info .table-row');
 
+var TemplateDiv = $('.dwn-template')
 var FileUploadCsv = $("#bu-upload-csv");
 
 var DataSummary = $("#bu-data-summary");
@@ -90,22 +91,35 @@ BulkUploadStatutoryMapping.prototype.showList = function() {
     SearchCsvName.val('');
     this.fetchListData();
 };
+BulkUploadStatutoryMapping.prototype.hideSummary = function() {
+    DataSummary.hide();
+    ErrorSummary.hide();
+    DocumentSummary.hide();
+    ValidorInvalidButton.hide();
+};
 BulkUploadStatutoryMapping.prototype.showAddScreen = function() {
     ViewScreen.hide();
     AddScreen.show();
     country_ac.focus();
     UploadDocument.hide();
-    DocumentSummary.hide();
-    DataSummary.hide();
-    ErrorSummary.hide();
+
     lblDomainName.hide();
     lblCountryName.hide();
     txtCountryName.show();
     txtDomainName.show();
+
     inputFileControl.show();
     displayFileControl.hide();
+    this.hideSummary();
+    country_val.val('');
+    country_ac.val('');
+    domain_val.val('');
+    domain_ac.val('');
+    FileUploadCsv.val('');
+    TemplateDiv.show();
+
     this._ActionMode = "add";
-    ValidorInvalidButton.hide();
+
     this.fetchDropDownData();
 };
 BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
@@ -185,9 +199,10 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
     };
     bu.uploadStatutoryMappingCSV(args, function (error, response) {
+        TemplateDiv.hide();
         if (error == null) {
             if (response.invalid == 0) {
-                displayMessage(message.upload_success);
+                displaySuccessMessage(message.upload_success);
                 if (response.doc_count > 0) {
                     DataSummary.show();
                     ErrorSummary.hide();
@@ -206,6 +221,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
             }
             else {
+                displayMessage(message.upload_failed);
                 DataSummary.show();
                 ErrorSummary.show();
                 // show error summary
@@ -231,6 +247,9 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                 $('#txt-type').attr("href", txt_path);
             }
 
+        }
+        else {
+            bu_sm_page.possibleFailures(error);
         }
     })
 };
@@ -369,6 +388,7 @@ function PageControls() {
   });
 
   SubmitButton.click(function() {
+    bu_sm_page.hideSummary();
     if (bu_sm_page._ActionMode == "add") {
         if (bu_sm_page.validateControls() == true) {
             bu_sm_page.uploadCsv();

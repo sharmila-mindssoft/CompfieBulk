@@ -264,11 +264,17 @@ class SourceDB(object):
 
     def save_division(self, cl_id, le_id, bg_id, division_name, createdby):
         created_on = get_date_time()
+        if bg_id is not None:
+            bg_id = int(bg_id)
+        else:
+            bg_id = None
         insert_value = [
             int(cl_id), int(le_id),
-            int(bg_id), division_name,
+            bg_id, division_name,
             int(createdby), str(created_on)
         ]
+        print "save_division"
+        print insert_value
         q = "INSERT INTO tbl_divisions (client_id, legal_entity_id, " + \
             " business_group_id, division_name, created_by, created_on) values " + \
             " (%s, %s, %s, %s, %s, %s)"
@@ -281,9 +287,13 @@ class SourceDB(object):
 
     def save_category(self, cl_id, le_id, bg_id, division_id, category_name, createdby):
         created_on = get_date_time()
+        if bg_id is not None:
+            bg_id = int(bg_id)
+        else:
+            bg_id = None
         insert_value = [
             int(cl_id), int(le_id),
-            int(bg_id), int(division_id),
+            bg_id, int(division_id),
             category_name, int(createdby), str(created_on)
         ]
         q = "INSERT INTO tbl_categories (client_id, legal_entity_id, business_group_id, " + \
@@ -324,8 +334,12 @@ class SourceDB(object):
 
     def save_units(self, cl_id, bg_id, le_id, division_id, category_id, country_id, geography_id, u_code, u_name, u_addr, post_code, createdby):
         created_on = get_date_time()
+        if bg_id is not None:
+            bg_id = int(bg_id)
+        else:
+            bg_id = None
         insert_value = [
-            int(cl_id), int(bg_id), int(le_id), int(division_id), int(category_id),
+            int(cl_id), bg_id, int(le_id), int(division_id), int(category_id),
             int(country_id), int(geography_id), str(u_code), str(u_name), str(u_addr),
             str(post_code), int(createdby), str(created_on)
         ]
@@ -403,6 +417,8 @@ class SourceDB(object):
         )
         self._source_db.save_activity(createdby, frmApproveClientUnitBulkUpload, action)
 
+    def source_commit(self):
+        self._source_db.commit()
 
 class ValidateClientUnitsBulkCsvData(SourceDB):
     def __init__(self, db, source_data, session_user, client_id, csv_name, csv_header):
@@ -740,6 +756,7 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
         return self._declined_bulk_unit_id
 
     def process_data_to_main_db_insert(self):
+        print "1"
         self._temp_data.sort(key=lambda x: (
              x["Legal_Entity"], x["Division"], x["Category"]
         ))
@@ -764,10 +781,11 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
             unit_address = value.get("Unit_Address") + "," + value.get("City") + "," + value.get("State")
             post_code = value.get("Postal_Code")
             domain_orgn_ids = []
-            # orgn_ids = []
+            print value
 
             # fetch legal_entity_id
             le_id = self.Legal_Entity.get(value.get("Legal_Entity")).get("legal_entity_id")
+            print cl_id, le_id, bg_id
 
             # fetch division id
             division = value.get("Division")
@@ -775,23 +793,39 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
                 main_division_id = self.save_division(cl_id, le_id, bg_id, division, created_by)
             else:
                 main_division_id = self.Division.get(division).get("division_id")
+            print "division"
+            print main_division_id
 
-            # fetch division id
+            # fetch category id
             category = value.get("Category")
             if self.Category.get(category) is None:
                 main_category_id = self.save_category(cl_id, le_id, bg_id, main_division_id, category, created_by)
             else:
                 main_category_id = self.Category.get(category).get("category_id")
+            print "category"
+            print main_category_id
 
             geo_level_id = self.Geography_Level.get(str(c_id)+"-"+value.get("Geography_Level")).get("level_id")
+            print "geo level id"
+            print geo_level_id
+            print self.Unit_Location
             ul = value.get("Unit_Location")
+            print ul
+            print self.Unit_Location.get(ul).get("level_id")
+            print self.Unit_Location.get(ul).get("geography_id")
             if geo_level_id == self.Unit_Location.get(ul).get("level_id"):
                 main_geo_id = self.Unit_Location.get(ul).get("geography_id")
+
+            print "geo id"
+            print main_geo_id
 
             if value.get("Unit_Code") == "auto_gen":
                 unit_code = self.generate_unit_code(cl_id, grp_name)
             else:
                 unit_code = str(value.get("Unit_Code")).strip()
+
+            print "unit code"
+            print unit_code
 
             if value.get("Organization").find(CSV_DELIMITER) > 0:
                 for orgn in value.get("Organization").strip().split(CSV_DELIMITER):
@@ -804,10 +838,16 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
                 if domain == split_org[0].strip():
                     domain_orgn_ids.append(str(self.Domain.get(str(le_id) + "-" + domain).get("domain_id")) + "-" + str(self.Organization.get(str(le_id)+"-"+orgn).get("organisation_id")))
 
-            unit_id = self.save_units(cl_id, bg_id, le_id, main_division_id, main_category_id, c_id, main_geo_id, unit_code, unit_name, unit_address, post_code, created_by)
+            print "domain orgn"
+            print domain_orgn_ids
 
+            unit_id = self.save_units(cl_id, bg_id, le_id, main_division_id, main_category_id, c_id, main_geo_id, unit_code, unit_name, unit_address, post_code, created_by)
+            print "unit_id"
+            print unit_id, cl_id, bg_id, le_id, main_division_id, main_category_id, c_id, main_geo_id, unit_code, unit_name, unit_address, post_code, created_by
             self.save_units_domain_organizations(unit_id, domain_orgn_ids)
 
     def make_rejection(self, declined_ids):
+        print "rejection"
+        print declined_ids
         q = "update tbl_bulk_units set action = 3 where bulk_unit_id in %s"
-        self._source_db.execute_insert(q, [",".join(declined_ids)])
+        self._source_db.execute_insert(q, [",".join(str(declined_ids))])

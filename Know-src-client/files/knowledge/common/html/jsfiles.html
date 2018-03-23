@@ -2,12 +2,12 @@
 <script src="/js/jquery-ui/jquery-ui.js"></script>
 <script src="/js/jquery-ui/jquery-ui-timepicker.js"></script>
 <script src="/js/filter/filtertable.jquery.js"></script>
-
 <script src="/js/jquery.core.js"></script>
 <script src="/js/jquery.app.js"></script>
 <script src="/js/modernizr.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/jquery.fastclick.js"></script>
+<script src="/js/jquery.nicescroll.js"></script>
 <script src="/js/wow.min.js"></script>
 <script src="/js/waves.js"></script>
 <script src="/js/custombox.min.js"></script>
@@ -16,51 +16,19 @@
 <script src="/js/bootstrap-sweetalert/sweet-alert.min.js"></script>
 <script src="/js/jquery.sweet-alert.init.js"></script>
 <script src="/js/multiselect/bootstrap-multiselect.js"></script>
-
-
-
 <script src="/js/datatables/jquery.dataTables.min.js"></script>
 <script src="/js/datatables/dataTables.fixedHeader.min.js"></script>
 <script src="/js/datatables/dataTables.keyTable.min.js"></script>
 <script src="/js/datatables/dataTables.responsive.min.js"></script>
 <script src="/js/datatables/responsive.bootstrap.min.js"></script>
 <script src="/js/datatables/jquery.datatables.init.js"></script>
-
-
-
-<script type="text/javascript" src="/script/nav-bar/nav-bar.js"></script>
-<script type="text/javascript" src="/script/js/mirror.js"></script>
-<script type="text/javascript" src="/script/js/mirror-functions.js"></script>
-<script type="text/javascript" src="/script/js/message-properties.js"></script>
-<script type="text/javascript" src="/script/js/common-functions.js"></script>
-<script type="text/javascript" src="/script/js/length-validation.js"></script>
-<script type="text/javascript" src="/script/js/pagination.js"></script>
-<script type="text/javascript" src="/script/bulk-upload/bulk-upload-js/bulk-upload.js"></script>
-<script type="text/javascript" src="/script/bulk-upload/bulk-upload-js/bulk-upload-init.js"></script>
-
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $("body").tooltip({selector:"[data-toggle=tooltip]"})
-    });
-
-    function showDownloadList() {
-        document.getElementById("myDropdown").classList.toggle("show");
-    }
-
-    // Close the dropdown if the user clicks outside of it
-    window.onclick = function(event) {
-      if (!event.target.matches('.dropbtn')) {
-
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        var i;
-        for (i = 0; i < dropdowns.length; i++) {
-          var openDropdown = dropdowns[i];
-          if (openDropdown.classList.contains('show')) {
-            openDropdown.classList.remove('show');
-          }
-        }
-      }
-    }
-
-</script>
+<script src="/script/nav-bar/nav-bar.js"></script>
+<script src="/script/js/mirror.js"></script>
+<script src="/script/js/mirror-functions.js"></script>
+<script src="/script/js/message-properties.js"></script>
+<script src="/script/js/common-functions.js"></script>
+<script src="/script/js/length-validation.js"></script>
+<script src="/script/js/pagination.js"></script>
+<script src="/script/bulk-upload/bulk-upload-js/bulk-upload.js"></script>
+<script src="/script/bulk-upload/bulk-upload-js/bulk-upload-init.js"></script>
+<script src="/js/download_dropdown.js"></script>

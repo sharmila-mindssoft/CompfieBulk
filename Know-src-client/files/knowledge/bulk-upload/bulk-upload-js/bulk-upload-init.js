@@ -9,7 +9,8 @@ function initMethods() {
         getDownloadAssignStatutory: getDownloadAssignStatutory,
         getUploadAssignStatutoryCSV: getUploadAssignStatutoryCSV,
         getAssignStatutoryForApprove: getAssignStatutoryForApprove,
-        getStatutoryMappingsBulkReportData: getStatutoryMappingsBulkReportData,
+        uploadCSVFile: uploadCSVFile,
+        getStatutoryMappingsBulkReportData:getStatutoryMappingsBulkReportData,
 
         updateActionFromList: updateActionFromList,
         confirmUpdateAction: confirmUpdateAction,
@@ -17,12 +18,12 @@ function initMethods() {
         getApproveMappingCSVList: getApproveMappingCSVList,
         updateActionFromView: updateActionFromView,
         getApproveMappingViewFilter: getApproveMappingViewFilter,
-        //getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
         submitMappingAction: submitMappingAction,
+        getApproveMappingViewFromFilter: getApproveMappingViewFromFilter,
 
         getAssignedStatutoryBulkReportData: getAssignedStatutoryBulkReportData,
-        getRejectedStatutoryMappingBulkUploadData: getRejectedStatutoryMappingBulkUploadData,
-        deleteRejectedStatutoryMappingByCsvID: deleteRejectedStatutoryMappingByCsvID,
+        getRejectedSMBulkData: getRejectedSMBulkData,
+        deleteRejectedSMByCsvID: deleteRejectedSMByCsvID,
         setDownloadClickCount: setDownloadClickCount,
         getClientUnitBulkReportData: getClientUnitBulkReportData,
         getClientUnitRejectedData: getClientUnitRejectedData,
@@ -50,7 +51,9 @@ function initMethods() {
 
         getBulkClientUnitListForFilterView: getBulkClientUnitListForFilterView,
         submitClientUnitActionFromView: submitClientUnitActionFromView,
-        confirmSubmitClientUnitFromView: confirmSubmitClientUnitFromView
+        confirmSubmitClientUnitFromView: confirmSubmitClientUnitFromView,
+        validateAssignStatutory: validateAssignStatutory,
+        submitAssignStatutoryAction: submitAssignStatutoryAction,
     };
 }
 

@@ -1,388 +1,354 @@
-var countriesList;
-var domains_list=[];
-var SystemRejected="COMPFIE";
+var COUNTRIES_LIST = [];
+var DOMAIN_LIST = [];
+var ALL_USER_INFO = [];
+var USER_DETAILS;
+var DOMAIN_IDS;
+var EMP_CODE;
+var EMP_NAME;
+var REJECTED_STATUTORY_DATA;
 
-var CountryVal = $('#countryval');
-var Country = $('#country');
-var Domain = $('#domain');
-var DomainVal = $('#domainval');
-var ACCountry = $('#ac-country');
-var ACDomain = $('#ac-domain');
+var SYSTEM_REJECTED = "COMPFIE";
 
-var Show_btn = $('#show');
-var Export_csv = $('.export-csv');
+var COUNTRY_VAL = $('#countryval');
+var COUNTRY = $('#country');
+var DOMAIN = $('#domain');
+var DOMAIN_VAL = $('#domainval');
+var AC_COUNTRY = $('#ac-country');
+var AC_DOMAIN = $('#ac-domain');
 
-var ReportView = $('.grid-table-rpt');
-var PasswordSubmitButton = $('#password-submit');
-var CurrentPassword = $('#current-password');
-var RemoveStatutoryCsvId;
+var SHOW_BTN = $('#show');
+var EXPORT_CSV = $('.export-csv');
+
+var REPORT_VIEW = $('.grid-table-rpt');
+var PASSWORD_SUBMIT_BTN = $('#password-submit');
+var CURRENT_PASSWORD = $('#current-password');
+var REMOVE_STATUTORY_CSV_ID;
+var DOWNLOAD_LIMIT = 2;
+var SYSTEM_REJECTED_ACTION = 3;
+
+/**** User Level Category ***********/
+var KM_USER_CATEGORY = 3;
+var KE_USER_CATEGORY = 4;
+var TM_USER_CATEGORY = 5;
+var TE_USER_CATEGORY = 6;
+var DM_USER_CATEGORY = 7;
+var DE_USER_CATEGORY = 8;
 
 
+// Creating New Class
+var rejStatuMapping = new RejectedStatutoryMappingBulk();
 
-rsm_page = new AssignStatutoryBulkReport();
+// Handle All Page Controls like Button submit
+function pageControls() {
+    //load group form list in autocomplete text box
+    COUNTRY_VAL.keyup(function(e) {
+        var textVal = $(this).val();
+        var cgList = [];
+        resetfilter("domain");
+        var i = 0;
+        for (i = 0; i < COUNTRIES_LIST.length; i++) {
+            if (COUNTRIES_LIST[i].is_active == true) {
+                var occur = -1;
+                var j = 0;
+                for (j = 0; j < cgList.length; j++) {
+                    if (cgList[j].country_id == COUNTRIES_LIST[i].country_id) {
+                        occur = 1;
+                        break;
+                    }
+                }
+                if (occur < 0) {
+                    cgList.push({
+                        "country_id": COUNTRIES_LIST[i].country_id,
+                        "country_name": COUNTRIES_LIST[i].country_name,
+                        "is_active": true
+                    });
+                }
 
-function pageControls()
-{
-  //load group form list in autocomplete text box
-  CountryVal.keyup(function (e) {
-    /*resetfilter('domains');*/
-    var textval = $(this).val();
-    var ctry_grps=[];
-      for(var i=0;i<countriesList.length;i++)
-      {
-        if(countriesList[i].is_active==true)
-        {
-          var occur = -1
-          for(var j=0;j<ctry_grps.length;j++){
-            if(ctry_grps[j].country_id == countriesList[i].country_id){
-              occur = 1;
-              break;
             }
-          }
-          if(occur < 0){
-            ctry_grps.push({
-              "country_id": countriesList[i].country_id,
-              "country_name": countriesList[i].country_name,
-              "is_active": true
-            });
-          }
-
         }
-      }
-      commonAutoComplete(
-          e, ACCountry, Country, textval,
-          ctry_grps, "country_name", "country_id", function (val) {
-            onAutoCompleteSuccess(CountryVal, Country, val);
-      });
-  });
-
-
-  //load legalentity form list in autocomplete text box
-  DomainVal.keyup(function (e) {
-    var textval = $(this).val();
-    var d_list = [];
-    var country_id = $('#country').val();
-    if($('#country').val() > 0)
-    {
-      var condition_fields = [];
-      var condition_values = [];
-      if($('#country').val() != ''){
-        condition_fields.push("country_id");
-        condition_values.push(Country.val());
-      }
-      for(var i =0; i < countriesList.length; i++)
-      {
-
-        if((countriesList[i].country_id == country_id))
-        {
-          for(var j = 0; j < domainsList.length; j++)
-          {
-            if ($.inArray(countriesList[i].country_id, domainsList[j].country_ids) >= 0)
-            {
-              d_list.push({
-                "domain_id": domainsList[j].domain_id,
-                "domain_name": domainsList[j].domain_name,
-                "is_active": true
-              });
-            }
-          }
-        }
-      }
         commonAutoComplete(
-            e, ACDomain, Domain, textval,
-            d_list, "domain_name", "domain_id", function (val) {
-                onAutoCompleteSuccess(DomainVal, Domain, val);
+            e, AC_COUNTRY, COUNTRY, textVal,
+            cgList, "country_name", "country_id",
+            function(val) {
+                onAutoCompleteSuccess(COUNTRY_VAL, COUNTRY, val);
             });
-    }
+    });
 
-  });
 
-  Show_btn.click(function() {
-    is_valid = rsm_page.validateMandatory();
-    if (is_valid == true)
-    {
-        $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
-        .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-            $(this).removeClass();
-        });
+    //load legalentity form list in autocomplete text box
+    DOMAIN_VAL.keyup(function(e) {
+        resetfilter('');
+        var textVal = $(this).val();
+        var dList = [];
+        var ctryId = COUNTRY.val();
+        var c_id;
+        if (COUNTRY.val() > 0) {
+            var conditionFields = [];
+            var conditionValues = [];
+            if (COUNTRY.val() != '') {
+                conditionFields.push("country_id");
+                conditionValues.push(COUNTRY.val());
+            }
+            var i = 0;
+            for (i = 0; i < COUNTRIES_LIST.length; i++) {
+                if ((COUNTRIES_LIST[i].country_id == ctryId)) {
+                    for (var j = 0; j < DOMAIN_LIST.length; j++) {
+                        c_id = COUNTRIES_LIST[i].country_id
+                        if ($.inArray(c_id, DOMAIN_LIST[j].country_ids) >= 0) {
+                            dList.push({
+                                "domain_id": DOMAIN_LIST[j].domain_id,
+                                "domain_name": DOMAIN_LIST[j].domain_name,
+                                "is_active": true
+                            });
+                        }
+                    }
+                }
+            }
+            commonAutoComplete(
+                e, AC_DOMAIN, DOMAIN, textVal,
+                dList, "domain_name", "domain_id",
+                function(val) {
+                    onAutoCompleteSuccess(DOMAIN_VAL, DOMAIN, val);
+                });
+        }
 
-        processSubmit();
-     }
-});
+    });
+
+    SHOW_BTN.click(function() {
+        isValid = rejStatuMapping.validateMandatory();
+        if (isValid == true) {
+            processSubmit();
+        }
+    });
 }
-function resetfilter(evt)
-{
 
-  if(evt == 'domains')
-  {
-    //$('#domainid').val('');
-  }
-  $('.tbody-usermappingdetails-list').empty();
-  $('.grid-table-rpt').hide();
-  $('.details').hide();
-}
-function onAutoCompleteSuccess(value_element, id_element, val) {
-    value_element.val(val[1]);
-    id_element.val(val[0]);
-    value_element.focus();
-    var current_id = id_element[0].id;
-    if(current_id == 'country'){
-      /*resetfilter('domains');*/
+//
+function resetfilter(evt) {
+    if (evt == "domain") {
+        DOMAIN_VAL.val('');
     }
-    else if(current_id == 'domainid'){
-    }
+    $('.tbody-usermappingdetails-list').empty();
+    $('.grid-table-rpt').hide();
+    $('.details').hide();
 }
+
+function onAutoCompleteSuccess(valueElement, idElement, val) {
+    valueElement.val(val[1]);
+    idElement.val(val[0]);
+    valueElement.focus();
+    var currentId = idElement[0].id;
+    if (currentId == 'country') {} else if (currentId == 'domainid') {}
+}
+
 // get statutory mapping report data from api
 function processSubmit() {
-    var CountryID = parseInt(Country.val());
-    var DomainID = parseInt(Domain.val());
+    var countryID = parseInt(COUNTRY.val());
+    var domainID = parseInt(DOMAIN.val());
 
-        displayLoader();
-        filterdata = {
-            "c_id":CountryID,
-            "d_id":DomainID,
-        };
-        function onSuccess(data) {
+    displayLoader();
+    filterdata = {
+        "c_id": countryID,
+        "d_id": domainID,
+    };
 
-            $('.details').show();
-
-            $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
-            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-                $(this).removeClass();
-                $(this).show();
-            });
-            console.log(data.rejected_data);
-
-
-            RejectedStatutoryMappingData = data.rejected_data;
-            if (RejectedStatutoryMappingData.length == 0) {
-                $('.tbody-compliance').empty();
-                var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
-                var clone4 = tableRow4.clone();
-                $('.tbl_norecords', clone4).text('No Records Found');
-                $('.tbody-compliance').append(clone4);
-                ReportView.show();
-                hideLoader();
-            } else {
-                hideLoader();
-                ReportView.show();
-                loadCountwiseResult(RejectedStatutoryMappingData);
-            }
-
-        }
-
-        function onFailure(error) {
-            displayMessage(error);
+    function onSuccess(data) {
+        $('.details').show();
+        REJECTED_STATUTORY_DATA = data.rejected_data;
+        if (REJECTED_STATUTORY_DATA.length == 0) {
+            $('.tbody-compliance').empty();
+            var tableRow4 = $('#nocompliance-templates ' +
+                '.table-nocompliances-list .table-row');
+            var clone4 = tableRow4.clone();
+            $('.tbl_norecords', clone4).text('No Records Found');
+            $('.tbody-compliance').append(clone4);
+            REPORT_VIEW.show();
+            hideLoader();
+        } else {
+            REPORT_VIEW.show();
+            loadCountwiseResult(REJECTED_STATUTORY_DATA);
             hideLoader();
         }
+    }
 
-        bu.getRejectedStatutoryMappingBulkUploadData(filterdata, function(error, response) {
-          console.log("error");
-          console.log(error);
-            if (error == null) {
-                onSuccess(response);
-            } else {
-
-                onFailure(error);
-            }
-        });
-        //temp_act = act;
-    //}
+    function onFailure(error) {
+        displayMessage(error);
+        hideLoader();
+    }
+    bu.getRejectedSMBulkData(filterdata, function(error, response) {
+        if (error == null) {
+            onSuccess(response);
+        } else {
+            onFailure(error);
+        }
+    });
 }
 
-//display statutory mapping details accoring to count
-function loadCountwiseResult(filterList) {
-    SNO=0;
-    var CsvId;
-    var CsvName;
-    var TotalNoOfTasks;
-    var RejectedOn;
-    var ReasonForRejection;
-    var StatutoryAction;
-    var RemoveHrefTag;
-    var RejectedBy;
-    var DeclinedCount;
-    var FileDownloadCount;
-    var DownloadRejectedFiles;
-    var deleteStatus;
-    var ReasonForRejection;
+//Display statutory mapping details accoring to count
+function loadCountwiseResult(data) {
+    var sno = 0;
+    var csvId;
+    var csvName;
+    var totalNoofTasks;
+    var rejectedOn;
+    var reasonForRejection;
+    var statutoryAction;
+    var rejectedBy;
+    var declinedCount = '-';
+    var fileDownloadCount;
+    var downloadRejectedFiles;
+
     $('.tbody-compliance').empty();
+    for (var entity in data) {
+        sno = parseInt(sno) + 1;
+        csvId = data[entity].csv_id;
+        csvName = data[entity].csv_name_text;
+        totalNoofTasks = data[entity].total_records;
+        rejectedOn = data[entity].rejected_on;
+        IsFullyRejected = data[entity].is_fully_rejected;
+        RejectedReason = data[entity].rejected_reason;
+        statutoryAction = data[entity].statutory_action;
+        fileDownloadCount = data[entity].file_download_count;
 
-    for (var entity in filterList) {
-
-        deleteStatus='';
-        SNO = parseInt(SNO) + 1;
-
-        CsvId = filterList[entity].csv_id;
-        CsvName = filterList[entity].csv_name_text;
-        TotalNoOfTasks = filterList[entity].total_records;
-        RejectedOn = filterList[entity].rejected_on;
-
-
-        IsFullyRejected = filterList[entity].is_fully_rejected;
-        RejectedReason = filterList[entity].rejected_reason;
-
-
-        StatutoryAction = filterList[entity].statutory_action;
-        FileDownloadCount = filterList[entity].file_download_count;
-
-        if(parseInt(IsFullyRejected)==1){
-            RemoveHrefTag='';
-            ReasonForRejection=RejectedReason;
-            $(allUserInfo).each(function(key,value){
-              if(parseInt(filterList[entity].rejected_by)==value["user_id"])
-              {
-                  EmpCode = value["employee_code"];
-                  EmpName = value["employee_name"];
-                  RejectedBy=EmpCode+" - "+ EmpName.toUpperCase();
-              }
+        if (parseInt(IsFullyRejected) == 1) {
+            removeAction = '';
+            reasonForRejection = RejectedReason;
+            $(ALL_USER_INFO).each(function(key, value) {
+                if (parseInt(data[entity].rejected_by) == value["user_id"]) {
+                    EMP_CODE = value["employee_code"];
+                    EMP_NAME = value["employee_name"];
+                    rejectedBy = EMP_CODE + " - " + EMP_NAME;
+                }
             });
-        }
-        else if(parseInt(StatutoryAction)==3)
-        {
-
-           RejectedBy=SystemRejected;
-           DeclinedCount = filterList[entity].declined_count;
-           ReasonForRejection='';
+        } else if (parseInt(statutoryAction) == SYSTEM_REJECTED_ACTION) {
+            rejectedBy = SYSTEM_REJECTED;
+            declinedCount = data[entity].declined_count;
+            reasonForRejection = '';
         }
 
-        if(parseInt(FileDownloadCount)<1)
-        {
-          deleteStatus='style="display:none;"';
-        }
-        console.log(parseInt(FileDownloadCount));
-        console.log(parseInt(FileDownloadCount)<1);
-        console.log(deleteStatus);
+        var tr = $('#act-templates .table-act-list .table-row-act-list');
+        var clone1 = tr.clone();
 
+        $('.tbl_sno', clone1).text(sno);
+        $('.tbl_upload_filename', clone1).text(csvName);
+        $(".tbl_rejected_on", clone1).text(rejectedOn);
+        $('.tbl_rejected_by', clone1).text(rejectedBy);
+        $('.tbl_no_of_tasks', clone1).text(totalNoofTasks);
+        $('.tbl_declined_count', clone1).text(declinedCount);
+        $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
 
-        RemoveHrefTag='<a id="delete_action_'+CsvId+'" '+deleteStatus+' data-csv-id="'+CsvId+'" onclick="confirm_alert(this)" title="'+CsvName+' - Click here to remove">';
-        RemoveHrefTag+=' <i class="fa fa-times text-danger c-pointer"></i>';
-        RemoveHrefTag+='</a>';
-
-
-        var tableRow1 = $('#act-templates .table-act-list .table-row-act-list');
-        var clone1 = tableRow1.clone();
-
-        $('.tbl_sno', clone1).text(SNO);
-        $('.tbl_upload_filename', clone1).text(CsvName);
-        $(".tbl_rejected_on", clone1).text(RejectedOn);
-        $('.tbl_rejected_by', clone1).text(RejectedBy);
-        $('.tbl_no_of_tasks', clone1).text(TotalNoOfTasks);
-        $('.tbl_declined_count', clone1).text(DeclinedCount);
-        $('.tbl_reason_for_rejection', clone1).text(ReasonForRejection);
-
+        $('.tbl_remove .remove_a', clone1).attr({
+            'id': "delete_action_" + csvId,
+            'data-csv-id': csvId,
+            onClick: "confirm_alert(this)",
+        });
 
         /***** Rejected File Downloads ********/
-        if(parseInt(FileDownloadCount)<2)
-        {
-          DownloadRejectedFiles='<i id="download_icon_'+CsvId+'" data-id="'+CsvId+'" class="fa fa-download text-primary c-pointer dropbtn" onclick="rejectedFiles(this)"></i>';
-          DownloadRejectedFiles+='<div id="download_files_'+CsvId+'" class="dropdown-content">';
-          DownloadRejectedFiles+='<a class="export-excel" data-format="excel" onclick="downloadclick('+CsvId+',this)" href="javascript:void(0);">Download Excel</a>';
-          DownloadRejectedFiles+='<a class="export-csv" data-format="csv" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download CSV</a>';
-          DownloadRejectedFiles+='<a class="export-ods" data-format="ods" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download ODS</a>';
-          DownloadRejectedFiles+='<a class="export-text" data-format="text" onclick="downloadclick('+CsvId+', this)" href="javascript:void(0);">Download Text</a>';
-          DownloadRejectedFiles+='</div>';
-          $('.tbl_rejected_file', clone1).html(DownloadRejectedFiles);
+        if (parseInt(fileDownloadCount) < 2) {
+            $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
+                'id': "download_icon_" + csvId,
+                'data-id': csvId,
+                onClick: "rejectedFiles(this)"
+            });
+            $('.tbl_rejected_file .rejected_div_cls', clone1).attr({
+                'id': "download_files_" + csvId
+            });
+            $('.tbl_rejected_file .rejected_div_cls .rej_excel, .rej_csv, ' +
+                '.rej_ods, .rej_text', clone1).attr({
+                onclick: "downloadClick(" + csvId + ",this)"
+            });
         }
-
-        /*$('.tbl_rejected_file', clone1).text('Link');*/
-
-        /*<a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.xlsx">Download Excel</a>
-        <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.csv">Download CSV</a>
-        <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.ods">Download ODS</a>
-        <a href="/files/knowledge/files/rejected/Statutory_Mapping_Rejected.txt">Download Text</a>*/
-
-        $('.tbl_remove', clone1).html(RemoveHrefTag);
-
+        else if (parseInt(fileDownloadCount) < 1 && parseInt(fileDownloadCount) < 2){
+            $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
+        }
+        else{
+            $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
+                'id': "download_icon_" + csvId,
+                'data-id': csvId,
+                onClick: "rejectedFiles(this)",
+            });
+            $('.tbl_rejected_file .rejected_i_cls', clone1).addClass("default-display-none");
+        }
         $('#datatable-responsive .tbody-compliance').append(clone1);
     }
     hideLoader();
 }
 
-
-function AssignStatutoryBulkReport() {}
+function RejectedStatutoryMappingBulk() {}
 // Fields Manadory validation
-AssignStatutoryBulkReport.prototype.validateMandatory = function()
-{
-    is_valid = true;
-
-    if (Country.val().trim().length == 0)
-    {
+RejectedStatutoryMappingBulk.prototype.validateMandatory = function() {
+    var isValid = true;
+    if (COUNTRY.val().trim().length == 0) {
         displayMessage(message.country_required);
-        is_valid = false;
-    }
-    else if (Domain.val().trim().length == 0)
-    {
+        isValid = false;
+    } else if (DOMAIN.val().trim().length == 0) {
         displayMessage(message.domain_required);
-        is_valid = false;
+        isValid = false;
     }
-    return is_valid;
+    return isValid;
 };
-
 
 //load all the filters
 function initialize() {
-   function onSuccess(data) {
-        countriesList = data.countries;
-        domainsList = data.domains;
-        allUserInfo = data.user_details;
-        userDetails = data.user_details[0];
-        Domain_ids = userDetails.country_wise_domain;
-        EmpCode = userDetails.employee_code;
-        EmpName = userDetails.employee_name;
+    function onSuccess(data) {
+        COUNTRIES_LIST = data.countries;
+        DOMAIN_LIST = data.domains;
+        ALL_USER_INFO = data.user_details;
+        USER_DETAILS = data.user_details[0];
+        DOMAIN_IDS = USER_DETAILS.country_wise_domain;
+        EMP_CODE = USER_DETAILS.employee_code;
+        EMP_NAME = USER_DETAILS.employee_name;
         hideLoader();
     }
+
     function onFailure(error) {
         displayMessage(error);
         hideLoader();
     }
-  mirror.getAdminUserList(function (error, response) {
-    if (error == null) {
-      onSuccess(response);
-      hideLoader();
-    } else {
-      onFailure(error);
-      hideLoader();
-    }
-  });
+    mirror.getAdminUserList(function(error, response) {
+        if (error == null) {
+            onSuccess(response);
+            hideLoader();
+        } else {
+            onFailure(error);
+            hideLoader();
+        }
+    });
 }
 
 //validate password
-function validateAuthentication(){
-  var password = CurrentPassword.val().trim();
-  if (password.length == 0) {
-    displayMessage(message.password_required);
-    CurrentPassword.focus();
-    return false;
-  } else if(validateMaxLength('password', password, "Password") == false) {
-    return false;
-  }
-  displayLoader();
-  mirror.verifyPassword(password, function(error, response) {
-    if (error == null) {
-      hideLoader();
-      isAuthenticate = true;
-      Custombox.close();
-      displaySuccessMessage(message.password_authentication_success);
-    } else {
-      hideLoader();
-      if (error == 'InvalidPassword') {
-        displayMessage(message.invalid_password);
-      }
+function validateAuthentication() {
+    var password = CURRENT_PASSWORD.val().trim();
+    if (password.length == 0) {
+        displayMessage(message.password_required);
+        CURRENT_PASSWORD.focus();
+        return false;
+    } else if (validateMaxLength('password', password, "Password") == false) {
+        return false;
     }
-  });
+    displayLoader();
+    mirror.verifyPassword(password, function(error, response) {
+        if (error == null) {
+            hideLoader();
+            isAuthenticate = true;
+            Custombox.close();
+            displaySuccessMessage(message.password_authentication_success);
+        } else {
+            hideLoader();
+            if (error == 'InvalidPassword') {
+                displayMessage(message.invalid_password);
+            }
+        }
+    });
 }
 
-
-PasswordSubmitButton.click(function() {
-  validateAuthentication();
+PASSWORD_SUBMIT_BTN.click(function() {
+    validateAuthentication();
 });
 
-function confirm_alert(event) {
-  var CountryId=Country.val();
-  var DomainId=Domain.val();
-
-   swal({
+function confirmAlert(event) {
+    var countryId = Country.val();
+    var domainId = DOMAIN.val();
+    swal({
         title: "Are you sure",
         text: "You want to permanently delete the file?",
         type: "success",
@@ -390,241 +356,209 @@ function confirm_alert(event) {
         confirmButtonClass: 'btn-success waves-effect waves-light',
         confirmButtonText: 'Yes'
     }, function(isConfirm) {
-      if(isConfirm){
-          Custombox.open({
-          target: '#authentication-modal-box',
-          effect: 'contentscale',
-          complete:   function() {
-             CurrentPassword.focus();
-             isAuthenticate = false;
-             Country.val(CountryId);
-             Domain.val(DomainId);
-          },
-          close:   function() {
-            Country.val(CountryId);
-            Domain.val(DomainId);
-             if(isAuthenticate){
-                RemoveStatutoryCsvId=$(event).attr("data-csv-id");
-                RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId);
-             }
-          }
-        });
-      }
+        if (isConfirm) {
+            Custombox.open({
+                target: '#custom-modal-approve',
+                effect: 'contentscale',
+                complete: function() {
+                    if (CURRENT_PASSWORD != null) {
+                                    CURRENT_PASSWORD.focus();
+                                    CURRENT_PASSWORD.val('');
+                                }
+                    CURRENT_PASSWORD.focus();
+                    isAuthenticate = false;
+                    COUNTRY.val(countryId);
+                    DOMAIN.val(domainId);
+                },
+                close: function() {
+                    COUNTRY.val(countryId);
+                    DOMAIN.val(domainId);
+                    if (isAuthenticate) {
+                        REMOVE_STATUTORY_CSV_ID = $(event).attr("data-csv-id");
+                        RemoveStatutoryCsv(REMOVE_STATUTORY_CSV_ID, countryId,
+                            domainId);
+                    }
+                }
+            });
+        }
     })
 }
 
-function RemoveStatutoryCsvData(RemoveStatutoryCsvId, CountryId, DomainId) {
-  displayLoader();
+// Remove Button functionality
+function RemoveStatutoryCsv(REMOVE_STATUTORY_CSV_ID, countryId, domainId) {
+    displayLoader();
 
-    function onSuccess(data)
-    {
+    function onSuccess(data) {
+        $('.details').show();
+        COUNTRY.val(countryId);
+        DOMAIN.val(domainId);
 
-      $('.details').show();
-      Country.val(CountryId);
-      Domain.val(DomainId);
+        $('.details').show();
+        $(this).show();
 
-      $('.details').show();
-      $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
-      .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-      $(this).removeClass();
-      $(this).show();
-      });
-
-      RejectedStatutoryMappingData = data.rejected_data;
-      if (RejectedStatutoryMappingData.length == 0)
-      {
-        $('.tbody-compliance').empty();
-        var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
-        var clone4 = tableRow4.clone();
-        $('.tbl_norecords', clone4).text('No Records Found');
-        $('.tbody-compliance').append(clone4);
-        ReportView.show();
-        hideLoader();
-      }
-      else
-      {
-        hideLoader();
-        ReportView.show();
-        loadCountwiseResult(RejectedStatutoryMappingData);
-      }
-      displaySuccessMessage(message.record_deleted);
+        REJECTED_STATUTORY_DATA = data.rejected_data;
+        if (REJECTED_STATUTORY_DATA.length == 0) {
+            $('.tbody-compliance').empty();
+            var tableRow4 = $('#nocompliance-templates '+
+                '.table-nocompliances-list ' +
+                '.table-row');
+            var clone4 = tableRow4.clone();
+            $('.tbl_norecords', clone4).text('No Records Found');
+            $('.tbody-compliance').append(clone4);
+            REPORT_VIEW.show();
+            hideLoader();
+        } else {
+            hideLoader();
+            REPORT_VIEW.show();
+            loadCountwiseResult(REJECTED_STATUTORY_DATA);
+        }
+        displaySuccessMessage(message.record_deleted);
 
     }
 
-    function onFailure(error)
-    {
-      displayMessage(error);
-      hideLoader();
+    function onFailure(error) {
+        displayMessage(error);
+        hideLoader();
     }
 
     filterdata = {
-            "d_id":parseInt(DomainId),
-            "csv_id":parseInt(RemoveStatutoryCsvId),
-            "c_id":parseInt(CountryId)
-        };
+        "d_id": parseInt(domainId),
+        "csv_id": parseInt(REMOVE_STATUTORY_CSV_ID),
+        "c_id": parseInt(countryId)
+    };
 
-   bu.deleteRejectedStatutoryMappingByCsvID(filterdata, function(error, response) {
-            if (error == null) {
-                onSuccess(response)
-            } else {
+    bu.deleteRejectedSMByCsvID(filterdata, function(error, response) {
+        if (error == null) {
+            onSuccess(response)
+        } else {
 
-                onFailure(error);
-            }
-        });
-   hideLoader();
+            onFailure(error);
+        }
+    });
+    hideLoader();
 }
 
-function downloadclick(CSV_ID, event)
-{
-  var c_id=Country.val();
-  var d_id=Domain.val();
-  var download_file_format=$(event).attr("data-format");
+// Download Click functionality
+function downloadClick(CSV_ID, event) {
+    var cId = COUNTRY.val();
+    var dId = DOMAIN.val();
+    var downloadFileFormat = $(event).attr("data-format");
 
     displayLoader();
-    function onSuccess(data)
-    {
-      var updatedCount;
-      var dataCSVid;
-      var downloadCount;
-      var eventID="download_files_";
-      //delete_action_
-      updatedCount = data.updated_count;
 
-      dataCSVid=updatedCount[0].csv_id;
-      downloadCount=updatedCount[0].download_count;
-      if(parseInt(downloadCount)==1)
-      {
-        eventID=eventID+dataCSVid;
-        document.getElementById(eventID).classList.toggle("show");
-        $("#delete_action_"+dataCSVid).attr("style","display:block");
+    function onSuccess(data) {
+        var updatedCount;
+        var dataCsvId;
+        var downloadCount;
+        var eventId = "download_files_";
+        //delete_action_
+        updatedCount = data.updated_count;
 
-      }
-      else if(parseInt(downloadCount)>=2)
-      {
-        eventID=eventID+dataCSVid;
-        document.getElementById(eventID).classList.toggle("show");
-        $("#delete_action_"+dataCSVid).attr("style","display:block");
-        $("#download_files_"+dataCSVid).remove();
-        $("#download_icon_"+dataCSVid).remove();
-      }
-      displaySuccessMessage(message.download_files);
-      hideLoader();
+        dataCsvId = updatedCount[0].csv_id;
+        downloadCount = updatedCount[0].download_count;
+        if (parseInt(downloadCount) == 1) {
+            eventId = eventId + dataCsvId;
+            document.getElementById(eventId).classList.toggle("show");
+            $("#delete_action_" + dataCsvId).attr("style", "display:block");
+        } else if (parseInt(downloadCount) >= parseInt(DOWNLOAD_LIMIT)) {
+            eventId = eventId + dataCsvId;
+            document.getElementById(eventId).classList.toggle("show");
+            $("#delete_action_" + dataCsvId).attr("style", "display:block");
+            $("#download_files_" + dataCsvId).remove();
+            $("#download_icon_" + dataCsvId).remove();
+        }
+        displaySuccessMessage(message.download_files);
+        hideLoader();
     }
-    function onFailure(error)
-    {
-      displayMessage(error);
-      hideLoader();
+
+    function onFailure(error) {
+        displayMessage(error);
+        hideLoader();
     }
-  //csv_id
-  filterdata = {
-            "csv_id":parseInt(CSV_ID)
-        };
+    //csvId
+    filterdata = {
+        "csv_id": parseInt(CSV_ID)
+    };
 
-  requestDownloadData = {
-            "csv_id":parseInt(CSV_ID),
-            "c_id":parseInt(c_id),
-            "d_id":parseInt(d_id),
-            "download_format":download_file_format
-        };
-  bu.setDownloadClickCount(filterdata, function(error, response) {
-      if (error == null) {
-          onSuccess(response);
-          requestDownload(requestDownloadData, download_file_format);
-
-           displayLoader();
-
-      } else {
-
-          onFailure(error);
-      }
-  });
-
-  hideLoader();
-  return false;
-
-}
-function requestDownload(requestDownloadData, download_file_format)
-{
-  bu.downloadRejectedSMReportData(requestDownloadData, function(d_error, d_response)
-  {
-    if (d_error == null) {
-          if(download_file_format=="csv")
-          {
-            $(location).attr('href', d_response.csv_link);
-            hideLoader();
-          }
-          else if(download_file_format=="excel")
-          {
-            $(location).attr('href', d_response.xlsx_link);
-            hideLoader();
-          }
-          else if(download_file_format=="text")
-          {
-            $(location).attr('href', d_response.txt_link);
-            hideLoader();
-          }
-          else if(download_file_format=="ods")
-          {
-            $(location).attr('href', d_response.ods_link);
-            hideLoader();
-          }
-
-
-      } else {
-
-          onFailure(d_error);
-          hideLoader();
-      }
-
-  });
+    var requestDownloadData = {
+        "csv_id": parseInt(CSV_ID),
+        "c_id": parseInt(cId),
+        "d_id": parseInt(dId),
+        "download_format": downloadFileFormat
+    };
+    /*bu.setDownloadClickCount(filterdata, function(error, response) {
+        if (error == null) {
+            onSuccess(response);*/
+            requestDownload(requestDownloadData, downloadFileFormat);
+            displayLoader();
+        /*} else {
+            onFailure(error);
+        }
+    });*/
+    hideLoader();
+    return false;
 }
 
-function downloadFile(filePath){
-  var link = document.createElement('a');
-  link.href = filePath;
-  link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-  link.click();
+// Download Request
+function requestDownload(requestDownloadData, downloadFileFormat) {
+    bu.downloadRejectedSMReportData(requestDownloadData,
+        function(error, response) {
+        if (error == null) {
+            if (downloadFileFormat == "csv") {
+                $(location).attr('href', response.csv_link);
+                hideLoader();
+                return false;
+            } else if (downloadFileFormat == "excel") {
+                $(location).attr('href', response.xlsx_link);
+                hideLoader();
+                return false;
+            } else if (downloadFileFormat == "text") {
+                $(location).attr('href', response.txt_link);
+                hideLoader();
+                return false;
+            } else if (downloadFileFormat == "ods") {
+                $(location).attr('href', response.ods_link);
+                hideLoader();
+                return false;
+            }
+
+        } else {
+            hideLoader();
+        }
+
+    });
 }
 
+// File Download
+function downloadFile(filePath) {
+    var link = document.createElement('a');
+    link.href = filePath;
+    link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+    link.click();
+}
 
 /* DownloadFileOptionList - Excel,CSV,ODS,Text  */
 function rejectedFiles(event) {
-  var eventID=$(event).attr("data-id");
-  eventID="download_files_"+eventID;
-
-  document.getElementById(eventID).classList.toggle("show");
-
-  /*$(event).toggle("show");*/
+    var eventId = $(event).attr("data-id");
+    eventId = "download_files_" + eventId;
+    document.getElementById(eventId).classList.toggle("show");
 }
 
 // Close the dropdown if the user clicks outside of it
 window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
+    if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
     }
-  }
 }
-
-$(function () {
-  $('.grid-table-rpt').hide();
-  initialize();
-  pageControls();
-  /*tempDatasetup();*/
+$(function() {
+    $('.grid-table-rpt').hide();
+    initialize();
+    pageControls();
 });
-
-/*function tempDatasetup()
-{
-  $('#countryval').val("India");
-  $('#domainval').val("Industrial Law");
-  $('#country').val(1);
-  $('#domain').val(3);
-  Show_btn.click();
-}
-*/

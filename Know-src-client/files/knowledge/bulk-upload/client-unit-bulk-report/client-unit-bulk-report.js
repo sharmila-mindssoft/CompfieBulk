@@ -1,280 +1,209 @@
-var allUserInfo;
-var userDetails;
-
-var GroupName = $("#groupsval");
-var GroupId = $("#group-id");
-var ACGroup = $("#ac-group");
-var Show_btn = $('#show');
-var Export_btn = $('#export');
-var fromDate = $("#from-date");
-var toDate = $("#to-date");
-var TeName=$('#tename-tmanager');
-var ExistingUserId=[];
+var CLIENT_UNIT_DATA;
+var ALL_USER_INFO;
+var GROUP_NAME = $("#groupsval");
+var GROUP_ID = $("#group-id");
+var AC_GROUP = $("#ac-group");
+var SHOW_BTN = $('#show');
+var EXPORT_BTN = $('#export');
+var FROM_DATE = $("#from_date");
+var TO_DATE = $("#to_date");
+var TE_NAME = $('#tename-tmanager');
+var EXISTING_USER_ID = [];
 var CSV = false;
+var USER_CATEGORY_ID = 0;
+var TECHNO_EXECUTIVES = [];
+var ITEMS_PER_PAGE = $('#items_per_page');
+var PAGE_LIMIT = 25;
 
-s_page = null;
-
-
-var UserCategoryID=0;
-var TechnoExecutives=[];
-
-var ItemsPerPage = $('#items_per_page');
-var Show_btn = $('#show');
-var Export_btn = $('#export');
-
-var _page_limit = 25;
-
-
-
-var count = 1;
 //Pagination variable declaration
-var PaginationView = $('.pagination-view');
-var Pagination = $('#pagination-rpt');
-var CompliacneCount = $('.compliance_count');
-var on_current_page = 1;
-var sno = 0;
-var totalRecord;
-var ReportView = $('.grid-table-rpt');
-var compliance_count = 0;
-var ItemsPerPage = $('#items_per_page');    
+var PAGINATION_VIEW = $('.pagination-view');
+var PAGINATION = $('#pagination-rpt');
+var UNITS_COUNT = $('.units_count');
+var ON_CURRENT_PAGE = 1;
+var SNO = 0;
+var TOTAL_RECORD;
+var REPORT_VIEW = $('.grid-table-rpt');
 
+// Instance Creation of the page class
+var clientUnitBulkReport = new ClientUnitBulkReport();
 
-function processPaging(){
-  _page_limit = parseInt(ItemsPerPage.val());
-  showFrom = sno + 1;
-  if (on_current_page == 1) {
-    sno = 0
-  }
-  else {
-    sno = (on_current_page - 1) *  _page_limit;
-  }
-  sno  = sno;
-  if (totalRecord == 0) {
-    /*loadHeader();*/
-    hideLoader();
-    $('.tbody-usermappingdetails-list').empty();
-    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
-    var clone4 = tableRow4.clone();
-    $('.no_records', clone4).text('No Records Found');
-    $('.tbody-usermappingdetails-list').append(clone4);
-    //ExportButton.hide();
-    PaginationView.hide();
+function ClientUnitBulkReport() {}
 
-  } else {
-    if(sno==0){
-      //ExportButton.show();
-      createPageView(totalRecord);
+// Pagination setup function
+function pageData(onCurrentPage) {
+    data = [];
+    PAGE_LIMIT = parseInt(ITEMS_PER_PAGE.val());
+    recordLength = (parseInt(onCurrentPage) * PAGE_LIMIT);
+    var showFrom = SNO + 1;
+    var isNull = true;
+    var i = 0;
+    for (i = SNO; i < mappedUserList.length; i++) {
+        isNull = false;
+        data.push(mappedUserList[i]);
+        if (i == (recordLength - 1)) {
+            break;
+        }
     }
-    PaginationView.show();
-    //ReportView.show();
-
-    loadUserMappingDetailsList();
-  }
+    if (isNull == true) {
+        hidePagePan();
+    } else {
+        if (recordLength < TOTAL_RECORD)
+            showPagePan(showFrom, recordLength, TOTAL_RECORD);
+        else
+            showPagePan(showFrom, TOTAL_RECORD, TOTAL_RECORD);
+    }
+    return data;
 }
 
-function pageData(on_current_page){
-  data = [];
-  _page_limit = parseInt(ItemsPerPage.val());
-  recordLength = (parseInt(on_current_page) * _page_limit);
-  var showFrom = sno + 1;
-  var is_null = true;
-  for(i=sno;i<mappedUserList.length;i++)
-  {
-    is_null = false;
-    data.push(mappedUserList[i]);
-    if(i == (recordLength-1))
-    {
-      break;
-    }
-  }
-  if (is_null == true) {
-    hidePagePan();
-  }
-  else {
-    if(recordLength < totalRecord)
-      showPagePan(showFrom, recordLength, totalRecord);
-    else
-      showPagePan(showFrom, totalRecord, totalRecord);
-  }
-  return data;
-}
+// Show Pagination Page
 function showPagePan(showFrom, showTo, total) {
-    var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
-    CompliacneCount.text(showText);
-    PaginationView.show();
+    var showText = 'Showing ' + showFrom;
+    showText += ' to ' + showTo + ' of ';
+    showText += total + ' entries ';
+    UNITS_COUNT.text(showText);
+    PAGINATION_VIEW.show();
 }
-function hidePagePan() {
-    CompliacneCount.text('');
-    PaginationView.hide();
-}
-function createPageView(total_records) {
-    perPage = parseInt(ItemsPerPage.val());
-    Pagination.empty();
-    Pagination.removeData('twbs-pagination');
-    Pagination.unbind('page');
 
-    Pagination.twbsPagination({
-        totalPages: Math.ceil(total_records/perPage),
+//Hide Pagination Pane
+function hidePagePan() {
+    UNITS_COUNT.text('');
+    PAGINATION_VIEW.hide();
+}
+
+// To Create Pagination View
+function createPageView(totalRecords) {
+    perPage = parseInt(ITEMS_PER_PAGE.val());
+    PAGINATION.empty();
+    PAGINATION.removeData('twbs-pagination');
+    PAGINATION.unbind('page');
+    PAGINATION.twbsPagination({
+        totalPages: Math.ceil(totalRecords / perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            if (parseInt(on_current_page) != cPage) {
-                on_current_page = cPage;
-                $('#show-button').trigger( "click" );
+            if (parseInt(ON_CURRENT_PAGE) != cPage) {
+                ON_CURRENT_PAGE = cPage;
+                $('#show-button').trigger("click");
                 processSubmit();
             }
         }
     });
 };
 
-function processPaging(){
-  _page_limit = parseInt(ItemsPerPage.val());
-  showFrom = sno + 1;
-  if (on_current_page == 1) {
-    sno = 0
-  }
-  else {
-    sno = (on_current_page - 1) *  _page_limit;
-  }
-  sno  = sno;
-  if (totalRecord == 0) {
-    /*loadHeader();*/
-    hideLoader();
-    $('.tbody-usermappingdetails-list').empty();
-    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
-    var clone4 = tableRow4.clone();
-    $('.no_records', clone4).text('No Records Found');
-    $('.tbody-usermappingdetails-list').append(clone4);
-    //ExportButton.hide();
-    PaginationView.hide();
+// Reset Common Fields
+function resetFields() {
+    $('#group-id').val('');
+    $('#legalentityid').val('');
+    $('#unitid').val('');
+}
 
-  } else {
-    if(sno==0){
-      //ExportButton.show();
-      createPageView(totalRecord);
+// Pagination Processing
+function processPaging() {
+    PAGE_LIMIT = parseInt(ITEMS_PER_PAGE.val());
+    showFrom = SNO + 1;
+    if (ON_CURRENT_PAGE == 1) {
+        SNO = 0
+    } else {
+        SNO = (ON_CURRENT_PAGE - 1) * PAGE_LIMIT;
     }
-    PaginationView.show();
-    //ReportView.show();
+    SNO = SNO;
 
-    loadUserMappingDetailsList();
-  }
-}
-
-function pageData(on_current_page){
-  data = [];
-  _page_limit = parseInt(ItemsPerPage.val());
-  recordLength = (parseInt(on_current_page) * _page_limit);
-  var showFrom = sno + 1;
-  var is_null = true;
-  for(i=sno;i<mappedUserList.length;i++)
-  {
-    is_null = false;
-    data.push(mappedUserList[i]);
-    if(i == (recordLength-1))
-    {
-      break;
+    if (TOTAL_RECORD == 0) {
+        /*loadHeader();*/
+        hideLoader();
+        $('.tbody-usermappingdetails-list').empty();
+        var tableRow4 = $('#no-record-templates .table-no-content ' +
+            ' .table-row-no-content');
+        var clone4 = tableRow4.clone();
+        $('.tbl-norecords', clone4).text('No Records Found');
+        $('.tbody-usermappingdetails-list').append(clone4);
+        //ExportButton.hide();
+        PAGINATION_VIEW.hide();
+        REPORT_VIEW.show();
+        hideLoader();
+    } else {
+        hideLoader();
+        if (SNO == 0) {
+            //ExportButton.show();
+            createPageView(TOTAL_RECORD);
+        }
+        PAGINATION_VIEW.show();
+        REPORT_VIEW.show();
+        //Called but function not defined
+        loadUserMappingDetailsList();
     }
-  }
-  if (is_null == true) {
-    hidePagePan();
-  }
-  else {
-    if(recordLength < totalRecord)
-      showPagePan(showFrom, recordLength, totalRecord);
-    else
-      showPagePan(showFrom, totalRecord, totalRecord);
-  }
-  return data;
-}
-function resetFields(){
-  $('#group-id').val('');
-  $('#legalentityid').val('');
-  $('#unitid').val('');
 }
 
-// get statutory mapping report data from api
+// Get Client Unit report data from api
 function processSubmit() {
-    var clientGroup = parseInt(GroupId.val());
-    var teIds = TeName.val();
+    var clientGroup = parseInt(GROUP_ID.val());
+    var teIds = TE_NAME.val();
     var unitID = "";
-
-    var fromDate = $('#from-date').val();
-    var toDate = $('#to-date').val();
-        
+    var fromDate = FROM_DATE.val();
+    var toDate = TO_DATE.val();
     var selectedTEName = [];
     var splitValues;
-
-    if(parseInt(ItemsPerPage.val())){
-        _page_limit = parseInt(ItemsPerPage.val());    
-    }    
-
-    if (on_current_page == 1) {
-        sno = 0
+    if (parseInt(ITEMS_PER_PAGE.val())) {
+        PAGE_LIMIT = parseInt(ITEMS_PER_PAGE.val());
+    }
+    if (ON_CURRENT_PAGE == 1) {
+        SNO = 0
     } else {
-        sno = (on_current_page - 1) * _page_limit;
+        SNO = (ON_CURRENT_PAGE - 1) * PAGE_LIMIT;
     }
-        
-     /* multiple TechExec Names selection in to generate array */
-    if($('#tename-tmanager option:selected').text() == ""){
-            selectedTEName = ExistingUserId;  // When execute unselected the Field.
-    }
-    else{
-        $.each(teIds, function(key, value){
+    /* multiple TechExec Names selection in to generate array */
+    if ($('#tename-tmanager option:selected').text() == "") {
+        selectedTEName = EXISTING_USER_ID; // When execute unselected the Field.
+    } else {
+        $.each(teIds, function(key, value) {
             selectedTEName.push(parseInt(value));
         });
     }
-    // if($('#tename-tmanager option:selected').text() == ""){
-    //     selectedTEName = ExistingUserId;
-    //     console.log("in if selectedTEName-> "+ selectedTEName);
-    // }else{
-    //     $('#tename-tmanager > option:selected').each(function() {
-    //         console.log(this.value);
-    //         selectedTEName.push(parseInt(this.value));
-    //         console.log("in else selectedTEName-> "+ selectedTEName);
-    //     });
-    // }
-    console.log("selectedTEName-> "+ selectedTEName);
+    console.log("selectedTEName-> " + selectedTEName);
     displayLoader();
     filterdata = {
-        "bu_client_id":clientGroup,
+        "bu_client_id": clientGroup,
         "from_date": fromDate,
-        "to_date" : toDate,
-        "r_count" : sno,
-        "p_count" : _page_limit,
-        "child_ids" : selectedTEName,
-        "user_category_id" : UserCategoryID
+        "to_date": toDate,
+        "r_count": SNO,
+        "p_count": PAGE_LIMIT,
+        "child_ids": selectedTEName,
+        "user_category_id": USER_CATEGORY_ID
     };
+
     function onSuccess(data) {
-
         $('.details').show();
-        $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
-        .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-            $(this).removeClass();
-            $(this).show();
-        });
-
-        sno = sno;
-        clientUnitData = data.clientdata;
-        totalRecord=data.total;
+        $('#mapping_animation')
+            .removeClass()
+            .addClass('bounceInLeft animated')
+            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd ' +
+                'oanimationend animationend',
+                function() {
+                    $(this).removeClass();
+                    $(this).show();
+                });
+        SNO = SNO;
+        CLIENT_UNIT_DATA = data.clientdata;
+        TOTAL_RECORD = data.total;
         hideLoader();
-
-        if (totalRecord == 0) {
+        if (TOTAL_RECORD == 0) {
             $('.tbody-compliance').empty();
-            var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
+            var tableRow4 = $('#nocompliance-templates ' +
+                '.table-nocompliances-list .table-row');
             var clone4 = tableRow4.clone();
-            $('.tbl_norecords', clone4).text('No Records Found');
+            $('.tbl-norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
-            PaginationView.hide();
-            ReportView.show();
+            PAGINATION_VIEW.hide();
+            REPORT_VIEW.show();
             hideLoader();
         } else {
             hideLoader();
-            if (sno == 0) {
-                createPageView(totalRecord);
+            if (SNO == 0) {
+                createPageView(TOTAL_RECORD);
             }
-           // PaginationView.show();
-           // ReportView.show();
-            loadCountwiseResult(clientUnitData);
+            PAGINATION_VIEW.show();
+            REPORT_VIEW.show();
+            loadCountwiseResult(CLIENT_UNIT_DATA);
         }
     }
 
@@ -282,7 +211,6 @@ function processSubmit() {
         displayMessage(error);
         hideLoader();
     }
-    
     bu.getClientUnitBulkReportData(filterdata, function(error, response) {
         if (error == null) {
             onSuccess(response);
@@ -290,59 +218,59 @@ function processSubmit() {
             onFailure(error);
         }
     });
-        //temp_act = act;
+    //temp_act = act;
     //}
 }
 
+// Handle All Page Controls like Button submit
 function PageControls() {
-    GroupName.keyup(function(e) {
+    GROUP_NAME.keyup(function(e) {
         var textval = $(this).val();
         commonAutoComplete(
-            e, ACGroup, GroupId, textval,
+            e, AC_GROUP, GROUP_ID, textval,
             _clients, "group_name", "client_id",
             function(val) {
-                onAutoCompleteSuccess(GroupName, GroupId, val);
+                onAutoCompleteSuccess(GROUP_NAME, GROUP_ID, val);
             });
     });
-
-    Show_btn.click(function() {
-        is_valid = s_page.validateMandatory();
-        if (is_valid == true) {
-            s_page._on_current_page = 1;
-            s_page._total_record = 0;
-       /*     s_page.fetchData();
-            s_page.renderPageControls();*/
-
-        $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
-            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-                $(this).removeClass();
-            });
-
-        on_current_page = 1;
-        /*$('.country').text("Country: " + Country.val());
-        $('.domain').text("Domain: " + Domain.val());*/
-         processSubmit();
-         }
-    });
-
-    ItemsPerPage.on('change', function(e) {
-        perPage = parseInt($(this).val());
-        sno = 0;
-        on_current_page = 1;
-        createPageView(totalRecord);
-        processSubmit();
-    });
-
-    Export_btn.click(function(e) {
-        is_valid = s_page.validateMandatory();
-        if (is_valid == true) {
-            CSV = true;
-            s_page.exportData();
+    SHOW_BTN.click(function() {
+        var isValid = clientUnitBulkReport.validateMandatory();
+        if (isValid == true) {
+            /*  clientUnitBulkReport._on_current_page = 1;
+                clientUnitBulkReport._total_record = 0;
+                clientUnitBulkReport.fetchData();
+                clientUnitBulkReport.renderPageControls();*/
+            $('#mapping_animation')
+                .removeClass()
+                .addClass('bounceInLeft animated')
+                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd ' +
+                    'oanimationend animationend',
+                    function() {
+                        $(this).removeClass();
+                    });
+            ON_CURRENT_PAGE = 1;
+            /*$('.country').text("Country: " + Country.val());
+            $('.domain').text("Domain: " + Domain.val());*/
+            processSubmit();
         }
     });
-
+    ITEMS_PER_PAGE.on('change', function(e) {
+        perPage = parseInt($(this).val());
+        SNO = 0;
+        ON_CURRENT_PAGE = 1;
+        createPageView(TOTAL_RECORD);
+        processSubmit();
+    });
+    EXPORT_BTN.click(function(e) {
+        var isValid = clientUnitBulkReport.validateMandatory();
+        if (isValid == true) {
+            CSV = true;
+            clientUnitBulkReport.exportData();
+        }
+    });
 }
 
+//
 function fetchFiltersData() {
     displayLoader();
     mirror.getClientLoginTraceFilter(
@@ -361,111 +289,108 @@ function fetchFiltersData() {
     );
 }
 
-function loadCurrentUserDetails(){
+// Loading Page according to Current User ie., Techno exec or Techno Manager
+function loadCurrentUserDetails() {
     var user = mirror.getUserInfo();
-    var logged_user_id = 0;
-     $.each(allUserInfo, function(key, value){
-        if(user.user_id == value["user_id"]) {
-            UserCategoryID = value["user_category_id"];
-            logged_user_id = value["user_id"];
-            console.log(UserCategoryID);
+    var loggedUserId = 0;
+    $.each(ALL_USER_INFO, function(key, value) {
+        if (user.user_id == value["user_id"]) {
+            USER_CATEGORY_ID = value["user_category_id"];
+            loggedUserId = value["user_id"];
+            console.log(USER_CATEGORY_ID);
         }
-     });
-
-    if(UserCategoryID == 6){       
-        // TE-Name  : Techno-Executive 
-        $('.active-techno-executive').attr('style','display:block');
-        $('#techno-name').text(user.employee_code + " - " + user.employee_name.toUpperCase());
-        ExistingUserId.push(logged_user_id);
-    }
-    else if(UserCategoryID == 5 && UserCategoryID != 6 && logged_user_id > 0){
-        // TE-Name  : Techno-Manager 
-        getUserMappingsList(logged_user_id);
+    });
+    if (USER_CATEGORY_ID == 6) {
+        // TE-Name  : Techno-Executive
+        $('.active-techno-executive').attr('style', 'display:block');
+        $('#techno-name').text(user.employee_code + " - " +
+                               user.employee_name.toUpperCase());
+        EXISTING_USER_ID.push(loggedUserId);
+    } else if (USER_CATEGORY_ID == 5 && USER_CATEGORY_ID != 6
+        && loggedUserId > 0) {
+        // TE-Name  : Techno-Manager
+        getUserMappingsList(loggedUserId);
     }
 }
 
 //get client unit bulk upload report filter details from api
-function getUserMappingsList(logged_user_id) {
-    $('.form-group-tename-tmanager').attr("style","display:block !important");
+function getUserMappingsList(loggedUserId) {
+    $('.form-group-tename-tmanager').attr("style", "display:block !important");
     $('#tename-tmanager').multiselect('rebuild');
-    function onSuccess(logged_user_id, data){
-        console.log("logged_user_id->"+ logged_user_id);
+
+    function onSuccess(loggedUserId, data) {
+        console.log("loggedUserId->" + loggedUserId);
         var userMappingData = data;
         var d;
-        $.each(userMappingData.user_mappings, function(key, value){
-            if(logged_user_id == value.parent_user_id){
-                console.log("value.child_user_id-> "+ value.child_user_id);
-                console.log("inaary-> "+jQuery.inArray(value.child_user_id, TechnoExecutives));
-                if(jQuery.inArray(value.child_user_id, TechnoExecutives) == -1){
+        $.each(userMappingData.user_mappings, function(key, value) {
+            if (loggedUserId == value.parent_user_id) {
+                var childUserId = value.parent_user_id
+                if (jQuery.inArray(childUserId, TECHNO_EXECUTIVES) == -1) {
                     console.log("inif");
-                    TechnoExecutives.push(value.child_user_id);
-                    childUsersDetails(allUserInfo, logged_user_id, value.child_user_id)
-                }  
+                    TECHNO_EXECUTIVES.push(value.child_user_id);
+                    childUsersDetails(loggedUserId, value.child_user_id)
+                }
             }
         });
     }
-    function childUsersDetails(allUserInfo, parent_user_id, child_user_id){
-        $.each(allUserInfo, function(key, value){
-           if($.inArray(parseInt(child_user_id), ExistingUserId) == -1){
-             if(child_user_id == value["user_id"] 
-                                    && value["is_active"] == true){
-                
-                var option = $('<option></option>');
-                option.val(value["user_id"]);
-                option.text(value["employee_code"]+" - "+value["employee_name"]);
-                console.log(option)
-                $('#tename-tmanager').append(option);
-                ExistingUserId.push(parseInt(child_user_id));
-             }
+
+    function childUsersDetails(parent_user_id, child_user_id) {
+        $.each(ALL_USER_INFO, function(key, value) {
+            if ($.inArray(parseInt(child_user_id), EXISTING_USER_ID) == -1) {
+                if (child_user_id == value["user_id"] &&
+                    value["is_active"] == true) {
+                    var option = $('<option></option>');
+                    option.val(value["user_id"]);
+                    option.text(value["employee_code"] + " - " +
+                        value["employee_name"]);
+                    console.log(option)
+                    $('#tename-tmanager').append(option);
+                    EXISTING_USER_ID.push(parseInt(child_user_id));
+                }
             }
         });
         $('#tename-tmanager').multiselect('rebuild');
     }
 
-    function onFailure(error){
+    function onFailure(error) {
         displayMessage(error);
         hideLoader();
     }
-
     mirror.getUserMappings(function(error, response) {
-        if (error == null)
-        {
-            onSuccess(logged_user_id, response);    
+        if (error == null) {
+            onSuccess(loggedUserId, response);
         } else {
-            onFailure(error); 
+            onFailure(error);
         }
     });
-
 }
 
-
-//callback for autocomplete success
-function onAutoCompleteSuccess(value_element, id_element, val) {
-    value_element.val(val[1]);
-    id_element.val(val[0]);
-    value_element.focus();
-    console.log(id_element)
-    var current_id = id_element[0].id;
+//Callback for autocomplete success
+function onAutoCompleteSuccess(valueElement, idElement, val) {
+    valueElement.val(val[1]);
+    idElement.val(val[0]);
+    valueElement.focus();
+    console.log(idElement)
+    var currentId = idElement[0].id;
     // if (current_id == "group-id") {
     //     clearElement([users, userId]);
     // }
 }
 
-//get client unit bulk report filter details from api
+//To get the client unit bulk report filter details from api
 function getClientUnits() {
     function onSuccess(data) {
-        allUserInfo = data.user_details;
-        userDetails = data.user_details[0];
+        ALL_USER_INFO = data.user_details;
         loadCurrentUserDetails();
         hideLoader();
     }
+
     function onFailure(error) {
         displayMessage(error);
         hideLoader();
     }
     mirror.getAdminUserList(function(error, response) {
-        if (error == null)
-        {
+        if (error == null) {
             onSuccess(response);
         } else {
             onFailure(error);
@@ -473,259 +398,175 @@ function getClientUnits() {
     });
 }
 
-function Client_unit_bulk_report_page(){
-
-}
-
-
-// Fields Manadory validation 
-Client_unit_bulk_report_page.prototype.validateMandatory = function()
-{
-    is_valid = true;
-
-    if (GroupId.val().trim() == '' || GroupId.val().trim() == null) {
+// Fields mandatory validation
+ClientUnitBulkReport.prototype.validateMandatory = function() {
+    var isValid = true;
+    if (GROUP_ID.val().trim() == '' || GROUP_ID.val().trim() == null) {
         displayMessage(message.group_required);
-        is_valid = false;
-    } 
-    else if (this.getValue("from-date") == "")
-    {
+        isValidisValid = false;
+    } else if (this.getValue("from_date") == "") {
         displayMessage(message.fromdate_required);
-        is_valid = false;
-    }
-    else if (this.getValue("to-date") == "")
-    {
+        isValid = false;
+    } else if (this.getValue("to_date") == "") {
         displayMessage(message.todate_required);
-        is_valid = false;
+        isValid = false;
     }
-    return is_valid;
+    return isValid;
 };
-
 
 // To get the corresponding value
-Client_unit_bulk_report_page.prototype.getValue = function(field_name, f_id)
-{
-    if (field_name == "from-date")
-    {
-        f_date = fromDate.val().trim();
-        return f_date;
+ClientUnitBulkReport.prototype.getValue = function(fieldName, fId) {
+    var dateValue;
+    if (fieldName == "from_date") {
+        dateValue = FROM_DATE.val().trim();
+        return dateValue;
+    } else if (fieldName == "to_date") {
+        dateValue = TO_DATE.val().trim();
+        return dateValue;
     }
-    else if (field_name == "to-date")
-    {
-        f_date = toDate.val().trim();
-        return f_date;
-    } 
 };
 
-//display client unit bulk upload details according to count
-/*function loadCountwiseResult(filterList) {
-    $('.tbody-compliance').empty();
-    lastActName = '';
-    lastOccuranceid = 0;
-    var showFrom = sno + 1;
-    var is_null = true;
-    for (var entity in filterList) {
-
-        is_null = false;
-        sno = parseInt(sno) + 1;
-
-        var csv_name = filterList[entity].csv_name;
-        var tbl_no_of_tasks = filterList[entity].total_records;
-        var tbl_no_of_tasks = filterList[entity].total_records;
-        var uploaded_by = filterList[entity].uploaded_by;
-        var uploaded_on = filterList[entity].uploaded_on;
-        var total_rejected_records = filterList[entity].total_rejected_records;
-        var rejected_on = filterList[entity].rejected_on;
-        var rejected_by = filterList[entity].rejected_by;
-        var reason_for_rejection = filterList[entity].is_fully_rejected;
-        var approve_status = filterList[entity].approve_status;
-        
-
-       
-        if(parseInt(uploaded_by)==userDetails.user_id){
-            EmpCode = userDetails.employee_code;
-            EmpName = userDetails.employee_name;
-            uploaded_by=EmpCode+" - "+ EmpName.toUpperCase();
-        }
-        if(parseInt(reason_for_rejection)==1){
-            reason_for_rejection="Fully Rejected";
-        }
-        else{
-            reason_for_rejection="- -";   
-        }
-        
-        var occurance = '';
-        var occuranceid;
-
-        var tableRow1 = $('#act-templates .table-act-list .table-row-act-list');
-        var clone1 = tableRow1.clone();
-
-        $('.tbl_sno', clone1).text(sno);
-        $('.tbl_uploaded_file_name', clone1).text(csv_name);
-        $(".tbl_uploaded_by", clone1).text(uploaded_by);
-        $('.tbl_uploaded_on', clone1).text(uploaded_on);
-        $('.tbl_no_of_tasks', clone1).text(tbl_no_of_tasks);
-        $('.tbl_approved_rejected_tasks', clone1).text(approve_status+" / "+total_rejected_records);
-        $('.tbl_approved_rejected_on', clone1).text(rejected_on);
-        $('.tbl_approved_rejected_by', clone1).text(rejected_by);
-        $('.tbl_reason_for_rejection', clone1).text(reason_for_rejection);
-        $('#datatable-responsive .tbody-compliance').append(clone1);
-        
-        compliance_count = compliance_count + 1;
-    }
-
-    if (is_null == true) {
-        hidePagePan();
-    } else {
-        showPagePan(showFrom, sno, totalRecord);
-    }
-    hideLoader();
-}
-*/
-
-//display statutory mapping details accoring to count
+//Display client unit bulk upload details according to count
 function loadCountwiseResult(filterList) {
     $('.tbody-compliance').empty();
     lastActName = '';
     lastOccuranceid = 0;
-    var showFrom = sno + 1;
-    var is_null = true;
+    var showFrom = SNO + 1;
+    var isNull = true;
+    var approvedByName, rejectedByName, uploadedByName;
     for (var entity in filterList) {
+        isNull = false;
+        SNO = parseInt(SNO) + 1;
+        var csvName = filterList[entity].csv_name;
+        var tblNoOfTasks = filterList[entity].total_records;
+        var uploadedBy = filterList[entity].uploaded_by;
+        var uploadedOn = filterList[entity].uploaded_on;
+        var totalRejectedRecords = filterList[entity].total_rejected_records;
+        var rejectedOn = filterList[entity].rejected_on;
+        var rejectedBy = filterList[entity].rejected_by;
+        var approvedBy = filterList[entity].approved_by;
+        var approvedOn = filterList[entity].approved_on;
 
-        is_null = false;
-        sno = parseInt(sno) + 1;
+        var reasonForRejection = filterList[entity].is_fully_rejected;
+        var rejectedReason = filterList[entity].rejected_reason;
+        var totalApproveRecords = filterList[entity].total_approve_records;
+        approvedRejectedOn = '';
+        approvedRejectedBy = '';
+        approvedRejectedTasks = '-';
 
-        var csv_name = filterList[entity].csv_name;
-        var tbl_no_of_tasks = filterList[entity].total_records;
-        var tbl_no_of_tasks = filterList[entity].total_records;
-        var uploaded_by = filterList[entity].uploaded_by;
-        var uploaded_on = filterList[entity].uploaded_on;
-        var total_rejected_records = filterList[entity].total_rejected_records;
-        var rejected_on = filterList[entity].rejected_on;
-        var rejected_by = filterList[entity].rejected_by;
-        var reason_for_rejection = filterList[entity].is_fully_rejected;
-        var approve_status = filterList[entity].approve_status;
-        
-        $(allUserInfo).each(function(key,value)
-        {
-            if(parseInt(uploaded_by)==value["user_id"])
-            {
-                EmpCode = value["employee_code"];
-                EmpName = value["employee_name"];
-                uploaded_by=EmpCode+" - "+ EmpName.toUpperCase();
-            }
-            else if(parseInt(rejected_by)==value["user_id"])
-            {
-                EmpCode = value["employee_code"];
-                EmpName = value["employee_name"];
-                rejected_by=EmpCode+" - "+ EmpName.toUpperCase();
+
+        $(ALL_USER_INFO).each(function(key, value) {
+            if (parseInt(uploadedBy) == value["user_id"]) {
+                EMP_CODE = value["employee_code"];
+                EMP_NAME = value["employee_name"];
+                uploadedBy = EMP_CODE + " - " + EMP_NAME;
+            } else if (parseInt(rejectedBy) == value["user_id"]) {
+                EMP_CODE = value["employee_code"];
+                EMP_NAME = value["employee_name"];
+                rejectedByName = EMP_CODE + " - " + EMP_NAME;
+            } else if (parseInt(approvedBy) == value["user_id"]) {
+                EMP_CODE = value["employee_code"];
+                EMP_NAME = value["employee_name"];
+                approvedByName = EMP_CODE + " - " + EMP_NAME;
             }
         });
-        if(parseInt(reason_for_rejection)==1){
-            reason_for_rejection="Fully Rejected";
+        if (parseInt(reasonForRejection) == 1) {
+            reasonForRejection = rejectedReason;
+        } else {
+            reasonForRejection = "";
+            approvedRejectedTasks =  totalApproveRecords;
+            approvedRejectedTasks += " / ";
+            approvedRejectedTasks += totalRejectedRecords;
         }
-        else{
-            reason_for_rejection="- -";   
+        if (rejectedOn != null && rejectedOn != '') {
+            approvedRejectedOn = String(rejectedOn);
+            approvedRejectedBy = rejectedByName;
         }
-        
+        if (approvedOn != null && approvedOn != '') {
+            approvedRejectedOn = String(approvedOn);
+            approvedRejectedBy = approvedByName;
+        }
         var occurance = '';
         var occuranceid;
+        var tblRow1 = $('#act-templates .table-act-list .table-row-act-list');
+        var clone1 = tblRow1.clone();
+        $('.tbl_sno', clone1).text(SNO);
+        $('.tbl_uploaded_file_name', clone1).text(csvName);
+        $(".tbl_uploaded_by", clone1).text(uploadedBy);
+        $('.tbl_uploaded_on', clone1).text(uploadedOn);
+        $('.tbl_no_of_tasks', clone1).text(tblNoOfTasks);
 
-        var tableRow1 = $('#act-templates .table-act-list .table-row-act-list');
-        var clone1 = tableRow1.clone();
+        $('.tbl_approved_rejected_tasks', clone1)
+        .text(approvedRejectedTasks);
 
-        $('.tbl_sno', clone1).text(sno);        
-
-        $('.tbl_uploaded_file_name', clone1).text(csv_name);
-        $(".tbl_uploaded_by", clone1).text(uploaded_by);
-        $('.tbl_uploaded_on', clone1).text(uploaded_on);
-        $('.tbl_no_of_tasks', clone1).text(tbl_no_of_tasks);
-        $('.tbl_approved_rejected_tasks', clone1).text(approve_status+" / "+total_rejected_records);
-        $('.tbl_approved_rejected_on', clone1).text(rejected_on);
-        $('.tbl_approved_rejected_by', clone1).text(rejected_by);
-        $('.tbl_reason_for_rejection', clone1).text(reason_for_rejection);
+        $('.tbl_approved_rejected_on', clone1).text(approvedRejectedOn);
+        $('.tbl_approved_rejected_by', clone1).text(approvedRejectedBy);
+        $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
         $('#datatable-responsive .tbody-compliance').append(clone1);
-        
-        compliance_count = compliance_count + 1;
+        // compliance_count = compliance_count + 1;
         // lastActName = country_name;
     }
-
-    if (is_null == true) {
+    if (isNull == true) {
         hidePagePan();
     } else {
-        showPagePan(showFrom, sno, totalRecord);
+        showPagePan(showFrom, SNO, TOTAL_RECORD);
     }
     hideLoader();
 }
 
-
 //To export data
-Client_unit_bulk_report_page.prototype.exportData = function() {  
-    var clientGroup = parseInt(GroupId.val());
-    var clientGroupName = GroupName.val();
-    var teIds = TeName.val();
+ClientUnitBulkReport.prototype.exportData = function() {
+    var clientGroup = parseInt(GROUP_ID.val());
+    var clientGroupName = GROUP_NAME.val();
+    var fromDate = FROM_DATE.val();
+    var toDate = TO_DATE.val();
+    var teIds = TE_NAME.val();
     var unitID = "";
-
-    var fromDate = $('#from-date').val();
-    var toDate = $('#to-date').val();
-        
     var selectedTEName = [];
     var splitValues;
-
-    if(parseInt(ItemsPerPage.val())){
-        _page_limit = parseInt(ItemsPerPage.val());    
-    }    
-
-
-    if (on_current_page == 1) {
-        sno = 0
+    if (parseInt(ITEMS_PER_PAGE.val())) {
+        PAGE_LIMIT = parseInt(ITEMS_PER_PAGE.val());
+    }
+    if (ON_CURRENT_PAGE == 1) {
+        SNO = 0
     } else {
-        sno = (on_current_page - 1) * _page_limit;
+        SNO = (ON_CURRENT_PAGE - 1) * PAGE_LIMIT;
     }
-        
-     /* multiple TechExec Names selection in to generate array */
-    if($('#tename-tmanager option:selected').text()== ""){
-            selectedTEName = ExistingUserId;  // When execute unselected the Field.
-    }
-    else{
-        $.each(teIds, function(key, value){
+    /* multiple TechExec Names selection in to generate array */
+    if ($('#tename-tmanager option:selected').text() == "") {
+        selectedTEName = EXISTING_USER_ID; // When execute unselected the Field.
+    } else {
+        $.each(teIds, function(key, value) {
             selectedTEName.push(parseInt(value));
         });
     }
-
     filterdata = {
         "bu_client_id": clientGroup,
         "bu_group_name": clientGroupName,
         "from_date": fromDate,
-        "to_date" : toDate,
-        "child_ids" : selectedTEName,
-        "user_category_id" : UserCategoryID,
-        "csv" : CSV
+        "to_date": toDate,
+        "child_ids": selectedTEName,
+        "user_category_id": USER_CATEGORY_ID,
+        "csv": CSV
     };
-
     displayLoader();
-    bu.exportCUBulkReportData(filterdata,
-        function(error, response) {
-            if (error == null) {
-                hideLoader();
-                if (CSV) {
-                    var download_url = response.link;
-                    $(location).attr('href', download_url);
-                }
+    bu.exportCUBulkReportData(filterdata, function(error, response) {
+        if (error == null) {
+            hideLoader();
+            if (CSV) {
+                var download_url = response.link;
+                $(location).attr('href', download_url);
             }
-            else {
-                hideLoader();
-                if (error == "ExportToCSVEmpty") {
-                    displayMessage(message.empty_export);
-                }else {
-                    displayMessage(error);
-                }
+        } else {
+            hideLoader();
+            if (error == "ExportToCSVEmpty") {
+                displayMessage(message.empty_export);
+            } else {
+                displayMessage(error);
             }
-        });
-
+        }
+    });
 };
-
-// Instance Creation of the page class
-s_page = new Client_unit_bulk_report_page();
 
 // Form Initalize
 $(function() {
@@ -733,7 +574,5 @@ $(function() {
     loadItemsPerPage();
     getClientUnits();
     PageControls();
-    fetchFiltersData();   
+    fetchFiltersData();
 });
-
-
