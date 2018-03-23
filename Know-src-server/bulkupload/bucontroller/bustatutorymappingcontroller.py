@@ -4,7 +4,7 @@ from ..bucsvvalidation.statutorymappingvalidation import (
     ValidateStatutoryMappingForApprove
 )
 from ..bucsvvalidation.rejectedstatutorymapping import (
-    ValidateRejectedSMBulkCsvData
+    ValidateRejectedDownloadBulkData
 )
 
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
@@ -532,10 +532,32 @@ def download_rejected_sm_report(db, request_frame, session_user):
     domain_id = request_frame.d_id
     download_format = request_frame.download_format
     user_id = session_user.user_id()
-    csv_header = ["csv_name", "uploaded_by", "uploaded_on", "total_records",
-                  "total_rejected_records", "approved_by", "rejected_by",
-                  "approved_on", "rejected_on", "is_fully_rejected",
-                  "approve_status"]
+
+    sheet_name = "Rejected Statutory Mapping"
+
+    csv_header_key = ["organization", "geography_location", "statutory_nature",
+                      "statutory", "statutory_provision", "compliance_task",
+                      "compliance_document", "task_id",
+                      "compliance_description", "penal_consequences",
+                      "task_Type", "reference_link", "compliance_frequency",
+                      "statutory_month", "statutory_date", "trigger_before",
+                      "repeats_every", "repeats_type", "repeat_by",
+                      "duration", "duration_type", "multiple_input",
+                      "format_file", "rejected_reason", "remarks"]
+
+    csv_column_name = ["Organization*", "Applicable_Location*",
+                       "Statutory_Nature*", "Statutory*",
+                       "Statutory_Provision*", "Compliance_Task*",
+                       "Compliance_Document",
+                       "Task_ID*", "Compliance_Description*",
+                       "Penal_Consequences", "Task_Type*",
+                       "Reference_Link", "Compliance_Frequency*",
+                       "Statutory_Month", "Statutory_Date",
+                       "Trigger_Days", "Repeats_Every",
+                       "Repeats_Type", "Repeats_By (DOM/EOM)",
+                       "Duration", "Duration_Type",
+                       "Multiple_Input_Section", "Format",
+                       "Rejected_Reason", "Error_Description"]
 
     csv_name = get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id)
     source_data = fetch_rejected_sm_download_csv_report(db,
@@ -544,9 +566,9 @@ def download_rejected_sm_report(db, request_frame, session_user):
                                                         country_id,
                                                         domain_id,
                                                         csv_id)
-    cObj = ValidateRejectedSMBulkCsvData(
-        db, source_data, session_user, download_format, csv_name, csv_header
-    )
+    cObj = ValidateRejectedDownloadBulkData(
+        db, source_data, session_user, download_format, csv_name,
+        csv_header_key, csv_column_name, sheet_name)
     result = cObj.perform_validation()
     return bu_sm.DownloadActionSuccess(
         result["xlsx_link"],

@@ -573,7 +573,7 @@ class ReportData(object):
     def __init__(self, country_name, domain_name, uploaded_by,
                  uploaded_on, csv_name_text, total_records,
                  total_rejected_records, approved_by, rejected_by, approved_on,
-                 rejected_on, is_fully_rejected, total_approve_records, bu_action,
+                 rejected_on, is_fully_rejected, total_approve_records,
                  rejected_reason):
 
         self.country_name = country_name
@@ -589,7 +589,6 @@ class ReportData(object):
         self.rejected_on = rejected_on
         self.is_fully_rejected = is_fully_rejected
         self.total_approve_records = total_approve_records
-        self.bu_action = bu_action
         self.rejected_reason = rejected_reason
 
     @staticmethod
@@ -600,7 +599,7 @@ class ReportData(object):
                                        "total_rejected_records", "approved_by",
                                        "rejected_by", "approved_on",
                                        "rejected_on", "is_fully_rejected",
-                                       "total_approve_records", "bu_action",
+                                       "total_approve_records",
                                        "rejected_reason"])
         return ReportData(
             data.get("country_name"),
@@ -616,7 +615,6 @@ class ReportData(object):
             data.get("rejected_on"),
             data.get("is_fully_rejected"),
             data.get("total_approve_records"),
-            data.get("bu_action"),
             data.get("rejected_reason")
         )
 
@@ -635,7 +633,6 @@ class ReportData(object):
             "rejected_on": self.rejected_on,
             "is_fully_rejected": self.is_fully_rejected,
             "total_approve_records": self.total_approve_records,
-            "bu_action": self.bu_action,
             "rejected_reason": self.rejected_reason
             }
 

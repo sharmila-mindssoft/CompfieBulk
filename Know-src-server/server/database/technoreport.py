@@ -1137,4 +1137,4 @@ def get_unit_details_for_statutory(db, user_category_id, user_id):
             d["legal_entity_id"], d["country_id"], d["division_id"], d["division_name"],
             d["category_id"], d["category_name"], domain_id
         ))
-    return results    
+    return results

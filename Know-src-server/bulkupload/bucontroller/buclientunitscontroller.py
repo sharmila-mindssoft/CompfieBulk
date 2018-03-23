@@ -3,7 +3,7 @@ from ..bucsvvalidation.clientunitsvalidation import (
     ValidateClientUnitsBulkDataForApprove
 )
 
-from ..bucsvvalidation.rejectedstatutorymapping import ValidateRejectedSMBulkCsvData
+from ..bucsvvalidation.rejectedstatutorymapping import ValidateRejectedDownloadBulkData
 
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
@@ -66,9 +66,6 @@ def process_bu_client_units_request(request, db, session_user):
     if type(request_frame) is bu_cu.ExportCUBulkReportData:
         result = export_clientunit_bulk_report(db, request_frame, session_user)
 
-    if type(request_frame) is bu_cu.DownloadRejectedClientUnitReport:
-        result = download_rejected_cu_report(db, request_frame, session_user)
-
     if type(request_frame) is bu_cu.PerformClientUnitApproveReject:
         result = perform_bulk_client_unit_approve_reject(db, request_frame, session_user)
 
@@ -121,43 +118,45 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
 
     # read data from csv file
     header, client_units_bulk_data = read_data_from_csv(csv_name)
-
     # csv data validation
-    cObj = ValidateClientUnitsBulkCsvData(
-        db, client_units_bulk_data, session_user, request_frame.bu_client_id,
-        request_frame.csv_name, header
-    )
-    res_data = cObj.perform_validation()
-    if res_data["return_status"] is True :
-        generate_valid_file(csv_name)
-        if res_data["doc_count"] == 0 :
-            upload_sts = 1
-        else :
-            upload_sts = 0
-
-        csv_args = [
-            request_frame.bu_client_id, request_frame.bu_group_name,
-            csv_name, session_user.user_id(),
-            res_data["total"]
-        ]
-        new_csv_id = save_client_units_mapping_csv(db, csv_args)
-        if new_csv_id :
-            if save_mapping_client_unit_data(db, new_csv_id, res_data["data"]) is True :
-                cObj.save_executive_message(csv_name, request_frame.bu_group_name, session_user.user_id())
-                result = bu_cu.UploadClientUnitBulkCSVSuccess(
-                    res_data["total"], res_data["valid"], res_data["invalid"]
-                )
-
-        # csv data save to temp db
-    else :
-        result = bu_cu.UploadClientUnitBulkCSVFailed(
-            res_data["invalid_file"], res_data["mandatory_error"],
-            res_data["max_length_error"], res_data["duplicate_error"],
-            res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"], res_data["max_unit_count_error"],
-            res_data["total"], res_data["invalid"]
+    if len(client_units_bulk_data) > 0:
+        cObj = ValidateClientUnitsBulkCsvData(
+            db, client_units_bulk_data, session_user, request_frame.bu_client_id,
+            request_frame.csv_name, header
         )
-    return result
+        res_data = cObj.perform_validation()
+        if res_data["return_status"] is True :
+            generate_valid_file(csv_name)
+            if res_data["doc_count"] == 0 :
+                upload_sts = 1
+            else :
+                upload_sts = 0
+
+            csv_args = [
+                request_frame.bu_client_id, request_frame.bu_group_name,
+                csv_name, session_user.user_id(),
+                res_data["total"]
+            ]
+            new_csv_id = save_client_units_mapping_csv(db, csv_args)
+            if new_csv_id :
+                if save_mapping_client_unit_data(db, new_csv_id, res_data["data"]) is True :
+                    cObj.save_executive_message(csv_name, request_frame.bu_group_name, session_user.user_id())
+                    result = bu_cu.UploadClientUnitBulkCSVSuccess(
+                        res_data["total"], res_data["valid"], res_data["invalid"]
+                    )
+
+            # csv data save to temp db
+        else :
+            result = bu_cu.UploadClientUnitBulkCSVFailed(
+                res_data["invalid_file"], res_data["mandatory_error"],
+                res_data["max_length_error"], res_data["duplicate_error"],
+                res_data["invalid_char_error"], res_data["invalid_data_error"],
+                res_data["inactive_error"], res_data["max_unit_count_error"],
+                res_data["total"], res_data["invalid"]
+            )
+        return result
+    else:
+        return bu_cu.EmptyCSVUploaded()
 
 #########################################################################################################
 '''
@@ -191,8 +190,6 @@ def get_ClientUnits_Uploaded_CSVFiles(db, request_frame, session_user):
 def get_rejected_client_unit_data(db, request_frame, session_user):
     client_group_id = request_frame.bu_client_id
     user_id = session_user.user_id()
-    print "client_group_id, user_id >>>"
-    print client_group_id, user_id
     rejected_unit_data = fetch_rejected_client_unit_report(db, session_user,
                                                            user_id,
                                                            client_group_id)
@@ -344,20 +341,18 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
             )
         if actionType == 1:
             system_declined_count = cuObj.check_for_system_declination_errors()
-            if len(system_declined_count) > 0:
-                return bu_cu.ReturnDeclinedCount(len(system_declined_count))
-            else:
-                if (update_bulk_client_unit_approve_reject_list(db, csv_id, actionType, bu_remarks, session_user)) :
-                    cuObj.process_data_to_main_db_insert()
-                    cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
-                    cuObj.source_commit()
-                    return bu_cu.UpdateApproveRejectActionFromListSuccess()
+            if (update_bulk_client_unit_approve_reject_list(db, csv_id, actionType, bu_remarks, session_user)) :
+                cuObj.process_data_to_main_db_insert()
+                cuObj.make_rejection(system_declined_count)
+                cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
+                cuObj.source_commit()
+                return bu_cu.UpdateApproveRejectActionFromListSuccess(declined_count=len(system_declined_count))
         else :
-                if (update_bulk_client_unit_approve_reject_list(db, csv_id, actionType, bu_remarks, session_user)) :
-                    print "after main db update"
-                    cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
-                    cuObj.source_commit()
-                    return bu_cu.UpdateApproveRejectActionFromListSuccess()
+            if (update_bulk_client_unit_approve_reject_list(db, csv_id, actionType, bu_remarks, session_user)) :
+                print "after main db update"
+                cuObj.save_manager_message(actionType, cuObj._csv_name, cuObj._group_name, session_user.user_id())
+                cuObj.source_commit()
+                return bu_cu.UpdateApproveRejectActionFromListSuccess(declined_count=0)
 
     except Exception, e:
         raise e
@@ -381,9 +376,7 @@ def download_rejected_cu_report(db, request_frame, session_user):
     cg_id = request_frame.cg_id
     download_format = request_frame.download_format
     user_id = session_user.user_id()
-
-    download_link = []
-    csv_header=[
+    csv_header = [
             "csv_name",
             "uploaded_by",
             "uploaded_on",
@@ -397,22 +390,23 @@ def download_rejected_cu_report(db, request_frame, session_user):
             "approve_status"
         ]
 
-    #csv_name = "RejectedData.xlsx"
     csv_name = get_cu_csv_file_name_by_id(db, session_user, user_id, csv_id)
 
     source_data = fetch_rejected_cu_download_csv_report(
         db, session_user, user_id,
         cg_id, csv_id)
 
-    cObj = ValidateRejectedSMBulkCsvData(
+    cObj = ValidateRejectedDownloadBulkData(
         db, source_data, session_user, download_format, csv_name, csv_header
     )
     result = cObj.perform_validation()
 
     return bu_sm.DownloadActionSuccess(result["xlsx_link"], result["csv_link"],
-        result["ods_link"], result["txt_link"])
+                                       result["ods_link"], result["txt_link"]
+                                       )
 
-##########################################################################################################
+
+##############################################################################
 '''   returns boolean value for the updation
     :param
         db: database object
@@ -423,11 +417,12 @@ def download_rejected_cu_report(db, request_frame, session_user):
         request_frame: Object
         session_user: Object
     :returns
-        result: returns processed api response ConfirmClientUnitDeclination class Object
+        result: returns processed api response ConfirmClientUnitDeclination
+        class Object
     rtype:
         result: Boolean
 '''
-##########################################################################################################
+##############################################################################
 
 def perform_bulk_client_unit_declination(db, request_frame, session_user):
     csv_id = request_frame.csv_id

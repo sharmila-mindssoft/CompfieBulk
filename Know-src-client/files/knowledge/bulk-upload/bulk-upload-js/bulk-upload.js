@@ -214,8 +214,8 @@ function downloadRejectedASMReportData(args, callback) {
   apiRequest("bu/assign_statutory", request, callback);
 }
 
-
-function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, le_name, d_names, u_names, callback){
+function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, 
+  le_name, d_names, u_names, callback){
   var request = [
     'DownloadAssignStatutory',
     {
@@ -372,7 +372,8 @@ function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
   apiRequest("bu/assign_statutory", request, callback);
 }
 
-function assignStatutoryActionInList(cl_id, le_id, csvid, action, remarks, password,  callback){
+function assignStatutoryActionInList(cl_id, le_id, csvid, action, 
+  remarks, password,  callback){
   var request = [
     'AssignStatutoryApproveActionInList',
     {
@@ -461,7 +462,8 @@ function getBulkClientUnitApproveRejectList(csv_id, f_count, r_range, callback) 
   apiRequest("bu/client_units", request, callback);
 }
 
-function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks, callback){
+function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks, 
+  callback){
   var request = [
     'SaveAction',
     {
@@ -575,4 +577,28 @@ function submitMappingAction(csvid, country_id, domain_id, pwd, callback){
     }
   ];
   apiRequest("bu/statutory_mapping", request, callback);
+}
+
+function validateAssignStatutory(csvid, callback){
+  var request = [
+    'AssignStatutoryValidate',
+    {
+        "csv_id": csvid
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+
+function submitAssignStatutoryAction(csvid, cl_id, le_id, pwd, callback){
+  var request = [
+    'SubmitAssignStatutory',
+    {
+        "csv_id": csvid,
+        "cl_id": cl_id,
+        "le_id": le_id,
+        "password": pwd
+    }
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
 }

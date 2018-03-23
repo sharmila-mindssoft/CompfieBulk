@@ -460,37 +460,34 @@ def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
     args = [user_ids, country_id_list, domain_id_list, from_date, to_date,
             record_count, page_count]
     data = db.call_proc_with_multiresult_set(
-        'sp_tbl_statutory_mappings_bulk_reportdata', args, expected_result)
+        'sp_statutory_mappings_bulk_reportdata', args, expected_result)
 
-    reportdata = data[0]
-    total_record = data[1][0]["total"]
+    if(data):
+        reportdata = data[0]
+        total_record = data[1][0]["total"]
 
-    uploaded_on = None
-    approved_on = None
-    rejected_on = None
-    for d in reportdata:
-        bu_action = None
-        if(d["uploaded_on"] is not None):
-            uploaded_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+        uploaded_on = None
+        approved_on = None
+        rejected_on = None
+        for d in reportdata:
+            if(d["uploaded_on"] is not None):
+                uploaded_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
 
-        if(d["approved_on"] is not None):
-            approved_on = d["approved_on"].strftime("%d-%b-%Y %H:%M")
+            if(d["approved_on"] is not None):
+                approved_on = d["approved_on"].strftime("%d-%b-%Y %H:%M")
 
-        if(d["rejected_on"] is not None):
-            rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
-
-        if (d["action"] is not None):
-            bu_action = d["action"]
-
-        d["csv_name"]
-        reportdatalist.append(bu_sm.ReportData(
-             d["country_name"], d["domain_name"],
-             d["uploaded_by"], uploaded_on, d["csv_name"],
-             d["total_records"], d["total_rejected_records"],
-             d["approved_by"], d["rejected_by"], approved_on,
-             rejected_on, d["is_fully_rejected"],
-             int(d["total_approve_records"]), bu_action,
-             str(d["rejected_reason"])))
+            if(d["rejected_on"] is not None):
+                rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
+            reportdatalist.append(bu_sm.ReportData(
+                 d["country_name"], d["domain_name"],
+                 d["uploaded_by"], uploaded_on, d["csv_name"],
+                 d["total_records"], d["total_rejected_records"],
+                 d["approved_by"], d["rejected_by"], approved_on,
+                 rejected_on, d["is_fully_rejected"],
+                 d["total_approve_records"], str(d["rejected_reason"])))
+    else:
+        reportdatalist = []
+        total_record = 0
     return reportdatalist, total_record
 
 
@@ -575,7 +572,7 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
              d["rejected_by"], str(approved_on), str(rejected_on),
              d["is_fully_rejected"], int(d["approve_status"]),
              int(download_count), str(d["remarks"]), d["action"],
-             int(d["declined_count"]), str(d["rejected_reason"])
+             d["declined_count"], d["rejected_reason"]
         ))
     return rejectdatalist
 
@@ -599,52 +596,36 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
 
 def fetch_rejected_sm_download_csv_report(db, session_user, user_id,
                                           country_id, domain_id, csv_id):
-
     rejectdatalist = []
     args = [country_id, domain_id, user_id, csv_id]
     data = db.call_proc('sp_rejected_sm_csv_report', args)
-
-    uploaded_on = ''
-    approved_on = ''
-    rejected_on = ''
     for d in data:
-
-        if(d["uploaded_on"] is not None):
-            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-                                                     '%Y-%m-%d %H:%M:%S'
-                                                     ).strftime(
-                                                     '%d-%b-%Y %H:%M')
-        if(d["approved_on"] is not None):
-            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-                                                     '%Y-%m-%d %H:%M:%S'
-                                                     ).strftime(
-                                                     '%d-%b-%Y %H:%M')
-        if(d["rejected_on"] is not None):
-            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-                                                     '%Y-%m-%d %H:%M:%S'
-                                                     ).strftime(
-                                                     '%d-%b-%Y %H:%M')
-        if (d["rejected_file_download_count"] is None):
-            download_count = 0
-        else:
-            download_count = d["rejected_file_download_count"]
         rejectdatalist.append({
-             str(d["csv_id"]),
-             str(d["uploaded_by"]),
-             str(uploaded_on),
-             str(d["csv_name"]),
-             str(d["total_records"]),
-             str(d["total_rejected_records"]),
-             str(d["approved_by"]),
-             str(d["rejected_by"]),
-             str(approved_on),
-             str(rejected_on),
-             str(d["is_fully_rejected"]),
-             str(d["approve_status"]),
-             str(download_count),
+             str(d["organization"]),
+             str(d["geography_location"]),
+             str(d["statutory_nature"]),
+             str(d["statutory"]),
+             str(d["statutory_provision"]),
+             str(d["compliance_task"]),
+             str(d["compliance_document"]),
+             str(d["task_id"]),
+             str(d["compliance_description"]),
+             str(d["penal_consequences"]),
+             str(d["task_Type"]),
+             str(d["reference_link"]),
+             str(d["compliance_frequency"]),
+             str(d["statutory_month"]),
+             str(d["statutory_date"]),
+             str(d["trigger_before"]),
+             str(d["repeats_every"]),
+             str(d["repeats_type"]),
+             str(d["repeat_by"]),
+             str(d["duration"]),
+             str(d["duration_type"]),
+             str(d["multiple_input"]),
+             str(d["format_file"]),
+             str(d["rejected_reason"]),
              str(d["remarks"]),
-             str(d["action"]),
-             str(d["rejected_reason"])
         })
     return data
 

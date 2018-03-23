@@ -464,13 +464,14 @@ class ClientUnitCSVList(object):
             "declined_count": self.declined_count
         }
 
-class StatutoryReportData(object):
 
+class StatutoryReportData(object):
     def __init__(self, uploaded_by,
-        uploaded_on, csv_name, total_records, total_rejected_records,
-        approved_by, rejected_by, approved_on, rejected_on,
-        is_fully_rejected, approve_status
-        ):
+                 uploaded_on, csv_name, total_records, total_rejected_records,
+                 approved_by, rejected_by, approved_on, rejected_on,
+                 is_fully_rejected, total_approve_records,
+                 rejected_reason
+                 ):
         self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
         self.csv_name = csv_name
@@ -481,42 +482,43 @@ class StatutoryReportData(object):
         self.approved_on = approved_on
         self.rejected_on = rejected_on
         self.is_fully_rejected = is_fully_rejected
-        self.approve_status = approve_status
+        self.total_approve_records = total_approve_records
+        self.rejected_reason = rejected_reason
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "uploaded_by",
-        "uploaded_on", "csv_name", "total_records", "total_rejected_records",
-        "approved_by", "rejected_by", "approved_on", "rejected_on",
-        "is_fully_rejected", "approve_status"
+            "uploaded_by", "uploaded_on", "csv_name", "total_records",
+            "total_rejected_records", "approved_by", "rejected_by",
+            "approved_on", "rejected_on", "is_fully_rejected",
+            "total_approve_records", "rejected_reason"
         ])
-        return ReportData(
-            data.get("uploaded_by"),
-            data.get("uploaded_on"),
-            data.get("csv_name"),
-            data.get("total_records"),
-            data.get("total_rejected_records"),
-            data.get("approved_by"),
-            data.get("rejected_by"),
-            data.get("approved_on"),
-            data.get("rejected_on"),
-            data.get("is_fully_rejected"),
-            data.get("approve_status")
-        )
+        return StatutoryReportData(
+                          data.get("uploaded_by"),
+                          data.get("uploaded_on"),
+                          data.get("csv_name"), data.get("total_records"),
+                          data.get("total_rejected_records"),
+                          data.get("approved_by"), data.get("rejected_by"),
+                          data.get("approved_on"), data.get("rejected_on"),
+                          data.get("is_fully_rejected"),
+                          data.get("total_approve_records"),
+                          data.get("rejected_reason"),
+                          )
 
     def to_structure(self):
         return {
             "uploaded_by": self.uploaded_by,
-            "uploaded_on" : self.uploaded_on,
-            "csv_name" : self.csv_name,
-            "total_records" : self.total_records,
-            "total_rejected_records" : self.total_rejected_records,
-            "rejected_by" : self.rejected_by,
-            "approved_on" : self.approved_on,
-            "rejected_on" : self.rejected_on,
-            "is_fully_rejected" : self.is_fully_rejected,
-            "approve_status"    : self.approve_status
+            "uploaded_on": self.uploaded_on,
+            "csv_name": self.csv_name,
+            "total_records": self.total_records,
+            "total_rejected_records": self.total_rejected_records,
+            "approved_by": self.approved_by,
+            "rejected_by": self.rejected_by,
+            "approved_on": self.approved_on,
+            "rejected_on": self.rejected_on,
+            "is_fully_rejected": self.is_fully_rejected,
+            "total_approve_records": self.total_approve_records,
+            "rejected_reason": self.rejected_reason
             }
 
 #
@@ -634,8 +636,8 @@ class ClientUnitRejectData(object):
     def __init__(self, csv_id, uploaded_by,
         uploaded_on, csv_name, total_records, total_rejected_records,
         approved_by, rejected_by, approved_on, rejected_on,
-        is_fully_rejected, approve_status, file_download_count, remarks,
-        statutory_action, declined_count
+        is_fully_rejected, total_approve_records, file_download_count, remarks,
+        statutory_action, declined_count, rejected_file
         ):
         self.csv_id = csv_id
         self.uploaded_by = uploaded_by
@@ -648,19 +650,21 @@ class ClientUnitRejectData(object):
         self.approved_on = approved_on
         self.rejected_on = rejected_on
         self.is_fully_rejected = is_fully_rejected
-        self.approve_status = approve_status
+        self.total_approve_records = total_approve_records
         self.file_download_count = file_download_count
         self.remarks = remarks
         self.statutory_action = statutory_action
         self.declined_count = declined_count
+        self.rejected_file = rejected_file
+
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "csv_id","uploaded_by","uploaded_on", "csv_name", "total_records",
             "total_rejected_records", "approved_by", "rejected_by", "approved_on",
-            "rejected_on", "is_fully_rejected", "approve_status", "file_download_count",
-            "remarks", "statutory_action", "declined_count"
+            "rejected_on", "is_fully_rejected", "total_approve_records", "file_download_count",
+            "remarks", "statutory_action", "declined_count", "rejected_file"
         ])
         return ClientUnitRejectData(
             data.get("csv_id"),
@@ -674,11 +678,12 @@ class ClientUnitRejectData(object):
             data.get("approved_on"),
             data.get("rejected_on"),
             data.get("is_fully_rejected"),
-            data.get("approve_status"),
+            data.get("total_approve_records"),
             data.get("file_download_count"),
             data.get("remarks"),
             data.get("statutory_action"),
-            data.get("declined_count")
+            data.get("declined_count"),
+            data.get("rejected_file")
         )
 
     def to_structure(self):
@@ -694,11 +699,12 @@ class ClientUnitRejectData(object):
             "approved_by" : self.approved_by,
             "rejected_on" : self.rejected_on,
             "is_fully_rejected" : self.is_fully_rejected,
-            "approve_status"    : self.approve_status,
+            "total_approve_records"    : self.total_approve_records,
             "file_download_count"    : self.file_download_count,
             "remarks"    : self.remarks,
             "statutory_action"    : self.statutory_action,
-            "declined_count"    : self.declined_count
+            "declined_count"    : self.declined_count,
+            "rejected_file"    : self.rejected_file
             }
 
 class UpdateUnitDownloadCount(object):
@@ -847,16 +853,18 @@ class ReturnDeclinedCount(Response):
         }
 
 class UpdateApproveRejectActionFromListSuccess(Response):
-    def __init__(self):
+    def __init__(self, declined_count):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return UpdateApproveRejectActionFromListSuccess()
+        data = parse_dictionary(data, ["declined_count"])
+        return UpdateApproveRejectActionFromListSuccess(data.get("declined_count"))
 
     def to_inner_structure(self):
-        return {}
+        return {
+            "declined_count": self.declined_count
+        }
 
 class SubmitClientUnitDeclinationSuccess(Response):
     def __init__(self):
@@ -993,6 +1001,18 @@ class SubmitClientUnitActionFromListFailure(Response):
     def to_inner_structure(self):
         return {}
 
+class EmptyCSVUploaded(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return EmptyCSVUploaded()
+
+    def to_inner_structure(self):
+        return {}
+
 def _init_Response_class_map():
     classes = [
         UploadClientUnitBulkCSVSuccess,
@@ -1007,7 +1027,8 @@ def _init_Response_class_map():
         GetBulkClientUnitFilterDataSuccess,
         SubmitClientUnitActionFromListSuccess,
         SaveClientUnitActionSuccess,
-        SubmitClientUnitActionFromListFailure
+        SubmitClientUnitActionFromListFailure,
+        EmptyCSVUploaded
     ]
     class_map = {}
     for c in classes:
