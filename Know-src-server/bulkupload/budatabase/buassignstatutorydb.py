@@ -113,6 +113,7 @@ def get_download_assing_statutory_list(
     db, cl_id, le_id, d_ids, u_ids, cl_name,
     le_name, d_names, u_names, session_user
 ):
+
     _source_db_con = mysql.connector.connect(
         user=KNOWLEDGE_DB_USERNAME,
         password=KNOWLEDGE_DB_PASSWORD,
@@ -136,7 +137,6 @@ def get_download_assing_statutory_list(
         "secondary_legislation", "statutory_provision", "compliance_task_name",
         "compliance_description"
     ]
-
     result = _source_db.call_proc("sp_get_assign_statutory_compliance", [u, d])
 
     ac_list = []
@@ -504,18 +504,19 @@ def fetch_rejected_assign_sm_data(db, session_user, user_id, client_id,
              int(d["uploaded_by"]),
              str(uploaded_on),
              str(d["csv_name"]),
-             int(d["total_records"]),
-             int(d["total_rejected_records"]),
+             d["total_records"],
+             d["total_rejected_records"]
+             if d["total_rejected_records"] is not None else 0,
              d["approved_by"],
              d["rejected_by"],
              str(approved_on),
              str(rejected_on),
-             int(d["is_fully_rejected"]),
-             int(d["approve_status"]),
-             int(download_count),
+             d["is_fully_rejected"],
+             d["approve_status"],
+             download_count,
              str(d["remarks"]),
              d["action"],
-             int(d["declined_count"]),
+             d["declined_count"],
              d["rejected_reason"]
         ))
     return rejectdatalist
@@ -526,7 +527,7 @@ def update_asm_download_count_by_csvid(db, session_user, csv_id):
     data = db.call_proc('sp_update_asm_download_count', args)
     for d in data:
         asm_updated_count.append(bu_as.ASMRejectUpdateDownloadCount(
-             int(d["csv_assign_statutory_id"]), 
+             int(d["csv_assign_statutory_id"]),
              int(d["rejected_file_download_count"])
         ))
     return asm_updated_count
@@ -725,6 +726,7 @@ def get_validation_info(db, csv_id):
     result = db.call_proc_with_multiresult_set(
         "sp_as_validation_info", [csv_id], 2
     )
+
     rej_count = result[0][0]["rejected"]
     un_saved_count = result[1][0]["un_saved"]
 
@@ -736,7 +738,6 @@ def get_rejected_file_count(db, session_user):
         "sp_as_rejected_file_count", [session_user.user_id()]
     )
     rej_count = result[0]["rejected"]
-
     return rej_count
 
 

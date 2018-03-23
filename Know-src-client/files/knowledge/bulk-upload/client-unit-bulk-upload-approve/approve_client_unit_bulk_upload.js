@@ -153,7 +153,7 @@ function loadClientUnitCSVFilesList(){
 				.attr("id","myDropdown-"+value.csv_id)
 			);
 			var splitFileName = value.csv_name.split(".")[0];
-			var aTags = '<a href="/uploaded_file/xlsx/'+ splitFileName+'.xlsx">Download Excel</a><br/><a href="/uploaded_file/csv/'+ splitFileName+'.csv">Download CSV</a><br/><a href="/uploaded_file/ods/'+ splitFileName+'.ods">Download ODS</a><br/><a href="/uploaded_file/text/'+ splitFileName+'.txt">Download Text</a>';
+			var aTags = '<a href="/uploaded_file/xlsx/'+ splitFileName+'.xlsx">Download Excel</a><a href="/uploaded_file/csv/'+ splitFileName+'.csv">Download CSV</a><a href="/uploaded_file/ods/'+ splitFileName+'.ods">Download ODS</a><a href="/uploaded_file/text/'+ splitFileName+'.txt">Download Text</a>';
 			$('.download-invalidfile #myDropdown-'+value.csv_id, clone).html(aTags);
 
 			//approve all

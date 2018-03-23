@@ -134,9 +134,21 @@
                 <td class="tbl_rejected_by"></td>
                 <td class="tbl_no_of_tasks text-center"></td>
                 <td class="tbl_declined_count text-center"></td>
-                <td class="text-center icon-3x tbl_rejected_file"></td>
+                <td class="text-center icon-3x tbl_rejected_file">
+                    <i class="fa fa-download text-primary c-pointer dropbtn rejected_i_cls"></i>
+                    <div class="dropdown-content show rejected_div_cls">
+                        <a class="rej_excel" data-format="excel" href="javascript:void(0);">Download Excel</a>
+                        <a class="rej_csv" data-format="csv" href="javascript:void(0);">Download CSV</a>
+                        <a class="rej_ods" data-format="ods" href="javascript:void(0);">Download ODS</a>
+                        <a class="rej_text" data-format="text" href="javascript:void(0);">Download Text</a>
+                    </div>
+                </td>
                 <td class="tbl_reason_for_rejection" class="width-15"></td>
-                <td class="tbl_remove text-center icon-3x"></td>
+               <td class="tbl_remove text-center icon-3x">
+                <a class="remove_a" title="Click here to remove">
+                    <i class="fa fa-times text-danger c-pointer"></i>
+                </a>
+            </td>
         </tr>
     </table>
 </div>

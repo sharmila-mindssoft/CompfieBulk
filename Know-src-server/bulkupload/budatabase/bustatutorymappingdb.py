@@ -454,37 +454,34 @@ def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
     args = [user_ids, country_id_list, domain_id_list, from_date, to_date,
             record_count, page_count]
     data = db.call_proc_with_multiresult_set(
-        'sp_tbl_statutory_mappings_bulk_reportdata', args, expected_result)
+        'sp_statutory_mappings_bulk_reportdata', args, expected_result)
 
-    reportdata = data[0]
-    total_record = data[1][0]["total"]
+    if(data):
+        reportdata = data[0]
+        total_record = data[1][0]["total"]
 
-    uploaded_on = None
-    approved_on = None
-    rejected_on = None
-    for d in reportdata:
-        bu_action = None
-        if(d["uploaded_on"] is not None):
-            uploaded_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+        uploaded_on = None
+        approved_on = None
+        rejected_on = None
+        for d in reportdata:
+            if(d["uploaded_on"] is not None):
+                uploaded_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
 
-        if(d["approved_on"] is not None):
-            approved_on = d["approved_on"].strftime("%d-%b-%Y %H:%M")
+            if(d["approved_on"] is not None):
+                approved_on = d["approved_on"].strftime("%d-%b-%Y %H:%M")
 
-        if(d["rejected_on"] is not None):
-            rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
-
-        if (d["action"] is not None):
-            bu_action = d["action"]
-
-        d["csv_name"]
-        reportdatalist.append(bu_sm.ReportData(
-             d["country_name"], d["domain_name"],
-             d["uploaded_by"], uploaded_on, d["csv_name"],
-             d["total_records"], d["total_rejected_records"],
-             d["approved_by"], d["rejected_by"], approved_on,
-             rejected_on, d["is_fully_rejected"],
-             int(d["total_approve_records"]), bu_action,
-             str(d["rejected_reason"])))
+            if(d["rejected_on"] is not None):
+                rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
+            reportdatalist.append(bu_sm.ReportData(
+                 d["country_name"], d["domain_name"],
+                 d["uploaded_by"], uploaded_on, d["csv_name"],
+                 d["total_records"], d["total_rejected_records"],
+                 d["approved_by"], d["rejected_by"], approved_on,
+                 rejected_on, d["is_fully_rejected"],
+                 d["total_approve_records"], str(d["rejected_reason"])))
+    else:
+        reportdatalist = []
+        total_record = 0
     return reportdatalist, total_record
 
 
@@ -569,7 +566,7 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
              d["rejected_by"], str(approved_on), str(rejected_on),
              d["is_fully_rejected"], int(d["approve_status"]),
              int(download_count), str(d["remarks"]), d["action"],
-             int(d["declined_count"]), str(d["rejected_reason"])
+             d["declined_count"], d["rejected_reason"]
         ))
     return rejectdatalist
 
