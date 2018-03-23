@@ -5,7 +5,8 @@ var ADDSCREEN = $("#add-screen");
 var VIEWSCREEN = $("#list-screen");
 var ADDBUTTON = $("#btn-add");
 var DOWNLOADBUTTON = $("#btnDownloadFile");
-var DIVUPLOAD = $('#divUploadFile')
+var DIVUPLOAD = $('#divUploadFile');
+var UploadFile = $("#fileInput");
 var LegalEntityNameLabel = $(".legal-entity-name");
 var LegalEntityNameAC = $(".legal-entity-name-ac");
 var LegalEntityId = $("#legal_entity_id");
@@ -20,12 +21,13 @@ var txtUnit = $('#txtUnit');
 var hdnUnit = $('#hdnUnit');
 var divUnit = $('#divUnit');
 
+var BTNUPLOAD = $('#btnUpload');
+
 var unitList = [];
-var domainList = [{ "d_name": "Commercial Law", "d_id": 1 }, { "d_name": "Labour Law", "d_id": 2 }];
+var domainList = [];
+var csvInfo = null;
 
 txtdomain.keyup(function(e) {
-    // var text_val = domain.val().trim();
-    // var domainList = REPORT._domains;
     var condition_fields = [];
     var condition_values = [];
     var text_val = $(this).val();
@@ -56,7 +58,6 @@ function loadUnits(le_id, unit_id) {
         }
     });
 }
-
 LegalEntityName.keyup(function(e) {
     var text_val = $(this).val();
     commonAutoComplete(
@@ -72,6 +73,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     id_element.val(val[0]);
     if (id_element[0].id == 'legal_entity_id') {
         // REPORT.fetchDomainList(countryId.val(), val[0]);
+        getPastRecords(parseInt(LegalEntityId.val()));
         loadUnits(parseInt(LegalEntityId.val()));
     }
 }
@@ -95,6 +97,30 @@ function loadEntityDetails() {
     }
 }
 
+function getPastRecords(legalEntity) {
+    displayLoader();
+
+    function onSuccess(data) {
+        // unitsList = data["in_units"];
+        domainList = data.domains;
+        // loadUnit();
+        hideLoader();
+    }
+
+    function onFailure(error) {
+        hideLoader();
+    }
+    client_mirror.getPastRecordsFormData(parseInt(legalEntity),
+        function(error, response) {
+            if (error == null) {
+                onSuccess(response);
+            } else {
+                onFailure(error);
+            }
+        }
+    );
+}
+
 function downloadData() {
     if (LegalEntityName.val().trim() == "") {
         displayMessage(message.legalentity_required);
@@ -111,25 +137,105 @@ function downloadData() {
         txtUnit.focus();
         return false;
     }
+
     // else if (txtUnit.val().trim() == "South Unit 15" && txtdomain.val().trim() == "Labour Law") {
     //     $('#downloadFormatFile').
     //     attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
     //     $('#downloadFormatFile').
     //     attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
-    //     DIVUPLOAD.show();
     // }
-    else {
-        $('#downloadFormatFile').
-        attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
-        $('#downloadFormatFile').
-        attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
-        DIVUPLOAD.show();
+    // else {
+    //     $('#downloadFormatFile').
+    //     attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
+    //     $('#downloadFormatFile').
+    //     attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
+    // }
 
+    // $('#fileInput').val()
+}
+
+function validateUpload() {
+    if ($('#fileInput').val() == "") {
+        displayMessage("Select file to upload");
+        $('#myModal').modal('show');
+        return false;
+    } else {
+        setTimeout(function() {
+            // $('.invaliddata').show();
+            // $('.view-summary').show();
+            $('#divSuccessFile').show();
+            $('#divSuccessDocument').show();
+            $('#divSuccessbutton').show();
+        }, 2000);
+
+        var args = {
+            "csv_name": csvInfo["file_name"],
+            "csv_data": csvInfo["file_content"],
+            "csv_size": csvInfo["file_size"],
+            "le_id": parseInt(LegalEntityId.val()),
+            "d_id": hdnDomain.val(),
+            "unit_id": hdnUnit.val()
+        };
+
+        buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
+            if (error == null) {
+                // TotalRecordsCount.text(data.total);
+                // ValidRecordsCount.text(parseInt(data.valid) - parseInt(data.invalid));
+                // InvalidRecordsCount.text(data.invalid);
+                // InvalidFileName = null;
+                // MandatoryErrorsCount.text("0");
+                // DuplicateErrorsCount.text("0");
+                // StatusErrorsCount.text("0");
+                // LengthErrorsCount.text("0");
+                // InvalidErrorsCount.text("0");
+                // $('.view-summary').show();
+                // $('.invaliddata').hide();
+                displaySuccessMessage("Records uploaded successfully for approval");
+                hideLoader();
+            } else {
+                // InvalidFileName = data.invalid_file.split('.');;
+                // TotalRecordsCount.text(data.total);
+                // var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
+                // ValidRecordsCount.text(getValidCount);
+                // InvalidRecordsCount.text(data.invalid);
+                // MandatoryErrorsCount.text(data.mandatory_error);
+                // DuplicateErrorsCount.text(data.duplicate_error);
+                // StatusErrorsCount.text(data.inactive_error);
+                // LengthErrorsCount.text(data.max_length_error);
+                // getInvaliddataCount = parseInt(data.invalid_char_error) + parseInt(data.invalid_data_error);
+                // InvalidErrorsCount.text(getInvaliddataCount);
+                // $('.invaliddata').show();
+                // $('.view-summary').show();
+
+                // csv_path = "/invalid_file/csv/" + InvalidFileName[0] + '.csv';
+                // xls_path = "/invalid_file/xlsx/" + InvalidFileName[0] + '.xlsx';
+                // ods_path = "/invalid_file/ods/" + InvalidFileName[0] + '.ods';
+                // txt_path = "/invalid_file/txt/" + InvalidFileName[0] + '.txt';
+                // $('#csv').attr("href", csv_path);
+                // $('#excel').attr("href", xls_path);
+                // $('#ods').attr("href", ods_path);
+                // $('#txt').attr("href", txt_path);
+                hideLoader();
+            }
+        });
     }
 }
 
+UploadFile.change(function(e) {
+    if ($(this).val() != '') {
+        buClient.uploadCSVFile(e, function(status, response) {
+            if (status == false) {
+                displayMessage(response);
+            } else {
+                csvInfo = response;
+            }
+        });
+    }
+});
+
 $(function() {
     loadEntityDetails();
+
 });
 
 function pageControls() {
@@ -143,14 +249,27 @@ function pageControls() {
     ADDBUTTON.click(function() {
         VIEWSCREEN.hide();
         ADDSCREEN.show();
-        DIVUPLOAD.hide();
+        // DIVUPLOAD.hide();
     });
 
     //Add Button Click Event
     DOWNLOADBUTTON.click(function() {
         downloadData();
     });
+
+    //Upload Button Click Event
+    BTNUPLOAD.click(function() {
+        validateUpload();
+    });
+
+
 }
+
+BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
+    displayMessage(error);
+};
+
+function BulkCompletedTaskCurrentYear() {}
 
 //initialization & master list filter
 $(document).ready(function() {
