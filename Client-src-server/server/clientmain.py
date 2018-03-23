@@ -28,22 +28,23 @@ from server.clientdatabase.savelegalentitydata import(
     LEntityReplicationServiceProvider, LEntityUnitClosure,
     LEntitySettingsData, LEntityReplicationUserPrivileges
 )
-
 from server.constants import (
-    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    IS_DEVELOPMENT, SESSION_CUTOFF, VERSION,
+    SESSION_CUTOFF,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
-    BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME, REJECTED_DOWNLOAD_PATH
+    BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME
 )
-
-from server.constants import SESSION_CUTOFF
 import logger
 import random, string
 from bulkupload.client_bulkuploadmain import BulkAPI
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 app = Flask(__name__)
+
+
+__all__ = [
+    "bulk_upload_api_request",
+    "API"
+]
 
 #
 # api_request
@@ -61,27 +62,6 @@ def api_request(
         return wrapped
     return wrapper
 
-def before_first_request():
-    cnx_pool = mysql.connector.connect(
-        user=KNOWLEDGE_DB_USERNAME,
-        password=KNOWLEDGE_DB_PASSWORD,
-        host=KNOWLEDGE_DB_HOST,
-        database=KNOWLEDGE_DATABASE_NAME,
-        port=KNOWLEDGE_DB_PORT,
-        autocommit=False,
-    )
-    return cnx_pool
-
-def bulk_db_connect():
-        cnx = mysql.connector.connect(
-            user=BULK_UPLOAD_DB_USERNAME,
-            password=BULK_UPLOAD_DB_PASSWORD,
-            host=BULK_UPLOAD_DB_HOST,
-            database=BULK_UPLOAD_DATABASE_NAME,
-            port=BULK_UPLOAD_DB_PORT,
-            autocommit=False,
-        )
-        return cnx
 
 def global_api_request(
     request_data_type, is_group=True, need_category=False
@@ -96,14 +76,37 @@ def global_api_request(
     return wrapper
 
 
-# class API(object):
+def bulk_upload_api_request(
+    request_data_type, is_group=True, need_category=False
+):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(self):
+            return self.handle_bulk_upload_api_request(
+                f, request_data_type, is_group, need_category
+            )
+        return wrapped
+    return wrapper
+
+
+def bulk_db_connect():
+        cnx = mysql.connector.connect(
+            user=BULK_UPLOAD_DB_USERNAME,
+            password=BULK_UPLOAD_DB_PASSWORD,
+            host=BULK_UPLOAD_DB_HOST,
+            database=BULK_UPLOAD_DATABASE_NAME,
+            port=BULK_UPLOAD_DB_PORT,
+            autocommit=False,
+        )
+        return cnx
+
+
 class API(BulkAPI):
     def __init__(
         self,
         address,
         knowledge_server_address,
     ):
-        # print "class API>>>>>",BulkAPI
         super(BulkAPI, self).__init__()
         self._address = address
         self._knowledge_server_address = knowledge_server_address
@@ -391,7 +394,7 @@ class API(BulkAPI):
             return
 
     def legal_entity_replication_added(self, group_info, le_infos):
-        extra_details = random.choice(string.lowercase)+str(random.randint(10000,99999))
+        extra_details = random.choice(string.lowercase) + str(random.randint(10000, 99999))
         for r in le_infos :
             le_id = r["legal_entity_id"]
             le_info = self._le_databases.get(le_id)
@@ -529,113 +532,29 @@ class API(BulkAPI):
             e = "Request Process Failed"
             raise Exception(str(e))
 
-    def validate_user_rights(self, session_token, rcaller_name, is_mobile):
-        if is_mobile is True:
-            user_id, user_category_id = self.validate_session_token(session_token)
-            return user_id, user_category_id
-
-        caller_name = [str(x) for x in rcaller_name.split("/") if x != ""]
-        caller_name = "/%s" % (caller_name[0])
-        try :
-            print caller_name
-            user_id, user_category_id = self.validate_session_token(session_token)
-            print user_category_id, user_id
-            if user_id is not None :
-                if user_category_id == 1 :
-                    q = "select t2.form_url from tbl_form_category as t1 " + \
-                        " inner join tbl_forms as t2 on t1.form_id = t2.form_id where " + \
-                        " t1.user_category_id = 1 " + \
-                        " and t2.form_url = %s "
-                    param = [caller_name]
-                else :
-                    q = "select t3.form_url " + \
-                        " from tbl_users as t1 " + \
-                        " inner join tbl_user_group_forms as t2 on t1.user_group_id = t2.user_group_id " + \
-                        " inner join tbl_forms as t3 on t2.form_id = t3.form_id " + \
-                        " where t1.user_id = %s and t3.form_url = %s"
-                    param = [user_id, caller_name]
-
-                if caller_name not in (
-                    "/welcome", "/home", "/profile", "/themes", "/reminders", "/escalations",
-                    "/message", "/notifications", "/view-profile", "/settings"
-                ) :
-                    rows = self.select_one(q, param)
-                    if rows :
-                        if rows.get("form_url") == caller_name :
-                            return user_id, user_category_id
-                    else :
-                        return None, None
-                else :
-                    return user_id, user_category_id
-            else :
-                return user_id, user_category_id
-
-        except Exception, e :
-            logger.logclient("error", "validate_rights", str(e))
-            raise fetch_error()
-
     def handle_api_request(
         self, unbound_method,
         request_data_type, need_client_id, is_group, need_category, save_le
     ):
         # ip_address = request.remote_addr
-        is_bulk_upload = False
         ip_address = request.headers.get("X-Real-Ip")
         caller_name = request.headers.get("Caller-Name")
         print "----------------"
         print caller_name
         self._ip_address = ip_address
-
         api_type = request.url
-        print"caller_name>>>>>>", caller_name
-        # caller_name = None
 
+        if "/api/mobile" in api_type:
+            is_mobile = True
+        else:
+            is_mobile = False
+
+        # response.set_default_header("Access-Control-Allow-Origin", "*")
+        # validate api format
         try:
             request_data, company_id = self._parse_request(
-                request_data_type, is_group)
-            print "request_data>>>", request_data
-
-            if "/api/mobile" in api_type:
-                is_mobile = True
-            else:
-                is_mobile = False
-
-            if "/api/bu" in api_type :
-                    is_bulk_upload = True
-                    _db_con = bulk_db_connect()
-            else :
-                _db_con = before_first_request()
-
-                _db = Database(_db_con)
-                _db.begin()
-
-                valid_session_data = None
-                session_user = None
-                session_category = None
-                _session_db = None
-                _session_db_con = None
-
-                print is_bulk_upload
-                if is_bulk_upload is True:
-                    _session_db_con = before_first_request()
-                    _session_db = Database(_session_db_con)
-                    _session_db.begin()
-                    # valid_session_data, session_user, session_category = self.validate_user_rights(request_data, caller_name, is_mobile)
-                    session = request_data.session_token
-                    session_user, client_id, session_category = self._validate_user_session(session, caller_name, is_mobile)
-                    _session_db.commit()
-
-                else:
-                    session = request_data.session_token
-                    session_user, client_id, session_category = self._validate_user_session(session, caller_name, is_mobile)
-
-
-            # response.set_default_header("Access-Control-Allow-Origin", "*")
-            # validate api format
-            # try:
-            #     request_data, company_id = self._parse_request(
-            #         request_data_type, is_group
-            #     )
+                request_data_type, is_group
+            )
         except Exception, e:
             logger.logclient("error", "while parse_request", str(e))
             logger.logclient("error", "while parse_request", str(traceback.format_exc()))
@@ -741,11 +660,11 @@ class API(BulkAPI):
                 elif type(request_data.request) is dashboard.GetNotificationsCount :
                     p_response.notification_count.extend(data.notification_count)
                     # p_response.notification_count = controller.merge_notification_count(p_response.notification_count)
-                        # p_response.reminder_count += data.reminder_count
-                        # p_response.reminder_expire_count += data.reminder_expire_count
-                        # p_response.escalation_count += data.escalation_count
-                        # p_response.messages_count += data.messages_count
-                        # p_response.statutory_count += data.statutory_count
+                    # p_response.reminder_count += data.reminder_count
+                    # p_response.reminder_expire_count += data.reminder_expire_count
+                    # p_response.escalation_count += data.escalation_count
+                    # p_response.messages_count += data.messages_count
+                    # p_response.statutory_count += data.statutory_count
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
                     p_response.T_0_to_30_days_count += data.T_0_to_30_days_count
@@ -900,6 +819,49 @@ class API(BulkAPI):
             print(traceback.format_exc())
             return self._send_response(str(e), 400)
 
+    def handle_bulk_upload_api_request(self, unbound_method, request_data_type, is_group, need_category):
+        caller_name = request.headers.get("Caller-Name")
+
+        try :
+            # print "try"
+            request_data, company_id = self._parse_request(request_data_type, is_group)
+            session = request_data.session_token
+
+            is_mobile = False
+
+            session_user, client_id, session_category = self._validate_user_session(session, caller_name, is_mobile)
+
+            if session_user is False :
+                return self.respond(clientlogin.InvalidSessionToken())
+
+            try :
+                _db_con = bulk_db_connect()
+                _db = Database(_db_con)
+                _db.begin()
+                response_data = unbound_method(
+                    self, request_data, _db, session_user, session_category
+                )
+                _db.commit()
+                _db.close()
+                _db_con.close()
+                return self.respond(response_data)
+            except Exception, e:
+                logger.logclient("error", "handle bulk upload api request", str(e))
+                logger.logclient("error", "handle bulk upload api request", str(traceback.format_exc()))
+                print(traceback.format_exc())
+
+                if str(e).find("expected a") is False :
+                    _db.rollback()
+                    _db.close()
+                    _db_con.close()
+                return self._send_response(str(e), 400)
+
+        except Exception, e :
+            logger.logclient("error", "handle bulk upload api request", str(e))
+            logger.logclient("error", "handle bulk upload api request", str(traceback.format_exc()))
+            print(traceback.format_exc())
+            return self._send_response(str(e), 400)
+
     @api_request(clientlogin.Request, need_client_id=True, is_group=True)
     def handle_login(self, request, db, client_id, user_ip):
         # print self._ip_address
@@ -983,10 +945,6 @@ def run_server(address, knowledge_server_address):
             ("/api/mobile/client_transaction", api.handle_client_transaction),
             ("/api/mobile/client_user", api.handle_client_user),
         ]
-
-        # api urls for bulk-upload
-        api_urls_and_handlers.extend(api.bulk_upload_api_urls())
-
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])
 

@@ -10,19 +10,37 @@ var CancelButton = $("#btn-sm-view-cancel");
 var ViewListContainer = $('#tbody-sm-approve-view');
 var ViewListRowTemplate = $('#templates .table-sm-approve-info .clone-row');
 var FinalSubmit = $('#btn-final-submit')
+
+var ItemsPerPage = $('#items_per_page');
+var PaginationView = $('.pagination-view');
+var Pagination = $('#pagination-rpt');
+var CompliacneCount = $('.compliance_count');
+var OnCurrentPage = 1;
+var STATUTOTALS;
+var j = 1;
+
+var pageType = "show";
+
+var CurrentPassword = null;
+
+var MsgPan = $(".error-message");
+var buApprovePage = null;
+var isAuthenticate;
+
+
 // auto complete - country
-var country_val = $('#countryid');
-var country_ac = $("#countryname");
+var countryVal = $('#countryid');
+var countryAc = $("#countryname");
 var AcCountry = $('#ac-country');
 
 // auto complete - domain
-var domain_val = $('#domainid');
-var domain_ac = $("#domainname");
+var domainVal = $('#domainid');
+var domainAc = $("#domainname");
 var AcDomain = $('#ac-domain')
 
 // auto complete - user
-var user_val = $('#userid');
-var user_ac = $("#username");
+var userVal = $('#userid');
+var userAc = $("#username");
 var AcUser = $('#ac-user');
 
 var searchFileName = $('.search-file-name');
@@ -47,42 +65,26 @@ var searchGeography = $('#search-geo');
 
 // filter controls
 
-var ac_orgName = $('#orgname');
+var acOrgName = $('#orgname');
 var ACOrg = $('#ac-orgname');
-var ac_nature = $('#nature');
+var acNature = $('#nature');
 var ACNature = $('#ac-nature');
-var ac_statutory = $('#statutory');
+var acStatutory = $('#statutory');
 var ACStatutory = $('#ac-statutory');
-var ac_geoLocation = $('#geolocation');
-var ACGeoLocation = $('#ac-geolocation');
-var ac_compTask = $('#comptask');
+var acGeoLocation = $('#geolocation');
+var acGeoLocation = $('#ac-geolocation');
+var acCompTask = $('#comptask');
 var ACCompTask = $('#ac-comptask');
-var ac_taskID = $('#taskid');
+var acTaskId = $('#taskid');
 var ACTaskId = $('#ac-taskid');
-var ac_compDoc = $('#compdoc');
+var acCompDoc = $('#compdoc');
 var ACCompDoc = $('#ac-compdoc');
-var ac_compDesc = $('#compdesc');
+var acCompDesc = $('#compdesc');
 var ACCompDesc = $('#ac-compdesc');
-var ac_taskType = $('#tasktype');
+var acTaskType = $('#tasktype');
 var ACTaskType = $('#ac-tasktype');
-var MultiSelect_Frequency = $('#frequency');
+var MultiSelectFrequency = $('#frequency');
 
-
-var ItemsPerPage = $('#items_per_page');
-var PaginationView = $('.pagination-view');
-var Pagination = $('#pagination-rpt');
-var CompliacneCount = $('.compliance_count');
-var _on_current_page = 1;
-var STATU_TOTALS;
-var j = 1;
-
-
-
-var CurrentPassword = null;
-
-var Msg_pan = $(".error-message");
-var bu_approve_page = null;
-var isAuthenticate;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -90,20 +92,20 @@ function displayLoader() {
 function hideLoader() {
   $('.loading-indicator-spin').hide();
 }
-function onAutoCompleteSuccess(value_element, id_element, val) {
-    value_element.val(val[1]);
-    id_element.val(val[0]);
-    value_element.focus();
-    var primary_key = id_element[0].id;
-    if(primary_key == 'countryid'){
-      domain_ac.val('');
-      domain_val.val('');
-      user_ac.val('');
-      user_val.val('');
+function onAutoCompleteSuccess(valueElement, idElement, val) {
+    valueElement.val(val[1]);
+    idElement.val(val[0]);
+    valueElement.focus();
+    var primaryKey = idElement[0].id;
+    if(primaryKey == 'countryid'){
+      domainAc.val('');
+      domainVal.val('');
+      userAc.val('');
+      userVal.val('');
     }
 }
 
-function displayPopUp(TYPE, csv_id, smid){
+function displayPopUp(TYPE, csvId, smid){
     if (TYPE == "reject") {
         targetid = "#custom-modal";
         CurrentPassword = $('#current-password-reject');
@@ -133,21 +135,41 @@ function displayPopUp(TYPE, csv_id, smid){
                 displayLoader();
                 setTimeout(function() {
                     if (TYPE == "approve") {
-                        bu_approve_page.actionFromList(csv_id, 1, null, CurrentPassword.val());
+                        buApprovePage.actionFromList(
+                            csvId, 1, null, CurrentPassword.val()
+                        );
                     }
                     else if (TYPE == "reject") {
-                        bu_approve_page.actionFromList(csv_id, 2, $('.reject-reason-txt').val(), CurrentPassword.val());
+                        if ($('.reject-reason-txt').val() == '') {
+                            displayMessage(message.reason_required)
+                        }
+                        else {
+                            buApprovePage.actionFromList(
+                                csvId, 2, $('.reject-reason-txt').val(),
+                                CurrentPassword.val()
+                            );
+                        }
+
                     }
                     else if (TYPE == "submit") {
-                        bu_approve_page.finalSubmit(csv_id, CurrentPassword.val());
+                        buApprovePage.finalSubmit(
+                            csvId, CurrentPassword.val()
+                        );
                     }
                     else if (TYPE == "view-reject") {
-                        bu.updateActionFromView(csv_id, smid, 2, $('.view-reason').val(), function(err, res) {
-                        if (err != null) {
-                            t_this.possibleFailures(err);
+                        if ($('.reject-reason-txt').val() == '') {
+                            displayMessage(message.reason_required)
                         }
-                        hideLoader();
-                    });
+                        else {
+                            bu.updateActionFromView(
+                                csvId, smid, 2, $('.view-reason').val(),
+                                function(err, res) {
+                                    if (err != null) {
+                                        tThis.possibleFailures(err);
+                                    }
+                                    hideLoader();
+                            });
+                        }
                     }
                 }, 500);
             }
@@ -161,7 +183,9 @@ function validateAuthentication() {
         displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
-    }else if(isLengthMinMax(CurrentPassword, 1, 20, message.password_20_exists) == false){
+    }else if(isLengthMinMax(
+        CurrentPassword, 1, 20, message.password_20_exists) == false
+    ){
         return false;
     } else {
         isAuthenticate = true;
@@ -172,26 +196,25 @@ function validateAuthentication() {
 
 
 function ApproveBulkMapping() {
-    this._CountryList = [];
-    this._DomainList = [];
-    this._UserList = [];
-    this._ApproveDataList = [];
-    this._ViewDataList = [];
-
-    this._OrgaNames = [];
-    this._Natures = [];
-    this._Statutories = [];
-    this._Frequency = [];
-    this._GeoLocation = [];
-    this._CompTasks = [];
-    this._CompDescs = [];
-    this._CompDocs = [];
-    this._TaskId = [];
-    this._TaskType = [];
-    this._CSV_ID = null;
-    this.show_map_count = 0;
-    this._Country_id = null;
-    this._domain_id = null;
+    this.CountryList = [];
+    this.DomainList = [];
+    this.UserList = [];
+    this.ApproveDataList = [];
+    this.ViewDataList = [];
+    this.OrgaNames = [];
+    this.Natures = [];
+    this.Statutories = [];
+    this.Frequency = [];
+    this.GeoLocation = [];
+    this.CompTasks = [];
+    this.CompDescs = [];
+    this.CompDocs = [];
+    this.TaskId = [];
+    this.TaskType = [];
+    this.CSVID = null;
+    this.showMapCount = 0;
+    this.CountryId = null;
+    this.DomainId = null;
 }
 ApproveBulkMapping.prototype.possibleFailures = function(error) {
     displayMessage(error);
@@ -208,41 +231,41 @@ ApproveBulkMapping.prototype.showList = function() {
 
 };
 ApproveBulkMapping.prototype.fetchListData = function() {
-    t_this = this;
+    tThis = this;
     displayLoader();
-    cid = parseInt(country_val.val());
-    did = parseInt(domain_val.val());
-    uid = parseInt(user_val.val());
+    cid = parseInt(countryVal.val());
+    did = parseInt(domainVal.val());
+    uid = parseInt(userVal.val());
     bu.getApproveMappingCSVList(cid, did, uid, function(error, response) {
         if (error == null) {
-            t_this._ApproveDataList = response.pending_csv_list;
-            $.each(t_this._ApproveDataList, function(idx, data) {
-                uploaded_name = null
-                for (var i=0; i<t_this._UserList.length; i++) {
-                    if (data.uploaded_by == t_this._UserList[i].user_id) {
-                        uploaded_name = t_this._UserList[i].emp_code_name
+            tThis.ApproveDataList = response.pending_csv_list;
+            $.each(tThis.ApproveDataList, function(idx, data) {
+                uploadedName = null
+                for (var i=0; i<tThis.UserList.length; i++) {
+                    if (data.uploaded_by == tThis.UserList[i].user_id) {
+                        uploadedName = tThis.UserList[i].emp_code_name
                         break;
                     }
                 }
-                if (uploaded_name != null) {
-                    data.uploaded_by = uploaded_name;
+                if (uploadedName != null) {
+                    data.uploaded_by = uploadedName;
                 }
 
             });
-            t_this.renderList(t_this._ApproveDataList);
+            tThis.renderList(tThis.ApproveDataList);
             hideLoader();
         }
         else{
             hideLoader();
-            t_this.possibleFailures(error);
+            tThis.possibleFailures(error);
         }
     });
 };
-ApproveBulkMapping.prototype.renderList = function(list_data) {
-    t_this = this;
+ApproveBulkMapping.prototype.renderList = function(listData) {
+    tThis = this;
     var j = 1;
     ListContainer.find('tr').remove();
-    if(list_data.length == 0) {
+    if(listData.length == 0) {
         ListContainer.empty();
         var tr = $('#no-record-templates .table-no-content .table-row-no-content');
         var clone4 = tr.clone();
@@ -250,13 +273,13 @@ ApproveBulkMapping.prototype.renderList = function(list_data) {
         ListContainer.append(clone4);
     }
     else {
-        $.each(list_data, function(idx, data) {
+        $.each(listData, function(idx, data) {
 
 
             var cloneRow = ListRowTemplate.clone();
-            cname_split = data.csv_name.split("_");
-            cname_split.pop();
-            cname = cname_split.join("_");
+            cnameSplit = data.csv_name.split("_");
+            cnameSplit.pop();
+            cname = cnameSplit.join("_");
             $('.sno', cloneRow).text(j);
             $('.csv-name', cloneRow).text(cname);;
             $('.uploaded-on', cloneRow).text(data.uploaded_on);
@@ -276,17 +299,26 @@ ApproveBulkMapping.prototype.renderList = function(list_data) {
                 }
             });
             $('.bu-view-mapping', cloneRow).on('click', function(){
-                t_this._CSV_ID = data.csv_id;
-                t_this._Country_id = data.c_id;
-                t_this._domain_id = data.d_id;
-                t_this.showViewScreen(data.csv_id, 0, 25);
+                tThis.CSVID = data.csv_id;
+                tThis.CountryId = data.c_id;
+                tThis.DomainId = data.d_id;
+                pageLimit = parseInt(ItemsPerPage.val());
+                tThis.showViewScreen(data.csv_id, 0, pageLimit);
             });
             flname = data.csv_name.split('.')
             flname = flname[0]
-            $('.dl-xls-file',cloneRow).attr("href", "/uploaded_file/xlsx/"+flname+'.xlsx');
-            $('.dl-csv-file',cloneRow).attr("href", "/uploaded_file/csv/"+flname+'.csv');
-            $('.dl-ods-file',cloneRow).attr("href", "/uploaded_file/ods/"+flname+ '.ods');
-            $('.dl-txt-file',cloneRow).attr("href", "/uploaded_file/txt/"+flname+'.txt');
+            $('.dl-xls-file',cloneRow).attr(
+                "href", "/uploaded_file/xlsx/"+flname+'.xlsx'
+            );
+            $('.dl-csv-file',cloneRow).attr(
+                "href", "/uploaded_file/csv/"+flname+'.csv'
+            );
+            $('.dl-ods-file',cloneRow).attr(
+                "href", "/uploaded_file/ods/"+flname+ '.ods'
+            );
+            $('.dl-txt-file',cloneRow).attr(
+                "href", "/uploaded_file/txt/"+flname+'.txt'
+            );
             ListContainer.append(cloneRow);
             j += 1;
         });
@@ -294,64 +326,64 @@ ApproveBulkMapping.prototype.renderList = function(list_data) {
     $('[data-toggle="tooltip"]').tooltip();
 };
 ApproveBulkMapping.prototype.fetchDropDownData = function() {
-    t_this = this;
+    tThis = this;
     displayLoader();
     mirror.getDomainList(function (error, response) {
         if (error == null) {
-            t_this._DomainList = response.domains;
-            t_this._CountryList = response.countries
+            tThis.DomainList = response.domains;
+            tThis.CountryList = response.countries
             mirror.getKnowledgeUserInfo(function (err, resp){
                 if (err == null){
-                    t_this._UserList = resp.k_executive_info;
+                    tThis.UserList = resp.k_executive_info;
                     hideLoader();
                 }
                 else {
                     hideLoader();
-                    t_this.possibleFailures(err);
+                    tThis.possibleFailures(err);
                 }
             });
 
         }
         else{
             hideLoader();
-            t_this.possibleFailures(error);
+            tThis.possibleFailures(error);
         }
     });
 };
 ApproveBulkMapping.prototype.confirmAction = function() {
-    t_this = this;
+    tThis = this;
     displayLoader();
     console.log("confirm action called")
-    bu.confirmUpdateAction(t_this._CSV_ID, t_this._Country_id, t_this._domain_id, function(error, response) {
+    bu.confirmUpdateAction(
+        tThis.CSVID, tThis.CountryId, tThis.DomainId,
+        function(error, response) {
         if (error == null) {
-            t_this.showList();
-            t_this.fetchListData();
+            tThis.showList();
+            tThis.fetchListData();
             displaySuccessMessage(message.confirm_success);
         }
         else {
-            bu_approve_page.possibleFailures(error);
+            buApprovePage.possibleFailures(error);
         }
     });
 };
 ApproveBulkMapping.prototype.actionFromList = function(
-    csv_id, action, remarks, pwd
+    csvId, action, remarks, pwd
 ) {
-    t_this = this;
-    c_id = parseInt(country_val.val());
-    d_id = parseInt(domain_val.val());
-    t_this._CSV_ID = csv_id;
-    t_this._Country_id = c_id;
-    t_this._domain_id = d_id;
+    tThis = this;
+    tThis.CSVID = csvId;
+    tThis.CountryId = parseInt(countryVal.val());
+    tThis.DomainId = parseInt(domainVal.val());
     displayLoader();
     bu.updateActionFromList(
-        csv_id, action, remarks, pwd, country_val.val(), domain_val.val(),
+        csvId, action, remarks, pwd, countryVal.val(), domainVal.val(),
         function(error, response){
             if (error == null) {
                 if (response.rej_count > 0) {
                     msg = response.rej_count + " compliance declined, Do you want to continue ?";
                     confirm_alert(msg, function(isConfirm) {
                         if (isConfirm) {
-                            t_this.confirmAction();
+                            tThis.confirmAction();
                         }
                         else {
                             hideLoader();
@@ -365,19 +397,21 @@ ApproveBulkMapping.prototype.actionFromList = function(
                         displaySuccessMessage(message.reject_success);
                     }
 
-                    t_this.fetchListData()
+                    tThis.fetchListData()
                 }
 
 
             }
             else {
                 hideLoader();
-                t_this.possibleFailures(error);
+                tThis.possibleFailures(error);
             }
         }
     );
 };
-ApproveBulkMapping.prototype.showViewScreen = function(csv_id, f_count, r_range) {
+ApproveBulkMapping.prototype.showViewScreen = function(
+    csvId, fCount, rRange
+) {
     ListScreen.hide();
     ViewScreen.show();
 
@@ -395,9 +429,11 @@ ApproveBulkMapping.prototype.showViewScreen = function(csv_id, f_count, r_range)
     searchFreq.val('');
     searchFormat.val('');
     searchGeography.val('');
+    onCurrentPage = 1;
     j = 1;
-    bu_approve_page.show_map_count = 0;
-    bu_approve_page.fetchViewData(csv_id, f_count, r_range);
+    $('.filtered-data').text('');
+    buApprovePage.showMapCount = 0;
+    buApprovePage.fetchViewData(csvId, fCount, rRange);
 
 
 // alert();
@@ -407,50 +443,60 @@ ApproveBulkMapping.prototype.showViewScreen = function(csv_id, f_count, r_range)
 // $.getScript("/knowledge/css/multifreezer.css");
  // hideLoader();}, 3000);
 
-     if($("body").hasClass("freezer-active-bu")==false) {
-displayLoader();
-        setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js");  hideLoader();}, 3000);
+    if($("body").hasClass("freezer-active-bu")==false) {
+        displayLoader();
+        setTimeout(function(){  $.getScript(
+            "/knowledge/js/multifreezer.js");  hideLoader();}, 3000
+        );
     }
 
 // $.getScript("/knowledge/js/multifreezer.js");
 };
-ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) {
-    t_this = this;
+ApproveBulkMapping.prototype.fetchViewData = function(
+    csvId, fCount, rRange
+) {
+    tThis = this;
 
     displayLoader();
-    bu.getApproveMappingView(csv_id, f_count, r_range, function(error, response){
+    bu.getApproveMappingView(csvId, fCount, rRange, function(
+        error, response
+    ){
         if(error == null) {
-            t_this._ViewDataList = response.mapping_data;
-            if (t_this._ViewDataList.length > 0) {
+            tThis.ViewDataList = response.mapping_data;
+            if (tThis.ViewDataList.length > 0) {
 
                 $('.view-country-name').text(response.c_name);
                 $('.view-domain-name').text(response.d_name)
-                uploaded_name = null
-                for (var i=0; i<t_this._UserList.length; i++) {
-                    if (response.uploaded_by == t_this._UserList[i].user_id) {
-                        uploaded_name = t_this._UserList[i].emp_code_name
+                uploadedName = null
+                for (var i=0; i<tThis.UserList.length; i++) {
+                    if (response.uploaded_by == tThis.UserList[i].user_id) {
+                        uploadedName = tThis.UserList[i].emp_code_name
                         break;
                     }
                 }
-                $('.view-uploaded-by').text(uploaded_name);
+                $('.view-uploaded-by').text(uploadedName);
                 $('.view-uploaded-on').text(response.uploaded_on);
-                cname_split = response.csv_name.split("_");
-                cname_split.pop();
-                cname = cname_split.join("_");
+                cnameSplit = response.csv_name.split("_");
+                cnameSplit.pop();
+                cname = cnameSplit.join("_");
                 $('.view-csv-name').text(cname);
                 $('#view-csv-id').val(response.csv_id);
-                STATU_TOTALS  = response.total;
-                if(t_this._ViewDataList.length == 0) {
-                    _t_this.hidePagePan();
+                STATUTOTALS  = response.total;
+                if(tThis.ViewDataList.length == 0) {
+                    _tThis.hidePagePan();
                     PaginationView.hide();
-                    t_this.hidePageView();
+                    tThis.hidePageView();
                 }
                 else {
-                    t_this.createPageView();
-                    PaginationView.show();
+                    if (onCurrentPage == 1) {
+                        tThis.createPageView();
+                        PaginationView.show();
+                    }
+                    pageType = "show";
+
                 }
             }
-            t_this.renderViewScreen(t_this._ViewDataList);
+            tThis.renderViewScreen(tThis.ViewDataList);
 
             // var onetimejs = $("#tbody-sm-approve-view").html();
             // alert(onetimejs);
@@ -461,14 +507,15 @@ ApproveBulkMapping.prototype.fetchViewData = function(csv_id, f_count, r_range) 
     });
 
 };
-ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
-    t_this = this;
+ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
+    tThis = this;
 
-    showFrom = t_this.show_map_count;
+    showFrom = tThis.showMapCount;
     showFrom += 1;
-
+    console.log("render view screen")
     ViewListContainer.find('tr').remove();
-    if(view_data.length == 0) {
+
+    if(viewData.length == 0) {
         ViewListContainer.empty();
         var tr = $('#no-record-templates .table-no-content .table-row-no-content');
         var clone4 = tr.clone();
@@ -476,8 +523,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
         ViewListContainer.append(clone4);
     }
     else {
-        $.each(view_data, function(idx, data) {
-
+        $.each(viewData, function(idx, data) {
 
             var cloneRow = ViewListRowTemplate.clone();
             $('.sno', cloneRow).text(j);
@@ -519,12 +565,16 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
             $('.view-approve-check', cloneRow).on('change', function(e){
                 if (e.target.checked){
                     csvid = $('#view-csv-id').val();
-                    bu.updateActionFromView(parseInt(csvid), data.sm_id, 1, null, function(err, res) {
+                    bu.updateActionFromView(
+                        parseInt(csvid), data.sm_id, 1, null,
+                        function(err, res) {
                         if (err != null) {
-                            t_this.possibleFailures(err);
+                            tThis.possibleFailures(err);
                         }
                         else {
-                            $('.view-reject-check',cloneRow).attr("checked", false);
+                            $('.view-reject-check',cloneRow).attr(
+                                "checked", true
+                            );
                         }
                     });
                 }
@@ -532,8 +582,9 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
             $('.view-reject-check', cloneRow).on('change', function(e){
                 if(e.target.checked){
                     csvid = $('#view-csv-id').val();
-                    displayPopUp('view-reject', parseInt(csvid), data.sm_id);
                     $('.view-approve-check',cloneRow).attr("checked", false);
+                    displayPopUp('view-reject', parseInt(csvid), data.sm_id);
+
                 }
             });
 
@@ -542,33 +593,33 @@ ApproveBulkMapping.prototype.renderViewScreen = function(view_data) {
         });
     }
 
-    t_this.show_map_count += view_data.length;
+    tThis.showMapCount += viewData.length;
     $('[data-toggle="tooltip"]').tooltip();
-    t_this.showPagePan(showFrom, t_this.show_map_count, STATU_TOTALS);
+    tThis.showPagePan(showFrom, tThis.showMapCount, STATUTOTALS);
 };
 
 ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
-    t_this = this;
+    tThis = this;
     displayLoader();
     bu.getApproveMappingViewFilter(parseInt(csvid), function(err, resp) {
         if (err == null) {
-            t_this._OrgaNames = resp.orga_names;
-            t_this._Natures = resp.s_natures;
-            t_this._Statutories = resp.bu_statutories;
-            t_this._Frequency = resp.frequencies;
-            t_this._GeoLocation = resp.geo_locations;
-            t_this._CompTasks = resp.c_tasks;
-            t_this._CompDescs = resp.c_descs;
-            t_this._CompDocs = resp.c_docs;
-            t_this._TaskId = resp.task_ids;
-            t_this._TaskType = resp.task_types
-            if (t_this._Frequency.length > 0) {
+            tThis.OrgaNames = resp.orga_names;
+            tThis.Natures = resp.s_natures;
+            tThis.Statutories = resp.bu_statutories;
+            tThis.Frequency = resp.frequencies;
+            tThis.GeoLocation = resp.geo_locations;
+            tThis.CompTasks = resp.c_tasks;
+            tThis.CompDescs = resp.c_descs;
+            tThis.CompDocs = resp.c_docs;
+            tThis.TaskId = resp.task_ids;
+            tThis.TaskType = resp.task_types
+            if (tThis.Frequency.length > 0) {
                 str = ''
-                for (var i in t_this._Frequency){
-                    val = t_this._Frequency[i]
+                for (var i in tThis.Frequency){
+                    val = tThis.Frequency[i]
                     str += '<option value="'+ val +'">'+ val +'</option>';
                 }
-                MultiSelect_Frequency.html(str).multiselect('rebuild');
+                MultiSelectFrequency.html(str).multiselect('rebuild');
             }
             hideLoader();
         }
@@ -576,72 +627,76 @@ ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
 };
 
 ApproveBulkMapping.prototype.renderViewFromFilter = function() {
-    _page_limit = parseInt(ItemsPerPage.val());
+    pageLimit = parseInt(ItemsPerPage.val());
     var showCount = 0;
-    if (_on_current_page == 1) {
+    if (onCurrentPage == 1) {
         showCount = 0;
-        t_this.show_map_count = 0;
+        tThis.showMapCount = 0;
     } else {
-        showCount = (_on_current_page - 1) * _page_limit;
-        t_this.show_map_count = showCount;
+        showCount = (onCurrentPage - 1) * pageLimit;
+        tThis.showMapCount = showCount;
     }
-    f_types = [];
+    fTypes = [];
     $("#frequency option:selected").each(function () {
        var $this = $(this);
        if ($this.length) {
-        f_types.push($this.text());
+        fTypes.push($this.text());
        }
     });
     args = {
         "csv_id": parseInt($('#view-csv-id').val()),
-        "orga_name": ac_orgName.val(),
-        "s_nature": ac_nature.val(),
-        "f_types": f_types,
-        "statutory": ac_statutory.val(),
-        "geo_location": ac_geoLocation.val(),
-        "c_task_name": ac_compTask.val(),
-        "c_desc": ac_compDesc.val(),
-        "c_doc": ac_compDoc.val(),
+        "orga_name": acOrgName.val(),
+        "s_nature": acNature.val(),
+        "f_types": fTypes,
+        "statutory": acStatutory.val(),
+        "geo_location": acGeoLocation.val(),
+        "c_task_name": acCompTask.val(),
+        "c_desc": acCompDesc.val(),
+        "c_doc": acCompDoc.val(),
         "f_count": showCount,
-        "r_range": _page_limit
+        "r_range": pageLimit
     }
     bu.getApproveMappingViewFromFilter(args, function(err, response){
         displayLoader()
         if(err != null) {
             hideLoader();
-            bu_approve_page.possibleFailures(err)
+            buApprovePage.possibleFailures(err)
         }
         if(err == null) {
-            t_this._ViewDataList = response.mapping_data;
-            if (t_this._ViewDataList.length > 0) {
+            tThis.ViewDataList = response.mapping_data;
+            if (tThis.ViewDataList.length > 0) {
                 $('.view-country-name').text(response.c_name);
                 $('.view-domain-name').text(response.d_name)
-                uploaded_name = null
-                for (var i=0; i<t_this._UserList.length; i++) {
-                    if (response.uploaded_by == t_this._UserList[i].user_id) {
-                        uploaded_name = t_this._UserList[i].emp_code_name
+                uploadedName = null
+                for (var i=0; i<tThis.UserList.length; i++) {
+                    if (response.uploaded_by == tThis.UserList[i].user_id) {
+                        uploadedName = tThis.UserList[i].emp_code_name
                         break;
                     }
                 }
-                $('.view-uploaded-by').text(uploaded_name);
+                $('.view-uploaded-by').text(uploadedName);
                 $('.view-uploaded-on').text(response.uploaded_on);
-                cname_split = response.csv_name.split("_");
-                cname_split.pop();
-                cname = cname_split.join("_");
+                cnameSplit = response.csv_name.split("_");
+                cnameSplit.pop();
+                cname = cnameSplit.join("_");
                 $('.view-csv-name').text(cname);
                 $('#view-csv-id').val(response.csv_id);
-                STATU_TOTALS  = response.total;
-                if(t_this._ViewDataList.length == 0) {
-                    _t_this.hidePagePan();
+                STATUTOTALS  = response.total;
+                if(tThis.ViewDataList.length == 0) {
+                    _tThis.hidePagePan();
                     PaginationView.hide();
-                    t_this.hidePageView();
+                    tThis.hidePageView();
                 }
                 else {
-                    t_this.createPageView();
-                    PaginationView.show();
+                    pageType = "filter";
+                    if (onCurrentPage == 1) {
+                        tThis.createPageView();
+                        PaginationView.show();
+                    }
+
                 }
             }
-            t_this.renderViewScreen(t_this._ViewDataList);
+            tThis.renderViewScreen(tThis.ViewDataList);
             hideLoader();
         }
     });
@@ -654,34 +709,38 @@ ApproveBulkMapping.prototype.hidePageView = function() {
     $('#pagination-rpt').unbind('page');
 };
 
-ApproveBulkMapping.prototype.createPageView = function(page_type) {
-    t_this = this;
+ApproveBulkMapping.prototype.createPageView = function() {
+    tThis = this;
     perPage = parseInt(ItemsPerPage.val());
-    t_this.hidePageView();
+    tThis.hidePageView();
     $('#pagination-rpt').twbsPagination({
-        totalPages: Math.ceil(STATU_TOTALS / perPage),
+        totalPages: Math.ceil(STATUTOTALS / perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
+            console.log(page);
             cpage = parseInt(page);
-            if (parseInt(_on_current_page) != cpage) {
-                _on_current_page = cpage;
-                _page_limit = parseInt(ItemsPerPage.val());
-                var showCount = 0;
-                if (_on_current_page == 1) {
-                    showCount = 0;
-                    t_this.show_map_count = 0;
-                } else {
-                    showCount = (_on_current_page - 1) * _page_limit;
-                    t_this.show_map_count = showCount;
-                }
-                if(page_type == "show") {
-                    t_this.fetchViewData(t_this._CSV_ID, showCount, _page_limit);
+            if (parseInt(onCurrentPage) != cpage) {
+                onCurrentPage = cpage;
+                console.log(onCurrentPage)
+                if(pageType == "show") {
+                    pageLimit = parseInt(ItemsPerPage.val());
+                    var showCount = 0;
+                    if (onCurrentPage == 1) {
+                        showCount = 0;
+                        j = 1;
+                        tThis.showMapCount = 0;
+                    } else {
+                        showCount = (onCurrentPage - 1) * pageLimit;
+                        tThis.showMapCount = showCount;
+                    }
+                    tThis.fetchViewData(tThis.CSVID, showCount, pageLimit);
                 }
                 else {
-                    t_this.renderViewFromFilter();
+                    tThis.renderViewFromFilter();
 
                 }
             }
+            console.log(onCurrentPage);
         }
     });
 };
@@ -692,26 +751,27 @@ ApproveBulkMapping.prototype.hidePagePan = function() {
 };
 
 ApproveBulkMapping.prototype.showPagePan = function(showFrom, showTo, total) {
-    var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ' + total + ' compliances ';
+    var showText = 'Showing ' + showFrom + ' to ' +
+    showTo + ' of ' + total + ' compliances ';
     $('.compliance_count').text(showText);
     $('.pagination-view').show();
 };
 
 ApproveBulkMapping.prototype.finalSubmit = function(csvid, pwd) {
-    t_this = this;
+    tThis = this;
     displayLoader();
-    c_id = parseInt(country_val.val());
-    d_id = parseInt(domain_val.val());
-    t_this._CSV_ID = csvid;
-    t_this._Country_id = c_id;
-    t_this._domain_id = d_id;
-    bu.submitMappingAction(csvid, c_id, d_id, pwd, function(err, res){
+    tThis.CSVID = csvid;
+    tThis.CountryId = parseInt(countryVal.val());
+    tThis.DomainId = parseInt(domainVal.val());
+    bu.submitMappingAction(
+        csvid, parseInt(countryVal.val()), parseInt(domainVal.val()), pwd,
+        function(err, res){
         if(err == null) {
             if (res.rej_count > 0) {
                 msg = res.rej_count + " compliance declined, Do you want to continue ?";
                 confirm_alert(msg, function(isConfirm) {
                     if (isConfirm) {
-                        t_this.confirmAction();
+                        tThis.confirmAction();
                     }
                 });
             }else {
@@ -722,37 +782,37 @@ ApproveBulkMapping.prototype.finalSubmit = function(csvid, pwd) {
                 searchUploadBy.val('');
                 searchTotRecords.val('');
                 searchUploadOn.val('');
-                t_this.fetchListData()
+                tThis.fetchListData()
             }
 
         }
         else {
-            t_this.possibleFailures(err);
+            tThis.possibleFailures(err);
         }
     });
 
 };
 
 function key_search(mainList) {
-    csv_key = searchFileName.val().toLowerCase();
-    upload_by_key = searchUploadBy.val().toLowerCase();
+    csvKey = searchFileName.val().toLowerCase();
+    uploadByKey = searchUploadBy.val().toLowerCase();
     total = searchTotRecords.val();
-    upload_on_key = searchUploadOn.val().toLowerCase();
-    console.log(upload_on_key)
+    uploadOnKey = searchUploadOn.val().toLowerCase();
+    console.log(uploadOnKey)
 
     var fList = [];
     for (var entity in mainList) {
         csvName = mainList[entity].csv_name;
         uploadby = mainList[entity].uploaded_by;
-        total_records = mainList[entity].no_of_records;
+        totalrecords = mainList[entity].no_of_records;
         uploadon = mainList[entity].uploaded_on;
         console.log(uploadon)
 
         if (
-            (~csvName.toLowerCase().indexOf(csv_key)) &&
-            (~uploadon.toLowerCase().indexOf(upload_on_key)) &&
-            (~uploadby.toLowerCase().indexOf(upload_by_key)) &&
-            (~total_records.toString().indexOf(total))
+            (~csvName.toLowerCase().indexOf(csvKey)) &&
+            (~uploadon.toLowerCase().indexOf(uploadOnKey)) &&
+            (~uploadby.toLowerCase().indexOf(uploadByKey)) &&
+            (~totalrecords.toString().indexOf(total))
         ){
             fList.push(mainList[entity]);
         }
@@ -761,92 +821,94 @@ function key_search(mainList) {
 }
 function key_view_search(mainList) {
     console.log("key view search");
-    key_statutory = searchStatutory.val().toLowerCase();
-    key_organization = searchOrganization.val().toLowerCase();
-    key_nature = searchNature.val().toLowerCase();
-    key_provision = searchProvision.val().toLowerCase();
-    key_c_task = searchCTask.val().toLowerCase();
-    key_c_doc = searchCDoc.val().toLowerCase();
-    key_taskid = searchTaskId.val().toLowerCase();
-    key_c_desc = searchCDesc.val().toLowerCase();
-    key_p_cons = searchPCons.val().toLowerCase();
-    key_tasktype = searchTaskType.val().toLowerCase();
-    key_refer = searchReferLink.val().toLowerCase();
-    key_freq = searchFreq.val().toLowerCase();
-    key_format = searchFormat.val().toLowerCase();
-    key_geo = searchGeography.val().toLowerCase();
+    keyStatutory = $('#search-statutory').val().toLowerCase();
+    keyOrganization = searchOrganization.val().toLowerCase();
+    keyNature = searchNature.val().toLowerCase();
+    keyProvision = searchProvision.val().toLowerCase();
+    keyCTask = searchCTask.val().toLowerCase();
+    keyCDoc = searchCDoc.val().toLowerCase();
+    keyTaskId = searchTaskId.val().toLowerCase();
+    keyCDesc = searchCDesc.val().toLowerCase();
+    keyPCons = searchPCons.val().toLowerCase();
+    keyTaskType = searchTaskType.val().toLowerCase();
+    keyRefer = searchReferLink.val().toLowerCase();
+    keyFreq = searchFreq.val().toLowerCase();
+    keyFormat = searchFormat.val().toLowerCase();
+    keyGeo = searchGeography.val().toLowerCase();
 
     var fList = [];
     for (var entity in mainList) {
         d = mainList[entity];
-
         if (
-            (~d.statutory.toLowerCase().indexOf(key_statutory)) &&
-            (~d.orga_name.toLowerCase().indexOf(key_organization)) &&
-            (~d.s_nature.toLowerCase().indexOf(key_nature)) &&
-            (~d.s_provision.toLowerCase().indexOf(key_provision)) &&
-            (~d.c_task_name.toLowerCase().indexOf(key_c_task)) &&
-            (~d.c_doc.toLowerCase().indexOf(key_c_doc)) &&
-            (~d.task_id.toLowerCase().indexOf(key_taskid)) &&
-            (~d.c_desc.toLowerCase().indexOf(key_c_desc)) &&
-            (~d.p_cons.toLowerCase().indexOf(key_p_cons)) &&
-            (~d.task_type.toLowerCase().indexOf(key_tasktype)) &&
-            (~d.refer.toLowerCase().indexOf(key_refer)) &&
-            (~d.frequency.toLowerCase().indexOf(key_freq)) &&
-            (~d.format_file.toLowerCase().indexOf(key_format)) &&
-            (~d.geo_location.toLowerCase().indexOf(key_geo))
+            (~d.statutory.toLowerCase().indexOf(keyStatutory)) &&
+            (~d.orga_name.toLowerCase().indexOf(keyOrganization)) &&
+            (~d.s_nature.toLowerCase().indexOf(keyNature)) &&
+            (~d.s_provision.toLowerCase().indexOf(keyProvision)) &&
+            (~d.c_task_name.toLowerCase().indexOf(keyCTask)) &&
+            (~d.c_doc.toLowerCase().indexOf(keyCDoc)) &&
+            (~d.task_id.toLowerCase().indexOf(keyTaskId)) &&
+            (~d.c_desc.toLowerCase().indexOf(keyCDesc)) &&
+            (~d.p_cons.toLowerCase().indexOf(keyPCons)) &&
+            (~d.task_type.toLowerCase().indexOf(keyTaskType)) &&
+            (~d.refer.toLowerCase().indexOf(keyRefer)) &&
+            (~d.frequency.toLowerCase().indexOf(keyFreq)) &&
+            (~d.format_file.toLowerCase().indexOf(keyFormat)) &&
+            (~d.geo_location.toLowerCase().indexOf(keyGeo))
 
         ){
             fList.push(d);
         }
     }
+    j = 1;
+    buApprovePage.showMapCount = 0;
     return fList
 }
 
 function PageControls() {
-    country_ac.keyup(function(e){
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
-        var text_val = $(this).val();
+    countryAc.keyup(function(e){
+        var conditionFields = ["is_active"];
+        var conditionValues = [true];
+        var textVal = $(this).val();
         commonAutoComplete(
-            e, AcCountry, country_val, text_val,
-            bu_approve_page._CountryList, "country_name", "country_id", function (val) {
-                onAutoCompleteSuccess(country_ac, country_val, val);
-            }, condition_fields, condition_values
+            e, AcCountry, countryVal, textVal,
+            buApprovePage.CountryList, "country_name", "country_id",
+            function (val) {
+                onAutoCompleteSuccess(countryAc, countryVal, val);
+            }, conditionFields, conditionValues
         );
 
     });
 
-    domain_ac.keyup(function(e){
-        var domainList = bu_approve_page._DomainList;
-        var text_val = $(this).val();
-        var domain_list = [];
-        var c_ids = null;
-        var check_val = false;
-        if(country_val.val() != ''){
-          for(var i=0;i<domainList.length;i++){
-            c_ids = domainList[i].country_ids;
+    domainAc.keyup(function(e){
+        var mainDomainList = buApprovePage.DomainList;
+        var textVal = $(this).val();
+        var domainList = [];
+        var cIds = null;
+        var checkVal = false;
+        if(countryVal.val() != ''){
+          for(var i=0;i<mainDomainList.length;i++){
+            cIds = mainDomainList[i].country_ids;
 
-            for(var j=0;j<c_ids.length;j++){
-              if(c_ids[j] == country_val.val())
+            for(var j=0;j<cIds.length;j++){
+              if(cIds[j] == countryVal.val())
               {
-                check_val = true;
+                checkVal = true;
               }
             }
 
-            if(check_val == true && domainList[i].is_active == true){
-              domain_list.push({
-                "domain_id": domainList[i].domain_id,
-                "domain_name": domainList[i].domain_name
+            if(checkVal == true && mainDomainList[i].is_active == true){
+              domainList.push({
+                "domain_id": mainDomainList[i].domain_id,
+                "domain_name": mainDomainList[i].domain_name
               });
-              check_val = false;
+              checkVal = false;
               //break;
             }
           }
           commonAutoComplete(
-            e, AcDomain, domain_val, text_val,
-            domain_list, "domain_name", "domain_id", function (val) {
-                onAutoCompleteSuccess(domain_ac, domain_val, val);
+            e, AcDomain, domainVal, textVal,
+            domainList, "domain_name", "domain_id", function (val) {
+                onAutoCompleteSuccess(domainAc, domainVal, val);
          });
         }
         else{
@@ -854,49 +916,53 @@ function PageControls() {
         }
     });
 
-    user_ac.keyup(function(e){
-        var userList = bu_approve_page._UserList;
-        var text_val = $(this).val();
-        var user_list = [];
-        if (country_val.val() != '' && domain_val.val() != '') {
-            for (var i=0; i<userList.length; i++) {
+    userAc.keyup(function(e){
+        var mainUserList = buApprovePage.UserList;
+        var textVal = $(this).val();
+        var userList = [];
+        if (countryVal.val() != '' && domainVal.val() != '') {
+            for (var i=0; i<mainUserList.length; i++) {
                 if(
-                    (jQuery.inArray(parseInt(country_val.val()), userList[i].c_ids) !== -1) &&
-                    (jQuery.inArray(parseInt(domain_val.val()), userList[i].d_ids) !== -1)
+                    (jQuery.inArray(
+                        parseInt(countryVal.val()), mainUserList[i].c_ids
+                        ) !== -1) &&
+                    (jQuery.inArray(
+                        parseInt(domainVal.val()), mainUserList[i].d_ids
+                        ) !== -1)
                 ) {
-                    console.log(userList[i])
-                    user_list.push({
-                        "emp_id": userList[i].user_id,
-                        "emp_name": userList[i].emp_code_name
+
+                    userList.push({
+                        "emp_id": mainUserList[i].user_id,
+                        "emp_name": mainUserList[i].emp_code_name
                     });
                 }
 
             }
             commonAutoComplete(
-                e, AcUser, user_val, text_val,
-                user_list, "emp_name", "emp_id", function (val) {
-                    onAutoCompleteSuccess(user_ac, user_val, val);
+                e, AcUser, userVal, textVal,
+                userList, "emp_name", "emp_id", function (val) {
+                    onAutoCompleteSuccess(userAc, userVal, val);
             });
         }
         else {
-            if (country_val.val() == '') {
+            if (countryVal.val() == '') {
                 displayMessage(message.country_required);
             }
-            else if (domain_val.val() == '') {
+            else if (domainVal.val() == '') {
                 displayMessage(message.domain_required);
             }
         }
     });
 
     ShowButton.click(function(){
-        if (country_val.val() == '') {
+        if (countryVal.val() == '') {
             displayMessage(message.country_required);
         }
-        else if (domain_val.val() == '') {
+        else if (domainVal.val() == '') {
             displayMessage(message.domain_required);
         }
-        if (country_val.val() != '' && domain_val.val() != '') {
-            bu_approve_page.fetchListData()
+        if (countryVal.val() != '' && domainVal.val() != '') {
+            buApprovePage.fetchListData()
         }
     });
 
@@ -912,191 +978,192 @@ function PageControls() {
     });
 
     CancelButton.click(function() {
-        bu_approve_page.showList();
+        buApprovePage.showList();
+        buApprovePage.fetchListData();
     });
 
 
     searchFileName.keyup(function() {
-        fList = key_search(bu_approve_page._ApproveDataList);
-        bu_approve_page.renderList(fList);
+        fList = key_search(buApprovePage.ApproveDataList);
+        buApprovePage.renderList(fList);
     });
 
     searchTotRecords.keyup(function() {
-        fList = key_search(bu_approve_page._ApproveDataList);
-        bu_approve_page.renderList(fList);
+        fList = key_search(buApprovePage.ApproveDataList);
+        buApprovePage.renderList(fList);
     });
 
     searchUploadBy.keyup(function() {
-        fList = key_search(bu_approve_page._ApproveDataList);
-        bu_approve_page.renderList(fList);
+        fList = key_search(buApprovePage.ApproveDataList);
+        buApprovePage.renderList(fList);
     });
     searchUploadOn.keyup(function() {
-        fList = key_search(bu_approve_page._ApproveDataList);
-        bu_approve_page.renderList(fList);
+        fList = key_search(buApprovePage.ApproveDataList);
+        buApprovePage.renderList(fList);
     });
 
     searchStatutory.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchOrganization.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchNature.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchProvision.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchCTask.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchCDoc.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchTaskId.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchCDesc.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchPCons.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchTaskType.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchReferLink.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchFreq.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchFormat.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
     searchGeography.keyup(function(){
-        fList = key_view_search(bu_approve_page._ViewDataList);
-        bu_approve_page.renderViewScreen(fList);
+        fList = key_view_search(buApprovePage.ViewDataList);
+        buApprovePage.renderViewScreen(fList);
     });
 
     // filter events
 
     $('.right-bar-toggle').on('click', function(e) {
       $('#wrapper').toggleClass('right-bar-enabled');
-      bu_approve_page.fetchFilterDropDown($('#view-csv-id').val());
+      buApprovePage.fetchFilterDropDown($('#view-csv-id').val());
     });
 
-    ac_orgName.keyup(function(e){
-        var text_val = $(this).val();
+    acOrgName.keyup(function(e){
+        var textVal = $(this).val();
         commonArrayAutoComplete(
-            e, ACOrg, text_val,
-            bu_approve_page._OrgaNames, function (val) {
-                ac_orgName.val(val[0])
+            e, ACOrg, textVal,
+            buApprovePage.OrgaNames, function (val) {
+                acOrgName.val(val[0])
             }
         );
 
     });
 
-    ac_nature.keyup(function(e){
-        var text_val = $(this).val();
+    acNature.keyup(function(e){
+        var textVal = $(this).val();
         commonArrayAutoComplete(
-            e, ACNature, text_val,
-            bu_approve_page._Natures, function (val) {
-                ac_nature.val(val[0])
+            e, ACNature, textVal,
+            buApprovePage.Natures, function (val) {
+                acNature.val(val[0])
             }
         );
 
     });
 
-    ac_statutory.keyup(function(e){
-        var text_val = $(this).val();
+    acStatutory.keyup(function(e){
+        var textVal = $(this).val();
         commonArrayAutoComplete(
-            e, ACStatutory, text_val,
-            bu_approve_page._Statutories, function (val) {
-                ac_statutory.val(val[0])
+            e, ACStatutory, textVal,
+            buApprovePage.Statutories, function (val) {
+                acStatutory.val(val[0])
             }
         );
 
     });
 
-    ac_geoLocation.keyup(function(e){
-        var text_val = $(this).val();
+    acGeoLocation.keyup(function(e){
+        var textVal = $(this).val();
         commonArrayAutoComplete(
-            e, ACGeoLocation, text_val,
-            bu_approve_page._GeoLocation, function (val) {
-                ac_geoLocation.val(val[0])
+            e, acGeoLocation, textVal,
+            buApprovePage.GeoLocation, function (val) {
+                acGeoLocation.val(val[0])
             }
         );
 
     });
 
-    ac_compTask.keyup(function(e){
-        var text_val = $(this).val();
+    acCompTask.keyup(function(e){
+        var textVal = $(this).val();
         commonArrayAutoComplete(
-            e, ACCompTask, text_val,
-            bu_approve_page._CompTasks, function (val) {
-                ac_compTask.val(val[0])
+            e, ACCompTask, textVal,
+            buApprovePage.CompTasks, function (val) {
+                acCompTask.val(val[0])
             }
         );
     });
 
-    ac_taskID.keyup(function(e){
-        var text_val = $(this).val();
+    acTaskId.keyup(function(e){
+        var textVal = $(this).val();
         commonArrayAutoComplete(
-            e, ACTaskId, text_val,
-            bu_approve_page._TaskId, function (val) {
-                ac_taskID.val(val[0])
+            e, ACTaskId, textVal,
+            buApprovePage.TaskId, function (val) {
+                acTaskId.val(val[0])
             }
         );
     });
 
-    ac_compDoc.keyup(function(e){
-        var text_val = $(this).val();
+    acCompDoc.keyup(function(e){
+        var textVal = $(this).val();
         commonArrayAutoComplete(
-            e, ACCompDoc, text_val,
-            bu_approve_page._CompDocs, function (val) {
-                ac_compDoc.val(val[0])
+            e, ACCompDoc, textVal,
+            buApprovePage.CompDocs, function (val) {
+                acCompDoc.val(val[0])
             }
         );
     });
 
-    ac_compDesc.keyup(function(e){
-        var text_val = $(this).val();
+    acCompDesc.keyup(function(e){
+        var textVal = $(this).val();
         commonArrayAutoComplete(
-            e, ACCompDesc, text_val,
-            bu_approve_page._CompDescs, function (val) {
-                ac_compDesc.val(val[0])
+            e, ACCompDesc, textVal,
+            buApprovePage.CompDescs, function (val) {
+                acCompDesc.val(val[0])
             }
         );
     });
 
 
-    ac_taskType.keyup(function(e){
-        var text_val = $(this).val();
+    acTaskType.keyup(function(e){
+        var textVal = $(this).val();
         commonArrayAutoComplete(
-            e, ACTaskType, text_val,
-            bu_approve_page._TaskType, function (val) {
-                ac_taskType.val(val[0])
+            e, ACTaskType, textVal,
+            buApprovePage.TaskType, function (val) {
+                acTaskType.val(val[0])
             }
         );
     });
 
     GoButton.click(function(){
         var filtered = '';
-        append_filter = function(val) {
+        appendFilter = function(val) {
             if (filtered == '') {
                 filtered += val;
             }
@@ -1104,72 +1171,69 @@ function PageControls() {
                 filtered += "|" + val;
             }
         }
-        if(ac_orgName.val() != "") {
-            orgs = "Organization : " + ac_orgName.val();
-            append_filter(orgs);
+        if(acOrgName.val() != "") {
+            orgs = "Organization : " + acOrgName.val();
+            appendFilter(orgs);
         }
-        if(ac_nature.val() != "") {
-            natures = "Statutory Nature : " + ac_nature.val();
-            append_filter(natures);
+        if(acNature.val() != "") {
+            natures = "Statutory Nature : " + acNature.val();
+            appendFilter(natures);
         }
-        if (ac_statutory.val() != "") {
-            statutories = "Statutory : " + ac_statutory.val();
-            append_filter(statutories);
+        if (acStatutory.val() != "") {
+            statutories = "Statutory : " + acStatutory.val();
+            appendFilter(statutories);
         }
-        if(ac_geoLocation.val() != "") {
-            geos = "Geography Location : " + ac_geoLocation.val();
-            append_filter(geos);
+        if(acGeoLocation.val() != "") {
+            geos = "Geography Location : " + acGeoLocation.val();
+            appendFilter(geos);
         }
-        if(ac_compTask.val() != "") {
-            tasks = "Compliance Task : " + ac_compTask.val();
-            append_filter(tasks);
+        if(acCompTask.val() != "") {
+            tasks = "Compliance Task : " + acCompTask.val();
+            appendFilter(tasks);
         }
-        if(ac_taskID.val() != "") {
-            tid = "Task ID : " + ac_taskID.val();
-            append_filter(tid);
+        if(acTaskId.val() != "") {
+            tid = "Task ID : " + acTaskId.val();
+            appendFilter(tid);
         }
-        if(ac_compDoc.val() != "") {
-            doc = "Compliance Document : " + ac_compDoc.val();
-            append_filter(doc);
+        if(acCompDoc.val() != "") {
+            doc = "Compliance Document : " + acCompDoc.val();
+            appendFilter(doc);
         }
-        if(ac_compDesc.val() != "") {
-            desc = "Compliance Description : " + ac_compDesc.val();
-            append_filter(desc);
+        if(acCompDesc.val() != "") {
+            desc = "Compliance Description : " + acCompDesc.val();
+            appendFilter(desc);
         }
-        if(ac_taskType.val() != "") {
-            tt = "Task Type : " + ac_taskType.val();
-            append_filter(tt);
+        if(acTaskType.val() != "") {
+            tt = "Task Type : " + acTaskType.val();
+            appendFilter(tt);
         }
-        f_types = [];
+        fTypes = [];
         $("#frequency option:selected").each(function () {
            var $this = $(this);
            if ($this.length) {
-            f_types.push($this.text());
+            fTypes.push($this.text());
            }
         });
-        if (f_types.length != 0) {
-            tt = "Frequency : " + f_types.join(',');
-            append_filter(tt);
+        if (fTypes.length != 0) {
+            tt = "Frequency : " + fTypes.join(',');
+            appendFilter(tt);
         }
 
         $('.filtered-data').text(filtered);
 
-        bu_approve_page.renderViewFromFilter();
+        buApprovePage.renderViewFromFilter();
 
     });
 
     FinalSubmit.click(function(){
         displayPopUp("submit", parseInt($('#view-csv-id').val()), null);
     });
-
-
-
-
 }
 
-bu_approve_page = new ApproveBulkMapping();
+var buApprovePage = new ApproveBulkMapping();
 
 $(document).ready(function() {
     PageControls();
-    bu_approve_page.showList()
+    // $(".nicescroll").niceScroll();
+    buApprovePage.showList()
 });

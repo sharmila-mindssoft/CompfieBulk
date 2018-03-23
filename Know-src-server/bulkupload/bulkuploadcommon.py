@@ -1,3 +1,4 @@
+import sys
 import os
 import io
 import uuid
@@ -107,6 +108,7 @@ def write_data_to_excel(
     file_src_path, file_name, headers, column_data,
     data_error_dict, header_dict, sheet_name
 ):
+
     file_path = os.path.join(file_src_path, file_name)
     workbook = xlsxwriter.Workbook(file_path)
     worksheet = workbook.add_worksheet(sheet_name)
@@ -133,7 +135,7 @@ def write_data_to_excel(
     col = 0
 
     for idx, dat in enumerate(column_data):
-        print idx, dat
+
         for i, h in enumerate(headers):
             h = h.replace('*', '')
             error_col = header_dict.get(h)
@@ -146,8 +148,16 @@ def write_data_to_excel(
                     e = ""
                 else :
                     e = "|;|".join(error_text)
-                worksheet.write(row, col+i, e)
+                print e
+                # e.encode("utf8")
+                # e.decode('utf8')
+
+                worksheet.write_string(row, col+i, e)
             else :
+                print d
+                # d.decode('utf8')
+                print type(d)
+                d.decode("utf8")
                 if idx in error_col :
                     worksheet.write_string(row, col+i, d, error_format)
                 else :
@@ -171,6 +181,8 @@ def write_data_to_excel(
         summarySheet.write(srow, 0, col)
         summarySheet.write(srow, 1, value)
         srow += 1
+    workbook.close()
+
 
 def rename_file_type(src_file_name, des_file_type):
     src_path = os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx")
@@ -237,7 +249,7 @@ def general_txt_file(src_file, dst_txt_file_name):
 
 
 def write_download_data_to_excel(
-    file_src_path, file_name, headers, headers_column_data, column_data,
+    file_src_path, file_name, headers, column_data,
     data_error_dict, header_dict, sheet_name
 ):
     file_path = os.path.join(file_src_path, file_name)
@@ -248,13 +260,15 @@ def write_download_data_to_excel(
     error_format = workbook.add_format({
         'font_color': 'red'
     })
-    cells = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    cells = [
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+    ]
 
-    for idx, h in enumerate(headers_column_data):
-        if idx < 26:
+    for idx, h in enumerate(headers):
+        if idx < 26 :
             x = idx
-        else:
+        else :
             x = idx - 26
 
         c = "%s%s" % (cells[x], 1)
@@ -268,20 +282,20 @@ def write_download_data_to_excel(
         for i, h in enumerate(headers):
             error_col = header_dict.get(h)
             d = str(dat.get(h))
-            if h == "Error Description":
+            if h == "Error Description" :
                 error_text = data_error_dict.get(idx)
-                if error_text is None:
+                if error_text is None :
                     e = ""
-                else:
+                else :
                     e = "|;|".join(error_text)
                 worksheet.write_string(row, col+i, e)
-            else:
-                if error_col is not None:
-                    if i in error_col:
+            else :
+                if error_col is not None :
+                    if i in error_col :
                         worksheet.write_string(row, col+i, d, error_format)
-                    else:
+                    else :
                         worksheet.write_string(row, col+i, d)
-                else:
+                else :
                         worksheet.write_string(row, col+i, d)
         row += 1
 
@@ -292,10 +306,10 @@ def write_download_data_to_excel(
         summarySheet.write(c, h, bold)
 
     srow = 1
-    for i, col in enumerate(headers_column_data):
+    for i, col in enumerate(headers) :
         value = 0
         error_count = header_dict.get(col)
-        if error_count is not None:
+        if error_count is not None :
             value = len(error_count)
         summarySheet.write_string(srow, 0, col)
         summarySheet.write_string(srow, 1, str(value))

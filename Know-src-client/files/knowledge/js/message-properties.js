@@ -476,6 +476,9 @@ var message = {
   "approve_success": "CSV file approved successfully",
   "reject_success": "CSV file rejected successfully",
   "upload_failed": "CSV file upload failed",
+
+  "confirm_success": "Action taken successfully",
+  "invalid_file": "Invalid file ",
   'client_group_required': 'Client Group Required',
   'client_group_50': 'More than 50 characters are not allowed for Client Group Name',
   'secondary_legislation_required': 'Please select any one of the Secondary Legislation',
@@ -491,6 +494,7 @@ var message = {
   "client_unit_upload_failed": "Errors in uploading Client Units",
   'clientgroup_required': 'Client Group Name Required',
   "no_compliance_assign_statutory": "No Compliance Available for Assign Statutory",
+
 }
 
 function clearMessage() {

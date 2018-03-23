@@ -8,7 +8,23 @@ from ..bucsvvalidation.rejectedstatutorymapping import (
 )
 
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
-from ..budatabase.bustatutorymappingdb import *
+from ..budatabase.bustatutorymappingdb import (
+    get_uploaded_statutory_mapping_csv_list,
+    fetch_statutory_bulk_report,
+    save_mapping_csv, save_mapping_data,
+    get_pending_mapping_list,
+    get_filters_for_approve,
+    get_statutory_mapping_by_filter,
+    update_approve_action_from_list,
+    get_statutory_mapping_by_csv_id,
+    fetch_rejected_statutory_mapping_bulk_report,
+    process_delete_rejected_sm_csv_id,
+    update_download_count_by_csvid,
+    fetch_rejected_sm_download_csv_report,
+    get_sm_csv_file_name_by_id,
+    save_action_from_view,
+    get_pending_action,
+)
 
 from ..bulkuploadcommon import (
     convert_base64_to_file,
@@ -18,7 +34,7 @@ from ..bulkuploadcommon import (
 from ..bulkexport import ConvertJsonToCSV
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
-from server.exceptionmessage import fetch_error, fetch_run_error
+# from server.exceptionmessage import fetch_run_error
 
 from protocol import generalprotocol, technoreports
 
@@ -185,6 +201,9 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         res_data = cObj.perform_validation()
         print res_data
 
+        if res_data is None :
+            raise RuntimeError("Invalid Csv File")
+
         if res_data["return_status"] is True:
             generate_valid_file(csv_name)
             if res_data["doc_count"] == 0:
@@ -208,6 +227,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                         request_frame.d_name, session_user.user_id()
                     )
                     result = bu_sm.UploadStatutoryMappingCSVValidSuccess(
+                        new_csv_id,
                         res_data["total"], res_data["valid"],
                         res_data["invalid"],
                         res_data["doc_count"], res_data["doc_names"]
@@ -227,6 +247,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         return result
     except Exception, e:
         print e
+        print str(traceback.format_exc())
         raise e
 
 ########################################################
@@ -343,7 +364,7 @@ def submit_statutory_mapping(db, request_frame, session_user):
         # csv data validation
         if get_pending_action(db, csv_id):
             raise RuntimeError(
-                "Some records action still pending, Complete action before submmit"
+                "All compliance should be selected before submit"
             )
 
         cObj = ValidateStatutoryMappingForApprove(
