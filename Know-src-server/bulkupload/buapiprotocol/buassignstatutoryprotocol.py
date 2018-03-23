@@ -6,6 +6,8 @@ from protocol.jsonvalidators import (
 #
 # Request
 #
+
+
 class Request(object):
     def to_structure(self):
         name = type(self).__name__
@@ -44,9 +46,13 @@ class GetClientInfo(Request):
         return {
         }
 
+
 class DownloadAssignStatutory(Request):
-    def __init__( self, cl_id, le_id, d_ids, u_ids, cl_name, le_name,
-        d_names, u_names):
+    def __init__(
+            self, cl_id, le_id, d_ids, u_ids,
+            cl_name, le_name, d_names, u_names
+            ):
+
         self.cl_id = cl_id
         self.le_id = le_id
         self.d_ids = d_ids
@@ -58,8 +64,11 @@ class DownloadAssignStatutory(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["cl_id", "le_id", "d_ids", "u_ids",
-            "cl_name", "le_name", "d_names", "u_names"])
+        data = parse_dictionary(data, [
+            "cl_id", "le_id", "d_ids", "u_ids",
+            "cl_name", "le_name", "d_names", "u_names"
+            ])
+
         return DownloadAssignStatutory(
             data.get("cl_id"), data.get("le_id"), data.get("d_ids"),
             data.get("u_ids"), data.get("cl_name"), data.get("le_name"),
@@ -78,39 +87,31 @@ class DownloadAssignStatutory(Request):
             "u_names": self.u_names,
         }
 
+
 class UploadAssignStatutoryCSV(Request):
-    def __init__(self, csv_name, csv_data, csv_size, cl_id, le_id, d_ids,
-        le_name, d_names):
+    def __init__(
+        self, csv_name, csv_data, csv_size
+    ):
         self.csv_name = csv_name
         self.csv_data = csv_data
         self.csv_size = csv_size
-        self.cl_id = cl_id
-        self.le_id = le_id
-        self.d_ids = d_ids
-        self.le_name = le_name
-        self.d_names = d_names
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["csv_name", "csv_data", "csv_size",
-            "cl_id", "le_id", "d_ids", "le_name", "d_names"])
+        data = parse_dictionary(data, [
+            "csv_name", "csv_data", "csv_size"
+        ])
         return UploadAssignStatutoryCSV(
-            data.get("csv_name"), data.get("csv_data"), data.get("csv_size"),
-            data.get("cl_id"), data.get("le_id"), data.get("d_ids"),
-            data.get("le_name"), data.get("d_names")
+            data.get("csv_name"), data.get("csv_data"), data.get("csv_size")
         )
 
     def to_inner_structure(self):
         return {
             "csv_name": self.csv_name,
             "csv_data": self.csv_data,
-            "csv_size": self.csv_size,
-            "cl_id": self.cl_id,
-            "le_id": self.le_id,
-            "d_ids": self.d_ids,
-            "le_name": self.le_name,
-            "d_names": self.d_names
+            "csv_size": self.csv_size
         }
+
 
 class GetAssignStatutoryForApprove(Request):
     def __init__(self, cl_id, le_id):
@@ -130,6 +131,7 @@ class GetAssignStatutoryForApprove(Request):
             "le_id": self.le_id
         }
 
+
 class GetRejectedAssignSMData(Request):
     def __init__(self, client_id, le_id, domain_ids, asm_unit_code):
         self.client_id = client_id
@@ -139,14 +141,16 @@ class GetRejectedAssignSMData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["client_id", "le_id", "domain_ids",
-            "asm_unit_code"])
+        data = parse_dictionary(data, [
+            "client_id", "le_id", "domain_ids", "asm_unit_code"
+            ])
         return GetRejectedAssignSMData(
             data.get("client_id"),
             data.get("le_id"),
             data.get("domain_ids"),
             data.get("asm_unit_code")
         )
+
     def to_inner_structure(self):
         return {
             "client_id": self.c_id,
@@ -154,6 +158,8 @@ class GetRejectedAssignSMData(Request):
             "domain_ids": self.domain_ids,
             "asm_unit_code": self.asm_unit_code
         }
+
+
 class UpdateASMClickCount(Request):
     def __init__(self, csv_id):
         self.csv_id = csv_id
@@ -169,6 +175,7 @@ class UpdateASMClickCount(Request):
         return {
             "csv_id": self.csv_id
         }
+
 
 class DeleteRejectedASMByCsvID(Request):
     def __init__(self, client_id, le_id, domain_ids, asm_unit_code, csv_id):
@@ -352,6 +359,7 @@ class GetAssignStatutoryFilters(Request):
             "csv_id": self.csv_id
         }
 
+
 class ViewAssignStatutoryData(Request):
     def __init__(self, csv_id, f_count, r_range):
         self.csv_id = csv_id
@@ -367,15 +375,18 @@ class ViewAssignStatutoryData(Request):
 
     def to_inner_structure(self):
         return {
-            "csv_id" : self.csv_id,
-            "f_count" : self.f_count,
-            "r_range" : self.r_range,
+            "csv_id": self.csv_id,
+            "f_count": self.f_count,
+            "r_range": self.r_range,
         }
 
+
 class ViewAssignStatutoryDataFromFilter(Request):
-    def __init__(self, csv_id, f_count, r_range, filter_d_name, filter_u_name,
-        filter_p_leg, s_leg, s_prov, c_task, c_desc, filter_view_data, s_status,
-        c_status):
+    def __init__(
+        self, csv_id, f_count, r_range, filter_d_name, filter_u_name,
+        filter_p_leg, s_leg, s_prov, c_task, c_desc, filter_view_data,
+        s_status, c_status
+    ):
         self.csv_id = csv_id
         self.f_count = f_count
         self.r_range = r_range
@@ -390,12 +401,16 @@ class ViewAssignStatutoryDataFromFilter(Request):
         self.s_status = s_status
         self.c_status = c_status
 
-
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["csv_id", "f_count", "r_range",
-        "filter_d_name", "filter_u_name", "filter_p_leg", "s_leg", "s_prov",
-        "c_task", "c_desc", "filter_view_data", "s_status", "c_status"])
+        data = parse_dictionary(
+            data,
+            [
+                "csv_id", "f_count", "r_range", "filter_d_name",
+                "filter_u_name", "filter_p_leg", "s_leg", "s_prov", "c_task",
+                "c_desc", "filter_view_data", "s_status", "c_status"
+            ]
+        )
         return ViewAssignStatutoryDataFromFilter(
             data.get("csv_id"),
             data.get("f_count"),
@@ -416,21 +431,22 @@ class ViewAssignStatutoryDataFromFilter(Request):
 
     def to_inner_structure(self):
         return {
-            "csv_id" : self.csv_id,
-            "f_count" : self.f_count,
-            "r_range" : self.r_range,
-            "filter_d_name" : self.filter_d_name,
-            "filter_u_name" : self.filter_u_name,
-            "filter_p_leg" : self.filter_p_leg,
-            "s_leg" : self.s_leg,
-            "s_prov" : self.s_prov,
-            "c_task" : self.c_task,
-            "c_desc" : self.c_desc,
-            "filter_view_data" : self.filter_view_data,
-            "s_status" : self.s_status,
-            "c_status" : self.c_status,
+            "csv_id": self.csv_id,
+            "f_count": self.f_count,
+            "r_range": self.r_range,
+            "filter_d_name": self.filter_d_name,
+            "filter_u_name": self.filter_u_name,
+            "filter_p_leg": self.filter_p_leg,
+            "s_leg": self.s_leg,
+            "s_prov": self.s_prov,
+            "c_task": self.c_task,
+            "c_desc": self.c_desc,
+            "filter_view_data": self.filter_view_data,
+            "s_status": self.s_status,
+            "c_status": self.c_status,
 
         }
+
 
 class AssignStatutoryApproveActionInList(Request):
     def __init__(self, cl_id, le_id, csv_id, bu_action, remarks, password):
@@ -463,6 +479,7 @@ class AssignStatutoryApproveActionInList(Request):
             "password": self.password
         }
 
+
 class SaveAction(Request):
     def __init__(self, as_id, csv_id, bu_action, remarks):
         self.as_id = as_id
@@ -488,6 +505,7 @@ class SaveAction(Request):
             "remarks": self.remarks
         }
 
+
 class ConfirmAssignStatutorySubmit(Request):
     def __init__(self, csv_id, cl_id, le_id):
         self.csv_id = csv_id
@@ -508,6 +526,7 @@ class ConfirmAssignStatutorySubmit(Request):
             "le_id": self.le_id,
         }
 
+
 class AssignStatutoryValidate(Request):
     def __init__(self, csv_id):
         self.csv_id = csv_id
@@ -523,6 +542,7 @@ class AssignStatutoryValidate(Request):
         return {
             "csv_id": self.csv_id
         }
+
 
 class SubmitAssignStatutory(Request):
     def __init__(self, csv_id, cl_id, le_id, password):
@@ -570,8 +590,6 @@ def _init_Request_class_map():
 _Request_class_map = _init_Request_class_map()
 
 
-
-
 class Clients(object):
     def __init__(
         self, cl_id, cl_name
@@ -593,6 +611,7 @@ class Clients(object):
             "cl_id": self.cl_id,
             "cl_name": self.cl_name
         }
+
 
 class LegalEntites(object):
     def __init__(
@@ -620,6 +639,7 @@ class LegalEntites(object):
             "le_name": self.le_name,
             "bu_domains": self.bu_domains
         }
+
 
 class Units(object):
     def __init__(
@@ -649,6 +669,7 @@ class Units(object):
             "u_name": self.u_name,
             "d_ids": self.d_ids
         }
+
 
 class Domains(object):
     def __init__(
@@ -712,6 +733,7 @@ class PendingCsvListAssignStatutory(object):
             "rej_count": self.rej_count,
             "download_file": self.download_file
         }
+
 
 class AssignStatutoryData(object):
     def __init__(
@@ -850,6 +872,7 @@ class GetClientInfoSuccess(Response):
 
         }
 
+
 class DownloadAssignStatutorySuccess(Response):
     def __init__(self, link):
         self.link = link
@@ -927,7 +950,7 @@ class UploadAssignStatutoryCSVFailed(Response):
 
     def to_inner_structure(self):
         return {
-            "invalid_file" : self.invalid_file,
+            "invalid_file": self.invalid_file,
             "mandatory_error": self.mandatory_error,
             "max_length_error": self.max_length_error,
             "duplicate_error": self.duplicate_error,
@@ -937,6 +960,7 @@ class UploadAssignStatutoryCSVFailed(Response):
             "total": self.total,
             "invalid": self.invalid
         }
+
 
 class GetAssignStatutoryForApproveSuccess(Response):
     def __init__(self, pending_csv_list_as):
@@ -953,6 +977,7 @@ class GetAssignStatutoryForApproveSuccess(Response):
         return {
             "pending_csv_list_as": self.pending_csv_list_as
         }
+
 
 class GetAssignStatutoryFiltersSuccess(Response):
     def __init__(
@@ -995,9 +1020,12 @@ class GetAssignStatutoryFiltersSuccess(Response):
             "c_descs": self.c_descs,
         }
 
+
 class ViewAssignStatutoryDataSuccess(Response):
-    def __init__(self, csv_id, csv_name, cl_name, le_name, uploaded_by,
-        uploaded_on, assign_statutory_data_list, count):
+    def __init__(
+        self, csv_id, csv_name, cl_name, le_name, uploaded_by,
+        uploaded_on, assign_statutory_data_list, count
+    ):
         self.csv_id = csv_id
         self.csv_name = csv_name
         self.cl_name = cl_name
@@ -1026,16 +1054,17 @@ class ViewAssignStatutoryDataSuccess(Response):
 
     def to_inner_structure(self):
         return {
-            "csv_id" : self.csv_id,
-            "csv_name" : self.csv_name,
-            "cl_name" : self.cl_name,
-            "le_name" : self.le_name,
-            "uploaded_by" : self.uploaded_by,
-            "uploaded_on" : self.uploaded_on,
-            "assign_statutory_data_list" : self.assign_statutory_data_list,
+            "csv_id": self.csv_id,
+            "csv_name": self.csv_name,
+            "cl_name": self.cl_name,
+            "le_name": self.le_name,
+            "uploaded_by": self.uploaded_by,
+            "uploaded_on": self.uploaded_on,
+            "assign_statutory_data_list": self.assign_statutory_data_list,
             "count": self.count
 
         }
+
 
 class AssignStatutoryApproveActionInListSuccess(Response):
     def __init__(self):
@@ -1063,6 +1092,7 @@ class ValidationSuccess(Response):
         return {
             "rej_count": self.rej_count
         }
+
 
 class GetRejectedASMDataSuccess(Response):
     def __init__(self, asm_rejected_data):
@@ -1154,6 +1184,7 @@ class ASMRejectUpdateDownloadCount(object):
             "download_count": self.download_count
             }
 
+
 class SaveActionSuccess(Response):
     def __init__(self):
         pass
@@ -1166,6 +1197,7 @@ class SaveActionSuccess(Response):
     def to_inner_structure(self):
         return {}
 
+
 class SubmitAssignStatutorySuccess(Response):
     def __init__(self):
         pass
@@ -1177,6 +1209,7 @@ class SubmitAssignStatutorySuccess(Response):
 
     def to_inner_structure(self):
         return {}
+
 
 class AssignStatutoryValidateSuccess(Response):
     def __init__(self, rej_count, un_saved_count):
@@ -1195,6 +1228,7 @@ class AssignStatutoryValidateSuccess(Response):
             "rej_count": self.rej_count,
             "un_saved_count": self.un_saved_count
         }
+
 
 def _init_Response_class_map():
     classes = [
@@ -1228,6 +1262,8 @@ _Response_class_map = _init_Response_class_map()
 # RequestFormat
 #
 assign_statutory = "bulkupload.buapiprotocol.buassignstatutoryprotocol"
+
+
 class RequestFormat(object):
     def __init__(self, session_token, request):
         self.session_token = session_token
@@ -1309,21 +1345,21 @@ class AssignStatutoryMappingRejectData(object):
         return {
             "csv_id": self.csv_id,
             "uploaded_by": self.uploaded_by,
-            "uploaded_on" : self.uploaded_on,
-            "csv_name" : self.csv_name,
-            "total_records" : self.total_records,
-            "total_rejected_records" : self.total_rejected_records,
-            "rejected_by" : self.rejected_by,
-            "approved_on" : self.approved_on,
-            "approved_by" : self.approved_by,
-            "rejected_on" : self.rejected_on,
-            "is_fully_rejected" : self.is_fully_rejected,
-            "approve_status"    : self.approve_status,
-            "file_download_count"    : self.file_download_count,
-            "remarks"    : self.remarks,
-            "statutory_action"    : self.statutory_action,
-            "declined_count"    : self.declined_count,
-            "rejected_reason"    : self.rejected_reason
+            "uploaded_on": self.uploaded_on,
+            "csv_name": self.csv_name,
+            "total_records": self.total_records,
+            "total_rejected_records": self.total_rejected_records,
+            "rejected_by": self.rejected_by,
+            "approved_on": self.approved_on,
+            "approved_by": self.approved_by,
+            "rejected_on": self.rejected_on,
+            "is_fully_rejected": self.is_fully_rejected,
+            "approve_status"  : self.approve_status,
+            "file_download_count"  : self.file_download_count,
+            "remarks"  : self.remarks,
+            "statutory_action"  : self.statutory_action,
+            "declined_count"  : self.declined_count,
+            "rejected_reason"  : self.rejected_reason
             }
 
 
@@ -1376,16 +1412,16 @@ class AssignStatutoryReportData(object):
     def to_structure(self):
         return {
             "uploaded_by": self.uploaded_by,
-            "uploaded_on" : self.uploaded_on,
-            "csv_name" : self.csv_name,
-            "total_records" : self.total_records,
-            "total_rejected_records" : self.total_rejected_records,
-            "approved_by" : self.approved_by,
-            "rejected_by" : self.rejected_by,
-            "approved_on" : self.approved_on,
-            "rejected_on" : self.rejected_on,
-            "is_fully_rejected" : self.is_fully_rejected,
-            "total_approve_records"    : self.total_approve_records,
-            "rejected_reason"    : self.rejected_reason,
-            "domain_name"    : self.domain_name
+            "uploaded_on": self.uploaded_on,
+            "csv_name": self.csv_name,
+            "total_records": self.total_records,
+            "total_rejected_records": self.total_rejected_records,
+            "approved_by": self.approved_by,
+            "rejected_by": self.rejected_by,
+            "approved_on": self.approved_on,
+            "rejected_on": self.rejected_on,
+            "is_fully_rejected": self.is_fully_rejected,
+            "total_approve_records"   : self.total_approve_records,
+            "rejected_reason"   : self.rejected_reason,
+            "domain_name"   : self.domain_name
             }

@@ -166,7 +166,7 @@ function pageControls() {
                    var $this = $(this);
                    if ($this.length) {
                     var selText = $this.text().split('-').pop();
-                    UNITNAMES.push(selText);
+                    UNITNAMES.push(selText.trim());
                    }
                 });
                 UNITIDS = MULTISELECTUNIT.val().map(Number);
@@ -252,40 +252,17 @@ function pageControls() {
         legalentityId = LEGALENTITYID.val();
         legalentityName = LEGALENTITYNAME.val();
 
-        if (clientId.trim().length <= 0) {
-            displayMessage(message.client_group_required);
-            return false;
-        } else if (legalentityId.trim().length <= 0) {
-            displayMessage(message.legalentity_required);
-            return false;
-        } else if (MULTISELECTDOMAIN.val() == null) {
-            displayMessage(message.domain_required);
-            return false;
-        } else if (UPLOADFILE.val() == '') {
+        if (UPLOADFILE.val() == '') {
             displayMessage(message.upload_csv);
             return false;
         } else if (CSVINFO == null) {
             displayMessage(message.invalid_file_format);
             return false;
         } else {
-            DOMAINIDS = MULTISELECTDOMAIN.val().map(Number);
-            DOMAINNAMES = [];
-            $("#domains option:selected").each(function () {
-               var $this = $(this);
-               if ($this.length) {
-                DOMAINNAMES.push($this.text());
-               }
-            });
-
             var args = {
                 "csv_name": CSVINFO["file_name"],
                 "csv_data": CSVINFO["file_content"],
-                "csv_size": CSVINFO["file_size"],
-                "cl_id": parseInt(clientId), 
-                "le_id": parseInt(legalentityId), 
-                "d_ids": DOMAINIDS,
-                "le_name": legalentityName, 
-                "d_names": DOMAINNAMES
+                "csv_size": CSVINFO["file_size"]
             };
             
             displayLoader();
