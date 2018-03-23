@@ -73,8 +73,15 @@ def upload():
             if not os.path.exists(load_path):
                 os.makedirs(load_path)
                 os.chmod(load_path, 0777)
+
             actual_file = os.path.join(load_path, f.filename)
-            f.save(actual_file)
+            zip_f_name = actual_file + ".zip"
+            # f.save(actual_file)
+            f.save(zip_f_name)
+            zip_ref = ZipFile(zip_f_name, 'r')
+            zip_ref.extractall(load_path)
+            zip_ref.close()
+            os.remove(zip_f_name)
             # f.save(f_name)
         # document_id = request.args.get('csvid')
         # validate session_id and document_id here
