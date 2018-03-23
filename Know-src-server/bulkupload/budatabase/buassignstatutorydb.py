@@ -649,59 +649,19 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
 
     return reportdatalist, total_record
 
-def fetch_rejected_asm_download_csv_report(db, session_user, user_id,
-    client_id, le_id, domain_ids, asm_unit_code, csv_id):
 
-    rejectdatalist=[]
-    domainIds=''
+def fetch_rejected_asm_download_csv_report(db, session_user, user_id,
+                                           client_id, le_id, domain_ids,
+                                           asm_unit_code, csv_id):
+
+    rejectdatalist = []
+    domainIds = ''
     if(domain_ids is not None):
-        domainIds=convertArrayToString(domain_ids)
+        domainIds = convertArrayToString(domain_ids)
 
     args = [client_id, le_id, domainIds, asm_unit_code, csv_id, user_id]
     data = db.call_proc('sp_rejected_asm_csv_report', args)
-    approved_on='0000-00-00'
-    uploaded_on=''
-    rejected_on=''
-
-    for d in data:
-        if(d["uploaded_on"] is not None):
-            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        if(d["approved_on"] is not None):
-            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-        '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        if(d["rejected_on"] is not None):
-            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-            '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M');
-
-        if (d["rejected_file_download_count"] is None):
-            download_count=0
-        else:
-            download_count=d["rejected_file_download_count"]
-
-        rejectdatalist.append({
-             int(d["csv_assign_statutory_id"]),
-             int(d["uploaded_by"]),
-             str(uploaded_on),
-             str(d["csv_name"]),
-             str(d["total_records"]),
-             str(d["total_rejected_records"]),
-             d["approved_by"],
-             d["rejected_by"],
-             str(approved_on),
-             str(d["rejected_on"]),
-             str(d["is_fully_rejected"]),
-             str(d["approve_status"]),
-             str(download_count),
-             str(d["remarks"]),
-             str(d["action"]),
-             d["rejected_reason"]
-        })
     return data
-
-
 def get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id):
     args = [csv_id]
     data = db.call_proc('sp_get_asm_csv_file_name_by_id', args)

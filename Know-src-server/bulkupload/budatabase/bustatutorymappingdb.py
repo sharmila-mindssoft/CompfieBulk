@@ -590,37 +590,8 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
 
 def fetch_rejected_sm_download_csv_report(db, session_user, user_id,
                                           country_id, domain_id, csv_id):
-    rejectdatalist = []
     args = [country_id, domain_id, user_id, csv_id]
     data = db.call_proc('sp_rejected_sm_csv_report', args)
-    for d in data:
-        rejectdatalist.append({
-             str(d["organization"]),
-             str(d["geography_location"]),
-             str(d["statutory_nature"]),
-             str(d["statutory"]),
-             str(d["statutory_provision"]),
-             str(d["compliance_task"]),
-             str(d["compliance_document"]),
-             str(d["task_id"]),
-             str(d["compliance_description"]),
-             str(d["penal_consequences"]),
-             str(d["task_Type"]),
-             str(d["reference_link"]),
-             str(d["compliance_frequency"]),
-             str(d["statutory_month"]),
-             str(d["statutory_date"]),
-             str(d["trigger_before"]),
-             str(d["repeats_every"]),
-             str(d["repeats_type"]),
-             str(d["repeat_by"]),
-             str(d["duration"]),
-             str(d["duration_type"]),
-             str(d["multiple_input"]),
-             str(d["format_file"]),
-             str(d["rejected_reason"]),
-             str(d["remarks"]),
-        })
     return data
 
 
@@ -632,6 +603,7 @@ def process_delete_rejected_sm_csv_id(db, session_user, user_id, country_id,
     rejectdatalist = fetch_rejected_statutory_mapping_bulk_report(
             db, session_user, user_id, country_id, domain_id)
     return rejectdatalist
+
 
 def update_download_count_by_csvid(db, session_user, csv_id):
     updated_count = []
