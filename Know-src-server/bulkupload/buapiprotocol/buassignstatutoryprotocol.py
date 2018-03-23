@@ -694,6 +694,29 @@ class Domains(object):
         }
 
 
+class AssignedUnits(object):
+    def __init__(
+        self, d_id, u_id
+    ):
+        self.d_id = d_id
+        self.u_id = u_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "d_id", "u_id"
+        ])
+        return AssignedUnits(
+            data.get("d_id"), data.get("u_id")
+        )
+
+    def to_structure(self):
+        return {
+            "d_id": self.d_id,
+            "u_id": self.u_id
+        }
+
+
 class PendingCsvListAssignStatutory(object):
     def __init__(
         self, csv_id, csv_name, uploaded_by,
@@ -848,27 +871,33 @@ class Response(object):
 
 
 class GetClientInfoSuccess(Response):
-    def __init__(self, bu_clients, bu_legalentites, bu_units):
+    def __init__(
+        self, bu_clients, bu_legalentites, bu_units, bu_assigned_units
+    ):
         self.bu_clients = bu_clients
         self.bu_legalentites = bu_legalentites
         self.bu_units = bu_units
+        self.bu_assigned_units = bu_assigned_units
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
-            data, ["bu_clients", "bu_legalentites", "bu_units"])
+            data,
+            ["bu_clients", "bu_legalentites", "bu_units", "bu_assigned_units"])
         bu_clients = data.get("bu_clients")
         bu_legalentites = data.get("bu_legalentites")
         bu_units = data.get("bu_units")
+        bu_assigned_units = data.get("bu_assigned_units")
         return GetClientInfoSuccess(
-            bu_clients, bu_legalentites, bu_units
+            bu_clients, bu_legalentites, bu_units, bu_assigned_units
         )
 
     def to_inner_structure(self):
         return {
             "bu_clients": self.bu_clients,
             "bu_legalentites": self.bu_legalentites,
-            "bu_units": self.bu_units
+            "bu_units": self.bu_units,
+            "bu_assigned_units": self.bu_assigned_units
 
         }
 

@@ -126,9 +126,11 @@ def process_bu_assign_statutory_request(request, db, session_user):
 
 def get_client_info(db, request_frame, session_user):
 
-    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+    clients_data, entitys_data, units_data, a_units_data = get_client_list(
+        db, session_user
+    )
     result = bu_as.GetClientInfoSuccess(
-        clients_data, entitys_data, units_data
+        clients_data, entitys_data, units_data, a_units_data
     )
     return result
 
@@ -228,7 +230,6 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
 
         if res_data["return_status"] is True:
             generate_valid_file(csv_name)
-            print 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG>>>', cObj._domain_ids
             d_ids = ",".join(map(str, cObj._domain_ids))
             d_names = ",".join(cObj._domain_names)
             csv_args = [

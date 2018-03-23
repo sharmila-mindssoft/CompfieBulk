@@ -376,6 +376,10 @@ BEGIN
     where t03.user_id = uid and t01.is_closed = 0
     group by t01.unit_id,t02.unit_id;
 
+    -- check assigned units
+    SELECT distinct domain_id, unit_id FROM tbl_client_compliances
+    WHERE is_approved < 5;
+
 END //
 
 DELIMITER ;
