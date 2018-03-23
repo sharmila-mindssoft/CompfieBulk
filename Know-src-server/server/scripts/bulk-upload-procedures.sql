@@ -374,7 +374,12 @@ BEGIN
     else
         UPDATE tbl_bulk_statutory_mapping_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
-        approved_by = userid, is_fully_rejected = 0
+        approved_by = userid, is_fully_rejected = 0,
+        total_rejected_records = (select count(0)
+          from tbl_bulk_statutory_mapping as t
+          where ifnull(action, 0) = 2 and
+          t.csv_id = csvid
+        )
         WHERE csv_id = csvid;
     end if;
 
