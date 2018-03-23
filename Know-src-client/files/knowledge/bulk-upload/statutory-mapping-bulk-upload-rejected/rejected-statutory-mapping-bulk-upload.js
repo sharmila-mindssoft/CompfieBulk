@@ -257,7 +257,7 @@ function loadCountwiseResult(data) {
                 onclick: "downloadClick(" + csvId + ",this)"
             });
         }
-        else if (parseInt(fileDownloadCount) < 1 && parseInt(fileDownloadCount)){
+        else if (parseInt(fileDownloadCount) < 1 && parseInt(fileDownloadCount) < 2){
             $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
         }
         else{
@@ -486,15 +486,15 @@ function downloadClick(CSV_ID, event) {
         "d_id": parseInt(dId),
         "download_format": downloadFileFormat
     };
-    bu.setDownloadClickCount(filterdata, function(error, response) {
+    /*bu.setDownloadClickCount(filterdata, function(error, response) {
         if (error == null) {
-            onSuccess(response);
+            onSuccess(response);*/
             requestDownload(requestDownloadData, downloadFileFormat);
             displayLoader();
-        } else {
+        /*} else {
             onFailure(error);
         }
-    });
+    });*/
     hideLoader();
     return false;
 }
