@@ -3,12 +3,11 @@ import traceback
 from server import logger
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 import datetime
+from server.constants import MAX_REJECTED_COUNT
 
 
 __all__ = [
     "get_uploaded_statutory_mapping_csv_list",
-    "save_mapping_csv",
-    "save_mapping_data",
     "fetch_statutory_bulk_report",
     "save_mapping_csv", "save_mapping_data",
     "get_pending_mapping_list",
@@ -41,7 +40,7 @@ __all__ = [
 def get_uploaded_statutory_mapping_csv_list(db, session_user):
     csv_data = []
     data = db.call_proc("sp_statutory_mapping_csv_list", [session_user])
-    if len(data) > 5:
+    if len(data) > MAX_REJECTED_COUNT:
         upload_more = False
     else:
         upload_more = True
