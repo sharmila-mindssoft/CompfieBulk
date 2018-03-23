@@ -268,7 +268,8 @@ function loadCountwiseResult(data) {
                 'data-id': csvId,
                 onClick: "rejectedFiles(this)",
             });
-            $('.tbl_rejected_file .rejected_i_cls', clone1).addClass("default-display-none");
+            $('.tbl_rejected_file .rejected_i_cls', clone1)
+                .addClass("default-display-none");
         }
         $('#datatable-responsive .tbody-compliance').append(clone1);
     }
