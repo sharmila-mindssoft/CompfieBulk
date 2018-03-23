@@ -476,7 +476,7 @@ DROP PROCEDURE IF EXISTS `sp_bu_as_user_legal_entities`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_bu_as_user_legal_entities`(
-    IN client_id INT(11), uid INT(11)
+    IN uid INT(11)
 )
 BEGIN
     -- legal entity details
@@ -528,11 +528,10 @@ DROP PROCEDURE IF EXISTS `sp_bu_unit_code_and_name`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_bu_unit_code_and_name`(
-  IN _client_id INT(11))
+CREATE PROCEDURE `sp_bu_unit_code_and_name`()
 BEGIN
-  SELECT legal_entity_id, unit_code, unit_name, unit_id, is_closed from tbl_units
-  WHERE client_id = _client_id;
+  SELECT legal_entity_id, unit_code, unit_name, unit_id, is_closed from 
+  tbl_units;
 END //
 
 DELIMITER ;

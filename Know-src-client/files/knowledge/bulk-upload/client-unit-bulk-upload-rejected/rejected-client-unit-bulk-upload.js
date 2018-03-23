@@ -229,6 +229,7 @@ function loadCountwiseResult(filterList) {
             $('.tbl_rejected_file .rejected_i_cls', clone1)
             .addClass("default-display-none");
         }
+
         $('#datatable-responsive .tbody-compliance').append(clone1);
     }
     hideLoader();
