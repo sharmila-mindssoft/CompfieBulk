@@ -135,21 +135,41 @@ function displayPopUp(TYPE, csvId, smid){
                 displayLoader();
                 setTimeout(function() {
                     if (TYPE == "approve") {
-                        buApprovePage.actionFromList(csvId, 1, null, CurrentPassword.val());
+                        buApprovePage.actionFromList(
+                            csvId, 1, null, CurrentPassword.val()
+                        );
                     }
                     else if (TYPE == "reject") {
-                        buApprovePage.actionFromList(csvId, 2, $('.reject-reason-txt').val(), CurrentPassword.val());
+                        if ($('.reject-reason-txt').val() == '') {
+                            displayMessage(message.reason_required)
+                        }
+                        else {
+                            buApprovePage.actionFromList(
+                                csvId, 2, $('.reject-reason-txt').val(),
+                                CurrentPassword.val()
+                            );
+                        }
+
                     }
                     else if (TYPE == "submit") {
-                        buApprovePage.finalSubmit(csvId, CurrentPassword.val());
+                        buApprovePage.finalSubmit(
+                            csvId, CurrentPassword.val()
+                        );
                     }
                     else if (TYPE == "view-reject") {
-                        bu.updateActionFromView(csvId, smid, 2, $('.view-reason').val(), function(err, res) {
-                        if (err != null) {
-                            tThis.possibleFailures(err);
+                        if ($('.reject-reason-txt').val() == '') {
+                            displayMessage(message.reason_required)
                         }
-                        hideLoader();
-                    });
+                        else {
+                            bu.updateActionFromView(
+                                csvId, smid, 2, $('.view-reason').val(),
+                                function(err, res) {
+                                    if (err != null) {
+                                        tThis.possibleFailures(err);
+                                    }
+                                    hideLoader();
+                            });
+                        }
                     }
                 }, 500);
             }
@@ -163,7 +183,9 @@ function validateAuthentication() {
         displayMessage(message.password_required);
         CurrentPassword.focus();
         return false;
-    }else if(isLengthMinMax(CurrentPassword, 1, 20, message.password_20_exists) == false){
+    }else if(isLengthMinMax(
+        CurrentPassword, 1, 20, message.password_20_exists) == false
+    ){
         return false;
     } else {
         isAuthenticate = true;
@@ -285,10 +307,18 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             });
             flname = data.csv_name.split('.')
             flname = flname[0]
-            $('.dl-xls-file',cloneRow).attr("href", "/uploaded_file/xlsx/"+flname+'.xlsx');
-            $('.dl-csv-file',cloneRow).attr("href", "/uploaded_file/csv/"+flname+'.csv');
-            $('.dl-ods-file',cloneRow).attr("href", "/uploaded_file/ods/"+flname+ '.ods');
-            $('.dl-txt-file',cloneRow).attr("href", "/uploaded_file/txt/"+flname+'.txt');
+            $('.dl-xls-file',cloneRow).attr(
+                "href", "/uploaded_file/xlsx/"+flname+'.xlsx'
+            );
+            $('.dl-csv-file',cloneRow).attr(
+                "href", "/uploaded_file/csv/"+flname+'.csv'
+            );
+            $('.dl-ods-file',cloneRow).attr(
+                "href", "/uploaded_file/ods/"+flname+ '.ods'
+            );
+            $('.dl-txt-file',cloneRow).attr(
+                "href", "/uploaded_file/txt/"+flname+'.txt'
+            );
             ListContainer.append(cloneRow);
             j += 1;
         });
@@ -324,7 +354,9 @@ ApproveBulkMapping.prototype.confirmAction = function() {
     tThis = this;
     displayLoader();
     console.log("confirm action called")
-    bu.confirmUpdateAction(tThis.CSVID, tThis.CountryId, tThis.DomainId, function(error, response) {
+    bu.confirmUpdateAction(
+        tThis.CSVID, tThis.CountryId, tThis.DomainId,
+        function(error, response) {
         if (error == null) {
             tThis.showList();
             tThis.fetchListData();
@@ -377,7 +409,9 @@ ApproveBulkMapping.prototype.actionFromList = function(
         }
     );
 };
-ApproveBulkMapping.prototype.showViewScreen = function(csvId, fCount, rRange) {
+ApproveBulkMapping.prototype.showViewScreen = function(
+    csvId, fCount, rRange
+) {
     ListScreen.hide();
     ViewScreen.show();
 
@@ -411,16 +445,22 @@ ApproveBulkMapping.prototype.showViewScreen = function(csvId, fCount, rRange) {
 
     if($("body").hasClass("freezer-active-bu")==false) {
         displayLoader();
-        setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js");  hideLoader();}, 3000);
+        setTimeout(function(){  $.getScript(
+            "/knowledge/js/multifreezer.js");  hideLoader();}, 3000
+        );
     }
 
 // $.getScript("/knowledge/js/multifreezer.js");
 };
-ApproveBulkMapping.prototype.fetchViewData = function(csvId, fCount, rRange) {
+ApproveBulkMapping.prototype.fetchViewData = function(
+    csvId, fCount, rRange
+) {
     tThis = this;
 
     displayLoader();
-    bu.getApproveMappingView(csvId, fCount, rRange, function(error, response){
+    bu.getApproveMappingView(csvId, fCount, rRange, function(
+        error, response
+    ){
         if(error == null) {
             tThis.ViewDataList = response.mapping_data;
             if (tThis.ViewDataList.length > 0) {
@@ -525,12 +565,16 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
             $('.view-approve-check', cloneRow).on('change', function(e){
                 if (e.target.checked){
                     csvid = $('#view-csv-id').val();
-                    bu.updateActionFromView(parseInt(csvid), data.sm_id, 1, null, function(err, res) {
+                    bu.updateActionFromView(
+                        parseInt(csvid), data.sm_id, 1, null,
+                        function(err, res) {
                         if (err != null) {
                             tThis.possibleFailures(err);
                         }
                         else {
-                            $('.view-reject-check',cloneRow).attr("checked", true);
+                            $('.view-reject-check',cloneRow).attr(
+                                "checked", true
+                            );
                         }
                     });
                 }
@@ -707,7 +751,8 @@ ApproveBulkMapping.prototype.hidePagePan = function() {
 };
 
 ApproveBulkMapping.prototype.showPagePan = function(showFrom, showTo, total) {
-    var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ' + total + ' compliances ';
+    var showText = 'Showing ' + showFrom + ' to ' +
+    showTo + ' of ' + total + ' compliances ';
     $('.compliance_count').text(showText);
     $('.pagination-view').show();
 };
@@ -826,7 +871,8 @@ function PageControls() {
         var textVal = $(this).val();
         commonAutoComplete(
             e, AcCountry, countryVal, textVal,
-            buApprovePage.CountryList, "country_name", "country_id", function (val) {
+            buApprovePage.CountryList, "country_name", "country_id",
+            function (val) {
                 onAutoCompleteSuccess(countryAc, countryVal, val);
             }, conditionFields, conditionValues
         );
@@ -877,8 +923,12 @@ function PageControls() {
         if (countryVal.val() != '' && domainVal.val() != '') {
             for (var i=0; i<mainUserList.length; i++) {
                 if(
-                    (jQuery.inArray(parseInt(countryVal.val()), mainUserList[i].c_ids) !== -1) &&
-                    (jQuery.inArray(parseInt(domainVal.val()), mainUserList[i].d_ids) !== -1)
+                    (jQuery.inArray(
+                        parseInt(countryVal.val()), mainUserList[i].c_ids
+                        ) !== -1) &&
+                    (jQuery.inArray(
+                        parseInt(domainVal.val()), mainUserList[i].d_ids
+                        ) !== -1)
                 ) {
 
                     userList.push({
