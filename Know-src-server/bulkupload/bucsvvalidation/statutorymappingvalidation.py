@@ -1162,6 +1162,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
     def make_rejection(self, declined_info):
         try :
+            count = len(declined_info)
             q = "update tbl_bulk_statutory_mapping set " + \
                 " action = 3 where bulk_statutory_mapping_id in (%s)" % (
                     ",".join(map(str, declined_info))
@@ -1169,8 +1170,8 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             self._db.execute(q)
 
             q1 = "update tbl_bulk_statutory_mapping_csv set " + \
-                " approve_status = 1 where csv_id = %s"
-            self._db.execute(q1, [self._csv_id])
+                " declined_count = %s where csv_id = %s"
+            self._db.execute(q1, [count, self._csv_id])
 
         except Exception, e :
             print str(traceback.format_exc())
