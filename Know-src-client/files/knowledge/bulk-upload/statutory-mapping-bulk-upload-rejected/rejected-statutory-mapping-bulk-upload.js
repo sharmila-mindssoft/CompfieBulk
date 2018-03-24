@@ -486,15 +486,15 @@ function downloadClick(CSV_ID, event) {
         "d_id": parseInt(dId),
         "download_format": downloadFileFormat
     };
-    /*bu.setDownloadClickCount(filterdata, function(error, response) {
+    bu.setDownloadClickCount(filterdata, function(error, response) {
         if (error == null) {
-            onSuccess(response);*/
+            onSuccess(response);
             requestDownload(requestDownloadData, downloadFileFormat);
             displayLoader();
-        /*} else {
+        } else {
             onFailure(error);
         }
-    });*/
+    });
     hideLoader();
     return false;
 }

@@ -530,20 +530,28 @@ def download_rejected_asm_report(db, request_frame, session_user):
     download_format = request_frame.download_format
     user_id = session_user.user_id()
 
-    download_link = []
-    csv_header=[
-            "csv_name",
-            "uploaded_by",
-            "uploaded_on",
-            "total_records",
-            "total_rejected_records",
-            "approved_by",
-            "rejected_by",
-            "approved_on",
-            "rejected_on",
-            "is_fully_rejected",
-            "approve_status"
-        ]
+    sheet_name = "Rejected Statutory Mapping"
+
+    csv_header_key = ["client_group", "legal_entity", "domain",
+                      "organization", "unit_code", "unit_name",
+                      "unit_location", "perimary_legislation",
+                      "secondary_legislation", "statutory_provision",
+                      "compliance_task_name", "compliance_description",
+                      "statutory_applicable_status", "statytory_remarks",
+                      "compliance_applicable_status", "rejected_reason",
+                      "remarks"
+                      ]
+
+    csv_column_name = ["Client_Group", "Legal_Entity",
+                       "Domain", "Organisation",
+                       "Unit_Code", "Unit_Name",
+                       "Location",
+                       "Primary_Legislation", "Secondary_Legislaion",
+                       "Statutory_Provision", "Compliance_Task_Name",
+                       "Compliance_Description",
+                       "Statutory_Applicable_Status*", "Statutory_remarks",
+                       "Compliance_Applicable_Status*", "Rejected_Reason",
+                       "Error_Description"]
 
     # csv_name = "RejectedData.xlsx"
     csv_name = get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id)
@@ -552,13 +560,17 @@ def download_rejected_asm_report(db, request_frame, session_user):
         db, session_user, user_id, client_id, le_id, domain_ids, asm_unit_code,
         csv_id)
 
+    # cObj = ValidateRejectedDownloadBulkData(
+    #     db, source_data, session_user, download_format, csv_name, csv_header
+    # )
     cObj = ValidateRejectedDownloadBulkData(
-        db, source_data, session_user, download_format, csv_name, csv_header
-    )
+        db, source_data, session_user, download_format, csv_name,
+        csv_header_key, csv_column_name, sheet_name)
+
     result = cObj.perform_validation()
 
     return bu_sm.DownloadActionSuccess(result["xlsx_link"], result["csv_link"],
-        result["ods_link"], result["txt_link"])
+                                       result["ods_link"], result["txt_link"])
 
 
 def save_action(db, request_frame, session_user):
