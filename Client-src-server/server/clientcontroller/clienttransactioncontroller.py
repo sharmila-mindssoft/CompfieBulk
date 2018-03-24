@@ -1,5 +1,6 @@
 import json
 from clientprotocol import (clienttransactions, clientcore)
+from clientprotocol import clientreport
 from server.constants import RECORD_DISPLAY_COUNT
 
 from server.clientdatabase.clienttransaction import *
@@ -22,7 +23,8 @@ from server.clientdatabase.general import (
 from server.common import (
     get_date_time_in_date, datetime_to_string_time, get_current_date, datetime_to_string
 )
-
+# from ..bulkupload.client_bulkexport import ConvertJsonToCSV
+from clientprotocol.pastdatadownloadbulk import PastDataJsonToCSV
 
 __all__ = [
     "process_client_transaction_requests",
@@ -149,9 +151,9 @@ def process_client_transaction_requests(request, db, session_user, session_categ
             db, request, session_user
         )
 
-    elif type(request) is clienttransactions.GetPastRecordsFormData_bulk:
-        result = process_get_past_records_form_data_bulk(
-        db, request, session_user, session_category
+    elif type(request) is clienttransactions.GetDownloadData:
+        result = process_get_bulk_download_data(
+            db, request, session_user
         )
 
     return result
@@ -740,3 +742,23 @@ def process_get_past_records_form_data_bulk(db, request, session_user, session_c
         level_1_statutories=level1_statutories,
         compliance_frequency=compliance_frequency
     )
+
+########################################################
+# To get the compliances under the selected filters
+# Completed Task - Current Year BULK (Past Data)
+########################################################
+
+
+def process_get_bulk_download_data(
+        db, request, session_user
+):
+    print "Process get Bulk download"
+    converter = PastDataJsonToCSV(
+                db, request, session_user, "DownloadPastData"
+            )
+    if converter.FILE_DOWNLOAD_PATH is None:
+            return clientreport.ExportToCSVEmpty()
+    else:
+        result = clienttransactions.DownloadBulkPastDataSuccess(
+                 converter.FILE_DOWNLOAD_PATH)
+    return result
