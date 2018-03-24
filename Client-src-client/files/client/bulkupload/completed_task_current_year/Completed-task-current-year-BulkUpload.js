@@ -136,22 +136,18 @@ function downloadData() {
         displayMessage(message.unit_required);
         txtUnit.focus();
         return false;
+    } else if (txtUnit.val().trim() == "South Unit 15" && txtdomain.val().trim() == "Labour Law") {
+        $('#downloadFormatFile').
+        attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
+        $('#downloadFormatFile').
+        attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
     }
-
-    // else if (txtUnit.val().trim() == "South Unit 15" && txtdomain.val().trim() == "Labour Law") {
-    //     $('#downloadFormatFile').
-    //     attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
-    //     $('#downloadFormatFile').
-    //     attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
-    // }
     // else {
     //     $('#downloadFormatFile').
     //     attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
     //     $('#downloadFormatFile').
     //     attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
     // }
-
-    // $('#fileInput').val()
 }
 
 function validateUpload() {
@@ -161,11 +157,11 @@ function validateUpload() {
         return false;
     } else {
         setTimeout(function() {
-            // $('.invaliddata').show();
-            // $('.view-summary').show();
-            $('#divSuccessFile').show();
-            $('#divSuccessDocument').show();
-            $('#divSuccessbutton').show();
+            $('.invaliddata').show();
+            $('.view-summary').show();
+            // $('#divSuccessFile').show();
+            // $('#divSuccessDocument').show();
+            // $('#divSuccessbutton').show();
         }, 2000);
 
         var args = {
@@ -261,8 +257,6 @@ function pageControls() {
     BTNUPLOAD.click(function() {
         validateUpload();
     });
-
-
 }
 
 BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {

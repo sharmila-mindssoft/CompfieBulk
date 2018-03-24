@@ -33,7 +33,7 @@ class SourceDB(object):
         self._source_db_con = None
         # self.Client_Group = {}
         self.Legal_Entity = {}
-        # self.Domain = {}
+        self.Domain = {}
         # self.Unit_Location = {}
         # self.Unit_Code = {}
         # self.Unit_Name = {}
@@ -64,10 +64,8 @@ class SourceDB(object):
         self.__source_db_con.close()
 
     def init_values(self):
-        # self.get_client_groups(user_id)
         self.get_legal_entities()
-        # self.get_domains(user_id)
-        # self.get_unit_location()
+        self.get_domains()
         # self.get_unit_code(client_id)
         # self.get_unit_name(client_id)
         # self.get_statutories()
@@ -75,29 +73,17 @@ class SourceDB(object):
         # self.get_compliance_task()
         # self.get_compliance_description()
 
-    # def get_client_groups(self, user_id):
-    #     data = self._source_db.call_proc("sp_bu_as_user_groups", [user_id])
-    #     for d in data :
-    #         self.Client_Group[d["group_name"]] = d
-
     def get_legal_entities(self):
-        # data = self._source_db.call_proc("sp_bu_as_user_legal_entities", [client_id, user_id])
         query = "SELECT legal_entity_id, legal_entity_name, is_closed FROM tbl_legal_entities;"
         rows = self._source_db.select_all(query)
-        print "rows>>>", rows
         for d in rows :
             self.Legal_Entity[d["legal_entity_name"]] = d
 
-
-    # def get_domains(self, user_id):
-    #     data = self._source_db.call_proc("sp_bu_as_user_domains", [user_id])
-    #     for d in data :
-    #         self.Domain[d["domain_name"]] = d
-
-    # def get_unit_location(self):
-    #     data = self._source_db.call_proc("sp_bu_client_unit_geographies")
-    #     for d in data :
-    #         self.Unit_Location[d["geography_name"]] = d
+    def get_domains(self):
+        query = "SELECT domain_id, domain_name, is_active  FROM tbl_domains;"
+        rows = self._source_db.select_all(query)
+        for d in rows :
+            self.Domain[d["domain_name"]] = d
 
     # def get_unit_code(self, client_id):
     #     data = self._source_db.call_proc("sp_bu_unit_code_and_name", [client_id])
@@ -130,7 +116,6 @@ class SourceDB(object):
     #         self.Compliance_Description[d["compliance_description"]] = d
 
     def check_base(self, check_status, store, key_name, status_name):
-        print 'DATA>>>',store
         data = store.get(key_name)
         if data is None:
             return "Not found"
@@ -154,8 +139,8 @@ class SourceDB(object):
     def check_legal_entity(self, legal_entity_name):
         return self.check_base(True, self.Legal_Entity, legal_entity_name, None)
 
-    # def check_domain(self, domain_name):
-    #     return self.check_base(True, self.Domain, domain_name, None)
+    def check_domain(self, domain_name):
+        return self.check_base(True, self.Domain, domain_name, None)
 
     # def check_unit_location(self, geography_name):
     #     return self.check_base(True, self.Unit_Location, geography_name, None)
@@ -235,7 +220,7 @@ class SourceDB(object):
     def statusCheckMethods(self):
         self._validation_method_maps = {
             "Legal_Entity": self.check_legal_entity,
-            # "Domain": self.check_domain,
+            "Domain": self.check_domain,
             # "Unit_Location": self.check_unit_location,
             # "Unit_Code": self.check_unit_code,
             # "Unit_Name_": self.check_unit_name,
@@ -283,10 +268,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         }
 
     def compare_csv_columns(self):
-        # print"collections.Counter(self._csv_column_name)>>>", collections.Counter(self._csv_column_name)
-        # print"collections.Counter(self._csv_header)>>>", collections.Counter(self._csv_header)
-        print self._csv_column_name, ' == ', self._csv_header
-
         res = collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
         if res is False :
             raise ValueError("Csv column mismatched")

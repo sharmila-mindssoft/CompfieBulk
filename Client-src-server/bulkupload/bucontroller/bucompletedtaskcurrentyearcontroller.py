@@ -96,11 +96,24 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
 
         # csv data save to temp db
     else:
+        print "res_data[invalid_file]>>", res_data["invalid_file"]
+        print "res_data[mandatory_error]", res_data["mandatory_error"]
+        print "res_data[max_length_error]", res_data["max_length_error"]
+        print "res_data[duplicate_error]", res_data["duplicate_error"]
+        print "res_data[invalid_char_error]", res_data["invalid_char_error"]
+        print "res_data[invalid_data_error]", res_data["invalid_data_error"]
+        print "res_data[inactive_error]", res_data["inactive_error"]
+        # print "res_data[total]", res_data[total]
+        # print"res_data[invalid]", res_data[invalid]
+        #  res_data["total"]
+        # res_data["invalid"]
+
         result = bu_ct.UploadCompletedTaskCurrentYearCSVFailed(
             res_data["invalid_file"], res_data["mandatory_error"],
             res_data["max_length_error"], res_data["duplicate_error"],
             res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"], res_data["total"], res_data["invalid"]
+            res_data["inactive_error"]
         )
+        print "result>>>", result
 
     return result
