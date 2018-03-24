@@ -245,9 +245,6 @@ def write_download_data_to_excel(
     worksheet = workbook.add_worksheet(sheet_name)
     worksheet.set_column('A:A', 30)
     bold = workbook.add_format({'bold': 1})
-    error_format = workbook.add_format({
-        'font_color': 'red'
-    })
     cells = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
              'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
@@ -262,7 +259,6 @@ def write_download_data_to_excel(
 
     row = 1
     col = 0
-
     for idx, dat in enumerate(column_data):
 
         for i, h in enumerate(headers):
@@ -278,11 +274,11 @@ def write_download_data_to_excel(
         summarySheet.write(c, h, bold)
 
     srow = 1
-    remove_error_desc_row = 0
+    remove_error_desc_row = []
     for i, col in enumerate(headers_column_data):
         if col is not None:
-            if (col == "Error_Description"):
-                remove_error_desc_row = srow
+            if (col == "Error_Description" or col == "Rejected_Reason"):
+                remove_error_desc_row.append(srow)
             else:
                 summarySheet.write_string(srow, 0, col)
         srow += 1
@@ -290,6 +286,6 @@ def write_download_data_to_excel(
     srow = 1
     for i, col in enumerate(headers):
         error_count = header_dict.get(col)
-        if (srow != remove_error_desc_row):
+        if (srow not in remove_error_desc_row):
             summarySheet.write_string(srow, 1, str(error_count))
         srow += 1

@@ -24,6 +24,15 @@ var SNO = 0;
 var TOTAL_RECORD;
 var REPORT_VIEW = $('.grid-table-rpt');
 
+/**** User Level Category ***********/
+var KM_USER_CATEGORY = 3;
+var KE_USER_CATEGORY = 4;
+var TM_USER_CATEGORY = 5;
+var TE_USER_CATEGORY = 6;
+var DM_USER_CATEGORY = 7;
+var DE_USER_CATEGORY = 8;
+var SYSTEM_REJECT_BY = "COMPFIE";
+
 // Instance Creation of the page class
 var clientUnitBulkReport = new ClientUnitBulkReport();
 
@@ -434,26 +443,30 @@ function loadCountwiseResult(filterList) {
     var showFrom = SNO + 1;
     var isNull = true;
     var approvedByName, rejectedByName, uploadedByName;
+    var csvName, tblNoOfTasks, uploadedBy, uploadedOn, totalRejectedRecords;
+    var rejectedOn, rejectedBy, approvedBy, approvedOn, reasonForRejection;
+    var rejectedReason, totalApproveRecords;
+
     for (var entity in filterList) {
         isNull = false;
         SNO = parseInt(SNO) + 1;
-        var csvName = filterList[entity].csv_name;
-        var tblNoOfTasks = filterList[entity].total_records;
-        var uploadedBy = filterList[entity].uploaded_by;
-        var uploadedOn = filterList[entity].uploaded_on;
-        var totalRejectedRecords = filterList[entity].total_rejected_records;
-        var rejectedOn = filterList[entity].rejected_on;
-        var rejectedBy = filterList[entity].rejected_by;
-        var approvedBy = filterList[entity].approved_by;
-        var approvedOn = filterList[entity].approved_on;
+        csvName = filterList[entity].csv_name;
+        tblNoOfTasks = filterList[entity].total_records;
+        uploadedBy = filterList[entity].uploaded_by;
+        uploadedOn = filterList[entity].uploaded_on;
+        totalRejectedRecords = filterList[entity].total_rejected_records;
+        rejectedOn = filterList[entity].rejected_on;
+        rejectedBy = filterList[entity].rejected_by;
+        approvedBy = filterList[entity].approved_by;
+        approvedOn = filterList[entity].approved_on;
+        reasonForRejection = filterList[entity].is_fully_rejected;
+        rejectedReason = filterList[entity].rejected_reason;
+        totalApproveRecords = filterList[entity].total_approve_records;
 
-        var reasonForRejection = filterList[entity].is_fully_rejected;
-        var rejectedReason = filterList[entity].rejected_reason;
-        var totalApproveRecords = filterList[entity].total_approve_records;
+        declinedCount = data[entity].declined_count;
         approvedRejectedOn = '';
         approvedRejectedBy = '';
         approvedRejectedTasks = '-';
-
 
         $(ALL_USER_INFO).each(function(key, value) {
             if (parseInt(uploadedBy) == value["user_id"]) {
@@ -503,8 +516,6 @@ function loadCountwiseResult(filterList) {
         $('.tbl_approved_rejected_by', clone1).text(approvedRejectedBy);
         $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
         $('#datatable-responsive .tbody-compliance').append(clone1);
-        // compliance_count = compliance_count + 1;
-        // lastActName = country_name;
     }
     if (isNull == true) {
         hidePagePan();
@@ -570,7 +581,6 @@ ClientUnitBulkReport.prototype.exportData = function() {
 
 // Form Initalize
 $(function() {
-    //resetFields();
     loadItemsPerPage();
     getClientUnits();
     PageControls();

@@ -171,7 +171,7 @@ function deleteRejectedUnitByCsvID(args, callback) {
 // Assigned Statutory Bulk Report
 function getRejectedSMBulkData(args, callback) {
     var request = [
-        'GetRejectedStatutoryMappingBulkUploadData', args
+        'GetRejectedSMBulkUploadData', args
     ];
     apiRequest('bu/statutory_mapping', request, callback);
 }
@@ -212,7 +212,7 @@ function downloadRejectedASMReportData(args, callback) {
   apiRequest("bu/assign_statutory", request, callback);
 }
 
-function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, 
+function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name,
   le_name, d_names, u_names, callback){
   var request = [
     'DownloadAssignStatutory',
@@ -368,7 +368,7 @@ function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
   apiRequest("bu/assign_statutory", request, callback);
 }
 
-function assignStatutoryActionInList(cl_id, le_id, csvid, action, 
+function assignStatutoryActionInList(cl_id, le_id, csvid, action,
   remarks, password,  callback){
   var request = [
     'AssignStatutoryApproveActionInList',
@@ -458,7 +458,7 @@ function getBulkClientUnitApproveRejectList(csv_id, f_count, r_range, callback) 
   apiRequest("bu/client_units", request, callback);
 }
 
-function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks, 
+function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks,
   callback){
   var request = [
     'SaveAction',

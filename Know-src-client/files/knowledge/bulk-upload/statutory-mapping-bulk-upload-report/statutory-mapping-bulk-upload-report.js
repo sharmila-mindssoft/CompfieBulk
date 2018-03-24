@@ -1,5 +1,4 @@
 var STATUTORY_MAPPING_REPORT_DATA;
-// var SYSTEM_REJECTED = "COMPFIE";
 var COUNTRY_LIST = [];
 var DOMAIN_LIST = [];
 
@@ -33,6 +32,7 @@ var TM_USER_CATEGORY = 5;
 var TE_USER_CATEGORY = 6;
 var DM_USER_CATEGORY = 7;
 var DE_USER_CATEGORY = 8;
+var SYSTEM_REJECT_BY = "COMPFIE";
 // Creating StatutoryMappingBulkReport Class
 StatutoryMappingBulkReport = function() {}
 
@@ -112,7 +112,7 @@ function loadCountwiseResult(data) {
     var uploadedOn, totalRejectedRecords, rejectedOn, rejectedBy;
     var approvedOn, approvedBy, isFullyRejected, totalApproveRecords;
     var rejReason, approvedRejectedOn, approvedRejectedBy;
-    var approvedRejectedTasks, reasonForRejection;
+    var approvedRejectedTasks, reasonForRejection, declinedCount;
     var isNull = true;
     var entity;
     var tableRow;
@@ -136,6 +136,8 @@ function loadCountwiseResult(data) {
         isFullyRejected = data[entity].is_fully_rejected;
         totalApproveRecords = data[entity].total_approve_records;
         rejReason = data[entity].rejected_reason;
+        declinedCount = data[entity].declined_count;
+
         approvedRejectedOn = '';
         approvedRejectedBy = '';
         approvedRejectedTasks = '-';
@@ -156,6 +158,7 @@ function loadCountwiseResult(data) {
                 approvedByName = EMP_CODE + " - " + EMP_NAME;
             }
         });
+
         if (parseInt(isFullyRejected) == 1) {
             reasonForRejection = rejReason;
         } else {
@@ -165,11 +168,16 @@ function loadCountwiseResult(data) {
             approvedRejectedTasks += totalRejectedRecords;
         }
 
-        if (rejectedOn != null && rejectedOn != '') {
+        if(declinedCount >= 1)
+        {
+            approvedRejectedBy = SYSTEM_REJECT_BY;
+            approvedRejectedOn = String(rejectedOn);
+        }
+        else if (rejectedOn != null && rejectedOn != '' && declinedCount == 0){
             approvedRejectedOn = String(rejectedOn);
             approvedRejectedBy = rejectedByName;
         }
-        if (approvedOn != null && approvedOn != '') {
+        else if (approvedOn != null && approvedOn != '' && declinedCount == 0){
             approvedRejectedOn = String(approvedOn);
             approvedRejectedBy = approvedByName;
         }

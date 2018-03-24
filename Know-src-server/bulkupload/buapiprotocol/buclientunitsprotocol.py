@@ -76,9 +76,11 @@ class GetClientUnitsUploadedCSVFiles(Request):
             "bu_group_name": self.bu_group_name
         }
 
+
 class GetClientUnitRejectedData(Request):
     def __init__(self, bu_client_id):
         self.bu_client_id = bu_client_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["bu_client_id"])
@@ -89,7 +91,8 @@ class GetClientUnitRejectedData(Request):
     def to_inner_structure(self):
         return {
             "bu_client_id": self.bu_client_id
-            }
+        }
+
 
 class UpdateUnitClickCount(Request):
     def __init__(self, csv_id):
@@ -107,28 +110,30 @@ class UpdateUnitClickCount(Request):
             "csv_id": self.csv_id
         }
 
+
 class DeleteRejectedUnitDataByCsvID(Request):
     def __init__(self, csv_id, bu_client_id):
         self.bu_client_id = bu_client_id
         self.csv_id = csv_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["csv_id", "bu_client_id"])
         return DeleteRejectedUnitDataByCsvID(
             data.get("csv_id"),
             data.get("bu_client_id")
-            )
+        )
 
     def to_inner_structure(self):
         return {
-            "csv_id":self.c_id,
-            "bu_client_id":self.d_id
-            }
+            "csv_id": self.c_id,
+            "bu_client_id": self.d_id
+        }
 
 
 class GetClientUnitBulkReportData(Request):
-    def __init__(self, bu_client_id, from_date, to_date,
-        r_count, p_count, child_ids, user_category_id):
+    def __init__(self, bu_client_id, from_date, to_date, r_count, p_count,
+                 child_ids, user_category_id):
         self.bu_client_id = bu_client_id
         self.from_date = from_date
         self.to_date = to_date
@@ -139,8 +144,9 @@ class GetClientUnitBulkReportData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["bu_client_id", "from_date", "to_date",
-        "r_count", "p_count", "child_ids", "user_category_id"])
+        data = parse_dictionary(data, [
+            "bu_client_id", "from_date", "to_date", "r_count", "p_count",
+            "child_ids", "user_category_id"])
         return GetClientUnitBulkReportData(
             data.get("bu_client_id"),
             data.get("from_date"),
@@ -158,10 +164,11 @@ class GetClientUnitBulkReportData(Request):
             "to_date": self.to_date,
             "r_count": self.r_count,
             "p_count": self.p_count,
-            "child_ids":self.child_ids,
-            "user_category_id":self.user_category_id
+            "child_ids": self.child_ids,
+            "user_category_id": self.user_category_id
         }
 # SM - Statutory Mapping
+
 
 class DownloadRejectedClientUnitReport(Request):
     def __init__(self, csv_id, cg_id, download_format):
@@ -183,6 +190,7 @@ class DownloadRejectedClientUnitReport(Request):
             "cg_id": self.cg_id,
             "download_format": self.download_format
         }
+
 
 class ExportCUBulkReportData(Request):
     def __init__(self, bu_client_id, bu_group_name, from_date, to_date,
@@ -221,6 +229,7 @@ class ExportCUBulkReportData(Request):
             "csv": self.csv
         }
 
+
 class PerformClientUnitApproveReject(Request):
     def __init__(self, csv_id, bu_action, bu_remarks, password, bu_client_id):
         self.csv_id = csv_id
@@ -231,7 +240,8 @@ class PerformClientUnitApproveReject(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["csv_id", "bu_action", "bu_remarks", "password", "bu_client_id"])
+        data = parse_dictionary(data, [
+            "csv_id", "bu_action", "bu_remarks", "password", "bu_client_id"])
         return PerformClientUnitApproveReject(
             data.get("csv_id"), data.get("bu_action"), data.get("bu_remarks"),
             data.get("password"), data.get("bu_client_id")
@@ -245,6 +255,7 @@ class PerformClientUnitApproveReject(Request):
             "password": self.password,
             "bu_client_id": self.bu_client_id
         }
+
 
 class GetBulkClientUnitApproveRejectList(Request):
     def __init__(self, csv_id, f_count, r_range):
@@ -266,6 +277,7 @@ class GetBulkClientUnitApproveRejectList(Request):
             "r_range": self.r_range
         }
 
+
 class ConfirmClientUnitDeclination(Request):
     def __init__(self, csv_id, bu_client_id):
         self.csv_id = csv_id
@@ -283,6 +295,7 @@ class ConfirmClientUnitDeclination(Request):
             "csv_id": self.csv_id,
             "bu_client_id": self.bu_client_id,
         }
+
 
 class SaveBulkClientUnitListFromView(Request):
     def __init__(self, bulk_unit_id, csv_id, bu_action, bu_remarks):
@@ -396,6 +409,7 @@ class GetBulkClientUnitListForFilterView(Request):
             "bu_orgn": self.bu_orgn
         }
 
+
 def _init_Request_class_map():
     classes = [
         UploadClientUnitsBulkCSV,
@@ -418,6 +432,7 @@ def _init_Request_class_map():
     for c in classes:
         class_map[c.__name__] = c
     return class_map
+
 
 _Request_class_map = _init_Request_class_map()
 
@@ -465,7 +480,7 @@ class ClientUnitCSVList(object):
         }
 
 
-class StatutoryReportData(object):
+class ClientReportData(object):
     def __init__(self, uploaded_by,
                  uploaded_on, csv_name, total_records, total_rejected_records,
                  approved_by, rejected_by, approved_on, rejected_on,
@@ -493,7 +508,7 @@ class StatutoryReportData(object):
             "approved_on", "rejected_on", "is_fully_rejected",
             "total_approve_records", "rejected_reason"
         ])
-        return StatutoryReportData(
+        return ClientReportData(
                           data.get("uploaded_by"),
                           data.get("uploaded_on"),
                           data.get("csv_name"), data.get("total_records"),
@@ -519,7 +534,8 @@ class StatutoryReportData(object):
             "is_fully_rejected": self.is_fully_rejected,
             "total_approve_records": self.total_approve_records,
             "rejected_reason": self.rejected_reason
-            }
+        }
+
 
 #
 # Response
@@ -617,9 +633,11 @@ class UploadClientUnitBulkCSVFailed(Response):
             "invalid": self.invalid
         }
 
+
 class GetRejectedClientUnitDataSuccess(Response):
     def __init__(self, rejected_unit_data):
         self.rejected_unit_data = rejected_unit_data
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["rejected_unit_data"])
@@ -632,13 +650,14 @@ class GetRejectedClientUnitDataSuccess(Response):
             "rejected_unit_data": self.rejected_unit_data
         }
 
+
 class ClientUnitRejectData(object):
     def __init__(self, csv_id, uploaded_by,
-        uploaded_on, csv_name, total_records, total_rejected_records,
-        approved_by, rejected_by, approved_on, rejected_on,
-        is_fully_rejected, total_approve_records, file_download_count, remarks,
-        statutory_action, declined_count, rejected_file
-        ):
+                 uploaded_on, csv_name, total_records, total_rejected_records,
+                 approved_by, rejected_by, approved_on, rejected_on,
+                 is_fully_rejected, total_approve_records, file_download_count,
+                 remarks, statutory_action, declined_count, rejected_file
+                 ):
         self.csv_id = csv_id
         self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
@@ -657,14 +676,14 @@ class ClientUnitRejectData(object):
         self.declined_count = declined_count
         self.rejected_file = rejected_file
 
-
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "csv_id","uploaded_by","uploaded_on", "csv_name", "total_records",
-            "total_rejected_records", "approved_by", "rejected_by", "approved_on",
-            "rejected_on", "is_fully_rejected", "total_approve_records", "file_download_count",
-            "remarks", "statutory_action", "declined_count", "rejected_file"
+            "csv_id", "uploaded_by", "uploaded_on", "csv_name",
+            "total_records", "total_rejected_records", "approved_by",
+            "rejected_by", "approved_on", "rejected_on", "is_fully_rejected",
+            "total_approve_records", "file_download_count", "remarks",
+            "statutory_action", "declined_count", "rejected_file"
         ])
         return ClientUnitRejectData(
             data.get("csv_id"),
@@ -690,33 +709,32 @@ class ClientUnitRejectData(object):
         return {
             "csv_id": self.csv_id,
             "uploaded_by": self.uploaded_by,
-            "uploaded_on" : self.uploaded_on,
-            "csv_name" : self.csv_name,
-            "total_records" : self.total_records,
-            "total_rejected_records" : self.total_rejected_records,
-            "rejected_by" : self.rejected_by,
-            "approved_on" : self.approved_on,
-            "approved_by" : self.approved_by,
-            "rejected_on" : self.rejected_on,
-            "is_fully_rejected" : self.is_fully_rejected,
-            "total_approve_records"    : self.total_approve_records,
-            "file_download_count"    : self.file_download_count,
-            "remarks"    : self.remarks,
-            "statutory_action"    : self.statutory_action,
-            "declined_count"    : self.declined_count,
-            "rejected_file"    : self.rejected_file
-            }
+            "uploaded_on": self.uploaded_on,
+            "csv_name": self.csv_name,
+            "total_records": self.total_records,
+            "total_rejected_records": self.total_rejected_records,
+            "rejected_by": self.rejected_by,
+            "approved_on": self.approved_on,
+            "approved_by": self.approved_by,
+            "rejected_on": self.rejected_on,
+            "is_fully_rejected": self.is_fully_rejected,
+            "total_approve_records": self.total_approve_records,
+            "file_download_count": self.file_download_count,
+            "remarks": self.remarks,
+            "statutory_action": self.statutory_action,
+            "declined_count": self.declined_count,
+            "rejected_file": self.rejected_file
+        }
+
 
 class UpdateUnitDownloadCount(object):
-    def __init__(self, csv_id, download_count
-        ):
+    def __init__(self, csv_id, download_count):
         self.csv_id = csv_id
         self.download_count = download_count
+
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, [
-            "csv_id","download_count"
-        ])
+        data = parse_dictionary(data, ["csv_id", "download_count"])
         return UpdateUnitDownloadCount(
             data.get("csv_id"),
             data.get("download_count")
@@ -726,14 +744,17 @@ class UpdateUnitDownloadCount(object):
         return {
             "csv_id": self.csv_id,
             "download_count": self.download_count
-            }
+        }
+
 
 class BulkClientUnitList(object):
     def __init__(
         self, bulk_unit_id, bu_le_name, bu_division_name, bu_category_name,
-        bu_geography_level, bu_unit_location, bu_unit_code, bu_unit_name, bu_address,
-        bu_city, bu_state, bu_postal_code, bu_domain, bu_orgn, bu_action, bu_remarks
+        bu_geography_level, bu_unit_location, bu_unit_code, bu_unit_name,
+        bu_address, bu_city, bu_state, bu_postal_code, bu_domain, bu_orgn,
+        bu_action, bu_remarks
     ):
+
         self.bulk_unit_id = bulk_unit_id
         self.bu_le_name = bu_le_name
         self.bu_division_name = bu_division_name
@@ -754,17 +775,21 @@ class BulkClientUnitList(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "bulk_unit_id", "bu_le_name", "bu_division_name", "bu_category_name",
-            "bu_geography_level", "bu_unit_location", "bu_unit_code", "bu_unit_name",
-            "bu_address", "bu_city", "bu_state", "bu_postal_code", "bu_domain",
-            "bu_orgn", "bu_action", "bu_remarks"
+            "bulk_unit_id", "bu_le_name", "bu_division_name",
+            "bu_category_name", "bu_geography_level", "bu_unit_location",
+            "bu_unit_code", "bu_unit_name", "bu_address", "bu_city",
+            "bu_state", "bu_postal_code", "bu_domain", "bu_orgn", "bu_action",
+            "bu_remarks"
         ])
         return BulkClientUnitList(
-            data.get("bulk_unit_id"), data.get("bu_le_name"), data.get("bu_division_name"),
-            data.get("bu_category_name"), data.get("bu_geography_level"), data.get("bu_unit_location"),
-            data.get("bu_unit_code"), data.get("bu_unit_name"), data.get("bu_address"), data.get("bu_city"),
-            data.get("bu_state"), data.get("bu_postal_code"), data.get("bu_domain"), data.get("bu_orgn"),
-            data.get("bu_action"), data.get("bu_remarks")
+            data.get("bulk_unit_id"), data.get("bu_le_name"),
+            data.get("bu_division_name"),
+            data.get("bu_category_name"), data.get("bu_geography_level"),
+            data.get("bu_unit_location"),
+            data.get("bu_unit_code"), data.get("bu_unit_name"),
+            data.get("bu_address"), data.get("bu_city"), data.get("bu_state"),
+            data.get("bu_postal_code"), data.get("bu_domain"),
+            data.get("bu_orgn"), data.get("bu_action"), data.get("bu_remarks")
         )
 
     def to_structure(self):
@@ -791,21 +816,25 @@ class BulkClientUnitList(object):
 class UpdateUnitDownloadCountSuccess(Response):
     def __init__(self, updated_unit_count):
         self.updated_unit_count = updated_unit_count
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["updated_unit_count"])
         return UpdateUnitDownloadCountSuccess(
             data.get("updated_unit_count")
         )
+
     def to_inner_structure(self):
         return {
             "updated_unit_count": self.updated_unit_count
         }
 
+
 class GetClientUnitReportDataSuccess(Response):
     def __init__(self, clientdata, total):
         self.clientdata = clientdata
         self.total = total
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
@@ -821,6 +850,7 @@ class GetClientUnitReportDataSuccess(Response):
             "clientdata": self.clientdata,
             "total": self.total
         }
+
 
 class ClientUnitsUploadedCSVFilesListSuccess(Response):
     def __init__(self, bu_cu_csvFilesList):
@@ -838,6 +868,7 @@ class ClientUnitsUploadedCSVFilesListSuccess(Response):
             "bu_cu_csvFilesList": self.bu_cu_csvFilesList,
         }
 
+
 class ReturnDeclinedCount(Response):
     def __init__(self, rej_count):
         self.rej_count = rej_count
@@ -851,6 +882,7 @@ class ReturnDeclinedCount(Response):
         return {
             "rej_count": self.rej_count
         }
+
 
 class UpdateApproveRejectActionFromListSuccess(Response):
     def __init__(self, declined_count):
@@ -866,6 +898,7 @@ class UpdateApproveRejectActionFromListSuccess(Response):
             "declined_count": self.declined_count
         }
 
+
 class SubmitClientUnitDeclinationSuccess(Response):
     def __init__(self):
         pass
@@ -877,6 +910,7 @@ class SubmitClientUnitDeclinationSuccess(Response):
 
     def to_inner_structure(self):
         return {}
+
 
 class GetBulkClientUnitViewAndFilterDataSuccess(Response):
     def __init__(
@@ -1013,6 +1047,7 @@ class EmptyCSVUploaded(Response):
     def to_inner_structure(self):
         return {}
 
+
 def _init_Response_class_map():
     classes = [
         UploadClientUnitBulkCSVSuccess,
@@ -1035,6 +1070,7 @@ def _init_Response_class_map():
         class_map[c.__name__] = c
     return class_map
 
+
 _Response_class_map = _init_Response_class_map()
 
 
@@ -1043,6 +1079,7 @@ _Response_class_map = _init_Response_class_map()
 #
 
 client_units = "bulkupload.buapiprotocol.buclientunitsprotocol"
+
 
 class RequestFormat(object):
     def __init__(self, session_token, request):
