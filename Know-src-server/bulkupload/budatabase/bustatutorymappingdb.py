@@ -590,53 +590,8 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
 
 def fetch_rejected_sm_download_csv_report(db, session_user, user_id,
                                           country_id, domain_id, csv_id):
-
-    rejectdatalist = []
     args = [country_id, domain_id, user_id, csv_id]
     data = db.call_proc('sp_rejected_sm_csv_report', args)
-
-    uploaded_on = ''
-    approved_on = ''
-    rejected_on = ''
-    for d in data:
-
-        if(d["uploaded_on"] is not None):
-            uploaded_on = datetime.datetime.strptime(str(d["uploaded_on"]),
-                                                     '%Y-%m-%d %H:%M:%S'
-                                                     ).strftime(
-                                                     '%d-%b-%Y %H:%M')
-        if(d["approved_on"] is not None):
-            approved_on = datetime.datetime.strptime(str(d["approved_on"]),
-                                                     '%Y-%m-%d %H:%M:%S'
-                                                     ).strftime(
-                                                     '%d-%b-%Y %H:%M')
-        if(d["rejected_on"] is not None):
-            rejected_on = datetime.datetime.strptime(str(d["rejected_on"]),
-                                                     '%Y-%m-%d %H:%M:%S'
-                                                     ).strftime(
-                                                     '%d-%b-%Y %H:%M')
-        if (d["rejected_file_download_count"] is None):
-            download_count = 0
-        else:
-            download_count = d["rejected_file_download_count"]
-        rejectdatalist.append({
-             str(d["csv_id"]),
-             str(d["uploaded_by"]),
-             str(uploaded_on),
-             str(d["csv_name"]),
-             str(d["total_records"]),
-             str(d["total_rejected_records"]),
-             str(d["approved_by"]),
-             str(d["rejected_by"]),
-             str(approved_on),
-             str(rejected_on),
-             str(d["is_fully_rejected"]),
-             str(d["approve_status"]),
-             str(download_count),
-             str(d["remarks"]),
-             str(d["action"]),
-             str(d["rejected_reason"])
-        })
     return data
 
 
@@ -648,6 +603,7 @@ def process_delete_rejected_sm_csv_id(db, session_user, user_id, country_id,
     rejectdatalist = fetch_rejected_statutory_mapping_bulk_report(
             db, session_user, user_id, country_id, domain_id)
     return rejectdatalist
+
 
 def update_download_count_by_csvid(db, session_user, csv_id):
     updated_count = []

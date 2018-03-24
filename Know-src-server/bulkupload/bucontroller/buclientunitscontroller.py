@@ -3,7 +3,7 @@ from ..bucsvvalidation.clientunitsvalidation import (
     ValidateClientUnitsBulkDataForApprove
 )
 
-from ..bucsvvalidation.rejectedstatutorymapping import ValidateRejectedSMBulkCsvData
+from ..bucsvvalidation.rejectedstatutorymapping import ValidateRejectedDownloadBulkData
 
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
@@ -396,7 +396,7 @@ def download_rejected_cu_report(db, request_frame, session_user):
         db, session_user, user_id,
         cg_id, csv_id)
 
-    cObj = ValidateRejectedSMBulkCsvData(
+    cObj = ValidateRejectedDownloadBulkData(
         db, source_data, session_user, download_format, csv_name, csv_header
     )
     result = cObj.perform_validation()

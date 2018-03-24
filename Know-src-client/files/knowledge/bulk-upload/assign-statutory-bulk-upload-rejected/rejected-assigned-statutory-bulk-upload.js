@@ -771,28 +771,21 @@ function downloadclick(csv_id, event)
            "download_format" :download_file_format
     };
 
-  bu.updateASMDownloadClickCount(filterdata, function(error, response) {
+  /*bu.updateASMDownloadClickCount(filterdata, function(error, response) {
       if (error == null) {
-          onSuccess(response)
+          onSuccess(response)*/
 
           requestDownload(requestDownloadData, download_file_format);
 
-      } else {
+/*      } else {
 
           onFailure(error);
       }
-  });
+  });*/
 
 //  hideLoader();
   return false;
 }
-
-/*function downloadFile(filePath){
-  var link = document.createElement('a');
-  link.href = filePath;
-  link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-  link.click();
-}*/
 
 function requestDownload(requestDownloadData, download_file_format)
 {
