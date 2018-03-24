@@ -69,23 +69,17 @@ var FILTER_COMPLIANCE_DESCRIPTION = $("#filter_compliance_description");
 var ACTION_PASSWORD_SUBMIT = $("#action_password_submit");
 var SUBMIT_PASSWORD = $("#submit_password");
 
-// ********************************
 // Display spinner icon in page
-// ********************************
 displayLoader = function() {
   $('.loading-indicator-spin').show();
 }
 
-// ********************************
 // Hiding spinner icon in page
-// ********************************
 hideLoader = function() {
   $('.loading-indicator-spin').hide();
 }
 
-// ********************************
-// Class variable 
-// ********************************
+// Created Class variables
 ApproveAssignStatutoryBU = function() {
   this.clientGroup = [];
   this.legalEntities = [];
@@ -103,6 +97,7 @@ ApproveAssignStatutoryBU = function() {
   this.filterComplianceDescription = [];
 }
 
+// Page loading clear the element default value
 ApproveAssignStatutoryBU.prototype.pageLoad = function() {
   statute = this;
   LIST_PAGE.show();
@@ -119,6 +114,7 @@ ApproveAssignStatutoryBU.prototype.pageLoad = function() {
   statute.initialize();
 };
 
+// Initial function to fetch client and legal entity data to server
 ApproveAssignStatutoryBU.prototype.initialize = function() {
   statute = this;
   displayLoader();
@@ -134,6 +130,7 @@ ApproveAssignStatutoryBU.prototype.initialize = function() {
   });
 }
 
+// To display any failure message to display
 ApproveAssignStatutoryBU.prototype.failuresMessage = function(error) {
   if (error == 'InvalidPassword') {
     displayMessage(message.invalid_password);
@@ -142,9 +139,7 @@ ApproveAssignStatutoryBU.prototype.failuresMessage = function(error) {
   }
 };
 
-// ********************************
-// HTML page event control function
-// ********************************
+// HTML page element event control function
 PageControls = function() {
   CLIENT_GROUP.keyup(function(e) {
     var textVal = CLIENT_GROUP.val().trim();
@@ -387,6 +382,7 @@ PageControls = function() {
   });
 }
 
+// Search key from array list. to display list tag
 arrayListSearch = function(e, textval, listval, acDiv, callback) {
   var checkKey = [16, 17, 18, 19, 20, 27, 33, 34, 42, 91, 92, 112, 113,
     114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 144, 145
@@ -414,6 +410,7 @@ arrayListSearch = function(e, textval, listval, acDiv, callback) {
   onArrowKey(e, acDiv, callback);
 }
 
+// Clear element default value to pass value array list
 clearElement = function(arr) {
   if (arr.length > 0) {
     $.each(arr, function(i, element) {
@@ -422,6 +419,7 @@ clearElement = function(arr) {
   }
 }
 
+// After Selected Client Group set values
 onClientGroupAutoCompleteSuccess = function(STATUTE, val) {
   CLIENT_GROUP.val(val[1]);
   CLIENT_GROUP_ID.val(val[0]);
@@ -429,12 +427,14 @@ onClientGroupAutoCompleteSuccess = function(STATUTE, val) {
   clearElement([LEGAL_ENTITY, LEGAL_ENTITY_ID]);
 }
 
+// After Selected Legal Entity set values
 onLegalEntityAutoCompleteSuccess = function(STATUTE, val) {
   LEGAL_ENTITY.val(val[1]);
   LEGAL_ENTITY_ID.val(val[0]);
   LEGAL_ENTITY.focus();
 }
 
+// Show click after to validate filter value
 validate = function() {
   is_valid = true;
   if (CLIENT_GROUP.val().trim().length == 0) {
@@ -453,6 +453,7 @@ validate = function() {
   return is_valid;
 };
 
+// Grid view filter search to pass array list value
 keySearchList = function(d) {
   keyOne = FILTER_UPLOADED_FILE_NAME.val().toLowerCase();
   keyTwo = FILTER_UPLOADED_ON.val().toLowerCase();
@@ -472,6 +473,7 @@ keySearchList = function(d) {
   return fList
 }
 
+// Grid detailed view filter search value to pass array list value
 keySearchDetailsList = function(d) {
   key_one = FILTER_DOMAIN.val().toLowerCase();
   keyTwo = FILTER_UNIT.val().toLowerCase();
@@ -499,6 +501,7 @@ keySearchDetailsList = function(d) {
   return fList
 }
 
+// download click show hide download list 
 download = function(element) {
   if ($("." + element).is(':visible') == false) {
     $(".dropdown-content").hide();
@@ -512,6 +515,7 @@ viewListPage = function() {
   STATUTE.pageLoad();
 }
 
+// To get value Grid view data to search values
 ApproveAssignStatutoryBU.prototype.fetchValues = function() {
   statute = this;
   var clId = CLIENT_GROUP_ID.val();
@@ -548,6 +552,7 @@ ApproveAssignStatutoryBU.prototype.fetchValues = function() {
     });
 };
 
+// To display value in grid view html element.
 ApproveAssignStatutoryBU.prototype.displayListPage = function(data) {
   statute = this;
   DATA_TABLE_TBODY.empty();
@@ -600,6 +605,7 @@ ApproveAssignStatutoryBU.prototype.displayListPage = function(data) {
   }
 };
 
+// Approve & Reject confirmation to display pop-up 
 confirmationAction = function(id, action) {
   APPROVE_ID.val(id);
   REJECT_ID.val(id);
@@ -616,6 +622,7 @@ confirmationAction = function(id, action) {
   });
 }
 
+// Event click close pop-up
 closeCustombox = function() {
   CHECK_ALL_REJECT.removeAttr("checked");
   Custombox.close();
@@ -623,6 +630,7 @@ closeCustombox = function() {
     $("#reject" + SINGLE_REJECT_ID.val()).removeAttr("checked");
 }
 
+// validate to approve or reject and server side.
 validateAuthentication = function(id, passwordField, reasonField) {
   var clId = CLIENT_GROUP_ID.val();
   var leId = LEGAL_ENTITY_ID.val();
@@ -664,6 +672,7 @@ validateAuthentication = function(id, passwordField, reasonField) {
   });
 }
 
+// Server to approve & Reject send status. To check system rejected status
 approveOrRejectAction = function(id, clId, leId, action, reason, password) {
   bu.assignStatutoryActionInList(parseInt(clId), parseInt(leId),
     parseInt(id), parseInt(action), reason, password,
@@ -698,6 +707,7 @@ approveOrRejectAction = function(id, clId, leId, action, reason, password) {
     });
 }
 
+// Display message to info message
 displayMsg = function(action) {
   if (action == 1)
     displaySuccessMessage(message.assign_statutory_approved_success);
@@ -705,6 +715,7 @@ displayMsg = function(action) {
     displaySuccessMessage(message.assign_statutory_rejected_success);
 }
 
+// Grid detailed view page Filter element set default value
 goToDetailsPage = function(id) {
   FILTERED_DATA.empty();
   CLEAR_FILTERED.hide();
@@ -726,9 +737,8 @@ goToDetailsPage = function(id) {
   viewListDetailsPage(id);
 }
 
-
+// Grid detailed view page load to all the element set default value
 viewListDetailsPage = function(id) {
-  console.log(id);
   LIST_PAGE.hide();
   DATA_LIST_PAGE.show();
   FILTER_DOMAIN.val('');
@@ -752,6 +762,7 @@ viewListDetailsPage = function(id) {
     COMPLIANCE_DESCRIPTION_NAME.val());
 }
 
+// To load the Grid detailed view page values
 ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
   if (flag == false)
     var showFrom = SNO + 1;
@@ -852,6 +863,7 @@ ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
   }
 };
 
+// Single approve to click check box 
 singleApprove = function(id) {
   if ($('#approve' + id).prop("checked") == true) {
     $('#reject' + id).removeAttr("checked");
@@ -863,6 +875,7 @@ singleApprove = function(id) {
   }
 }
 
+// Single Reject to click check box 
 singleReject = function(id, flag) {
   if ($('#reject' + id).prop("checked") == true) {
     if (CHECK_ALL_REJECT.prop("checked") == false) {
@@ -891,6 +904,7 @@ singleReject = function(id, flag) {
   }
 }
 
+// To update approve & reject to sent server 
 tempAction = function(id, action) {
   console.log(id);
   var csvid = ASID.val();
@@ -908,6 +922,7 @@ tempAction = function(id, action) {
     });
 }
 
+// To validate approve all and reject all check box
 checkAllEnableDisable = function(id, action) {
   var approveTotalCount = DETAILS_TABLE_TBODY.find('.single-approve').length;
   var rejectTotalCount = DETAILS_TABLE_TBODY.find('.single-reject').length;
@@ -925,6 +940,7 @@ checkAllEnableDisable = function(id, action) {
   }
 }
 
+// To get grid detailed view page filters value to server.
 ApproveAssignStatutoryBU.prototype.loadFilterPage = function(id) {
   statute = this;
   displayLoader();
@@ -946,6 +962,7 @@ ApproveAssignStatutoryBU.prototype.loadFilterPage = function(id) {
   });
 };
 
+// To load the grid detailed view page filters.
 ApproveAssignStatutoryBU.prototype.displayFilterList = function() {
   statute = this;
   if (statute.filterDomain.length > 0 && DOMAIN.val() == null) {
@@ -988,6 +1005,7 @@ ApproveAssignStatutoryBU.prototype.displayFilterList = function() {
   }
 }
 
+// To get filter values pass and get value to server 
 ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
   id, vData, dNames, uNames, pLeg, sLeg,
   sPro, cTask, sStatus, cStatus, cDes) {
@@ -1047,6 +1065,7 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
     });
 };
 
+// Pagination Show values display 
 showPagePan = function(showFrom, showTo, total) {
   var showText = 'Showing ' + showFrom + ' to ' +
     showTo + ' of ' + total + ' entries ';
@@ -1054,11 +1073,13 @@ showPagePan = function(showFrom, showTo, total) {
   PAGINATION_VIEW.show();
 };
 
+// Pagination hide values display 
 hidePagePan = function() {
   SHOW_COUNT.text('');
   PAGINATION_VIEW.hide();
 }
 
+// To create pagination no of page list
 createPageView = function(total_records) {
   perPage = parseInt(ITEMS_PER_PAGE.val());
   PAGINATION.empty();
@@ -1077,6 +1098,7 @@ createPageView = function(total_records) {
   });
 };
 
+// To validate and send action status server using submit button action
 ApproveAssignStatutoryBU.prototype.submitProcess = function() {
   var password = SUBMIT_PASSWORD.val();
   var csvid = ASID.val();
@@ -1134,8 +1156,10 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
   });
 }
 
+// Create class
 STATUTE = new ApproveAssignStatutoryBU();
 
+// To start ready function
 $(document).ready(function() {
   STATUTE.pageLoad();
   PageControls();
