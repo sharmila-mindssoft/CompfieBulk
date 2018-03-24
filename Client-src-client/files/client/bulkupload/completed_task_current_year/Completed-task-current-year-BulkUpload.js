@@ -172,9 +172,9 @@ function validateUpload() {
             "csv_name": csvInfo["file_name"],
             "csv_data": csvInfo["file_content"],
             "csv_size": csvInfo["file_size"],
-            "le_id": parseInt(LegalEntityId.val()),
-            "d_id": hdnDomain.val(),
-            "unit_id": hdnUnit.val()
+            "legal_entity_id": parseInt(LegalEntityId.val())
+                // "d_id": hdnDomain.val(),
+                // "unit_id": hdnUnit.val()
         };
 
         buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {

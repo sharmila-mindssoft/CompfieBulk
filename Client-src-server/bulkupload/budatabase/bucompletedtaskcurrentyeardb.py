@@ -53,13 +53,13 @@ def get_legal_entity_domains(
 
 def save_completed_task_current_year_csv(db, completed_task, session_user):
     columns = [
-        "csv_past_id", "client_id", "legal_entity_id", "domain_id",
+        "client_id", "legal_entity_id", "domain_id",
         "unit_id_id", "client_group", "csv_name",
         "uploaded_by", "uploaded_on",
         "total_records", "total_documents", "uploaded_documents", "upload_status"
     ]
     values = [
-        completed_task.csv_past_id, completed_task.client_id, completed_task.legal_entity_id,
+        completed_task.client_id, completed_task.legal_entity_id,
         completed_task.domain_id, completed_task.unit_id_id,
         completed_task.client_group, completed_task.csv_name,
         completed_task.uploaded_by, completed_task.uploaded_on,
@@ -71,7 +71,7 @@ def save_completed_task_current_year_csv(db, completed_task, session_user):
 
     return completed_task_id
 
-def save_completed_task_data(db, csv_id, csv_data) :
+def save_completed_task_data(db, csv_id, csv_data):
     try:
         columns = ["csv_past_id", "client_group", "legal_entity", "domain",
         "unit_code", "unit_name", "perimary_legislation",

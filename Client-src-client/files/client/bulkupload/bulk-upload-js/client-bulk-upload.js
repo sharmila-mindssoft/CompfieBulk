@@ -17,10 +17,18 @@ function getDomains(le_id, callback) {
 
 function UploadCompletedTaskCurrentYearCSV(args, callback) {
     var request = [
-        'UploadAssignStatutoryCSV', args
+        'UploadCompletedTaskCurrentYearCSV', args
     ];
     clientApiRequest("bu/completed_task", request, callback);
 }
+
+// var request = [
+//     'GetClientUnitsUploadedCSVFiles',
+//     {
+//         'bu_client_id': clientId,
+//         'bu_group_name': groupName
+//     }
+// ];
 
 function convert_to_base64(file, callback) {
     var reader = new FileReader();
