@@ -6,118 +6,132 @@ __all__ = [
 ]
 
 
-def expectation_error(expected, received):
+def expectation_error(expected, received) :
+
     msg = "expected %s, but received: %s"
     return ValueError(msg % (expected, str(received)))
 
 
-def allow_specialchar(value):
+def allow_specialchar(value) :
+
     r = re.compile("^[0-9a-zA-Z- _& ,.;:/+=$%@#&*()<>?:\n]*$")
-    if r.match(value):
+    if r.match(value) :
         return True
     else :
         return False
 
-def is_alphabet(value):
+def is_alphabet(value) :
+
     r = re.compile("^[a-zA-Z ]*$")  # a-z with space
-    if r.match(value):
+    if r.match(value) :
         return True
     else:
         return False
 
+def is_applicable_location(value) :
 
-def is_applicable_location(value):
     r = re.compile("^[a-zA-Z>>| ]*$")
-    if r.match(value):
+    if r.match(value) :
         return True
     else:
         return False
 
-def is_statutory(value):
+def is_statutory(value) :
+
     r = re.compile("^[0-9a-zA-Z&@,-.>>| ]*$")
-    if r.match(value):
+    if r.match(value) :
         return True
     else:
         return False
 
-def only_numeric(value):
+def only_numeric(value) :
+
     r = re.compile("^[0-9]*$")
-    if r.match(str(value)):
+    if r.match(str(value)) :
         return True
     else:
         return False
 
-def is_numeric(value):
+def is_numeric(value) :
+
     r = re.compile("^[0-9 ]*$")  # 0-9 with space
-    if r.match(str(value)):
+    if r.match(str(value)) :
         return True
     else:
         return False
 
-def is_numeric_with_delimiter(value):
+def is_numeric_with_delimiter(value) :
+
     r = re.compile("^[0-9|;| ]*$")  # 0-9 with |;|
-    if r.match(str(value)):
+    if r.match(str(value)) :
         return True
     else:
         return False
 
-def is_valid_statutory_date_input(value, irange):
+def is_valid_statutory_date_input(value, irange) :
+
     flag = True
     if value != "" :
         if only_numeric(value) :
-            if int(value) > irange:
+            if int(value) > irange :
                 flag = "cannot exceed maxlength %s" % (irange)
         else :
             flag = False
     return flag
 
-def statutory_month(value):
+def statutory_month(value) :
     return is_valid_statutory_date_input(value, 12)
 
-def statutory_date(value):
+def statutory_date(value) :
     return is_valid_statutory_date_input(value, 31)
 
-def trigger_days(value):
+def trigger_days(value) :
     return is_valid_statutory_date_input(value, 100)
 
-def duration_and_repeats(value):
+def duration_and_repeats(value) :
+
     flag = True
-    if value != "":
-        if only_numeric(value):
+    if value != "" :
+        if only_numeric(value) :
             if int(value) > 999 :
                 flag = False
         else :
             flag = False
     return flag
 
-def duration_and_repeats_type(value):
+def duration_and_repeats_type(value) :
+
     r = re.compile("^[a-zA-Z() ]*$")
-    if r.match(value):
+    if r.match(value) :
         return True
-    else:
+    else :
         return False
 
-def repeats_by(value):
-    if value in ["DOM", "EOM"]:
+def repeats_by(value) :
+
+    if value in ["DOM", "EOM"] :
         return True
-    else:
+    else :
         return False
 
-def multiple_input_selection(value):
-    if value in ["Yes", "No"]:
+def multiple_input_selection(value) :
+
+    if value in ["Yes", "No"] :
         return True
-    else:
+    else :
         return False
 
-def is_alpha_numeric(value):
+def is_alpha_numeric(value) :
+
     #    a-z and 0-9 with space
     r = re.compile("^[A-Za-z0-9-_.,@ ]*$")
-    if r.match(value):
+    if r.match(value) :
         return True
-    else:
+    else :
         return False
 
-def is_url(value):
+def is_url(value) :
+
     regex = re.compile(
         r'^https?://'  # http:// or https://
         r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'
@@ -127,43 +141,48 @@ def is_url(value):
         r'(?:/?|[/?]\S+)$', re.IGNORECASE
     )
 
-    if regex.search(value):
+    if regex.search(value) :
         return True
-    else:
+    else :
         return False
 
-def is_address(value):
+def is_address(value) :
+
     # a-z0-9 with special char and space
     r = re.compile("^[a-zA-Z0-9_.,-@# ]*$")
-    if r.match(value):
+    if r.match(value) :
         return True
-    else:
+    else :
         return False
 
-def is_alphabet_withdot(value):
-    r = re.compile("^[a-zA-Z-. ]*$")
-    if r.match(value):
-        return True
-    else:
-        raise False
+def is_alphabet_withdot(value) :
 
-def is_domain(value):
+    r = re.compile("^[a-zA-Z-. ]*$")
+    if r.match(value) :
+        return True
+    else :
+        return False
+
+def is_domain(value) :
+
     # a-z0-9 with special char and space with delimiter
     r = re.compile("^[a-zA-Z0-9|;| ]*$")
-    if r.match(value):
+    if r.match(value) :
         return True
-    else:
+    else :
         return False
 
-def is_domain_orgn(value):
+def is_domain_orgn(value) :
+
     # a-z0-9 with special char and space with delimiter
     r = re.compile("^[a-zA-Z0-9|;|>> ]*$")
-    if r.match(value):
+    if r.match(value) :
         return True
-    else:
+    else :
         return False
 
-def parse_csv_dictionary_values(key, val):
+def parse_csv_dictionary_values(key , val) :
+
     error_count = {
         "mandatory": 0,
         "max_length": 0,
@@ -171,7 +190,7 @@ def parse_csv_dictionary_values(key, val):
     }
     csvparam = csv_params.get(key)
 
-    if csvparam is None:
+    if csvparam is None :
         raise ValueError('%s is not configured in csv parameter' % (key))
 
     _mandatory = csvparam.get("check_mandatory")
@@ -430,7 +449,7 @@ csv_params = {
     ),
     'Postal_Code': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=6, isValidCharCheck=True,
-        validation_method=is_numeric
+        validation_method=is_alpha_numeric
     ),
     'Domain': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=30, isValidCharCheck=True,
