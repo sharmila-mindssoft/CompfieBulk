@@ -6,19 +6,20 @@ function getStatutoryMappingCsvList(callback){
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
-function uploadClientUnitsBulkCSV(clientId, group_name, file_name, file_content, file_size, callback) {
-  callerName = 'bu/client_units';
+function uploadClientUnitsBulkCSV(
+  clientId, groupName, fileName, fileContent, fileSize, callback
+) {
   var request = [
     'UploadClientUnitsBulkCSV',
     {
       'bu_client_id': clientId,
-      'bu_group_name': group_name,
-      'csv_name': file_name,
-      'csv_data': file_content,
-      'csv_size': file_size
+      'bu_group_name': groupName,
+      'csv_name': fileName,
+      'csv_data': fileContent,
+      'csv_size': fileSize
     }
   ];
-  apiRequest(callerName, request, callback);
+  apiRequest('bu/client_units', request, callback);
 }
 
 function uploadStatutoryMappingCSV(args, callback) {
@@ -99,7 +100,6 @@ function getStatutoryMappingsBulkReportData(args, callback) {
 }
 
 function getClientGroupsClientUnitFilesList(clientId, groupName, callback) {
-    callerName = 'bu/client_units';
     var request = [
         'GetClientUnitsUploadedCSVFiles',
         {
@@ -107,7 +107,7 @@ function getClientGroupsClientUnitFilesList(clientId, groupName, callback) {
             'bu_group_name': groupName
         }
     ];
-    apiRequest(callerName, request, callback);
+    apiRequest('bu/client_units', request, callback);
 }
 
 function exportSMBulkReportData(args, callback) {
@@ -507,8 +507,8 @@ function getBulkClientUnitListForFilterView(csvid, f_count, r_range,
         "bu_category_name": filter_cg,
         "bu_unit_location": filter_u_loc,
         "bu_unit_code": filter_u_code,
-        "domain_name": filter_domain,
-        "orga_name": filter_orgn
+        "bu_domain": filter_domain,
+        "bu_orgn": filter_orgn
     }
   ];
   apiRequest("bu/client_units", request, callback)
