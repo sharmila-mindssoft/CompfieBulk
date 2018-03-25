@@ -1,5 +1,14 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
 
+<!-- Multiselect -->
+<link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+<!-- Notification css (Toastr) -->
+<link href="/files/client/common/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<style>
+    .text-middle {
+        vertical-align: middle;
+    }
+</style>
 <div id="list-screen">
     <div class="content-page">
         <div class="content">
@@ -9,7 +18,8 @@
                         <div class="col-sm-1"></div>
                         <div class="col-sm-10">
                             <div class="btn-group pull-right m-t-5 m-b-20">
-                                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false" id="btn-add" onclick="openAddPage();"><i class="fa fa-plus-circle"></i> Add </button>
+                                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false" id="btn-add">
+                                    <i class="fa fa-plus-circle"></i> Add </button>
                             </div>
                             <h4 class="page-title">Completed Task - Current Year - Bulk Upload</h4>
                         </div>
@@ -24,14 +34,14 @@
                                     <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
-                                                <th width="2%">#</th>
-                                                <th width="15">Uploaded File Name</th>
-                                                <th width="8">Uploaded On</th>
-                                                <th width="8" class="text-center">No. of Records</th>
-                                                <th width="8" class="text-center">Required Documents</th>
-                                                <th width="10" class="text-center">Uploaded Documents</th>
-                                                <th width="10" class="text-center">Remaining Documents</th>
-                                                <th width="8" class="text-center">Upload Documents</th>
+                                                <th class="width-2">#</th>
+                                                <th class="width-15">Uploaded File Name</th>
+                                                <th class="width-8">Uploaded On</th>
+                                                <th class="text-center width-8">No. of Records</th>
+                                                <th class="text-center width-8">Required Documents</th>
+                                                <th class="text-center width-10">Uploaded Documents</th>
+                                                <th class="text-center width-10">Remaining Documents</th>
+                                                <th class="text-center width-8">Upload Documents</th>
                                             </tr>
                                             <tr>
                                                 <td></td>
@@ -54,50 +64,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <!-- <tr class="firstTr">
-                    <td>1</td>
-                    <td>Ind-LL-Maternity Act1990</a></td>
-                    <td>04-Dec-2017 10:15</td>
-                    <td class="text-center">1500</td>
-                    <td class="text-center">100</td>
-                    <td class="text-center">90</td>
-                    <td class="text-center">10</td>
-                    <td class="text-center icon-3x"><a href="/Completed-task-current-year-BulkUpload-3" title="Upload"><i class="fa fa-upload text-primary c-pointer" title="Click here to Upload Docs"></i></a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Ind-LL-Administrator Act1947</td>
-                    <td>04-Dec-2017 11:45</td>
-                    <td class="text-center">1000</td>
-                    <td class="text-center">10</td>
-                    <td class="text-center">5</td>
-                    <td class="text-center">5</td>
-                    <td class="text-center icon-3x"><i class="fa fa-upload text-primary c-pointer" title="Click here to Upload Docs"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Ind-FL-General Act1947</td>
-                    <td>03-Dec-2017 10:10</td>
-                    <td class="text-center">2000</td>
-                    <td class="text-center">2000</td>
-                    <td class="text-center">1500</td>
-                    <td class="text-center">500</td>
-                    <td class="text-center icon-3x"><i class="fa fa-upload text-primary c-pointer" title="Click here to Upload Docs"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Ind-FL-General Act1947</td>
-                    <td>06-Dec-2017 12:15</td>
-                    <td class="text-center">200</td>
-                    <td class="text-center">100</td>
-                    <td class="text-center">30</td>
-                    <td class="text-center">70</td>
-                    <td class="text-center icon-3x"><i class="fa fa-upload text-primary c-pointer"  title="Click here to Upload Docs"></i>
-                    </td>
-                </tr> -->
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -107,291 +74,6 @@
                         <!-- end col -->
                     </div>
                 </div>
-                <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="page-title compfie-model-title">Client Group: RG Group</h4>
-                            <hr class="no-top-margin no-bottom-margin">
-                            <div class="modal-body">
-                                <div class="table-responsive">
-                                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                                        <tr>
-                                            <td colspan="4" class="no-border">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="30%" align="center">Short Name: rggroup</td>
-                                                        <td width="30%" align="center">Username: groupadmin@domain.com</td>
-                                                        <td width="30%" align="center">View Only Licence(s): 5</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr class="bg-lightdark">
-                                            <td colspan="4">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="33%">Country: India</td>
-                                                        <td width="33%">Business Group: RG Business Group </td>
-                                                        <td width="33%" colspan="2">Legal Entity: RG Legal Entity</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="33%">Contract From: 01-Jan-2017</td>
-                                                        <td width="33%">Contract To: 31-Dec-2018 </td>
-                                                        <td width="33%" colspan="2"><span data-toggle="tooltip" title="Old Data: Total Licence(s): 15"><i class="fa fa-info-circle"></i> Total Licence(s): 20</span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="2">Logo: logo.png</td>
-                                                        <td><span data-toggle="tooltip" title="Old Data: File Space: 10 GB"><i class="fa fa-info-circle"></i> File Space: 20 GB</span></td>
-                                                    </tr>
-
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4">
-                                                <table cellspacing="0" cellpadding="0" width="100%" class="btable letable">
-                                                    <tr>
-                                                        <td colspan="4">
-                                                            <div class="grid-table">
-                                                                <table cellspacing="0" cellpadding="0" width="100%">
-                                                                    <tr>
-                                                                        <th width="15%">Domain </th>
-                                                                        <th width="20%">Organization</th>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Labour Law </td>
-                                                                        <td>
-                                                                            <p><span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3"><i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span></p>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Finace Law </td>
-                                                                        <td>
-                                                                            <p>Establishment - 5, S & E - 4</p>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <!--table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-            <tr class="bg-lightdark">
-              <td colspan="4"><table class="table" >
-                  <tr>
-                    <td width="33%">Country: Singapore</td>
-                    <td width="33%">Business Group: JKL Business Group </td>
-                    <td width="33%" colspan="2">Legal Entity: JKL Legal Entity</td>
-                  </tr>
-                  <tr>
-                    <td  colspan="2">Incharge Person:  EMP01 - Hariharan</td>
-                    <td>File Space: 14 GB</td>
-                  </tr>
-                  <tr>
-                    <td width="33%">Contract From: 01-Apr-2016</td>
-                    <td width="33%">Contract To: 31-Mar-2017 </td>
-                    <td width="33%" colspan="2">Total Licence(s): 9</td>
-                  </tr>
-                </table></td>
-            </tr>
-            <tr>
-              <td colspan="4" ><table cellspacing="0" cellpadding="0" width="100%" class="btable letable">
-                  <tr>
-                    <td colspan="4" ><div class="grid-table">
-                        <table cellspacing="0" cellpadding="0" width="100%" >
-                          <tr >
-                            <th width="15%">Domain </th>
-                            <th width="20%">Organization</th>
-                          </tr>
-                          <tr>
-                            <td>Economic Law</td>
-                            <td><p>Establishment - 5, S & E - 4</p></td>
-                          </tr>
-                          <tr>
-                            <td >Employee Law</td>
-                            <td><p>Establishment - 5, S & E - 4</p></td>
-                          </tr>
-                        </table>
-                      </div></td>
-                  </tr>
-                </table></td>
-            </tr>
-          </table-->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
-                <!-- compfie model -->
-                <div class="modal fade bs-example-modal-lg-ci" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="page-title">Client Group: ABC Group</h4>
-                            <hr class="no-top-margin no-bottom-margin">
-                            <div class="modal-body">
-                                <div class="table-responsive">
-                                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                                        <tr>
-                                            <td colspan="4" class="no-border">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="30%" align="center">Short Name: abcgroup</td>
-                                                        <td width="30%" align="center">Username: groupadmin@domain.com</td>
-                                                        <td width="30%" align="center">View Only Licence(s): 5</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr class="bg-lightdark">
-                                            <td colspan="4">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="33%">Country: India</td>
-                                                        <td width="33%">Business Group: ABC Business Group </td>
-                                                        <td width="33%" colspan="2">Legal Entity: ABC Limited</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="33%">Contract From: 01-Jan-2017</td>
-                                                        <td width="33%">Contract To: 31-Dec-2018 </td>
-                                                        <td width="33%" colspan="2"><span data-toggle="tooltip" title="Old Data: Total Licence(s): 15"><i class="fa fa-info-circle"></i> Total Licence(s): 20</span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="2">Logo: logo.png</td>
-                                                        <td><span data-toggle="tooltip" title="Old Data: File Space: 10 GB"><i class="fa fa-info-circle"></i> File Space: 20 GB</span></td>
-                                                    </tr>
-
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4">
-                                                <table cellspacing="0" cellpadding="0" width="100%" class="btable letable">
-                                                    <tr>
-                                                        <td colspan="4">
-                                                            <div class="grid-table">
-                                                                <table cellspacing="0" cellpadding="0" width="100%">
-                                                                    <tr>
-                                                                        <th width="15%">Domain </th>
-                                                                        <th width="20%">Organization</th>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Labour Law </td>
-                                                                        <td>
-                                                                            <p><span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3"><i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span></p>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Finace Law </td>
-                                                                        <td>
-                                                                            <p>Establishment - 5, S & E - 4</p>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
-                <!-- inm model -->
-                <div class="modal fade bs-example-modal-lg-inm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="page-title">Client Group: VRM Group</h4>
-                            <hr class="no-top-margin no-bottom-margin">
-                            <div class="modal-body">
-                                <div class="table-responsive">
-                                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                                        <tr>
-                                            <td colspan="4" class="no-border">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="30%" align="center">Short Name: vrmgroup</td>
-                                                        <td width="30%" align="center">Username: groupadmin@domain.com</td>
-                                                        <td width="30%" align="center">View Only Licence(s): 5</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr class="bg-lightdark">
-                                            <td colspan="4">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="33%">Country: India</td>
-                                                        <td width="33%">Business Group: VRM Business Group </td>
-                                                        <td width="33%" colspan="2">Legal Entity: ABC Limited</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="33%">Contract From: 01-Jan-2017</td>
-                                                        <td width="33%">Contract To: 31-Dec-2018 </td>
-                                                        <td width="33%" colspan="2"><span data-toggle="tooltip" title="Old Data: Total Licence(s): 15"><i class="fa fa-info-circle"></i> Total Licence(s): 20</span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="2">Logo: logo.png</td>
-                                                        <td><span data-toggle="tooltip" title="Old Data: File Space: 10 GB"><i class="fa fa-info-circle"></i> File Space: 20 GB</span></td>
-                                                    </tr>
-
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4">
-                                                <table cellspacing="0" cellpadding="0" width="100%" class="btable letable">
-                                                    <tr>
-                                                        <td colspan="4">
-                                                            <div class="grid-table">
-                                                                <table cellspacing="0" cellpadding="0" width="100%">
-                                                                    <tr>
-                                                                        <th width="15%">Domain </th>
-                                                                        <th width="20%">Organization</th>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Labour Law </td>
-                                                                        <td>
-                                                                            <p><span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3"><i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span></p>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Finace Law </td>
-                                                                        <td>
-                                                                            <p>Establishment - 5, S & E - 4</p>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
-                <style type="text/css">
-                    .text-middle {
-                        vertical-align: middle;
-                    }
-                </style>
             </div>
         </div>
     </div>
@@ -402,14 +84,10 @@
 <div id="add-screen" style="display:none">
     <div class="content-page">
         <div class="content">
-            <!-- Multiselect -->
-            <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
-            <!-- Notification css (Toastr) -->
-            <link href="/files/client/common/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
             <div class="container">
                 <div class="row">
                     <div class="container">
-                        <div class="row" id="animationSandbox">
+                        <div class="row" id="animationSandbox-1">
                             <div class="col-sm-3"> </div>
                             <div class="col-sm-6">
                                 <div class="portlet">
@@ -418,7 +96,7 @@
                                             Completed Task - Current Year - Bulk Upload
                                         </h3>
                                         <div class="portlet-widgets">
-                                            <a href="#" onclick="openListPage()">
+                                            <a href="#" id="cancelButton">
                                                 <i class="zmdi zmdi-close zmdi-hc-2x"></i>
                                             </a>
                                         </div>
@@ -434,91 +112,164 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                                        <div class="col-sm-6 has-feedback">
-                                                            <input type="text" class="form-control input-sm" placeholder="Legal Entity name" value="">
+                                                        <label class="col-sm-4 control-label">Legal Entity:
+                                                            <span class="mandatory">*</span>
+                                                        </label>
+                                                        <p class="form-control-static legal-entity-name default-display-none"></p>
+                                                        <div class="col-sm-6 has-feedback default-display-none legal-entity-name-ac">
+                                                            <input type="text" class="form-control input-sm legal-entity-name-ac" placeholder="Legal Entity name" id="legal_entity_name" placeholder="Enter Legal Entity">
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                            <input type="hidden" id="legal_entity_id" value="">
+                                                            <div id="ac-entity" class="ac-textbox default-display-none">
+                                                                <ul class="width85Percent"></ul>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
+                                                        <label class="col-sm-4 control-label">Domain:
+                                                            <span class="mandatory">*</span>
+                                                        </label>
                                                         <div class="col-sm-6 has-feedback">
-                                                            <input type="text" class="form-control input-sm" placeholder="Domain name" value="">
+                                                            <input type="text" class="form-control input-sm" placeholder="Domain name" id="txtdomain" value="">
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                            <input type="hidden" id="hdnDomain" value="">
+                                                            <div id="divDomain" class="ac-textbox default-display-none">
+                                                                <ul class="hidemenu"></ul>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="col-sm-4 control-label">Unit: <span class="mandatory">*</span></label>
+                                                        <label class="col-sm-4 control-label">Unit:
+                                                            <span class="mandatory">*</span>
+                                                        </label>
                                                         <div class="col-sm-6 has-feedback">
-                                                            <input type="text" class="form-control input-sm" placeholder="Unit name" value="">
+                                                            <input type="text" class="form-control input-sm" placeholder="Unit name" value="" id="txtUnit">
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                            <input type="hidden" id="hdnUnit" value="">
+                                                            <div id="divUnit" class="ac-textbox default-display-none">
+                                                                <ul class="width85Percent"></ul>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
                                                         <center>
-                                                            <a href="/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv" download="/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv"><button class="btn btn-primary waves-effect waves-light" type="button" >
-                                                                Download File </button>
-                                                                </a>
+                                                            <a id="downloadFormatFile">
+                                                                <button class="btn btn-primary waves-effect waves-light" type="button" id="btnDownloadFile">
+                                                                    Download File </button>
+                                                            </a>
                                                         </center>
                                                     </div>
-                                                    <div class="form-group bg-muted">
-                                                        <div class="col-sm-12">
-                                                            <h4 class="header-title">Upload File</h4>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group has-feedback">
-                                                        <label class="col-sm-4 control-label">Select File: <span class="mandatory">*</span></label>
-                                                        <div class="col-sm-6">
-                                                            <input class="form-control input-sm" type="file">
-                                                            <small class="" style="text-align: left;">[ Accepted file format <span style="color: #E64C3D !important;">.csv</span> ]</small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group col-sm-12 text-center">
-                                                        <div class="col-sm-12 col-sm-offset-1">
-                                                            <button class="btn btn-primary waves-effect waves-light animateprogress" type="button" data-toggle="modal" data-target="#myModal"> Upload </button>
-                                                            <a class="btn btn-primary btn-trans invaliddata dropbtn" onclick="myFunction()"><i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
-
-                                                        </div>
-
-                                                        <!-- <div class="col-sm-4 invaliddata no-padding">
-                                   <button class="btn btn-info waves-effect waves-light " type="button">
-                              Download Invalid Data
-                              </button>
-                            </div> -->
-                                                    </div>
-                                                    <!-- <div class="form-group col-sm-12 invaliddata">
-                            <label class="col-sm-4 control-label">Download Invalid Data:</label>
-                            <div class="col-sm-8 has-feedback">
-                              <button class="btn btn-primary"><i class="fa fa-file-excel-o text-white"></i> Excel</button>
-                              <button class="btn btn-primary"><i class="fa fa-file-excel-o text-white"></i> CSV</button>
-                              <button class="btn btn-primary"><i class="fa fa-file-excel-o text-white"></i> ODS</button>
-                              <button class="btn btn-primary"><i class="fa fa-file-text-o text-white"></i> Text</button>
-                            </div>
-                          </div> -->
-                                                    <div class="clear"></div>
-
-                                                    <div class="view-summary" style="display: none;">
-                                                        <div class="col-sm-6 no-padding">
-                                                            <div class="form-group bg-muted">
-                                                                <h5 class="col-sm-12 header-title">Uploaded Data - Summary</h5>
+                                                    <div id="divUploadFile">
+                                                        <div class="form-group bg-muted">
+                                                            <div class="col-sm-12">
+                                                                <h4 class="header-title">Upload File</h4>
                                                             </div>
-                                                            <ul class="p-l-20">
-                                                                <li>Total No. Of Records: <b>1000</b> </li>
-                                                                <li>Valid Processed Records: <b> 950 </b> </li>
-                                                                <li>Invalid Records: <b> 50</b></li>
-                                                            </ul>
                                                         </div>
-                                                        <div class="col-sm-6 text-danger no-padding">
-                                                            <div class="form-group bg-muted">
-                                                                <h5 class="col-sm-12 text-danger header-title">Invalid Data - Summary</h5>
+
+                                                        <div class="form-group has-feedback field_label m-b-0" style="display: none;" id="divSuccessFile">
+                                                            <label class="col-sm-4 control-label">Uploaded File: </label>
+                                                            <div class="col-sm-6">
+                                                                <table class="tablenopadd" width="100%">
+                                                                    <tbody>
+                                                                        <tr class="bg-lightdark border-1">
+                                                                            <td width="60%" class="p-5-px"> </td>
+
+                                                                            <td width="10%" class="p-5-px">
+                                                                                <i class="fa fa-download fa-1-2x c-pointer" data-toggle="tooltip" title="" data-original-title="Download Document"></i>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
                                                             </div>
-                                                            <ul class="p-l-20">
-                                                                <li>Invalid Date: <b>20</b> </li>
-                                                                <li>Invalid File Format: <b>15</b> </li>
-                                                                <li>Mandatory Field Blank: <b>10</b> </li>
-                                                                <li>Master Data Inactive: <b>5</b> </li>
-                                                            </ul>
                                                         </div>
+                                                        <div class="form-group has-feedback select_docs m-t-20" style="display: none;" id="divSuccessDocument">
+                                                            <label class="col-sm-4 control-label">Select Documents:<span class="mandatory">*</span> </label>
+                                                            <div class="col-sm-6">
+                                                                <input class="form-control input-sm" type="file" webkitdirectory="" multiple="">
+                                                                <ul class="p-l-20 p-t-5">
+                                                                    <li>Required Documents: <b>60</b> </li>
+                                                                    <li>Uploaded Documents: <b>60</b> </li>
+                                                                    <li class="text-danger">Remaining Documents: <b>0</b> </li>
+                                                                    <li class="view-summary" style="display: none;">Uploaded Documents: <b> 90 </b> </li>
+                                                                    <li class="text-danger view-summary" style="display: none;">Remaining Documents: <b> 10</b></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-12 text-center m-b-20" id="divSuccessbutton" style="display: none;">
+                                                            <button class="btn btn-primary waves-effect waves-light btn_upload animateprogress1 m-r-5" type="button" data-toggle="modal" data-target="#myModal1" style="display: none;"> Upload</button>
+
+                                                            <a class="btn btn-primary btn-trans uploaded_data" style="display: inline-block;"><i class="fa fa-download text-primary"></i> Uploaded Data (.zip)</a>
+                                                            <button class="btn btn-primary waves-effect waves-light btn_submit" type="button" onclick="location.href='/Completed-task-current-year-BulkUpload_List'" style="display: inline-block;"> Submit</button>
+                                                        </div>
+
+
+
+                                                        <div class="form-group has-feedback">
+                                                            <label class="col-sm-4 control-label">Select File:
+                                                            <span class="mandatory">*</span>
+                                                        </label>
+                                                            <div class="col-sm-6">
+                                                                <input class="form-control input-sm" type="file" accept=".csv" id="fileInput">
+                                                                <small class="" style="text-align: left;">[ Accepted file format
+                                                                <span style="color: #E64C3D !important;">.csv</span> ]</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-12 text-center">
+                                                            <div class="col-sm-12 col-sm-offset-1">
+                                                                <button class="btn btn-primary waves-effect waves-light animateprogress upload-btn" type="button" data-toggle="modal" data-target="#myModal" id="btnUpload">
+                                                                Upload </button>
+                                                                <a class="btn btn-primary btn-trans invaliddata dropbtn default-display-none" onclick="showDownloadList()">
+                                                                    <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
+                                                                <div id="myDropdown" class="dropdown-content">
+                                                                    <a href="#">Download Excel</a>
+                                                                    <a href="#">Download CSV</a>
+                                                                    <a href="#">Download ODS</a>
+                                                                    <a href="#">Download Text</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="clear"></div>
+                                                        <div class="view-summary default-display-none">
+                                                            <div class="col-sm-6 no-padding">
+                                                                <div class="form-group bg-muted">
+                                                                    <h5 class="col-sm-12 header-title">Uploaded Data - Summary</h5>
+                                                                </div>
+                                                                <ul class="p-l-20">
+                                                                    <li>Total No. Of Records:
+                                                                        <b>61</b>
+                                                                    </li>
+                                                                    <li>Valid Processed Records:
+                                                                        <b> 0 </b>
+                                                                    </li>
+                                                                    <li>Invalid Records:
+                                                                        <b>60</b>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="col-sm-6 text-danger no-padding">
+                                                                <div class="form-group bg-muted">
+                                                                    <h5 class="col-sm-12 text-danger header-title">Invalid Data - Summary</h5>
+                                                                </div>
+                                                                <ul class="p-l-20">
+                                                                    <li>Invalid Date:
+                                                                        <b>60</b>
+                                                                    </li>
+                                                                    <li>Invalid File Format:
+                                                                        <b>0</b>
+                                                                    </li>
+                                                                    <li>Mandatory Field Blank:
+                                                                        <b>0</b>
+                                                                    </li>
+                                                                    <li>Master Data Inactive:
+                                                                        <b>0</b>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="clear"></div>
                                                     </div>
                                                 </div>
                                                 <div class="clear"></div>
@@ -529,61 +280,10 @@
                             </div>
                         </div>
                     </div>
-                    <script src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
-                    <!-- <script type="text/javascript">
-            $('#countries').multiselect();
-            $('#domains').multiselect();
-            </script> -->
-                    <script type="text/javascript">
-                        $(document).ready(function() {
-                            $('.example-multiple-optgroups').multiselect({
-                                buttonWidth: '100%',
-                                enableClickableOptGroups: true
-                                    /*,
-                                                   enableCollapsibleOptGroups: true*/
-                            });
-                            $('.example-multiple').multiselect({
-                                buttonWidth: '100%'
-                            });
-                        });
-                    </script>
-                    <!-- Toastr js -->
-                    <script src="/files/client/common/js/toastr/toastr.min.js"></script>
-                    <script type="text/javascript">
-                        function import_toast() {
-                            toastr.options = {
-                                "closeButton": false,
-                                "debug": false,
-                                "newestOnTop": false,
-                                "progressBar": false,
-                                "positionClass": "toast-top-center",
-                                "preventDuplicates": false,
-                                "onclick": null,
-                                "showDuration": "500",
-                                "hideDuration": "1000",
-                                "timeOut": "5000",
-                                "extendedTimeOut": "1000",
-                                "showEasing": "swing",
-                                "hideEasing": "linear",
-                                "showMethod": "fadeIn",
-                                "hideMethod": "fadeOut"
-                            };
-                            return toastr;
-                        }
 
-                        function displayMessage(message) {
-                            // $('.error-message').text(message);
-                            // $('.error-message').show();
-                            if ($('.toast-error').css('display') == "block") {
-                                $('.toast').remove();
-                            }
-                            var toastPan = import_toast();
-                            Command: toastPan["error"](message)
-                        }
-                    </script>
                     <!-- Modal -->
                     <!-- Modal -->
-                    <div class="modal fade" id="myModal" role="dialog">
+                    <div class="modal fade default-display-none" id="myModal" role="dialog">
                         <div class="modal-dialog">
                             <!-- Modal content-->
                             <div class="modal-content">
@@ -594,80 +294,15 @@
                                 <div class="modal-body">
                                     <div class="progress skill-bar ">
                                         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                            <span class="skill">Uploading <i class="val">100%</i></span>
+                                            <span class="skill">Uploading
+                                                <i class="val"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
-                                <!--   <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  </div> -->
                             </div>
                         </div>
                     </div>
-                    <script src="/files/client/common/js/custombox/custombox.min.js"></script>
-                    <!-- Toastr js -->
-                    <script src="/files/client/common/js/toastr/toastr.min.js"></script>
-
-                    <script type="text/javascript">
-                        var theme_name = "";
-                        if (window.localStorage['theme_name'])
-                            theme_name = window.localStorage['theme_name'];
-                        else
-                            theme_name = "one";
-
-                        if (theme_name == "two") {
-                            $('#themes_value').attr('href', 'css/theme_two.css');
-                        } else if (theme_name == "three") {
-                            $('#themes_value').attr('href', 'css/theme_three.css');
-                        } else if (theme_name == "four") {
-                            $('#themes_value').attr('href', 'css/theme_four.css');
-                        } else if (theme_name == "five") {
-                            $('#themes_value').attr('href', 'css/theme_five.css');
-                        } else if (theme_name == "six") {
-                            $('#themes_value').attr('href', 'css/theme_six.css');
-                        } else {
-                            $('#themes_value').attr('href', '/files/client/common/css/theme_one.css');
-                        }
-
-                        function getCookie(name) {
-                            var value = "; " + document.cookie;
-                            var parts = value.split("; " + name + "=");
-                            if (parts.length == 2) return parts.pop().split(";").shift();
-                        }
-
-                        $('.thememodalbox').click(function() {
-                            Custombox.open({
-                                target: '#theme-modal',
-                                /*overlayClose: false,
-                                escKey:false,*/
-                                effect: 'slit',
-                                overlaySpeed: 100,
-                                overlayColor: '#36404a'
-                            });
-                            e.preventDefault();
-                        });
-                        $('.legal-table tr').click(function() {
-                            //location.href='/home';
-                            location.reload();
-                        });
-                    </script>
-                    <script type="text/javascript">
-                        $(document).ready(function() {
-                            $(".animateprogress").click(function() {
-                                $('.invaliddata').hide();
-                                $('.view-summary').hide();
-                                setTimeout(function() {
-                                    $('#myModal').modal('hide');
-                                    $('.invaliddata').show();
-                                    $('.view-summary').show();
-                                    displayMessage("Records are not uploaded successfully");
-                                }, 2000);
-                            });
-                        });
-                    </script>
-                    <script src="/files/client/common/js/jquery.core.js"></script>
-                    <script src="/files/client/common/js/jquery.app.js"></script>
-                    <script src="/files/client/common/js/download_dropdown.js"></script>
                 </div>
             </div>
         </div>
@@ -676,87 +311,29 @@
         <!-- Modal -->
         <div id="custom-modal" class="modal-demo box-width-400">
             <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
-      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-    </span>
+                <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+            </span>
             <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
             <div class="custom-modal-text">
-                <form role="form">
+                <form>
                     <div class="form-group">
-                        <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+                        <label for="exampleInputPassword" class="pull-left">Password
+                            <span class="mandatory">*</span>
+                        </label>
                         <input type="password" class="form-control input-sm" id="exampleInputPassword" placeholder="Password">
                     </div>
                     <div class="form-group">
-                        <label for="exampleInputReason" class="pull-left">Remarks <span class="mandatory">*</span></label>
+                        <label for="exampleInputReason" class="pull-left">Remarks
+                            <span class="mandatory">*</span>
+                        </label>
                         <textarea class="form-control input-sm" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
                     </div>
                     <button type="button" class="btn btn-primary waves-effect waves-light">Submit</button>
                 </form>
             </div>
         </div>
-
-        <script src="/files/client/common/js/custombox/custombox.min.js"></script>
-        <!-- Toastr js -->
-        <script src="/files/client/common/js/toastr/toastr.min.js"></script>
-
-        <script type="text/javascript">
-            $(function() {
-                $('#showtoast').click(function() {
-
-                    Command: toastr["success"]("Record was saved successfully!", "Success")
-
-                        toastr.options = {
-                        "closeButton": false,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": false,
-                        "positionClass": "toast-top-center",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "5000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    }
-                })
-            });
-
-            $(function() {
-                $('#typeid').on('change', function(e) {
-                    if ($(this).val() == '1') {
-                        $('.view-compfie').show();
-                        $('.view-compfie-inm').hide();
-                        $('.view-inm').hide();
-                    } else if ($(this).val() == '2') {
-                        $('.view-compfie').hide();
-                        $('.view-compfie-inm').show();
-                        $('.view-inm').hide();
-                    } else if ($(this).val() == '3') {
-                        $('.view-compfie').hide();
-                        $('.view-compfie-inm').hide();
-                        $('.view-inm').show();
-                    }
-                });
-            });
-        </script>
-        <script src="/files/client/common/js/jquery.core.js"></script>
-        <script src="/files/client/common/js/jquery.app.js"></script>
     </div>
 </div>
-<script src="/files/client/common/js/custombox/custombox.min.js"></script>
+{% endblock %} {% block contentscript %}
 <script src="/script/bulkupload/completed_task_current_year/Completed-task-current-year-BulkUpload.js"></script>
-<script>
-    function openAddPage() {
-        $('#list-screen').hide();
-        $('#add-screen').show();
-    }
-
-    function openListPage() {
-        $('#list-screen').show();
-        $('#add-screen').hide();
-    }
-</script>
 {% endblock %}

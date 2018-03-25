@@ -8,14 +8,13 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     CSV_DELIMITER, REJECTED_DOWNLOAD_PATH, REJECTED_DOWNLOAD_BASE_PATH
 )
-
 from keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..bulkuploadcommon import (
     rename_download_file_type, write_download_data_to_excel
 )
 
 __all__ = [
-    "ValidateRejectedSMBulkCsvData"
+    "ValidateRejectedDownloadBulkData"
 ]
 ################################
 '''
@@ -149,8 +148,9 @@ __all__ = [
 # db, source_data, session_user, country_id,
 #         domain_id, csv_id, download_format
 
-class ValidateRejectedSMBulkCsvData():
-    def __init__(self, db, source_data, session_user, download_format, csv_name, csv_header):
+class ValidateRejectedDownloadBulkData():
+    def __init__(self, db, source_data, session_user, download_format,
+                 csv_name, csv_header, csv_column_name, sheet_name):
         # super(SourceDB, self).__init__()
         # SourceDB.__init__(self)
         self._db = db
@@ -163,14 +163,14 @@ class ValidateRejectedSMBulkCsvData():
         self._error_summary = {}
         # self.errorSummary()
         # self.statusCheckMethods()
-        self._csv_column_name = []
-        self._csv_column_header=[]
-        self.csv_column_fields()
+        self._csv_column_name = csv_column_name
+        self._csv_column_header = []
+#        self.csv_column_fields()
         self._doc_names = []
-        self._sheet_name = "Rejected StatutoryMapping"
+        self._sheet_name = sheet_name
 
-    def csv_column_fields(self):
-        self._csv_column_name = self._csv_header
+    # def csv_column_fields(self):
+    #     self._csv_column_name = csv_column_name
 
     def perform_validation(self):
         mapped_error_dict = {}
@@ -186,11 +186,12 @@ class ValidateRejectedSMBulkCsvData():
         file_name = "%s_%s.%s" % (
             fileString[0], "download", "xlsx"
         )
-        final_hearder = self._csv_column_name
+        final_hearder = self._csv_header
+        final_header_column = self._csv_column_name
         write_download_data_to_excel(
             os.path.join(REJECTED_DOWNLOAD_PATH, "xlsx"), file_name,
-            final_hearder, self._source_data, mapped_error_dict,
-            mapped_header_dict, self._sheet_name
+            final_hearder, final_header_column, self._source_data,
+            mapped_error_dict, mapped_header_dict, self._sheet_name
         )
         xlsx_download_path = REJECTED_DOWNLOAD_BASE_PATH+"xlsx/"
         xlsx_link = os.path.join(xlsx_download_path, file_name)
@@ -205,5 +206,4 @@ class ValidateRejectedSMBulkCsvData():
             "csv_link": csv_link,
             "ods_link": ods_link,
             "txt_link": txt_link
-
         }

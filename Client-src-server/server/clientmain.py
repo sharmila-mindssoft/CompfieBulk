@@ -28,12 +28,23 @@ from server.clientdatabase.savelegalentitydata import(
     LEntityReplicationServiceProvider, LEntityUnitClosure,
     LEntitySettingsData, LEntityReplicationUserPrivileges
 )
-from server.constants import SESSION_CUTOFF
+from server.constants import (
+    SESSION_CUTOFF,
+    BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
+    BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME
+)
 import logger
 import random, string
+from bulkupload.client_bulkuploadmain import BulkAPI
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 app = Flask(__name__)
+
+
+__all__ = [
+    "bulk_upload_api_request",
+    "API"
+]
 
 #
 # api_request
@@ -65,12 +76,38 @@ def global_api_request(
     return wrapper
 
 
-class API(object):
+def bulk_upload_api_request(
+    request_data_type, is_group=True, need_category=False
+):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(self):
+            return self.handle_bulk_upload_api_request(
+                f, request_data_type, is_group, need_category
+            )
+        return wrapped
+    return wrapper
+
+
+def bulk_db_connect():
+        cnx = mysql.connector.connect(
+            user=BULK_UPLOAD_DB_USERNAME,
+            password=BULK_UPLOAD_DB_PASSWORD,
+            host=BULK_UPLOAD_DB_HOST,
+            database=BULK_UPLOAD_DATABASE_NAME,
+            port=BULK_UPLOAD_DB_PORT,
+            autocommit=False,
+        )
+        return cnx
+
+
+class API(BulkAPI):
     def __init__(
         self,
         address,
         knowledge_server_address,
     ):
+        super(BulkAPI, self).__init__()
         self._address = address
         self._knowledge_server_address = knowledge_server_address
         self._group_databases = {}
@@ -357,7 +394,7 @@ class API(object):
             return
 
     def legal_entity_replication_added(self, group_info, le_infos):
-        extra_details = random.choice(string.lowercase)+str(random.randint(10000,99999))
+        extra_details = random.choice(string.lowercase) + str(random.randint(10000, 99999))
         for r in le_infos :
             le_id = r["legal_entity_id"]
             le_info = self._le_databases.get(le_id)
@@ -374,7 +411,7 @@ class API(object):
                 info._start()
 
             if r["privileges_data"] == 1 :
-                
+
                 info = LEntityReplicationUserPrivileges(group_info, le_info, le_id, extra_details)
                 info._start()
 
@@ -615,19 +652,19 @@ class API(object):
                 if type(request_data.request) is dashboard.GetComplianceStatusChart :
                     p_response.chart_data.extend(data.chart_data)
                     p_response.chart_data = controller.merge_compliance_status(p_response.chart_data)
-                    
+
                 elif type(request_data.request) is dashboard.GetEscalationsChart :
                     p_response.chart_data.extend(data.chart_data)
                     p_response.chart_data = controller.merge_escalation_status(p_response.chart_data)
-                    
+
                 elif type(request_data.request) is dashboard.GetNotificationsCount :
                     p_response.notification_count.extend(data.notification_count)
                     # p_response.notification_count = controller.merge_notification_count(p_response.notification_count)
-                        # p_response.reminder_count += data.reminder_count
-                        # p_response.reminder_expire_count += data.reminder_expire_count
-                        # p_response.escalation_count += data.escalation_count
-                        # p_response.messages_count += data.messages_count
-                        # p_response.statutory_count += data.statutory_count
+                    # p_response.reminder_count += data.reminder_count
+                    # p_response.reminder_expire_count += data.reminder_expire_count
+                    # p_response.escalation_count += data.escalation_count
+                    # p_response.messages_count += data.messages_count
+                    # p_response.statutory_count += data.statutory_count
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
                     p_response.T_0_to_30_days_count += data.T_0_to_30_days_count
@@ -680,15 +717,15 @@ class API(object):
 
                 elif type(request_data.request) is widgetprotocol.GetCalendarView :
                     p_response = controller.merge_calendar_view(p_response, data)
-                    
+
                 elif type(request_data.request) is widgetprotocol.GetRiskChart :
                     p_response = controller.merge_risk_chart_widget(p_response, data)
 
-                elif type(request_data.request) is dashboard.GetStatutoryNotifications : 
+                elif type(request_data.request) is dashboard.GetStatutoryNotifications :
                     p_response.statutory.extend(data.statutory)
                     p_response.statutory_count += data.statutory_count
                     p_response.statutory.sort(key=lambda x : (x.created_on), reverse=True)
-                    
+
                 elif type(request_data.request) is dashboard.GetNotifications :
                     if request_data.request.notification_type == 2:
                         p_response.reminders.extend(data.reminders)
@@ -779,6 +816,49 @@ class API(object):
         except Exception, e :
             logger.logclient("error", "handle global api request", str(e))
             logger.logclient("error", "handle global api request", str(traceback.format_exc()))
+            print(traceback.format_exc())
+            return self._send_response(str(e), 400)
+
+    def handle_bulk_upload_api_request(self, unbound_method, request_data_type, is_group, need_category):
+        caller_name = request.headers.get("Caller-Name")
+
+        try :
+            # print "try"
+            request_data, company_id = self._parse_request(request_data_type, is_group)
+            session = request_data.session_token
+
+            is_mobile = False
+
+            session_user, client_id, session_category = self._validate_user_session(session, caller_name, is_mobile)
+
+            if session_user is False :
+                return self.respond(clientlogin.InvalidSessionToken())
+
+            try :
+                _db_con = bulk_db_connect()
+                _db = Database(_db_con)
+                _db.begin()
+                response_data = unbound_method(
+                    self, request_data, _db, session_user, session_category
+                )
+                _db.commit()
+                _db.close()
+                _db_con.close()
+                return self.respond(response_data)
+            except Exception, e:
+                logger.logclient("error", "handle bulk upload api request", str(e))
+                logger.logclient("error", "handle bulk upload api request", str(traceback.format_exc()))
+                print(traceback.format_exc())
+
+                if str(e).find("expected a") is False :
+                    _db.rollback()
+                    _db.close()
+                    _db_con.close()
+                return self._send_response(str(e), 400)
+
+        except Exception, e :
+            logger.logclient("error", "handle bulk upload api request", str(e))
+            logger.logclient("error", "handle bulk upload api request", str(traceback.format_exc()))
             print(traceback.format_exc())
             return self._send_response(str(e), 400)
 

@@ -2,6 +2,7 @@
 
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
+<link href="/css/dropzone.css" rel="stylesheet" type="text/css" />
 <div class="container" id="sm-csv-view">
     <div class="row">
         <div class="col-sm-1"></div>
@@ -141,8 +142,15 @@
                                 <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">
                                 Select Documents:
                                 <span class="mandatory">*</span></label>
+                                <!-- <form action="/upload"> -->
+                                    <div class="dropzone dz-clickable" id="myDrop">
+                                         <div class="dz-default dz-message" data-dz-message="">
+                                              <span>Upload or drag your files here</span>
+                                         </div>
+                                    </div>
+                                <!-- </form> -->
                                 <div class="col-sm-6 controls">
-                                    <input class="form-control input-sm" type="file">
+                                    <!-- <input class="form-control input-sm" type="file"> -->
                                     <ul class="p-l-20 p-t-5 bu-doc-summary">
                                         <li>Required Documents:
                                             <b><span id="bu-doc-total"></span></b>
@@ -277,5 +285,6 @@
 {% endblock %}
 
 {% block contentscript %}
+    <script src="/js/dropzone.js"></script>
     <script type="text/javascript" src="/script/bulk-upload/statutory-mapping-bulk-upload/statutory-mapping-bulk-upload.js"></script>
 {% endblock %}
