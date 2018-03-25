@@ -64,6 +64,7 @@ class Database(object):
             " WHERE  session_token=%s"
         param = [session_token]
         row = self.select_one(query, param)
+        print row
         user_id = None
         if row:
             user_id = row["user_id"]
@@ -119,3 +120,22 @@ class Database(object):
         except Exception, e:
             raise RuntimeError(str(e))
 
+    def call_update_proc(self, procedure_name, args):
+        cursor = self.cursor()
+        assert cursor is not None
+        try:
+            if args is None:
+                cursor.callproc(procedure_name)
+            else:
+                cursor.callproc(procedure_name, args)
+
+            cursor.nextset()
+        except Exception, e:
+            raise RuntimeError(str(e))
+        return True
+
+    def update_file_status(self, csv_id, file_name):
+
+        self.call_update_proc(
+            "sp_format_file_status_update", [csv_id, file_name]
+        )

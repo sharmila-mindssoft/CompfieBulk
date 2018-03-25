@@ -150,6 +150,8 @@ BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
             $('.expec-docs', cloneRow).text(data.no_of_documents);
             $('.uploaded-docs', cloneRow).text(data.uploaded_documents);
             $('.remaining-docs', cloneRow).text(balance);
+            csvId = data.csv_id;
+            docNames = data.doc_names;
             $('.upload i', cloneRow).on('click', function(){
                 t_this.showEdit(data);
             });
@@ -166,6 +168,13 @@ BulkUploadStatutoryMapping.prototype.fetchListData = function(first_argument) {
         if (error == null) {
             t_this._ListDataForView = response.csv_list;
             t_this.renderList(t_this._ListDataForView);
+            if (response.upload_more == false) {
+                displayMessage(message.upload_limit)
+                AddButton.hide();
+            }
+            else {
+                AddButton.show();
+            }
             hideLoader();
         }
         else{
@@ -416,7 +425,7 @@ function PageControls() {
 function file_upload_rul() {
     var session_id = mirror.getSessionToken();
 
-    var file_base_url = "http://localhost:9005/upload?session_id=" +
+    var file_base_url = "/temp/upload?session_id=" +
         session_id + "&csvid=" + csvId
     console.log(file_base_url)
     return file_base_url;
@@ -424,16 +433,30 @@ function file_upload_rul() {
 
 
 Dropzone.autoDiscover = false;
+Dropzone.autoProcessQueue = false;
 
 var myDropzone = new Dropzone("div#myDrop", {
     addRemoveLinks: true,
     autoProcessQueue: false,
     parallelUploads: 3,
     url: "#",
+    transformFile: function transformFile(file, done) {
+      var zip = new JSZip();
+      zip.file(file.name, file);
+      zip.generateAsync(
+        {
+          type:"blob",
+          compression: "DEFLATE"
+        }
+      ).then(function(content) {
+        done(content);
+      });
+    },
     init: function() {
         this.on("addedfile", function(file) {
+            console.log(docNames)
             if (jQuery.inArray(file.name, docNames) == -1) {
-                displayMessage(message.invalid_file + file.name)
+                // displayMessage(message.invalid_file + file.name)
                 console.log(file.name);
                 myDropzone.removeFile(file);
             }
@@ -447,14 +470,18 @@ var myDropzone = new Dropzone("div#myDrop", {
         });
 
         this.on("processing", function(file) {
-          this.options.url = file_base_url();
+          this.options.url = file_upload_rul();
         });
 
         this.on("success", function(file, response) {
-            console.log("Completed file=", file.name);
-            // // Call this once the files are uploaded successfully
-            // myDropzone.removeAllFiles(true);
-        })
+            myDropzone.removeAllFiles(true);
+            displaySuccessMessage(message.document_upload_success)
+            buSmPage.showList();
+        });
+
+        this.on("error", function(file, errorMessage) {
+            displayMessage(errorMessage);
+        });
     }
 });
 

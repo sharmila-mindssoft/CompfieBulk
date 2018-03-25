@@ -1,11 +1,11 @@
 CLIENT_TEMPLATE_PATHS = [
+    # (
+    #     r"/",
+    #     "files/client/login/login.html",
+    #     None, {}
+    # ),
     (
-        r"/",
-        "files/client/login/login.html",
-        None, {}
-    ),
-    (
-        "/login",
+        r"/login",
         "files/client/login/login.html",
         None, {}
     ),

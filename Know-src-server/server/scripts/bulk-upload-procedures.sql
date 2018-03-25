@@ -24,12 +24,21 @@ CREATE PROCEDURE `sp_statutory_mapping_csv_list`(
 IN uploadedby INT
 )
 BEGIN
+    SELECT COUNT(0) AS max_count from tbl_bulk_statutory_mapping_csv
+    WHERE (ifnull(is_fully_rejected, 0) = 1  OR ifnull(declined_count, 0) > 0)
+    AND approve_status != 4  AND uploaded_by = uploadedby;
+
     SELECT country_id, domain_id, csv_id, country_name,
     domain_name, csv_name, total_records, uploaded_on,
     total_documents, uploaded_documents
     FROM tbl_bulk_statutory_mapping_csv
-    WHERE (ifnull(is_fully_rejected, 0) = 1  OR ifnull(declined_count, 0) > 0)
-    AND approve_status != 4  AND uploaded_by = uploadedby;
+    WHERE ifnull(upload_status, 0) = 0  AND uploaded_by = uploadedby;
+
+    select t1.csv_id, format_file from tbl_bulk_statutory_mapping as t1
+    INNER JOIN tbl_bulk_statutory_mapping_csv as t2
+    ON t2.csv_id = t1.csv_id
+    where ifnull(t2.upload_status, 0) = 0
+    and t2.uploaded_by = uploadedby and ifnull(t1.format_upload_status, 0) = 0;
 END //
 
 DELIMITER ;
@@ -1656,6 +1665,34 @@ BEGIN
     SELECT count(bulk_statutory_mapping_id) AS pending_count
     FROM tbl_bulk_statutory_mapping AS t2
     WHERE t2.csv_id = csvid AND ifnull(action, 0) = 0;
+
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To update file and upload statis
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_format_file_status_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_format_file_status_update`(
+    IN csvid INT, filename VARCHAR(150)
+)
+BEGIN
+
+    update tbl_bulk_statutory_mapping set format_upload_status = 1
+      where csv_id = csvid and format_file = filename;
+
+    update tbl_bulk_statutory_mapping_csv
+      set uploaded_documents = uploaded_documents + 1
+      where csv_id = csvid;
+
+    update  tbl_bulk_statutory_mapping_csv set upload_status = 1 where
+      uploaded_documents = total_documents and csv_id = csvid;
+
 
 END //
 

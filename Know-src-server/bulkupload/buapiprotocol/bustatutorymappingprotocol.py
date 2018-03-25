@@ -525,7 +525,7 @@ class CsvList(object):
     def __init__(
         self, c_id, c_name, d_id, d_name, csv_id, csv_name,
         no_of_records, no_of_documents, uploaded_documents,
-        uploaded_on
+        uploaded_on, doc_names
     ):
         self.c_id = c_id
         self.c_name = c_name
@@ -537,20 +537,21 @@ class CsvList(object):
         self.no_of_documents = no_of_documents
         self.uploaded_documents = uploaded_documents
         self.uploaded_on = uploaded_on
+        self.doc_names = doc_names
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "c_id", "c_name", "d_id", "d_name", "csv_id", "csv_name",
             "no_of_records", "no_of_documents", "uploaded_documents",
-            "uploaded_on"
+            "uploaded_on", "doc_names"
         ])
         return CsvList(
             data.get("c_id"), data.get("c_name"), data.get("d_id"),
             data.get("d_name"), data.get("csv_id"), data.get("csv_name"),
             data.get("no_of_records"), data.get("no_of_documents"),
             data.get("uploaded_documents"),
-            data.get("uploaded_on")
+            data.get("uploaded_on"), data.get("doc_names")
         )
 
     def to_structure(self):
@@ -564,7 +565,8 @@ class CsvList(object):
             "no_of_records": self.no_of_records,
             "no_of_documents": self.no_of_documents,
             "uploaded_documents": self.uploaded_documents,
-            "uploaded_on": self.uploaded_on
+            "uploaded_on": self.uploaded_on,
+            "doc_names": self.doc_names
         }
 
 

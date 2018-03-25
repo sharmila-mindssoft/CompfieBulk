@@ -610,9 +610,10 @@ class StatutorySource(object):
             )
 
     def save_executive_message(
-        self, csv_name, countryname, domainname, createdby
+        self, actual_csv_name, countryname, domainname, createdby
     ):
-
+        csv_name = actual_csv_name.split('_')
+        csv_name = "_".join(csv_name[:-1])
         text = "Statutory mapping file %s of %s - %s uploaded for your %s" % (
                 csv_name, countryname, domainname, 'approval'
             )
@@ -631,8 +632,10 @@ class StatutorySource(object):
             )
 
     def save_manager_message(
-        self, a_type, csv_name, countryname, domainname, createdby
+        self, a_type, actual_csv_name, countryname, domainname, createdby
     ):
+        csv_name = actual_csv_name.split('_')
+        csv_name = "_".join(csv_name[:-1])
         if a_type == 1:
             action_type = "approved"
 

@@ -55,6 +55,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping` (
   `task_Type` VARCHAR(150) not null,
   `action` TINYINT null,
   `remarks` varchar(500) null,
+  `format_upload_status` TINYINT null,
   PRIMARY KEY (`bulk_statutory_mapping_id`),
   CONSTRAINT `fk_csv_id` FOREIGN KEY (`csv_id`) REFERENCES `tbl_bulk_statutory_mapping_csv` (`csv_id`));
 
