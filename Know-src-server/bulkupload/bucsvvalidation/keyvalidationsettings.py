@@ -73,7 +73,9 @@ def is_valid_statutory_date_input(value, irange) :
     flag = True
     if value != "" :
         if only_numeric(value) :
-            if int(value) > irange :
+            if int(value) == 0:
+                flag = False
+            elif int(value) > irange:
                 flag = "cannot exceed maxlength %s" % (irange)
         else :
             flag = False
@@ -91,10 +93,12 @@ def trigger_days(value) :
 def duration_and_repeats(value) :
 
     flag = True
-    if value != "" :
-        if only_numeric(value) :
-            if int(value) > 999 :
+    if value != "":
+        if only_numeric(value):
+            if int(value) == 0:
                 flag = False
+            elif int(value) > 999 :
+                flag = "cannot exceed maxlength 999"
         else :
             flag = False
     return flag
@@ -368,7 +372,8 @@ csv_params = {
         validation_method=is_alpha_numeric
     ),
     'Task_ID': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True,  isValidCharCheck=True,
+        keyType='STRING', isMandatoryCheck=True,  maxLengthCheck=25,
+        isValidCharCheck=True,
         validation_method=is_alpha_numeric
     ),
     'Compliance_Description': make_required_validation(

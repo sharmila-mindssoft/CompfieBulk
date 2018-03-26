@@ -476,6 +476,7 @@ var message = {
   "upload_success": "CSV file uploaded successfully",
   "approve_success": "CSV file approved successfully",
   "reject_success": "CSV file rejected successfully",
+  "invalid_file": "Invalid file ",
   'client_group_required': 'Client Group Required',
   'client_group_50': 'More than 50 characters are not allowed for Client Group Name',
   'secondary_legislation_required': 'Please select any one of the Secondary Legislation',

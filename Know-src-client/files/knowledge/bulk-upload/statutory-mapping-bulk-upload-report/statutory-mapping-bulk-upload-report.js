@@ -225,10 +225,10 @@ function processSubmit() {
         splitDomainName = value.split("-");
         selectedDomainId.push(parseInt(splitDomainName[1]));
     });
-    if ($('#kename-kmanager').val() == null) {
+    if ($('#kename_kmanager').val() == null) {
         selectedKe = KNOWLEDGE_EXECUTIVES;
     } else {
-        $('#kename-kmanager > option:selected').each(function() {
+        $('#kename_kmanager > option:selected').each(function() {
             selectedKe.push(parseInt(this.value));
         });
     }
@@ -337,7 +337,7 @@ function loadDomains() {
 /****** Pagination ***********/
 function showPagePan(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ';
-    showText = total + ' entries ';
+    showText += total + ' entries ';
     COMPLIANCE_CLASS.text(showText);
     PAGINATION_VIEW.show();
 };
@@ -520,10 +520,10 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
         return $(this).text();
     }).get().join(',');
     console.log("domainNames-> " + domainNames);
-    if ($('#kename-kmanager').val() == null) {
+    if ($('#kename_kmanager').val() == null) {
         selectedKe = KNOWLEDGE_EXECUTIVES;
     } else {
-        $('#kename-kmanager > option:selected').each(function() {
+        $('#kename_kmanager > option:selected').each(function() {
             console.log(this.value);
             selectedKe.push(parseInt(this.value));
         });

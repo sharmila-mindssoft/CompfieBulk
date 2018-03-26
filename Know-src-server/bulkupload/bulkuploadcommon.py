@@ -1,3 +1,4 @@
+import sys
 import os
 import io
 import uuid
@@ -107,6 +108,7 @@ def write_data_to_excel(
     file_src_path, file_name, headers, column_data,
     data_error_dict, header_dict, sheet_name
 ):
+
     file_path = os.path.join(file_src_path, file_name)
     workbook = xlsxwriter.Workbook(file_path)
     worksheet = workbook.add_worksheet(sheet_name)
@@ -133,7 +135,7 @@ def write_data_to_excel(
     col = 0
 
     for idx, dat in enumerate(column_data):
-        print idx, dat
+
         for i, h in enumerate(headers):
             h = h.replace('*', '')
             error_col = header_dict.get(h)
@@ -146,8 +148,16 @@ def write_data_to_excel(
                     e = ""
                 else :
                     e = "|;|".join(error_text)
-                worksheet.write(row, col+i, e)
+                print e
+                # e.encode("utf8")
+                # e.decode('utf8')
+
+                worksheet.write_string(row, col+i, e)
             else :
+                print d
+                # d.decode('utf8')
+                print type(d)
+                d.decode("utf8")
                 if idx in error_col :
                     worksheet.write_string(row, col+i, d, error_format)
                 else :
@@ -171,6 +181,8 @@ def write_data_to_excel(
         summarySheet.write(srow, 0, col)
         summarySheet.write(srow, 1, value)
         srow += 1
+    workbook.close()
+
 
 def rename_file_type(src_file_name, des_file_type):
     src_path = os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx")

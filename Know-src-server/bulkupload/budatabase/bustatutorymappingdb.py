@@ -3,12 +3,11 @@ import traceback
 from server import logger
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 import datetime
+from server.constants import MAX_REJECTED_COUNT
 
 
 __all__ = [
     "get_uploaded_statutory_mapping_csv_list",
-    "save_mapping_csv",
-    "save_mapping_data",
     "fetch_statutory_bulk_report",
     "save_mapping_csv", "save_mapping_data",
     "get_pending_mapping_list",
@@ -41,7 +40,7 @@ __all__ = [
 def get_uploaded_statutory_mapping_csv_list(db, session_user):
     csv_data = []
     data = db.call_proc("sp_statutory_mapping_csv_list", [session_user])
-    if len(data) > 5:
+    if len(data) > MAX_REJECTED_COUNT:
         upload_more = False
     else:
         upload_more = True
@@ -216,7 +215,8 @@ def get_filters_for_approve(db, csv_id):
     if len(data) > 0:
         if len(data[0]) > 0:
             for d in data[0]:
-                org_names.append(d["organization"])
+                org_names.extend(d["organization"].strip().split('|;|'))
+                org_names = list(set(org_names))
 
         if len(data[1]) > 0:
             for d in data[1]:
@@ -279,6 +279,8 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     f_range = request_frame.r_range
     if organization is None or organization == "":
         organization = '%'
+    else :
+        organization = organization + '%'
 
     if s_nature is None or s_nature == "":
         s_nature = '%'
@@ -290,9 +292,13 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
 
     if statutory is None or statutory == "":
         statutory = '%'
+    else :
+        statutory = statutory + '%'
 
     if geo_location is None or geo_location == "":
         geo_location = '%'
+    else :
+        geo_location = geo_location + '%'
 
     if c_task is None or c_task == "":
         c_task = '%'
