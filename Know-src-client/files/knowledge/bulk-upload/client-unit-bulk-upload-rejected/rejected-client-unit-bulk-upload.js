@@ -12,6 +12,7 @@ var REMOVE_UNIT_CSV_ID;
 var EXISTING_USER_ID = [];
 var ALL_USER_INFO = '';
 var USER_CATEGORY_ID = 0;
+var VISIBLE_REMOVE_ICON = 1;
 
 /**** User Level Category ***********/
 var KM_USER_CATEGORY = 3;
