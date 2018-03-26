@@ -121,35 +121,6 @@ function getPastRecords(legalEntity) {
     );
 }
 
-function downloadData() {
-    if (LegalEntityName.val().trim() == "") {
-        displayMessage(message.legalentity_required);
-        LegalEntityName.focus();
-        return false;
-    }
-    if (txtdomain.val().trim() == "") {
-        displayMessage(message.domain_required);
-        txtdomain.focus();
-        return false;
-    }
-    if (txtUnit.val().trim() == "") {
-        displayMessage(message.unit_required);
-        txtUnit.focus();
-        return false;
-    } else if (txtUnit.val().trim() == "South Unit 15" && txtdomain.val().trim() == "Labour Law") {
-        $('#downloadFormatFile').
-        attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
-        $('#downloadFormatFile').
-        attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
-    }
-    // else {
-    //     $('#downloadFormatFile').
-    //     attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
-    //     $('#downloadFormatFile').
-    //     attr("download", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
-    // }
-}
-
 function validateUpload() {
     if ($('#fileInput').val() == "") {
         displayMessage("Select file to upload");
@@ -257,6 +228,90 @@ function pageControls() {
     BTNUPLOAD.click(function() {
         validateUpload();
     });
+}
+
+BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
+    displayMessage(error);
+};
+
+function downloadData() {
+    if (LegalEntityName.val().trim() == "") {
+        displayMessage(message.legalentity_required);
+        LegalEntityName.focus();
+        return false;
+    }
+    if (txtdomain.val().trim() == "") {
+        displayMessage(message.domain_required);
+        txtdomain.focus();
+        return false;
+    }
+    if (txtUnit.val().trim() == "") {
+        displayMessage(message.unit_required);
+        txtUnit.focus();
+        return false;
+    }
+    var legalEntityName = LegalEntityName.val();
+    var domainName = txtdomain.val();
+    var unitName = txtUnit.val();
+    //Todo Get Unit Code
+    var unitCode = "unitCode";
+    var leId = LegalEntityId.val();
+    var domainId = hdnDomain.val();
+    var unitId = hdnUnit.val();
+    var frequency = "Periodical";
+    var startCount = 0;
+
+    buClient.getDownloadData(
+        parseInt(leId), parseInt(domainId), parseInt(unitId), frequency, startCount,
+        legalEntityName, domainName, unitName, unitCode,
+        function(error, data) {
+            if (error == null) {
+                var download_url = data.link;
+                if (download_url != null) {
+                    window.open(download_url, '_blank');
+                    hideLoader();
+                } else {
+                    displayMessage("message.empty_export");
+                    hideLoader();
+                }
+            } else {
+                displayMessage(error);
+                hideLoader();
+            }
+        }
+    );
+}
+
+$(function() {
+    loadEntityDetails();
+
+});
+
+function pageControls() {
+    // Cancel Button Click Event
+    CANCELBUTTON.click(function() {
+        VIEWSCREEN.show();
+        ADDSCREEN.hide();
+    });
+
+    //Add Button Click Event
+    ADDBUTTON.click(function() {
+        VIEWSCREEN.hide();
+        ADDSCREEN.show();
+        // DIVUPLOAD.hide();
+    });
+
+    //Add Button Click Event
+    DOWNLOADBUTTON.click(function() {
+        downloadData();
+    });
+
+    //Upload Button Click Event
+    BTNUPLOAD.click(function() {
+        validateUpload();
+    });
+
+
 }
 
 BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
