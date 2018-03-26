@@ -1798,3 +1798,23 @@ BEGIN
 END //
 
 DELIMITER;
+
+
+-- --------------------------------------------------------------------------------
+-- To get total document count
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_sm_get_total_file_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_sm_get_total_file_count`(
+    IN csvid INT
+)
+BEGIN
+
+    select total_documents from tbl_bulk_statutory_mapping_csv
+    where csv_id = csvid;
+
+END //
+
+DELIMITER ;

@@ -1024,14 +1024,21 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self._source_data = None
         self._declined_row_idx = []
         self.get_source_data()
+        self.get_file_count()
         self._country_name = None
         self._domain_name = None
         self._csv_name = None
+        self._doc_count = 0
 
     def get_source_data(self):
         self._source_data = self._db.call_proc(
             "sp_statutory_mapping_by_csvid", [self._csv_id]
         )
+
+    def get_file_count(self):
+        data = self._db.call_proc("sp_sm_get_total_file_count", [self._csv_id])
+        if len(data) > 0 :
+            self._doc_count = data[0].get("total_documents")
 
     def perform_validation_before_submit(self):
         declined_count = 0
@@ -1190,9 +1197,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             raise (e)
 
     def format_download_process_initiate(self, csvid):
-        # call approve after initiate add time out to check zip status, if done
-        # call download once after complete download call remove
-        # and close the call time our
         self.file_server_approve_call(csvid)
         self._stop = False
 
