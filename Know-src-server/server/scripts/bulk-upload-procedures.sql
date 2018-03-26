@@ -402,7 +402,7 @@ DROP PROCEDURE IF EXISTS `sp_client_units_csv_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_units_csv_list`(
-    IN _clientId INT(11), _groupName varchar(50))
+    IN _clientId INT, _groupName VARCHAR(50))
 BEGIN
     SELECT t1.csv_unit_id, t1.csv_name, t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') AS uploaded_on,
@@ -1279,7 +1279,7 @@ DROP PROCEDURE IF EXISTS `sp_groups_client_units_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_groups_client_units_list`(
-  IN _ClientId INT(11))
+  IN _ClientId INT)
 BEGIN
   SELECT t2.legal_entity, t2.unit_code, t2.domain, t2.organization
   FROM tbl_bulk_units_csv AS t1 inner join tbl_bulk_units AS t2
@@ -1456,7 +1456,7 @@ DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_by_csvid`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_bulk_client_unit_by_csvid`(
-    IN _csv_id INT(11))
+    IN _csv_id INT)
 BEGIN
     select t1.client_id, t1.client_group, t2.bulk_unit_id,
     t2.legal_entity as Legal_Entity, t2.division as Division,
@@ -1497,8 +1497,8 @@ DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_update_action`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_bulk_client_unit_update_action`(
-    IN _csv_unit_id INT(11), _action TINYINT, _remarks TEXT, _user_id INT(11),
-  _declinedCount INT(11))
+    IN _csv_unit_id INT, _action TINYINT, _remarks TEXT, _user_id INT,
+  _declinedCount INT)
 BEGIN
     IF _action = 2 then
         UPDATE tbl_bulk_units SET
