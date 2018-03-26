@@ -297,8 +297,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
 
         for row_idx, data in enumerate(self._source_data):
             if row_idx == 0:
-                self._legal_entity_names = data.get("Legal_Entity")
-                self._Domains = data.get("Domain")
+                self._legal_entity_names = data.get("legal_entity_id")
+                self._Domains = data.get("d_id")
                 # self._Unit_Codes = data.get("Unit_Code")
                 # self._Unit_Names = data.get("Unit_Name")
                 # self._Primary_Legislations = data.get("Primary_Legislation")

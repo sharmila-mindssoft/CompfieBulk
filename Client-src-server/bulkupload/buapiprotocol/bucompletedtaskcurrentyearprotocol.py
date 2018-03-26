@@ -115,7 +115,7 @@ class UploadCompletedTaskCurrentYearCSVSuccess(Response):
 class UploadCompletedTaskCurrentYearCSVFailed(Response):
     def __init__(
         self, invalid_file, mandatory_error, max_length_error, duplicate_error,
-        invalid_char_error, invalid_data_error, inactive_error
+        invalid_char_error, invalid_data_error, inactive_error, total, invalid
     ):
         # total, invalid
         self.invalid_file = invalid_file
@@ -125,32 +125,22 @@ class UploadCompletedTaskCurrentYearCSVFailed(Response):
         self.invalid_char_error = invalid_char_error
         self.invalid_data_error = invalid_data_error
         self.inactive_error = inactive_error
-        # self.total = total
-        # self.invalid = invalid
+        self.total = total
+        self.invalid = invalid
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "invalid_file", "mandatory_error", "max_length_error",
             "duplicate_error", "invalid_char_error", "invalid_data_error",
-            "inactive_error"
+            "inactive_error", "total", "invalid"
         ])
-
-        # print "parse_inner_structure STARTS>>>"
-        # print data.get("invalid_file")
-        # print data.get("mandatory_error")
-        # print data.get("max_length_error")
-        # print data.get("duplicate_error")
-        # print data.get("invalid_char_error")
-        # print data.get("invalid_data_error")
-        # print data.get("inactive_error")
-        # print"ENDS>>>"
 
         return UploadCompletedTaskCurrentYearCSVFailed(
             data.get("invalid_file"), data.get("mandatory_error"),
             data.get("max_length_error"), data.get("duplicate_error"),
             data.get("invalid_char_error"), data.get("invalid_data_error"),
-            data.get("inactive_error")
+            data.get("inactive_error"), data.get("total"), data.get("invalid")
         )
 
     def to_inner_structure(self):
@@ -162,7 +152,9 @@ class UploadCompletedTaskCurrentYearCSVFailed(Response):
             "duplicate_error": self.duplicate_error,
             "invalid_char_error": self.invalid_char_error,
             "invalid_data_error": self.invalid_data_error,
-            "inactive_error": self.inactive_error
+            "inactive_error": self.inactive_error,
+            "total": self.total,
+            "invalid": self.invalid
         }
 
 def _init_Response_class_map():
