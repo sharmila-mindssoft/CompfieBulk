@@ -146,12 +146,12 @@ function validateUpload() {
         return false;
     } else {
         setTimeout(function() {
-            $('.invaliddata').show();
-            $('.view-summary').show();
+            // $('.invaliddata').show();
+            // $('.view-summary').show();
             // $('#divSuccessFile').show();
             // $('#divSuccessDocument').show();
             // $('#divSuccessbutton').show();
-        }, 2000);
+        }, 1000);
 
         var args = {
             "csv_name": csvInfo["file_name"],
@@ -164,18 +164,28 @@ function validateUpload() {
 
         buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
             if (error == null) {
-                // TotalRecordsCount.text(data.total);
-                // ValidRecordsCount.text(parseInt(data.valid) - parseInt(data.invalid));
-                // InvalidRecordsCount.text(data.invalid);
-                // InvalidFileName = null;
-                // MandatoryErrorsCount.text("0");
-                // DuplicateErrorsCount.text("0");
-                // StatusErrorsCount.text("0");
-                // LengthErrorsCount.text("0");
-                // InvalidErrorsCount.text("0");
-                // $('.view-summary').show();
-                // $('.invaliddata').hide();
-                displaySuccessMessage("Records uploaded successfully for approval");
+
+                TOTALRECORD.text(data.total);
+                VALIDRECORD.text(parseInt(data.valid) -
+                    parseInt(data.invalid));
+                INVALIDRECORD.text(data.invalid);
+                INVALIDFILENAME = null;
+                MANDATORYERROR.text("0");
+                DUPLICATEERROR.text("0");
+                STATUSERROR.text("0");
+                LENGTHERROR.text("0");
+                INVALIDERROR.text("0");
+                $('.view-summary').hide();
+                $('.dropbtn').hide();
+
+                $('.invaliddata').hide();
+                $('.view-summary').hide();
+                $('#divFileUpload').hide();
+                $('#divSuccessFile').show();
+                $('#divSuccessDocument').show();
+                $('#divSuccessbutton').show();
+
+                displaySuccessMessage("Records uploaded successfully");
                 hideLoader();
             } else {
                 // displayMessage(message.upload_failed);
@@ -196,6 +206,13 @@ function validateUpload() {
                 INVALIDERROR.text(getInvaliddataCount);
                 $('.dropbtn').show();
                 $('.view-summary').show();
+
+                $('.invaliddata').show();
+                $('.view-summary').show();
+                $('#divFileUpload').show();
+                $('#divSuccessFile').hide();
+                $('#divSuccessDocument').hide();
+                $('#divSuccessbutton').hide();
 
                 csv_path = "/invalid_file/csv/" + INVALIDFILENAME[0] +
                     '.csv';
@@ -311,7 +328,7 @@ function downloadData() {
     var unitCode = unit_list_map[unitId];
     var frequency = "Periodical";
     var startCount = 0;
-    console.log("^^^^^^^^^^^^" + unitId + " " + unitCode);
+    // console.log("^^^^^^^^^^^^" + unitId + " " + unitCode);
 
     buClient.getDownloadData(
         parseInt(leId), parseInt(domainId), parseInt(unitId), frequency, startCount,
