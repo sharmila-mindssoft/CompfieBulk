@@ -703,6 +703,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         }
 
     def compare_csv_columns(self):
+        print self._csv_column_name
+        print self._csv_header
         res = collections.Counter(
             self._csv_column_name
         ) == collections.Counter(self._csv_header)
