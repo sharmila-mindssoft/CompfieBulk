@@ -85,6 +85,10 @@ var acTaskType = $('#tasktype');
 var ACTaskType = $('#ac-tasktype');
 var MultiSelectFrequency = $('#frequency');
 
+var ApproveSelectAll = $(".approve-all");
+var RejectSelectAll = $(".reject-all");
+var CurrentPageSmId = [];
+
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -157,7 +161,7 @@ function displayPopUp(TYPE, csvId, smid){
                         );
                     }
                     else if (TYPE == "view-reject") {
-                        if ($('.reject-reason-txt').val() == '') {
+                        if ($('.view-reason').val()== '') {
                             displayMessage(message.reason_required)
                         }
                         else {
@@ -176,6 +180,39 @@ function displayPopUp(TYPE, csvId, smid){
         },
     });
 }
+
+function displayViewRejectAllPopUp(callback){
+    targetid = "#custom-modal-remarks";
+    CurrentPassword = null;
+    $('.view-reason').val('')
+
+    Custombox.open({
+        target: targetid,
+        effect: 'contentscale',
+        complete: function() {
+            if (CurrentPassword != null) {
+                CurrentPassword.focus();
+                CurrentPassword.val('');
+            }
+            isAuthenticate = false;
+        },
+        close: function() {
+            if (isAuthenticate) {
+                displayLoader();
+                setTimeout(function() {
+                    if ($('.view-reason').val() == '') {
+                        displayMessage(message.reason_required)
+                    }
+                    else {
+                        callback($('.view-reason').val());
+                    }
+
+                }, 500);
+            }
+        },
+    });
+}
+
 function validateAuthentication() {
 
     var password = CurrentPassword.val().trim();
@@ -512,7 +549,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
 
     showFrom = tThis.showMapCount;
     showFrom += 1;
-    console.log("render view screen")
+
     ViewListContainer.find('tr').remove();
 
     if(viewData.length == 0) {
@@ -524,6 +561,9 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
     }
     else {
         $.each(viewData, function(idx, data) {
+
+            var formatDownloadUrl = "/uploadedformat/" +
+                $('#view-csv-id').val() + "/" + data.format_file;
 
             var cloneRow = ViewListRowTemplate.clone();
             $('.sno', cloneRow).text(j);
@@ -545,7 +585,9 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
             $('.duration', cloneRow).text(data.dur);
             $('.duration-type', cloneRow).text(data.dur_type);
             $('.multiple', cloneRow).text(data.multiple_input);
-            $('.format', cloneRow).text(data.format_file);
+            $('.format a', cloneRow).text(data.format_file).attr(
+                "href", formatDownloadUrl
+            );
             $('.geography', cloneRow).text(data.geo_location);
             $('.comp-desc', cloneRow).text(data.c_desc);
             $('.penal', cloneRow).text(data.p_cons);
@@ -592,6 +634,10 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
             j += 1;
         });
     }
+
+    $('.js-filtertable-action-sm').each(function() {
+        $(this).filtertable().addFilter('.js-filter-sm');
+    });
 
     tThis.showMapCount += viewData.length;
     $('[data-toggle="tooltip"]').tooltip();
@@ -983,81 +1029,81 @@ function PageControls() {
     });
 
 
-    searchFileName.keyup(function() {
-        fList = key_search(buApprovePage.ApproveDataList);
-        buApprovePage.renderList(fList);
-    });
+    // searchFileName.keyup(function() {
+    //     fList = key_search(buApprovePage.ApproveDataList);
+    //     buApprovePage.renderList(fList);
+    // });
 
-    searchTotRecords.keyup(function() {
-        fList = key_search(buApprovePage.ApproveDataList);
-        buApprovePage.renderList(fList);
-    });
+    // searchTotRecords.keyup(function() {
+    //     fList = key_search(buApprovePage.ApproveDataList);
+    //     buApprovePage.renderList(fList);
+    // });
 
-    searchUploadBy.keyup(function() {
-        fList = key_search(buApprovePage.ApproveDataList);
-        buApprovePage.renderList(fList);
-    });
-    searchUploadOn.keyup(function() {
-        fList = key_search(buApprovePage.ApproveDataList);
-        buApprovePage.renderList(fList);
-    });
+    // searchUploadBy.keyup(function() {
+    //     fList = key_search(buApprovePage.ApproveDataList);
+    //     buApprovePage.renderList(fList);
+    // });
+    // searchUploadOn.keyup(function() {
+    //     fList = key_search(buApprovePage.ApproveDataList);
+    //     buApprovePage.renderList(fList);
+    // });
 
-    searchStatutory.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchOrganization.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchNature.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchProvision.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchCTask.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchCDoc.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchTaskId.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchCDesc.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchPCons.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchTaskType.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchReferLink.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchFreq.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchFormat.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
-    searchGeography.keyup(function(){
-        fList = key_view_search(buApprovePage.ViewDataList);
-        buApprovePage.renderViewScreen(fList);
-    });
+    // searchStatutory.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchOrganization.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchNature.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchProvision.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchCTask.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchCDoc.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchTaskId.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchCDesc.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchPCons.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchTaskType.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchReferLink.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchFreq.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchFormat.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
+    // searchGeography.keyup(function(){
+    //     fList = key_view_search(buApprovePage.ViewDataList);
+    //     buApprovePage.renderViewScreen(fList);
+    // });
 
     // filter events
 
@@ -1227,6 +1273,66 @@ function PageControls() {
 
     FinalSubmit.click(function(){
         displayPopUp("submit", parseInt($('#view-csv-id').val()), null);
+    });
+
+
+    ApproveSelectAll.on("change", function(e) {
+        if (buApprovePage.ViewDataList.length > 0) {
+            $("#tbody-sm-approve-view .view-approve-check").prop('checked', false);
+            $("#tbody-sm-approve-view .view-reject-check").prop('checked', false);
+            $('#tbody-sm-approve-view .view-approve-check').each(function(index, el) {
+                var data = buApprovePage.ViewDataList[index];
+                if (e.target.checked) {
+                    $(this).prop("checked", true);
+                    if (data) {
+                        var csvid = $('#view-csv-id').val();
+                        bu.updateActionFromView(
+                            parseInt(csvid), data.sm_id, 1, null,
+                            function(err, res) {
+                                if (err != null) {
+                                    buApprovePage.possibleFailures(err);
+                                }
+                        });
+                    }
+                }
+                else {
+                    $(this).prop("checked", false);
+                }
+            });
+
+        }
+    });
+
+
+    RejectSelectAll.on("change", function(e) {
+        CurrentPageSmId = [];
+        if (buApprovePage.ViewDataList.length > 0) {
+            displayViewRejectAllPopUp(function(reason) {
+                console.log(reason);
+                $("#tbody-sm-approve-view .view-approve-check").prop('checked', false);
+                $("#tbody-sm-approve-view .view-reject-check").prop('checked', false);
+                $('#tbody-sm-approve-view .view-reject-check').each(function(index, el) {
+                    var data = buApprovePage.ViewDataList[index];
+                    if (e.target.checked) {
+                        $(this).prop("checked", true);
+                        if (data) {
+                            var csvid = $('#view-csv-id').val();
+                            bu.updateActionFromView(
+                                parseInt(csvid), data.sm_id, 2, null,
+                                function(err, res) {
+                                    if (err != null) {
+                                        buApprovePage.possibleFailures(err);
+                                    }
+                            });
+                        }
+                    }
+                    else {
+                        $(this).prop("checked", false);
+                    }
+                });
+                hideLoader();
+            });
+        }
     });
 }
 

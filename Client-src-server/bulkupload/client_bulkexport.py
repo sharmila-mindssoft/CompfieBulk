@@ -99,7 +99,7 @@ class ConvertJsonToCSV(object):
                         "Statutory_Applicable_Status_*", "Statutory_remarks",
                         "Compliance_Applicable_Status_*"
                     ]
-                    
+
                     self.write_csv(csv_headers, None)
                     is_header = True
                 csv_values = [

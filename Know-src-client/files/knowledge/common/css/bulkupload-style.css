@@ -1,9 +1,7 @@
 .multiselect {
-    width: 266px !important;
+    width: 296px !important;
+    /* width: 266px !important; */
 }
-
-
-
 /* using width css classes instead of html width attribute */
 
 .width-1 {
@@ -116,6 +114,8 @@
 
 
 
+
+
 /* Dropdown download items*/
 
 .popover {
@@ -167,6 +167,8 @@
 }
 
 
+
+
 /* pagination */
 
 .pagination-space {
@@ -176,6 +178,34 @@
 .pagination-right-side {
     text-align: right;
     padding-right: 10px;
+}
+
+.filter-by-text {
+  padding: 10px;
+  text-transform: none;
+  color: #fff !important;
+  margin-top: 0px;
+}
+
+.filter-by-div {
+  height: 550px;
+}
+
+.mar-50-px {
+  margin-bottom: 50px;
+}
+
+.width-600-px {
+  width: 600px;
+}
+
+.pagination-td {
+  text-align: right;
+  padding-right: 10px;
+}
+
+.width-percentage {
+    width: 100%;
 }
 
 .pagination-view-width {

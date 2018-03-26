@@ -573,7 +573,6 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
         validation_method=is_alpha_numeric
     ),
-
     'Statutory_Provision_Column': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
     ),

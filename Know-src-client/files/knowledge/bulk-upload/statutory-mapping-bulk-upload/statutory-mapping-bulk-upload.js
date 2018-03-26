@@ -150,6 +150,8 @@ BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
             $('.expec-docs', cloneRow).text(data.no_of_documents);
             $('.uploaded-docs', cloneRow).text(data.uploaded_documents);
             $('.remaining-docs', cloneRow).text(balance);
+            csvId = data.csv_id;
+            docNames = data.doc_names;
             $('.upload i', cloneRow).on('click', function(){
                 t_this.showEdit(data);
             });
@@ -166,6 +168,13 @@ BulkUploadStatutoryMapping.prototype.fetchListData = function(first_argument) {
         if (error == null) {
             t_this._ListDataForView = response.csv_list;
             t_this.renderList(t_this._ListDataForView);
+            if (response.upload_more == false) {
+                displayMessage(message.upload_limit)
+                AddButton.hide();
+            }
+            else {
+                AddButton.show();
+            }
             hideLoader();
         }
         else{
@@ -402,6 +411,7 @@ function PageControls() {
         }
     }
     else {
+        displayLoader();
         myDropzone.processQueue();
     }
   });
@@ -416,7 +426,7 @@ function PageControls() {
 function file_upload_rul() {
     var session_id = mirror.getSessionToken();
 
-    var file_base_url = "http://localhost:9005/upload?session_id=" +
+    var file_base_url = "/temp/upload?session_id=" +
         session_id + "&csvid=" + csvId
     console.log(file_base_url)
     return file_base_url;
@@ -424,37 +434,70 @@ function file_upload_rul() {
 
 
 Dropzone.autoDiscover = false;
+Dropzone.autoProcessQueue = false;
+var addedfiles = []
+var fileUploadSuccess = 0;
 
 var myDropzone = new Dropzone("div#myDrop", {
     addRemoveLinks: true,
     autoProcessQueue: false,
-    parallelUploads: 3,
+    parallelUploads: 10,
     url: "#",
+    transformFile: function transformFile(file, done) {
+      var zip = new JSZip();
+      zip.file(file.name, file);
+      zip.generateAsync(
+        {
+          type:"blob",
+          compression: "DEFLATE"
+        }
+      ).then(function(content) {
+        done(content);
+      });
+    },
     init: function() {
         this.on("addedfile", function(file) {
+            if (jQuery.inArray(file.name, addedfiles) > -1) {
+                myDropzone.removeFile(file);
+            }
             if (jQuery.inArray(file.name, docNames) == -1) {
-                displayMessage(message.invalid_file + file.name)
                 console.log(file.name);
                 myDropzone.removeFile(file);
             }
-            // if (file.name == "Company_8787_excluded.json") {
-            //     console.log("Removed");
-            //     console.log(file);
-            //     myDropzone.removeFile(file);
-            // } else {
-            //     console.log(file);
-            // }
+            else {
+                addedfiles.push(file.name);
+            }
+
+
         });
 
         this.on("processing", function(file) {
-          this.options.url = file_base_url();
+          this.options.url = file_upload_rul();
         });
 
         this.on("success", function(file, response) {
-            console.log("Completed file=", file.name);
-            // // Call this once the files are uploaded successfully
-            // myDropzone.removeAllFiles(true);
-        })
+            addedfiles.pop(file.name);
+            if (fileUploadSuccess < docNames.length) {
+                fileUploadSuccess += 1;
+            }
+            console.log(fileUploadSuccess);
+            console.log(docNames.length);
+            if (fileUploadSuccess == docNames.length) {
+                myDropzone.removeAllFiles(true);
+                hideLoader()
+                displaySuccessMessage(message.document_upload_success)
+                buSmPage.showList();
+            }
+
+            //
+            //
+        });
+
+        this.on("error", function(file, errorMessage) {
+            displayMessage(errorMessage);
+            addedfiles = []
+            myDropzone.removeAllFiles(true);
+        });
     }
 });
 

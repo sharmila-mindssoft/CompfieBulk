@@ -72,6 +72,7 @@ BULK_UPLOAD_DB_PASSWORD = "Msft!@#$%^"
 BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload"
 
 CSV_DELIMITER = '|;|'
+CSV_MAX_LINE_ITEM = 100
 
 if IS_DEVELOPMENT is True :
     VERSION = time.time()
