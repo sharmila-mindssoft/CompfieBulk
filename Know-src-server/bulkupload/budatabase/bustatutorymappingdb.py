@@ -39,23 +39,40 @@ __all__ = [
 
 def get_uploaded_statutory_mapping_csv_list(db, session_user):
     csv_data = []
-    data = db.call_proc("sp_statutory_mapping_csv_list", [session_user])
-    if len(data) > MAX_REJECTED_COUNT:
-        upload_more = False
-    else:
-        upload_more = True
-    for d in data:
-        # csv_name = d.get("csv_name").split('_')
-        # csvname = "_".join(csv_name[:-1])
-        upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+    upload_more = True
+    doc_names = {}
+    data = db.call_proc_with_multiresult_set("sp_statutory_mapping_csv_list", [session_user], 3)
+    print data
+    if len(data) == 3 :
+        if data[0][0]["max_count"] > MAX_REJECTED_COUNT:
+            upload_more = False
+        else:
+            upload_more = True
+        print upload_more
 
-        csv_data.append(bu_sm.CsvList(
-            d.get("country_id"), d.get("country_name"), d.get("domain_id"),
-            d.get("domain_name"),
-            d.get("csv_id"), d.get("csv_name"), d.get("total_records"),
-            d.get("total_documents"),
-            d.get("uploaded_documents"), upload_on
-        ))
+        for d in data[2]:
+            csv_id = d.get("csv_id")
+            docname = d.get("format_file")
+            doc_list = doc_names.get(csv_id)
+            if doc_list is None :
+                doc_list = [docname]
+            else :
+                doc_list.append(docname)
+            doc_names[csv_id] = doc_list
+
+        for d in data[1]:
+            # csv_name = d.get("csv_name").split('_')
+            # csvname = "_".join(csv_name[:-1])
+            upload_on = d.get("uploaded_on").strftime("%d-%b-%Y %H:%M")
+
+            csv_data.append(bu_sm.CsvList(
+                d.get("country_id"), d.get("country_name"), d.get("domain_id"),
+                d.get("domain_name"),
+                d.get("csv_id"), d.get("csv_name"), d.get("total_records"),
+                d.get("total_documents"),
+                d.get("uploaded_documents"), upload_on,
+                doc_names.get(d.get("csv_id"))
+            ))
 
     return upload_more, csv_data
 

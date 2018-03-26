@@ -58,10 +58,8 @@ KNOWLEDGE_DB_POOL_SIZE = 200
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
-
-KNOWLEDGE_DB_PASSWORD = "root"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_uat"
-
+KNOWLEDGE_DB_PASSWORD = "123456"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new"
 URL = "http://localhost:8080/"
 CLIENT_URL = URL
 KNOWLEDGE_URL = URL + "knowledge"
@@ -80,3 +78,5 @@ MAX_REJECTED_COUNT = 5
 
 if IS_DEVELOPMENT is True :
     VERSION = time.time()
+
+TEMP_FILE_SERVER = "http://localhost:9000/temp/"

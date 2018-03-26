@@ -24,12 +24,21 @@ CREATE PROCEDURE `sp_statutory_mapping_csv_list`(
 IN uploadedby INT
 )
 BEGIN
+    SELECT COUNT(0) AS max_count from tbl_bulk_statutory_mapping_csv
+    WHERE (ifnull(is_fully_rejected, 0) = 1  OR ifnull(declined_count, 0) > 0)
+    AND approve_status != 4  AND uploaded_by = uploadedby;
+
     SELECT country_id, domain_id, csv_id, country_name,
     domain_name, csv_name, total_records, uploaded_on,
     total_documents, uploaded_documents
     FROM tbl_bulk_statutory_mapping_csv
-    WHERE (ifnull(is_fully_rejected, 0) = 1  OR ifnull(declined_count, 0) > 0)
-    AND approve_status != 4  AND uploaded_by = uploadedby;
+    WHERE ifnull(upload_status, 0) = 0  AND uploaded_by = uploadedby;
+
+    select t1.csv_id, format_file from tbl_bulk_statutory_mapping as t1
+    INNER JOIN tbl_bulk_statutory_mapping_csv as t2
+    ON t2.csv_id = t1.csv_id
+    where ifnull(t2.upload_status, 0) = 0
+    and t2.uploaded_by = uploadedby and ifnull(t1.format_upload_status, 0) = 0;
 END //
 
 DELIMITER ;
@@ -374,6 +383,9 @@ BEGIN
           t.csv_id = csvid
         )
         WHERE csv_id = csvid;
+
+        delete from tbl_bulk_statutory_mapping where csv_id = csvid
+          and ifnull(action, 0) != 3;
     end if;
 
     IF action = 3 then
@@ -1632,6 +1644,30 @@ END //
 
 DELIMITER ;
 
+-- --------------------------------------------------------------------------------
+-- To update format file and upload statis
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_sm_format_file_status_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_sm_format_file_status_update`(
+    IN csvid INT, filename VARCHAR(150)
+)
+BEGIN
+
+    update tbl_bulk_statutory_mapping set format_upload_status = 1
+      where csv_id = csvid and format_file = filename;
+
+    update tbl_bulk_statutory_mapping_csv
+      set uploaded_documents = uploaded_documents + 1
+      where csv_id = csvid and uploaded_documents < total_documents;
+
+    update  tbl_bulk_statutory_mapping_csv set upload_status = 1 where
+      uploaded_documents = total_documents and csv_id = csvid;
+
+
+
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_compliance_for_unit`;
 DELIMITER //
 
@@ -1664,6 +1700,21 @@ END //
 
 DELIMITER ;
 
+-- --------------------------------------------------------------------------------
+-- To update file download status
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_sm_file_download_status_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_sm_file_download_status_update`(
+    IN csvid INT, download_status VARCHAR(50)
+)
+BEGIN
+
+    update  tbl_bulk_statutory_mapping_csv set file_download_status =  download_status
+      where csv_id = csvid;
+
 
 DROP PROCEDURE IF EXISTS `sp_as_validation_info`;
 
@@ -1678,6 +1729,27 @@ BEGIN
 
     SELECT count(1) as un_saved FROM tbl_bulk_assign_statutory
     WHERE action is null AND csv_assign_statutory_id = csv_id;
+
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To update file download status
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_sm_get_file_download_status`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_sm_get_file_download_status`(
+    IN csvid INT
+)
+BEGIN
+
+    select file_download_status from tbl_bulk_statutory_mapping_csv
+    where csv_id = csvid;
+
 END //
 
 DELIMITER ;
@@ -1726,4 +1798,3 @@ BEGIN
 END //
 
 DELIMITER;
-

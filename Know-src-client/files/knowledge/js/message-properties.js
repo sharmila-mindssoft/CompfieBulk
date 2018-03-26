@@ -489,12 +489,16 @@ var message = {
   'un_saved_compliance': 'All compliance should be selected before submit',
   'clientgroup_required': 'Client Group Name Required',
   "no_compliance_assign_statutory": "No Compliance Available for Assign Statutory",
+  "upload_limit": "CSV Upload limit exceeded",
+  "document_upload_success": "Document uploaded successfully",
+
   "client_unit_upload_success": "Client Units uploaded successfully",
   "client_unit_upload_failed": "Errors in uploading Client Units",
   "upload_failed": "CSV file upload failed",
   "confirm_success": "Action taken successfully",
   "invalid_csv_file": "Invalid CSV File Uploaded",
-  "client_unit_file_max": "Client Unit Upload File Reached the Max Limit"
+  "client_unit_file_max": "Client Unit Upload File Reached the Max Limit",
+
 }
 
 function clearMessage() {
