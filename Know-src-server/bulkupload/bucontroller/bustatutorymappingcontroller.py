@@ -334,6 +334,7 @@ def update_statutory_mapping_action(db, request_frame, session_user):
                         db, csv_id, action, remarks, session_user
                 )):
                     print "after temp db update"
+                    cObj.format_download_process_initiate(csv_id)
                     cObj.frame_data_for_main_db_insert()
                     cObj.save_manager_message(
                         action, cObj._csv_name, cObj._country_name,
@@ -379,6 +380,7 @@ def submit_statutory_mapping(db, request_frame, session_user):
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
                 session_user.user_id()
             )
+            cObj.format_download_process_initiate(csv_id)
             cObj.frame_data_for_main_db_insert()
             cObj.source_commit()
             update_approve_action_from_list(db, csv_id, 1, None, session_user)
@@ -399,6 +401,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         )
         is_declined = cObj.perform_validation_before_submit()
         if len(is_declined) > 0:
+            cObj.format_download_process_initiate(csv_id)
             cObj.frame_data_for_main_db_insert()
             cObj.make_rejection(is_declined)
             cObj.save_manager_message(

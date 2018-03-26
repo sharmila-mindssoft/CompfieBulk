@@ -1672,13 +1672,13 @@ DELIMITER ;
 
 
 -- --------------------------------------------------------------------------------
--- To update file and upload statis
+-- To update format file and upload statis
 -- --------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS `sp_format_file_status_update`;
+DROP PROCEDURE IF EXISTS `sp_sm_format_file_status_update`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_format_file_status_update`(
+CREATE PROCEDURE `sp_sm_format_file_status_update`(
     IN csvid INT, filename VARCHAR(150)
 )
 BEGIN
@@ -1688,11 +1688,51 @@ BEGIN
 
     update tbl_bulk_statutory_mapping_csv
       set uploaded_documents = uploaded_documents + 1
-      where csv_id = csvid;
+      where csv_id = csvid and uploaded_documents < total_documents;
 
     update  tbl_bulk_statutory_mapping_csv set upload_status = 1 where
       uploaded_documents = total_documents and csv_id = csvid;
 
+
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To update file download status
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_sm_file_download_status_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_sm_file_download_status_update`(
+    IN csvid INT, download_status VARCHAR(50)
+)
+BEGIN
+
+    update  tbl_bulk_statutory_mapping_csv set file_download_status =  download_status
+      where csv_id = csvid;
+
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- To update file download status
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_sm_get_file_download_status`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_sm_get_file_download_status`(
+    IN csvid INT
+)
+BEGIN
+
+    select file_download_status from tbl_bulk_statutory_mapping_csv
+    where csv_id = csvid;
 
 END //
 

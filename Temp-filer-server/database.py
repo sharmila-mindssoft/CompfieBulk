@@ -135,7 +135,11 @@ class Database(object):
         return True
 
     def update_file_status(self, csv_id, file_name):
+        return self.call_update_proc(
+            "sp_sm_format_file_status_update", [csv_id, file_name]
+        )
 
-        self.call_update_proc(
-            "sp_format_file_status_update", [csv_id, file_name]
+    def update_format_file_status(self, csv_id, status):
+        return self.call_update_proc(
+            "sp_sm_file_download_status_update", [csv_id, status]
         )

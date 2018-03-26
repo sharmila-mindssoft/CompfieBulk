@@ -4,12 +4,18 @@ import json
 import traceback
 import collections
 import mysql.connector
+import urllib
+import threading
+from zipfile import ZipFile
 from itertools import groupby
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
+    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, TEMP_FILE_SERVER,
+    KNOWLEDGE_FORMAT_PATH,
+    BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
+    BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME
 )
 from server.common import (
     get_date_time
@@ -1179,3 +1185,76 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         except Exception, e :
             print str(traceback.format_exc())
             raise (e)
+
+    def format_download_process_initiate(self, csvid):
+        # call approve after initiate add time out to check zip status, if done
+        # call download once after complete download call remove
+        # and close the call time our
+        self.file_server_approve_call(csvid)
+        self._stop = False
+
+        def check_status():
+            if self._stop :
+                return
+
+            file_status = get_file_stats(csvid)
+            if file_status == "completed":
+                self._stop = True
+                self.file_server_download_call(csvid)
+
+            if self._stop is False :
+                t = threading.Timer(60, check_status)
+                t.daemon = True
+                t.start()
+
+        def get_file_stats(csvid):
+            file_status = None
+            c_db_con = self.bulkupload_db_connect()
+            _db_check = Database(c_db_con)
+            try :
+                _db_check.begin()
+                data = _db_check.call_proc("sp_sm_get_file_download_status", [csvid])
+                if len(data) > 0 :
+                    file_status = data[0].get("file_download_status")
+
+            except Exception, e :
+                print e
+                _db_check.rollback()
+
+            finally :
+                _db_check.close()
+                c_db_con.close()
+            return file_status
+
+        check_status()
+
+    def file_server_approve_call(self, csvid):
+        caller_name = "%s/approve?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        urllib.urlretrieve(caller_name)
+
+    def file_server_download_call(self, csvid):
+        actual_zip_file = os.path.join(KNOWLEDGE_FORMAT_PATH, csvid + ".zip")
+        caller_name = "%s/approve?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        urllib.urlretrieve(caller_name, actual_zip_file)
+        zip_ref = ZipFile(actual_zip_file, 'r')
+        zip_ref.extractall(KNOWLEDGE_FORMAT_PATH)
+        zip_ref.close()
+        os.remove(actual_zip_file)
+        self.file_server_remove_call(csvid)
+        return True
+
+    def file_server_remove_call(self, csvid):
+        caller_name = "%s/removefile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        urllib.urlretrieve(caller_name)
+
+
+def bulkupload_db_connect():
+    cnx_pool = mysql.connector.connect(
+        user=BULK_UPLOAD_DB_USERNAME,
+        password=BULK_UPLOAD_DB_PASSWORD,
+        host=BULK_UPLOAD_DB_HOST,
+        database=BULK_UPLOAD_DATABASE_NAME,
+        port=BULK_UPLOAD_DB_PORT,
+        autocommit=False,
+    )
+    return cnx_pool
