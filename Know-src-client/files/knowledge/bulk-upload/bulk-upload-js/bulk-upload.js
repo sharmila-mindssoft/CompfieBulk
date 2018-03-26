@@ -6,19 +6,20 @@ function getStatutoryMappingCsvList(callback){
   apiRequest("bu/statutory_mapping", request, callback);
 }
 
-function uploadClientUnitsBulkCSV(clientId, group_name, file_name, file_content, file_size, callback) {
-  callerName = 'bu/client_units';
+function uploadClientUnitsBulkCSV(
+  clientId, groupName, fileName, fileContent, fileSize, callback
+) {
   var request = [
     'UploadClientUnitsBulkCSV',
     {
       'bu_client_id': clientId,
-      'bu_group_name': group_name,
-      'csv_name': file_name,
-      'csv_data': file_content,
-      'csv_size': file_size
+      'bu_group_name': groupName,
+      'csv_name': fileName,
+      'csv_data': fileContent,
+      'csv_size': fileSize
     }
   ];
-  apiRequest(callerName, request, callback);
+  apiRequest('bu/client_units', request, callback);
 }
 
 function uploadStatutoryMappingCSV(args, callback) {
@@ -49,7 +50,7 @@ function convert_to_base64(file, callback) {
     var reader = new FileReader();
     reader.onload = function(readerEvt) {
         var binaryString = readerEvt.target.result;
-        file_content = btoa(binaryString);
+        var file_content = btoa(binaryString);
         callback(file_content);
     };
     reader.readAsBinaryString(file);
@@ -58,12 +59,12 @@ function convert_to_base64(file, callback) {
 function uploadCSVFile(fileListener, callback) {
     var status = false;
     var evt = fileListener;
-    max_limit = 1024 * 1024 * 50;
+    var max_limit = 1024 * 1024 * 50;
     // file max limit 50MB
     var files = evt.target.files;
     var file = files[0];
-    file_name = file.name;
-    file_size = file.size;
+    var file_name = file.name;
+    var file_size = file.size;
     var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
     if (file_name.indexOf('.') !== -1) {
       console.log("file_extension--"+file_extension);
@@ -72,13 +73,15 @@ function uploadCSVFile(fileListener, callback) {
         } else if ($.inArray(file_extension, ['csv']) == -1) {
             callback(status, 'Invalid file format');
         } else {
-            file_content = null;
+            var file_content = null;
             if (files && file) {
                 convert_to_base64(file, function(file_content) {
                     if (file_content == null) {
                         callback(status, 'File content is empty');
                     }
-                    result = uploadFileFormat(file_size, file_name, file_content);
+                    var result = uploadFileFormat(
+                      file_size, file_name, file_content
+                    );
                     status = true;
                     callback(status, result);
                 });
@@ -99,7 +102,6 @@ function getStatutoryMappingsBulkReportData(args, callback) {
 }
 
 function getClientGroupsClientUnitFilesList(clientId, groupName, callback) {
-    callerName = 'bu/client_units';
     var request = [
         'GetClientUnitsUploadedCSVFiles',
         {
@@ -107,7 +109,7 @@ function getClientGroupsClientUnitFilesList(clientId, groupName, callback) {
             'bu_group_name': groupName
         }
     ];
-    apiRequest(callerName, request, callback);
+    apiRequest('bu/client_units', request, callback);
 }
 
 function exportSMBulkReportData(args, callback) {
@@ -171,7 +173,7 @@ function deleteRejectedUnitByCsvID(args, callback) {
 // Assigned Statutory Bulk Report
 function getRejectedSMBulkData(args, callback) {
     var request = [
-        'GetRejectedStatutoryMappingBulkUploadData', args
+        'GetRejectedSMBulkUploadData', args
     ];
     apiRequest('bu/statutory_mapping', request, callback);
 }
@@ -212,7 +214,7 @@ function downloadRejectedASMReportData(args, callback) {
   apiRequest("bu/assign_statutory", request, callback);
 }
 
-function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, 
+function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name,
   le_name, d_names, u_names, callback){
   var request = [
     'DownloadAssignStatutory',
@@ -257,7 +259,9 @@ function getAssignStatutoryForApprove(cl_id, le_id, callback){
 }*/
 
 
-function updateActionFromList(csvid, action, remarks, pwd, country_id, domain_id, callback){
+function updateActionFromList(
+  csvid, action, remarks, pwd, country_id, domain_id, callback
+){
   var request = [
     'UpdateApproveActionFromList',
     {
@@ -368,7 +372,7 @@ function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
   apiRequest("bu/assign_statutory", request, callback);
 }
 
-function assignStatutoryActionInList(cl_id, le_id, csvid, action, 
+function assignStatutoryActionInList(cl_id, le_id, csvid, action,
   remarks, password,  callback){
   var request = [
     'AssignStatutoryApproveActionInList',
@@ -458,7 +462,7 @@ function getBulkClientUnitApproveRejectList(csv_id, f_count, r_range, callback) 
   apiRequest("bu/client_units", request, callback);
 }
 
-function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks, 
+function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks,
   callback){
   var request = [
     'SaveAction',
@@ -509,8 +513,8 @@ function getBulkClientUnitListForFilterView(csvid, f_count, r_range,
         "bu_category_name": filter_cg,
         "bu_unit_location": filter_u_loc,
         "bu_unit_code": filter_u_code,
-        "domain_name": filter_domain,
-        "orga_name": filter_orgn
+        "bu_domain": filter_domain,
+        "bu_orgn": filter_orgn
     }
   ];
   apiRequest("bu/client_units", request, callback)

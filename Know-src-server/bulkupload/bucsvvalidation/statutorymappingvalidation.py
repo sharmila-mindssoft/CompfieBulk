@@ -226,8 +226,7 @@ class StatutorySource(object):
         for k in keys:
             if d[k] != "":
                 msg.append(
-                    "Invalid  %s for compliance frequency %s" %
-                    (k, d["Compliance_Frequency"])
+                    "%s - Invalid Compliance Frequency" % (k)
                 )
         return msg
 
@@ -703,51 +702,65 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
     def check_duplicate_in_csv(self):
         seen = set()
+        duplicate_count = 0
         for d in self._source_data:
             t = tuple(d.items())
             if t not in seen:
                 seen.add(t)
+            else :
+                duplicate_count += 1
+        return duplicate_count
 
-        if len(seen) != len(self._source_data):
-            raise ValueError("Duplicate data found in CSV")
+        # if len(seen) != len(self._source_data):
+        #     raise ValueError("Duplicate or empty data found in CSV")
 
     def check_duplicate_task_name_in_csv(self):
         self._source_data.sort(key=lambda x: (
             x["Statutory"], x["Statutory_Provision"], x["Compliance_Task"]
         ))
-        msg = []
+        duplicate_compliance = 0
+        duplicate_compliance_row = []
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Statutory"], s["Statutory_Provision"], s["Compliance_Task"]
         )):
             grouped_list = list(v)
             if len(grouped_list) > 1:
-                msg.append(grouped_list[0].get("Compliance_Task"))
+                # msg.append(grouped_list[0].get("Compliance_Task"))
+                duplicate_compliance += len(grouped_list)
+                duplicate_compliance_row.append([
+                    grouped_list[0].get("Compliance_Task"),
+                    grouped_list[0].get("Statutory"),
+                    grouped_list[0].get("Statutory_Provision"),
+                ])
 
-        if len(msg) > 0:
-            error_msg = "Duplicate compliance task found in csv %s" % (
-                ','.join(msg)
-            )
-            raise ValueError(str(error_msg))
+        return duplicate_compliance, duplicate_compliance_row
+
+        # if len(msg) > 0:
+        #     error_msg = "Duplicate compliance task found in csv %s" % (
+        #         ','.join(msg)
+        #     )
+        #     raise ValueError(str(error_msg))
 
     def check_duplicate_task_id_in_csv(self):
         self._source_data.sort(key=lambda x: (
             x["Statutory"], x["Statutory_Provision"],
             x["Compliance_Task"], x["Task_ID"]
         ))
-        msg = []
+        duplicate_task_ids = []
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Statutory"], s["Statutory_Provision"],
             s["Compliance_Task"], s["Task_ID"]
         )):
             grouped_list = list(v)
             if len(grouped_list) > 1:
-                msg.append(grouped_list[0].get("Task_ID"))
+                duplicate_task_ids.append(grouped_list[0].get("Task_ID"))
 
-        if len(msg) > 0:
-            error_msg = "Duplicate task id found in csv %s" % (
-                ','.join(msg)
-            )
-            raise ValueError(str(error_msg))
+        return duplicate_task_ids
+        # if len(msg) > 0:
+        #     error_msg = "Duplicate task id found in csv %s" % (
+        #         ','.join(msg)
+        #     )
+        #     raise ValueError(str(error_msg))
 
     '''
         looped csv data to perform corresponding validation
@@ -760,9 +773,13 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         mapped_header_dict = {}
         invalid = 0
         self.compare_csv_columns()
-        self.check_duplicate_in_csv()
-        self.check_duplicate_task_name_in_csv()
-        self.check_duplicate_task_id_in_csv()
+        # duplicate_row_in_csv = self.check_duplicate_in_csv()
+        # self._error_summary["duplicate_error"] += duplicate_row_in_csv
+        duplicate = self.check_duplicate_task_name_in_csv()
+        duplicate_compliance_in_csv = duplicate[0]
+        duplicate_compliance_row = duplicate[1]
+        self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
+        duplicate_task_ids = self.check_duplicate_task_id_in_csv()
 
         self.init_values(self._country_id, self._domain_id)
 
@@ -789,12 +806,9 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     self._doc_names.append(value)
 
                 for v in [v.strip() for v in values]:
-                        print key
                         valid_failed, error_cnt = parse_csv_dictionary_values(
                             key, v
                         )
-                        print valid_failed
-                        print error_cnt
                         if valid_failed is not True:
                             if res is True:
                                 res = valid_failed
@@ -837,6 +851,20 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                                             "invalid_data_error"
                                         ] += 1
 
+                if key == "Task_ID":
+                    if v in duplicate_task_ids :
+                        dup_error = "Task_ID - Duplicate data"
+                        res = make_error_desc(res, dup_error)
+                if key == "Compliance_Task":
+                    for x in duplicate_compliance_row:
+                        if (
+                            x[0] == v and
+                            x[1] == data.get("Statutory") and
+                            x[2] == data.get("Statutory_Provision")
+                        ):
+                            dup_err = "Compliance_Task - Duplicate data"
+                            res = make_error_desc(res, dup_err)
+
                 if key == "Compliance_Frequency" and res is True:
                     msg = []
                     if value == "One time":
@@ -865,6 +893,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
                         mapped_header_dict[key] = head_idx
 
+                print res
+                print data.get("Task_ID")
                 if key == "Format" and res is True:
                     if not self.check_compliance_task_name_duplicate(
                         self._country_id, self._domain_id,
@@ -918,40 +948,43 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             )
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
-
-        fileString = self._csv_name.split('.')
-        file_name = "%s_%s.%s" % (
-            fileString[0], "invalid", "xlsx"
-        )
-        final_hearder = self._csv_column_name_with_mandatory
-        final_hearder.append("Error Description")
-        write_data_to_excel(
-            os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"),
-            file_name, final_hearder,
-            self._source_data, mapped_error_dict,
-            mapped_header_dict, self._sheet_name
-        )
-        invalid = len(mapped_error_dict.keys())
-        total = len(self._source_data)
-        # make csv file
-        rename_file_type(file_name, "csv")
-        # make ods file
-        rename_file_type(file_name, "ods")
-        # make text file
-        rename_file_type(file_name, "txt")
-        return {
-            "return_status": False,
-            "invalid_file": file_name,
-            "mandatory_error": self._error_summary["mandatory_error"],
-            "max_length_error": self._error_summary["max_length_error"],
-            "duplicate_error": self._error_summary["duplicate_error"],
-            "invalid_char_error": self._error_summary["invalid_char_error"],
-            "invalid_data_error": self._error_summary["invalid_data_error"],
-            "inactive_error": self._error_summary["inactive_error"],
-            "total": total,
-            "invalid": invalid,
-            "doc_count": len(set(self._doc_names))
-        }
+        try :
+            fileString = self._csv_name.split('.')
+            file_name = "%s_%s.%s" % (
+                fileString[0], "invalid", "xlsx"
+            )
+            final_hearder = self._csv_column_name_with_mandatory
+            final_hearder.append("Error Description")
+            write_data_to_excel(
+                os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"),
+                file_name, final_hearder,
+                self._source_data, mapped_error_dict,
+                mapped_header_dict, self._sheet_name
+            )
+            invalid = len(mapped_error_dict.keys())
+            total = len(self._source_data)
+            # make csv file
+            rename_file_type(file_name, "csv")
+            # make ods file
+            rename_file_type(file_name, "ods")
+            # make text file
+            rename_file_type(file_name, "txt")
+            return {
+                "return_status": False,
+                "invalid_file": file_name,
+                "mandatory_error": self._error_summary["mandatory_error"],
+                "max_length_error": self._error_summary["max_length_error"],
+                "duplicate_error": self._error_summary["duplicate_error"],
+                "invalid_char_error": self._error_summary["invalid_char_error"],
+                "invalid_data_error": self._error_summary["invalid_data_error"],
+                "inactive_error": self._error_summary["inactive_error"],
+                "total": total,
+                "invalid": invalid,
+                "doc_count": len(set(self._doc_names))
+            }
+        except Exception, e :
+            print e
+            print str(traceback.format_exc())
 
     def make_valid_return(self, mapped_error_dict, mapped_header_dict):
         invalid = len(mapped_error_dict.keys())
@@ -1030,15 +1063,12 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
                             if isFound is not True and isFound != "":
                                 declined_count += 1
-                                print "Not Found Error"
-                                print key, v
 
             if not self.check_compliance_task_name_duplicate(
                 self._country_id, self._domain_id, data.get("Statutory"),
                 data.get("Statutory_Provision"), data.get("Compliance_Task")
             ):
                 declined_count += 1
-                print "duplicate task_name"
 
             if not self.check_task_id_duplicate(
                 self._country_id, self._domain_id, data.get("Statutory"),
@@ -1046,7 +1076,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 data.get("Task_ID")
             ):
                 declined_count += 1
-                print "duplicate task id"
 
             if declined_count > 0:
                 self._declined_row_idx.append(
@@ -1078,10 +1107,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     "Organization"
                 ).strip().split(CSV_DELIMITER):
                     org_info = self.Organization.get(org)
-                    print org_info
-                    print self.Organization
-                    print org
-                    print "------------------------------------------------"
                     if org_info is not None :
                         org_ids.append(
                             org_info.get("organisation_id")
@@ -1137,6 +1162,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
     def make_rejection(self, declined_info):
         try :
+            count = len(declined_info)
             q = "update tbl_bulk_statutory_mapping set " + \
                 " action = 3 where bulk_statutory_mapping_id in (%s)" % (
                     ",".join(map(str, declined_info))
@@ -1144,8 +1170,8 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             self._db.execute(q)
 
             q1 = "update tbl_bulk_statutory_mapping_csv set " + \
-                " approve_status = 1 where csv_id = %s"
-            self._db.execute(q1, [self._csv_id])
+                " declined_count = %s where csv_id = %s"
+            self._db.execute(q1, [count, self._csv_id])
 
         except Exception, e :
             print str(traceback.format_exc())

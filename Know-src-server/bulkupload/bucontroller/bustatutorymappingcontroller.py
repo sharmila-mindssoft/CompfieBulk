@@ -4,11 +4,27 @@ from ..bucsvvalidation.statutorymappingvalidation import (
     ValidateStatutoryMappingForApprove
 )
 from ..bucsvvalidation.rejectedstatutorymapping import (
-    ValidateRejectedSMBulkCsvData
+    ValidateRejectedDownloadBulkData
 )
 
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
-from ..budatabase.bustatutorymappingdb import *
+from ..budatabase.bustatutorymappingdb import (
+    get_uploaded_statutory_mapping_csv_list,
+    fetch_statutory_bulk_report,
+    save_mapping_csv, save_mapping_data,
+    get_pending_mapping_list,
+    get_filters_for_approve,
+    get_statutory_mapping_by_filter,
+    update_approve_action_from_list,
+    get_statutory_mapping_by_csv_id,
+    fetch_rejected_statutory_mapping_bulk_report,
+    process_delete_rejected_sm_csv_id,
+    update_download_count_by_csvid,
+    fetch_rejected_sm_download_csv_report,
+    get_sm_csv_file_name_by_id,
+    save_action_from_view,
+    get_pending_action,
+)
 
 from ..bulkuploadcommon import (
     convert_base64_to_file,
@@ -18,7 +34,7 @@ from ..bulkuploadcommon import (
 from ..bulkexport import ConvertJsonToCSV
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
-from server.exceptionmessage import fetch_error, fetch_run_error
+# from server.exceptionmessage import fetch_run_error
 
 from protocol import generalprotocol, technoreports
 
@@ -58,7 +74,7 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     if type(request_frame) is bu_sm.GetSMBulkReportData:
         result = get_sm_bulk_report_data(db, request_frame, session_user)
 
-    if type(request_frame) is bu_sm.GetRejectedStatutoryMappingBulkUploadData:
+    if type(request_frame) is bu_sm.GetRejectedSMBulkUploadData:
         result = get_rejected_sm_bulk_data(db, request_frame, session_user)
 
     if type(request_frame) is bu_sm.DeleteRejectedSMCsvId:
@@ -111,7 +127,6 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
 ########################################################
 '''
-
     returns statutory mapping uploaded csv list
    :param
         db: database object
@@ -185,6 +200,9 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         res_data = cObj.perform_validation()
         print res_data
 
+        if res_data is None :
+            raise RuntimeError("Invalid Csv File")
+
         if res_data["return_status"] is True:
             generate_valid_file(csv_name)
             if res_data["doc_count"] == 0:
@@ -208,6 +226,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                         request_frame.d_name, session_user.user_id()
                     )
                     result = bu_sm.UploadStatutoryMappingCSVValidSuccess(
+                        new_csv_id,
                         res_data["total"], res_data["valid"],
                         res_data["invalid"],
                         res_data["doc_count"], res_data["doc_names"]
@@ -227,6 +246,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         return result
     except Exception, e:
         print e
+        print str(traceback.format_exc())
         raise e
 
 ########################################################
@@ -343,7 +363,7 @@ def submit_statutory_mapping(db, request_frame, session_user):
         # csv data validation
         if get_pending_action(db, csv_id):
             raise RuntimeError(
-                "Some records action still pending, Complete action before submmit"
+                "All compliance should be selected before submit"
             )
 
         cObj = ValidateStatutoryMappingForApprove(
@@ -403,7 +423,25 @@ def save_action(db, request_frame, session_user):
 # transaction methods end
 
 
-# Reports - Statutory Mapping Data
+########################################################
+'''
+    returns statutory mapping bulk report data
+   :param
+        db: database object
+        request_frame: api request GetSMBulkReportData class object
+        session_user: logged in user details
+   :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+   :returns
+        result: returns processed api response
+        GetSMBulkReportDataSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+
 
 def get_sm_bulk_report_data(db, request_frame, session_user):
     country_ids = request_frame.c_ids
@@ -434,7 +472,26 @@ def get_sm_bulk_report_data(db, request_frame, session_user):
     return result
 
 
-# Reports - Statutory Mapping Data
+########################################################
+'''
+    returns only rejected statutory mapping bulk report data
+   :param
+        db: database object
+        request_frame: api request GetRejectedSMBulkUploadData class object
+        session_user: logged in user details
+   :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+   :returns
+        result: returns processed api response
+        RejectedSMBulkDataSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+
+
 def get_rejected_sm_bulk_data(db, request_frame, session_user):
     country_id = request_frame.c_id
     domain_id = request_frame.d_id
@@ -449,7 +506,27 @@ def get_rejected_sm_bulk_data(db, request_frame, session_user):
     return result
 
 
-# Delete Rejected Satatutory Mapping By CSV Id
+########################################################
+'''
+    Delete Rejected Statutory Mapping for requested CSV Id
+    returns Rejected Statutory Mapping
+   :param
+        db: database object
+        request_frame: api request DeleteRejectedSMCsvId class object
+        session_user: logged in user details
+   :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+   :returns
+        result: returns processed api response
+        RejectedSMBulkDataSuccess class Object
+    rtype:
+        result: Object
+'''
+########################################################
+
+
 def delete_rejected_sm_csv_id(db, request_frame, session_user):
 
     country_id = request_frame.c_id
@@ -489,21 +566,10 @@ def export_statutory_bulk_report(db, request, session_user):
                 link=converter.FILE_DOWNLOAD_PATH
             )
 
-########################################################
-# To retrieve all the audit trails of the given User
-########################################################
-# def process_statutory_bulk_report(db, request, session_user):
-#     if request.csv:
-#         converter = ConvertJsonToCSV(
-#             db, request, session_user, "StatutoryMappingBulkReport"
-#         )
-#         if converter.FILE_DOWNLOAD_PATH is None:
-#             return technoreports.ExportToCSVEmpty()
-#         else:
-#             return generalprotocol.ExportToCSVSuccess(
-#                 link=converter.FILE_DOWNLOAD_PATH
-#             )
 
+#############################################################
+# Dowload Rejected Statutory Mapping Data For Request CSV id
+#############################################################
 
 def download_rejected_sm_report(db, request_frame, session_user):
     csv_id = request_frame.csv_id
@@ -511,10 +577,32 @@ def download_rejected_sm_report(db, request_frame, session_user):
     domain_id = request_frame.d_id
     download_format = request_frame.download_format
     user_id = session_user.user_id()
-    csv_header = ["csv_name", "uploaded_by", "uploaded_on", "total_records",
-                  "total_rejected_records", "approved_by", "rejected_by",
-                  "approved_on", "rejected_on", "is_fully_rejected",
-                  "approve_status"]
+
+    sheet_name = "Rejected Statutory Mapping"
+
+    csv_header_key = ["organization", "geography_location", "statutory_nature",
+                      "statutory", "statutory_provision", "compliance_task",
+                      "compliance_document", "task_id",
+                      "compliance_description", "penal_consequences",
+                      "task_Type", "reference_link", "compliance_frequency",
+                      "statutory_month", "statutory_date", "trigger_before",
+                      "repeats_every", "repeats_type", "repeat_by",
+                      "duration", "duration_type", "multiple_input",
+                      "format_file", "rejected_reason", "remarks"]
+
+    csv_column_name = ["Organization*", "Applicable_Location*",
+                       "Statutory_Nature*", "Statutory*",
+                       "Statutory_Provision*", "Compliance_Task*",
+                       "Compliance_Document",
+                       "Task_ID*", "Compliance_Description*",
+                       "Penal_Consequences", "Task_Type*",
+                       "Reference_Link", "Compliance_Frequency*",
+                       "Statutory_Month", "Statutory_Date",
+                       "Trigger_Days", "Repeats_Every",
+                       "Repeats_Type", "Repeats_By (DOM/EOM)",
+                       "Duration", "Duration_Type",
+                       "Multiple_Input_Section", "Format",
+                       "Rejected_Reason", "Error_Description"]
 
     csv_name = get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id)
     source_data = fetch_rejected_sm_download_csv_report(db,
@@ -523,9 +611,9 @@ def download_rejected_sm_report(db, request_frame, session_user):
                                                         country_id,
                                                         domain_id,
                                                         csv_id)
-    cObj = ValidateRejectedSMBulkCsvData(
-        db, source_data, session_user, download_format, csv_name, csv_header
-    )
+    cObj = ValidateRejectedDownloadBulkData(
+        db, source_data, session_user, download_format, csv_name,
+        csv_header_key, csv_column_name, sheet_name)
     result = cObj.perform_validation()
     return bu_sm.DownloadActionSuccess(
         result["xlsx_link"],
