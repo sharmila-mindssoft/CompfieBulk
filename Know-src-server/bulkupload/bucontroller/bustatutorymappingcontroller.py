@@ -375,12 +375,11 @@ def submit_statutory_mapping(db, request_frame, session_user):
         if len(is_declined) > 0:
             return bu_sm.ValidationSuccess(len(is_declined))
         else:
-
+            cObj.format_download_process_initiate(csv_id)
             cObj.save_manager_message(
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
                 session_user.user_id()
             )
-            cObj.format_download_process_initiate(csv_id)
             cObj.frame_data_for_main_db_insert()
             cObj.source_commit()
             update_approve_action_from_list(db, csv_id, 1, None, session_user)

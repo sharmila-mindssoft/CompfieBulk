@@ -118,6 +118,7 @@ class Database(object):
             return True
 
         except Exception, e:
+            print e
             raise RuntimeError(str(e))
 
     def call_update_proc(self, procedure_name, args):
@@ -131,6 +132,7 @@ class Database(object):
 
             cursor.nextset()
         except Exception, e:
+            print e
             raise RuntimeError(str(e))
         return True
 

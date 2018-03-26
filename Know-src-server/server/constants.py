@@ -72,4 +72,4 @@ MAX_REJECTED_COUNT = 5
 if IS_DEVELOPMENT is True :
     VERSION = time.time()
 
-TEMP_FILE_SERVER = "http://localhost:8080/temp/"
+TEMP_FILE_SERVER = "http://localhost:9000/temp/"

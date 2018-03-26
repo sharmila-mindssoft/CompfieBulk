@@ -6,7 +6,7 @@ from flask import (
 )
 from shutil import rmtree
 import thread
-from zipfile import ZipFile
+import zipfile
 
 import argparse
 import socket
@@ -77,8 +77,10 @@ def update_file_status(file_name, csv_id):
         _db_con = bulkupload_db_connect()
         _db = Database(_db_con)
         _db.begin()
+        print "update file status"
         if _db.update_file_status(csv_id, file_name) is None:
             res_ponse_data = False
+            print "update failed"
         _db.commit()
     except Exception:
         _db.rollback()
@@ -96,8 +98,10 @@ def update_file_ddwnload_status(csv_id, status):
         _db_con = bulkupload_db_connect()
         _db = Database(_db_con)
         _db.begin()
+        print "update format file status"
         if _db.update_format_file_status(csv_id, status) is None:
             res_ponse_data = False
+            print "update failed"
         _db.commit()
     except Exception:
         _db.rollback()
@@ -128,7 +132,7 @@ def upload():
             actual_file = os.path.join(load_path, f.filename)
             zip_f_name = actual_file + ".zip"
             f.save(zip_f_name)
-            zip_ref = ZipFile(zip_f_name, 'r')
+            zip_ref = zipfile.ZipFile(zip_f_name, 'r')
             zip_ref.extractall(load_path)
             zip_ref.close()
             os.remove(zip_f_name)
@@ -150,10 +154,13 @@ def zip_folder(folder_name, folder_path):
     zip_f_name = get_zip_file(folder_name)
     print folder_path
     files = glob.glob(os.path.join(folder_path, "*"))
+    print files
     files = [x for x in files if os.path.isfile(x)]
-    with ZipFile(zip_f_name, "w") as newzip:
+    print files
+    with zipfile.ZipFile(zip_f_name, "w", zipfile.ZIP_DEFLATED) as newzip:
         for f in files:
-            newzip.write(f)
+            arcname = f[len(folder_path)+0:]
+            newzip.write(f, arcname)
     print "*" * 10
     print "Completed", zip_f_name
     print "*" * 10
@@ -176,7 +183,7 @@ def approve():
         return "download status update failed"
     return "started zipping"
 
-@app.route('/temp/downloadfile', methods=['POST'])
+@app.route('/temp/downloadfile', methods=['GET'])
 def downloadfile():
     folder_name = request.args.get('csvid')
     assert folder_name is not None

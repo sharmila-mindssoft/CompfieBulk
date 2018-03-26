@@ -6,6 +6,7 @@ import collections
 import mysql.connector
 import urllib
 import threading
+import requests
 from zipfile import ZipFile
 from itertools import groupby
 from server.dbase import Database
@@ -1209,11 +1210,12 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
         def get_file_stats(csvid):
             file_status = None
-            c_db_con = self.bulkupload_db_connect()
+            c_db_con = bulkupload_db_connect()
             _db_check = Database(c_db_con)
             try :
                 _db_check.begin()
                 data = _db_check.call_proc("sp_sm_get_file_download_status", [csvid])
+                print data
                 if len(data) > 0 :
                     file_status = data[0].get("file_download_status")
 
@@ -1229,12 +1231,14 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         check_status()
 
     def file_server_approve_call(self, csvid):
-        caller_name = "%s/approve?csvid=%s" % (TEMP_FILE_SERVER, csvid)
-        urllib.urlretrieve(caller_name)
+        caller_name = "%sapprove?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        response = requests.post(caller_name)
+        print response.text
 
     def file_server_download_call(self, csvid):
-        actual_zip_file = os.path.join(KNOWLEDGE_FORMAT_PATH, csvid + ".zip")
-        caller_name = "%s/approve?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        actual_zip_file = os.path.join(KNOWLEDGE_FORMAT_PATH, str(csvid) + ".zip")
+        caller_name = "%sdownloadfile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        print caller_name
         urllib.urlretrieve(caller_name, actual_zip_file)
         zip_ref = ZipFile(actual_zip_file, 'r')
         zip_ref.extractall(KNOWLEDGE_FORMAT_PATH)
@@ -1244,8 +1248,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         return True
 
     def file_server_remove_call(self, csvid):
-        caller_name = "%s/removefile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
-        urllib.urlretrieve(caller_name)
+        caller_name = "%sremovefile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        response = requests.post(caller_name)
+        print response.text
 
 
 def bulkupload_db_connect():
