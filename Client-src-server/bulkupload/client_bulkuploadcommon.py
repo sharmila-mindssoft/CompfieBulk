@@ -119,6 +119,7 @@ def write_data_to_excel(
         c = "%s%s" % (cells[x], 1)
         worksheet.write(c, h, bold)
 
+
     row = 1
     col = 0
 
@@ -133,7 +134,7 @@ def write_data_to_excel(
                     e = ""
                 else :
                     e = "|;|".join(error_text)
-                worksheet.write_string(row, col+i, e)
+                worksheet.write_string(row, col + i, e)
             else :
                 if error_col is not None :
                     if i in error_col :
@@ -159,6 +160,8 @@ def write_data_to_excel(
         summarySheet.write_string(srow, 0, col)
         summarySheet.write_string(srow, 1, str(value))
         srow += 1
+
+    # workbook.close()
 
 def rename_file_type(src_file_name, des_file_type):
     src_path = os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx")

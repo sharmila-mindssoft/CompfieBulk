@@ -945,7 +945,10 @@ def run_server(address, knowledge_server_address):
             ("/api/mobile/client_transaction", api.handle_client_transaction),
             ("/api/mobile/client_user", api.handle_client_user),
         ]
+
+        # api urls for bulk-upload
         api_urls_and_handlers.extend(api.bulk_upload_api_urls())
+
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])
 
