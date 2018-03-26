@@ -346,7 +346,7 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user) :
                         db, csv_id, actionType, bu_remarks, 0, session_user
                     )
                 ) :
-                    clientUnitObj.process_data_to_main_db_insert()
+                    clientUnitObj.process_data_to_main_db_insert(system_declined_count)
                     clientUnitObj.save_manager_message(
                         actionType, clientUnitObj._csv_name, clientUnitObj._group_name,
                         session_user.user_id(),
