@@ -143,7 +143,10 @@ bu_api_params = {
     'task_id': {'type': 'STRING', 'length': 25, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'task_type': {'type': 'STRING', 'length': 25, 'validation_method': is_alphabet, 'is_optional': False},
     'approved_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'bu_cu_csvFilesList': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "ClientUnitCSVList"},
+    'bu_cu_csvFilesList': {
+        'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False,
+        'module_name': client_units, "class_name": "ClientUnitCSVList"
+    },
     'rejected_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': statutory_mapping, "class_name": "StatutoryMappingRejectData"},
     'asm_rejected_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "AssignStatutoryMappingRejectData"},
     'file_download_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
@@ -198,31 +201,74 @@ bu_api_params = {
     'txt_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
     'download_link': {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True, 'module_name': statutory_mapping, "class_name": "SMRejectedDownload"},
     "cg_id": {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': False},
-    'filter_view_data': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True},
-
-    'bulk_unit_id': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'bu_le_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'bu_division_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'bu_category_name': {'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'bu_geography_level': {'type': 'STRING', 'length': 50, 'validation_method': is_address, 'is_optional': True},
-    'bu_unit_location': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
-    'bu_unit_code': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
-    'bu_unit_name': {'type': 'TEXT', 'length': 50, 'validation_metunithod': is_alpha_numeric, 'is_optional': False},
-    'bu_address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
-    'bu_postal_code': {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': False},
-    'bu_city': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
-    'bu_state': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False},
-    'bu_domain_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
-    'bu_domain': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
-    'bu_orgn': {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
-    'le_names': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
-    'div_names': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
-    'cg_names': {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True},
-    'unit_locations': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
-    'unit_codes': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True},
-    'client_unit_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "BulkClientUnitList"},
     'un_saved_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'rejected_file': {'type': 'STRING', 'length': 200, 'validation_method': is_alpha_numeric, 'is_optional': True},
     "bu_assigned_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "AssignedUnits"},
-
+    'filter_view_data': {
+        'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': True
+    },
+    'bulk_unit_id': {
+        'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False
+    },
+    'bu_le_name': {
+        'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True
+    },
+    'bu_division_name': {
+        'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True
+    },
+    'bu_category_name': {
+        'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': True
+    },
+    'bu_geography_level': {
+        'type': 'STRING', 'length': 50, 'validation_method': is_address, 'is_optional': True
+    },
+    'bu_unit_location': {
+        'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True
+    },
+    'bu_unit_code': {
+        'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True
+    },
+    'bu_unit_name': {
+        'type': 'TEXT', 'length': 50, 'validation_metunithod': is_alpha_numeric, 'is_optional': False
+    },
+    'bu_address': {
+        'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True
+    },
+    'bu_postal_code': {
+        'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False
+    },
+    'bu_city': {
+        'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False
+    },
+    'bu_state': {
+        'type': 'STRING', 'length': 50, 'validation_method': is_alphabet_withdot, 'is_optional': False
+    },
+    'bu_domain_names': {
+        'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False
+    },
+    'bu_domain': {
+        'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True
+    },
+    'bu_orgn': {
+        'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True
+    },
+    'le_names': {
+        'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True
+    },
+    'div_names': {
+        'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True
+    },
+    'cg_names': {
+        'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alphabet, 'is_optional': True
+    },
+    'unit_locations': {
+        'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True
+    },
+    'unit_codes': {
+        'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': True
+    },
+    'client_unit_data': {
+        'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False,
+        'module_name': client_units, "class_name": "BulkClientUnitList"
+    },
 }

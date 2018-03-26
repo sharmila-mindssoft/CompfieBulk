@@ -18,7 +18,8 @@ __all__ = [
     "get_bulk_client_units_and_filtersets_by_csv_id",
     "get_bulk_client_unit_list_by_filter",
     "save_client_unit_action_from_view",
-    "get_bulk_client_unit_null_action_count"
+    "get_bulk_client_unit_null_action_count",
+    "get_bulk_client_unit_file_count"
 ]
 
 ########################################################
@@ -37,7 +38,9 @@ __all__ = [
 '''
 ########################################################
 
-def save_client_units_mapping_csv(db, args):
+
+def save_client_units_mapping_csv(db, args) :
+
     newid = db.call_insert_proc("sp_client_units_bulk_csv_save", args)
     return newid
 
@@ -60,8 +63,10 @@ def save_client_units_mapping_csv(db, args):
 '''
 ########################################################
 
+
 def save_mapping_client_unit_data(db, csv_id, csv_data) :
-    try:
+
+    try :
         columns = [
             "csv_unit_id", "legal_entity", "division", "category",
             "geography_level", "unit_location", "unit_code",
@@ -84,7 +89,8 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
             return True
         else :
             return False
-    except Exception, e:
+    except Exception, e :
+        print e
         raise ValueError("Transaction failed")
 
 ########################################################
@@ -103,7 +109,9 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
 '''
 ########################################################
 
-def get_ClientUnits_Uploaded_CSVList(db, clientId, groupName):
+
+def get_ClientUnits_Uploaded_CSVList(db, clientId, groupName) :
+
     csv_list = []
     result = db.call_proc("sp_client_units_csv_list", [clientId, groupName])
     print "uploaded data"
@@ -308,15 +316,17 @@ def get_cu_csv_file_name_by_id(db, session_user, user_id, csv_id):
 '''
 ########################################################
 
-def update_bulk_client_unit_approve_reject_list(db, csv_unit_id, action, remarks, session_user):
+
+def update_bulk_client_unit_approve_reject_list(db, csv_unit_id, action, remarks, declined_count, session_user) :
+
     try :
-        args = [csv_unit_id, action, remarks, session_user.user_id()]
+        args = [csv_unit_id, action, remarks, session_user.user_id(), declined_count]
         data = db.call_proc("sp_bulk_client_unit_update_action", args)
         print "here"
         print data
         return True
 
-    except Exception, e:
+    except Exception, e :
         logger.logKnowledge("error", "update action from list", str(traceback.format_exc()))
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
@@ -339,7 +349,9 @@ def update_bulk_client_unit_approve_reject_list(db, csv_unit_id, action, remarks
 '''
 ########################################################
 
-def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
+
+def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user) :
+
     csv_id = request.csv_id
     f_count = request.f_count
     f_range = request.r_range
@@ -364,7 +376,7 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
                 int(d["bulk_unit_id"]), d["legal_entity"], d["division"],
                 d["category"], d["geography_level"], d["unit_location"],
                 d["unit_code"], d["unit_name"], d["address"], d["city"],
-                d["state"], int(d["postalcode"]), d["domain"], d["organization"],
+                d["state"], str(d["postalcode"]), d["domain"], d["organization"],
                 d["action"], d["remarks"]
             ))
 
@@ -380,59 +392,59 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
     domain_names = []
     orga_names = []
 
-    if len(filter_data) > 0:
-        if len(filter_data[0]) > 0:
+    if len(filter_data) > 0 :
+        if len(filter_data[0]) > 0 :
             for d in filter_data[0]:
                 le_names.append(d["legal_entity"])
 
-        if len(filter_data[1]) > 0:
-            for d in filter_data[1]:
+        if len(filter_data[1]) > 0 :
+            for d in filter_data[1] :
                 div_names.append(d["division"])
 
-        if len(filter_data[2]) > 0:
-            for d in filter_data[2]:
+        if len(filter_data[2]) > 0 :
+            for d in filter_data[2] :
                 cg_names.append(d["category"])
 
-        if len(filter_data[3]) > 0:
-            for d in filter_data[3]:
+        if len(filter_data[3]) > 0 :
+            for d in filter_data[3] :
                 u_locations.append(d["unit_location"])
 
-        if len(filter_data[4]) > 0:
-            for d in filter_data[4]:
+        if len(filter_data[4]) > 0 :
+            for d in filter_data[4] :
                 u_codes.append(d["unit_code"])
 
         last = object()
-        if len(filter_data[5]) > 0:
-            for d in filter_data[5]:
-                if d["domain"].find('|;|') > 0:
+        if len(filter_data[5]) > 0 :
+            for d in filter_data[5] :
+                if d["domain"].find('|;|') > 0 :
                     dom = d["domain"].split('|;|')
                     for domain in dom:
                         if last != domain:
                             last = domain
                             domain_names.append(domain)
                 else:
-                    if last != d["domain"]:
+                    if last != d["domain"] :
                         last = d["domain"]
                         domain_names.append(d["domain"])
 
         last = object()
-        if len(filter_data[6]) > 0:
-            for d in filter_data[6]:
-                if d["organization"].find('|;|') > 0:
+        if len(filter_data[6]) > 0 :
+            for d in filter_data[6] :
+                if d["organization"].find('|;|') > 0 :
                     org = d["organization"].split('|;|')
-                    for d_o in org:
+                    for d_o in org :
                         o = d_o.split(">>")
                         if last != o[1].strip():
                             last = o[1].strip()
                             orga_names.append(o[1].strip())
                 else:
-                    if d["organization"].find(">>") > 0:
+                    if d["organization"].find(">>") > 0 :
                         o = d["organization"].split(">>")
-                        if last != o[1].strip():
+                        if last != o[1].strip() :
                             last = o[1].strip()
                             orga_names.append(o[1].strip())
                     else:
-                        if last != d["organization"].strip():
+                        if last != d["organization"].strip() :
                             last = d["organization"].strip()
                             orga_names.append(d["organization"].strip())
 
@@ -460,7 +472,9 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
 '''
 ########################################################
 
-def get_bulk_client_unit_list_by_filter(db, request_frame, session_user):
+
+def get_bulk_client_unit_list_by_filter(db, request_frame, session_user) :
+
     csv_id = request_frame.csv_id
     legal_entity = request_frame.bu_le_name
     division = request_frame.bu_division_name
@@ -472,25 +486,25 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user):
     f_count = request_frame.f_count
     f_range = request_frame.r_range
 
-    if legal_entity is None or legal_entity == "":
+    if legal_entity is None or legal_entity == "" :
         legal_entity = '%'
 
-    if division is None or division == "":
+    if division is None or division == "" :
         division = '%'
 
-    if category is None or category == "":
+    if category is None or category == "" :
         category = '%'
 
-    if unit_location is None or unit_location == "":
+    if unit_location is None or unit_location == "" :
         unit_location = '%'
 
-    if unit_code is None or unit_code == "":
+    if unit_code is None or unit_code == "" :
         unit_code = '%'
 
-    if domain is None or domain == "":
+    if domain is None or domain == "" :
         domain = '%'
 
-    if orga_name is None or orga_name == "":
+    if orga_name is None or orga_name == "" :
         orga_name = '%'
 
     unit_list = db.call_proc(
@@ -517,7 +531,7 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user):
                 d["bulk_unit_id"], d["legal_entity"], d["division"],
                 d["category"], d["geography_level"], d["unit_location"],
                 d["unit_code"], d["unit_name"], d["address"], d["city"],
-                d["state"], d["postalcode"], d["domain"], d["organization"],
+                d["state"], str(d["postalcode"]), d["domain"], d["organization"],
                 d["action"], d["remarks"]
             ))
 
@@ -548,15 +562,22 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user):
         result: Boolean
 '''
 ########################################################
-def save_client_unit_action_from_view(db, csv_id, bulk_unit_id, action, remarks, session_user):
+
+
+def save_client_unit_action_from_view(db, csv_id, bulk_unit_id, action, remarks, session_user) :
+
     try :
         args = [csv_id, bulk_unit_id, action, remarks]
         data = db.call_proc("sp_bulk_client_unit_id_save", args)
         print data
         return True
 
-    except Exception, e:
-        logger.logKnowledge("error", "update action from view", str(traceback.format_exc()))
+    except Exception, e :
+        logger.logKnowledge(
+            "error",
+            "update action from view",
+            str(traceback.format_exc())
+        )
         logger.logKnowledge("error", "update action from view", str(e))
         raise fetch_error()
 
@@ -578,12 +599,44 @@ def save_client_unit_action_from_view(db, csv_id, bulk_unit_id, action, remarks,
 '''
 ########################################################
 
-def get_bulk_client_unit_null_action_count(db, request_frame, session_user):
+
+def get_bulk_client_unit_null_action_count(db, request_frame, session_user) :
+
     csv_id = request_frame.csv_id
     args = [csv_id]
     data = db.call_proc("sp_bulk_client_unit_action_count", args)
-    if len(data) > 0:
-        if int(data[0].get("null_action_count")) > 0:
+    if len(data) > 0 :
+        if int(data[0].get("null_action_count")) > 0 :
             return False
         else:
             return True
+
+########################################################
+'''
+    returns boolean value
+    :param
+        db: database object
+        csv_id: parent table id
+        user_id: logged user
+    :type
+        db: Object
+        csv_id: Integer
+        user_id: Integer
+    :returns
+        result: return a boolean value
+    rtype:
+        result: boolean value
+'''
+########################################################
+
+
+def get_bulk_client_unit_file_count(db, request_frame) :
+
+    client_id = request_frame.bu_client_id
+    args = [client_id]
+    data = db.call_proc("sp_bulk_client_unit_file_count", args)
+    if len(data) > 0 :
+        if int(data[0].get("file_count")) < 5 :
+            return True
+        else:
+            return False

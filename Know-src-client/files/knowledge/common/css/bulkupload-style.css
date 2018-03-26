@@ -1,115 +1,115 @@
 .multiselect {
-  width: 266px !important;
+    width: 296px !important;
+    /* width: 266px !important; */
 }
-
-
-
-
-
 /* using width css classes instead of html width attribute */
 
 .width-1 {
-  width: 1%;
+    width: 1%;
 }
 
 .width-2 {
-  width: 2%;
+    width: 2%;
 }
 
 .width-3 {
-  width: 3%;
+    width: 3%;
 }
 
 .width-4 {
-  width: 4%;
+    width: 4%;
 }
 
 .width-5 {
-  width: 5%;
+    width: 5%;
 }
 
 .width-6 {
-  width: 6%;
+    width: 6%;
 }
 
 .width-7 {
-  width: 7%;
+    width: 7%;
 }
 
 .width-8 {
-  width: 8%;
+    width: 8%;
 }
 
 .width-9 {
-  width: 9%;
+    width: 9%;
 }
 
 .width-10 {
-  width: 10%;
+    width: 10%;
 }
 
 .width-11 {
-  width: 11%;
+    width: 11%;
 }
 
 .width-12 {
-  width: 12%;
+    width: 12%;
 }
 
 .width-13 {
-  width: 13%;
+    width: 13%;
 }
 
 .width-14 {
-  width: 14%;
+    width: 14%;
 }
 
 .width-15 {
-  width: 15%;
+    width: 15%;
 }
 
 .width-16 {
-  width: 16%;
+    width: 16%;
 }
 
 .width-17 {
-  width: 17%;
+    width: 17%;
 }
 
 .width-18 {
-  width: 18%;
+    width: 18%;
 }
 
 .width-19 {
-  width: 19%;
+    width: 19%;
 }
 
 .width-20 {
-  width: 20%;
+    width: 20%;
 }
 
 .width-21 {
-  width: 21%;
+    width: 21%;
 }
 
 .width-22 {
-  width: 22%;
+    width: 22%;
 }
 
 .width-23 {
-  width: 23%;
+    width: 23%;
 }
 
 .width-24 {
-  width: 24%;
+    width: 24%;
 }
 
 .width-25 {
-  width: 25%;
+    width: 25%;
 }
 
 .width-85 {
-  width: 85%;
+    width: 85%;
+}
+
+.width-94 {
+    width: 94%;
 }
 
 
@@ -119,46 +119,52 @@
 /* Dropdown download items*/
 
 .popover {
-  max-width: 600px;
-  border: 1px solid #ccc;
+    max-width: 600px;
+    border: 1px solid #ccc;
 }
 
 .p-t-2 {
-  padding-top: 2px !important;
+    padding-top: 2px !important;
 }
 
 .p-b-2 {
-  padding-bottom: 2px !important;
+    padding-bottom: 2px !important;
 }
 
 .dropdown-content {
-  background-color: #FFF;
-  border: 1px solid #a0a0a0;
-  display: none;
-  margin-left: -78px;
-  min-width: 120px;
-  overflow: auto;
-  position: absolute;
-  text-align: left;
-  z-index: 11;
-  -webkit-box-shadow: rgb(136, 136, 136) 3px 3px 10px;
-  -moz-box-shadow: rgb(136, 136, 136) 3px 3px 10px;
-  box-shadow: rgb(136, 136, 136) 3px 3px 10px;
+    background-color: #FFF;
+    border: 1px solid #a0a0a0;
+    display: none;
+    margin-left: -78px;
+    min-width: 120px;
+    overflow: auto;
+    position: absolute;
+    text-align: left;
+    z-index: 11;
+    -webkit-box-shadow: rgb(136, 136, 136) 3px 3px 10px;
+    -moz-box-shadow: rgb(136, 136, 136) 3px 3px 10px;
+    box-shadow: rgb(136, 136, 136) 3px 3px 10px;
 }
 
 .dropdown-content a {
-  color: #303030;
-  display: block;
-  font-size: 11px;
-  padding: 1% 3%;
-  text-decoration: none;
+    color: #303030;
+    display: block;
+    font-size: 11px;
+    padding: 1% 3%;
+    text-decoration: none;
 }
 
 .dropdown-content a:hover {
-  background-color: #4572a5;
-  color: #FFF;
+    background-color: #4572a5;
+    color: #FFF;
 }
 
+.filter-by-class {
+    padding: 10px;
+    text-transform: none;
+    color: #fff !important;
+    margin-top: 0px;
+}
 
 
 
@@ -166,12 +172,12 @@
 /* pagination */
 
 .pagination-space {
-  width: 650px;
+    width: 650px;
 }
 
 .pagination-right-side {
-  text-align: right;
-  padding-right: 10px;
+    text-align: right;
+    padding-right: 10px;
 }
 
 .filter-by-text {
@@ -200,4 +206,34 @@
 
 .width-percentage {
     width: 100%;
+}
+
+.pagination-view-width {
+    width: 100%;
+    display: table;
+}
+
+.width-250 {
+    width:250px;
+}
+
+.right-align-class {
+    text-align:right;
+}
+
+.overflow-class {
+    overflow-y: scroll !important;
+    height: 550px;
+}
+
+.col-sm-12-1 {
+    border:1px solid #F5F5F5;
+}
+
+.left-align-class {
+    text-align: left;
+}
+
+.small-text {
+    color: #E64C3D !important;
 }

@@ -1527,7 +1527,7 @@ BEGIN
     t2.unit_name as Unit_Name, t2.address as Unit_Address,
     t2.city as City, t2.state as State, t2.postalcode as Postal_Code,
     t2.domain as Domain, t2.organization as Organization,
-    t1.uploaded_by, t1.csv_name
+    t1.uploaded_by, t1.csv_name, t2.action
     from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
     on t2.csv_unit_id = t1.csv_unit_id
     where t1.csv_unit_id = _csv_id;
@@ -1559,7 +1559,8 @@ DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_update_action`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_bulk_client_unit_update_action`(
-    IN _csv_unit_id INT(11), _action TINYINT, _remarks TEXT, _user_id INT(11))
+    IN _csv_unit_id INT(11), _action TINYINT, _remarks TEXT, _user_id INT(11),
+  _declinedCount INT(11))
 BEGIN
     IF _action = 2 then
         UPDATE tbl_bulk_units SET
@@ -1575,13 +1576,19 @@ BEGIN
         tbl_bulk_units as t1 WHERE t1.csv_unit_id = _csv_unit_id)
         WHERE csv_unit_id = _csv_unit_id;
     else
-        UPDATE tbl_bulk_units SET
-        action = 1, remarks = _remarks
-        WHERE csv_unit_id = _csv_unit_id;
+    if _declinedCount = 0 then
+      delete from tbl_bulk_units
+      where csv_unit_id = _csv_unit_id
+      and action = 1;
+    else
+      UPDATE tbl_bulk_units SET
+      action = 1 WHERE csv_unit_id = _csv_unit_id;
+    end if;
 
         UPDATE tbl_bulk_units_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
-        approved_by = _user_id, is_fully_rejected = 0
+        approved_by = _user_id, is_fully_rejected = 0,
+    declined_count = _declinedCount
         WHERE csv_unit_id = _csv_unit_id;
     end if;
 END //
@@ -1725,7 +1732,6 @@ END //
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_compliance_for_unit`;
-
 DELIMITER //
 
 CREATE PROCEDURE `sp_check_duplicate_compliance_for_unit`(
@@ -1804,3 +1810,19 @@ BEGIN
 END //
 
 DELIMITER ;
+-- --------------------------------------------------------------------------------
+-- To get the file count of client unit csv uploaded under a client
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_file_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bulk_client_unit_file_count`(
+  IN _client_id INT(11))
+BEGIN
+  select count(csv_unit_id) as file_count from tbl_bulk_units_csv
+  where client_id = _client_id and approve_status < 4 and
+  (IFNULL(declined_count, 0) > 0 or IFNULL(is_fully_rejected, 0) = 1);
+END //
+
+DELIMITER;
