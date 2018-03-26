@@ -406,7 +406,7 @@ DROP PROCEDURE IF EXISTS `sp_client_units_csv_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_units_csv_list`(
-    IN _clientId INT(11), _groupName varchar(50))
+    IN _clientId INT, _groupName VARCHAR(50))
 BEGIN
     SELECT t1.csv_unit_id, t1.csv_name, t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') AS uploaded_on,
@@ -1246,7 +1246,7 @@ DROP PROCEDURE IF EXISTS `sp_groups_client_units_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_groups_client_units_list`(
-  IN _ClientId INT(11))
+  IN _ClientId INT)
 BEGIN
   SELECT t2.legal_entity, t2.unit_code, t2.domain, t2.organization
   FROM tbl_bulk_units_csv AS t1 inner join tbl_bulk_units AS t2
@@ -1432,17 +1432,17 @@ DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_by_csvid`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_bulk_client_unit_by_csvid`(
-    IN _csv_id INT(11))
+    IN _csv_id INT)
 BEGIN
-    SELECT t1.client_id, t1.client_group, t2.bulk_unit_id,
-    t2.legal_entity AS Legal_Entity, t2.division AS Division,
-    t2.category AS Category, t2.geography_level AS Geography_Level,
-    t2.unit_location AS Unit_Location, t2.unit_code AS Unit_Code,
-    t2.unit_name AS Unit_Name, t2.address AS Unit_Address,
-    t2.city AS City, t2.state AS State, t2.postalcode AS Postal_Code,
-    t2.domain AS Domain, t2.organization AS Organization,
-    t1.uploaded_by, t1.csv_name
-    FROM tbl_bulk_units_csv AS t1 inner join tbl_bulk_units AS t2
+    select t1.client_id, t1.client_group, t2.bulk_unit_id,
+    t2.legal_entity as Legal_Entity, t2.division as Division,
+    t2.category as Category, t2.geography_level as Geography_Level,
+    t2.unit_location as Unit_Location, t2.unit_code as Unit_Code,
+    t2.unit_name as Unit_Name, t2.address as Unit_Address,
+    t2.city as City, t2.state as State, t2.postalcode as Postal_Code,
+    t2.domain as Domain, t2.organization as Organization,
+    t1.uploaded_by, t1.csv_name, t2.action
+    from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
     on t2.csv_unit_id = t1.csv_unit_id
     WHERE t1.csv_unit_id = _csv_id;
 END //
@@ -1472,8 +1472,8 @@ DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_update_action`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_bulk_client_unit_update_action`(
-    IN _csv_unit_id INT(11), _action TINYINT, _remarks TEXT, _user_id INT(11),
-  _declinedCount INT(11))
+    IN _csv_unit_id INT, _action TINYINT, _remarks TEXT, _user_id INT,
+  _declinedCount INT)
 BEGIN
     IF _action = 2 then
         UPDATE tbl_bulk_units SET

@@ -143,6 +143,7 @@ function loadClientUnitCSVFilesList(){
 			$('.uploaded-on', clone).text(value.uploaded_on);
 			$('.uploaded-by', clone).text(fetchTechnoManager(value.uploaded_by));
 			$('.no-of-units', clone).text(value.no_of_records);
+            totalRecord = value.no_of_records;
 			var app_rej = value.approved_count + " / " + value.rej_count;
 			$('.approved-rejected', clone).text(app_rej);
 			$('.download-invalidfile', clone).html(
@@ -150,7 +151,7 @@ function loadClientUnitCSVFilesList(){
             );
 			$('.download-invalidfile', clone).append
 			(
-				$('<div/>')
+            	$('<div/>')
 				.addClass("dropdown-content default-display-none")
 				.attr("id","myDropdown-"+value.csv_id)
 			);
@@ -803,7 +804,7 @@ function hidePageView() {
 
 function createPageView(page_type) {
     perPage = parseInt(ItemsPerPage.val());
-    t_this.hidePageView();
+    hidePageView();
     $('#pagination_rpt').twbsPagination({
         totalPages: Math.ceil(STATU_TOTALS / perPage),
         visiblePages: visiblePageCount,

@@ -57,7 +57,6 @@ bu_api_params = {
         'type': 'BOOL', 'length': None, 'validation_method': None,
         'is_optional': False
     },
-
     'doc_count': {
         'type': 'INT', 'length': None, 'validation_method': None,
         'is_optional': False
@@ -740,8 +739,8 @@ bu_api_params = {
         'validation_method': None, 'is_optional': True
     },
     'bu_postal_code': {
-        'type': 'INT', 'length': None,
-        'validation_method': is_numeric, 'is_optional': False
+        'type': 'TEXT', 'length': None,
+        'validation_method': None, 'is_optional': False
     },
     'bu_city': {
         'type': 'STRING', 'length': 50,
@@ -803,5 +802,6 @@ bu_api_params = {
         'length': None,
         'validation_method': None,
         'is_optional': False,
-        'module_name': assign_statutory, "class_name": "AssignedUnits"},
+        'module_name': assign_statutory, "class_name": "AssignedUnits"
+    },
 }
