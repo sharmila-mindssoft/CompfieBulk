@@ -1,5 +1,0 @@
-<<<<<<< HEAD
-
-=======
-
->>>>>>> Vaishnavi/bulk-upload
