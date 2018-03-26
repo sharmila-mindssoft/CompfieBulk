@@ -739,8 +739,8 @@ bu_api_params = {
         'validation_method': None, 'is_optional': True
     },
     'bu_postal_code': {
-        'type': 'INT', 'length': None,
-        'validation_method': is_numeric, 'is_optional': False
+        'type': 'TEXT', 'length': None,
+        'validation_method': None, 'is_optional': False
     },
     'bu_city': {
         'type': 'STRING', 'length': 50,
