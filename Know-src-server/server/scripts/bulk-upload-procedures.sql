@@ -391,6 +391,9 @@ BEGIN
           t.csv_id = csvid
         )
         WHERE csv_id = csvid;
+
+        delete from tbl_bulk_statutory_mapping where csv_id = csvid
+          and ifnull(action, 0) != 3;
     end if;
 
     IF action = 3 then

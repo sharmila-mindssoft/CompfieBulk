@@ -411,6 +411,7 @@ function PageControls() {
         }
     }
     else {
+        displayLoader();
         myDropzone.processQueue();
     }
   });
@@ -434,11 +435,13 @@ function file_upload_rul() {
 
 Dropzone.autoDiscover = false;
 Dropzone.autoProcessQueue = false;
+var addedfiles = []
+var fileUploadSuccess = 0;
 
 var myDropzone = new Dropzone("div#myDrop", {
     addRemoveLinks: true,
     autoProcessQueue: false,
-    parallelUploads: 3,
+    parallelUploads: 10,
     url: "#",
     transformFile: function transformFile(file, done) {
       var zip = new JSZip();
@@ -454,19 +457,18 @@ var myDropzone = new Dropzone("div#myDrop", {
     },
     init: function() {
         this.on("addedfile", function(file) {
-            console.log(docNames)
+            if (jQuery.inArray(file.name, addedfiles) > -1) {
+                myDropzone.removeFile(file);
+            }
             if (jQuery.inArray(file.name, docNames) == -1) {
-                // displayMessage(message.invalid_file + file.name)
                 console.log(file.name);
                 myDropzone.removeFile(file);
             }
-            // if (file.name == "Company_8787_excluded.json") {
-            //     console.log("Removed");
-            //     console.log(file);
-            //     myDropzone.removeFile(file);
-            // } else {
-            //     console.log(file);
-            // }
+            else {
+                addedfiles.push(file.name);
+            }
+
+
         });
 
         this.on("processing", function(file) {
@@ -474,13 +476,27 @@ var myDropzone = new Dropzone("div#myDrop", {
         });
 
         this.on("success", function(file, response) {
-            myDropzone.removeAllFiles(true);
-            displaySuccessMessage(message.document_upload_success)
-            buSmPage.showList();
+            addedfiles.pop(file.name);
+            if (fileUploadSuccess < docNames.length) {
+                fileUploadSuccess += 1;
+            }
+            console.log(fileUploadSuccess);
+            console.log(docNames.length);
+            if (fileUploadSuccess == docNames.length) {
+                myDropzone.removeAllFiles(true);
+                hideLoader()
+                displaySuccessMessage(message.document_upload_success)
+                buSmPage.showList();
+            }
+
+            //
+            //
         });
 
         this.on("error", function(file, errorMessage) {
             displayMessage(errorMessage);
+            addedfiles = []
+            myDropzone.removeAllFiles(true);
         });
     }
 });
