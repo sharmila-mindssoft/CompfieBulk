@@ -51,7 +51,6 @@ def process_bu_completed_task_current_year_request(request, db, session_user):
 
 def upload_completed_task_current_year_csv(db, request_frame, session_user):
 
-    print "inside bucompletedtaskcurrentyearcontroller>>>>upload_completed_task_current_year_csv "
     if request_frame.csv_size > 0 :
         pass
     # save csv file
