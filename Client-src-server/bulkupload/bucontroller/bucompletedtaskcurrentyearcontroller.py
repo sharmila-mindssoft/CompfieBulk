@@ -42,6 +42,8 @@ def process_bu_completed_task_current_year_request(request, db, session_user):
     if type(request_frame) is bu_ct.UploadCompletedTaskCurrentYearCSV:
         result = upload_completed_task_current_year_csv(db, request_frame, session_user)
 
+    return result
+
 ########################################################
 
 def upload_completed_task_current_year_csv(db, request_frame, session_user):

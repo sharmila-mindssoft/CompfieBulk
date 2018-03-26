@@ -4,7 +4,8 @@ function initMethods() {
         // getCompletedTaskCurrentYearCsvList: getCompletedTaskCurrentYearCsvList,
         // getDomains: getDomains,
         UploadCompletedTaskCurrentYearCSV: UploadCompletedTaskCurrentYearCSV,
-        uploadCSVFile: uploadCSVFile
+        uploadCSVFile: uploadCSVFile,
+        getDownloadData: getDownloadData
     };
 }
 

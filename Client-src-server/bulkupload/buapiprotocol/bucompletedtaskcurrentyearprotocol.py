@@ -154,15 +154,6 @@ class UploadCompletedTaskCurrentYearCSVFailed(Response):
         )
 
     def to_inner_structure(self):
-        print "to_inner_structure STARTS>>>"
-        print invalid_file
-        print mandatory_error
-        print max_length_error
-        print duplicate_error
-        print invalid_char_error
-        print invalid_data_error
-        print inactive_error
-        print"ENDS>>>"
 
         return {
             "invalid_file" : self.invalid_file,

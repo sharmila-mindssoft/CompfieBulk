@@ -58,5 +58,12 @@ def make_record_type(module, klass_name):
 bu_api_params = {
     'csv_name': make_text_field(length=250),
     'csv_data': make_text_field(length=None),
-    'csv_size': make_int_field()
+    'csv_size': make_int_field(),
+    'mandatory_error': make_int_field(),
+    'max_length_error': make_int_field(),
+    'duplicate_error': make_int_field(),
+    'invalid_char_error': make_int_field(),
+    'invalid_data_error': make_int_field(),
+    'inactive_error': make_int_field(),
+    'invalid_file': make_text_field(length=250)
 }
