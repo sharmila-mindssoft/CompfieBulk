@@ -322,17 +322,13 @@ def update_statutory_mapping_action(db, request_frame, session_user):
             db, csv_id, country_id, domain_id, session_user
         )
         if action == 1:
-            print "Object init"
             is_declined = cObj.perform_validation_before_submit()
-            print "After validation"
-            print is_declined
             if len(is_declined) > 0:
                 return bu_sm.ValidationSuccess(len(is_declined))
             else:
                 if (update_approve_action_from_list(
                         db, csv_id, action, remarks, session_user
                 )):
-                    print "after temp db update"
                     if cObj._doc_count > 0 :
                         cObj.format_download_process_initiate(csv_id)
                     cObj.frame_data_for_main_db_insert()
