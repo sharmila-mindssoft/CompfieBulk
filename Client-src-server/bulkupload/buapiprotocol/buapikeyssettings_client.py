@@ -65,5 +65,7 @@ bu_api_params = {
     'invalid_char_error': make_int_field(),
     'invalid_data_error': make_int_field(),
     'inactive_error': make_int_field(),
-    'invalid_file': make_text_field(length=250)
+    'invalid_file': make_text_field(length=250),
+    'valid': make_int_field(),
+    'invalid': make_int_field(),
 }
