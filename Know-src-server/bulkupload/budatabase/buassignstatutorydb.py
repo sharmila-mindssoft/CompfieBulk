@@ -61,13 +61,15 @@ def get_client_list(db, session_user):
     clients_data = []
     entitys_data = []
     units_data = []
+    assigned_units_data = []
     result = _source_db.call_proc_with_multiresult_set("sp_client_info", [
         session_user.user_id()
-        ], 4)
+        ], 5)
     clients = result[0]
     entitys = result[1]
     domains = result[2]
     units = result[3]
+    assigned_units = result[4]
 
     for c in clients:
 
@@ -95,7 +97,12 @@ def get_client_list(db, session_user):
             (u["unit_code"] + ' - ' + u["unit_name"]), domain_ids
         ))
 
-    return clients_data, entitys_data, units_data
+    for au in assigned_units:
+        assigned_units_data.append(bu_as.AssignedUnits(
+            au["domain_id"], au["unit_id"]
+        ))
+
+    return clients_data, entitys_data, units_data, assigned_units_data
 
 
 ########################################################

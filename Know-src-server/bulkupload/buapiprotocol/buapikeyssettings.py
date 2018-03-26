@@ -223,5 +223,6 @@ bu_api_params = {
     'client_unit_data': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': client_units, "class_name": "BulkClientUnitList"},
     'un_saved_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
     'rejected_file': {'type': 'STRING', 'length': 200, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    "bu_assigned_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': assign_statutory, "class_name": "AssignedUnits"},
 
 }
