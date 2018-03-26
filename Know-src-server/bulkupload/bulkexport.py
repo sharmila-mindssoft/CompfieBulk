@@ -151,13 +151,38 @@ class ConvertJsonToCSV(object):
                 csv_name = ac["csv_name"]
                 total_records = ac["total_records"]
                 total_rejected_records = ac["total_rejected_records"]
-                rejected_by = ac["rejected_by"]
-                rejected_by_name = getUserNameAndCode(cnx_pool, rejected_by)
+                print "declined_count->>->", ac["declined_count"]
+                rejected_by_name = ""
+                approved_by_name = ""
+                if ac["declined_count"] is not None:
+                    rejected_by_name = "COMPFIE"
+                    approved_by_name = "COMPFIE"
+                else:
+                    rejected_by = ac["rejected_by"]
+                    rejected_by_name = getUserNameAndCode(cnx_pool,
+                                                          rejected_by)
+                    approved_by = ac["approved_by"]
+                    approved_by_name = getUserNameAndCode(cnx_pool,
+                                                          approved_by)
                 rejected_on = ac["rejected_on"]
-                reason_for_rejection = ac["rejected_reason"]
+                approved_on = ac["approved_on"]
+                approvedRejectedOn = ""
+                approvedRejectedBy = ""
+                if rejected_on is not None:
+                    approvedRejectedOn = rejected_on
+                    approvedRejectedBy = rejected_by_name
+                if approved_on is not None:
+                    approvedRejectedOn = approved_on
+                    approvedRejectedBy = approved_by_name
+                print "approvedRejectedOn-----> ", approvedRejectedOn
+                print "approvedRejectedBy-----> ", approvedRejectedBy
                 approve_status = ac["total_approve_records"]
                 approve_reject_task = str(approve_status) + " / " + str(
                                                     total_rejected_records)
+                reason_for_rejection = ""
+                if (ac["is_fully_rejected"] == 1):
+                    approve_reject_task = "-"
+                    reason_for_rejection = ac["rejected_reason"]
                 exported_time = datetime.datetime.now()
                 if not is_header:
                     text = "Statutory Mapping - Bulk Report"
@@ -192,7 +217,8 @@ class ConvertJsonToCSV(object):
                 csv_values = [
                     sno, country_name, domain_name, uploaded_by_name,
                     uploaded_on, csv_name, total_records, approve_reject_task,
-                    rejected_on, rejected_by_name, reason_for_rejection
+                    approvedRejectedOn, approvedRejectedBy,
+                    reason_for_rejection
                 ]
                 self.write_csv(None, csv_values)
         else:
@@ -231,16 +257,38 @@ class ConvertJsonToCSV(object):
                 csv_name = cu["csv_name"]
                 total_records = cu["total_records"]
                 total_rejected_records = cu["total_rejected_records"]
-                # approved_by = cu["approved_by"]
-                rejected_by = cu["rejected_by"]
-                rejected_by_name = getUserNameAndCode(cnx_pool, rejected_by)
-                # approved_on = cu["approved_on"]
+                print "declined_count->>->", cu["declined_count"]
+                rejected_by_name = ""
+                approved_by_name = ""
+                if cu["declined_count"] is not None:
+                    rejected_by_name = "COMPFIE"
+                    approved_by_name = "COMPFIE"
+                else:
+                    rejected_by = cu["rejected_by"]
+                    rejected_by_name = getUserNameAndCode(cnx_pool,
+                                                          rejected_by)
+                    approved_by = cu["approved_by"]
+                    approved_by_name = getUserNameAndCode(cnx_pool,
+                                                          approved_by)
                 rejected_on = cu["rejected_on"]
-                # is_fully_rejected = cu["is_fully_rejected"]
-                approve_status = cu["approve_status"]
-                reason_for_rejection = cu["rejected_reason"]
+                approved_on = cu["approved_on"]
+                approvedRejectedOn = ""
+                approvedRejectedBy = ""
+                if rejected_on is not None:
+                    approvedRejectedOn = rejected_on
+                    approvedRejectedBy = rejected_by_name
+                if approved_on is not None:
+                    approvedRejectedOn = approved_on
+                    approvedRejectedBy = approved_by_name
+                print "approvedRejectedOn-----> ", approvedRejectedOn
+                print "approvedRejectedBy-----> ", approvedRejectedBy
+                approve_status = cu["total_approve_records"]
                 approve_reject_task = str(approve_status) + " / " + str(
                                                     total_rejected_records)
+                reason_for_rejection = ""
+                if (cu["is_fully_rejected"] == 1):
+                    approve_reject_task = "-"
+                    reason_for_rejection = cu["rejected_reason"]
                 exported_time = datetime.datetime.now()
                 if not is_header:
                     text = "Client Unit - Bulk Report"
@@ -274,7 +322,8 @@ class ConvertJsonToCSV(object):
                 csv_values = [
                     sno, uploaded_by_name, uploaded_on,
                     csv_name, total_records, approve_reject_task,
-                    rejected_on, rejected_by_name, reason_for_rejection
+                    approvedRejectedOn, approvedRejectedBy,
+                    reason_for_rejection
                 ]
                 self.write_csv(None, csv_values)
         else:
@@ -322,16 +371,38 @@ class ConvertJsonToCSV(object):
                 total_records = asr["total_records"]
                 total_rejected_records = asr["total_rejected_records"]
                 result_domain = asr["domain_ids"]
-                # approved_by = asr["approved_by"]
-                rejected_by = asr["rejected_by"]
-                rejected_by_name = getUserNameAndCode(cnx_pool, rejected_by)
-                # approved_on = asr["approved_on"]
-                rejected_on = asr["rejected_on"]
-                # is_fully_rejected = asr["is_fully_rejected"]
-                approve_status = asr["approve_status"]
-                reason_for_rejection = asr["rejected_reason"]
+                print "declined_count->>->", cu["declined_count"]
+                rejected_by_name = ""
+                approved_by_name = ""
+                if cu["declined_count"] is not None:
+                    rejected_by_name = "COMPFIE"
+                    approved_by_name = "COMPFIE"
+                else:
+                    rejected_by = cu["rejected_by"]
+                    rejected_by_name = getUserNameAndCode(cnx_pool,
+                                                          rejected_by)
+                    approved_by = cu["approved_by"]
+                    approved_by_name = getUserNameAndCode(cnx_pool,
+                                                          approved_by)
+                rejected_on = cu["rejected_on"]
+                approved_on = cu["approved_on"]
+                approvedRejectedOn = ""
+                approvedRejectedBy = ""
+                if rejected_on is not None:
+                    approvedRejectedOn = rejected_on
+                    approvedRejectedBy = rejected_by_name
+                if approved_on is not None:
+                    approvedRejectedOn = approved_on
+                    approvedRejectedBy = approved_by_name
+                print "approvedRejectedOn-----> ", approvedRejectedOn
+                print "approvedRejectedBy-----> ", approvedRejectedBy
+                approve_status = cu["total_approve_records"]
                 approve_reject_task = str(approve_status) + " / " + str(
                                                     total_rejected_records)
+                reason_for_rejection = ""
+                if (cu["is_fully_rejected"] == 1):
+                    approve_reject_task = "-"
+                    reason_for_rejection = cu["rejected_reason"]
                 exported_time = datetime.datetime.now()
                 if not is_header:
                     text = "Assigned Statutory - Bulk Report"
@@ -371,7 +442,8 @@ class ConvertJsonToCSV(object):
                 csv_values = [
                     sno, result_domain, uploaded_by_name, uploaded_on,
                     csv_name, total_records, approve_reject_task,
-                    rejected_on, rejected_by_name, reason_for_rejection
+                    approvedRejectedOn, approvedRejectedBy,
+                    reason_for_rejection
                 ]
                 self.write_csv(None, csv_values)
         else:

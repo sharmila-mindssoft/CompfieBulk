@@ -4,7 +4,7 @@
 <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 <!-- Notification css (Toastr) -->
 <link href="/files/client/common/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
-<style type="text/css">
+<style>
     .text-middle {
         vertical-align: middle;
     }
@@ -34,14 +34,14 @@
                                     <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
-                                                <th width="2%">#</th>
-                                                <th width="15">Uploaded File Name</th>
-                                                <th width="8">Uploaded On</th>
-                                                <th width="8" class="text-center">No. of Records</th>
-                                                <th width="8" class="text-center">Required Documents</th>
-                                                <th width="10" class="text-center">Uploaded Documents</th>
-                                                <th width="10" class="text-center">Remaining Documents</th>
-                                                <th width="8" class="text-center">Upload Documents</th>
+                                                <th class="width-2">#</th>
+                                                <th class="width-15">Uploaded File Name</th>
+                                                <th class="width-8">Uploaded On</th>
+                                                <th class="text-center width-8">No. of Records</th>
+                                                <th class="text-center width-8">Required Documents</th>
+                                                <th class="text-center width-10">Uploaded Documents</th>
+                                                <th class="text-center width-10">Remaining Documents</th>
+                                                <th class="text-center width-8">Upload Documents</th>
                                             </tr>
                                             <tr>
                                                 <td></td>
@@ -74,273 +74,6 @@
                         <!-- end col -->
                     </div>
                 </div>
-                <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="page-title compfie-model-title">Client Group: RG Group</h4>
-                            <hr class="no-top-margin no-bottom-margin">
-                            <div class="modal-body">
-                                <div class="table-responsive">
-                                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                                        <tr>
-                                            <td colspan="4" class="no-border">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="30%" align="center">Short Name: rggroup</td>
-                                                        <td width="30%" align="center">Username: groupadmin@domain.com</td>
-                                                        <td width="30%" align="center">View Only Licence(s): 5</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr class="bg-lightdark">
-                                            <td colspan="4">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="33%">Country: India</td>
-                                                        <td width="33%">Business Group: RG Business Group </td>
-                                                        <td width="33%" colspan="2">Legal Entity: RG Legal Entity</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="33%">Contract From: 01-Jan-2017</td>
-                                                        <td width="33%">Contract To: 31-Dec-2018 </td>
-                                                        <td width="33%" colspan="2">
-                                                            <span data-toggle="tooltip" title="Old Data: Total Licence(s): 15">
-                                                                <i class="fa fa-info-circle"></i> Total Licence(s): 20</span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="2">Logo: logo.png</td>
-                                                        <td>
-                                                            <span data-toggle="tooltip" title="Old Data: File Space: 10 GB">
-                                                                <i class="fa fa-info-circle"></i> File Space: 20 GB</span>
-                                                        </td>
-                                                    </tr>
-
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4">
-                                                <table cellspacing="0" cellpadding="0" width="100%" class="btable letable">
-                                                    <tr>
-                                                        <td colspan="4">
-                                                            <div class="grid-table">
-                                                                <table cellspacing="0" cellpadding="0" width="100%">
-                                                                    <tr>
-                                                                        <th width="15%">Domain </th>
-                                                                        <th width="20%">Organization</th>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Labour Law </td>
-                                                                        <td>
-                                                                            <p>
-                                                                                <span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3">
-                                                                                    <i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span>
-                                                                            </p>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Finace Law </td>
-                                                                        <td>
-                                                                            <p>Establishment - 5, S & E - 4</p>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
-                <!-- compfie model -->
-                <div class="modal fade bs-example-modal-lg-ci" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="page-title">Client Group: ABC Group</h4>
-                            <hr class="no-top-margin no-bottom-margin">
-                            <div class="modal-body">
-                                <div class="table-responsive">
-                                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                                        <tr>
-                                            <td colspan="4" class="no-border">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="30%" align="center">Short Name: abcgroup</td>
-                                                        <td width="30%" align="center">Username: groupadmin@domain.com</td>
-                                                        <td width="30%" align="center">View Only Licence(s): 5</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr class="bg-lightdark">
-                                            <td colspan="4">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="33%">Country: India</td>
-                                                        <td width="33%">Business Group: ABC Business Group </td>
-                                                        <td width="33%" colspan="2">Legal Entity: ABC Limited</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="33%">Contract From: 01-Jan-2017</td>
-                                                        <td width="33%">Contract To: 31-Dec-2018 </td>
-                                                        <td width="33%" colspan="2">
-                                                            <span data-toggle="tooltip" title="Old Data: Total Licence(s): 15">
-                                                                <i class="fa fa-info-circle"></i> Total Licence(s): 20</span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="2">Logo: logo.png</td>
-                                                        <td>
-                                                            <span data-toggle="tooltip" title="Old Data: File Space: 10 GB">
-                                                                <i class="fa fa-info-circle"></i> File Space: 20 GB</span>
-                                                        </td>
-                                                    </tr>
-
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4">
-                                                <table cellspacing="0" cellpadding="0" width="100%" class="btable letable">
-                                                    <tr>
-                                                        <td colspan="4">
-                                                            <div class="grid-table">
-                                                                <table cellspacing="0" cellpadding="0" width="100%">
-                                                                    <tr>
-                                                                        <th width="15%">Domain </th>
-                                                                        <th width="20%">Organization</th>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Labour Law </td>
-                                                                        <td>
-                                                                            <p>
-                                                                                <span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3">
-                                                                                    <i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span>
-                                                                            </p>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Finace Law </td>
-                                                                        <td>
-                                                                            <p>Establishment - 5, S & E - 4</p>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
-                <!-- inm model -->
-                <div class="modal fade bs-example-modal-lg-inm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="page-title">Client Group: VRM Group</h4>
-                            <hr class="no-top-margin no-bottom-margin">
-                            <div class="modal-body">
-                                <div class="table-responsive">
-                                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                                        <tr>
-                                            <td colspan="4" class="no-border">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="30%" align="center">Short Name: vrmgroup</td>
-                                                        <td width="30%" align="center">Username: groupadmin@domain.com</td>
-                                                        <td width="30%" align="center">View Only Licence(s): 5</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr class="bg-lightdark">
-                                            <td colspan="4">
-                                                <table class="table">
-                                                    <tr>
-                                                        <td width="33%">Country: India</td>
-                                                        <td width="33%">Business Group: VRM Business Group </td>
-                                                        <td width="33%" colspan="2">Legal Entity: ABC Limited</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="33%">Contract From: 01-Jan-2017</td>
-                                                        <td width="33%">Contract To: 31-Dec-2018 </td>
-                                                        <td width="33%" colspan="2">
-                                                            <span data-toggle="tooltip" title="Old Data: Total Licence(s): 15">
-                                                                <i class="fa fa-info-circle"></i> Total Licence(s): 20</span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="2">Logo: logo.png</td>
-                                                        <td>
-                                                            <span data-toggle="tooltip" title="Old Data: File Space: 10 GB">
-                                                                <i class="fa fa-info-circle"></i> File Space: 20 GB</span>
-                                                        </td>
-                                                    </tr>
-
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4">
-                                                <table cellspacing="0" cellpadding="0" width="100%" class="btable letable">
-                                                    <tr>
-                                                        <td colspan="4">
-                                                            <div class="grid-table">
-                                                                <table cellspacing="0" cellpadding="0" width="100%">
-                                                                    <tr>
-                                                                        <th width="15%">Domain </th>
-                                                                        <th width="20%">Organization</th>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Labour Law </td>
-                                                                        <td>
-                                                                            <p>
-                                                                                <span data-toggle="tooltip" title="Old Data: Establishment - 6, S & E - 3">
-                                                                                    <i class="fa fa-info-circle"></i> Establishment - 5, S & E - 4</span>
-                                                                            </p>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Finace Law </td>
-                                                                        <td>
-                                                                            <p>Establishment - 5, S & E - 4</p>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
-
             </div>
         </div>
     </div>
@@ -354,7 +87,7 @@
             <div class="container">
                 <div class="row">
                     <div class="container">
-                        <div class="row" id="animationSandbox">
+                        <div class="row" id="animationSandbox-1">
                             <div class="col-sm-3"> </div>
                             <div class="col-sm-6">
                                 <div class="portlet">
@@ -426,45 +159,98 @@
                                                             </a>
                                                         </center>
                                                     </div>
-                                                    <div id="divUploadFile" style="display:none">
+                                                    <div id="divUploadFile">
                                                         <div class="form-group bg-muted">
                                                             <div class="col-sm-12">
                                                                 <h4 class="header-title">Upload File</h4>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group has-feedback">
-                                                            <label class="col-sm-4 control-label">Select File:
+
+                                                        <div class="form-group has-feedback field_label m-b-0" style="display: none;" id="divSuccessFile">
+                                                            <label class="col-sm-4 control-label">Uploaded File: </label>
+                                                            <div class="col-sm-6">
+                                                                <table class="tablenopadd" width="100%">
+                                                                    <tbody>
+                                                                        <tr class="bg-lightdark border-1">
+                                                                            <td width="60%" class="p-5-px"> </td>
+
+                                                                            <td width="10%" class="p-5-px">
+                                                                                <i class="fa fa-download fa-1-2x c-pointer" data-toggle="tooltip" title="" data-original-title="Download Document"></i>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group has-feedback select_docs m-t-20" style="display: none;" id="divSuccessDocument">
+                                                            <label class="col-sm-4 control-label">Select Documents:<span class="mandatory">*</span> </label>
+                                                            <div class="col-sm-6">
+                                                                <input class="form-control input-sm" type="file" webkitdirectory="" multiple="">
+                                                                <ul class="p-l-20 p-t-5">
+                                                                    <li>Required Documents: <b>0</b> </li>
+                                                                    <li>Uploaded Documents: <b>0</b> </li>
+                                                                    <li class="text-danger">Remaining Documents: <b>0</b> </li>
+                                                                    <li class="view-summary" style="display: none;">Uploaded Documents: <b> 90 </b> </li>
+                                                                    <li class="text-danger view-summary" style="display: none;">Remaining Documents: <b> 10</b></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-12 text-center m-b-20" id="divSuccessbutton" style="display: none;">
+                                                            <button class="btn btn-primary waves-effect waves-light btn_upload animateprogress1 m-r-5" type="button" data-toggle="modal" data-target="#myModal1" style="display: none;"> Upload</button>
+
+                                                            <a class="btn btn-primary btn-trans uploaded_data" style="display: inline-block;"><i class="fa fa-download text-primary"></i> Uploaded Data (.zip)</a>
+                                                            <button class="btn btn-primary waves-effect waves-light btn_submit" type="button" onclick="location.href='/Completed-task-current-year-BulkUpload_List'" style="display: inline-block;"> Submit</button>
+                                                        </div>
+
+
+
+                                                        <div id="divFileUpload">
+                                                            <div class="form-group has-feedback">
+                                                                <label class="col-sm-4 control-label">Select File:
                                                             <span class="mandatory">*</span>
                                                         </label>
-                                                            <div class="col-sm-6">
-                                                                <input class="form-control input-sm" type="file" accept=".csv">
-                                                                <small class="" style="text-align: left;">[ Accepted file format
+                                                                <div class="col-sm-6">
+                                                                    <input class="form-control input-sm" type="file" accept=".csv" id="fileInput">
+                                                                    <small class="" style="text-align: left;">[ Accepted file format
                                                                 <span style="color: #E64C3D !important;">.csv</span> ]</small>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="form-group col-sm-12 text-center">
-                                                            <div class="col-sm-12 col-sm-offset-1">
-                                                                <button class="btn btn-primary waves-effect waves-light animateprogress" type="button" data-toggle="modal" data-target="#myModal">
+                                                            <div class="form-group col-sm-12 text-center">
+                                                                <div class="col-sm-12 col-sm-offset-1">
+                                                                    <button class="btn btn-primary waves-effect waves-light animateprogress upload-btn" type="button" data-toggle="modal" data-target="#myModal" id="btnUpload">
                                                                 Upload </button>
-                                                                <a class="btn btn-primary btn-trans invaliddata dropbtn" onclick="myFunction()">
-                                                                    <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
+                                                                    <a class="btn btn-primary btn-trans invaliddata dropbtn default-display-none" onclick="showDownloadList()">
+                                                                        <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
+                                                                    <div id="myDropdown" class="dropdown-content">
+                                                                        <a id="excel">Download Excel</a>
+                                                                        <a id="csv">Download CSV</a>
+                                                                        <a id="ods">Download ODS</a>
+                                                                        <a id="txt">Download Text</a>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
+
+
                                                         <div class="clear"></div>
-                                                        <div class="view-summary" style="display: none;">
+                                                        <div class="view-summary default-display-none">
                                                             <div class="col-sm-6 no-padding">
                                                                 <div class="form-group bg-muted">
                                                                     <h5 class="col-sm-12 header-title">Uploaded Data - Summary</h5>
                                                                 </div>
                                                                 <ul class="p-l-20">
                                                                     <li>Total No. Of Records:
-                                                                        <b>1000</b>
+                                                                        <b><span class="totalRecords">
+                                                                        </span></b>
                                                                     </li>
                                                                     <li>Valid Processed Records:
-                                                                        <b> 950 </b>
+                                                                        <b> <span class="validRecords">
+                                                                        </span> </b>
                                                                     </li>
                                                                     <li>Invalid Records:
-                                                                        <b> 50</b>
+                                                                        <b><span class="invalidRecords">
+                                                                        </span></b>
                                                                     </li>
                                                                 </ul>
                                                             </div>
@@ -473,17 +259,32 @@
                                                                     <h5 class="col-sm-12 text-danger header-title">Invalid Data - Summary</h5>
                                                                 </div>
                                                                 <ul class="p-l-20">
-                                                                    <li>Invalid Date:
-                                                                        <b>20</b>
+                                                                    <!-- <li>Invalid Date:
+                                                                        <b>60</b>
                                                                     </li>
                                                                     <li>Invalid File Format:
-                                                                        <b>15</b>
+                                                                        <b>0</b>
                                                                     </li>
                                                                     <li>Mandatory Field Blank:
-                                                                        <b>10</b>
+                                                                        <b>0</b>
                                                                     </li>
                                                                     <li>Master Data Inactive:
-                                                                        <b>5</b>
+                                                                        <b>0</b>
+                                                                    </li> -->
+                                                                    <li>Mandatory field validation:
+                                                                        <b><span class="mandatoryErrors"></span></b>
+                                                                    </li>
+                                                                    <li>Duplicate Data validation:
+                                                                        <b><span class="duplicateErrors"></span></b>
+                                                                    </li>
+                                                                    <li>Status validation:
+                                                                        <b><span class="statusErrors"></span></b>
+                                                                    </li>
+                                                                    <li>Max. length validation:
+                                                                        <b><span class="lengthErrors"></span></b>
+                                                                    </li>
+                                                                    <li>Invalid Data validation:
+                                                                        <b><span class="invalidErrors"></span></b>
                                                                     </li>
                                                                 </ul>
                                                             </div>
@@ -502,7 +303,7 @@
 
                     <!-- Modal -->
                     <!-- Modal -->
-                    <div class="modal fade" id="myModal" role="dialog">
+                    <div class="modal fade default-display-none" id="myModal" role="dialog">
                         <div class="modal-dialog">
                             <!-- Modal content-->
                             <div class="modal-content">
@@ -514,7 +315,7 @@
                                     <div class="progress skill-bar ">
                                         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
                                             <span class="skill">Uploading
-                                                <i class="val">100%</i>
+                                                <i class="val"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -534,7 +335,7 @@
             </span>
             <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
             <div class="custom-modal-text">
-                <form role="form">
+                <form>
                     <div class="form-group">
                         <label for="exampleInputPassword" class="pull-left">Password
                             <span class="mandatory">*</span>

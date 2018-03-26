@@ -554,16 +554,29 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             grouped_list = list(v)
             if len(grouped_list) > 1:
                 self._domain_names.append(grouped_list[0].get("Domain"))
-                self._domain_ids.append(self.Domain.get(
-                    grouped_list[0].get("Domain")).get("domain_id")
-                )
+
+                if(
+                    self.Domain.get(grouped_list[0].get("Domain"))
+                ) != None:
+                    self._domain_ids.append(self.Domain.get(
+                        grouped_list[0].get("Domain")).get("domain_id")
+                    )
+
                 self._legal_entity = grouped_list[0].get("Legal_Entity")
-                self._legal_entity_id = self.Legal_Entity.get(
-                        grouped_list[0].get("Legal_Entity")
-                    ).get("legal_entity_id")
-                self._client_id = self.Client_Group.get(
-                    grouped_list[0].get("Client_Group")
-                    ).get("client_id")
+
+                if(
+                    self.Legal_Entity.get(grouped_list[0].get("Legal_Entity"))
+                ) != None:
+                    self._legal_entity_id = self.Legal_Entity.get(
+                            grouped_list[0].get("Legal_Entity")
+                        ).get("legal_entity_id")
+
+                if(
+                    self.Client_Group.get(grouped_list[0].get("Client_Group"))
+                ) != None:
+                    self._client_id = self.Client_Group.get(
+                        grouped_list[0].get("Client_Group")
+                        ).get("client_id")
 
     def perform_validation(self):
         mapped_error_dict = {}

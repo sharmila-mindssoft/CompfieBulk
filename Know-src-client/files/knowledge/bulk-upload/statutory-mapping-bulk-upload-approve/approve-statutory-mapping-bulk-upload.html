@@ -70,7 +70,7 @@
                                         <!-- end col -->
                                     </form>
                                 </div>
-                                <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                                <table id="datatable-responsive" class="table table-striped dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -227,7 +227,7 @@
 
                 <div id="freezer-example">
                   <div class="table-responsive vertical-scroll" >
-                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap table-freeze-multi" cellspacing="0" style="width: 3000px; overflow-x: auto;">
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap table-freeze-multi js-filtertable-action-sm" cellspacing="0" style="width: 3000px; overflow-x: auto;">
                       <thead>
                         <tr>
                           <th width="1%" rowspan="2">#</th>
@@ -278,13 +278,13 @@
                             <th class=" columnfixed" width="2%"></th>
                             <th class="text-center columnfixed">
                               <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-                                <input id="singleCheckbox2" value="option2" type="checkbox">
+                                <input id="singleCheckbox2" class="approve-all" value="option2" type="checkbox">
                                 <label></label>
                               </div>
                             </th>
                             <th class="text-center columnfixed">
                               <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
-                                <input id="singleCheckbox2" value="option2" type="checkbox" >
+                                <input id="singleCheckbox2" class="reject-all" value="option2" type="checkbox" >
                                 <label></label>
                               </div>
                             </th>
@@ -292,7 +292,7 @@
 
                             <th class="columnfixed divider-column">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm"
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-statutory"
                                 placeholder="Statutory">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -301,7 +301,7 @@
                             <th class="columnfixed" width="1%"></th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-organization"
                                 placeholder="Organization">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -309,7 +309,7 @@
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-nature"
                                 placeholder="Statutory Nature">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -317,7 +317,7 @@
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-provision"
                                 placeholder="Statutory Provision">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -325,7 +325,7 @@
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-c-task"
                                 placeholder="Compliance Task">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -333,7 +333,7 @@
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-c-doc"
                                 placeholder="Compliance Document">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -341,7 +341,7 @@
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-task-id"
                                 placeholder="Task ID">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -349,7 +349,7 @@
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-c-desc"
                                 placeholder="Compliance Description">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -357,7 +357,7 @@
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-p-cons"
                                 placeholder="Penal Consequences">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -365,7 +365,7 @@
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-task-type"
                                 placeholder="Task Type">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -373,7 +373,7 @@
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-refer-link"
                                 placeholder="Reference Link">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -381,7 +381,7 @@
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-frequency"
                                 placeholder="Frequency">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -397,7 +397,7 @@
                             <th class="columnfixed"></th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-format"
                                 placeholder="Format File">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -405,7 +405,7 @@
                             </th>
                             <th class="columnfixed">
                               <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                <input type="text" class="form-control input-sm "
+                                <input type="text" class="form-control input-sm js-filter-sm"
                                 id="search-geo"
                                 placeholder="Geography Location">
                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -554,7 +554,7 @@
         <td class="duration" width="3%"></td>
         <td class="duration-type" width="3%"></td>
         <td class="multiple" width="3%"></td>
-        <td class="format" width="4%"></td>
+        <td class="format" width="4%"><a target="new"></a></td>
         <td class="geography" width="5%"></td>
     </table>
 </div>
