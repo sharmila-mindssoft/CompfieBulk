@@ -703,6 +703,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         }
 
     def compare_csv_columns(self):
+        print self._csv_column_name
+        print self._csv_header
         res = collections.Counter(
             self._csv_column_name
         ) == collections.Counter(self._csv_header)
@@ -1021,77 +1023,93 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self._session_user_obj = session_user
         self._source_data = None
         self._declined_row_idx = []
-        self.get_source_data()
         self._country_name = None
         self._domain_name = None
         self._csv_name = None
+        self._doc_count = 0
+        self.get_source_data()
+        self.get_file_count()
 
     def get_source_data(self):
         self._source_data = self._db.call_proc(
             "sp_statutory_mapping_by_csvid", [self._csv_id]
         )
+        if len(self._source_data) > 0 :
+            self._csv_name = self._source_data[0].get("csv_name")
+            self._country_name = self._source_data[0].get("country_name")
+            self._domain_name = self._source_data[0].get("domain_name")
+
+    def get_file_count(self):
+        data = self._db.call_proc("sp_sm_get_total_file_count", [self._csv_id])
+        if len(data) > 0 :
+            self._doc_count = data[0].get("total_documents")
 
     def perform_validation_before_submit(self):
-        declined_count = 0
-        self._declined_row_idx = []
-        self.init_values(self._country_id, self._domain_id)
+        try :
+            declined_count = 0
+            self._declined_row_idx = []
+            self.init_values(self._country_id, self._domain_id)
 
-        for row_idx, data in enumerate(self._source_data):
+            for row_idx, data in enumerate(self._source_data):
+                if row_idx == 0:
+                    self._country_name = data.get("country_name")
+                    self._domain_name = data.get("domain_name")
+                    self._csv_name = data.get("csv_name")
 
-            if row_idx == 0:
-                self._country_name = data.get("country_name")
-                self._domain_name = data.get("domain_name")
-                self._csv_name = data.get("csv_name")
+                for key in self._csv_column_name:
+                    value = data.get(key)
+                    isFound = ""
+                    if value is None:
+                        continue
 
-            for key in self._csv_column_name:
-                value = data.get(key)
-                isFound = ""
-                if value is None:
-                    continue
+                    csvParam = csv_params.get(key)
+                    if csvParam is None:
+                        continue
 
-                csvParam = csv_params.get(key)
-                if csvParam is None:
-                    continue
+                    if type(value) is not int:
+                        values = value.strip().split(CSV_DELIMITER)
 
-                if type(value) is not int:
-                    values = value.strip().split(CSV_DELIMITER)
+                        for v in values:
+                            if type(v) is str:
+                                v = v.strip()
 
-                    for v in values:
-                        if type(v) is str:
-                            v = v.strip()
+                            if v != "":
+                                if (
+                                    csvParam.get("check_is_exists") is True or
+                                    csvParam.get("check_is_active") is True
+                                ):
+                                    unboundMethod = self._check_method_maps.get(
+                                        key
+                                    )
+                                    print key
+                                    print v
+                                    if unboundMethod is not None:
+                                        isFound = unboundMethod(v)
 
-                        if v != "":
-                            if (
-                                csvParam.get("check_is_exists") is True or
-                                csvParam.get("check_is_active") is True
-                            ):
-                                unboundMethod = self._check_method_maps.get(
-                                    key
-                                )
-                                if unboundMethod is not None:
-                                    isFound = unboundMethod(v)
+                                if isFound is not True and isFound != "":
+                                    declined_count += 1
 
-                            if isFound is not True and isFound != "":
-                                declined_count += 1
+                if not self.check_compliance_task_name_duplicate(
+                    self._country_id, self._domain_id, data.get("Statutory"),
+                    data.get("Statutory_Provision"), data.get("Compliance_Task")
+                ):
+                    declined_count += 1
 
-            if not self.check_compliance_task_name_duplicate(
-                self._country_id, self._domain_id, data.get("Statutory"),
-                data.get("Statutory_Provision"), data.get("Compliance_Task")
-            ):
-                declined_count += 1
+                if not self.check_task_id_duplicate(
+                    self._country_id, self._domain_id, data.get("Statutory"),
+                    data.get("Statutory_Provision"), data.get("Compliance_Task"),
+                    data.get("Task_ID")
+                ):
+                    declined_count += 1
 
-            if not self.check_task_id_duplicate(
-                self._country_id, self._domain_id, data.get("Statutory"),
-                data.get("Statutory_Provision"), data.get("Compliance_Task"),
-                data.get("Task_ID")
-            ):
-                declined_count += 1
-
-            if declined_count > 0:
-                self._declined_row_idx.append(
-                    data.get("bulk_statutory_mapping_id")
-                )
-        return self._declined_row_idx
+                if declined_count > 0:
+                    self._declined_row_idx.append(
+                        data.get("bulk_statutory_mapping_id")
+                    )
+            return self._declined_row_idx
+        except Exception, e :
+            print e
+            print str(traceback.format_exc())
 
     def frame_data_for_main_db_insert(self):
         try:
@@ -1188,9 +1206,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             raise (e)
 
     def format_download_process_initiate(self, csvid):
-        # call approve after initiate add time out to check zip status, if done
-        # call download once after complete download call remove
-        # and close the call time our
         self.file_server_approve_call(csvid)
         self._stop = False
 

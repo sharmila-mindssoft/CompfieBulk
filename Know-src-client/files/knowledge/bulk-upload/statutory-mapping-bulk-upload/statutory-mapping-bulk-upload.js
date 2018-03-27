@@ -436,12 +436,14 @@ function file_upload_rul() {
 Dropzone.autoDiscover = false;
 Dropzone.autoProcessQueue = false;
 var addedfiles = []
-var fileUploadSuccess = 0;
-
+var totalfileUploadSuccess = 0;
+var perQueueUploadSuccess = 0;
+var queueCount = 0;
+var maxParallelCount = 2;
 var myDropzone = new Dropzone("div#myDrop", {
     addRemoveLinks: true,
     autoProcessQueue: false,
-    parallelUploads: 10,
+    parallelUploads: maxParallelCount,
     url: "#",
     transformFile: function transformFile(file, done) {
       var zip = new JSZip();
@@ -461,15 +463,21 @@ var myDropzone = new Dropzone("div#myDrop", {
                 myDropzone.removeFile(file);
             }
             if (jQuery.inArray(file.name, docNames) == -1) {
-                console.log(file.name);
                 myDropzone.removeFile(file);
             }
             else {
                 addedfiles.push(file.name);
+                queueCount += 1;
             }
 
-
         });
+        this.on("removedfile", function(file) {
+            console.log(file.name);
+            if (jQuery.inArray(file.name, addedfiles) > -1) {
+                addedfiles.pop(file.name);
+                queueCount -= 1;
+            }
+        })
 
         this.on("processing", function(file) {
           this.options.url = file_upload_rul();
@@ -477,12 +485,16 @@ var myDropzone = new Dropzone("div#myDrop", {
 
         this.on("success", function(file, response) {
             addedfiles.pop(file.name);
-            if (fileUploadSuccess < docNames.length) {
-                fileUploadSuccess += 1;
+            if (totalfileUploadSuccess < queueCount) {
+                totalfileUploadSuccess += 1;
+                perQueueUploadSuccess += 1;
             }
-            console.log(fileUploadSuccess);
-            console.log(docNames.length);
-            if (fileUploadSuccess == docNames.length) {
+
+            if (perQueueUploadSuccess == maxParallelCount) {
+                perQueueUploadSuccess = 0;
+                myDropzone.processQueue();
+            }
+            if (totalfileUploadSuccess == queueCount) {
                 myDropzone.removeAllFiles(true);
                 hideLoader()
                 displaySuccessMessage(message.document_upload_success)
