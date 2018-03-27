@@ -12,7 +12,7 @@ var COUNTRY_WISE_DOMAIN = '';
 var USER_CATEGORY_ID = 0;
 
 var GROUP_NAME = $('#cgroupval');
-var GROUP_ID = GROUP_ID;
+var GROUP_ID = $('#cgroup-id');;
 var AC_GROUP = $('#ac-cgroup');
 var SHOW_BTN = $('#show');
 var REPORT_VIEW = $('.grid-table-rpt');
@@ -21,7 +21,7 @@ var CURRENT_PASSWORD = $('#current-password');
 var AC_LEGAL_ENTITY = $('#ac-legalentity');
 var AC_UNIT = $('#ac-unit');
 var LEGAL_ENTITY_VAL = $('#legalentityval');
-var LEGAL_ENTITY = LEGAL_ENTITY;
+var LEGAL_ENTITY = $('#legalentityid');
 var UNIT_VAL = $('#unitval');
 var UNIT = $('#unitid');
 var DOMAIN = $('#domain');

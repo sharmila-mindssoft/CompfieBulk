@@ -1484,14 +1484,15 @@ BEGIN
         is_fully_rejected = 1,
         rejected_by = _user_id,
         rejected_on = current_ist_datetime(),
-        total_rejected_records = (SELECT count(0) FROM
-        tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id)
+        rejected_reason = _remarks,
+        total_rejected_records = (select count(0) from
+        tbl_bulk_units as t1 WHERE t1.csv_unit_id = _csv_unit_id)
         WHERE csv_unit_id = _csv_unit_id;
     else
     if _declinedCount = 0 then
       delete from tbl_bulk_units
       where csv_unit_id = _csv_unit_id
-      and action = 1;
+      and (action = 1 or action = 0);
     else
       UPDATE tbl_bulk_units SET
       action = 1 WHERE csv_unit_id = _csv_unit_id;
