@@ -1665,7 +1665,9 @@ BEGIN
 
     update  tbl_bulk_statutory_mapping_csv set upload_status = 1 where
       uploaded_documents = total_documents and csv_id = csvid;
+END //
 
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_compliance_for_unit`;
@@ -1715,6 +1717,9 @@ BEGIN
     update  tbl_bulk_statutory_mapping_csv set file_download_status =  download_status
       where csv_id = csvid;
 
+END //
+
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_as_validation_info`;
 
