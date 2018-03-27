@@ -850,6 +850,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
                                 if isFound is not True and isFound != "":
                                     msg = "%s - %s" % (key, isFound)
+                                    print msg
+                                    print row_idx
                                     if res is not True:
                                         res.append(msg)
                                     else:
@@ -905,8 +907,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
                         mapped_header_dict[key] = head_idx
 
-                print res
-                print data.get("Task_ID")
                 if key == "Format" and res is True:
                     if not self.check_compliance_task_name_duplicate(
                         self._country_id, self._domain_id,
@@ -950,6 +950,9 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 ]
                 res = True
 
+        print mapped_error_dict
+        print "\n"
+        print mapped_header_dict
         if invalid > 0:
             return self.make_invalid_return(
                 mapped_error_dict, mapped_header_dict
@@ -1008,7 +1011,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             "valid": total - invalid,
             "invalid": invalid,
             "doc_count": len(set(self._doc_names)),
-            "doc_names": list(set(self._doc_names))
+            "doc_names": list(set(self._doc_names)),
+            "csv_name": self._csv_name
         }
 
 
@@ -1022,7 +1026,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self._domain_id = domain_id
         self._session_user_obj = session_user
         self._source_data = None
-        self._declined_row_idx = []
+        self._declined_row_idx = {}
         self._country_name = None
         self._domain_name = None
         self._csv_name = None
@@ -1051,6 +1055,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             self.init_values(self._country_id, self._domain_id)
 
             for row_idx, data in enumerate(self._source_data):
+                res = True
                 if row_idx == 0:
                     self._country_name = data.get("country_name")
                     self._domain_name = data.get("domain_name")
@@ -1081,19 +1086,27 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                     unboundMethod = self._check_method_maps.get(
                                         key
                                     )
-                                    print key
-                                    print v
                                     if unboundMethod is not None:
                                         isFound = unboundMethod(v)
 
                                 if isFound is not True and isFound != "":
                                     declined_count += 1
+                                    msg = "%s - %s" % (key, isFound)
+                                    if res is not True:
+                                        res.append(msg)
+                                    else:
+                                        res = [msg]
 
                 if not self.check_compliance_task_name_duplicate(
                     self._country_id, self._domain_id, data.get("Statutory"),
                     data.get("Statutory_Provision"), data.get("Compliance_Task")
                 ):
                     declined_count += 1
+                    dup_error = "Compliance_Task - Duplicate data"
+                    if res is not True:
+                        res.append(dup_error)
+                    else:
+                        res = [dup_error]
 
                 if not self.check_task_id_duplicate(
                     self._country_id, self._domain_id, data.get("Statutory"),
@@ -1101,11 +1114,17 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     data.get("Task_ID")
                 ):
                     declined_count += 1
+                    dup_error = "Task_ID - Duplicate data"
+                    if res is not True:
+                        res.append(dup_error)
+                    else:
+                        res = [dup_error]
 
                 if declined_count > 0:
-                    self._declined_row_idx.append(
+                    self._declined_row_idx[
                         data.get("bulk_statutory_mapping_id")
-                    )
+                    ] = res
+
             return self._declined_row_idx
         except Exception, e :
             print e
@@ -1190,12 +1209,14 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
     def make_rejection(self, declined_info):
         try :
-            count = len(declined_info)
-            q = "update tbl_bulk_statutory_mapping set " + \
-                " action = 3 where bulk_statutory_mapping_id in (%s)" % (
-                    ",".join(map(str, declined_info))
-                )
-            self._db.execute(q)
+            count = len(declined_info.keys())
+            for k, v in declined_info.items() :
+                q = "update tbl_bulk_statutory_mapping set " + \
+                    " action = 3, remarks = %s where " + \
+                    " bulk_statutory_mapping_id  = %s" % (
+                        "|;|".join(v), k
+                    )
+                self._db.execute(q)
 
             q1 = "update tbl_bulk_statutory_mapping_csv set " + \
                 " declined_count = %s where csv_id = %s"
@@ -1230,7 +1251,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             try :
                 _db_check.begin()
                 data = _db_check.call_proc("sp_sm_get_file_download_status", [csvid])
-                print data
                 if len(data) > 0 :
                     file_status = data[0].get("file_download_status")
 

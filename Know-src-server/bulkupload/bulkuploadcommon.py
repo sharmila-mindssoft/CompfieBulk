@@ -148,15 +148,11 @@ def write_data_to_excel(
                     e = ""
                 else :
                     e = "|;|".join(error_text)
+
                 print e
-                # e.encode("utf8")
-                # e.decode('utf8')
 
                 worksheet.write_string(row, col+i, e)
             else :
-                print d
-                # d.decode('utf8')
-                print type(d)
                 d.decode("utf8")
                 if idx in error_col :
                     worksheet.write_string(row, col+i, d, error_format)
