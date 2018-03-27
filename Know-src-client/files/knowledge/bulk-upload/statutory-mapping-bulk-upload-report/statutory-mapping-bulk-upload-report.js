@@ -171,7 +171,10 @@ function loadCountwiseResult(data) {
         if(declinedCount >= 1)
         {
             approvedRejectedBy = SYSTEM_REJECT_BY;
-            approvedRejectedOn = String(rejectedOn);
+            approvedRejectedOn = '';
+            if(rejectedOn != null){
+                approvedRejectedOn = String(rejectedOn);
+            }
         }
         else if (rejectedOn != null && rejectedOn != '' && declinedCount == 0){
             approvedRejectedOn = String(rejectedOn);
@@ -180,6 +183,10 @@ function loadCountwiseResult(data) {
         else if (approvedOn != null && approvedOn != '' && declinedCount == 0){
             approvedRejectedOn = String(approvedOn);
             approvedRejectedBy = approvedByName;
+        }
+        else
+        {
+            approvedRejectedOn = ''
         }
 
         tableRow = $('#act_templates .table-act-list .table-row-act-list');

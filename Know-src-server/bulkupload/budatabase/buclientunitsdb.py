@@ -270,7 +270,8 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
                 str(rejected_on),
                 d["is_fully_rejected"],
                 d["total_approve_records"],
-                d["rejected_reason"]
+                d["rejected_reason"],
+                d["declined_count"]
             ))
     else:
             client_list = []

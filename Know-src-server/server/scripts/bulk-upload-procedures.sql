@@ -712,7 +712,8 @@ t1.rejected_on,
 t1.is_fully_rejected,
 t1.approve_status,
 t1.rejected_reason,
-(t1.total_records - IFNULL(t1.total_rejected_records, 0) - IFNULL(t1.declined_count, 0)) AS total_approve_records
+(t1.total_records - IFNULL(t1.total_rejected_records, 0) - IFNULL(t1.declined_count, 0)) AS total_approve_records,
+t1.declined_count
 FROM tbl_bulk_units_csv AS t1
 WHERE
 t1.approve_status>0 AND

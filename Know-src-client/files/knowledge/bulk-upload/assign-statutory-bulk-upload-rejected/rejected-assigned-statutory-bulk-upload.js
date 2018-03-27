@@ -125,10 +125,9 @@ function pageControls() {
                     unitCodeName = ASSIGNED_UNIT_LIST[i].unit_code_name;
                     unitCode = unitCodeName.split("-");
                     unitCode = unitCode[0];
-
                     unitList.push({
                         "unit_id": unitCode,
-                        "unit_name": ASSIGNED_UNIT_LIST[i].unitCodeName
+                        "unit_name": unitCodeName
                     });
                 }
             }
