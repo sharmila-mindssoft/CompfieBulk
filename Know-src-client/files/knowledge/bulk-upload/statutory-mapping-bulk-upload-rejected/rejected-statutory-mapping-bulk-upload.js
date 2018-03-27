@@ -6,24 +6,18 @@ var DOMAIN_IDS;
 var EMP_CODE;
 var EMP_NAME;
 var REJECTED_STATUTORY_DATA;
-
-var SYSTEM_REJECTED = "COMPFIE";
-
 var COUNTRY_VAL = $('#countryval');
 var COUNTRY = $('#country');
 var DOMAIN = $('#domain');
 var DOMAIN_VAL = $('#domainval');
 var AC_COUNTRY = $('#ac-country');
 var AC_DOMAIN = $('#ac-domain');
-
 var SHOW_BTN = $('#show');
 var EXPORT_CSV = $('.export-csv');
-
 var REPORT_VIEW = $('.grid-table-rpt');
 var PASSWORD_SUBMIT_BTN = $('#password-submit');
 var CURRENT_PASSWORD = $('#current-password');
 var REMOVE_STATUTORY_CSV_ID;
-var DOWNLOAD_LIMIT = 2;
 var SYSTEM_REJECTED_ACTION = 3;
 
 /**** User Level Category ***********/
@@ -33,6 +27,9 @@ var TM_USER_CATEGORY = 5;
 var TE_USER_CATEGORY = 6;
 var DM_USER_CATEGORY = 7;
 var DE_USER_CATEGORY = 8;
+var SYSTEM_REJECTED = "COMPFIE";
+var REJECTED_FILE_DOWNLOADCOUNT = 2;
+var VISIBLE_REMOVE_ICON = 1;
 
 
 // Creating New Class
@@ -196,24 +193,23 @@ function loadCountwiseResult(data) {
     var declinedCount = '-';
     var fileDownloadCount;
     var downloadRejectedFiles;
-    var deleteStatus;
+    var isFullyRejected;
 
     $('.tbody-compliance').empty();
     for (var entity in data) {
-        deleteStatus = '';
         sno = parseInt(sno) + 1;
         csvId = data[entity].csv_id;
         csvName = data[entity].csv_name_text;
         totalNoofTasks = data[entity].total_records;
         rejectedOn = data[entity].rejected_on;
-        IsFullyRejected = data[entity].is_fully_rejected;
-        RejectedReason = data[entity].rejected_reason;
+        isFullyRejected = data[entity].is_fully_rejected;
+        rejectedReason = data[entity].rejected_reason;
         statutoryAction = data[entity].statutory_action;
         fileDownloadCount = data[entity].file_download_count;
 
-        if (parseInt(IsFullyRejected) == 1) {
+        if (parseInt(isFullyRejected) == 1) {
             removeAction = '';
-            reasonForRejection = RejectedReason;
+            reasonForRejection = rejectedReason;
             $(ALL_USER_INFO).each(function(key, value) {
                 if (parseInt(data[entity].rejected_by) == value["user_id"]) {
                     EMP_CODE = value["employee_code"];
@@ -227,9 +223,6 @@ function loadCountwiseResult(data) {
             reasonForRejection = '';
         }
 
-        if (parseInt(fileDownloadCount) < 1) {
-            deleteStatus = 'style="display:none;"';
-        }
         var tr = $('#act-templates .table-act-list .table-row-act-list');
         var clone1 = tr.clone();
 
@@ -241,8 +234,14 @@ function loadCountwiseResult(data) {
         $('.tbl_declined_count', clone1).text(declinedCount);
         $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
 
+        $('.tbl_remove .remove_a', clone1).attr({
+            'id': "delete_action_" + csvId,
+            'data-csv-id': csvId,
+            onClick: "confirmAlert(this)",
+        });
+
         /***** Rejected File Downloads ********/
-        if (parseInt(fileDownloadCount) < 2) {
+        if (parseInt(fileDownloadCount) < REJECTED_FILE_DOWNLOADCOUNT) {
             $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
@@ -256,13 +255,12 @@ function loadCountwiseResult(data) {
                 onclick: "downloadClick(" + csvId + ",this)"
             });
         }
-        else if (parseInt(fileDownloadCount) < 1)
-        {
+        else if (parseInt(fileDownloadCount) < 1
+            && parseInt(fileDownloadCount) < REJECTED_FILE_DOWNLOADCOUNT){
             $('.tbl_remove .remove_a', clone1)
-            .addClass("default-display-none");
+        .addClass("default-display-none");
         }
-        else
-        {
+        else{
             $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
@@ -271,11 +269,6 @@ function loadCountwiseResult(data) {
             $('.tbl_rejected_file .rejected_i_cls', clone1)
             .addClass("default-display-none");
         }
-        $('.tbl_remove .remove_a', clone1).attr({
-            'id': "delete_action_" + csvId,
-            'data-csv-id': csvId,
-            onClick: "confirmAlert(this)"
-        });
         $('#datatable-responsive .tbody-compliance').append(clone1);
     }
     hideLoader();
@@ -339,7 +332,6 @@ function validateAuthentication() {
             hideLoader();
             isAuthenticate = true;
             Custombox.close();
-            displaySuccessMessage(message.password_authentication_success);
         } else {
             hideLoader();
             if (error == 'InvalidPassword') {
@@ -354,7 +346,7 @@ PASSWORD_SUBMIT_BTN.click(function() {
 });
 
 function confirmAlert(event) {
-    var countryId = Country.val();
+    var countryId = COUNTRY.val();
     var domainId = DOMAIN.val();
     swal({
         title: "Are you sure",
@@ -464,11 +456,13 @@ function downloadClick(CSV_ID, event) {
 
         dataCsvId = updatedCount[0].csv_id;
         downloadCount = updatedCount[0].download_count;
-        if (parseInt(downloadCount) == 1) {
+        if (parseInt(downloadCount) == VISIBLE_REMOVE_ICON) {
             eventId = eventId + dataCsvId;
             document.getElementById(eventId).classList.toggle("show");
             $("#delete_action_" + dataCsvId).attr("style", "display:block");
-        } else if (parseInt(downloadCount) >= parseInt(DOWNLOAD_LIMIT)) {
+        }
+        else if (
+            parseInt(downloadCount) >= parseInt(REJECTED_FILE_DOWNLOADCOUNT)) {
             eventId = eventId + dataCsvId;
             document.getElementById(eventId).classList.toggle("show");
             $("#delete_action_" + dataCsvId).attr("style", "display:block");

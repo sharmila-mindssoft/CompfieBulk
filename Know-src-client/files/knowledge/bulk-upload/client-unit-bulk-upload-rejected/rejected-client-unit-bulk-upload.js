@@ -12,6 +12,17 @@ var REMOVE_UNIT_CSV_ID;
 var EXISTING_USER_ID = [];
 var ALL_USER_INFO = '';
 var USER_CATEGORY_ID = 0;
+var VISIBLE_REMOVE_ICON = 1;
+
+/**** User Level Category ***********/
+var KM_USER_CATEGORY = 3;
+var KE_USER_CATEGORY = 4;
+var TM_USER_CATEGORY = 5;
+var TE_USER_CATEGORY = 6;
+var DM_USER_CATEGORY = 7;
+var DE_USER_CATEGORY = 8;
+var SYSTEM_REJECTED = "COMPFIE";
+var REJECTED_FILE_DOWNLOADCOUNT = 2;
 
 
 var rejClientUnit = new RejectedClientUnitBulk();
@@ -138,7 +149,6 @@ function loadCountwiseResult(filterList) {
     var rejectedOn;
     var reasonForRejection;
     var statutoryAction;
-    var removeHrefTag;
     var rejectedBy;
     var declinedCount;
     var fileDownloadCount;
@@ -165,7 +175,6 @@ function loadCountwiseResult(filterList) {
         declinedCount = filterList[entity].declined_count;
         rejectedFileName = filterList[entity].rejected_file;
 
-
         if (parseInt(isFullyRejected) == 1) {
             removeHrefTag = '';
             reasonForRejection = rejectedReason;
@@ -178,6 +187,7 @@ function loadCountwiseResult(filterList) {
             });
         } else if (parseInt(statutoryAction) == SYSTEM_REJECTED_ACTION) {
             rejectedBy = SYSTEMREJECTED;
+            declinedCount = data[entity].declined_count;
             reasonForRejection = '';
         }
         var tblRow1 = $('#act-templates .table-act-list .table-row-act-list');
@@ -190,8 +200,6 @@ function loadCountwiseResult(filterList) {
         $('.tbl_no_of_tasks', clone1).text(totalNoOfTasks);
         $('.tbl_declined_count', clone1).text(declinedCount);
         $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
-        $('.tbl_rejected_file', clone1).text(rejectedFileName);
-
 
         $('.tbl_remove .remove_a', clone1).attr({
             'id': "delete_action_" + csvId,
@@ -200,7 +208,7 @@ function loadCountwiseResult(filterList) {
         });
 
         /***** Rejected File Downloads ********/
-        if (parseInt(fileDownloadCount) < 2) {
+        if (parseInt(fileDownloadCount) < REJECTED_FILE_DOWNLOADCOUNT) {
             $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
@@ -214,13 +222,7 @@ function loadCountwiseResult(filterList) {
                 onclick: "downloadClick(" + csvId + ",this)"
             });
         }
-        else if (parseInt(fileDownloadCount) < 1)
-        {
-            $('.tbl_remove .remove_a', clone1)
-            .addClass("default-display-none");
-        }
-        else
-        {
+        else{
             $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
@@ -228,6 +230,10 @@ function loadCountwiseResult(filterList) {
             });
             $('.tbl_rejected_file .rejected_i_cls', clone1)
             .addClass("default-display-none");
+        }
+        if (parseInt(fileDownloadCount) < 1
+            && parseInt(fileDownloadCount) < REJECTED_FILE_DOWNLOADCOUNT){
+            $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
         }
         $('#datatable-responsive .tbody-compliance').append(clone1);
     }
@@ -280,14 +286,15 @@ function loadCurrentUserDetails() {
         });
     }
 
-    if (USER_CATEGORY_ID == 6) {
+    if (USER_CATEGORY_ID == TE_USER_CATEGORY) {
         // TE-Name  : Techno-Executive
         $('.active-techno-executive').attr('style', 'display:block');
         $('#techno-name').text(user.employee_code + " - " +
             user.employee_name.toUpperCase());
         EXISTING_USER_ID.push(loggedUserId);
-    } else if (USER_CATEGORY_ID == 5 && USER_CATEGORY_ID != 6
-                                   && loggedUserId > 0) {
+    } else if (USER_CATEGORY_ID == TM_USER_CATEGORY
+        && USER_CATEGORY_ID != TE_USER_CATEGORY
+        && loggedUserId > 0) {
         // TE-Name  : Techno-Manager
         getUserMappingsList(loggedUserId);
     }
@@ -309,7 +316,6 @@ function validateAuthentication() {
             hideLoader();
             isAuthenticate = true;
             Custombox.close();
-            displaySuccessMessage(message.password_authentication_success);
             CURRENT_PASWORD.empty();
         } else {
             hideLoader();
@@ -425,12 +431,12 @@ function downloadClick(csvId, event) {
 
         dataCSVid = updatedCount[0].csv_id;
         downloadCount = updatedCount[0].download_count;
-        if (parseInt(downloadCount) == 1) {
+        if (parseInt(downloadCount) == VISIBLE_REMOVE_ICON) {
             eventID = eventID + dataCSVid;
             document.getElementById(eventID).classList.toggle("show");
             $("#delete_action_" + dataCSVid).attr("style", "display:block");
 
-        } else if (parseInt(downloadCount) >= 2) {
+        } else if (parseInt(downloadCount) >= REJECTED_FILE_DOWNLOADCOUNT) {
             eventID = eventID + dataCSVid;
             document.getElementById(eventID).classList.toggle("show");
             $("#delete_action_" + dataCSVid).attr("style", "display:block");
@@ -465,7 +471,6 @@ function downloadClick(csvId, event) {
             onFailure(error);
         }
     });
-
     hideLoader();
     return false;
 }

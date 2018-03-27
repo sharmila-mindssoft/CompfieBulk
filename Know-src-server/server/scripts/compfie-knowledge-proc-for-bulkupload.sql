@@ -376,6 +376,10 @@ BEGIN
     where t03.user_id = uid and t01.is_closed = 0
     group by t01.unit_id,t02.unit_id;
 
+    -- check assigned units
+    SELECT distinct domain_id, unit_id FROM tbl_client_compliances
+    WHERE is_approved < 5;
+
 END //
 
 DELIMITER ;
@@ -476,7 +480,7 @@ DROP PROCEDURE IF EXISTS `sp_bu_as_user_legal_entities`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_bu_as_user_legal_entities`(
-    IN client_id INT(11), uid INT(11)
+    IN uid INT(11)
 )
 BEGIN
     -- legal entity details
@@ -528,11 +532,10 @@ DROP PROCEDURE IF EXISTS `sp_bu_unit_code_and_name`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_bu_unit_code_and_name`(
-  IN _client_id INT(11))
+CREATE PROCEDURE `sp_bu_unit_code_and_name`()
 BEGIN
-  SELECT legal_entity_id, unit_code, unit_name, unit_id, is_closed from tbl_units
-  WHERE client_id = _client_id;
+  SELECT legal_entity_id, unit_code, unit_name, unit_id, is_closed from
+  tbl_units;
 END //
 
 DELIMITER ;
@@ -585,7 +588,7 @@ END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;;
+DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;
 DELIMITER //
 CREATE PROCEDURE `sp_usermapping_statutory_unit_details`(IN `userCatgId` int(11), IN `userId` int)
 BEGIN
@@ -605,18 +608,20 @@ BEGIN
         group by tu.unit_id;
     end if;
 
-    if(userCatgId = 1)then
-        select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name,tu.client_id,
+    if(userCatgId = 7)then
+        select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
         tu.business_group_id, tu.legal_entity_id,
-        tu.country_id, tu.division_id,
-        td.division_name, tc.category_id,
+        tu.country_id, td.division_id, td.division_name, tc.category_id,
         tc.category_name, tuu.domain_id
         from
-        tbl_units as tu
-        left join tbl_user_units as tuu on tu.unit_id = tuu.unit_id
+        tbl_user_units as tuu inner join tbl_units as tu
+        on tu.unit_id = tuu.unit_id
         left join tbl_divisions as td on
         td.division_id = tu.division_id
         left join tbl_categories as tc on tc.category_id = tu.category_id
+        left join tbl_user_mapping as tum on tum.parent_user_id = userId
+        where
+        tum.parent_user_id = userId and tuu.user_category_id = userCatgId
         group by tu.unit_id;
     end if;
 END//

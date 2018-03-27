@@ -186,22 +186,14 @@ CLIENT_TEMPLATE_PATHS = [
 ]
 
 TEMPLATE_PATHS = [
-    (
-        r"/",
-        "files/knowledge/login/login.html",
-        None, {}
-    ),
-    (
-        "/knowledge",
-        "files/knowledge/login/login.html",
-        None, {}
-    ),
 
     (
         "/knowledge/login",
         "files/knowledge/login/login.html",
         None, {}
     ),
+
+
     (
         "/knowledge/forgot-password",
         "files/knowledge/forgot-password/forgot-password.html",
@@ -575,7 +567,7 @@ TEMPLATE_PATHS = [
     ),
     (
         "/knowledge/statutory-mapping-bulkupload-report",
-        "files/knowledge/bulk-upload/statutory-mapping-bulkupload-report/statutory-mapping-bulkupload-report.html",
+        "files/knowledge/bulk-upload/statutory-mapping-bulk-upload-report/statutory-mapping-bulk-upload-report.html",
         None, {}
     ),
     (

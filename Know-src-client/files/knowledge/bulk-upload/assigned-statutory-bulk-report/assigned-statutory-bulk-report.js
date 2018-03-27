@@ -39,6 +39,15 @@ var UNIT_VAL = $('#unitval');
 var UNIT = $('#unitid');
 var DOMAIN = $('#domain');
 
+/**** User Level Category ***********/
+var KM_USER_CATEGORY = 3;
+var KE_USER_CATEGORY = 4;
+var TM_USER_CATEGORY = 5;
+var TE_USER_CATEGORY = 6;
+var DM_USER_CATEGORY = 7;
+var DE_USER_CATEGORY = 8;
+var SYSTEM_REJECT_BY = "COMPFIE";
+
 function AssignStatutoryBulkReport() {}
 
 var asBulkReport = new AssignStatutoryBulkReport();
@@ -172,7 +181,7 @@ function createPageView(totalRecords) {
     PAGINATION.empty();
     PAGINATION.removeData('twbs-pagination');
     PAGINATION.unbind('page');
-    PAGINATION.twbsPAGINATION({
+    PAGINATION.twbsPagination({
         totalPages: Math.ceil(totalRecords / perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
@@ -255,11 +264,7 @@ function loadUserMappingDetailsList() {
     var isNull = true;
     $('.tbody-usermappingdetails-list').empty();
     $('.usermapping-header').empty();
-    //$('.#datatable-responsive').empty();
     var domainsList = USER_MAPPING_LIST.usermapping_domain;
-    /*loadHeader();*/
-
-    //$('#datatable-responsive th').remove();
 
     var tableheading = $('#templates .tr-heading');
     var cloneheading = tableheading.clone();
@@ -295,7 +300,6 @@ function loadUserMappingDetailsList() {
     var col = 4;
     for (var i = 0; i < technoDetails.length; i++) {
         isNull = false;
-        //alert(technoDetails.length);
         assignedDomVal = '';
         var tableRow = $('#templates .table-row');
         var clone1 = tableRow.clone();
@@ -393,7 +397,7 @@ function loadCurrentUserDetails() {
             }
         });
 
-        if (USER_CATEGORY_ID == 8) {
+        if (USER_CATEGORY_ID == DE_USER_CATEGORY) {
             // De-Name  : Domain-Executive
             $('.active-domain-executive').attr('style', 'display:block');
             $('.form-group-dename-dmanager')
@@ -402,8 +406,9 @@ function loadCurrentUserDetails() {
                 .text(
                 user.employee_code + " - " + user.employee_name.toUpperCase());
             EXISTING_USER_ID.push(loggedUserID);
-        } else if (USER_CATEGORY_ID == 7 && USER_CATEGORY_ID != 8
-                                                    && loggedUserID > 0) {
+        } else if (USER_CATEGORY_ID == DM_USER_CATEGORY
+            && USER_CATEGORY_ID != DE_USER_CATEGORY
+            && loggedUserID > 0) {
             // DE-Name  : Domain-Manager
             getUserMappingsList(loggedUserID);
         }
@@ -414,7 +419,7 @@ function loadCurrentUserDetails() {
 //get statutory mapping bulk report filter details from api
 function getUserMappingsList(loggedUserID) {
     $('.form-group-dename-dmanager').attr("style", "display:block !important");
-    $('#de_name').multiselect('rebuild');
+    DE_NAME.multiselect('rebuild');
 
     function onSuccess(loggedUserID, data) {
         var userMappingData = data;
@@ -437,12 +442,12 @@ function getUserMappingsList(loggedUserID) {
                     option.text(value["employee_code"] + " - " +
                                 value["employee_name"]);
 
-                    $('#de_name').append(option);
+                    DE_NAME.append(option);
                     EXISTING_USER_ID.push(parseInt(child_user_id));
                 }
             }
         });
-        $('#de_name').multiselect('rebuild');
+        DE_NAME.multiselect('rebuild');
     }
 
     function onFailure(error) {
@@ -660,15 +665,12 @@ AssignStatutoryBulkReport.prototype.pageControls = function() {
 }
 
 function loadDomains() {
-
     /******** Load Domain Lists *********/
-
     var clientId = GROUP.val();
     var legal_id = LEGAL_ENTITY.val();
     var APIClientID;
     var APILegalEntityID;
     var countriesList = [];
-
     $.each(CLIENT_LIST, function(key, value) {
         APIClientID = parseInt(value["client_id"]);
         APILegalEntityID = parseInt(value["legal_entity_id"]);
@@ -807,68 +809,81 @@ function processSubmit() {
     //}
 }
 //display statutory mapping details accoring to count
-function loadCountwiseResult(filterList) {
+function loadCountwiseResult(data) {
     $('.tbody-compliance').empty();
     lastActName = '';
     lastOccuranceid = 0;
     var showFrom = SNO + 1;
     var isNull = true;
 
-    for (var entity in filterList) {
+    var csvName, noOfTasks, uploadedBy, uploadedOn, totalRejectedRecords;
+    var rejectedOn, rejectedBy, reasonRejection, totalApproveRecords;
+    var rejReason, domainName, approvedOn, approvedBy, declinedCount;
+    var approvedRejectedOn, approvedRejectedBy, approvedRejectedTasks;
+    var domain;
+
+    for (var entity in data) {
 
         isNull = false;
         SNO = parseInt(SNO) + 1;
+        domain = data[entity].domain;
+        csvName = data[entity].csv_name;
+        noOfTasks = data[entity].total_records;
+        uploadedBy = data[entity].uploaded_by;
+        uploadedOn = data[entity].uploaded_on;
+        totalRejectedRecords = data[entity].total_rejected_records;
+        rejectedOn = data[entity].rejected_on;
+        rejectedBy = data[entity].rejected_by;
+        reasonRejection = data[entity].is_fully_rejected;
+        totalApproveRecords = data[entity].total_approve_records;
+        rejReason = data[entity].rejected_reason;
+        domainName = data[entity].domain_name;
+        approvedOn = data[entity].approved_on;
+        approvedBy = data[entity].approved_by;
+        declinedCount = data[entity].declined_count;
+        isFullyRejected = data[entity].is_fully_rejected;
+        approvedRejectedOn = '';
+        approvedRejectedBy = '';
+        approvedRejectedTasks = '-';
 
-        var domain = filterList[entity].domain;
-        //alert(domain);
-        var csv_name = filterList[entity].csv_name;
-        var tbl_no_of_tasks = filterList[entity].total_records;
-        var uploaded_by = filterList[entity].uploaded_by;
-        var uploaded_on = filterList[entity].uploaded_on;
-        var total_rejected_records = filterList[entity].total_rejected_records;
-        var rejected_on = filterList[entity].rejected_on;
-        var rejected_by = filterList[entity].rejected_by;
-        var reason_for_rejection = filterList[entity].is_fully_rejected;
-        var total_approve_records = filterList[entity].total_approve_records;
-        var rejected_reason = filterList[entity].rejected_reason;
-        var domain_name = filterList[entity].domain_name;
-        var approved_on = filterList[entity].approved_on;
-        var approved_by = filterList[entity].approved_by;
-        approved_rejected_on = '';
-        approved_rejected_by = '';
-        approved_rejected_tasks = '-';
+        alert(declinedCount);
 
         $(ALL_USER_INFO).each(function(key, value) {
-            if (parseInt(uploaded_by) == value["user_id"]) {
+            if (parseInt(uploadedBy) == value["user_id"]) {
                 EmpCode = value["employee_code"];
                 EmpName = value["employee_name"];
-                uploaded_by = EmpCode + " - " + EmpName.toUpperCase();
-            } else if (parseInt(rejected_by) == value["user_id"]) {
+                uploadedBy = EmpCode + " - " + EmpName.toUpperCase();
+            } else if (parseInt(rejectedBy) == value["user_id"]) {
                 EmpCode = value["employee_code"];
                 EmpName = value["employee_name"];
-                rejected_by = EmpCode + " - " + EmpName.toUpperCase();
-            } else if (parseInt(approved_by) == value["user_id"]) {
+                rejectedBy = EmpCode + " - " + EmpName.toUpperCase();
+            } else if (parseInt(approvedBy) == value["user_id"]) {
                 EmpCode = value["employee_code"];
                 EmpName = value["employee_name"];
-                approved_by = EmpCode + " - " + EmpName.toUpperCase();
+                approvedBy = EmpCode + " - " + EmpName.toUpperCase();
             }
         });
 
-        if (parseInt(reason_for_rejection) == 1) {
-            reason_for_rejection = rejected_reason;
+        if (parseInt(isFullyRejected) == 1) {
+            reasonForRejection = rejReason;
         } else {
-            reason_for_rejection = "";
-            approved_rejected_tasks = total_approve_records;
-            approved_rejected_tasks += " / ";
-            approved_rejected_tasks += total_rejected_records;
+            reasonForRejection = "";
+            approvedRejectedTasks = totalApproveRecords;
+            approvedRejectedTasks += " / ";
+            approvedRejectedTasks += totalRejectedRecords;
         }
 
-        if (String(approved_on) != null && String(approved_on) != '') {
-            approved_rejected_on = approved_on;
-            approved_rejected_by = approved_by;
-        } else if (String(rejected_on) != null && String(rejected_on) != '') {
-            approved_rejected_on = rejected_on;
-            approved_rejected_by = rejected_by;
+        if(declinedCount != null && declinedCount >= 1) {
+            approvedRejectedBy = SYSTEM_REJECT_BY;
+            approvedRejectedOn = String(rejectedOn);
+        }
+        else if (rejectedOn != null && rejectedOn != '' && declinedCount == 0){
+            approvedRejectedOn = String(rejectedOn);
+            approvedRejectedBy = rejectedByName;
+        }
+        else if (approvedOn != null && approvedOn != '' && declinedCount == 0){
+            approvedRejectedOn = String(approvedOn);
+            approvedRejectedBy = approvedByName;
         }
 
         var occurance = '';
@@ -876,16 +891,16 @@ function loadCountwiseResult(filterList) {
         var tableRow1 = $('#act-templates .table-act-list .table-row-act-list');
         var clone1 = tableRow1.clone();
 
-        $('.tbl_SNO', clone1).text(SNO);
-        $('.tbl_uploaded_file_name', clone1).text(csv_name);
-        $(".tbl_uploaded_by", clone1).text(uploaded_by);
-        $('.tbl_uploaded_on', clone1).text(uploaded_on);
-        $('.tbl_no_of_tasks', clone1).text(tbl_no_of_tasks);
-        $('.tbl_approved_rejected_tasks', clone1).text(approved_rejected_tasks);
-        $('.tbl_approved_rejected_on', clone1).text(approved_rejected_on);
-        $('.tbl_approved_rejected_by', clone1).text(approved_rejected_by);
-        $('.tbl_reason_for_rejection', clone1).text(reason_for_rejection);
-        $('.tbl_domain', clone1).text(domain_name);
+        $('.tbl_sno', clone1).text(SNO);
+        $('.tbl_uploaded_file_name', clone1).text(csvName);
+        $(".tbl_uploaded_by", clone1).text(uploadedBy);
+        $('.tbl_uploaded_on', clone1).text(uploadedOn);
+        $('.tbl_no_of_tasks', clone1).text(noOfTasks);
+        $('.tbl_approved_rejected_tasks', clone1).text(approvedRejectedTasks);
+        $('.tbl_approved_rejected_on', clone1).text(approvedRejectedOn);
+        $('.tbl_approved_rejected_by', clone1).text(approvedRejectedBy);
+        $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
+        $('.tbl_domain', clone1).text(domainName);
         $('#datatable-responsive .tbody-compliance').append(clone1);
     }
 

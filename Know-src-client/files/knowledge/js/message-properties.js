@@ -182,6 +182,7 @@ var message = {
   'cannot_deactivate_sp': 'User(s) Exists. Cannot Deactivate Service Provider.',
   'seatingunit_required': 'Seating Unit Required',
   'employeecode_required': 'Employee Code Required',
+  'usergroup_required': 'User Group Required',
   'userlevel_required': 'User Level Required',
   'usertype_required': 'User Type Required',
   'add_one_form': 'Select atleast one form from list',
@@ -475,7 +476,7 @@ var message = {
   "upload_success": "CSV file uploaded successfully",
   "approve_success": "CSV file approved successfully",
   "reject_success": "CSV file rejected successfully",
-  "upload_failed": "CSV file upload failed",
+  "invalid_file": "Invalid file ",
   'client_group_required': 'Client Group Required',
   'client_group_50': 'More than 50 characters are not allowed for Client Group Name',
   'secondary_legislation_required': 'Please select any one of the Secondary Legislation',
@@ -486,10 +487,18 @@ var message = {
   'sys_rejected_confirm': 'compliance declined, Do you want to continue ?',
   'manuval_rejected_confirm': 'Some manual rejections are inside, Do you want to continue?',
   'un_saved_compliance': 'All compliance should be selected before submit',
-  "confirm_success": "Action taken successfully",
+  'clientgroup_required': 'Client Group Name Required',
+  "no_compliance_assign_statutory": "No Compliance Available for Assign Statutory",
+  "upload_limit": "CSV Upload limit exceeded",
+  "document_upload_success": "Document uploaded successfully",
+
   "client_unit_upload_success": "Client Units uploaded successfully",
   "client_unit_upload_failed": "Errors in uploading Client Units",
-  'clientgroup_required': 'Client Group Name Required',
+  "upload_failed": "CSV file upload failed",
+  "confirm_success": "Action taken successfully",
+  "invalid_csv_file": "Invalid CSV File Uploaded",
+  "client_unit_file_max": "Client Unit Upload File Reached the Max Limit",
+
 }
 
 function clearMessage() {
