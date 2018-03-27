@@ -110,6 +110,8 @@ function loadEntityDetails() {
 
         loadUnits(parseInt(LegalEntityId.val()));
         // ShowButton.trigger("click");
+        getPastRecords(parseInt(LegalEntityId.val()));
+
     }
 }
 
@@ -296,7 +298,7 @@ BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
 };
 
 function downloadData() {
-    if (LegalEntityName.val().trim() == "") {
+    if (LegalEntityId.val().trim() == "") {
         displayMessage(message.legalentity_required);
         LegalEntityName.focus();
         return false;
@@ -311,7 +313,9 @@ function downloadData() {
         txtUnit.focus();
         return false;
     }
-    var legalEntityName = LegalEntityName.val();
+    // var legalEntityName = LegalEntityName.val();
+    var legalEntityName = LegalEntityNameLabel.text();
+    console.log(LegalEntityNameLabel.text());
     var domainName = txtdomain.val();
     var unitName = txtUnit.val();
     var leId = LegalEntityId.val();

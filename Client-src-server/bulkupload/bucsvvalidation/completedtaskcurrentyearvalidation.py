@@ -35,12 +35,12 @@ class SourceDB(object):
         self.Legal_Entity = {}
         self.Domain = {}
         # self.Unit_Location = {}
-        # self.Unit_Code = {}
-        # self.Unit_Name = {}
+        self.Unit_Code = {}
+        self.Unit_Name = {}
         # self.Statutories = {}
         # self.Statutory_Provision = {}
-        # self.Compliance_Task = {}
-        # self.Compliance_Description = {}
+        self.Compliance_Task = {}
+        self.Compliance_Description = {}
         self.connect_source_db()
         self._validation_method_maps = {}
         self.statusCheckMethods()
@@ -66,12 +66,12 @@ class SourceDB(object):
     def init_values(self):
         self.get_legal_entities()
         self.get_domains()
-        # self.get_unit_code(client_id)
-        # self.get_unit_name(client_id)
+        self.get_unit_code()
+        self.get_unit_name()
         # self.get_statutories()
         # self.get_statutory_provision()
-        # self.get_compliance_task()
-        # self.get_compliance_description()
+        self.get_compliance_task()
+        self.get_compliance_description()
 
     def get_legal_entities(self):
         query = "SELECT legal_entity_id, legal_entity_name, is_closed FROM tbl_legal_entities;"
@@ -85,15 +85,23 @@ class SourceDB(object):
         for d in rows :
             self.Domain[d["domain_name"]] = d
 
-    # def get_unit_code(self, client_id):
-    #     data = self._source_db.call_proc("sp_bu_unit_code_and_name", [client_id])
-    #     for d in data:
-    #         self.Unit_Code[d["unit_code"]] = d
+    def get_unit_code(self):
+        query = "SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name, is_closed FROM tbl_units;"
+        rows = self._source_db.select_all(query)
+        return "rows>>>", rows
+        for d in rows:
+            self.Unit_Code[d["unit_code"]] = d
+            print "self.unit_code[d[unit_code]]>>>", self.Unit_Name[d["unit_code"]]
+            print "d>>>", d
 
-    # def get_unit_name(self, client_id):
-    #     data = self._source_db.call_proc("sp_bu_unit_code_and_name", [client_id])
-    #     for d in data:
-    #         self.Unit_Name[d["unit_name"]] = d
+    def get_unit_name(self):
+        query = "SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name, is_closed FROM tbl_units;"
+        rows = self._source_db.select_all(query)
+        return "rows>>>", rows
+        for d in rows:
+            self.Unit_Name[d["unit_name"]] = d
+            print "self.Unit_Name[d[unit_name]]>>>", self.Unit_Name[d["unit_name"]]
+            print "d>>>", d
 
     # def get_statutories(self):
     #     data = self._source_db.call_proc("sp_bu_level_one_statutories")
@@ -105,18 +113,23 @@ class SourceDB(object):
     #     for d in data :
     #         self.Statutory_Provision[d["statutory_provision"]] = d
 
-    # def get_compliance_task(self):
-    #     data = self._source_db.call_proc("sp_bu_compliance_info")
-    #     for d in data :
-    #         self.Compliance_Task[d["compliance_task"]] = d
+    def get_compliance_task(self):
+        query = "SELECT compliance_id, statutory_provision, compliance_task, compliance_description, is_active from tbl_compliances"
+        rows = self._source_db.select_all(query)
+        for d in rows:
+            self.Compliance_Task[d["compliance_task"]] = d
 
-    # def get_compliance_description(self):
-    #     data = self._source_db.call_proc("sp_bu_compliance_info")
-    #     for d in data :
-    #         self.Compliance_Description[d["compliance_description"]] = d
+    def get_compliance_description(self):
+        query = "SELECT compliance_id, statutory_provision, compliance_task, compliance_description, is_active from tbl_compliances"
+        rows = self._source_db.select_all(query)
+        for d in rows:
+            self.Compliance_Description[d["compliance_description"]] = d
 
     def check_base(self, check_status, store, key_name, status_name):
+        print"store>>>", store
+        print"key_name>>>", key_name
         data = store.get(key_name)
+        print "data>>>", data
         if data is None:
             return "Not found"
 
@@ -124,9 +137,9 @@ class SourceDB(object):
             if status_name is None :
                 if data.get("is_active") == 0 :
                     return "Status Inactive"
-            # elif status_name == "domain_is_active" :
-            #     if data.get("domain_is_active") == 0 :
-            #         return "Status Inactive"
+            elif status_name == "is_closed" :
+                if data.get("is_closed") == 0 :
+                    return "Status Inactive"
             # elif status_name == "organization_is_active" :
             #     if data.get("organization_is_active") == 0 :
             #         return "Status Inactive"
@@ -145,11 +158,11 @@ class SourceDB(object):
     # def check_unit_location(self, geography_name):
     #     return self.check_base(True, self.Unit_Location, geography_name, None)
 
-    # def check_unit_code(self, unit_code):
-    #     return self.check_base(False, self.Unit_Code, unit_code, None)
+    def check_unit_code(self, unit_code):
+        return self.check_base(False, self.Unit_Code, unit_code, None)
 
-    # def check_unit_name(self, unit_name):
-    #     return self.check_base(False, self.Unit_Name, unit_name, None)
+    def check_unit_name(self, unit_name):
+        return self.check_base(False, self.Unit_Name, unit_name, None)
 
     # def check_statutories(self, statutories):
     #     return self.check_base(False, self.Statutories, statutories, None)
@@ -157,11 +170,11 @@ class SourceDB(object):
     # def check_statutory_provision(self, statutory_provision):
     #     return self.check_base(False, self.Statutory_Provision, statutory_provision, None)
 
-    # def check_compliance_task(self, compliance_task):
-    #     return self.check_base(False, self.Compliance_Task, compliance_task, None)
+    def check_compliance_task(self, compliance_task):
+        return self.check_base(True, self.Compliance_Task, compliance_task, None)
 
-    # def check_compliance_description(self, compliance_description):
-    #     return self.check_base(False, self.Compliance_Description, compliance_description, None)
+    def check_compliance_description(self, compliance_description):
+        return self.check_base(True, self.Compliance_Description, compliance_description, None)
 
     def save_client_statutories_data(self, cl_id, u_id, d_id, uploadedby):
         created_on = get_date_time()
@@ -222,12 +235,12 @@ class SourceDB(object):
             "Legal_Entity": self.check_legal_entity,
             "Domain": self.check_domain,
             # "Unit_Location": self.check_unit_location,
-            # "Unit_Code": self.check_unit_code,
-            # "Unit_Name_": self.check_unit_name,
+            "Unit_Code": self.check_unit_code,
+            "Unit_Name_": self.check_unit_name,
             # "Primary_Legislation_": self.check_statutories,
             # "Statutory_Provision_": self.check_statutory_provision,
-            # "Compliance_Task_": self.check_compliance_task,
-            # "Compliance_Description_": self.check_compliance_description
+            "Compliance_Task_": self.check_compliance_task,
+            "Compliance_Description_": self.check_compliance_description
         }
 
     def csv_column_fields(self):

@@ -60,6 +60,7 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
         )
     # read data from csv file
     header, completed_task_data = read_data_from_csv(csv_name)
+    print "completed_task_data>>", completed_task_data
 
     # csv data validation
     cObj = ValidateCompletedTaskCurrentYearCsvData(
