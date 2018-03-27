@@ -179,6 +179,7 @@ PageControls = function() {
     validateAuthentication(REJECT_ID.val(), REJECT_PASSWORD, REJECT_REASON);
   });
   FILTER_UPLOADED_FILE_NAME.keyup(function() {
+
     fList = keySearchList(STATUTE.dataList);
     STATUTE.displayListPage(fList);
   });
@@ -461,12 +462,12 @@ keySearchList = function(d) {
   keyFour = FILTER_NO_OF_RECORDS.val();
   var fList = [];
   for (var e in d) {
-    var keyOne = d[e].csv_name.toLowerCase();
-    var value_two = d[e].uploaded_on.toLowerCase();
-    var value_three = d[e].uploaded_by.toString().toLowerCase();
-    var value_four = d[e].no_of_records.toString();
-    if ((~keyOne.indexOf(key_one)) && (~value_two.indexOf(keyTwo)) &&
-      (~value_three.indexOf(keyThree)) && (~value_four.indexOf(keyFour))) {
+    var valueOne = d[e].csv_name.toLowerCase();
+    var valueTwo = d[e].uploaded_on.toLowerCase();
+    var valueThree = d[e].uploaded_by.toString().toLowerCase();
+    var valueFour = d[e].no_of_records.toString();
+    if ((~valueOne.indexOf(keyOne)) && (~valueTwo.indexOf(keyTwo)) &&
+      (~valueThree.indexOf(keyThree)) && (~valueFour.indexOf(keyFour))) {
       fList.push(d[e]);
     }
   }
@@ -475,7 +476,7 @@ keySearchList = function(d) {
 
 // Grid detailed view filter search value to pass array list value
 keySearchDetailsList = function(d) {
-  key_one = FILTER_DOMAIN.val().toLowerCase();
+  keyOne = FILTER_DOMAIN.val().toLowerCase();
   keyTwo = FILTER_UNIT.val().toLowerCase();
   keyThree = FILTER_PRIMARY_LEGISLATION.val();
   keyFour = FILTER_SECONDARY_LEGISLATION.val();
@@ -484,17 +485,17 @@ keySearchDetailsList = function(d) {
   keySeven = FILTER_COMPLIANCE_DESCRIPTION.val();
   var fList = [];
   for (var e in d) {
-    var keyOne = d[e].d_name.toLowerCase();
-    var value_two = d[e].u_name.toLowerCase();
-    var value_three = d[e].p_leg.toLowerCase();
-    var value_four = d[e].s_leg.toLowerCase();
-    var value_five = d[e].s_prov.toLowerCase();
-    var value_six = d[e].c_task.toLowerCase();
-    var value_seven = d[e].c_desc.toLowerCase();
-    if ((~keyOne.indexOf(key_one)) && (~value_two.indexOf(keyTwo)) &&
-      (~value_three.indexOf(keyThree)) && (~value_four.indexOf(keyFour)) &&
-      (~value_five.indexOf(keyFive)) && (~value_six.indexOf(keySix)) &&
-      (~value_seven.indexOf(keySeven))) {
+    var valueOne = d[e].d_name.toLowerCase();
+    var valueTwo = d[e].u_name.toLowerCase();
+    var valueThree = d[e].p_leg.toLowerCase();
+    var valueFour = d[e].s_leg.toLowerCase();
+    var valueFive = d[e].s_prov.toLowerCase();
+    var valueSix = d[e].c_task.toLowerCase();
+    var valueSeven = d[e].c_desc.toLowerCase();
+    if ((~valueOne.indexOf(keyOne)) && (~valueTwo.indexOf(keyTwo)) &&
+      (~valueThree.indexOf(keyThree)) && (~valueFour.indexOf(keyFour)) &&
+      (~valueFive.indexOf(keyFive)) && (~valueSix.indexOf(keySix)) &&
+      (~valueSeven.indexOf(keySeven))) {
       fList.push(d[e]);
     }
   }
@@ -587,7 +588,7 @@ ApproveAssignStatutoryBU.prototype.displayListPage = function(data) {
       $('.download .dowload-csv', clone)
         .attr("href", path + "csv/" + v.download_file.split('.')[0] + ".csv");
       $('.download .dowload-ods', clone)
-        .attr("href", path + "ods/" + v.download_file.split('.')[0] + ".ods)");
+        .attr("href", path + "ods/" + v.download_file.split('.')[0] + ".ods");
       $('.download .dowload-text', clone)
         .attr("href", path + "txt/" + v.download_file.split('.')[0] + ".txt");
       $('.dropdown-content', clone).addClass("show-download" + v.csv_id);
