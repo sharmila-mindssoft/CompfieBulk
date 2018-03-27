@@ -77,6 +77,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units_csv` (
   `is_fully_rejected` tinyINT(4) DEFAULT NULL,
   `rejected_file_name` varchar(500) DEFAULT NULL,
   `rejected_file_download_count` INT DEFAULT NULL,
+  `declined_count` INT(11) null,
   PRIMARY KEY (`csv_unit_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_units` ;
@@ -141,6 +142,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory_csv` (
   `is_fully_rejected` TINYINT NULL,
   `rejected_file_name` VARCHAR(500) NULL,
   `rejected_file_download_count` INT NULL,
+  `declined_count` INT(11) null,
   PRIMARY KEY (`csv_assign_statutory_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_assign_statutory`;
