@@ -1,27 +1,30 @@
 import traceback
 from ..bucsvvalidation.completedtaskcurrentyearvalidation import (
-    ValidateStatutoryMappingCsvData,
-    ValidateStatutoryMappingForApprove
+    ValidateCompletedTaskCurrentYearCsvData
 )
-# from ..bucsvvalidation.rejectedstatutorymapping import ValidateRejectedSMBulkCsvData
+
 from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
-from ..budatabase.bucompletedtaskcurrentyeardb import *
+from..budatabase.bucompletedtaskcurrentyeardb import *
 from ..client_bulkuploadcommon import (
     convert_base64_to_file,
     read_data_from_csv,
     generate_valid_file
 )
-# from ..client_bulkexport import ConvertJsonToCSV
+from ..client_bulkexport import ConvertJsonToCSV
 import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
 from server.exceptionmessage import fetch_error
-# from protocol import generalprotocol, technoreports
+
+from server.common import (
+    get_date_time_in_date, datetime_to_string_time, get_current_date, datetime_to_string
+)
+
 __all__ = [
     "process_bu_completed_task_current_year_request"
 ]
 ########################################################
 '''
-    Process all statutory mapping request here
+    Process all completed task current year request here
     :param
         request: api Request class object
         db: database object
@@ -39,45 +42,51 @@ __all__ = [
 def process_bu_completed_task_current_year_request(request, db, session_user):
     request_frame = request.request
 
-    if type(request_frame) is bu_sm.GetCompletedTask_Domains:
-        result = get_completed_task_legal_domains(db, request_frame,
-                                                session_user)
+    if type(request_frame) is bu_ct.UploadCompletedTaskCurrentYearCSV:
+        result = upload_completed_task_current_year_csv(db, request_frame, session_user)
 
-    elif type(request) is bu_sm.GetDownloadData:
-        result = process_get_download_data(
-            db, request, session_user
+    return result
+
+########################################################
+
+def upload_completed_task_current_year_csv(db, request_frame, session_user):
+
+    if request_frame.csv_size > 0 :
+        pass
+    # save csv file
+    csv_name = convert_base64_to_file(
+            BULKUPLOAD_CSV_PATH, request_frame.csv_name,
+            request_frame.csv_data
         )
+    # read data from csv file
+    header, completed_task_data = read_data_from_csv(csv_name)
+
+    # csv data validation
+    cObj = ValidateCompletedTaskCurrentYearCsvData(
+        db, completed_task_data, session_user, request_frame.csv_name, header)
+    res_data = cObj.perform_validation()
+
+    if res_data["return_status"] is True :
+        current_date_time = get_date_time_in_date()
+        str_current_date_time = datetime_to_string(current_date_time)
+        csv_args = [
+            "1", request_frame.legal_entity_id, "1","1","1",
+            csv_name, session_user,current_date_time, res_data["total"],"0","0", "0"
+        ]
+
+        new_csv_id = save_completed_task_current_year_csv(db, csv_args, session_user)
+        if new_csv_id:
+            if save_completed_task_data(db, new_csv_id, res_data["data"]) is True :
+                result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
+                    res_data["total"], res_data["valid"], res_data["invalid"])
+
+        # csv data save to temp db
+    else:
+        result = bu_ct.UploadCompletedTaskCurrentYearCSVFailed(
+            res_data["invalid_file"], res_data["mandatory_error"],
+            res_data["max_length_error"], res_data["duplicate_error"],
+            res_data["invalid_char_error"], res_data["invalid_data_error"],
+            res_data["inactive_error"], res_data["total"], res_data["invalid"]
+        )
+
     return result
-
-########################################################
-def get_completed_task_legal_domains(db, request_frame, session_user):
-
-    domains = get_legal_entity_domains(db, request_frame.le_id)
-    result = bu_ct.GetStatutoryMappingCsvUploadedListSuccess(domains)
-    return result
-
-
-########################################################
-# To get the compliances under the selected filters
-# Completed Task - Current Year (Past Data)
-########################################################
-def process_get_download_data(
-        db, request, session_user
-):
-    # to_count = RECORD_DISPLAY_COUNT
-    unit_id = request.unit_id
-    domain_id = request.domain_id
-    compliance_frequency = request.compliance_frequency
-    # country_id = request.country_id
-    start_count = request.start_count
-    # country_id
-    statutory_wise_compliances, total_count = get_statutory_wise_compliances(
-        db, unit_id, domain_id, level_1_statutory_name,
-        compliance_frequency, session_user, start_count,
-        to_count
-    )
-    users = get_users_by_unit_and_domain(db, unit_id, domain_id)
-    return clienttransactions.GetStatutoriesByUnitSuccess(
-        statutory_wise_compliances=statutory_wise_compliances,
-        users=users, total_count=total_count
-    )

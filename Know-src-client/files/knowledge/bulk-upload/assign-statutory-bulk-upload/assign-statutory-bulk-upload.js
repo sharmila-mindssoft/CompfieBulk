@@ -29,6 +29,7 @@ var GROUPS = null;
 var LEGAL_ENTITIES = null;
 var UNITS = null;
 var DOMAINS = null;
+var ASSIGNEDUNITS = null;
 
 //other variable declaration
 var UNITNAMES = [];
@@ -87,14 +88,27 @@ function fetchDomainMultiselect() {
 function fetchUnitMultiselect() {
     var str = '';
     if(MULTISELECTDOMAIN.val() != null){
-        c_d_ids = MULTISELECTDOMAIN.val().map(Number);
-        if (UNITS.length > 0 && c_d_ids.length > 0) {
+        checkDomain = MULTISELECTDOMAIN.val().map(Number);
+        if (UNITS.length > 0 && checkDomain.length > 0) {
             for (var i in UNITS) {
                 if(UNITS[i].le_id == LEGALENTITYID.val() &&
-                    containsAll(c_d_ids, UNITS[i].d_ids)
+                    containsAll(checkDomain, UNITS[i].d_ids)
                     ){
-                    str += '<option value="'+ UNITS[i].u_id +'">'+ 
-                UNITS[i].u_name +'</option>';
+                        var ISVALID = true;
+                        for(var j in ASSIGNEDUNITS){
+                            if(
+                                ASSIGNEDUNITS[j].u_id == UNITS[i].u_id &&
+                                $.inArray(
+                                    ASSIGNEDUNITS[j].d_id, UNITS[i].d_ids
+                                ) == 0
+                            ){
+                                ISVALID = false;
+                            }
+                        }
+                        if(ISVALID){
+                            str += '<option value="'+ UNITS[i].u_id +'">'+ 
+                            UNITS[i].u_name +'</option>';
+                        }   
                 }
             }
             MULTISELECTUNIT.html(str).multiselect('rebuild');
@@ -115,6 +129,7 @@ function fetchData(){
             GROUPS = data.bu_clients;
             LEGAL_ENTITIES = data.bu_legalentites;
             UNITS = data.bu_units;
+            ASSIGNEDUNITS = data.bu_assigned_units;
             hideLoader();
         } else {
             displayMessage(error);
@@ -157,8 +172,24 @@ function pageControls() {
                 for (var i in UNITS) {
                     if(UNITS[i].le_id == LEGALENTITYID.val() &&
                         containsAll(DOMAINIDS, UNITS[i].d_ids)){
-                        UNITNAMES.push(UNITS[i].u_name.split('-').pop());
-                        UNITIDS.push(UNITS[i].u_id);
+
+                        var ISVALID = true;
+                        for(var j in ASSIGNEDUNITS){
+                            if(
+                                ASSIGNEDUNITS[j].u_id == UNITS[i].u_id &&
+                                $.inArray(
+                                    ASSIGNEDUNITS[j].d_id, UNITS[i].d_ids
+                                ) == 0
+                            ){
+                                ISVALID = false;
+                            }
+                        }
+                        if(ISVALID){
+                            UNITNAMES.push(
+                                UNITS[i].u_name.split('-').pop().trim()
+                            );
+                            UNITIDS.push(UNITS[i].u_id);
+                        }   
                     }
                 }
             }else{

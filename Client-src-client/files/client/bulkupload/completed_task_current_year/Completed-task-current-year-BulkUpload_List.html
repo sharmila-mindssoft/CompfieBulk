@@ -165,30 +165,74 @@
                                                                 <h4 class="header-title">Upload File</h4>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group has-feedback">
-                                                            <label class="col-sm-4 control-label">Select File:
-                                                            <span class="mandatory">*</span>
-                                                        </label>
+
+                                                        <div class="form-group has-feedback field_label m-b-0" style="display: none;" id="divSuccessFile">
+                                                            <label class="col-sm-4 control-label">Uploaded File: </label>
                                                             <div class="col-sm-6">
-                                                                <input class="form-control input-sm" type="file" accept=".csv" id="fileInput">
-                                                                <small class="" style="text-align: left;">[ Accepted file format
-                                                                <span style="color: #E64C3D !important;">.csv</span> ]</small>
+                                                                <table class="tablenopadd" width="100%">
+                                                                    <tbody>
+                                                                        <tr class="bg-lightdark border-1">
+                                                                            <td width="60%" class="p-5-px"> </td>
+
+                                                                            <td width="10%" class="p-5-px">
+                                                                                <i class="fa fa-download fa-1-2x c-pointer" data-toggle="tooltip" title="" data-original-title="Download Document"></i>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group col-sm-12 text-center">
-                                                            <div class="col-sm-12 col-sm-offset-1">
-                                                                <button class="btn btn-primary waves-effect waves-light animateprogress upload-btn" type="button" data-toggle="modal" data-target="#myModal" id="btnUpload">
+                                                        <div class="form-group has-feedback select_docs m-t-20" style="display: none;" id="divSuccessDocument">
+                                                            <label class="col-sm-4 control-label">Select Documents:<span class="mandatory">*</span> </label>
+                                                            <div class="col-sm-6">
+                                                                <input class="form-control input-sm" type="file" webkitdirectory="" multiple="">
+                                                                <ul class="p-l-20 p-t-5">
+                                                                    <li>Required Documents: <b>0</b> </li>
+                                                                    <li>Uploaded Documents: <b>0</b> </li>
+                                                                    <li class="text-danger">Remaining Documents: <b>0</b> </li>
+                                                                    <li class="view-summary" style="display: none;">Uploaded Documents: <b> 90 </b> </li>
+                                                                    <li class="text-danger view-summary" style="display: none;">Remaining Documents: <b> 10</b></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-12 text-center m-b-20" id="divSuccessbutton" style="display: none;">
+                                                            <button class="btn btn-primary waves-effect waves-light btn_upload animateprogress1 m-r-5" type="button" data-toggle="modal" data-target="#myModal1" style="display: none;"> Upload</button>
+
+                                                            <a class="btn btn-primary btn-trans uploaded_data" style="display: inline-block;"><i class="fa fa-download text-primary"></i> Uploaded Data (.zip)</a>
+                                                            <button class="btn btn-primary waves-effect waves-light btn_submit" type="button" onclick="location.href='/Completed-task-current-year-BulkUpload_List'" style="display: inline-block;"> Submit</button>
+                                                        </div>
+
+
+
+                                                        <div id="divFileUpload">
+                                                            <div class="form-group has-feedback">
+                                                                <label class="col-sm-4 control-label">Select File:
+                                                            <span class="mandatory">*</span>
+                                                        </label>
+                                                                <div class="col-sm-6">
+                                                                    <input class="form-control input-sm" type="file" accept=".csv" id="fileInput">
+                                                                    <small class="" style="text-align: left;">[ Accepted file format
+                                                                <span style="color: #E64C3D !important;">.csv</span> ]</small>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-sm-12 text-center">
+                                                                <div class="col-sm-12 col-sm-offset-1">
+                                                                    <button class="btn btn-primary waves-effect waves-light animateprogress upload-btn" type="button" data-toggle="modal" data-target="#myModal" id="btnUpload">
                                                                 Upload </button>
-                                                                <a class="btn btn-primary btn-trans invaliddata dropbtn default-display-none" onclick="showDownloadList()">
-                                                                    <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
-                                                                <div id="myDropdown" class="dropdown-content">
-                                                                    <a href="#">Download Excel</a>
-                                                                    <a href="#">Download CSV</a>
-                                                                    <a href="#">Download ODS</a>
-                                                                    <a href="#">Download Text</a>
+                                                                    <a class="btn btn-primary btn-trans invaliddata dropbtn default-display-none" onclick="showDownloadList()">
+                                                                        <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
+                                                                    <div id="myDropdown" class="dropdown-content">
+                                                                        <a id="excel">Download Excel</a>
+                                                                        <a id="csv">Download CSV</a>
+                                                                        <a id="ods">Download ODS</a>
+                                                                        <a id="txt">Download Text</a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
+
+
                                                         <div class="clear"></div>
                                                         <div class="view-summary default-display-none">
                                                             <div class="col-sm-6 no-padding">
@@ -197,13 +241,16 @@
                                                                 </div>
                                                                 <ul class="p-l-20">
                                                                     <li>Total No. Of Records:
-                                                                        <b>61</b>
+                                                                        <b><span class="totalRecords">
+                                                                        </span></b>
                                                                     </li>
                                                                     <li>Valid Processed Records:
-                                                                        <b> 0 </b>
+                                                                        <b> <span class="validRecords">
+                                                                        </span> </b>
                                                                     </li>
                                                                     <li>Invalid Records:
-                                                                        <b>60</b>
+                                                                        <b><span class="invalidRecords">
+                                                                        </span></b>
                                                                     </li>
                                                                 </ul>
                                                             </div>
@@ -212,7 +259,7 @@
                                                                     <h5 class="col-sm-12 text-danger header-title">Invalid Data - Summary</h5>
                                                                 </div>
                                                                 <ul class="p-l-20">
-                                                                    <li>Invalid Date:
+                                                                    <!-- <li>Invalid Date:
                                                                         <b>60</b>
                                                                     </li>
                                                                     <li>Invalid File Format:
@@ -223,6 +270,21 @@
                                                                     </li>
                                                                     <li>Master Data Inactive:
                                                                         <b>0</b>
+                                                                    </li> -->
+                                                                    <li>Mandatory field validation:
+                                                                        <b><span class="mandatoryErrors"></span></b>
+                                                                    </li>
+                                                                    <li>Duplicate Data validation:
+                                                                        <b><span class="duplicateErrors"></span></b>
+                                                                    </li>
+                                                                    <li>Status validation:
+                                                                        <b><span class="statusErrors"></span></b>
+                                                                    </li>
+                                                                    <li>Max. length validation:
+                                                                        <b><span class="lengthErrors"></span></b>
+                                                                    </li>
+                                                                    <li>Invalid Data validation:
+                                                                        <b><span class="invalidErrors"></span></b>
                                                                     </li>
                                                                 </ul>
                                                             </div>

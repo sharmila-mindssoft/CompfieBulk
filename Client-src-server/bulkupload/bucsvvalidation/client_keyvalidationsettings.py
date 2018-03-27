@@ -312,12 +312,27 @@ csv_params = {
         validation_method=statutory_month
     ),
     'Statutory_Date': make_required_validation(
-        keyType='STRING', isValidCharCheck=True,
-        validation_method=statutory_date
+        keyType='STRING', isValidCharCheck=False
     ),
+
+
+    'Due_Date': make_required_validation(
+        keyType='STRING', isValidCharCheck=False
+    ),
+
+    'Assignee': make_required_validation(
+        keyType='STRING', isValidCharCheck=False
+    ),
+    'Completion_Date': make_required_validation(
+        keyType='STRING', isValidCharCheck=False
+    ),
+    'Document_Name': make_required_validation(
+        keyType='STRING', isValidCharCheck=False
+    ),
+
     'Trigger_Days': make_required_validation(
-        keyType='STRING', isValidCharCheck=True,
-        validation_method=trigger_days
+    keyType='STRING', isValidCharCheck=True,
+    validation_method=trigger_days
     ),
     'Repeats_Every': make_required_validation(
         keyType='INT', isValidCharCheck=True, validation_method=duration_and_repeats
@@ -409,7 +424,7 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
         validation_method=is_alpha_numeric
     ),
-    'Secondary_Legislaion': make_required_validation(
+    'Secondary_Legislation': make_required_validation(
         keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
         validation_method=is_alpha_numeric
     ),

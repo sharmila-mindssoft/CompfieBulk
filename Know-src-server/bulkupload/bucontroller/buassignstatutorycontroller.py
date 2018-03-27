@@ -126,9 +126,11 @@ def process_bu_assign_statutory_request(request, db, session_user):
 
 def get_client_info(db, request_frame, session_user):
 
-    clients_data, entitys_data, units_data = get_client_list(db, session_user)
+    clients_data, entitys_data, units_data, a_units_data = get_client_list(
+        db, session_user
+    )
     result = bu_as.GetClientInfoSuccess(
-        clients_data, entitys_data, units_data
+        clients_data, entitys_data, units_data, a_units_data
     )
     return result
 
@@ -228,7 +230,6 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
 
         if res_data["return_status"] is True:
             generate_valid_file(csv_name)
-            print 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG>>>', cObj._domain_ids
             d_ids = ",".join(map(str, cObj._domain_ids))
             d_names = ",".join(cObj._domain_names)
             csv_args = [
@@ -382,17 +383,16 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
         result: Object
 '''
 ########################################################
+
+
 def update_rejected_asm_download_count(db, request_frame, session_user):
 
-    csv_id=request_frame.csv_id
-
-    user_id=session_user.user_id()
-
-    asm_updated_count = update_asm_download_count_by_csvid(db, session_user,
-        csv_id)
+    csv_id = request_frame.csv_id
+    asm_updated_count = update_asm_download_count_by_csvid(db,
+                                                           session_user,
+                                                           csv_id)
     result = bu_as.RejecteASMUpdatedDownloadCountSuccess(asm_updated_count)
     return result
-
 ########################################################
 '''
     returns statutory mapping list for approve
@@ -405,25 +405,25 @@ def update_rejected_asm_download_count(db, request_frame, session_user):
         request_frame: Object
         session_user: Object
     :returns
-        result: returns processed api response GetApproveStatutoryMappingListSuccess class Object
+        result: returns processed api response
+        GetApproveStatutoryMappingListSuccess class Object
     rtype:
         result: Object
 '''
 ########################################################
+
+
 def delete_rejected_asm_data(db, request_frame, session_user):
-
-    client_id=request_frame.client_id
-    le_id=request_frame.le_id
-    domain_ids=request_frame.domain_ids
-    unit_code=request_frame.asm_unit_code
-    csv_id=request_frame.csv_id
-
-
-
-    user_id=session_user.user_id()
-
+    client_id = request_frame.client_id
+    le_id = request_frame.le_id
+    domain_ids = request_frame.domain_ids
+    unit_code = request_frame.asm_unit_code
+    csv_id = request_frame.csv_id
+    user_id = session_user.user_id()
     rejected_data = get_list_and_delete_rejected_asm(db, session_user, user_id,
-        client_id, le_id, domain_ids, unit_code, csv_id)
+                                                     client_id, le_id,
+                                                     domain_ids, unit_code,
+                                                     csv_id)
     result = bu_as.GetRejectedASMDataSuccess(rejected_data)
     return result
 
@@ -521,6 +521,7 @@ def export_assigned_statutory_bulk_report_data(db, request, session_user):
                 link=converter.FILE_DOWNLOAD_PATH
             )
 
+
 def download_rejected_asm_report(db, request_frame, session_user):
     client_id = request_frame.client_id
     le_id = request_frame.le_id
@@ -530,20 +531,28 @@ def download_rejected_asm_report(db, request_frame, session_user):
     download_format = request_frame.download_format
     user_id = session_user.user_id()
 
-    download_link = []
-    csv_header=[
-            "csv_name",
-            "uploaded_by",
-            "uploaded_on",
-            "total_records",
-            "total_rejected_records",
-            "approved_by",
-            "rejected_by",
-            "approved_on",
-            "rejected_on",
-            "is_fully_rejected",
-            "approve_status"
-        ]
+    sheet_name = "Rejected Statutory Mapping"
+
+    csv_header_key = ["client_group", "legal_entity", "domain",
+                      "organization", "unit_code", "unit_name",
+                      "unit_location", "perimary_legislation",
+                      "secondary_legislation", "statutory_provision",
+                      "compliance_task_name", "compliance_description",
+                      "statutory_applicable_status", "statytory_remarks",
+                      "compliance_applicable_status", "rejected_reason",
+                      "remarks"
+                      ]
+
+    csv_column_name = ["Client_Group", "Legal_Entity",
+                       "Domain", "Organisation",
+                       "Unit_Code", "Unit_Name",
+                       "Location",
+                       "Primary_Legislation", "Secondary_Legislaion",
+                       "Statutory_Provision", "Compliance_Task_Name",
+                       "Compliance_Description",
+                       "Statutory_Applicable_Status*", "Statutory_remarks",
+                       "Compliance_Applicable_Status*", "Rejected_Reason",
+                       "Error_Description"]
 
     # csv_name = "RejectedData.xlsx"
     csv_name = get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id)
@@ -552,13 +561,17 @@ def download_rejected_asm_report(db, request_frame, session_user):
         db, session_user, user_id, client_id, le_id, domain_ids, asm_unit_code,
         csv_id)
 
+    # cObj = ValidateRejectedDownloadBulkData(
+    #     db, source_data, session_user, download_format, csv_name, csv_header
+    # )
     cObj = ValidateRejectedDownloadBulkData(
-        db, source_data, session_user, download_format, csv_name, csv_header
-    )
+        db, source_data, session_user, download_format, csv_name,
+        csv_header_key, csv_column_name, sheet_name)
+
     result = cObj.perform_validation()
 
     return bu_sm.DownloadActionSuccess(result["xlsx_link"], result["csv_link"],
-        result["ods_link"], result["txt_link"])
+                                       result["ods_link"], result["txt_link"])
 
 
 def save_action(db, request_frame, session_user):

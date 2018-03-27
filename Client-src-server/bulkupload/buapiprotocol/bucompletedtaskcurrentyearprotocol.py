@@ -2,7 +2,6 @@ from clientprotocol.jsonvalidators_client import (
     parse_dictionary, parse_static_list, parse_VariantType,
     to_VariantType, to_structure_dictionary_values
 )
-
 #
 # Request
 #
@@ -30,60 +29,33 @@ class Request(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
-class GetCompletedTask_Domains(Request):
-    def __init__(self, c_id):
-        self.c_id = c_id
 
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id"])
-        return GetCompletedTask_Domains(
-            data.get("le_id")
-        )
 
-    def to_inner_structure(self):
-        return {
-            "le_id": self.le_id
-        }
-
-####################################################
-# Get Completed Task Current Year (Past Data)
-####################################################
-class GetDownloadData(Request):
-    def __init__(
-        self, legal_entity_id, unit_id, domain_id,
-        compliance_frequency, start_count
-    ):
+class UploadCompletedTaskCurrentYearCSV(Request):
+    def __init__(self, csv_name, csv_data, csv_size, legal_entity_id):
+        self.csv_name = csv_name
+        self.csv_data = csv_data
+        self.csv_size = csv_size
         self.legal_entity_id = legal_entity_id
-        self.unit_id = unit_id
-        self.domain_id = domain_id
-        self.compliance_frequency = compliance_frequency
-        self.start_count = start_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "le_id", "unit_id", "domain_id", "compliance_task_frequency",
-            "start_count"
-        ])
-        return GetDownloadData(
-            data.get("le_id"), data.get("unit_id"), data.get("domain_id"),
-            data.get("level_1_statutory_name"), data.get("compliance_task_frequency"),
-            data.get("start_count")
+        data = parse_dictionary(data, ["csv_name", "csv_data", "csv_size","legal_entity_id"])
+        return UploadCompletedTaskCurrentYearCSV(
+            data.get("csv_name"), data.get("csv_data"), data.get("csv_size"), data.get("legal_entity_id")
         )
 
     def to_inner_structure(self):
         return {
-            "le_id": self.legal_entity_id, "unit_id": self.unit_id, "domain_id": self.domain_id,
-            "compliance_task_frequency": self.compliance_frequency,
-            "start_count": self.start_count
+            "csv_name": self.csv_name,
+            "csv_data": self.csv_data,
+            "csv_size": self.csv_size,
+            "legal_entity_id": self.legal_entity_id
         }
-
 
 def _init_Request_class_map():
     classes = [
-        GetCompletedTask_Domains,
-        GetDownloadData
+        UploadCompletedTaskCurrentYearCSV
     ]
     class_map = {}
     for c in classes:
@@ -119,49 +91,77 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
-class Domains(object):
-    def __init__(
-        self, le_id, d_id, d_name
-    ):
-        self.le_id = le_id
-        self.d_id = d_id
-        self.d_name = d_name
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, [
-            "le_id", "d_id", "d_name"
-        ])
-        return Units(
-            data.get("le_id"), data.get("d_id"), data.get("d_name")
-        )
-
-    def to_structure(self):
-        return{
-            "le_id": self.le_id,
-            "d_id": self.d_id,
-            "d_name": self.d_name
-        }
-
-class GetCompletedTask_DomainsSuccess(Response):
-    def __init__(self, domain_list):
-        self.domain_list = domain_list
+class UploadCompletedTaskCurrentYearCSVSuccess(Response):
+    def __init__(self, total, valid, invalid):
+        self.total = total
+        self.valid = valid
+        self.invalid = invalid
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, ["domain_list"])
-        domain_list = data.get("domain_list")
-        return GetCompletedTask_DomainsSuccess(domain_list)
+        data = parse_dictionary(data, ["total", "valid", "invalid"])
+        return UploadCompletedTaskCurrentYearCSVSuccess(
+            data.get("total"), data.get("valid"), data.get("invalid")
+        )
 
     def to_inner_structure(self):
         return {
-            "domain_list": self.domain_list
+            "total": self.total,
+            "valid": self.valid,
+            "invalid": self.invalid
+        }
+
+
+class UploadCompletedTaskCurrentYearCSVFailed(Response):
+    def __init__(
+        self, invalid_file, mandatory_error, max_length_error, duplicate_error,
+        invalid_char_error, invalid_data_error, inactive_error, total, invalid
+    ):
+        # total, invalid
+        self.invalid_file = invalid_file
+        self.mandatory_error = mandatory_error
+        self.max_length_error = max_length_error
+        self.duplicate_error = duplicate_error
+        self.invalid_char_error = invalid_char_error
+        self.invalid_data_error = invalid_data_error
+        self.inactive_error = inactive_error
+        self.total = total
+        self.invalid = invalid
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "invalid_file", "mandatory_error", "max_length_error",
+            "duplicate_error", "invalid_char_error", "invalid_data_error",
+            "inactive_error", "total", "invalid"
+        ])
+
+        return UploadCompletedTaskCurrentYearCSVFailed(
+            data.get("invalid_file"), data.get("mandatory_error"),
+            data.get("max_length_error"), data.get("duplicate_error"),
+            data.get("invalid_char_error"), data.get("invalid_data_error"),
+            data.get("inactive_error"), data.get("total"), data.get("invalid")
+        )
+
+    def to_inner_structure(self):
+
+        return {
+            "invalid_file" : self.invalid_file,
+            "mandatory_error": self.mandatory_error,
+            "max_length_error": self.max_length_error,
+            "duplicate_error": self.duplicate_error,
+            "invalid_char_error": self.invalid_char_error,
+            "invalid_data_error": self.invalid_data_error,
+            "inactive_error": self.inactive_error,
+            "total": self.total,
+            "invalid": self.invalid
         }
 
 def _init_Response_class_map():
     classes = [
-        GetCompletedTask_DomainsSuccess
+        UploadCompletedTaskCurrentYearCSVSuccess,
+        UploadCompletedTaskCurrentYearCSVFailed
+
     ]
     class_map = {}
     for c in classes:
@@ -174,9 +174,39 @@ _Response_class_map = _init_Response_class_map()
 #
 # RequestFormat
 #
-statutory_mapping = "bulkupload.buapiprotocol.bustatutorymappingprotocol"
+completed_task = "bulkupload.buapiprotocol.bucompletedtaskcurrentyearprotocol"
+
+
+# class RequestFormat(object):
+#     def __init__(self, session_token, request):
+#         self.session_token = session_token
+#         self.request = request
+
+#     @staticmethod
+#     def parse_structure(data):
+#         print "parse_structure>>252"
+#         data = parse_dictionary(data, ["session_token", "request"])
+#         session_token = data.get("session_token")
+#         request = data.get("request")
+#         print "completed_task>>>", completed_task
+#         request = parse_VariantType(
+#             request, completed_task, "Request"
+#         )
+#         return RequestFormat(session_token, request)
+
+#     def to_structure(self):
+#         return {
+#             "session_token": self.session_token,
+#             "request": to_VariantType(
+#                 self.request, completed_task, "Response"
+#             ),
+#         }
+
+
 class RequestFormat(object):
     def __init__(self, session_token, request):
+        print"session_token>>>", session_token
+        print "request>>>", request
         self.session_token = session_token
         self.request = request
 
@@ -185,15 +215,10 @@ class RequestFormat(object):
         data = parse_dictionary(data, ["session_token", "request"])
         session_token = data.get("session_token")
         request = data.get("request")
-        request = parse_VariantType(
-            request, statutory_mapping, "Request"
-        )
+        request = Request.parse_structure(request)
         return RequestFormat(session_token, request)
 
     def to_structure(self):
         return {
-            "session_token": self.session_token,
-            "request": to_VariantType(
-                self.request, statutory_mapping, "Response"
-            ),
+            "session_token": self.session_token, "request": Request.to_structure(self.request)
         }

@@ -6,6 +6,7 @@ var VIEWSCREEN = $("#list-screen");
 var ADDBUTTON = $("#btn-add");
 var DOWNLOADBUTTON = $("#btnDownloadFile");
 var DIVUPLOAD = $('#divUploadFile');
+var UploadFile = $("#fileInput");
 var LegalEntityNameLabel = $(".legal-entity-name");
 var LegalEntityNameAC = $(".legal-entity-name-ac");
 var LegalEntityId = $("#legal_entity_id");
@@ -24,6 +25,20 @@ var BTNUPLOAD = $('#btnUpload');
 
 var unitList = [];
 var domainList = [];
+var csvInfo = null;
+
+//error description variable declaration
+var TOTALRECORD = $('.totalRecords');
+var VALIDRECORD = $('.validRecords');
+var INVALIDRECORD = $('.invalidRecords');
+var MANDATORYERROR = $('.mandatoryErrors');
+var DUPLICATEERROR = $('.duplicateErrors');
+var STATUSERROR = $('.statusErrors');
+var LENGTHERROR = $('.lengthErrors');
+var INVALIDERROR = $('.invalidErrors');
+var INVALIDFILENAME = null;
+
+var unit_list_map = {};
 
 txtdomain.keyup(function(e) {
     var condition_fields = [];
@@ -53,6 +68,9 @@ function loadUnits(le_id, unit_id) {
     client_mirror.complianceFilters(le_id, function(error, response) {
         if (error == null) {
             unitList = response.user_units;
+            $.each(unitList, function(key, u) {
+                unit_list_map[parseInt(u["unit_id"])] = u["unit_code"]
+            });
         }
     });
 }
@@ -99,8 +117,7 @@ function getPastRecords(legalEntity) {
     displayLoader();
 
     function onSuccess(data) {
-        unitsList = data["in_units"];
-
+        // unitsList = data["in_units"];
         domainList = data.domains;
         // loadUnit();
         hideLoader();
@@ -120,56 +137,6 @@ function getPastRecords(legalEntity) {
     );
 }
 
-function downloadData() {
-    if (LegalEntityName.val().trim() == "") {
-        displayMessage(message.legalentity_required);
-        LegalEntityName.focus();
-        return false;
-    }
-    if (txtdomain.val().trim() == "") {
-        displayMessage(message.domain_required);
-        txtdomain.focus();
-        return false;
-    }
-    if (txtUnit.val().trim() == "") {
-        displayMessage(message.unit_required);
-        txtUnit.focus();
-        return false;
-    }
-    var legalEntityName = LegalEntityName.val();
-    var domainName = txtdomain.val();    
-    var unitName = txtUnit.val();
-    //Todo Get Unit Code 
-    var unitCode = "unitCode";
-    var leId = LegalEntityId.val();
-    var domainId = hdnDomain.val();
-    var unitId = hdnUnit.val();
-    var frequency = "Periodical";
-    var startCount = 0;
-
-    buClient.getDownloadData(
-        parseInt(leId), parseInt(domainId), parseInt(unitId), frequency, startCount,
-        legalEntityName, domainName, unitName, unitCode,
-        function(error, data) {
-            if (error == null) {
-                    var download_url = data.link;
-                    if (download_url != null){
-                        window.open(download_url, '_blank');
-                        hideLoader();
-                    }
-                    else{
-                        displayMessage("message.empty_export");
-                        hideLoader();
-                    }
-                } else {
-                    displayMessage(error);
-                    hideLoader();
-                }
-        }
-    );
-
- }
-
 function validateUpload() {
     if ($('#fileInput').val() == "") {
         displayMessage("Select file to upload");
@@ -179,15 +146,120 @@ function validateUpload() {
         setTimeout(function() {
             // $('.invaliddata').show();
             // $('.view-summary').show();
+            // $('#divSuccessFile').show();
+            // $('#divSuccessDocument').show();
+            // $('#divSuccessbutton').show();
+        }, 1000);
 
-            $('#divSuccessFile').show();
-            $('#divSuccessDocument').show();
-            $('#divSuccessbutton').show();
+        var args = {
+            "csv_name": csvInfo["file_name"],
+            "csv_data": csvInfo["file_content"],
+            "csv_size": csvInfo["file_size"],
+            "legal_entity_id": parseInt(LegalEntityId.val())
+        };
 
+        buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
+            if (error == null) {
 
-        }, 2000);
+                TOTALRECORD.text(data.total);
+                VALIDRECORD.text(parseInt(data.valid) -
+                    parseInt(data.invalid));
+                INVALIDRECORD.text(data.invalid);
+                INVALIDFILENAME = null;
+                MANDATORYERROR.text("0");
+                DUPLICATEERROR.text("0");
+                STATUSERROR.text("0");
+                LENGTHERROR.text("0");
+                INVALIDERROR.text("0");
+                $('.view-summary').hide();
+                $('.dropbtn').hide();
+
+                $('.invaliddata').hide();
+                $('.view-summary').hide();
+                $('#divFileUpload').hide();
+                $('#divSuccessFile').show();
+                $('#divSuccessDocument').show();
+                $('#divSuccessbutton').show();
+
+                displaySuccessMessage("Records uploaded successfully");
+                hideLoader();
+            } else {
+                displayMessage(message.upload_failed);
+                INVALIDFILENAME = data.invalid_file.split('.');
+                TOTALRECORD.text(data.total);
+                var getValidCount = (parseInt(data.total) -
+                    parseInt(data.invalid));
+                VALIDRECORD.text(getValidCount);
+                INVALIDRECORD.text(data.invalid);
+                MANDATORYERROR.text(data.mandatory_error);
+                DUPLICATEERROR.text(data.duplicate_error);
+                STATUSERROR.text(data.inactive_error);
+                LENGTHERROR.text(data.max_length_error);
+                getInvaliddataCount = parseInt(data.invalid_char_error) +
+                    parseInt(data.invalid_data_error);
+                INVALIDERROR.text(getInvaliddataCount);
+                $('.dropbtn').show();
+                $('.view-summary').show();
+
+                $('.invaliddata').show();
+                $('.view-summary').show();
+                $('#divFileUpload').show();
+                $('#divSuccessFile').hide();
+                $('#divSuccessDocument').hide();
+                $('#divSuccessbutton').hide();
+
+                csv_path = "/invalid_file/csv/" + INVALIDFILENAME[0] +
+                    '.csv';
+                xls_path = "/invalid_file/xlsx/" + INVALIDFILENAME[0] +
+                    '.xlsx';
+                ods_path = "/invalid_file/ods/" + INVALIDFILENAME[0] +
+                    '.ods';
+                txt_path = "/invalid_file/txt/" + INVALIDFILENAME[0] +
+                    '.txt';
+                $('#csv').attr("href", csv_path);
+                $('#excel').attr("href", xls_path);
+                $('#ods').attr("href", ods_path);
+                $('#txt').attr("href", txt_path);
+
+                // InvalidFileName = data.invalid_file.split('.');;
+                // TotalRecordsCount.text(data.total);
+                // var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
+                // ValidRecordsCount.text(getValidCount);
+                // InvalidRecordsCount.text(data.invalid);
+                // MandatoryErrorsCount.text(data.mandatory_error);
+                // DuplicateErrorsCount.text(data.duplicate_error);
+                // StatusErrorsCount.text(data.inactive_error);
+                // LengthErrorsCount.text(data.max_length_error);
+                // getInvaliddataCount = parseInt(data.invalid_char_error) + parseInt(data.invalid_data_error);
+                // InvalidErrorsCount.text(getInvaliddataCount);
+                // $('.invaliddata').show();
+                // $('.view-summary').show();
+
+                // csv_path = "/invalid_file/csv/" + InvalidFileName[0] + '.csv';
+                // xls_path = "/invalid_file/xlsx/" + InvalidFileName[0] + '.xlsx';
+                // ods_path = "/invalid_file/ods/" + InvalidFileName[0] + '.ods';
+                // txt_path = "/invalid_file/txt/" + InvalidFileName[0] + '.txt';
+                // $('#csv').attr("href", csv_path);
+                // $('#excel').attr("href", xls_path);
+                // $('#ods').attr("href", ods_path);
+                // $('#txt').attr("href", txt_path);
+                hideLoader();
+            }
+        });
     }
 }
+
+UploadFile.change(function(e) {
+    if ($(this).val() != '') {
+        buClient.uploadCSVFile(e, function(status, response) {
+            if (status == false) {
+                displayMessage(response);
+            } else {
+                csvInfo = response;
+            }
+        });
+    }
+});
 
 $(function() {
     loadEntityDetails();
@@ -217,9 +289,63 @@ function pageControls() {
     BTNUPLOAD.click(function() {
         validateUpload();
     });
-
-
 }
+
+BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
+    displayMessage(error);
+};
+
+function downloadData() {
+    if (LegalEntityName.val().trim() == "") {
+        displayMessage(message.legalentity_required);
+        LegalEntityName.focus();
+        return false;
+    }
+    if (txtdomain.val().trim() == "") {
+        displayMessage(message.domain_required);
+        txtdomain.focus();
+        return false;
+    }
+    if (txtUnit.val().trim() == "") {
+        displayMessage(message.unit_required);
+        txtUnit.focus();
+        return false;
+    }
+    var legalEntityName = LegalEntityName.val();
+    var domainName = txtdomain.val();
+    var unitName = txtUnit.val();
+    var leId = LegalEntityId.val();
+    var domainId = hdnDomain.val();
+    var unitId = hdnUnit.val();
+    var unitCode = unit_list_map[unitId];
+    var frequency = "Periodical";
+    var startCount = 0;
+
+    buClient.getDownloadData(
+        parseInt(leId), parseInt(domainId), parseInt(unitId), frequency, startCount,
+        legalEntityName, domainName, unitName, unitCode,
+        function(error, data) {
+            if (error == null) {
+                var download_url = data.link;
+                if (download_url != null) {
+                    window.open(download_url, '_blank');
+                    hideLoader();
+                } else {
+                    displayMessage("message.empty_export");
+                    hideLoader();
+                }
+            } else {
+                displayMessage(error);
+                hideLoader();
+            }
+        }
+    );
+}
+
+$(function() {
+    loadEntityDetails();
+
+});
 
 BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
     displayMessage(error);

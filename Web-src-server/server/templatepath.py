@@ -1,19 +1,9 @@
 CLIENT_TEMPLATE_PATHS = [
     (
-        r"/",
+        r"/login",
         "files/client/login/login.html",
         None, {}
     ),
-    (
-        "/login",
-        "files/client/login/login.html",
-        None, {}
-    ),
-    # (
-    #     r"/forgot_password/([a-zA-Z-0-9]+)",
-    #     "files/client/forgotpassword.html",
-    #     None, {}
-    # ),
     (
         "/forgot-password",
         "files/client/forgot-password/forgot-password.html",

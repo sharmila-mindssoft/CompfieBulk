@@ -13,6 +13,7 @@
 
 from clientprotocol.api_key_validation_client import *
 from server.constants import CAPTCHA_LENGTH
+from bulkupload.buapiprotocol.buapikeyssettings_client import bu_api_params
 
 __all__ = [
     'api_params'
@@ -709,7 +710,9 @@ api_params = {
     "chart_units": make_vector_type_field(module="clienttransactions", klass_name="CHART_UNITS"),
     "sp_users": make_vector_type_string(is_optional=True, length=500),
     "statu": make_text_field(length=5000, is_optional=False),
-    "record_display_count": make_int_field(is_optional=True),
+    "record_display_count": make_int_field(is_optional=True)
 
-    #Bulk Upload
 }
+
+#Bulk Upload
+api_params.update(bu_api_params)

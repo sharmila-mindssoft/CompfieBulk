@@ -53,8 +53,8 @@ from server.common import encrypt
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
 app = Flask(__name__)
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+# log = logging.getLogger('werkzeug')
+# log.setLevel(logging.ERROR)
 
 # base config
 
@@ -572,8 +572,6 @@ def run_server(port):
 
     delay_initialize()
     settings = {
-        "threaded": True,
-        "debug": False,
-        "use_reloader": False
+        "threaded": True
     }
     app.run(host="0.0.0.0", port=port, **settings)
