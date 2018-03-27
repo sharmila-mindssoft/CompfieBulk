@@ -16,7 +16,7 @@ DELIMITER ;
 -- Returns uploaded csv infor
 -- --------------------------------------------------------------------------------
 
-DROP PROCEDURE IF EXISTS `sp_statutory_mapping_csv_list`;
+/*DROP PROCEDURE IF EXISTS `sp_statutory_mapping_csv_list`;
 
 DELIMITER //
 
@@ -41,7 +41,37 @@ BEGIN
     and t2.uploaded_by = uploadedby and ifnull(t1.format_upload_status, 0) = 0;
 END //
 
+DELIMITER ;*/
+
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_csv_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_mapping_csv_list`(
+IN uploadedby INT
+)
+BEGIN
+    SELECT COUNT(0) AS max_count from tbl_bulk_statutory_mapping_csv
+    WHERE (ifnull(is_fully_rejected, 0) = 1  OR ifnull(declined_count, 0) > 0)
+    AND approve_status != 4  AND uploaded_by = uploadedby;
+
+    SELECT country_id, domain_id, csv_id, country_name,
+    domain_name, csv_name, total_records, uploaded_on,
+    total_documents, uploaded_documents
+    FROM tbl_bulk_statutory_mapping_csv
+    WHERE ifnull(upload_status, 0) = 0  AND uploaded_by = uploadedby;
+
+    select t1.csv_id, format_file from tbl_bulk_statutory_mapping as t1
+    INNER JOIN tbl_bulk_statutory_mapping_csv as t2
+    ON t2.csv_id = t1.csv_id
+    where ifnull(t2.upload_status, 0) = 0 and format_file != ''
+    and t2.uploaded_by = uploadedby and ifnull(t1.format_upload_status, 0) = 0;
+END //
+
 DELIMITER ;
+
+
+
 
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_csv_save`;
