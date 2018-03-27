@@ -323,8 +323,8 @@ def update_statutory_mapping_action(db, request_frame, session_user):
         )
         if action == 1:
             is_declined = cObj.perform_validation_before_submit()
-            if len(is_declined) > 0:
-                return bu_sm.ValidationSuccess(len(is_declined))
+            if len(is_declined.keys()) > 0:
+                return bu_sm.ValidationSuccess(len(is_declined.keys()))
             else:
                 if (update_approve_action_from_list(
                         db, csv_id, action, remarks, session_user
@@ -368,8 +368,8 @@ def submit_statutory_mapping(db, request_frame, session_user):
             db, csv_id, country_id, domain_id, session_user
         )
         is_declined = cObj.perform_validation_before_submit()
-        if len(is_declined) > 0:
-            return bu_sm.ValidationSuccess(len(is_declined))
+        if len(is_declined.keys()) > 0:
+            return bu_sm.ValidationSuccess(len(is_declined.keys()))
         else:
             if cObj._doc_count > 0 :
                 cObj.format_download_process_initiate(csv_id)
@@ -396,7 +396,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
             db, csv_id, country_id, domain_id, session_user
         )
         is_declined = cObj.perform_validation_before_submit()
-        if len(is_declined) > 0:
+        if len(is_declined.keys()) > 0:
 
             if cObj._doc_count > 0 :
                 cObj.format_download_process_initiate(csv_id)
