@@ -37,7 +37,7 @@ BEGIN
     select t1.csv_id, format_file from tbl_bulk_statutory_mapping as t1
     INNER JOIN tbl_bulk_statutory_mapping_csv as t2
     ON t2.csv_id = t1.csv_id
-    where ifnull(t2.upload_status, 0) = 0
+    where ifnull(t2.upload_status, 0) = 0 format_file != ''
     and t2.uploaded_by = uploadedby and ifnull(t1.format_upload_status, 0) = 0;
 END //
 
