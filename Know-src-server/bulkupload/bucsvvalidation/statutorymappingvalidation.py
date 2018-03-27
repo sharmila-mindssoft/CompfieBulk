@@ -850,6 +850,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
                                 if isFound is not True and isFound != "":
                                     msg = "%s - %s" % (key, isFound)
+                                    print msg
+                                    print row_idx
                                     if res is not True:
                                         res.append(msg)
                                     else:
@@ -905,8 +907,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
                         mapped_header_dict[key] = head_idx
 
-                print res
-                print data.get("Task_ID")
                 if key == "Format" and res is True:
                     if not self.check_compliance_task_name_duplicate(
                         self._country_id, self._domain_id,
@@ -950,6 +950,9 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 ]
                 res = True
 
+        print mapped_error_dict
+        print "\n"
+        print mapped_header_dict
         if invalid > 0:
             return self.make_invalid_return(
                 mapped_error_dict, mapped_header_dict
@@ -1008,7 +1011,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             "valid": total - invalid,
             "invalid": invalid,
             "doc_count": len(set(self._doc_names)),
-            "doc_names": list(set(self._doc_names))
+            "doc_names": list(set(self._doc_names)),
+            "csv_name": self._csv_name
         }
 
 
@@ -1066,9 +1070,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     csvParam = csv_params.get(key)
                     if csvParam is None:
                         continue
-
-                    print value
-                    print key
 
                     if type(value) is not int:
                         values = value.strip().split(CSV_DELIMITER)
@@ -1250,7 +1251,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             try :
                 _db_check.begin()
                 data = _db_check.call_proc("sp_sm_get_file_download_status", [csvid])
-                print data
                 if len(data) > 0 :
                     file_status = data[0].get("file_download_status")
 

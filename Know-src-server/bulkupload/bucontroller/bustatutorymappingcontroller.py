@@ -226,7 +226,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                         request_frame.d_name, session_user.user_id()
                     )
                     result = bu_sm.UploadStatutoryMappingCSVValidSuccess(
-                        new_csv_id,
+                        new_csv_id, res_data["csv_name"],
                         res_data["total"], res_data["valid"],
                         res_data["invalid"],
                         res_data["doc_count"], res_data["doc_names"]

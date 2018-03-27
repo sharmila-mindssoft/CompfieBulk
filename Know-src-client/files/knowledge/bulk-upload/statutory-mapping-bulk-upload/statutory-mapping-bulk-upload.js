@@ -225,6 +225,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     docNames = response.doc_names;
                     UploadDocument.show();
                     DocumentSummary.hide();
+                    changeTxttoLabel(countryAc.val(), domainAc.val(), response.csv_name)
                 }
                 else {
                     DataSummary.hide();
@@ -282,26 +283,32 @@ BulkUploadStatutoryMapping.prototype.validateControls = function() {
     }
     return true;
 };
+BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
+    c_name, d_name, cav_name
+) {
+    txtCountryName.hide();
+    txtDomainName.hide();
+    lblCountryName.show();
+    lblDomainName.show();
+    lblCountryName.text(c_name);
+    lblDomainName.text(d_name);
+    inputFileControl.hide();
+    displayFileControl.show();
+    var cname_split = csv_name.split("_");
+    cname_split.pop();
+    var cname = cname_split.join("_") + ".csv";
+    $('.csv-file-name').text(cname);
+    $('.csv-file-view').attr("href", "/uploaded_file/csv/"+csv_name);
+    $('.csv-file-download').attr("href", "/uploaded_file/csv/"+csv_name);
+    this._ActionMode = "upload"
+};
 BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     this.showAddScreen();
     countryAc.val(data.c_name);
     countryVal.val(data.c_id);
     domainAc.val(data.d_name);
     domainVal.val(data.d_id);
-    txtCountryName.hide();
-    txtDomainName.hide();
-    lblCountryName.show();
-    lblDomainName.show();
-    lblCountryName.text(data.c_name);
-    lblDomainName.text(data.d_name);
-    inputFileControl.hide();
-    displayFileControl.show();
-    var cname_split = data.csv_name.split("_");
-    cname_split.pop();
-    var cname = cname_split.join("_") + ".csv";
-    $('.csv-file-name').text(cname);
-    $('.csv-file-view').attr("href", "/uploaded_file/csv/"+data.csv_name);
-    $('.csv-file-download').attr("href", "/uploaded_file/csv/"+data.csv_name);
+    this.changeTxttoLabel(data.c_name, data.d_name, data.csv_name)
     UploadDocument.show();
     DocumentSummary.show();
     DocumentTotal.text(data.no_of_documents);
@@ -309,7 +316,7 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     DocumentRemaining.text(
         parseInt(data.no_of_documents) - parseInt(data.uploaded_documents)
     );
-    this._ActionMode = "upload"
+
 
 };
 function key_search(mainList) {
