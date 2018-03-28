@@ -5,7 +5,8 @@ function initMethods() {
         // getDomains: getDomains,
         UploadCompletedTaskCurrentYearCSV: UploadCompletedTaskCurrentYearCSV,
         uploadCSVFile: uploadCSVFile,
-        getDownloadData: getDownloadData
+        getDownloadData: getDownloadData,
+        saveBulkRecords: saveBulkRecords
     };
 }
 

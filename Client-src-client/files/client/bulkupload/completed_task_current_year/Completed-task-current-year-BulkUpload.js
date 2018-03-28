@@ -5,6 +5,8 @@ var ADDSCREEN = $("#add-screen");
 var VIEWSCREEN = $("#list-screen");
 var ADDBUTTON = $("#btn-add");
 var DOWNLOADBUTTON = $("#btnDownloadFile");
+var SUBMITBUTTON = $(".btn_submit");
+
 var DIVUPLOAD = $('#divUploadFile');
 var UploadFile = $("#fileInput");
 var LegalEntityNameLabel = $(".legal-entity-name");
@@ -175,6 +177,12 @@ function validateUpload() {
                 INVALIDERROR.text("0");
                 $('.view-summary').hide();
                 $('.dropbtn').hide();
+                $('#hdnCsvId').val(data.new_csv_id);
+                $('.successFileName').text(data.csv_name);
+                csv_path = "../../../../../uploaded_file/csv/" + data.csv_name;
+                $('.uploaded_data').attr("href", csv_path);
+                $('.uploaded_data').attr("download", csv_path);
+                // attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
 
                 $('.invaliddata').hide();
                 $('.view-summary').hide();
@@ -291,6 +299,10 @@ function pageControls() {
     BTNUPLOAD.click(function() {
         validateUpload();
     });
+
+    SUBMITBUTTON.click(function() {
+        submitUpload();
+    });
 }
 
 BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
@@ -345,6 +357,36 @@ function downloadData() {
         }
     );
 }
+
+function submitUpload() {
+    // console.log("csvid>>" + $('#hdnCsvId').val());
+    // buClient.saveBulkRecords(parseInt($('#hdnCsvId').val()),
+    //     function(error, data) {
+    //         if (error == null) {
+
+    //         } else {
+
+    //         }
+    //     }
+    // );
+
+    var args = {
+        "new_csv_id": parseInt($('#hdnCsvId').val()),
+        "legal_entity_id": parseInt(LegalEntityId.val())
+    };
+
+    buClient.saveBulkRecords(args, function(error, data) {
+        if (error == null) {
+            VIEWSCREEN.show();
+            ADDSCREEN.hide();
+            displaySuccessMessage("Record Submitted successfully");
+        } else {
+
+        }
+    });
+}
+
+
 
 $(function() {
     loadEntityDetails();

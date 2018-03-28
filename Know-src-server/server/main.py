@@ -455,6 +455,7 @@ CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
 BULK_CSV_FORMAT_PATH = os.path.join(ROOT_PATH, "bulkuploadcsvformat")
 BULK_CSV_UPLOAD_PATH = os.path.join(ROOT_PATH, "bulkuploadcsv")
 BULK_CSV_INVALID_PATH = os.path.join(ROOT_PATH, "bulkuploadinvalid")
+BULK_CSV_UPLOAD_PATH_CSV = os.path.join(ROOT_PATH, "bulkuploadcsv/csv")
 
 STATIC_PATHS = [
     ("/knowledge/css/<path:filename>", CSS_PATH),
@@ -469,6 +470,7 @@ STATIC_PATHS = [
     ("/compliance_format/<path:filename>", DOC_PATH),
     ("/csv_format/<path:filename>", BULK_CSV_FORMAT_PATH),
     ("/uploaded_file/<path:filename>", BULK_CSV_UPLOAD_PATH),
+    ("/uploaded_file/csv/<path:filename>", BULK_CSV_UPLOAD_PATH_CSV),
     ("/invalid_file/<path:filename>", BULK_CSV_INVALID_PATH),
     ("/knowledge/rejected/downloads/<path:filename>", REJECTED_DOWNLOAD_PATH),
 ]

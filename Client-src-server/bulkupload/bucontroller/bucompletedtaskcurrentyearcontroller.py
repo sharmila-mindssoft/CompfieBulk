@@ -1,6 +1,7 @@
 import traceback
 from ..bucsvvalidation.completedtaskcurrentyearvalidation import (
-    ValidateCompletedTaskCurrentYearCsvData
+    ValidateCompletedTaskCurrentYearCsvData,
+    ValidateCompletedTaskForSubmit
 )
 
 from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
@@ -45,6 +46,9 @@ def process_bu_completed_task_current_year_request(request, db, session_user):
     if type(request_frame) is bu_ct.UploadCompletedTaskCurrentYearCSV:
         result = upload_completed_task_current_year_csv(db, request_frame, session_user)
 
+    if type(request_frame) is bu_ct.saveBulkRecords:
+        result = process_saveBulkRecords(db, request_frame, session_user)
+
     return result
 
 ########################################################
@@ -77,9 +81,11 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
 
         new_csv_id = save_completed_task_current_year_csv(db, csv_args, session_user)
         if new_csv_id:
-            if save_completed_task_data(db, new_csv_id, res_data["data"]) is True :
+            if save_completed_task_data(db, new_csv_id, res_data["data"]) is True:
+                print "csv_name>>>", csv_name
                 result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
-                    res_data["total"], res_data["valid"], res_data["invalid"])
+                    res_data["total"], res_data["valid"], res_data["invalid"],
+                    new_csv_id, csv_name)
 
         # csv data save to temp db
     else:
@@ -89,5 +95,20 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
             res_data["invalid_char_error"], res_data["invalid_data_error"],
             res_data["inactive_error"], res_data["total"], res_data["invalid"]
         )
+
+    return result
+
+def process_saveBulkRecords(db, request_frame, session_user):
+
+    csv_id = request_frame.new_csv_id
+    dataResult = getPastRecordData(db, csv_id)
+
+    cObj = ValidateCompletedTaskForSubmit(
+        db, csv_id, dataResult,  session_user)
+
+    if cObj.frame_data_for_main_db_insert(db, dataResult) is True:
+        result = bu_ct.saveBulkRecordSuccess()
+    else:
+        result = []
 
     return result

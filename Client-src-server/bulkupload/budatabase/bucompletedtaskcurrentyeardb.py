@@ -14,7 +14,8 @@ __all__ = [
     # "get_uploaded_statutory_mapping_csv_list"
     "get_legal_entity_domains",
     "save_completed_task_current_year_csv",
-    "save_completed_task_data"
+    "save_completed_task_data",
+    "getPastRecordData"
 ]
 # transaction method begin
 ########################################################
@@ -52,23 +53,7 @@ def get_legal_entity_domains(
 #     return newid
 
 def save_completed_task_current_year_csv(db, completed_task, session_user):
-    # columns = [
-    #     "client_id", "legal_entity_id", "domain_id",
-    #     "unit_id_id", "client_group", "csv_name",
-    #     "uploaded_by", "uploaded_on",
-    #     "total_records", "total_documents", "uploaded_documents", "upload_status"
-    # ]
-    # values = [
-    #     completed_task.client_id, completed_task.legal_entity_id,
-    #     completed_task.domain_id, completed_task.unit_id_id,
-    #     completed_task.client_group, completed_task.csv_name,
-    #     completed_task.uploaded_by, completed_task.uploaded_on,
-    #     completed_task.total_records, completed_task.total_documents,
-    #     completed_task.uploaded_documents, completed_task.upload_status
-    # ]
-    # print"completed_task>>>", completed_task
-    # print"completed_task>>>", completed_task[0]
-    # print "completed_task>>>", completed_task[1]
+
     columns = [
         "client_id", "legal_entity_id", "domain_id","unit_id_id", "client_group",
         "csv_name", "uploaded_by", "uploaded_on",
@@ -117,6 +102,35 @@ def save_completed_task_data(db, csv_id, csv_data):
         print "e>>", str(e)
         print "Exception>>", Exception
         raise ValueError("Transaction failed")
+
+def getPastRecordData(db, csvID):
+
+        query = " SELECT bulk_past_data_id, csv_past_id, legal_entity, domain, unit_code, unit_name, perimary_legislation, secondary_legislation, compliance_task_name, compliance_description, compliance_frequency, statutory_date, due_date, assignee, completion_date, document_name                FROM tbl_bulk_past_data where csv_past_id = %s; "
+
+        param = [csvID]
+        rows = db.select_all(query, param)
+
+        return rows
+
+        # for d in rows:
+        #     self.getComplianceID(db, d["compliance_task_name"])
+        # print "getPastRecordData>>rows>>>", rows
+        # results = []
+        # for compliances in rows:
+        #     complianceObj = self.getCOMPLIANCE(
+        #         compliances["compliance_task_name"], compliances["due_date"])
+        #     results.append(complianceObj)
+
+        # return results
+
+def getComplianceID(db, compliance_task_name):
+
+    query = "SELECT compliance_id FROM tbl_compliances where compliance_task = '%s' limit 1"
+
+    param = [compliance_task_name]
+    complianceID = db.select_all(query, param)
+
+    return complianceID
 
 def get_uploaded_statutory_mapping_csv_list(db, session_user):
     csv_data = []
