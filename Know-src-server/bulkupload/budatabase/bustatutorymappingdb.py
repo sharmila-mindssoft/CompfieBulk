@@ -3,7 +3,9 @@ import traceback
 from server import logger
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 import datetime
-from server.constants import MAX_REJECTED_COUNT
+from server.constants import (
+    MAX_REJECTED_COUNT, KM_USER_CATEGORY, KE_USER_CATEGORY
+)
 
 
 __all__ = [
@@ -471,9 +473,10 @@ def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
     domain_id_list = ",".join(map(str, domain_ids))
     country_id_list = ",".join(map(str, country_ids))
 
-    if(user_category_id == 3):
+    if(user_category_id == KM_USER_CATEGORY):
         user_ids = ",".join(map(str, dependent_users))
-    elif(user_category_id == 5 and user_category_id != 3):
+    elif(user_category_id == KE_USER_CATEGORY and
+         user_category_id != KM_USER_CATEGORY):
         user_ids = ",".join(map(str, dependent_users))
     else:
         user_ids = user_id

@@ -33,9 +33,11 @@ var TM_USER_CATEGORY = 5;
 var TE_USER_CATEGORY = 6;
 var DM_USER_CATEGORY = 7;
 var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECT_BY = "COMPFIE";
+var SYSTEM_REJECTED_BY = "COMPFIE";
 var REJECTED_FILE_DOWNLOADCOUNT = 2;
-var VISIBLE_REMOVE_ICON = 1;
+var SHOW_REMOVE_ICON = 1;
+var SYSTEM_REJECT_ACTION_STATUS = 3;
+var IS_FULLY_REJECT_ACTION_STATUS = 1;
 
 ASM_BULK_REPORT_CLASS = new assignStatutoryBulkReport();
 
@@ -372,7 +374,7 @@ function loadCountwiseResult(filterList) {
         fileDownloadCount = filterList[entity].file_download_count;
         reasonRejection = filterList[entity].rejected_reason;
 
-        if (parseInt(isFullyRejected) == 1) {
+        if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
 
             reasonRejectionComment = reasonRejection;
             $(ALL_USER_INFO).each(function(key, value) {
@@ -382,9 +384,9 @@ function loadCountwiseResult(filterList) {
                     rejectedBy = empCode + " - " + empName.toUpperCase();
                 }
             });
-        } else if (parseInt(statutoryAction) == 3) {
+        } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {
 
-            rejectedBy = SYSTEM_REJECTED;
+            rejectedBy = SYSTEM_REJECTED_BY;
             declinedCount = filterList[entity].declined_count;
             reasonRejectionComment = '';
         }
@@ -429,8 +431,7 @@ function loadCountwiseResult(filterList) {
             $('.tbl_rejected_file .rejected_i_cls', trRow)
                 .addClass("default-display-none");
         }
-        if (parseInt(fileDownloadCount) < 1
-            && parseInt(fileDownloadCount) < REJECTED_FILE_DOWNLOADCOUNT) {
+        if (parseInt(fileDownloadCount) < SHOW_REMOVE_ICON) {
             $('.tbl_remove .remove_a', trRow).addClass("default-display-none");
         }
 
@@ -683,7 +684,7 @@ function downloadClick(csv_id, event) {
 
         dataCSVid = updatedCount[0].csv_id;
         downloadCount = updatedCount[0].download_count;
-        if (parseInt(downloadCount) == VISIBLE_REMOVE_ICON) {
+        if (parseInt(downloadCount) == SHOW_REMOVE_ICON) {
             eventID = eventID + dataCSVid;
             document.getElementById(eventID).classList.toggle("show");
             $("#delete_action_" + dataCSVid).attr("style", "display:block");

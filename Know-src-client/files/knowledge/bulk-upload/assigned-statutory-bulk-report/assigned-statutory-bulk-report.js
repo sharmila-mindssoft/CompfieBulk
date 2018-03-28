@@ -46,7 +46,7 @@ var TM_USER_CATEGORY = 5;
 var TE_USER_CATEGORY = 6;
 var DM_USER_CATEGORY = 7;
 var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECT_BY = "COMPFIE";
+var SYSTEM_REJECTED_BY = "COMPFIE";
 
 function AssignStatutoryBulkReport() {}
 
@@ -872,17 +872,19 @@ function loadCountwiseResult(data) {
         }
 
         if(declinedCount != null && declinedCount >= 1) {
-            approvedRejectedBy = SYSTEM_REJECT_BY;
+            approvedRejectedBy = SYSTEM_REJECTED_BY;
             approvedRejectedOn = '';
             if(rejectedOn != null){
                 approvedRejectedOn = String(rejectedOn);
             }
         }
-        else if (rejectedOn != null && rejectedOn != '' && declinedCount == 0){
+        else if (rejectedOn != null && rejectedOn != '' &&
+            (declinedCount == 0 || declinedCount == null)){
             approvedRejectedOn = String(rejectedOn);
             approvedRejectedBy = rejectedByName;
         }
-        else if (approvedOn != null && approvedOn != '' && declinedCount == 0){
+        else if (approvedOn != null && approvedOn != '' &&
+            (declinedCount == 0 || declinedCount == null)){
             approvedRejectedOn = String(approvedOn);
             approvedRejectedBy = approvedByName;
         }
