@@ -1,6 +1,6 @@
 .multiselect {
-    width: 296px !important;
-    /* width: 266px !important; */
+    /*width: 296px !important;*/
+     width: 100% !important; 
 }
 /* using width css classes instead of html width attribute */
 
@@ -188,7 +188,7 @@
 }
 
 .filter-by-div {
-  height: 550px;
+  height: 520px;
 }
 
 .mar-50-px {
@@ -236,4 +236,8 @@
 
 .small-text {
     color: #E64C3D !important;
+}
+
+.filter-multiselect .btn-group{
+    width: 100% !important;
 }

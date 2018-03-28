@@ -249,9 +249,9 @@
                               <i class="fa fa-filter form-control-feedback l-h-34"></i>
                             </div>
                           </td>
-                          <td><i class="fa fa-check fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Applicable"></i></td>
-                          <td><i class="fa fa-times fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Not Applicable"></i></td>
-                          <td><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Do Not Show"></i></td>
+                          <td><i class="fa fa-check fa-1-3x text-muted c-pointer" id="statutory_applicable" data-toggle="tooltip" title="Click here to View Applicable"></i></td>
+                          <td><i class="fa fa-times fa-1-3x text-muted c-pointer" id="statutory_not_applicable" data-toggle="tooltip" title="Click here to View Not Applicable"></i></td>
+                          <td><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" id="statutory_do_not_show" data-toggle="tooltip" title="Click here to View Do Not Show"></i></td>
                           <td></td>
                           <td>
                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
@@ -277,9 +277,9 @@
                               <i class="fa fa-filter form-control-feedback l-h-34"></i>
                             </div>
                           </td>
-                          <td><i class="fa fa-check fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Applicable"></i></td>
-                          <td><i class="fa fa-times fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Not Applicable"></i></td>
-                          <td><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" data-toggle="tooltip" title="Click here to View Do Not Show"></i></td>
+                          <td><i class="fa fa-check fa-1-3x text-muted c-pointer" id="compliance_applicable" data-toggle="tooltip" title="Click here to View Applicable"></i></td>
+                          <td><i class="fa fa-times fa-1-3x text-muted c-pointer" id="compliance_not_applicable" data-toggle="tooltip" title="Click here to View Not Applicable"></i></td>
+                          <td><i class="fa fa-minus-circle fa-1-3x text-muted c-pointer" id="compliance_do_not_show" data-toggle="tooltip" title="Click here to View Do Not Show"></i></td>
                         </tr>
                       </thead>
                       <tbody id="data_details_table_tbody"></tbody>
@@ -481,7 +481,7 @@
     </div>
     <div class="form-group col-sm-12">
       <label class="control-label">Domain Name</label>
-      <div class="has-feedback">
+      <div class="has-feedback filter-multiselect">
         <select class="form-control input-sm" id="domain" multiple="multiple">
           <option>All</option>
         </select>
@@ -489,7 +489,7 @@
     </div>
     <div class="form-group col-sm-12">
       <label class="control-label">Unit Name</label>
-      <div class="has-feedback">
+      <div class="has-feedback filter-multiselect">
         <select class="form-control input-sm" id="unit" multiple="multiple">
           <option>All</option>
         </select>
@@ -497,7 +497,7 @@
     </div>
     <div class="form-group col-sm-12">
       <label class="control-label">Primary Legislation</label>
-      <div class="has-feedback">
+      <div class="has-feedback filter-multiselect">
         <select class="form-control input-sm" id="primary_legislation" multiple="multiple">
           <option>All</option>
         </select>
@@ -571,6 +571,7 @@
     <div class="form-group col-sm-12 mar-50-px">
       <button class="btn btn-info" id="search">Search</button>
     </div>
+    <br><br><br>
   </div>
 </div>
 {% endblock %} {% block contentscript %}
