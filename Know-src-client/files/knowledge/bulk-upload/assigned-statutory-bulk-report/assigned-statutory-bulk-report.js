@@ -945,10 +945,10 @@ AssignStatutoryBulkReport.prototype.exportData = function() {
     var splitValues;
 
     var selectedDomain = [];
-    $.each(domain_ids, function(key, value) {
+    $.each(domainIds, function(key, value) {
         selectedDomain.push(parseInt(value));
     });
-
+    console.log("selectedDomain-> "+ selectedDomain);
     if (UNIT.val()) {
         unitID = UNIT.val();
     }
