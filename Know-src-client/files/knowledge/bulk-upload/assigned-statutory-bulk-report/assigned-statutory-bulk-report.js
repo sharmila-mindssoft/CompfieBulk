@@ -40,13 +40,6 @@ var UNIT = $('#unitid');
 var DOMAIN = $('#domain');
 
 /**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECTED_BY = "COMPFIE";
 
 function AssignStatutoryBulkReport() {}
 
@@ -916,6 +909,7 @@ function loadCountwiseResult(data) {
 }
 
 $(function() {
+    mirror.getLoadConstants();
     REPORT_VIEW.hide();
     asBulkReport.pageControls();
     initialize();

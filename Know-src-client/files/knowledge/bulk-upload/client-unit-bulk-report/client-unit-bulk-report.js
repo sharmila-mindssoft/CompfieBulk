@@ -24,14 +24,6 @@ var SNO = 0;
 var TOTAL_RECORD;
 var REPORT_VIEW = $('.grid-table-rpt');
 
-/**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECTED_BY = "COMPFIE";
 
 // Instance Creation of the page class
 var clientUnitBulkReport = new ClientUnitBulkReport();
@@ -596,6 +588,7 @@ ClientUnitBulkReport.prototype.exportData = function() {
 
 // Form Initalize
 $(function() {
+    mirror.getLoadConstants();
     loadItemsPerPage();
     getClientUnits();
     PageControls();

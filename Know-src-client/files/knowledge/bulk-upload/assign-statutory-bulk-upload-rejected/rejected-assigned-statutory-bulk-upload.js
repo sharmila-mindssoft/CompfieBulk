@@ -27,17 +27,6 @@ var UNIT = $('#unitid');
 var DOMAIN = $('#domain');
 
 /**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECTED_BY = "COMPFIE";
-var REJECTED_FILE_DOWNLOADCOUNT = 2;
-var SHOW_REMOVE_ICON = 1;
-var SYSTEM_REJECT_ACTION_STATUS = 3;
-var IS_FULLY_REJECT_ACTION_STATUS = 1;
 
 ASM_BULK_REPORT_CLASS = new assignStatutoryBulkReport();
 
@@ -790,6 +779,7 @@ window.onclick = function(event) {
 }
 
 $(function() {
+    mirror.getLoadConstants();
     REPORT_VIEW.hide();
     initialize();
     UserGroupDetails();

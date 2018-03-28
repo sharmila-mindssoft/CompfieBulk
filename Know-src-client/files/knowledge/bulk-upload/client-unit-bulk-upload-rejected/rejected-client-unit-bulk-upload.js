@@ -10,18 +10,6 @@ var EXISTING_USER_ID = [];
 var ALL_USER_INFO = '';
 var USER_CATEGORY_ID = 0;
 
-/**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECTED_BY = "COMPFIE";
-var REJECTED_FILE_DOWNLOADCOUNT = 2;
-var SHOW_REMOVE_ICON = 1;
-var SYSTEM_REJECT_ACTION_STATUS = 3;
-var IS_FULLY_REJECT_ACTION_STATUS = 1;
 
 var rejClientUnit = new RejectedClientUnitBulk();
 
@@ -517,18 +505,10 @@ window.onclick = function(event) {
 }
 
 $(function() {
+    mirror.getLoadConstants();
     REPORT_VIEW.hide();
     initialize();
     fetchFiltersData();
     pageControls();
-    /*tempDatasetup();*/
-});
 
-/*function tempDatasetup() {
-  $('#countryval').val("India");
-  $('#domainval').val("Industrial Law");
-  $('#country').val(1);
-  $('#domain').val(3);
-  SHOW_BTN.click();
-}
-*/
+});
