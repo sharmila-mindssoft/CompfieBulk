@@ -26,13 +26,6 @@ var CSV = false;
 var ALL_USER_INFO;
 var USER_DETAILS;
 /**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECTED_BY = "COMPFIE";
 // Creating StatutoryMappingBulkReport Class
 StatutoryMappingBulkReport = function() {}
 
@@ -571,11 +564,13 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
 
 //initialization
 $(function() {
+    mirror.getLoadConstants();
     displayLoader();
     $('.grid-table-rpt').hide();
     pageControls();
     loadItemsPerPage();
     getStatutoryMappings();
+
     COUNTRY.focus();
 });
 $(document).ready(function() {

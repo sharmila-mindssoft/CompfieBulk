@@ -76,3 +76,5 @@ CSV_MAX_LINE_ITEM = 100
 
 if IS_DEVELOPMENT is True :
     VERSION = time.time()
+
+SYSTEM_REJECTED_BY = "COMPFIE"

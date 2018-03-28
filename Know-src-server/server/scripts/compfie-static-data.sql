@@ -88,12 +88,6 @@ INSERT INTO tbl_forms VALUES(61, 2, 'Assign Statutory - Bulk Upload', '/knowledg
 INSERT INTO tbl_forms VALUES(62, 2, 'Rejected Assign Statutory - Bulk Upload', '/knowledge/rejected-assign-statutory-bu', 62, NULL);
 INSERT INTO tbl_forms VALUES(63, 2, 'Approve Assign Statutory - Bulk Upload', '/knowledge/approve-assign-statutory-bu', 63, NULL);
 
-/*INSERT INTO tbl_forms VALUES(64, 3, 'Approved/Rejected Statutory Mapping Summary', '/knowledge/approved-rejected-statutory-mapping-summary', 64, NULL);*/
-/*INSERT INTO tbl_forms VALUES(65, 3, 'Statutory Mapping Upload Summary', '/knowledge/statutory-mapping-upload-summary', 65, NULL);*/
-INSERT INTO tbl_forms VALUES(66, 3, 'Client Unit Upload Summary', '/knowledge/client-unit-upload-summary', 66, NULL);
-INSERT INTO tbl_forms VALUES(67, 3, 'Approved/Rejected Client Unit Summary', '/knowledge/approved-rejected-client-unit-summary', 67, NULL);
-INSERT INTO tbl_forms VALUES(68, 3, 'Assign Statutory Upload Summary', '/knowledge/assign-statutory-upload-summary', 68, NULL);
-INSERT INTO tbl_forms VALUES(69, 3, 'Approved/Rejected Assign Statutory Upload Summary', '/knowledge/approved-rejected-assign-statutory-summary', 69, NULL);
 INSERT INTO tbl_forms VALUES(70, 3,	'Statutory Mapping - Bulk Upload Report',	'/knowledge/statutory-mapping-bulkupload-report', 70, NULL);
 INSERT INTO tbl_forms VALUES(71, 3,	'Client Unit - Bulk Upload Report',	'/knowledge/client-unit-bulk-report-bu', 71, NULL);
 INSERT INTO tbl_forms VALUES(72, 3, 'Assigned Statutory - Bulk Upload Report', '/knowledge/assigned-statutory-bulk-report', 72, NULL);
@@ -197,14 +191,8 @@ INSERT INTO tbl_form_category VALUES(62, 0, 0, 0, 0, 0, 0, 0, 1);
 INSERT INTO tbl_form_category VALUES(63, 0, 0, 0, 0, 0, 0, 1, 0);
 
 -- reports
-/*INSERT INTO tbl_form_category VALUES(64, 0, 0, 1, 1, 0, 0, 0, 0);
-INSERT INTO tbl_form_category VALUES(65, 0, 0, 0, 1, 0, 0, 0, 0);*/
-INSERT INTO tbl_form_category VALUES(66, 0, 0, 0, 0, 0, 1, 0, 0);
-INSERT INTO tbl_form_category VALUES(67, 0, 0, 0, 0, 1, 1, 0, 0);
-INSERT INTO tbl_form_category VALUES(68, 0, 0, 0, 0, 0, 0, 0, 1);
-INSERT INTO tbl_form_category VALUES(69, 0, 0, 0, 0, 0, 0, 1, 1);
-INSERT INTO tbl_form_category VALUES(70, 0,	0, 1, 0, 0,	0, 0, 0);
-INSERT INTO tbl_form_category VALUES(71, 0,	0, 0, 0, 1,	0, 0, 0);
+INSERT INTO tbl_form_category VALUES(70, 0,	0, 1, 1, 0,	0, 0, 0);
+INSERT INTO tbl_form_category VALUES(71, 0,	0, 0, 0, 1,	1, 0, 0);
 INSERT INTO tbl_form_category VALUES(72, 0,	0, 0, 0, 0,	0, 1, 1);
 
 -- tbl_user_login_details

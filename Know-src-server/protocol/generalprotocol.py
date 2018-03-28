@@ -702,6 +702,38 @@ class GetDomainExecutiveDetails(Request):
         return {
         }
 
+
+class GetBulkUploadConstants(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetBulkUploadConstants()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class BulkUploadConstant(object):
+    def __init__(self, user_category_id, user_category_name):
+        self.user_category_id = user_category_id
+        self.user_category_name = user_category_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_category_id"])
+        return BulkUploadConstant(
+            data.get("user_category_id")
+        )
+
+    def to_structure(self):
+        return {
+            self.user_category_name: self.user_category_id,
+        }
+
 def _init_Request_class_map():
     classes = [
         UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain,
@@ -710,7 +742,8 @@ def _init_Request_class_map():
         GetAuditTrails, VerifyPassword, GetMessages, GetStatutoryNotifications, UpdateStatutoryNotificationStatus,
         GetAuditTrailsFilter, ExportAuditTrails, UpdateMessageStatus, GetClientAuditTrailsFilter,
         GetClientAuditTrails, GetClientLoginTraceFilter, GetClientLoginTrace, ExportClientLoginTrace,
-        ExportClientAuditTrails, GetKExecutiveDetails, GetTechnoUserDetails, GetDomainExecutiveDetails
+        ExportClientAuditTrails, GetKExecutiveDetails, GetTechnoUserDetails, GetDomainExecutiveDetails,
+        GetBulkUploadConstants
     ]
     class_map = {}
     for c in classes:
@@ -1315,6 +1348,49 @@ class GetDomainExecutiveDetailsSuccess(Response):
         return {
             "domain_executive_info": self.domain_executive_info
         }
+
+
+class GetBulkUploadConstantSuccess(Response):
+    def __init__(self, bu_constants, bu_system_rejected_by,
+                 bu_rejected_download_count, bu_show_remove_icon,
+                 bu_system_reject_status,
+                 bu_fully_reject_status):
+
+        self.bu_constants = bu_constants
+        self.bu_system_rejected_by = bu_system_rejected_by
+        self.bu_rejected_download_count = bu_rejected_download_count
+        self.bu_show_remove_icon = bu_show_remove_icon
+        self.bu_system_reject_status = bu_system_reject_status
+        self.bu_fully_reject_status = bu_fully_reject_status
+
+    @staticmethod
+    def parse_inner_strucure(data):
+        data = parse_dictionary(data,
+                                ["bu_constants", "bu_system_rejected_by",
+                                 "bu_rejected_download_count",
+                                 "bu_show_remove_icon",
+                                 "bu_system_reject_status",
+                                 "bu_fully_reject_status"])
+        return GetBulkUploadConstantSuccess(
+            data.get("bu_constants"),
+            data.get("bu_system_rejected_by"),
+            data.get("bu_rejected_download_count"),
+            data.get("bu_show_remove_icon"),
+            data.get("bu_system_reject_status"),
+            data.get("bu_fully_reject_status")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "bu_constants": self.bu_constants,
+            "bu_system_rejected_by": self.bu_system_rejected_by,
+            "bu_rejected_download_count": self.bu_rejected_download_count,
+            "bu_show_remove_icon": self.bu_show_remove_icon,
+            "bu_system_reject_status": self.bu_system_reject_status,
+            "bu_fully_reject_status": self.bu_fully_reject_status
+        }
+
+
 def _init_Response_class_map():
     classes = [
         UpdateUserProfileSuccess,
@@ -1326,8 +1402,8 @@ def _init_Response_class_map():
         ExportToCSVSuccess, UpdateMessageStatusSuccess, GetClientAuditTrailSuccess,
         GetClientLoginTraceFilterSuccess, GetClientLoginTraceSuccess,
         DatabaseConnectionFailure,
-        GetKExecutiveDetailsSuccess, GetTechnoDetailsSuccess, 
-        GetDomainExecutiveDetailsSuccess
+        GetKExecutiveDetailsSuccess, GetTechnoDetailsSuccess,
+        GetDomainExecutiveDetailsSuccess, GetBulkUploadConstantSuccess
     ]
     class_map = {}
     for c in classes:
