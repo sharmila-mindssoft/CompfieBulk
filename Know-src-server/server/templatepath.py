@@ -186,22 +186,14 @@ CLIENT_TEMPLATE_PATHS = [
 ]
 
 TEMPLATE_PATHS = [
-    (
-        r"/",
-        "files/knowledge/login/login.html",
-        None, {}
-    ),
-    (
-        "/knowledge",
-        "files/knowledge/login/login.html",
-        None, {}
-    ),
 
     (
         "/knowledge/login",
         "files/knowledge/login/login.html",
         None, {}
     ),
+
+
     (
         "/knowledge/forgot-password",
         "files/knowledge/forgot-password/forgot-password.html",

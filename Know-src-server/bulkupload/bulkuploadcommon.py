@@ -148,15 +148,11 @@ def write_data_to_excel(
                     e = ""
                 else :
                     e = "|;|".join(error_text)
+
                 print e
-                # e.encode("utf8")
-                # e.decode('utf8')
 
                 worksheet.write_string(row, col+i, e)
             else :
-                print d
-                # d.decode('utf8')
-                print type(d)
                 d.decode("utf8")
                 if idx in error_col :
                     worksheet.write_string(row, col+i, d, error_format)
@@ -236,7 +232,7 @@ def rename_download_file_type(src_file_name, des_file_type):
         pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
 
     download_path_link = os.path.join(
-         REJECTED_DOWNLOAD_BASE_PATH, des_file_type, new_file)
+        REJECTED_DOWNLOAD_BASE_PATH, des_file_type, new_file)
     return download_path_link
 
 
@@ -257,18 +253,13 @@ def write_download_data_to_excel(
     worksheet = workbook.add_worksheet(sheet_name)
     worksheet.set_column('A:A', 30)
     bold = workbook.add_format({'bold': 1})
-    error_format = workbook.add_format({
-        'font_color': 'red'
-    })
-    cells = [
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-    ]
+    cells = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-    for idx, h in enumerate(headers):
-        if idx < 26 :
+    for idx, h in enumerate(headers_column_data):
+        if idx < 26:
             x = idx
-        else :
+        else:
             x = idx - 26
 
         c = "%s%s" % (cells[x], 1)
@@ -278,26 +269,20 @@ def write_download_data_to_excel(
     col = 0
 
     for idx, dat in enumerate(column_data):
-
         for i, h in enumerate(headers):
-            d = str(dat.get(h))
-            if h == "Error Description" :
-                error_text = data_error_dict.get(idx)
-                if error_text is None :
-                    e = ""
-                else :
-                    e = "|;|".join(error_text)
-                worksheet.write_string(row, col+i, e)
-            else :
-                if error_col is not None :
-                    if i in error_col :
-                        worksheet.write_string(row, col+i, d, error_format)
-                    else :
-                        worksheet.write_string(row, col+i, d)
-                else :
-                        worksheet.write_string(row, col+i, d)
+
+            if(h == "remarks"):
+                if(dat.get("is_fully_rejected") == 1):
+                    d = str(dat.get("rejected_reason"))
+                else:
+                    d = str(dat.get(h))
+            elif(h is "is_fully_rejected" or h is "rejected_reason"):
+                d = ''
+            else:
+                d = str(dat.get(h))
+
             if (d != '' and d is not None and d != 'None'):
-                worksheet.write_string(row, col+i, d)
+                worksheet.write_string(row, col + i, d)
         row += 1
 
     # summary sheet
@@ -307,18 +292,11 @@ def write_download_data_to_excel(
         summarySheet.write(c, h, bold)
 
     srow = 1
-    for i, col in enumerate(headers) :
-        value = 0
-        error_count = header_dict.get(col)
-        if error_count is not None :
-            value = len(error_count)
-        summarySheet.write_string(srow, 0, col)
-        summarySheet.write_string(srow, 1, str(value))
-    remove_error_desc_row = 0
+    remove_error_desc_row = []
     for i, col in enumerate(headers_column_data):
         if col is not None:
             if (col == "Error_Description"):
-                remove_error_desc_row = srow
+                remove_error_desc_row.append(srow)
             else:
                 summarySheet.write_string(srow, 0, col)
         srow += 1
@@ -326,6 +304,6 @@ def write_download_data_to_excel(
     srow = 1
     for i, col in enumerate(headers):
         error_count = header_dict.get(col)
-        if (srow != remove_error_desc_row):
+        if (srow not in remove_error_desc_row):
             summarySheet.write_string(srow, 1, str(error_count))
         srow += 1

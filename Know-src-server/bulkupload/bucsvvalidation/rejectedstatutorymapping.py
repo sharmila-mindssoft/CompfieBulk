@@ -1,14 +1,7 @@
 import os
-import collections
-import mysql.connector
-
-from server.dbase import Database
 from server.constants import (
-    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     CSV_DELIMITER, REJECTED_DOWNLOAD_PATH, REJECTED_DOWNLOAD_BASE_PATH
 )
-from keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..bulkuploadcommon import (
     rename_download_file_type, write_download_data_to_excel
 )
@@ -16,46 +9,33 @@ from ..bulkuploadcommon import (
 __all__ = [
     "ValidateRejectedDownloadBulkData"
 ]
-################################
-'''
-    csv data validation
-    param:
-        csv_data :
 
-'''
-################################
+###################################################################
+# ValidateRejectedDownloadBulkData is a common class to generate and download
+# - Rejected Reports
+# format files
+###################################################################
 
 
 class ValidateRejectedDownloadBulkData():
     def __init__(self, db, source_data, session_user, download_format,
                  csv_name, csv_header, csv_column_name, sheet_name):
-        self._db = db
         self._source_data = source_data
-        self._session_user_obj = session_user
         self._csv_name = csv_name
         self._csv_header = csv_header
-        self._download_format = download_format
-        self._validation_method_maps = {}
-        self._error_summary = {}
         self._csv_column_name = csv_column_name
-        self._csv_row_summary_title = {}
-        self._csv_summary_count = {}
-        self._doc_names = []
         self._sheet_name = sheet_name
 
+    ###################################################################
+    # Validate the Source Data
+    ###################################################################
     def perform_validation(self):
         mapped_header_dict = {}
         is_return = False
         sno = 0
-        print "self._csv_header >>>>"
-        print self._csv_header
-
         for row_idx, data in enumerate(self._source_data):
             sno = sno + 1
             for key in self._csv_header:
-
-                print key
-                print data
                 v_col_key = data.get(key)
 
                 if (key == "remarks" and v_col_key is not None):
@@ -78,13 +58,19 @@ class ValidateRejectedDownloadBulkData():
                                 is_return = True
                 elif(key == "remarks" and v_col_key is None):
                     is_return = True
+                elif(key is "is_fully_rejected" or key is "rejected_reason"):
+                    mapped_header_dict[key] = ''
+                    is_return = True
                 else:
                     if(sno == 1):
                         mapped_header_dict[key] = 0
-
         if is_return is True:
             is_return = False
             return self.generateDownloadFiles(mapped_header_dict)
+
+    ######################################################
+    # Generate Download file formats XLSX, CSV, TXT, ODS
+    ######################################################
 
     def generateDownloadFiles(self, mapped_header_dict):
         fileString = self._csv_name.split('.')
@@ -99,7 +85,7 @@ class ValidateRejectedDownloadBulkData():
             mapped_header_dict, self._sheet_name
         )
 
-        xlsx_download_path = REJECTED_DOWNLOAD_BASE_PATH+"xlsx/"
+        xlsx_download_path = REJECTED_DOWNLOAD_BASE_PATH + "xlsx/"
         xlsx_link = os.path.join(xlsx_download_path, file_name)
 
         csv_link = rename_download_file_type(file_name, "csv")

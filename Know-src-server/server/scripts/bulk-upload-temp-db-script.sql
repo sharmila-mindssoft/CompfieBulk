@@ -22,7 +22,8 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping_csv` (
   `is_fully_rejected` TINYINT NULL,
   `rejected_file_name` VARCHAR(500) NULL,
   `rejected_file_download_count` INT NULL,
-  `declined_count` INT(11) null,
+  `declined_count` INT DEFAULT NULL,
+  `file_download_status` VARCHAR(50) Null,
   PRIMARY KEY (`csv_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_statutory_mapping`;
@@ -55,6 +56,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping` (
   `task_Type` VARCHAR(150) not null,
   `action` TINYINT null,
   `remarks` varchar(500) null,
+  `format_upload_status` TINYINT null,
   PRIMARY KEY (`bulk_statutory_mapping_id`),
   CONSTRAINT `fk_csv_id` FOREIGN KEY (`csv_id`) REFERENCES `tbl_bulk_statutory_mapping_csv` (`csv_id`));
 
@@ -77,6 +79,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units_csv` (
   `is_fully_rejected` tinyINT(4) DEFAULT NULL,
   `rejected_file_name` varchar(500) DEFAULT NULL,
   `rejected_file_download_count` INT DEFAULT NULL,
+  `declined_count` INT DEFAULT NULL,
   PRIMARY KEY (`csv_unit_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_units` ;
@@ -141,6 +144,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory_csv` (
   `is_fully_rejected` TINYINT NULL,
   `rejected_file_name` VARCHAR(500) NULL,
   `rejected_file_download_count` INT NULL,
+  `declined_count` INT DEFAULT NULL,
   PRIMARY KEY (`csv_assign_statutory_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_assign_statutory`;
