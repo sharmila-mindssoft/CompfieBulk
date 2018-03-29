@@ -368,7 +368,10 @@ def get_assign_statutory_by_csv_id(db, request_frame, session_user):
             if idx == 0:
                 client_name = "Client Name"
                 legal_entity_name = d["legal_entity"]
-                csv_name = d["csv_name"]
+
+                file_name = d["csv_name"].split('.')
+                remove_code = file_name[0].split('_')
+                csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
                 upload_on = d["uploaded_on"]
                 upload_by = d["uploaded_by"]
             as_data.append(bu_as.AssignStatutoryData(
@@ -414,7 +417,10 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
 
     client_name = header_info[0]["client_group"]
     legal_entity_name = header_info[0]["legal_entity"]
-    csv_name = header_info[0]["csv_name"]
+
+    file_name = header_info[0]["csv_name"].split('.')
+    remove_code = file_name[0].split('_')
+    csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
     upload_on = header_info[0]["uploaded_on"]
     upload_by = header_info[0]["uploaded_by"]
     total_records = header_info[0]["total_count"]
