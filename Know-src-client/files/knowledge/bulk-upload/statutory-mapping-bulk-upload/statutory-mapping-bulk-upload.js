@@ -150,6 +150,8 @@ BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
             $('.expec-docs', cloneRow).text(data.no_of_documents);
             $('.uploaded-docs', cloneRow).text(data.uploaded_documents);
             $('.remaining-docs', cloneRow).text(balance);
+            csvId = data.csv_id;
+            docNames = data.doc_names;
             $('.upload i', cloneRow).on('click', function(){
                 t_this.showEdit(data);
             });
@@ -166,6 +168,13 @@ BulkUploadStatutoryMapping.prototype.fetchListData = function(first_argument) {
         if (error == null) {
             t_this._ListDataForView = response.csv_list;
             t_this.renderList(t_this._ListDataForView);
+            if (response.upload_more == false) {
+                displayMessage(message.upload_limit)
+                AddButton.hide();
+            }
+            else {
+                AddButton.show();
+            }
             hideLoader();
         }
         else{
@@ -216,6 +225,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     docNames = response.doc_names;
                     UploadDocument.show();
                     DocumentSummary.hide();
+                    changeTxttoLabel(countryAc.val(), domainAc.val(), response.csv_name)
                 }
                 else {
                     DataSummary.hide();
@@ -273,26 +283,32 @@ BulkUploadStatutoryMapping.prototype.validateControls = function() {
     }
     return true;
 };
+BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
+    c_name, d_name, cav_name
+) {
+    txtCountryName.hide();
+    txtDomainName.hide();
+    lblCountryName.show();
+    lblDomainName.show();
+    lblCountryName.text(c_name);
+    lblDomainName.text(d_name);
+    inputFileControl.hide();
+    displayFileControl.show();
+    var cname_split = csv_name.split("_");
+    cname_split.pop();
+    var cname = cname_split.join("_") + ".csv";
+    $('.csv-file-name').text(cname);
+    $('.csv-file-view').attr("href", "/uploaded_file/csv/"+csv_name);
+    $('.csv-file-download').attr("href", "/uploaded_file/csv/"+csv_name);
+    this._ActionMode = "upload"
+};
 BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     this.showAddScreen();
     countryAc.val(data.c_name);
     countryVal.val(data.c_id);
     domainAc.val(data.d_name);
     domainVal.val(data.d_id);
-    txtCountryName.hide();
-    txtDomainName.hide();
-    lblCountryName.show();
-    lblDomainName.show();
-    lblCountryName.text(data.c_name);
-    lblDomainName.text(data.d_name);
-    inputFileControl.hide();
-    displayFileControl.show();
-    var cname_split = data.csv_name.split("_");
-    cname_split.pop();
-    var cname = cname_split.join("_") + ".csv";
-    $('.csv-file-name').text(cname);
-    $('.csv-file-view').attr("href", "/uploaded_file/csv/"+data.csv_name);
-    $('.csv-file-download').attr("href", "/uploaded_file/csv/"+data.csv_name);
+    this.changeTxttoLabel(data.c_name, data.d_name, data.csv_name)
     UploadDocument.show();
     DocumentSummary.show();
     DocumentTotal.text(data.no_of_documents);
@@ -300,7 +316,7 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     DocumentRemaining.text(
         parseInt(data.no_of_documents) - parseInt(data.uploaded_documents)
     );
-    this._ActionMode = "upload"
+
 
 };
 function key_search(mainList) {
@@ -402,6 +418,7 @@ function PageControls() {
         }
     }
     else {
+        displayLoader();
         myDropzone.processQueue();
     }
   });
@@ -416,7 +433,7 @@ function PageControls() {
 function file_upload_rul() {
     var session_id = mirror.getSessionToken();
 
-    var file_base_url = "http://localhost:9005/upload?session_id=" +
+    var file_base_url = "/temp/upload?session_id=" +
         session_id + "&csvid=" + csvId
     console.log(file_base_url)
     return file_base_url;
@@ -424,37 +441,82 @@ function file_upload_rul() {
 
 
 Dropzone.autoDiscover = false;
-
+Dropzone.autoProcessQueue = false;
+var addedfiles = []
+var totalfileUploadSuccess = 0;
+var perQueueUploadSuccess = 0;
+var queueCount = 0;
+var maxParallelCount = 2;
 var myDropzone = new Dropzone("div#myDrop", {
     addRemoveLinks: true,
     autoProcessQueue: false,
-    parallelUploads: 3,
+    parallelUploads: maxParallelCount,
     url: "#",
+    transformFile: function transformFile(file, done) {
+      var zip = new JSZip();
+      zip.file(file.name, file);
+      zip.generateAsync(
+        {
+          type:"blob",
+          compression: "DEFLATE"
+        }
+      ).then(function(content) {
+        done(content);
+      });
+    },
     init: function() {
         this.on("addedfile", function(file) {
-            if (jQuery.inArray(file.name, docNames) == -1) {
-                displayMessage(message.invalid_file + file.name)
-                console.log(file.name);
+            if (jQuery.inArray(file.name, addedfiles) > -1) {
                 myDropzone.removeFile(file);
             }
-            // if (file.name == "Company_8787_excluded.json") {
-            //     console.log("Removed");
-            //     console.log(file);
-            //     myDropzone.removeFile(file);
-            // } else {
-            //     console.log(file);
-            // }
+            if (jQuery.inArray(file.name, docNames) == -1) {
+                myDropzone.removeFile(file);
+            }
+            else {
+                addedfiles.push(file.name);
+                queueCount += 1;
+            }
+
         });
+        this.on("removedfile", function(file) {
+            console.log(file.name);
+            if (jQuery.inArray(file.name, addedfiles) > -1) {
+                addedfiles.pop(file.name);
+                queueCount -= 1;
+            }
+        })
 
         this.on("processing", function(file) {
-          this.options.url = file_base_url();
+          this.options.url = file_upload_rul();
         });
 
         this.on("success", function(file, response) {
-            console.log("Completed file=", file.name);
-            // // Call this once the files are uploaded successfully
-            // myDropzone.removeAllFiles(true);
-        })
+            addedfiles.pop(file.name);
+            if (totalfileUploadSuccess < queueCount) {
+                totalfileUploadSuccess += 1;
+                perQueueUploadSuccess += 1;
+            }
+
+            if (perQueueUploadSuccess == maxParallelCount) {
+                perQueueUploadSuccess = 0;
+                myDropzone.processQueue();
+            }
+            if (totalfileUploadSuccess == queueCount) {
+                myDropzone.removeAllFiles(true);
+                hideLoader()
+                displaySuccessMessage(message.document_upload_success)
+                buSmPage.showList();
+            }
+
+            //
+            //
+        });
+
+        this.on("error", function(file, errorMessage) {
+            displayMessage(errorMessage);
+            addedfiles = []
+            myDropzone.removeAllFiles(true);
+        });
     }
 });
 

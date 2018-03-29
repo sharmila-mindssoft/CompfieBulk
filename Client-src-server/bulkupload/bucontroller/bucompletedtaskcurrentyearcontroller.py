@@ -15,6 +15,10 @@ import datetime
 from server.constants import BULKUPLOAD_CSV_PATH
 from server.exceptionmessage import fetch_error
 
+from server.common import (
+    get_date_time_in_date, datetime_to_string_time, get_current_date, datetime_to_string
+)
+
 __all__ = [
     "process_bu_completed_task_current_year_request"
 ]
@@ -37,7 +41,6 @@ __all__ = [
 ########################################################
 def process_bu_completed_task_current_year_request(request, db, session_user):
     request_frame = request.request
-    print "Inside controller>>>"
 
     if type(request_frame) is bu_ct.UploadCompletedTaskCurrentYearCSV:
         result = upload_completed_task_current_year_csv(db, request_frame, session_user)
@@ -48,7 +51,6 @@ def process_bu_completed_task_current_year_request(request, db, session_user):
 
 def upload_completed_task_current_year_csv(db, request_frame, session_user):
 
-    print "inside bucompletedtaskcurrentyearcontroller>>>>upload_completed_task_current_year_csv "
     if request_frame.csv_size > 0 :
         pass
     # save csv file
@@ -65,57 +67,26 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
     res_data = cObj.perform_validation()
 
     if res_data["return_status"] is True :
-
-        # d_ids = ",".join(str(e) for e in request_frame.d_ids)
-        # d_names = ",".join(str(e) for e in request_frame.d_names)
-        # session_user.user_id(),
-        # print "request_frame>>>", request_frame
-        # request_frame.le_id,
-
-        # csv_args = [
-        #     cObj._legal_entity_names, cObj._Domains,
-        #     cObj._Unit_Codes, cObj._Unit_Names, cObj._Primary_Legislations,
-        #     cObj._Secondary_Legislations, cObj._Compliance_Tasks,
-        #     cObj._Compliance_Descriptions, cObj._Compliance_Frequencys,
-        #     cObj._Statutory_Dates, cObj._Due_Dates, cObj._Assignees,
-        #     cObj._Completion_Dates, cObj._Document_Names, csv_name,
-        #     res_data["total"]
-        # ]
-        #  "csv_past_id", "client_id", "legal_entity_id", "domain_id",
-        # "unit_id_id", "client_group", "csv_name",
-        # "uploaded_by", "uploaded_on",
-        # "total_records", "total_documents", "uploaded_documents", "upload_status"
-
+        current_date_time = get_date_time_in_date()
+        str_current_date_time = datetime_to_string(current_date_time)
         csv_args = [
-            "1","1","1","1","1", csv_name, "1","", res_data["total"],"0","0"
+            "1", request_frame.legal_entity_id, "1","1","1",
+            csv_name, session_user,current_date_time, res_data["total"],"0","0", "0"
         ]
+
         new_csv_id = save_completed_task_current_year_csv(db, csv_args, session_user)
-        if new_csv_id :
+        if new_csv_id:
             if save_completed_task_data(db, new_csv_id, res_data["data"]) is True :
                 result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
-                    res_data["total"], res_data["valid"], res_data["invalid"]
-                )
+                    res_data["total"], res_data["valid"], res_data["invalid"])
 
         # csv data save to temp db
     else:
-        print "res_data[invalid_file]>>", res_data["invalid_file"]
-        print "res_data[mandatory_error]", res_data["mandatory_error"]
-        print "res_data[max_length_error]", res_data["max_length_error"]
-        print "res_data[duplicate_error]", res_data["duplicate_error"]
-        print "res_data[invalid_char_error]", res_data["invalid_char_error"]
-        print "res_data[invalid_data_error]", res_data["invalid_data_error"]
-        print "res_data[inactive_error]", res_data["inactive_error"]
-        # print "res_data[total]", res_data[total]
-        # print"res_data[invalid]", res_data[invalid]
-        #  res_data["total"]
-        # res_data["invalid"]
-
         result = bu_ct.UploadCompletedTaskCurrentYearCSVFailed(
             res_data["invalid_file"], res_data["mandatory_error"],
             res_data["max_length_error"], res_data["duplicate_error"],
             res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"]
+            res_data["inactive_error"], res_data["total"], res_data["invalid"]
         )
-        print "result>>>", result
 
     return result

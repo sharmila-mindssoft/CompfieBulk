@@ -445,7 +445,7 @@ function loadCountwiseResult(filterList) {
     var approvedByName, rejectedByName, uploadedByName;
     var csvName, tblNoOfTasks, uploadedBy, uploadedOn, totalRejectedRecords;
     var rejectedOn, rejectedBy, approvedBy, approvedOn, reasonForRejection;
-    var rejectedReason, totalApproveRecords;
+    var rejectedReason, totalApproveRecords, isFullyRejected;
 
     for (var entity in filterList) {
         isNull = false;
@@ -459,11 +459,11 @@ function loadCountwiseResult(filterList) {
         rejectedBy = filterList[entity].rejected_by;
         approvedBy = filterList[entity].approved_by;
         approvedOn = filterList[entity].approved_on;
-        reasonForRejection = filterList[entity].is_fully_rejected;
+        isFullyRejected = filterList[entity].is_fully_rejected;
         rejectedReason = filterList[entity].rejected_reason;
         totalApproveRecords = filterList[entity].total_approve_records;
 
-        declinedCount = data[entity].declined_count;
+        declinedCount = filterList[entity].declined_count;
         approvedRejectedOn = '';
         approvedRejectedBy = '';
         approvedRejectedTasks = '-';
@@ -483,7 +483,10 @@ function loadCountwiseResult(filterList) {
                 approvedByName = EMP_CODE + " - " + EMP_NAME;
             }
         });
-        if (parseInt(reasonForRejection) == 1) {
+
+
+
+        if (parseInt(isFullyRejected) == 1) {
             reasonForRejection = rejectedReason;
         } else {
             reasonForRejection = "";
@@ -491,14 +494,24 @@ function loadCountwiseResult(filterList) {
             approvedRejectedTasks += " / ";
             approvedRejectedTasks += totalRejectedRecords;
         }
-        if (rejectedOn != null && rejectedOn != '') {
+
+
+        if(declinedCount != null && declinedCount >= 1) {
+            approvedRejectedBy = SYSTEM_REJECT_BY;
+            approvedRejectedOn = '';
+            if(rejectedOn != null){
+                approvedRejectedOn = String(rejectedOn);
+            }
+        }
+        else if (rejectedOn != null && rejectedOn != '' && declinedCount == 0){
             approvedRejectedOn = String(rejectedOn);
             approvedRejectedBy = rejectedByName;
         }
-        if (approvedOn != null && approvedOn != '') {
+        else if (approvedOn != null && approvedOn != '' && declinedCount == 0){
             approvedRejectedOn = String(approvedOn);
             approvedRejectedBy = approvedByName;
         }
+
         var occurance = '';
         var occuranceid;
         var tblRow1 = $('#act_templates .table-act-list .table-row-act-list');

@@ -71,8 +71,6 @@ function loadUnits(le_id, unit_id) {
             $.each(unitList, function(key, u) {
                 unit_list_map[parseInt(u["unit_id"])] = u["unit_code"]
             });
-            console.log("unitList" + unitList);
-            console.log("unit_list_map" + unit_list_map);
         }
     });
 }
@@ -146,46 +144,52 @@ function validateUpload() {
         return false;
     } else {
         setTimeout(function() {
-            $('.invaliddata').show();
-            $('.view-summary').show();
+            // $('.invaliddata').show();
+            // $('.view-summary').show();
             // $('#divSuccessFile').show();
             // $('#divSuccessDocument').show();
             // $('#divSuccessbutton').show();
-        }, 2000);
+        }, 1000);
 
         var args = {
             "csv_name": csvInfo["file_name"],
             "csv_data": csvInfo["file_content"],
             "csv_size": csvInfo["file_size"],
             "legal_entity_id": parseInt(LegalEntityId.val())
-                // "d_id": hdnDomain.val(),
-                // "unit_id": hdnUnit.val()
         };
 
         buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
             if (error == null) {
-                // TotalRecordsCount.text(data.total);
-                // ValidRecordsCount.text(parseInt(data.valid) - parseInt(data.invalid));
-                // InvalidRecordsCount.text(data.invalid);
-                // InvalidFileName = null;
-                // MandatoryErrorsCount.text("0");
-                // DuplicateErrorsCount.text("0");
-                // StatusErrorsCount.text("0");
-                // LengthErrorsCount.text("0");
-                // InvalidErrorsCount.text("0");
-                // $('.view-summary').show();
-                // $('.invaliddata').hide();
-                displaySuccessMessage("Records uploaded successfully for approval");
+
+                TOTALRECORD.text(data.total);
+                VALIDRECORD.text(parseInt(data.valid) -
+                    parseInt(data.invalid));
+                INVALIDRECORD.text(data.invalid);
+                INVALIDFILENAME = null;
+                MANDATORYERROR.text("0");
+                DUPLICATEERROR.text("0");
+                STATUSERROR.text("0");
+                LENGTHERROR.text("0");
+                INVALIDERROR.text("0");
+                $('.view-summary').hide();
+                $('.dropbtn').hide();
+
+                $('.invaliddata').hide();
+                $('.view-summary').hide();
+                $('#divFileUpload').hide();
+                $('#divSuccessFile').show();
+                $('#divSuccessDocument').show();
+                $('#divSuccessbutton').show();
+
+                displaySuccessMessage("Records uploaded successfully");
                 hideLoader();
             } else {
-                // displayMessage(message.upload_failed);
                 displayMessage(message.upload_failed);
                 INVALIDFILENAME = data.invalid_file.split('.');
                 TOTALRECORD.text(data.total);
                 var getValidCount = (parseInt(data.total) -
                     parseInt(data.invalid));
                 VALIDRECORD.text(getValidCount);
-                VALIDRECORD.text("");
                 INVALIDRECORD.text(data.invalid);
                 MANDATORYERROR.text(data.mandatory_error);
                 DUPLICATEERROR.text(data.duplicate_error);
@@ -196,6 +200,13 @@ function validateUpload() {
                 INVALIDERROR.text(getInvaliddataCount);
                 $('.dropbtn').show();
                 $('.view-summary').show();
+
+                $('.invaliddata').show();
+                $('.view-summary').show();
+                $('#divFileUpload').show();
+                $('#divSuccessFile').hide();
+                $('#divSuccessDocument').hide();
+                $('#divSuccessbutton').hide();
 
                 csv_path = "/invalid_file/csv/" + INVALIDFILENAME[0] +
                     '.csv';
@@ -303,15 +314,12 @@ function downloadData() {
     var legalEntityName = LegalEntityName.val();
     var domainName = txtdomain.val();
     var unitName = txtUnit.val();
-    //Todo Get Unit Code
-
     var leId = LegalEntityId.val();
     var domainId = hdnDomain.val();
     var unitId = hdnUnit.val();
     var unitCode = unit_list_map[unitId];
     var frequency = "Periodical";
     var startCount = 0;
-    console.log("^^^^^^^^^^^^" + unitId + " " + unitCode);
 
     buClient.getDownloadData(
         parseInt(leId), parseInt(domainId), parseInt(unitId), frequency, startCount,
@@ -338,32 +346,6 @@ $(function() {
     loadEntityDetails();
 
 });
-
-// function pageControls() {
-//     // Cancel Button Click Event
-//     CANCELBUTTON.click(function() {
-//         VIEWSCREEN.show();
-//         ADDSCREEN.hide();
-//     });
-
-//     //Add Button Click Event
-//     ADDBUTTON.click(function() {
-//         VIEWSCREEN.hide();
-//         ADDSCREEN.show();
-//         // DIVUPLOAD.hide();
-//     });
-
-//     //Add Button Click Event
-//     DOWNLOADBUTTON.click(function() {
-//         downloadData();
-//     });
-
-//     //Upload Button Click Event
-//     BTNUPLOAD.click(function() {
-//         validateUpload();
-//     });
-
-// }
 
 BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
     displayMessage(error);

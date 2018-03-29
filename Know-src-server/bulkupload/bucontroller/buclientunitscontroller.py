@@ -87,9 +87,6 @@ def process_bu_client_units_request(request, db, session_user):
     if type(request_frame) is bu_cu.ExportCUBulkReportData:
         result = export_clientunit_bulk_report(db, request_frame, session_user)
 
-    if type(request_frame) is bu_cu.DownloadRejectedClientUnitReport:
-        result = download_rejected_cu_report(db, request_frame, session_user)
-
     if type(request_frame) is bu_cu.PerformClientUnitApproveReject:
         result = perform_bulk_client_unit_approve_reject(db, request_frame, session_user)
 
@@ -349,7 +346,7 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user) :
                         db, csv_id, actionType, bu_remarks, 0, session_user
                     )
                 ) :
-                    clientUnitObj.process_data_to_main_db_insert()
+                    clientUnitObj.process_data_to_main_db_insert(system_declined_count)
                     clientUnitObj.save_manager_message(
                         actionType, clientUnitObj._csv_name, clientUnitObj._group_name,
                         session_user.user_id(),

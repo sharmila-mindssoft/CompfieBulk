@@ -846,8 +846,6 @@ function loadCountwiseResult(data) {
         approvedRejectedBy = '';
         approvedRejectedTasks = '-';
 
-        alert(declinedCount);
-
         $(ALL_USER_INFO).each(function(key, value) {
             if (parseInt(uploadedBy) == value["user_id"]) {
                 EmpCode = value["employee_code"];
@@ -875,7 +873,10 @@ function loadCountwiseResult(data) {
 
         if(declinedCount != null && declinedCount >= 1) {
             approvedRejectedBy = SYSTEM_REJECT_BY;
-            approvedRejectedOn = String(rejectedOn);
+            approvedRejectedOn = '';
+            if(rejectedOn != null){
+                approvedRejectedOn = String(rejectedOn);
+            }
         }
         else if (rejectedOn != null && rejectedOn != '' && declinedCount == 0){
             approvedRejectedOn = String(rejectedOn);

@@ -297,20 +297,20 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
 
         for row_idx, data in enumerate(self._source_data):
             if row_idx == 0:
-                self._legal_entity_names = data.get("Legal_Entity")
-                self._Domains = data.get("Domain")
-                self._Unit_Codes = data.get("Unit_Code")
-                self._Unit_Names = data.get("Unit_Name")
-                self._Primary_Legislations = data.get("Primary_Legislation")
-                self._Secondary_Legislations = data.get("Secondary_Legislation")
-                self._Compliance_Tasks = data.get("Compliance_Task")
-                self._Compliance_Descriptions = data.get("Compliance_Description")
-                self._Compliance_Frequencys = data.get("Compliance_Frequency")
-                self._Statutory_Dates = data.get("Statutory_Date")
-                self._Due_Dates = data.get("Due_Date")
-                self._Assignees = data.get("Assignee")
-                self._Completion_Dates = data.get("Completion_Date")
-                self._Document_Names = data.get("Document_Name")
+                self._legal_entity_names = data.get("legal_entity_id")
+                self._Domains = data.get("d_id")
+                # self._Unit_Codes = data.get("Unit_Code")
+                # self._Unit_Names = data.get("Unit_Name")
+                # self._Primary_Legislations = data.get("Primary_Legislation")
+                # self._Secondary_Legislations = data.get("Secondary_Legislation")
+                # self._Compliance_Tasks = data.get("Compliance_Task")
+                # self._Compliance_Descriptions = data.get("Compliance_Description")
+                # self._Compliance_Frequencys = data.get("Compliance_Frequency")
+                # self._Statutory_Dates = data.get("Statutory_Date")
+                # self._Due_Dates = data.get("Due_Date")
+                # self._Assignees = data.get("Assignee")
+                # self._Completion_Dates = data.get("Completion_Date")
+                # self._Document_Names = data.get("Document_Name")
 
             res = True
             error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
