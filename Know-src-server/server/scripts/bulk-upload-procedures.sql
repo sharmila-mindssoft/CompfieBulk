@@ -1111,7 +1111,7 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statut
   asm_csv.uploaded_by=user_id AND
   asm.csv_assign_statutory_id=csv_id AND
   (asm.action=3 OR asm_csv.is_fully_rejected=1)
-  ORDER BY asm_csv.rejected_on, asm_csv.approved_on DESC
+  ORDER BY asm_csv.rejected_on, asm_csv.approved_on DESC;
 
 ELSE
 
@@ -1144,7 +1144,7 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statut
   asm_csv.uploaded_by=user_id AND
   asm.csv_assign_statutory_id=csv_id AND
   (asm.action=3 OR asm_csv.is_fully_rejected=1)
-  ORDER BY asm_csv.rejected_on, asm_csv.approved_on DESC
+  ORDER BY asm_csv.rejected_on, asm_csv.approved_on DESC;
 
 END IF;
 

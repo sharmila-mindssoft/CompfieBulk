@@ -12,7 +12,7 @@ var COUNTRY_WISE_DOMAIN = '';
 var USER_CATEGORY_ID = 0;
 
 var GROUP_NAME = $('#cgroupval');
-var GROUP_ID = $('#cgroup-id');;
+var GROUP_ID = $('#cgroup-id');
 var AC_GROUP = $('#ac-cgroup');
 var SHOW_BTN = $('#show');
 var REPORT_VIEW = $('.grid-table-rpt');

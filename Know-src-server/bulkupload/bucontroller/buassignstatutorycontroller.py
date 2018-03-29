@@ -569,9 +569,10 @@ def download_rejected_asm_report(db, request_frame, session_user):
 
     result = cObj.perform_validation()
 
-    return bu_sm.DownloadActionSuccess(result["xlsx_link"], result["csv_link"],
-                                       result["ods_link"], result["txt_link"])
-
+    return bu_sm.DownloadActionSuccess(result["xlsx_link"],
+                                       result["csv_link"],
+                                       result["ods_link"],
+                                       result["txt_link"])
 
 def save_action(db, request_frame, session_user):
     try:
