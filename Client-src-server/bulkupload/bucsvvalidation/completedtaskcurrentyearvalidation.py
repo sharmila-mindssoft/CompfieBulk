@@ -19,7 +19,7 @@ from server.common import (
 
 __all__ = [
     "ValidateCompletedTaskCurrentYearCsvData",
-    "ValidateAssignStatutoryForApprove"
+    "ValidateCompletedTaskForSubmit"
 ]
 ################################
 '''
@@ -35,12 +35,12 @@ class SourceDB(object):
         self.Legal_Entity = {}
         self.Domain = {}
         # self.Unit_Location = {}
-        # self.Unit_Code = {}
-        # self.Unit_Name = {}
+        self.Unit_Code = {}
+        self.Unit_Name = {}
         # self.Statutories = {}
         # self.Statutory_Provision = {}
-        # self.Compliance_Task = {}
-        # self.Compliance_Description = {}
+        self.Compliance_Task = {}
+        self.Compliance_Description = {}
         self.connect_source_db()
         self._validation_method_maps = {}
         self.statusCheckMethods()
@@ -66,12 +66,12 @@ class SourceDB(object):
     def init_values(self):
         self.get_legal_entities()
         self.get_domains()
-        # self.get_unit_code(client_id)
-        # self.get_unit_name(client_id)
+        self.get_unit_code()
+        self.get_unit_name()
         # self.get_statutories()
         # self.get_statutory_provision()
-        # self.get_compliance_task()
-        # self.get_compliance_description()
+        self.get_compliance_task()
+        self.get_compliance_description()
 
     def get_legal_entities(self):
         query = "SELECT legal_entity_id, legal_entity_name, is_closed FROM tbl_legal_entities;"
@@ -85,15 +85,18 @@ class SourceDB(object):
         for d in rows :
             self.Domain[d["domain_name"]] = d
 
-    # def get_unit_code(self, client_id):
-    #     data = self._source_db.call_proc("sp_bu_unit_code_and_name", [client_id])
-    #     for d in data:
-    #         self.Unit_Code[d["unit_code"]] = d
+    def get_unit_code(self):
+        query = "SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name, is_closed FROM tbl_units;"
+        rows = self._source_db.select_all(query)
+        return "rows>>>", rows
+        for d in rows:
+            self.Unit_Code[d["unit_code"]] = d
 
-    # def get_unit_name(self, client_id):
-    #     data = self._source_db.call_proc("sp_bu_unit_code_and_name", [client_id])
-    #     for d in data:
-    #         self.Unit_Name[d["unit_name"]] = d
+    def get_unit_name(self):
+        query = "SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name, is_closed FROM tbl_units;"
+        rows = self._source_db.select_all(query)
+        for d in rows:
+            self.Unit_Name[d["unit_name"]] = d
 
     # def get_statutories(self):
     #     data = self._source_db.call_proc("sp_bu_level_one_statutories")
@@ -105,18 +108,23 @@ class SourceDB(object):
     #     for d in data :
     #         self.Statutory_Provision[d["statutory_provision"]] = d
 
-    # def get_compliance_task(self):
-    #     data = self._source_db.call_proc("sp_bu_compliance_info")
-    #     for d in data :
-    #         self.Compliance_Task[d["compliance_task"]] = d
+    def get_compliance_task(self):
+        query = "SELECT compliance_id, statutory_provision, compliance_task, compliance_description, is_active from tbl_compliances"
+        rows = self._source_db.select_all(query)
+        for d in rows:
+            self.Compliance_Task[d["compliance_task"]] = d
 
-    # def get_compliance_description(self):
-    #     data = self._source_db.call_proc("sp_bu_compliance_info")
-    #     for d in data :
-    #         self.Compliance_Description[d["compliance_description"]] = d
+    def get_compliance_description(self):
+        query = "SELECT compliance_id, statutory_provision, compliance_task, compliance_description, is_active from tbl_compliances"
+        rows = self._source_db.select_all(query)
+        for d in rows:
+            self.Compliance_Description[d["compliance_description"]] = d
 
     def check_base(self, check_status, store, key_name, status_name):
+        # print"store>>>", store
+        # print"key_name>>>", key_name
         data = store.get(key_name)
+        # print "data>>>", data
         if data is None:
             return "Not found"
 
@@ -124,9 +132,9 @@ class SourceDB(object):
             if status_name is None :
                 if data.get("is_active") == 0 :
                     return "Status Inactive"
-            # elif status_name == "domain_is_active" :
-            #     if data.get("domain_is_active") == 0 :
-            #         return "Status Inactive"
+            elif status_name == "is_closed" :
+                if data.get("is_closed") == 0 :
+                    return "Status Inactive"
             # elif status_name == "organization_is_active" :
             #     if data.get("organization_is_active") == 0 :
             #         return "Status Inactive"
@@ -158,63 +166,60 @@ class SourceDB(object):
     #     return self.check_base(False, self.Statutory_Provision, statutory_provision, None)
 
     # def check_compliance_task(self, compliance_task):
-    #     return self.check_base(False, self.Compliance_Task, compliance_task, None)
+    #     return self.check_base(True, self.Compliance_Task, compliance_task, None)
 
     # def check_compliance_description(self, compliance_description):
-    #     return self.check_base(False, self.Compliance_Description, compliance_description, None)
+    #     return self.check_base(True, self.Compliance_Description, compliance_description, None)
 
-    def save_client_statutories_data(self, cl_id, u_id, d_id, uploadedby):
-        created_on = get_date_time()
-        client_statutory_value = [
-            int(cl_id), int(u_id),
-            int(d_id),
-            int(uploadedby), str(created_on)
-        ]
-        q = "INSERT INTO tbl_client_statutories (client_id, unit_id, domain_id, " + \
-            " approved_by, approved_on) values " + \
-            " (%s, %s, %s, %s, %s)"
-        client_statutory_id = self._source_db.execute_insert(
-            q, client_statutory_value
-        )
-        # self._source_db.commit()
-        if client_statutory_id is False:
-            raise process_error("E018")
-        return client_statutory_id
 
-    def save_client_compliances_data(self, cl_id, le_id, u_id, d_id, cs_id, data):
-        created_on = get_date_time()
+    def save_completed_task_data(self, data):
+        # created_on = get_date_time()
+        # columns = [
+        #     "client_statutory_id",
+        #     "client_id", "legal_entity_id", "unit_id",
+        #     "domain_id", "statutory_id", "statutory_applicable_status",
+        #     "remarks", "compliance_id", "compliance_applicable_status",
+        #     "is_approved", "approved_by", "approved_on",
+        #     "updated_by", "updated_on"
+        # ]
         columns = [
-            "client_statutory_id",
-            "client_id", "legal_entity_id", "unit_id",
-            "domain_id", "statutory_id", "statutory_applicable_status",
-            "remarks", "compliance_id", "compliance_applicable_status",
-            "is_approved", "approved_by", "approved_on",
-            "updated_by", "updated_on"
-
+            "legal_entity_id", "unit_id", "compliance_id", "start_date",
+            "due_date", "completion_date", "completed_by", "approved_by"
         ]
+
         values = []
-        for idx, d in enumerate(data) :
-            statu_id = self.Statutories.get(d["Primary_Legislation"]).get("statutory_id")
-            comp_id = None
-            c_ids = self._source_db.call_proc("sp_bu_get_compliance_id_by_name" , [d["Compliance_Task"], d["Compliance_Description"]])
-            for c_id in c_ids :
-                comp_id = c_id["compliance_id"]
+        for idx,d in enumerate(data):
+            print "data>>>", data
+            print"d>>>", d
+            cName = d["compliance_task_name"]
+            print "cName>>>", cName
+
+            # q = " SELECT compliance_id FROM tbl_compliances where compliance_task like TRIM('%s') "
+            q = "SELECT compliance_id, compliance_task FROM tbl_compliances LIMIT 1"
+            c = self._source_db.select_all(q, cName)
+            print "c>>>", c
+            print"compliance_id>>", c[0]["compliance_id"]
+            compliance_id = c[0]["compliance_id"]
 
             values.append((
-                int(cs_id), cl_id, le_id, u_id, d_id, statu_id,
-                d["Statutory_Applicable_Status"],
-                d["Statutory_remarks"], comp_id,
-                d["Compliance_Applicable_Status"],
-                1, d["uploaded_by"], created_on,
-                d["uploaded_by"], created_on
+                "1", "1", compliance_id,
+                d["due_date"], d["due_date"], d["due_date"],
+                "1","1"
             ))
+            # values.append((
+            #     "1", "1", "1",
+            #     d["due_date"], d["due_date"], d["due_date"],
+            #     "1","1"
+            # ))
 
         if values :
-            self._source_db.bulk_insert("tbl_client_compliances", columns, values)
-            # self._source_db.commit()
+            self._source_db.bulk_insert("tbl_compliance_history", columns, values)
+            self._source_db.commit()
             return True
         else :
             return False
+
+
 
     # main db related validation mapped with field name
     def statusCheckMethods(self):
@@ -297,8 +302,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
 
         for row_idx, data in enumerate(self._source_data):
             if row_idx == 0:
-                self._legal_entity_names = data.get("Legal_Entity")
-                self._Domains = data.get("Domain")
+                self._legal_entity_names = data.get("legal_entity_id")
+                self._Domains = data.get("d_id")
                 # self._Unit_Codes = data.get("Unit_Code")
                 # self._Unit_Names = data.get("Unit_Name")
                 # self._Primary_Legislations = data.get("Primary_Legislation")
@@ -420,3 +425,49 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "valid": total - invalid,
             "invalid": invalid
         }
+
+
+class ValidateCompletedTaskForSubmit(SourceDB):
+    def __init__(self, db, csv_id, dataResult, session_user):
+        SourceDB.__init__(self)
+        self._db = db
+        self._csv_id = csv_id
+        self._session_user_obj = session_user
+        self._source_data = dataResult
+        # self._declined_row_idx = []
+        # self._legal_entity = None
+        # self._client_group = None
+        # self._csv_name = None
+        # self._unit_id = None
+
+    # def get_source_data(self):
+    #     self._source_data = self._db.call_proc(
+    #         "sp_assign_statutory_by_csvid", [self._csv_id]
+    #     )
+
+
+
+
+    def frame_data_for_main_db_insert(self, db, dataResult):
+        # self.get_source_data()
+        # self._source_data.sort(key=lambda x: (
+        #      x["Domain"], x["Unit_Name"]
+        # ))
+        # for k, v in groupby(self._source_data, key=lambda s: (
+        #     s["Domain"], s["Unit_Name"]
+        # )):
+        #     grouped_list = list(v)
+        #     if len(grouped_list) == 0:
+        #         continue
+
+        #     unit_id = None
+        #     domain_id = None
+        #     value = grouped_list[0]
+
+        #     unit_id = self.Unit_Code.get(value.get("Unit_Code")).get("unit_id")
+        #     domain_id = self.Domain.get(value.get("Domain")).get("domain_id")
+
+            # cs_id = self.save_client_statutories_data(
+            #     self._client_id, unit_id, domain_id, user_id
+            #     )
+        return self.save_completed_task_data(dataResult)

@@ -1089,8 +1089,12 @@ class GetStatutoryMappingCsvUploadedListSuccess(Response):
 
 
 class UploadStatutoryMappingCSVValidSuccess(Response):
-    def __init__(self, csv_id, total, valid, invalid, doc_count, doc_names):
+    def __init__(
+        self, csv_id, csv_name, total, valid, invalid,
+        doc_count, doc_names
+    ):
         self.csv_id = csv_id
+        self.csv_name = csv_name
         self.total = total
         self.valid = valid
         self.invalid = invalid
@@ -1100,12 +1104,12 @@ class UploadStatutoryMappingCSVValidSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "csv_id",
+            "csv_id", "csv_name",
             "total", "valid", "invalid", "doc_count", "doc_names"
         ])
 
         return UploadStatutoryMappingCSVValidSuccess(
-            data.get("csv_id"),
+            data.get("csv_id"), data.get("csv_name"),
             data.get("total"), data.get("valid"), data.get("invalid"),
             data.get("doc_count"), data.get("doc_names")
         )
@@ -1113,6 +1117,7 @@ class UploadStatutoryMappingCSVValidSuccess(Response):
     def to_inner_structure(self):
         return {
             "csv_id": self.csv_id,
+            "csv_name": self.csv_name,
             "total": self.total,
             "valid": self.valid,
             "invalid": self.invalid,

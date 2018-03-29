@@ -175,6 +175,7 @@
                                                                             <td width="60%" class="p-5-px"> </td>
 
                                                                             <td width="10%" class="p-5-px">
+                                                                                <span class="successFileName"> </span>
                                                                                 <i class="fa fa-download fa-1-2x c-pointer" data-toggle="tooltip" title="" data-original-title="Download Document"></i>
                                                                             </td>
                                                                         </tr>
@@ -187,6 +188,7 @@
                                                             <div class="col-sm-6">
                                                                 <input class="form-control input-sm" type="file" webkitdirectory="" multiple="">
                                                                 <ul class="p-l-20 p-t-5">
+
                                                                     <li>Required Documents: <b>0</b> </li>
                                                                     <li>Uploaded Documents: <b>0</b> </li>
                                                                     <li class="text-danger">Remaining Documents: <b>0</b> </li>
@@ -200,7 +202,9 @@
                                                             <button class="btn btn-primary waves-effect waves-light btn_upload animateprogress1 m-r-5" type="button" data-toggle="modal" data-target="#myModal1" style="display: none;"> Upload</button>
 
                                                             <a class="btn btn-primary btn-trans uploaded_data" style="display: inline-block;"><i class="fa fa-download text-primary"></i> Uploaded Data (.zip)</a>
-                                                            <button class="btn btn-primary waves-effect waves-light btn_submit" type="button" onclick="location.href='/Completed-task-current-year-BulkUpload_List'" style="display: inline-block;"> Submit</button>
+                                                            <button class="btn btn-primary waves-effect waves-light btn_submit" type="button" style="display: inline-block;"> Submit</button>
+                                                            <input type="hidden" id="hdnCsvId" value="">
+
                                                         </div>
 
 
@@ -335,25 +339,26 @@
             </span>
             <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
             <div class="custom-modal-text">
-                <form>
-                    <div class="form-group">
-                        <label for="exampleInputPassword" class="pull-left">Password
+                <img src="" <form>
+                <div class="form-group">
+                    <label for="exampleInputPassword" class="pull-left">Password
                             <span class="mandatory">*</span>
                         </label>
-                        <input type="password" class="form-control input-sm" id="exampleInputPassword" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputReason" class="pull-left">Remarks
+                    <input type="password" class="form-control input-sm" id="exampleInputPassword" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputReason" class="pull-left">Remarks
                             <span class="mandatory">*</span>
                         </label>
-                        <textarea class="form-control input-sm" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
-                    </div>
-                    <button type="button" class="btn btn-primary waves-effect waves-light">Submit</button>
+                    <textarea class="form-control input-sm" id="exampleInputReason" rows="2" placeholder="Enter Reason"></textarea>
+                </div>
+                <button type="button" class="btn btn-primary waves-effect waves-light ">Submit</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %} {% block contentscript %}
 <script src="/script/bulkupload/completed_task_current_year/Completed-task-current-year-BulkUpload.js"></script>
 {% endblock %}

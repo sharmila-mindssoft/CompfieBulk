@@ -54,7 +54,6 @@ class PastDataJsonToCSV(object):
 
     def download_past_data(self, db, request, session_user):
         is_header = False
-        print "AM COMING HERE"
 
         unit_id = request.unit_id
         domain_id = request.domain_id
@@ -79,13 +78,21 @@ class PastDataJsonToCSV(object):
                 print "swc ->> ", swc
                 # print "level 1 -->>>", swc.level_1_statutory_name
                 print "pr_compliances-->>>", swc.compliances[0]
-                print "SNO-> ", sno
+
                 level_statu_name = swc.level_1_statutory_name
                 compliances = swc.compliances
 
                 if not is_header:
+                    # csv_headers = [
+                    #     "SNO", "Legal_Entity", "Domain", "Unit_Code",
+                    #     "Unit_Name", "Primary_Legislation",
+                    #     "Secondary_Legislation", "Compliance_Task",
+                    #     "Compliance_Description", "Compliance_Frequency",
+                    #     "Statutory_Date", "Due_Date", "Assignee",
+                    #     "Completion_Date*", "Document_Name"
+                    # ]
                     csv_headers = [
-                        "SNO", "Legal_Entity", "Domain", "Unit_Code",
+                        "Legal_Entity", "Domain", "Unit_Code",
                         "Unit_Name", "Primary_Legislation",
                         "Secondary_Legislation", "Compliance_Task",
                         "Compliance_Description", "Compliance_Frequency",
@@ -95,9 +102,6 @@ class PastDataJsonToCSV(object):
                     self.write_csv(csv_headers, None)
 
                     for comp in compliances:
-                        sno = sno + 1
-                        print "^^^^^^^^^^", comp.description
-                        print "Compl Freq-> ", comp.frequency.to_structure()
                         description = comp.description
                         due_date = comp.due_date
                         compliance_name = comp.compliance_name
@@ -106,7 +110,7 @@ class PastDataJsonToCSV(object):
                         assignee_name = comp.assignee_name
                         is_header = True
                         csv_values = [
-                            sno, le_name, domain_name, unit_name, unit_code,
+                            le_name, domain_name, unit_code, unit_name,
                             level_statu_name, "",
                             compliance_name, description,
                             compliance_task_frequency, statutory_date,

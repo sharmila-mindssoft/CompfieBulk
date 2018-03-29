@@ -600,7 +600,13 @@ class SourceDB(object) :
             print "action"
             print d["action"]
             print int(d["action"]) == 1
-            if d["bulk_unit_id"] not in system_declined_units and int(d["action"]) == 1 :
+            print len(system_declined_units) == 0
+            print (len(system_declined_units) == 0 or (len(system_declined_units) > 0 and d["bulk_unit_id"] not in system_declined_units))
+            if (
+                (len(system_declined_units) == 0 or (len(system_declined_units) > 0 and
+                    d["bulk_unit_id"] not in system_declined_units)) and
+                (int(d["action"]) == 1 or int(d["action"]) == 0)
+            ):
                 print "bulk unit id"
                 print d["bulk_unit_id"]
                 if bg_id is not None :
@@ -800,7 +806,7 @@ class SourceDB(object) :
 
     ######################################################################################
     '''
-        save_units: This class methods is defined to commit the transaction made in
+        source_commit: This class methods is defined to commit the transaction made in
         master database
     '''
     #######################################################################################
@@ -1288,6 +1294,8 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB) :
     ###############################################################################################
 
     def process_data_to_main_db_insert(self, system_declined_units) :
+        print "process main"
+        print self._temp_data
         self._temp_data.sort(key=lambda x : (
              x["Legal_Entity"], x["Division"], x["Category"]
         ))

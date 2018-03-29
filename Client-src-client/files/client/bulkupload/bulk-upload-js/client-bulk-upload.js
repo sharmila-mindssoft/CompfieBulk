@@ -14,6 +14,15 @@ function UploadCompletedTaskCurrentYearCSV(args, callback) {
     clientApiRequest("bu/completed_task", request, callback);
 }
 
+function saveBulkRecords(args, callback) {
+    var request = [
+        'saveBulkRecords', args
+    ];
+    clientApiRequest("bu/completed_task", request, callback);
+}
+
+
+
 function convert_to_base64(file, callback) {
     var reader = new FileReader();
     reader.onload = function(readerEvt) {

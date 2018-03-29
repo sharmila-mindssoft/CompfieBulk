@@ -7,7 +7,7 @@ from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    CSV_DELIMITER
+    CSV_DELIMITER, DM_USER_CATEGORY, DE_USER_CATEGORY
 )
 from server.exceptionmessage import fetch_error
 
@@ -599,9 +599,10 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
         unitId = ''
 
     if(len(dependent_users) > 0):
-        if(user_category_id == 7):
+        if(user_category_id == DM_USER_CATEGORY):
             user_ids = ",".join(map(str, dependent_users))
-        elif(user_category_id == 8 and user_category_id != 7):
+        elif(user_category_id == DE_USER_CATEGORY and
+             user_category_id != DM_USER_CATEGORY):
             user_ids = ",".join(map(str, dependent_users))
         else:
             user_ids = user_id

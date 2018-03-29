@@ -58,6 +58,9 @@ class ValidateRejectedDownloadBulkData():
                                 is_return = True
                 elif(key == "remarks" and v_col_key is None):
                     is_return = True
+                elif(key is "is_fully_rejected" or key is "rejected_reason"):
+                    mapped_header_dict[key] = ''
+                    is_return = True
                 else:
                     if(sno == 1):
                         mapped_header_dict[key] = 0

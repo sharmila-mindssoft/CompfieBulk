@@ -42,5 +42,4 @@ class BulkAPI(object):
     @bulk_upload_api_request(bucompletedtaskcurrentyearprotocol.RequestFormat, is_group=False, need_category=True)
     def handle_completed_task(self, request, db, session_user, session_category):
         print "client_bulkuploadmain.py>>>45"
-
         return bucontroller.process_bu_completed_task_current_year_request(request, db, session_user)

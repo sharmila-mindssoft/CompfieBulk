@@ -531,7 +531,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
     download_format = request_frame.download_format
     user_id = session_user.user_id()
 
-    sheet_name = "Rejected Statutory Mapping"
+    sheet_name = "Rejected Assign Statutory"
 
     csv_header_key = ["client_group", "legal_entity", "domain",
                       "organization", "unit_code", "unit_name",
@@ -539,8 +539,8 @@ def download_rejected_asm_report(db, request_frame, session_user):
                       "secondary_legislation", "statutory_provision",
                       "compliance_task_name", "compliance_description",
                       "statutory_applicable_status", "statytory_remarks",
-                      "compliance_applicable_status", "rejected_reason",
-                      "remarks"
+                      "compliance_applicable_status", "remarks",
+                      "rejected_reason", "is_fully_rejected"
                       ]
 
     csv_column_name = ["Client_Group", "Legal_Entity",
@@ -551,8 +551,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
                        "Statutory_Provision", "Compliance_Task_Name",
                        "Compliance_Description",
                        "Statutory_Applicable_Status*", "Statutory_remarks",
-                       "Compliance_Applicable_Status*", "Rejected_Reason",
-                       "Error_Description"]
+                       "Compliance_Applicable_Status*", "Error_Description"]
 
     # csv_name = "RejectedData.xlsx"
     csv_name = get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id)
