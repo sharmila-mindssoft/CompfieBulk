@@ -232,7 +232,7 @@ def rename_download_file_type(src_file_name, des_file_type):
         pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
 
     download_path_link = os.path.join(
-         REJECTED_DOWNLOAD_BASE_PATH, des_file_type, new_file)
+        REJECTED_DOWNLOAD_BASE_PATH, des_file_type, new_file)
     return download_path_link
 
 
@@ -267,12 +267,22 @@ def write_download_data_to_excel(
 
     row = 1
     col = 0
-    for idx, dat in enumerate(column_data):
 
+    for idx, dat in enumerate(column_data):
         for i, h in enumerate(headers):
-            d = str(dat.get(h))
+
+            if(h == "remarks"):
+                if(dat.get("is_fully_rejected") == 1):
+                    d = str(dat.get("rejected_reason"))
+                else:
+                    d = str(dat.get(h))
+            elif(h is "is_fully_rejected" or h is "rejected_reason"):
+                d = ''
+            else:
+                d = str(dat.get(h))
+
             if (d != '' and d is not None and d != 'None'):
-                worksheet.write_string(row, col+i, d)
+                worksheet.write_string(row, col + i, d)
         row += 1
 
     # summary sheet
@@ -285,7 +295,7 @@ def write_download_data_to_excel(
     remove_error_desc_row = []
     for i, col in enumerate(headers_column_data):
         if col is not None:
-            if (col == "Error_Description" or col == "Rejected_Reason"):
+            if (col == "Error_Description"):
                 remove_error_desc_row.append(srow)
             else:
                 summarySheet.write_string(srow, 0, col)
