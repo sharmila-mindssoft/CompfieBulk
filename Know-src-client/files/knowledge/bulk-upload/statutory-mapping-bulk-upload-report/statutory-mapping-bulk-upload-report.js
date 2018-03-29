@@ -415,12 +415,19 @@ function loadCurrentUserDetails() {
     var knowledgeName;
     var knowledgeUserDetails = {};
     $.each(ALL_USER_INFO, function(key, value) {
+        console.log("==>>>>");
+        console.log(user.user_id +"=="+ value["user_id"]);
+
+
         if (user.user_id == value["user_id"]) {
             USER_CATEGORY_ID = value["user_category_id"];
             loggedUserId = value["user_id"];
         }
     });
     if (USER_CATEGORY_ID == KE_USER_CATEGORY) {
+        console.log("USER_CATEGORY_ID" +"=="+ "KE_USER_CATEGORY");
+
+        console.log(USER_CATEGORY_ID +"=="+ KE_USER_CATEGORY);
         // KE-Name  : Knowledge-Executive
         knowledgeName = user.employee_code + " - " + user.employee_name;
         $('.active-knowledge-executive').attr('style', 'display:block');
@@ -433,6 +440,10 @@ function loadCurrentUserDetails() {
         KNOWLEDGE_EXECUTIVES.push(user.user_id);
     } else if (USER_CATEGORY_ID == KM_USER_CATEGORY
         && USER_CATEGORY_ID != KE_USER_CATEGORY && loggedUserId > 0) {
+
+        console.log("USER_CATEGORY_ID" +"=="+ "KM_USER_CATEGORY");
+        console.log(USER_CATEGORY_ID +"=="+ KM_USER_CATEGORY);
+
         // KE-Name  : Knowledge-Manager
         getUserMappingsList(loggedUserId);
     }
@@ -446,9 +457,12 @@ function getUserMappingsList(loggedUserId) {
         console.log("loggedUserId->" + loggedUserId);
         var userMappingData = data;
         var d;
+        var childUserId;
+        console.log(userMappingData);
+
         $.each(userMappingData.user_mappings, function(key, value) {
             if (loggedUserId == value.parent_user_id) {
-                var childUserId;
+                childUserId = value.child_user_id;
                 if (jQuery.inArray(childUserId, KNOWLEDGE_EXECUTIVES) == -1) {
                     console.log("inif")
                     KNOWLEDGE_EXECUTIVES.push(childUserId);

@@ -777,7 +777,7 @@ INNER JOIN tbl_bulk_units_csv AS cu_csv ON cu_csv.csv_unit_id=cu.csv_unit_id
   cu_csv.client_id=client_group_id AND
   cu_csv.uploaded_by=user_id AND
   (cu.action=3 OR cu_csv.is_fully_rejected=1) -- Declined Action
-  ORDER BY cu_csv.uploaded_on ASC;
+  ORDER BY cu_csv.rejected_on, cu_csv.approved_on  DESC;
 END//
 DELIMITER ;
 
@@ -834,7 +834,7 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS sm_csv ON sm_csv.csv_assign_statutor
   sm_csv.uploaded_by=user_id AND
   (sm.action=3 OR sm_csv.is_fully_rejected=1)
   Group by sm.csv_assign_statutory_id
-  ORDER BY sm_csv.rejected_on DESC;
+  ORDER BY sm_csv.rejected_on, sm_csv.approved_on DESC;
 
 ELSE
 
@@ -865,8 +865,7 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS sm_csv ON sm_csv.csv_assign_statutor
   sm_csv.uploaded_by=user_id AND
   (sm.action=3 OR sm_csv.is_fully_rejected=1)
   Group by sm.csv_assign_statutory_id
-  ORDER BY sm_csv.rejected_on DESC;
-
+  ORDER BY sm_csv.rejected_on, sm_csv.approved_on DESC;
 END IF;
 
 END//
@@ -1080,7 +1079,9 @@ DROP PROCEDURE IF EXISTS `sp_rejected_asm_csv_report`;
 DELIMITER //
 CREATE PROCEDURE `sp_rejected_asm_csv_report`(IN `client_id` int(11), IN `le_id` int(11), IN `domain_ids` varchar(100), IN `unit_id` varchar(100), IN `csv_id` int(11), IN `user_id` int(11))
 BEGIN
+
 IF(unit_id!='') THEN
+
 SELECT
 asm.client_group,
 asm.legal_entity,
@@ -1097,8 +1098,9 @@ asm.compliance_description,
 asm.statutory_applicable_status,
 asm.statytory_remarks,
 asm.compliance_applicable_status,
-asm_csv.rejected_reason,
-asm.remarks
+asm.remarks,
+(CASE WHEN asm_csv.is_fully_rejected = 1 THEN asm_csv.rejected_reason else '' END) AS rejected_reason,
+asm_csv.is_fully_rejected
 FROM tbl_bulk_assign_statutory AS asm
 INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statutory_id=asm.csv_assign_statutory_id
  WHERE
@@ -1109,7 +1111,7 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statut
   asm_csv.uploaded_by=user_id AND
   asm.csv_assign_statutory_id=csv_id AND
   (asm.action=3 OR asm_csv.is_fully_rejected=1)
-  ORDER BY asm_csv.uploaded_on DESC;
+  ORDER BY asm_csv.rejected_on, asm_csv.approved_on DESC
 
 ELSE
 
@@ -1130,7 +1132,9 @@ asm.statutory_applicable_status,
 asm.statytory_remarks,
 asm.compliance_applicable_status,
 asm_csv.rejected_reason,
-asm.remarks
+asm.remarks,
+(CASE WHEN asm_csv.is_fully_rejected = 1 THEN asm_csv.rejected_reason else '' END) AS rejected_reason,
+asm_csv.is_fully_rejected
 FROM tbl_bulk_assign_statutory AS asm
 INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statutory_id=asm.csv_assign_statutory_id
  WHERE
@@ -1140,9 +1144,10 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statut
   asm_csv.uploaded_by=user_id AND
   asm.csv_assign_statutory_id=csv_id AND
   (asm.action=3 OR asm_csv.is_fully_rejected=1)
-  ORDER BY asm_csv.uploaded_on DESC;
+  ORDER BY asm_csv.rejected_on, asm_csv.approved_on DESC
 
 END IF;
+
 END //
 DELIMITER ;
 

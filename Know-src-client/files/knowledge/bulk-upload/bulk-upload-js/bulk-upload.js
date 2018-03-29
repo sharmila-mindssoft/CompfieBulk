@@ -214,8 +214,8 @@ function downloadRejectedASMReportData(args, callback) {
     apiRequest("bu/assign_statutory", request, callback);
 }
 
-function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, <<
-    << << < HEAD le_name, d_names, u_names, callback) {
+function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name,
+  le_name, d_names, u_names, callback) {
     var request = [
         'DownloadAssignStatutory',
         {
@@ -229,24 +229,7 @@ function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name, <<
             "u_names": u_names
         }
     ];
-    apiRequest("bu/assign_statutory", request, callback); ===
-    === =
-    le_name, d_names, u_names, callback) {
-    var request = [
-        'DownloadAssignStatutory',
-        {
-            "cl_id": cl_id,
-            "le_id": le_id,
-            "d_ids": d_ids,
-            "u_ids": u_ids,
-            "cl_name": cl_name,
-            "le_name": le_name,
-            "d_names": d_names,
-            "u_names": u_names
-        }
-    ];
-    apiRequest("bu/assign_statutory", request, callback); >>>
-    >>> > KarthiKeyan / bulk - upload
+    apiRequest("bu/assign_statutory", request, callback);
 }
 
 function getUploadAssignStatutoryCSV(args, callback) {
@@ -388,8 +371,7 @@ function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
     apiRequest("bu/assign_statutory", request, callback);
 }
 
-function assignStatutoryActionInList(cl_id, le_id, csvid, action, <<
-    << << < HEAD remarks, password, callback) {
+function assignStatutoryActionInList(cl_id, le_id, csvid, action, remarks, password, callback) {
     var request = [
         'AssignStatutoryApproveActionInList',
         {
@@ -401,22 +383,7 @@ function assignStatutoryActionInList(cl_id, le_id, csvid, action, <<
             "password": password
         }
     ];
-    apiRequest("bu/assign_statutory", request, callback); ===
-    === =
-    remarks, password, callback) {
-    var request = [
-        'AssignStatutoryApproveActionInList',
-        {
-            "cl_id": cl_id,
-            "le_id": le_id,
-            "csv_id": csvid,
-            "bu_action": action,
-            "remarks": remarks,
-            "password": password
-        }
-    ];
-    apiRequest("bu/assign_statutory", request, callback); >>>
-    >>> > KarthiKeyan / bulk - upload
+    apiRequest("bu/assign_statutory", request, callback);
 }
 
 function getApproveMappingCSVList(cid, did, uid, callback) {
@@ -493,8 +460,8 @@ function getBulkClientUnitApproveRejectList(csv_id, f_count, r_range, callback) 
     apiRequest("bu/client_units", request, callback);
 }
 
-function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks, <<
-    << << < HEAD callback) {
+function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks,
+  callback) {
     var request = [
         'SaveAction',
         {
@@ -504,20 +471,7 @@ function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks, <<
             "remarks": remarks,
         }
     ];
-    apiRequest("bu/assign_statutory", request, callback); ===
-    === =
-    callback) {
-    var request = [
-        'SaveAction',
-        {
-            "as_id": as_id,
-            "csv_id": csvid,
-            "bu_action": action,
-            "remarks": remarks,
-        }
-    ];
-    apiRequest("bu/assign_statutory", request, callback); >>>
-    >>> > KarthiKeyan / bulk - upload
+    apiRequest("bu/assign_statutory", request, callback);
 }
 
 function confirmAssignStatutoryUpdateAction(csvid, cl_id, le_id, callback) {
@@ -543,26 +497,7 @@ function confirmClientUnitDeclination(csv_id, client_id, callback) {
     apiRequest("bu/client_units", request, callback);
 }
 
-function getBulkClientUnitListForFilterView(csvid, f_count, r_range, <<
-    << << < HEAD filter_le, filter_div, filter_cg, filter_u_loc, filter_u_code,
-    filter_domain, filter_orgn, callback) {
-    var request = [
-        'GetBulkClientUnitListForFilterView',
-        {
-            "csv_id": csvid,
-            "f_count": f_count,
-            "r_range": r_range,
-            "bu_le_name": filter_le,
-            "bu_division_name": filter_div,
-            "bu_category_name": filter_cg,
-            "bu_unit_location": filter_u_loc,
-            "bu_unit_code": filter_u_code,
-            "domain_name": filter_domain,
-            "orga_name": filter_orgn
-        }
-    ];
-    apiRequest("bu/client_units", request, callback) ===
-        === =
+function getBulkClientUnitListForFilterView(csvid, f_count, r_range,
         filter_le, filter_div, filter_cg, filter_u_loc, filter_u_code,
         filter_domain, filter_orgn, callback) {
     var request = [
@@ -580,8 +515,7 @@ function getBulkClientUnitListForFilterView(csvid, f_count, r_range, <<
             "bu_orgn": filter_orgn
         }
     ];
-    apiRequest("bu/client_units", request, callback) >>>
-        >>> > KarthiKeyan / bulk - upload
+    apiRequest("bu/client_units", request, callback)
 }
 
 function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback) {
