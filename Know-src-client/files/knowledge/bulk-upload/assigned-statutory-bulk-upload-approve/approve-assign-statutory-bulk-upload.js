@@ -1314,7 +1314,7 @@ $(document).ready(function() {
     STATUTE.pageLoad();
     PageControls();
     loadItemsPerPage();
-    // goToDetailsPage(33);
+    // goToDetailsPage(1);
     // LIST_VIEW.show();
     // STATUTE.fetchValues();
     $(".nicescroll").niceScroll();

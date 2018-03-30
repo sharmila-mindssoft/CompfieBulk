@@ -243,3 +243,7 @@
 .filter-multiselect .btn-group{
     width: 100% !important;
 }
+
+.break-word {
+    word-wrap: break-word;
+}
