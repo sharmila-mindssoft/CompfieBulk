@@ -1338,15 +1338,29 @@ CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
     view_data INT, s_status INT, c_status INT
 )
 BEGIN
-
-    SELECT distinct t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
+    
+    SELECT t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
-    (SELECT distinct client_group FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id = t1.csv_assign_statutory_id) as client_group,
+    (SELECT distinct client_group FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id = t1.csv_assign_statutory_id) as client_group
+    FROM tbl_bulk_assign_statutory_csv as t1
+    WHERE t1.csv_assign_statutory_id = csvid;
+
+    SELECT distinct t1.csv_assign_statutory_id,
     (SELECT count(0) FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id = t1.csv_assign_statutory_id) as total_count
     FROM tbl_bulk_assign_statutory_csv as t1
     inner join tbl_bulk_assign_statutory as t2 on
-    t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid;
+    t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid
+    AND IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
+    AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_name), 1)
+    AND IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
+    AND IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
+    AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
+    AND IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
+    AND IF(c_desc IS NOT NULL, t2.compliance_description = c_desc, 1)
+    AND IF(view_data IS NOT NULL, t2.action = view_data, 1)
+    AND IF(s_status IS NOT NULL, t2.statutory_applicable_status = s_status, 1)
+    AND IF(c_status IS NOT NULL, t2.compliance_applicable_status = c_status, 1);
 
     SELECT t2.bulk_assign_statutory_id,
     t2.unit_code, t2.unit_name, t2.unit_location,
@@ -1360,7 +1374,7 @@ BEGIN
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid
 
     AND IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
-    AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_name, unit_name), 1)
+    AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_name), 1)
     AND IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
     AND IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
