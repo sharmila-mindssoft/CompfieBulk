@@ -498,6 +498,7 @@ var message = {
   "confirm_success": "Action taken successfully",
   "invalid_csv_file": "Invalid CSV File Uploaded",
   "client_unit_file_max": "Client Unit Upload File Reached the Max Limit",
+  "reason_invalid":"Reason should accept only 0-9, A-Z, a-z, dot, comma, hyphen.",
 
 }
 
