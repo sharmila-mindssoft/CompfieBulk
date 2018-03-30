@@ -3123,8 +3123,9 @@ function getLoadConstants()
       TM_USER_CATEGORY=data.bu_constants[2].TechnoManager;
       TE_USER_CATEGORY=data.bu_constants[3].TechnoExecutive;
 
-      DE_USER_CATEGORY=data.bu_constants[4].DomainManager;
-      DM_USER_CATEGORY=data.bu_constants[5].DomainExecutive;
+      DM_USER_CATEGORY=data.bu_constants[4].DomainManager;
+      DE_USER_CATEGORY=data.bu_constants[5].DomainExecutive;
+
 
       SYSTEM_REJECTED_BY = data.bu_system_rejected_by;
       REJECTED_FILE_DOWNLOADCOUNT = data.bu_rejected_download_count;
