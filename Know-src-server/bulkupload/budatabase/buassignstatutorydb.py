@@ -411,9 +411,10 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
             csv_id, domain_name, unit_name, p_legis,
             s_legis, s_prov, c_task, c_desc, f_count, r_range,
             view_data, s_status, c_status
-        ], 2)
+        ], 3)
     header_info = result[0]
-    compliance_info = result[1]
+    count_info = result[1]
+    compliance_info = result[2]
 
     client_name = header_info[0]["client_group"]
     legal_entity_name = header_info[0]["legal_entity"]
@@ -423,8 +424,12 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
     csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
     upload_on = header_info[0]["uploaded_on"]
     upload_by = header_info[0]["uploaded_by"]
-    total_records = header_info[0]["total_count"]
+
+    total_records = 0
     as_data = []
+
+    if len(count_info) > 0:
+        total_records = count_info[0]["total_count"]
 
     if len(compliance_info) > 0:
         for idx, d in enumerate(compliance_info):
