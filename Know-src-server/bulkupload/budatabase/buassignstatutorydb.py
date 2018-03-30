@@ -666,7 +666,7 @@ def fetch_rejected_asm_download_csv_report(db, session_user, user_id,
                                            asm_unit_code, csv_id):
     domainIds = ''
     if(domain_ids is not None):
-        domainIds = convertArrayToString(domain_ids)
+        domainIds = ",".join(map(str, domain_ids))
     args = [client_id, le_id, domainIds, asm_unit_code, csv_id, user_id]
     data = db.call_proc('sp_rejected_asm_csv_report', args)
     return data
