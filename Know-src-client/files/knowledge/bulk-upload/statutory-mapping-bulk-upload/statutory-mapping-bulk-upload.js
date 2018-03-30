@@ -225,6 +225,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     docNames = response.doc_names;
                     UploadDocument.show();
                     DocumentSummary.hide();
+                    changeTxttoLabel(countryAc.val(), domainAc.val(), response.csv_name)
                 }
                 else {
                     DataSummary.hide();
@@ -282,26 +283,32 @@ BulkUploadStatutoryMapping.prototype.validateControls = function() {
     }
     return true;
 };
+BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
+    c_name, d_name, cav_name
+) {
+    txtCountryName.hide();
+    txtDomainName.hide();
+    lblCountryName.show();
+    lblDomainName.show();
+    lblCountryName.text(c_name);
+    lblDomainName.text(d_name);
+    inputFileControl.hide();
+    displayFileControl.show();
+    var cname_split = csv_name.split("_");
+    cname_split.pop();
+    var cname = cname_split.join("_") + ".csv";
+    $('.csv-file-name').text(cname);
+    $('.csv-file-view').attr("href", "/uploaded_file/csv/"+csv_name);
+    $('.csv-file-download').attr("href", "/uploaded_file/csv/"+csv_name);
+    this._ActionMode = "upload"
+};
 BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     this.showAddScreen();
     countryAc.val(data.c_name);
     countryVal.val(data.c_id);
     domainAc.val(data.d_name);
     domainVal.val(data.d_id);
-    txtCountryName.hide();
-    txtDomainName.hide();
-    lblCountryName.show();
-    lblDomainName.show();
-    lblCountryName.text(data.c_name);
-    lblDomainName.text(data.d_name);
-    inputFileControl.hide();
-    displayFileControl.show();
-    var cname_split = data.csv_name.split("_");
-    cname_split.pop();
-    var cname = cname_split.join("_") + ".csv";
-    $('.csv-file-name').text(cname);
-    $('.csv-file-view').attr("href", "/uploaded_file/csv/"+data.csv_name);
-    $('.csv-file-download').attr("href", "/uploaded_file/csv/"+data.csv_name);
+    this.changeTxttoLabel(data.c_name, data.d_name, data.csv_name)
     UploadDocument.show();
     DocumentSummary.show();
     DocumentTotal.text(data.no_of_documents);
@@ -309,7 +316,7 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     DocumentRemaining.text(
         parseInt(data.no_of_documents) - parseInt(data.uploaded_documents)
     );
-    this._ActionMode = "upload"
+
 
 };
 function key_search(mainList) {
@@ -436,12 +443,14 @@ function file_upload_rul() {
 Dropzone.autoDiscover = false;
 Dropzone.autoProcessQueue = false;
 var addedfiles = []
-var fileUploadSuccess = 0;
-
+var totalfileUploadSuccess = 0;
+var perQueueUploadSuccess = 0;
+var queueCount = 0;
+var maxParallelCount = 2;
 var myDropzone = new Dropzone("div#myDrop", {
     addRemoveLinks: true,
     autoProcessQueue: false,
-    parallelUploads: 10,
+    parallelUploads: maxParallelCount,
     url: "#",
     transformFile: function transformFile(file, done) {
       var zip = new JSZip();
@@ -461,15 +470,21 @@ var myDropzone = new Dropzone("div#myDrop", {
                 myDropzone.removeFile(file);
             }
             if (jQuery.inArray(file.name, docNames) == -1) {
-                console.log(file.name);
                 myDropzone.removeFile(file);
             }
             else {
                 addedfiles.push(file.name);
+                queueCount += 1;
             }
 
-
         });
+        this.on("removedfile", function(file) {
+            console.log(file.name);
+            if (jQuery.inArray(file.name, addedfiles) > -1) {
+                addedfiles.pop(file.name);
+                queueCount -= 1;
+            }
+        })
 
         this.on("processing", function(file) {
           this.options.url = file_upload_rul();
@@ -477,12 +492,16 @@ var myDropzone = new Dropzone("div#myDrop", {
 
         this.on("success", function(file, response) {
             addedfiles.pop(file.name);
-            if (fileUploadSuccess < docNames.length) {
-                fileUploadSuccess += 1;
+            if (totalfileUploadSuccess < queueCount) {
+                totalfileUploadSuccess += 1;
+                perQueueUploadSuccess += 1;
             }
-            console.log(fileUploadSuccess);
-            console.log(docNames.length);
-            if (fileUploadSuccess == docNames.length) {
+
+            if (perQueueUploadSuccess == maxParallelCount) {
+                perQueueUploadSuccess = 0;
+                myDropzone.processQueue();
+            }
+            if (totalfileUploadSuccess == queueCount) {
                 myDropzone.removeAllFiles(true);
                 hideLoader()
                 displaySuccessMessage(message.document_upload_success)

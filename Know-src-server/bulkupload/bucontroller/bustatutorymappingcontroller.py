@@ -226,7 +226,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                         request_frame.d_name, session_user.user_id()
                     )
                     result = bu_sm.UploadStatutoryMappingCSVValidSuccess(
-                        new_csv_id,
+                        new_csv_id, res_data["csv_name"],
                         res_data["total"], res_data["valid"],
                         res_data["invalid"],
                         res_data["doc_count"], res_data["doc_names"]
@@ -322,18 +322,15 @@ def update_statutory_mapping_action(db, request_frame, session_user):
             db, csv_id, country_id, domain_id, session_user
         )
         if action == 1:
-            print "Object init"
             is_declined = cObj.perform_validation_before_submit()
-            print "After validation"
-            print is_declined
-            if len(is_declined) > 0:
-                return bu_sm.ValidationSuccess(len(is_declined))
+            if len(is_declined.keys()) > 0:
+                return bu_sm.ValidationSuccess(len(is_declined.keys()))
             else:
                 if (update_approve_action_from_list(
                         db, csv_id, action, remarks, session_user
                 )):
-                    print "after temp db update"
-                    cObj.format_download_process_initiate(csv_id)
+                    if cObj._doc_count > 0 :
+                        cObj.format_download_process_initiate(csv_id)
                     cObj.frame_data_for_main_db_insert()
                     cObj.save_manager_message(
                         action, cObj._csv_name, cObj._country_name,
@@ -371,10 +368,11 @@ def submit_statutory_mapping(db, request_frame, session_user):
             db, csv_id, country_id, domain_id, session_user
         )
         is_declined = cObj.perform_validation_before_submit()
-        if len(is_declined) > 0:
-            return bu_sm.ValidationSuccess(len(is_declined))
+        if len(is_declined.keys()) > 0:
+            return bu_sm.ValidationSuccess(len(is_declined.keys()))
         else:
-            cObj.format_download_process_initiate(csv_id)
+            if cObj._doc_count > 0 :
+                cObj.format_download_process_initiate(csv_id)
             cObj.save_manager_message(
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
                 session_user.user_id()
@@ -398,8 +396,10 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
             db, csv_id, country_id, domain_id, session_user
         )
         is_declined = cObj.perform_validation_before_submit()
-        if len(is_declined) > 0:
-            cObj.format_download_process_initiate(csv_id)
+        if len(is_declined.keys()) > 0:
+
+            if cObj._doc_count > 0 :
+                cObj.format_download_process_initiate(csv_id)
             cObj.frame_data_for_main_db_insert()
             cObj.make_rejection(is_declined)
             cObj.save_manager_message(
@@ -590,7 +590,8 @@ def download_rejected_sm_report(db, request_frame, session_user):
                       "statutory_month", "statutory_date", "trigger_before",
                       "repeats_every", "repeats_type", "repeat_by",
                       "duration", "duration_type", "multiple_input",
-                      "format_file", "rejected_reason", "remarks"]
+                      "format_file", "remarks", "rejected_reason",
+                      "is_fully_rejected"]
 
     csv_column_name = ["Organization*", "Applicable_Location*",
                        "Statutory_Nature*", "Statutory*",
@@ -604,7 +605,7 @@ def download_rejected_sm_report(db, request_frame, session_user):
                        "Repeats_Type", "Repeats_By (DOM/EOM)",
                        "Duration", "Duration_Type",
                        "Multiple_Input_Section", "Format",
-                       "Rejected_Reason", "Error_Description"]
+                       "Error_Description"]
 
     csv_name = get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id)
     source_data = fetch_rejected_sm_download_csv_report(db,

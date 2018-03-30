@@ -5,6 +5,8 @@ var ADDSCREEN = $("#add-screen");
 var VIEWSCREEN = $("#list-screen");
 var ADDBUTTON = $("#btn-add");
 var DOWNLOADBUTTON = $("#btnDownloadFile");
+var SUBMITBUTTON = $(".btn_submit");
+
 var DIVUPLOAD = $('#divUploadFile');
 var UploadFile = $("#fileInput");
 var LegalEntityNameLabel = $(".legal-entity-name");
@@ -71,8 +73,6 @@ function loadUnits(le_id, unit_id) {
             $.each(unitList, function(key, u) {
                 unit_list_map[parseInt(u["unit_id"])] = u["unit_code"]
             });
-            console.log("unitList" + unitList);
-            console.log("unit_list_map" + unit_list_map);
         }
     });
 }
@@ -112,6 +112,8 @@ function loadEntityDetails() {
 
         loadUnits(parseInt(LegalEntityId.val()));
         // ShowButton.trigger("click");
+        getPastRecords(parseInt(LegalEntityId.val()));
+
     }
 }
 
@@ -158,8 +160,6 @@ function validateUpload() {
             "csv_data": csvInfo["file_content"],
             "csv_size": csvInfo["file_size"],
             "legal_entity_id": parseInt(LegalEntityId.val())
-                // "d_id": hdnDomain.val(),
-                // "unit_id": hdnUnit.val()
         };
 
         buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
@@ -177,6 +177,12 @@ function validateUpload() {
                 INVALIDERROR.text("0");
                 $('.view-summary').hide();
                 $('.dropbtn').hide();
+                $('#hdnCsvId').val(data.new_csv_id);
+                $('.successFileName').text(data.csv_name);
+                csv_path = "../../../../../uploaded_file/csv/" + data.csv_name;
+                $('.uploaded_data').attr("href", csv_path);
+                $('.uploaded_data').attr("download", csv_path);
+                // attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
 
                 $('.invaliddata').hide();
                 $('.view-summary').hide();
@@ -188,14 +194,12 @@ function validateUpload() {
                 displaySuccessMessage("Records uploaded successfully");
                 hideLoader();
             } else {
-                // displayMessage(message.upload_failed);
                 displayMessage(message.upload_failed);
                 INVALIDFILENAME = data.invalid_file.split('.');
                 TOTALRECORD.text(data.total);
                 var getValidCount = (parseInt(data.total) -
                     parseInt(data.invalid));
                 VALIDRECORD.text(getValidCount);
-                VALIDRECORD.text("");
                 INVALIDRECORD.text(data.invalid);
                 MANDATORYERROR.text(data.mandatory_error);
                 DUPLICATEERROR.text(data.duplicate_error);
@@ -295,6 +299,10 @@ function pageControls() {
     BTNUPLOAD.click(function() {
         validateUpload();
     });
+
+    SUBMITBUTTON.click(function() {
+        submitUpload();
+    });
 }
 
 BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
@@ -302,7 +310,7 @@ BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
 };
 
 function downloadData() {
-    if (LegalEntityName.val().trim() == "") {
+    if (LegalEntityId.val().trim() == "") {
         displayMessage(message.legalentity_required);
         LegalEntityName.focus();
         return false;
@@ -317,18 +325,17 @@ function downloadData() {
         txtUnit.focus();
         return false;
     }
-    var legalEntityName = LegalEntityName.val();
+    // var legalEntityName = LegalEntityName.val();
+    var legalEntityName = LegalEntityNameLabel.text();
+    console.log(LegalEntityNameLabel.text());
     var domainName = txtdomain.val();
     var unitName = txtUnit.val();
-    //Todo Get Unit Code
-
     var leId = LegalEntityId.val();
     var domainId = hdnDomain.val();
     var unitId = hdnUnit.val();
     var unitCode = unit_list_map[unitId];
     var frequency = "Periodical";
     var startCount = 0;
-    // console.log("^^^^^^^^^^^^" + unitId + " " + unitCode);
 
     buClient.getDownloadData(
         parseInt(leId), parseInt(domainId), parseInt(unitId), frequency, startCount,
@@ -351,36 +358,40 @@ function downloadData() {
     );
 }
 
+function submitUpload() {
+    // console.log("csvid>>" + $('#hdnCsvId').val());
+    // buClient.saveBulkRecords(parseInt($('#hdnCsvId').val()),
+    //     function(error, data) {
+    //         if (error == null) {
+
+    //         } else {
+
+    //         }
+    //     }
+    // );
+
+    var args = {
+        "new_csv_id": parseInt($('#hdnCsvId').val()),
+        "legal_entity_id": parseInt(LegalEntityId.val())
+    };
+
+    buClient.saveBulkRecords(args, function(error, data) {
+        if (error == null) {
+            VIEWSCREEN.show();
+            ADDSCREEN.hide();
+            displaySuccessMessage("Record Submitted successfully");
+        } else {
+
+        }
+    });
+}
+
+
+
 $(function() {
     loadEntityDetails();
 
 });
-
-// function pageControls() {
-//     // Cancel Button Click Event
-//     CANCELBUTTON.click(function() {
-//         VIEWSCREEN.show();
-//         ADDSCREEN.hide();
-//     });
-
-//     //Add Button Click Event
-//     ADDBUTTON.click(function() {
-//         VIEWSCREEN.hide();
-//         ADDSCREEN.show();
-//         // DIVUPLOAD.hide();
-//     });
-
-//     //Add Button Click Event
-//     DOWNLOADBUTTON.click(function() {
-//         downloadData();
-//     });
-
-//     //Upload Button Click Event
-//     BTNUPLOAD.click(function() {
-//         validateUpload();
-//     });
-
-// }
 
 BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
     displayMessage(error);

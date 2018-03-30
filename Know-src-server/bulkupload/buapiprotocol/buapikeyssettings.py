@@ -57,7 +57,6 @@ bu_api_params = {
         'type': 'BOOL', 'length': None, 'validation_method': None,
         'is_optional': False
     },
-
     'doc_count': {
         'type': 'INT', 'length': None, 'validation_method': None,
         'is_optional': False
@@ -540,7 +539,7 @@ bu_api_params = {
     'clientdata': {
         'type': 'VECTOR_TYPE', 'length': None,
         'validation_method': None, 'is_optional': False,
-        'module_name': client_units, "class_name": "StatutoryReportData"
+        'module_name': client_units, "class_name": "ClientReportData"
     },
 
     'bu_legal_entity_id': {
@@ -554,7 +553,7 @@ bu_api_params = {
     'assign_statutory_data': {
         'type': 'VECTOR_TYPE', 'length': None,
         'validation_method': None, 'is_optional': False,
-        'module_name': assign_statutory, "class_name": "StatutoryReportData"
+        'module_name': assign_statutory, "class_name": "AssignStatutoryReportData"
     },
 
     'rejected_unit_data': {
@@ -652,7 +651,7 @@ bu_api_params = {
     },
     'rejected_reason': {
         'type': 'STRING', 'length': 500,
-        'validation_method': is_alphabet, 'is_optional': True
+        'validation_method': is_alpha_numeric, 'is_optional': True
     },
 
     "c_names": {
@@ -740,8 +739,8 @@ bu_api_params = {
         'validation_method': None, 'is_optional': True
     },
     'bu_postal_code': {
-        'type': 'INT', 'length': None,
-        'validation_method': is_numeric, 'is_optional': False
+        'type': 'TEXT', 'length': None,
+        'validation_method': None, 'is_optional': False
     },
     'bu_city': {
         'type': 'STRING', 'length': 50,
@@ -803,5 +802,6 @@ bu_api_params = {
         'length': None,
         'validation_method': None,
         'is_optional': False,
-        'module_name': assign_statutory, "class_name": "AssignedUnits"},
+        'module_name': assign_statutory, "class_name": "AssignedUnits"
+    },
 }

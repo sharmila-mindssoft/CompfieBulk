@@ -7,7 +7,7 @@ from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    CSV_DELIMITER
+    CSV_DELIMITER, DM_USER_CATEGORY, DE_USER_CATEGORY
 )
 from server.exceptionmessage import fetch_error
 
@@ -368,7 +368,10 @@ def get_assign_statutory_by_csv_id(db, request_frame, session_user):
             if idx == 0:
                 client_name = "Client Name"
                 legal_entity_name = d["legal_entity"]
-                csv_name = d["csv_name"]
+
+                file_name = d["csv_name"].split('.')
+                remove_code = file_name[0].split('_')
+                csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
                 upload_on = d["uploaded_on"]
                 upload_by = d["uploaded_by"]
             as_data.append(bu_as.AssignStatutoryData(
@@ -414,7 +417,10 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
 
     client_name = header_info[0]["client_group"]
     legal_entity_name = header_info[0]["legal_entity"]
-    csv_name = header_info[0]["csv_name"]
+
+    file_name = header_info[0]["csv_name"].split('.')
+    remove_code = file_name[0].split('_')
+    csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
     upload_on = header_info[0]["uploaded_on"]
     upload_by = header_info[0]["uploaded_by"]
     total_records = header_info[0]["total_count"]
@@ -599,9 +605,10 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
         unitId = ''
 
     if(len(dependent_users) > 0):
-        if(user_category_id == 7):
+        if(user_category_id == DM_USER_CATEGORY):
             user_ids = ",".join(map(str, dependent_users))
-        elif(user_category_id == 8 and user_category_id != 7):
+        elif(user_category_id == DE_USER_CATEGORY and
+             user_category_id != DM_USER_CATEGORY):
             user_ids = ",".join(map(str, dependent_users))
         else:
             user_ids = user_id

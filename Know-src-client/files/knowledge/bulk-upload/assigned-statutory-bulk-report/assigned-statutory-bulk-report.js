@@ -40,13 +40,6 @@ var UNIT = $('#unitid');
 var DOMAIN = $('#domain');
 
 /**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECT_BY = "COMPFIE";
 
 function AssignStatutoryBulkReport() {}
 
@@ -846,8 +839,6 @@ function loadCountwiseResult(data) {
         approvedRejectedBy = '';
         approvedRejectedTasks = '-';
 
-        alert(declinedCount);
-
         $(ALL_USER_INFO).each(function(key, value) {
             if (parseInt(uploadedBy) == value["user_id"]) {
                 EmpCode = value["employee_code"];
@@ -874,14 +865,19 @@ function loadCountwiseResult(data) {
         }
 
         if(declinedCount != null && declinedCount >= 1) {
-            approvedRejectedBy = SYSTEM_REJECT_BY;
-            approvedRejectedOn = String(rejectedOn);
+            approvedRejectedBy = SYSTEM_REJECTED_BY;
+            approvedRejectedOn = '';
+            if(rejectedOn != null){
+                approvedRejectedOn = String(rejectedOn);
+            }
         }
-        else if (rejectedOn != null && rejectedOn != '' && declinedCount == 0){
+        else if (rejectedOn != null && rejectedOn != '' &&
+            (declinedCount == 0 || declinedCount == null)){
             approvedRejectedOn = String(rejectedOn);
             approvedRejectedBy = rejectedByName;
         }
-        else if (approvedOn != null && approvedOn != '' && declinedCount == 0){
+        else if (approvedOn != null && approvedOn != '' &&
+            (declinedCount == 0 || declinedCount == null)){
             approvedRejectedOn = String(approvedOn);
             approvedRejectedBy = approvedByName;
         }
@@ -913,6 +909,7 @@ function loadCountwiseResult(data) {
 }
 
 $(function() {
+    mirror.getLoadConstants();
     REPORT_VIEW.hide();
     asBulkReport.pageControls();
     initialize();
@@ -944,10 +941,10 @@ AssignStatutoryBulkReport.prototype.exportData = function() {
     var splitValues;
 
     var selectedDomain = [];
-    $.each(domain_ids, function(key, value) {
+    $.each(domainIds, function(key, value) {
         selectedDomain.push(parseInt(value));
     });
-
+    console.log("selectedDomain-> "+ selectedDomain);
     if (UNIT.val()) {
         unitID = UNIT.val();
     }
