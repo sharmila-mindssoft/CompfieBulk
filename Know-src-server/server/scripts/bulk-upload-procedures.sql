@@ -913,7 +913,7 @@ BEGIN
   tbl_bsm_csv.uploaded_on,
   LEFT(tbl_bsm_csv.csv_name, LENGTH(tbl_bsm_csv.csv_name) - LOCATE('_', REVERSE(tbl_bsm_csv.csv_name))) AS csv_name,
   tbl_bsm_csv.total_records,
-  tbl_bsm_csv.total_rejected_records,
+  (IFNULL(tbl_bsm_csv.total_rejected_records, 0) + IFNULL(tbl_bsm_csv.declined_count, 0)) AS total_rejected_records,
   tbl_bsm_csv.approved_by,
   tbl_bsm_csv.rejected_by,
   tbl_bsm_csv.approved_on,

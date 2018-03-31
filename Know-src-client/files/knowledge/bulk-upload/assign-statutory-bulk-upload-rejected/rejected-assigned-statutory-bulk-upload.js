@@ -93,6 +93,10 @@ function pageControls() {
     });
 
     UNIT_VAL.keyup(function(e) {
+
+    isValid = ASM_BULK_REPORT_CLASS.validateMandatory();
+    if(isValid == true)
+    {
         var clientId = GROUP_ID.val();
         var legalEntityId = LEGAL_ENTITY.val();
         var domainIds = DOMAIN.val();
@@ -129,6 +133,7 @@ function pageControls() {
                     onAutoCompleteSuccess(UNIT_VAL, UNIT, val);
                 });
         }
+    }
     });
 
     SHOW_BTN.click(function() {
@@ -370,7 +375,7 @@ function loadCountwiseResult(filterList) {
                 if (parseInt(filterList[entity].rejected_by) == value["user_id"]) {
                     empCode = value["employee_code"];
                     empName = value["employee_name"];
-                    rejectedBy = empCode + " - " + empName.toUpperCase();
+                    rejectedBy = empCode + " - " + empName;
                 }
             });
         } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {

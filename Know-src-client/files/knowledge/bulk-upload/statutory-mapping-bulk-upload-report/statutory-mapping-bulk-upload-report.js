@@ -270,7 +270,7 @@ function processSubmit() {
         hideLoader();
         if (TOTAL_RECORD == 0) {
             $('.tbody-compliance').empty();
-            var tr = $();
+            var tr = $('#nocompliance_templates .table-nocompliances-list .table-row');
             var tr_row = tr.clone();
             $('.tbl-norecords', tr_row).text('No Records Found');
             $('.tbody-compliance').append(tr_row);
