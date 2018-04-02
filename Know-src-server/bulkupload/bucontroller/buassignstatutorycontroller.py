@@ -546,7 +546,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
     csv_column_name = ["Client_Group", "Legal_Entity",
                        "Domain", "Organisation",
                        "Unit_Code", "Unit_Name",
-                       "Location",
+                       "Unit_Location",
                        "Primary_Legislation", "Secondary_Legislaion",
                        "Statutory_Provision", "Compliance_Task_Name",
                        "Compliance_Description",

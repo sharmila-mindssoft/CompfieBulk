@@ -270,8 +270,10 @@ def write_download_data_to_excel(
 
     for idx, dat in enumerate(column_data):
         for i, h in enumerate(headers):
-
             if(h == "remarks"):
+                print "is_fully_rejected >>>>>>"
+                print dat.get("is_fully_rejected")
+
                 if(dat.get("is_fully_rejected") == 1):
                     d = str(dat.get("rejected_reason"))
                 else:

@@ -57,7 +57,7 @@ function hideLoader() {
 //load all the filters
 function initialize() {
     function onSuccess(data) {
-        DomainList = data.domains;
+        DOMAIN_LIST = data.domains;
         console.log("initialize");
         allUserInfoList();
         resetAllFilter();
@@ -83,6 +83,7 @@ function initialize() {
 function UserGroupDetails() {
     function onSuccess(data) {
         CLIENT_LIST = data.usermapping_groupdetails;
+        console.log(CLIENT_LIST);
         LEGEL_ENTITY_LIST = data.usermapping_legal_entities;
         ASSIGNED_UNIT_LIST = data.statutory_unit;
         resetAllFilter();
@@ -202,12 +203,10 @@ function processPaging() {
     if (TOTAL_RECORD == 0) {
         /*loadHeader();*/
         hideLoader();
-        $('.tbody-usermappingdetails-list').empty();
-        var tableRow4 = $('#no-record-templates .table-no-content '+
-                          '.table-row-no-content');
-        var clone4 = tableRow4.clone();
-        $('.no_records', clone4).text('No Records Found');
-        $('.tbody-usermappingdetails-list').append(clone4);
+        var tr = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        var tr_row = tr.clone();
+        $('.tbl-norecords', tr_row).text('No Records Found');
+        $('.tbody-compliance').append(tr_row);
         //ExportButton.hide();
         PAGINATION_VIEW.hide();
 
@@ -267,10 +266,11 @@ function loadUserMappingDetailsList() {
 
     if (domainsList.length > 0) {
         var i = 0;
+        console.log("domainsList >>>>");
+        console.log(domainsList);
         for (i = 0; i < domainsList.length; i++) {
             isNull = false;
             var domName = domainsList[i].domain_name;
-            console.log("Dom name- >>> " + domName);
             $('.usermapping-header th:last-child').each(function() {
                 for (var j = 1; j <= 2; j++) {
                     var clone = $(this).clone().html('&nbsp;');
@@ -364,7 +364,7 @@ function loadUserMappingDetailsList() {
 function allUserInfoList() {
     function onSuccess(data) {
         ALL_USER_INFO = data.user_details;
-        console.log("allUserInfoList");
+        /*console.log("allUserInfoList");*/
         loadCurrentUserDetails();
     }
 
@@ -388,14 +388,14 @@ function loadCurrentUserDetails() {
     var domainUserDetails = {};
     $.each(ALL_USER_INFO, function(key, value) {
         if (user.user_id == value["user_id"]) {
-            console.log("==>>>>");
-            console.log(user.user_id +"=="+ value["user_id"]);
+            /*console.log("==>>>>");
+            console.log(user.user_id +"=="+ value["user_id"]);*/
             USER_CATEGORY_ID = value["user_category_id"];
             loggedUserId = value["user_id"];
         }
     });
-    console.log(USER_CATEGORY_ID +"=="+ DE_USER_CATEGORY);
-    console.log(USER_CATEGORY_ID == DE_USER_CATEGORY);
+    /*console.log(USER_CATEGORY_ID +"=="+ DE_USER_CATEGORY);
+    console.log(USER_CATEGORY_ID == DE_USER_CATEGORY);*/
 
     if (USER_CATEGORY_ID == DE_USER_CATEGORY) {
         // KE-Name  : Knowledge-Executive
@@ -421,25 +421,11 @@ function getUserMappingsList(loggedUserID) {
     DE_NAME.multiselect('rebuild');
 
     function onSuccess(loggedUserID, data) {
-        console.log("getUserMappingsList");
         var userMappingData = data;
         var d, childUserId;
-
-        console.log(userMappingData.user_mappings);
-
         $.each(userMappingData.user_mappings, function(key, value) {
-            console.log("loggedUserID == value.parent_user_id");
-            console.log(value.parent_user_id);
-            console.log(loggedUserID);
-
             if (loggedUserID == value.parent_user_id) {
                 childUserId = value.child_user_id;
-
-                console.log("loggedUserID");
-                console.log(loggedUserID);
-
-                console.log("childUserId");
-                console.log(childUserId);
 
                 if (jQuery.inArray(childUserId, DOMAIN_EXECUTIVES) == -1) {
 
@@ -476,7 +462,7 @@ function getUserMappingsList(loggedUserID) {
                 option.val(value["user_id"]);
                 option.text(value["employee_code"] + " - "
                     + value["employee_name"]);
-                $('#domain-name').append(option);
+                DE_NAME.append(option);
                 domainName = value["employee_code"] + " - " +
                     value["employee_name"];
 
@@ -487,7 +473,7 @@ function getUserMappingsList(loggedUserID) {
                 ALLUSERS.push(domainUserDetails);
             }
         });
-        $('#domain-name').multiselect('rebuild');
+        DE_NAME.multiselect('rebuild');
     }
 
 
@@ -712,6 +698,8 @@ function loadDomains() {
     var APIClientID;
     var APILegalEntityID;
     var countriesList = [];
+    console.log("CLIENT_LIST >>>>>");
+    console.log(CLIENT_LIST);
     $.each(CLIENT_LIST, function(key, value) {
         APIClientID = parseInt(value["client_id"]);
         APILegalEntityID = parseInt(value["legal_entity_id"]);
@@ -730,7 +718,7 @@ function getDomainByCountryID(countriesList) {
         var cId = countryId;
         var flag = true;
 
-        $.each(DomainList, function(key1, v) {
+        $.each(DOMAIN_LIST, function(key1, v) {
             if (v.is_active == false) {
                 return;
             }
@@ -817,7 +805,7 @@ function processSubmit() {
             $('.tbody-compliance').empty();
             var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
             var clone4 = tableRow4.clone();
-            $('.tbl_norecords', clone4).text('No Records Found');
+            $('.tbl-norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
             PAGINATION_VIEW.hide();
             REPORT_VIEW.show();
@@ -861,10 +849,9 @@ function loadCountwiseResult(data) {
     var rejectedOn, rejectedBy, reasonRejection, totalApproveRecords;
     var rejReason, domainName, approvedOn, approvedBy, declinedCount;
     var approvedRejectedOn, approvedRejectedBy, approvedRejectedTasks;
-    var domain;
+    var domain, approvedByName, rejectedByName;
 
     for (var entity in data) {
-
         isNull = false;
         SNO = parseInt(SNO) + 1;
         domain = data[entity].domain;
@@ -992,7 +979,7 @@ AssignStatutoryBulkReport.prototype.exportData = function() {
     $.each(domainIds, function(key, value) {
         selectedDomain.push(parseInt(value));
     });
-    console.log("selectedDomain-> "+ selectedDomain);
+
     if (UNIT.val()) {
         unitID = UNIT.val();
     }
