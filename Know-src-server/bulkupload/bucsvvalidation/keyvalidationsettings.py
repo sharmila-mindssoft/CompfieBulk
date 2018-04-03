@@ -185,7 +185,8 @@ def is_domain_orgn(value) :
     else :
         return False
 
-def parse_csv_dictionary_values(key , val) :
+
+def parse_csv_dictionary_values(key, val):
 
     error_count = {
         "mandatory": 0,
@@ -194,7 +195,7 @@ def parse_csv_dictionary_values(key , val) :
     }
     csvparam = csv_params.get(key)
 
-    if csvparam is None :
+    if csvparam is None:
         raise ValueError('%s is not configured in csv parameter' % (key))
 
     _mandatory = csvparam.get("check_mandatory")
@@ -202,30 +203,29 @@ def parse_csv_dictionary_values(key , val) :
     _validation_method = csvparam.get("validation_method")
 
     msg = []
-    if _mandatory is True and (len(val) == 0 or val == '') :
+    if _mandatory is True and (len(val) == 0 or val == ''):
         msg.append(key + " - Field is blank")
         error_count["mandatory"] = 1
 
-    if _maxlength is not None and len(val) > _maxlength :
-        msg.append(key + " - Cannot exceed max length")
+    if _maxlength is not None and len(val) > _maxlength:
+        msg.append(key + " - " + val +" Cannot exceed max length")
         error_count["max_length"] = 1
 
     if val != "":
-        if _validation_method is not None :
+        if _validation_method is not None:
             _result = _validation_method(val)
-            if _result is False :
-                msg.append(key + " - Invalid character")
+            if _result is False:
+                msg.append(key + " - " + val + " Invalid character")
                 error_count["invalid_char"] = 1
 
             elif _result is not True:
                 msg.append("%s - %s" % (key, _result))
                 error_count["max_length"] += 1
 
-    if len(msg) == 0 :
+    if len(msg) == 0:
         return True, error_count
-    else :
+    else:
         return msg, error_count
-
 
 
 def parse_csv_dictionary_values_as(key, val):

@@ -185,7 +185,7 @@ class StatutorySource(object):
         return True
 
     def check_organization(self, organization_name):
-        return self.check_base(True,  self.Organization, organization_name)
+        return self.check_base(True, self.Organization, organization_name)
 
     def check_statutory_nature(self, nature):
         return self.check_base(True, self.Statutory_Nature, nature)
@@ -703,8 +703,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         }
 
     def compare_csv_columns(self):
-        print self._csv_column_name
-        print self._csv_header
+        print "self._csv_column_name->> ", self._csv_column_name
+        print "self._csv_header--->", self._csv_header
         res = collections.Counter(
             self._csv_column_name
         ) == collections.Counter(self._csv_header)
@@ -845,11 +845,12 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                                 unboundMethod = self._check_method_maps.get(
                                     key
                                 )
+                                print "v-> ", v
                                 if unboundMethod is not None:
                                     isFound = unboundMethod(v)
 
                                 if isFound is not True and isFound != "":
-                                    msg = "%s - %s" % (key, isFound)
+                                    msg = "%s - %s %s" % (key, v, isFound)
                                     print msg
                                     print row_idx
                                     if res is not True:
