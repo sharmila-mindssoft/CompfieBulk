@@ -7,7 +7,7 @@ from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    CSV_DELIMITER
+    CSV_DELIMITER, DM_USER_CATEGORY, DE_USER_CATEGORY
 )
 from server.exceptionmessage import fetch_error
 
@@ -599,9 +599,10 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
         unitId = ''
 
     if(len(dependent_users) > 0):
-        if(user_category_id == 7):
+        if(user_category_id == DM_USER_CATEGORY):
             user_ids = ",".join(map(str, dependent_users))
-        elif(user_category_id == 8 and user_category_id != 7):
+        elif(user_category_id == DE_USER_CATEGORY and
+             user_category_id != DM_USER_CATEGORY):
             user_ids = ",".join(map(str, dependent_users))
         else:
             user_ids = user_id
@@ -665,7 +666,7 @@ def fetch_rejected_asm_download_csv_report(db, session_user, user_id,
                                            asm_unit_code, csv_id):
     domainIds = ''
     if(domain_ids is not None):
-        domainIds = convertArrayToString(domain_ids)
+        domainIds = ",".join(map(str, domain_ids))
     args = [client_id, le_id, domainIds, asm_unit_code, csv_id, user_id]
     data = db.call_proc('sp_rejected_asm_csv_report', args)
     return data

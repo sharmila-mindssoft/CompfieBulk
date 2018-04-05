@@ -654,7 +654,7 @@ bu_api_params = {
     },
     'rejected_reason': {
         'type': 'STRING', 'length': 500,
-        'validation_method': is_alphabet, 'is_optional': True
+        'validation_method': is_alpha_numeric, 'is_optional': True
     },
 
     "c_names": {

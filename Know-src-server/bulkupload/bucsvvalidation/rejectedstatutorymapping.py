@@ -38,13 +38,12 @@ class ValidateRejectedDownloadBulkData():
             for key in self._csv_header:
                 v_col_key = data.get(key)
 
-                if (key == "remarks" and v_col_key is not None):
+                if (key == "remarks" and v_col_key is not None and v_col_key != ''):
                     split_key_value = v_col_key.strip().split(CSV_DELIMITER)
-
                     for summary_row_title in split_key_value:
                         row_value = summary_row_title.strip().split(' - ')
 
-                        if(row_value[1] != ""):
+                        if(row_value is not None and len(row_value) >= 2):
                             summary_key = row_value[0].lower()
                             summary_key = summary_key.replace(" ", "_")
                             e_count = mapped_header_dict[summary_key]
@@ -57,6 +56,9 @@ class ValidateRejectedDownloadBulkData():
                                 mapped_header_dict[summary_key] = int(1)
                                 is_return = True
                 elif(key == "remarks" and v_col_key is None):
+                    is_return = True
+                elif(key is "is_fully_rejected" or key is "rejected_reason"):
+                    mapped_header_dict[key] = ''
                     is_return = True
                 else:
                     if(sno == 1):

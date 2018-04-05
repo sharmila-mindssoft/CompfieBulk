@@ -110,7 +110,7 @@ class PastDataJsonToCSV(object):
                         assignee_name = comp.assignee_name
                         is_header = True
                         csv_values = [
-                            le_name, domain_name, unit_name, unit_code,
+                            le_name, domain_name, unit_code, unit_name,
                             level_statu_name, "",
                             compliance_name, description,
                             compliance_task_frequency, statutory_date,

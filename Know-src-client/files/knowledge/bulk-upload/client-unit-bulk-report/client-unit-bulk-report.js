@@ -8,7 +8,9 @@ var EXPORT_BTN = $('#export');
 var FROM_DATE = $("#from_date");
 var TO_DATE = $("#to_date");
 var TE_NAME = $('#tename_tmanager');
-var EXISTING_USER_ID = [];
+var CLIENT_EXECUTIVES = [];
+var ALLUSERS = [];
+
 var CSV = false;
 var USER_CATEGORY_ID = 0;
 var TECHNO_EXECUTIVES = [];
@@ -24,14 +26,6 @@ var SNO = 0;
 var TOTAL_RECORD;
 var REPORT_VIEW = $('.grid-table-rpt');
 
-/**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECT_BY = "COMPFIE";
 
 // Instance Creation of the page class
 var clientUnitBulkReport = new ClientUnitBulkReport();
@@ -162,7 +156,7 @@ function processSubmit() {
     }
     /* multiple TechExec Names selection in to generate array */
     if ($('#tename_tmanager option:selected').text() == "") {
-        selectedTEName = EXISTING_USER_ID; // When execute unselected the Field.
+        selectedTEName = CLIENT_EXECUTIVES; // When execute unselected the Field.
     } else {
         $.each(teIds, function(key, value) {
             selectedTEName.push(parseInt(value));
@@ -299,7 +293,7 @@ function fetchFiltersData() {
 }
 
 // Loading Page according to Current User ie., Techno exec or Techno Manager
-function loadCurrentUserDetails() {
+/*function loadCurrentUserDetails() {
     var user = mirror.getUserInfo();
     var loggedUserId = 0;
     $.each(ALL_USER_INFO, function(key, value) {
@@ -314,10 +308,48 @@ function loadCurrentUserDetails() {
         $('.active-techno-executive').attr('style', 'display:block');
         $('#techno_name').text(user.employee_code + " - " +
                                user.employee_name.toUpperCase());
-        EXISTING_USER_ID.push(loggedUserId);
+        CLIENT_EXECUTIVES.push(loggedUserId);
     } else if (USER_CATEGORY_ID == 5 && USER_CATEGORY_ID != 6
         && loggedUserId > 0) {
         // TE-Name  : Techno-Manager
+        getUserMappingsList(loggedUserId);
+    }
+}*/
+
+function loadCurrentUserDetails() {
+    var user = mirror.getUserInfo();
+    var loggedUserId = 0;
+    var clientName;
+    var clientUserDetails = {};
+    $.each(ALL_USER_INFO, function(key, value) {
+        if (user.user_id == value["user_id"]) {
+            console.log("==>>>>");
+            console.log(user.user_id +"=="+ value["user_id"]);
+            USER_CATEGORY_ID = value["user_category_id"];
+            loggedUserId = value["user_id"];
+        }
+    });
+    if (USER_CATEGORY_ID == TE_USER_CATEGORY) {
+        console.log("USER_CATEGORY_ID" +"=="+ "TE_USER_CATEGORY");
+
+        console.log(USER_CATEGORY_ID +"=="+ TE_USER_CATEGORY);
+        // KE-Name  : ClientUnit-Executive
+        clientName = user.employee_code + " - " + user.employee_name;
+        $('.active-techno-executive').removeClass("default-display-none");
+        $('#techno_name').html(clientName);
+        clientUserDetails = {
+            /*"user_name":clientName,*/
+            "user_id": user.user_id
+        }
+        ALLUSERS.push(clientUserDetails);
+        CLIENT_EXECUTIVES.push(user.user_id);
+    } else if (USER_CATEGORY_ID == TM_USER_CATEGORY
+        && USER_CATEGORY_ID != TE_USER_CATEGORY && loggedUserId > 0) {
+
+        console.log("USER_CATEGORY_ID" +"=="+ "TE_USER_CATEGORY");
+        console.log(USER_CATEGORY_ID +"=="+ TE_USER_CATEGORY);
+
+        // KE-Name  : ClientUnit-Manager
         getUserMappingsList(loggedUserId);
     }
 }
@@ -331,21 +363,50 @@ function getUserMappingsList(loggedUserId) {
         console.log("loggedUserId->" + loggedUserId);
         var userMappingData = data;
         var d;
+        var childUserId;
+        console.log(userMappingData.user_mappings);
         $.each(userMappingData.user_mappings, function(key, value) {
             if (loggedUserId == value.parent_user_id) {
-                var childUserId = value.parent_user_id
+                childUserId = value.child_user_id;
+
+                console.log(childUserId);
+                console.log(TECHNO_EXECUTIVES);
                 if (jQuery.inArray(childUserId, TECHNO_EXECUTIVES) == -1) {
                     console.log("inif");
                     TECHNO_EXECUTIVES.push(value.child_user_id);
-                    childUsersDetails(loggedUserId, value.child_user_id)
+                    childUsersDetails(ALL_USER_INFO, loggedUserId,
+                        value.child_user_id)
                 }
             }
         });
     }
-
-    function childUsersDetails(parent_user_id, child_user_id) {
+    function childUsersDetails(ALL_USER_INFO, parentUserId, childUsrId) {
+        var clientUserDetails = {};
         $.each(ALL_USER_INFO, function(key, value) {
-            if ($.inArray(parseInt(child_user_id), EXISTING_USER_ID) == -1) {
+
+            if (childUsrId == value["user_id"] && value["is_active"] == true
+                && value["user_category_id"] == TE_USER_CATEGORY) {
+                var option = $('<option></option>');
+                option.val(value["user_id"]);
+                option.text(value["employee_code"] + " - "
+                    + value["employee_name"]);
+                $('#tename_tmanager').append(option);
+                clientName = value["employee_code"] + " - " +
+                    value["employee_name"];
+                clientUserDetails = {
+                    "name": clientName,
+                    "user_id": value["user_id"]
+                }
+                ALLUSERS.push(clientUserDetails);
+            }
+        });
+        $('#tename_tmanager').multiselect('rebuild');
+    }
+
+
+/*    function childUsersDetails(parent_user_id, child_user_id) {
+        $.each(ALL_USER_INFO, function(key, value) {
+            if ($.inArray(parseInt(child_user_id), CLIENT_EXECUTIVES) == -1) {
                 if (child_user_id == value["user_id"] &&
                     value["is_active"] == true) {
                     var option = $('<option></option>');
@@ -354,12 +415,12 @@ function getUserMappingsList(loggedUserId) {
                         value["employee_name"]);
                     console.log(option)
                     $('#tename_tmanager').append(option);
-                    EXISTING_USER_ID.push(parseInt(child_user_id));
+                    CLIENT_EXECUTIVES.push(parseInt(child_user_id));
                 }
             }
         });
         $('#tename_tmanager').multiselect('rebuild');
-    }
+    }*/
 
     function onFailure(error) {
         displayMessage(error);
@@ -497,17 +558,19 @@ function loadCountwiseResult(filterList) {
 
 
         if(declinedCount != null && declinedCount >= 1) {
-            approvedRejectedBy = SYSTEM_REJECT_BY;
+            approvedRejectedBy = SYSTEM_REJECTED_BY;
             approvedRejectedOn = '';
             if(rejectedOn != null){
                 approvedRejectedOn = String(rejectedOn);
             }
         }
-        else if (rejectedOn != null && rejectedOn != '' && declinedCount == 0){
+        else if (rejectedOn != null && rejectedOn != '' &&
+            (declinedCount == 0 || declinedCount == null)){
             approvedRejectedOn = String(rejectedOn);
             approvedRejectedBy = rejectedByName;
         }
-        else if (approvedOn != null && approvedOn != '' && declinedCount == 0){
+        else if (approvedOn != null && approvedOn != '' &&
+            (declinedCount == 0 || declinedCount == null)){
             approvedRejectedOn = String(approvedOn);
             approvedRejectedBy = approvedByName;
         }
@@ -558,7 +621,7 @@ ClientUnitBulkReport.prototype.exportData = function() {
     }
     /* multiple TechExec Names selection in to generate array */
     if ($('#tename_tmanager option:selected').text() == "") {
-        selectedTEName = EXISTING_USER_ID; // When execute unselected the Field.
+        selectedTEName = CLIENT_EXECUTIVES; // When execute unselected the Field.
     } else {
         $.each(teIds, function(key, value) {
             selectedTEName.push(parseInt(value));
@@ -594,6 +657,7 @@ ClientUnitBulkReport.prototype.exportData = function() {
 
 // Form Initalize
 $(function() {
+    mirror.getLoadConstants();
     loadItemsPerPage();
     getClientUnits();
     PageControls();

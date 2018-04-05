@@ -592,7 +592,8 @@ def download_rejected_sm_report(db, request_frame, session_user):
                       "statutory_month", "statutory_date", "trigger_before",
                       "repeats_every", "repeats_type", "repeat_by",
                       "duration", "duration_type", "multiple_input",
-                      "format_file", "rejected_reason", "remarks"]
+                      "format_file", "remarks", "rejected_reason",
+                      "is_fully_rejected"]
 
     csv_column_name = ["Organization*", "Applicable_Location*",
                        "Statutory_Nature*", "Statutory*",
@@ -606,7 +607,7 @@ def download_rejected_sm_report(db, request_frame, session_user):
                        "Repeats_Type", "Repeats_By (DOM/EOM)",
                        "Duration", "Duration_Type",
                        "Multiple_Input_Section", "Format",
-                       "Rejected_Reason", "Error_Description"]
+                       "Error_Description"]
 
     csv_name = get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id)
     source_data = fetch_rejected_sm_download_csv_report(db,

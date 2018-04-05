@@ -26,13 +26,6 @@ var CSV = false;
 var ALL_USER_INFO;
 var USER_DETAILS;
 /**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECT_BY = "COMPFIE";
 // Creating StatutoryMappingBulkReport Class
 StatutoryMappingBulkReport = function() {}
 
@@ -170,17 +163,19 @@ function loadCountwiseResult(data) {
 
         if(declinedCount >= 1)
         {
-            approvedRejectedBy = SYSTEM_REJECT_BY;
+            approvedRejectedBy = SYSTEM_REJECTED_BY;
             approvedRejectedOn = '';
             if(rejectedOn != null){
                 approvedRejectedOn = String(rejectedOn);
             }
         }
-        else if (rejectedOn != null && rejectedOn != '' && declinedCount == 0){
+        else if (rejectedOn != null && rejectedOn != '' &&
+            (declinedCount == 0 || declinedCount == null)){
             approvedRejectedOn = String(rejectedOn);
             approvedRejectedBy = rejectedByName;
         }
-        else if (approvedOn != null && approvedOn != '' && declinedCount == 0){
+        else if (approvedOn != null && approvedOn != '' &&
+            (declinedCount == 0 || declinedCount == null)){
             approvedRejectedOn = String(approvedOn);
             approvedRejectedBy = approvedByName;
         }
@@ -275,7 +270,7 @@ function processSubmit() {
         hideLoader();
         if (TOTAL_RECORD == 0) {
             $('.tbody-compliance').empty();
-            var tr = $();
+            var tr = $('#nocompliance_templates .table-nocompliances-list .table-row');
             var tr_row = tr.clone();
             $('.tbl-norecords', tr_row).text('No Records Found');
             $('.tbody-compliance').append(tr_row);
@@ -421,15 +416,20 @@ function loadCurrentUserDetails() {
     var knowledgeUserDetails = {};
     $.each(ALL_USER_INFO, function(key, value) {
         if (user.user_id == value["user_id"]) {
+            console.log("==>>>>");
+            console.log(user.user_id +"=="+ value["user_id"]);
             USER_CATEGORY_ID = value["user_category_id"];
             loggedUserId = value["user_id"];
         }
     });
     if (USER_CATEGORY_ID == KE_USER_CATEGORY) {
+        console.log("USER_CATEGORY_ID" +"=="+ "KE_USER_CATEGORY");
+
+        console.log(USER_CATEGORY_ID +"=="+ KE_USER_CATEGORY);
         // KE-Name  : Knowledge-Executive
         knowledgeName = user.employee_code + " - " + user.employee_name;
-        $('.active-knowledge-executive').attr('style', 'display:block');
-        $('#knowledge_name').text(knowledgeName);
+        $('.active-knowledge-executive').removeClass("default-display-none");
+        $('#knowledge_name').html(knowledgeName);
         knowledgeUserDetails = {
             /*"user_name":knowledgeName,*/
             "user_id": user.user_id
@@ -438,6 +438,10 @@ function loadCurrentUserDetails() {
         KNOWLEDGE_EXECUTIVES.push(user.user_id);
     } else if (USER_CATEGORY_ID == KM_USER_CATEGORY
         && USER_CATEGORY_ID != KE_USER_CATEGORY && loggedUserId > 0) {
+
+        console.log("USER_CATEGORY_ID" +"=="+ "KM_USER_CATEGORY");
+        console.log(USER_CATEGORY_ID +"=="+ KM_USER_CATEGORY);
+
         // KE-Name  : Knowledge-Manager
         getUserMappingsList(loggedUserId);
     }
@@ -451,9 +455,12 @@ function getUserMappingsList(loggedUserId) {
         console.log("loggedUserId->" + loggedUserId);
         var userMappingData = data;
         var d;
+        var childUserId;
+        console.log(userMappingData);
+
         $.each(userMappingData.user_mappings, function(key, value) {
             if (loggedUserId == value.parent_user_id) {
-                var childUserId;
+                childUserId = value.child_user_id;
                 if (jQuery.inArray(childUserId, KNOWLEDGE_EXECUTIVES) == -1) {
                     console.log("inif")
                     KNOWLEDGE_EXECUTIVES.push(childUserId);
@@ -474,7 +481,7 @@ function getUserMappingsList(loggedUserId) {
                     + value["employee_name"]);
                 $('#kename_kmanager').append(option);
                 knowledgeName = value["employee_code"] + " - " +
-                    value["employee_name"].toUpperCase();
+                    value["employee_name"];
 
                 knowledgeUserDetails = {
                     "name": knowledgeName,
@@ -569,11 +576,13 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
 
 //initialization
 $(function() {
+    mirror.getLoadConstants();
     displayLoader();
     $('.grid-table-rpt').hide();
     pageControls();
     loadItemsPerPage();
     getStatutoryMappings();
+
     COUNTRY.focus();
 });
 $(document).ready(function() {

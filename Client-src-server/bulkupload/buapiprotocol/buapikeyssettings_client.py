@@ -68,4 +68,5 @@ bu_api_params = {
     'invalid_file': make_text_field(length=250),
     'valid': make_int_field(),
     'invalid': make_int_field(),
+    'new_csv_id': make_int_field(),
 }

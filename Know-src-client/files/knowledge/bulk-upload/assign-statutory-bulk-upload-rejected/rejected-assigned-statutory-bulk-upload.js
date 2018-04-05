@@ -12,7 +12,7 @@ var COUNTRY_WISE_DOMAIN = '';
 var USER_CATEGORY_ID = 0;
 
 var GROUP_NAME = $('#cgroupval');
-var GROUP_ID = $('#cgroup-id');;
+var GROUP_ID = $('#cgroup-id');
 var AC_GROUP = $('#ac-cgroup');
 var SHOW_BTN = $('#show');
 var REPORT_VIEW = $('.grid-table-rpt');
@@ -27,15 +27,6 @@ var UNIT = $('#unitid');
 var DOMAIN = $('#domain');
 
 /**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECT_BY = "COMPFIE";
-var REJECTED_FILE_DOWNLOADCOUNT = 2;
-var VISIBLE_REMOVE_ICON = 1;
 
 ASM_BULK_REPORT_CLASS = new assignStatutoryBulkReport();
 
@@ -102,6 +93,10 @@ function pageControls() {
     });
 
     UNIT_VAL.keyup(function(e) {
+
+    isValid = ASM_BULK_REPORT_CLASS.validateMandatory();
+    if(isValid == true)
+    {
         var clientId = GROUP_ID.val();
         var legalEntityId = LEGAL_ENTITY.val();
         var domainIds = DOMAIN.val();
@@ -138,6 +133,7 @@ function pageControls() {
                     onAutoCompleteSuccess(UNIT_VAL, UNIT, val);
                 });
         }
+    }
     });
 
     SHOW_BTN.click(function() {
@@ -372,19 +368,19 @@ function loadCountwiseResult(filterList) {
         fileDownloadCount = filterList[entity].file_download_count;
         reasonRejection = filterList[entity].rejected_reason;
 
-        if (parseInt(isFullyRejected) == 1) {
+        if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
 
             reasonRejectionComment = reasonRejection;
             $(ALL_USER_INFO).each(function(key, value) {
                 if (parseInt(filterList[entity].rejected_by) == value["user_id"]) {
                     empCode = value["employee_code"];
                     empName = value["employee_name"];
-                    rejectedBy = empCode + " - " + empName.toUpperCase();
+                    rejectedBy = empCode + " - " + empName;
                 }
             });
-        } else if (parseInt(statutoryAction) == 3) {
+        } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {
 
-            rejectedBy = SYSTEM_REJECTED;
+            rejectedBy = SYSTEM_REJECTED_BY;
             declinedCount = filterList[entity].declined_count;
             reasonRejectionComment = '';
         }
@@ -429,8 +425,7 @@ function loadCountwiseResult(filterList) {
             $('.tbl_rejected_file .rejected_i_cls', trRow)
                 .addClass("default-display-none");
         }
-        if (parseInt(fileDownloadCount) < 1
-            && parseInt(fileDownloadCount) < REJECTED_FILE_DOWNLOADCOUNT) {
+        if (parseInt(fileDownloadCount) < SHOW_REMOVE_ICON) {
             $('.tbl_remove .remove_a', trRow).addClass("default-display-none");
         }
 
@@ -683,7 +678,7 @@ function downloadClick(csv_id, event) {
 
         dataCSVid = updatedCount[0].csv_id;
         downloadCount = updatedCount[0].download_count;
-        if (parseInt(downloadCount) == VISIBLE_REMOVE_ICON) {
+        if (parseInt(downloadCount) == SHOW_REMOVE_ICON) {
             eventID = eventID + dataCSVid;
             document.getElementById(eventID).classList.toggle("show");
             $("#delete_action_" + dataCSVid).attr("style", "display:block");
@@ -789,6 +784,7 @@ window.onclick = function(event) {
 }
 
 $(function() {
+    mirror.getLoadConstants();
     REPORT_VIEW.hide();
     initialize();
     UserGroupDetails();
