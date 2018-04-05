@@ -74,9 +74,9 @@ class StatutorySource(object):
             "Task_Type", "Reference_Link",
             "Compliance_Frequency", "Statutory_Month",
             "Statutory_Date", "Trigger_Days", "Repeats_Every",
-            "Repeats_Type",  "Repeats_By (DOM/EOM)", "Duration",
+            "Repeats_Type", "Repeats_By (DOM/EOM)", "Duration",
             "Duration_Type",
-            "Multiple_Input_Section",  "Format"
+            "Multiple_Input_Section", "Format"
         ]
         self._csv_column_name_with_mandatory = [
             "Organization*", "Applicable_Location*",
@@ -86,9 +86,9 @@ class StatutorySource(object):
             "Task_Type*", "Reference_Link",
             "Compliance_Frequency*", "Statutory_Month",
             "Statutory_Date", "Trigger_Days", "Repeats_Every",
-            "Repeats_Type",  "Repeats_By (DOM/EOM)", "Duration",
+            "Repeats_Type", "Repeats_By (DOM/EOM)", "Duration",
             "Duration_Type",
-            "Multiple_Input_Section",  "Format"
+            "Multiple_Input_Section", "Format"
         ]
 
     def connect_source_db(self):
