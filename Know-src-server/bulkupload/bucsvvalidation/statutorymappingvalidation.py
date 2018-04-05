@@ -936,8 +936,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         res = make_error_desc(res, msg)
                 print "RES ->> ", res
                 if res is not True:
-                    # print "Res is not true ", res
-
                     err_str = (',').join(res)
                     # print "Err_str--->>>>>>>>", err_str
 
