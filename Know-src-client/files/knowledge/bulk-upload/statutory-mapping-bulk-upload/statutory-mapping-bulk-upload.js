@@ -22,6 +22,7 @@ var SummaryDuplicate = $('#bu-summary-duplicate');
 var SummaryInvalidChar = $('#bu-summary-invalidchar');
 var SummaryInvalidData = $('#bu-summary-invaliddata');
 var SummaryInactive = $('#bu-summary-inactive');
+var SummaryFrequencyInvalid = $("#bu-frequency-invalid");
 
 var UploadDocument = $("#bu-upload-docs");
 var DocumentSummary = $('#bu-doc-summary');
@@ -211,6 +212,8 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
     };
     bu.uploadStatutoryMappingCSV(args, function (error, response) {
+        console.log("error-> "+ error);
+        console.log("Response-> "+ response);
         TemplateDiv.hide();
         if (error == null) {
             if (response.invalid == 0) {
@@ -250,6 +253,8 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                 SummaryInvalidChar.text(response.invalid_char_error);
                 SummaryInvalidData.text(response.invalid_data_error);
                 SummaryInactive.text(response.inactive_error);
+                SummaryFrequencyInvalid.text(response.invalid_frequency_error);
+
                 invalid_file = response.invalid_file.split('.');
                 var csv_path = "/invalid_file/csv/" + invalid_file[0] + '.csv';
                 var xls_path = "/invalid_file/xlsx/" + invalid_file[0] + '.xlsx';

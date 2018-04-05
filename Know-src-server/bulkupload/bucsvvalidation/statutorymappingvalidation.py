@@ -288,11 +288,12 @@ class StatutorySource(object):
             d["Multiple_Input_Section"] == "No" or
             d["Multiple_Input_Section"] == ""
         ):
-            msg.extend(self.check_single_input(d))
+            # msg.extend(self.check_single_input(d))
 
             if d["Repeats_Type"] == "Month(s)":
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 99:
-                    msg.append("Repeats_Every - Invalid data")
+                    msg.extend(
+                        "Repeats_Every - Cannot exceed maximum 2 digits")
                 if d["Repeats_By (DOM/EOM)"] == "":
                     msg.append("Repeats_By (DOM/EOM) - Field is blank")
                 if d["Statutory_Month"] != "":
@@ -305,9 +306,13 @@ class StatutorySource(object):
 
             elif d["Repeats_Type"] == "Year(s)":
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 9:
-                    msg.append("Repeats_Every - Invalid data")
+                    msg.append("Repeats_Every - Cannot exceed maximum 1 digit")
                 if d["Repeats_By (DOM/EOM)"] == "":
                     msg.append("Repeats_By (DOM/EOM) - Field is blank")
+                # if (
+                #     d["Multiple_Input_Section"] == "No"
+                # ):
+                #     msg.append("Statutory_Date - Invalid data")
                 if (
                     d["Repeats_By (DOM/EOM)"] == "EOM" and
                     d["Statutory_Date"] != ""
@@ -315,8 +320,10 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)":
+                msg.append("Multiple_Input_Section - Invalid data")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999:
-                    msg.append("Repeats_Every - Invalid data")
+                    msg.append(
+                        "Repeats_Every - Cannot exceed maximum 3 digits")
                 if d["Repeats_By (DOM/EOM)"] != "":
                     msg.append("Repeats_By (DOM/EOM) - Invalid data")
                 if d["Statutory_Month"] != "":
@@ -366,11 +373,13 @@ class StatutorySource(object):
             d["Multiple_Input_Section"] == "No" or
             d["Multiple_Input_Section"] == ""
         ):
-            msg.extend(self.check_single_input(d))
+            # msg.extend(self.check_single_input(d))
 
             if d["Repeats_Type"] == "Month(s)":
+                if d["Repeats_Every"] == '':
+                    msg.append("Repeats_Every - Field is blank")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 99:
-                    msg.append("Repeats_Every - Invalid data")
+                    msg.append("Repeats_Every - Cannot exceed maximum 2 digits")
                 if d["Repeats_By (DOM/EOM)"] == "":
                     msg.append("Repeats_By (DOM/EOM)- Field is blank")
                 if d["Statutory_Month"] != "":
@@ -383,7 +392,7 @@ class StatutorySource(object):
 
             elif d["Repeats_Type"] == "Year(s)":
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 9:
-                    msg.append("Repeats_Every - Invalid data")
+                    msg.append("Repeats_Every - Cannot exceed maximum 1 digits")
                 if d["Repeats_By (DOM/EOM)"] == "":
                     msg.append("Repeats_By (DOM/EOM)- Field is blank")
                 if (
@@ -393,8 +402,9 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)":
+                msg.append("Multiple_Input_Section - Invalid data")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999:
-                    msg.append("Repeats_Every - Invalid data")
+                    msg.append("Repeats_Every - Cannot exceed maximum 2 digits")
                 if d["Repeats_By (DOM/EOM)"] != "":
                     msg.append("Repeats_By (DOM/EOM)- Invalid data")
                 if d["Statutory_Month"] != "":
@@ -402,6 +412,19 @@ class StatutorySource(object):
                 if d["Statutory_Date"] != "":
                     msg.append("Statutory_Date - Invalid data")
                 if d["Repeats_Every"] < d["Trigger_Days"]:
+                    msg.append("Trigger_Days - Invalid data")
+
+            # Added for BUC588
+            if (
+                d["Repeats_Type"] == "" and
+                d["Repeats_Every"] == "" and
+                d["Repeats_By (DOM/EOM)"] == ""
+            ):
+                if(d["Statutory_Date"] != ""):
+                    msg.append("Statutory_Date - Invalid data")
+                if d["Statutory_Month"] != "":
+                    msg.append("Statutory_Month - Invalid data")
+                if d["Trigger_Days"] != "":
                     msg.append("Trigger_Days - Invalid data")
 
         elif (
@@ -700,6 +723,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             "invalid_char_error": 0,
             "invalid_data_error": 0,
             "inactive_error": 0,
+            "invalid_frequency_error": 0
         }
 
     def compare_csv_columns(self):
@@ -809,7 +833,9 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             res = True
             error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
             for key in self._csv_column_name:
+                # print "key->  ", key
                 value = data.get(key)
+                # print "value ->", value
                 isFound = ""
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
@@ -836,8 +862,9 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                                 error_count["invalid_char"] += error_cnt[
                                     "invalid_char"
                                 ]
-
-                        if v != "" and res is True:
+                        # Usha's code Commented by vaishnavi for bugBUC543
+                        # if v != "" and res is True:
+                        if v != "":
                             if (
                                 csvParam.get("check_is_exists") is True or
                                 csvParam.get("check_is_active") is True
@@ -865,6 +892,14 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                                         self._error_summary[
                                             "invalid_data_error"
                                         ] += 1
+                                if (
+                                    isFound is not True and isFound != "" and
+                                    (key == "Compliance_Frequency" or
+                                     key == "Repeats_Type" or
+                                     key == "Duration_Type")
+                                ):
+                                    print "in if ====>>"
+                                    self._error_summary["invalid_frequency_error"] += 1
 
                 if key == "Task_ID":
                     if v in duplicate_task_ids :
@@ -880,9 +915,9 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                             dup_err = "Compliance_Task - Duplicate data"
                             res = make_error_desc(res, dup_err)
 
-                if key == "Compliance_Frequency" and res is True:
+                if key == "Compliance_Frequency":
                     msg = []
-                    if value == "One time":
+                    if value == "One Time":
                         msg = self.check_one_time(data)
 
                     elif value == "On Occurrence":
@@ -894,19 +929,35 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     else:
                         msg = self.check_flexi_review(data)
 
+                    print "Messge---> ", msg
                     self._error_summary["invalid_data_error"] += len(msg)
+                    self._error_summary["invalid_frequency_error"] += len(msg)
                     if len(msg) > 0:
                         res = make_error_desc(res, msg)
+                print "RES ->> ", res
                 if res is not True:
+                    # print "Res is not true ", res
+
                     err_str = (',').join(res)
+                    # print "Err_str--->>>>>>>>", err_str
+
+                    # print "!@#$%-> sn", err_str.find("Statutory_Nature")
+                    # print "$$$$$-> StTutory ", err_str.find("Statutory")
+
+                    # print "@@@-> sn", "Statutory_Nature" in res
+                    # print "###-> StTutory ", "Statutory" in res
+
                     if err_str.find(key) != -1:
+                        # print "KEY$-> ", key
                         head_idx = mapped_header_dict.get(key)
+                        print "row_idx-->>> ", row_idx
                         if head_idx is None:
                             head_idx = [row_idx]
                         else:
                             head_idx.append(row_idx)
 
                         mapped_header_dict[key] = head_idx
+                    print "mapped_header_dict!!!!!!!!!!!!!", mapped_header_dict
 
                 if key == "Format" and res is True:
                     if not self.check_compliance_task_name_duplicate(
@@ -964,7 +1015,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             )
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
-        try :
+        try:
             fileString = self._csv_name.split('.')
             file_name = "%s_%s.%s" % (
                 fileString[0], "invalid", "xlsx"
@@ -994,6 +1045,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 "invalid_char_error": self._error_summary["invalid_char_error"],
                 "invalid_data_error": self._error_summary["invalid_data_error"],
                 "inactive_error": self._error_summary["inactive_error"],
+                "invalid_frequency_error": self._error_summary["invalid_frequency_error"],
                 "total": total,
                 "invalid": invalid,
                 "doc_count": len(set(self._doc_names))

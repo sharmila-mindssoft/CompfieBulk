@@ -1203,7 +1203,7 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
     def __init__(
         self, invalid_file, mandatory_error, max_length_error, duplicate_error,
         invalid_char_error, invalid_data_error, inactive_error,
-        total, invalid, valid
+        total, invalid, valid, invalid_frequency_error
 
     ):
         self.invalid_file = invalid_file
@@ -1216,6 +1216,7 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
         self.total = total
         self.invalid = invalid
         self.valid = valid
+        self.invalid_frequency_error = invalid_frequency_error
 
     @staticmethod
     def parse_inner_structure(data):
@@ -1223,7 +1224,7 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
             "invalid_file", "mandatory_error", "max_length_error",
             "duplicate_error",
             "invalid_char_error", "invalid_data_error", "inactive_error",
-            "total", "invalid", "valid"
+            "total", "invalid", "valid", "invalid_frequency_error"
         ])
         return UploadStatutoryMappingCSVInvalidSuccess(
             data.get("invalid_file"), data.get("mandatory_error"),
@@ -1231,7 +1232,8 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
             data.get("invalid_char_error"), data.get("invalid_data_error"),
             data.get("inactive_error"),
             data.get("total"),
-            data.get("invalid"), data.get("valid")
+            data.get("invalid"), data.get("valid"),
+            data.get("invalid_frequency_error")
         )
 
     def to_inner_structure(self):
@@ -1245,7 +1247,8 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
             "inactive_error": self.inactive_error,
             "total": self.total,
             "invalid": self.invalid,
-            "valid": self.valid
+            "valid": self.valid,
+            "invalid_frequency_error": self.invalid_frequency_error
         }
 
 

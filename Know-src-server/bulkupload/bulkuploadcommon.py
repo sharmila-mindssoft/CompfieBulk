@@ -123,9 +123,9 @@ def write_data_to_excel(
         'W', 'X', 'Y', 'Z'
     ]
     for idx, h in enumerate(headers):
-        if idx < 26 :
+        if idx < 26:
             x = idx
-        else :
+        else:
             x = idx - 26
 
         c = "%s%s" % (cells[x], 1)
@@ -139,25 +139,25 @@ def write_data_to_excel(
         for i, h in enumerate(headers):
             h = h.replace('*', '')
             error_col = header_dict.get(h)
-            if error_col is None :
+            if error_col is None:
                 error_col = []
             d = dat.get(h)
-            if h == "Error Description" :
+            if h == "Error Description":
                 error_text = data_error_dict.get(idx)
-                if error_text is None :
+                if error_text is None:
                     e = ""
-                else :
+                else:
                     e = "|;|".join(error_text)
 
                 print e
 
-                worksheet.write_string(row, col+i, e)
-            else :
+                worksheet.write_string(row, col + i, e)
+            else:
                 d.decode("utf8")
-                if idx in error_col :
-                    worksheet.write_string(row, col+i, d, error_format)
-                else :
-                    worksheet.write_string(row, col+i, d)
+                if idx in error_col:
+                    worksheet.write_string(row, col + i, d, error_format)
+                else:
+                    worksheet.write_string(row, col + i, d)
 
         row += 1
 

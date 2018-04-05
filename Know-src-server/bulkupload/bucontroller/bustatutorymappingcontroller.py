@@ -198,6 +198,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             request_frame.csv_name, header
         )
         res_data = cObj.perform_validation()
+        print "Res Data----------------------------------------->"
         print res_data
 
         if res_data is None :
@@ -240,7 +241,8 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                 res_data["invalid_char_error"], res_data["invalid_data_error"],
                 res_data["inactive_error"], res_data["total"],
                 res_data["invalid"],
-                res_data["total"] - res_data["invalid"]
+                res_data["total"] - res_data["invalid"],
+                res_data["invalid_frequency_error"]
             )
 
         return result

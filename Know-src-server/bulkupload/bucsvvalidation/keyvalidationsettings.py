@@ -90,16 +90,17 @@ def statutory_date(value) :
 def trigger_days(value) :
     return is_valid_statutory_date_input(value, 100)
 
-def duration_and_repeats(value) :
+
+def duration_and_repeats(value):
 
     flag = True
     if value != "":
         if only_numeric(value):
             if int(value) == 0:
                 flag = False
-            elif int(value) > 999 :
+            elif int(value) > 999:
                 flag = "cannot exceed maxlength 999"
-        else :
+        else:
             flag = False
     return flag
 
@@ -208,7 +209,7 @@ def parse_csv_dictionary_values(key, val):
         error_count["mandatory"] = 1
 
     if _maxlength is not None and len(val) > _maxlength:
-        msg.append(key + " - " + val +" Cannot exceed max length")
+        msg.append(key + " - " + val + " Cannot exceed max length")
         error_count["max_length"] = 1
 
     if val != "":
@@ -412,8 +413,8 @@ csv_params = {
         validation_method=trigger_days
     ),
     'Repeats_Every': make_required_validation(
-        keyType='INT', isValidCharCheck=True,
-        validation_method=duration_and_repeats
+        keyType='INT', isValidCharCheck=True
+        # validation_method=duration_and_repeats
     ),
 
     'Repeats_Type': make_required_validation(
@@ -425,8 +426,8 @@ csv_params = {
         keyType='STRING', isValidCharCheck=True, validation_method=repeats_by
     ),
     'Duration': make_required_validation(
-        keyType='INT', isValidCharCheck=True,
-        validation_method=duration_and_repeats
+        keyType='INT', isValidCharCheck=True
+        # validation_method=duration_and_repeats
     ),
     'Duration_Type': make_required_validation(
         keyType='STRING', maxLengthCheck=20, isValidCharCheck=True,
