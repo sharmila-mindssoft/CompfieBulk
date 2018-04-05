@@ -1102,7 +1102,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
     def perform_validation_before_submit(self):
         try :
             declined_count = 0
-            self._declined_row_idx = []
+            self._declined_row_idx = {}
             self.init_values(self._country_id, self._domain_id)
 
             for row_idx, data in enumerate(self._source_data):
