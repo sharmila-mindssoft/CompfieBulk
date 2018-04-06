@@ -148,7 +148,6 @@ def write_data_to_excel(
                     e = ""
                 else :
                     e = "|;|".join(error_text)
-
                 print e
 
                 worksheet.write_string(row, col+i, e)

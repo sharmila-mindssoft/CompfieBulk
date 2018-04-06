@@ -491,7 +491,8 @@ BEGIN
     (SELECT count(action) FROM tbl_bulk_assign_statutory WHERE
      action = 2 AND csv_assign_statutory_id = t1.csv_assign_statutory_id) as rejected_count
     FROM tbl_bulk_assign_statutory_csv as t1
-    WHERE t1.approve_status =  0 AND t1.client_id = cl_id AND t1.legal_entity_id = le_id;
+    WHERE t1.approve_status =  0 AND t1.client_id = cl_id AND t1.legal_entity_id = le_id
+    ORDER BY t1.uploaded_on DESC;
 END //
 
 DELIMITER ;
@@ -1399,7 +1400,7 @@ BEGIN
     t2.bulk_assign_statutory_id,
     t2.domain AS Domain, t2.organization AS Organization,
     t2.unit_code AS Unit_Code, t2.unit_name AS Unit_Name, t2.unit_location AS Unit_Location,
-    t2.perimary_legislation AS Primary_Legislation, t2.secondary_legislation AS Secondary_Legislaion,
+    t2.perimary_legislation AS Primary_Legislation, t2.secondary_legislation AS Secondary_Legislation,
     t2.statutory_provision AS Statutory_Provision,
     t2.compliance_task_name AS Compliance_Task, t2.compliance_description AS Compliance_Description,
     t2.statutory_applicable_status AS Statutory_Applicable_Status, t2.statytory_remarks AS Statutory_remarks,
@@ -1861,6 +1862,32 @@ BEGIN
     select total_documents from tbl_bulk_statutory_mapping_csv
     where csv_id = csvid;
 
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_check_invalid_compliance_in_csv`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_invalid_compliance_in_csv`(
+IN client_group_ VARCHAR(50), legal_entity_ VARCHAR(100), domain_ TEXT, 
+organization_ TEXT, unit_code_ VARCHAR(50), unit_name_ VARCHAR(50), 
+unit_location_ TEXT , primary_legislation_ VARCHAR(100),
+secondary_legislation_ TEXT, statutory_provision_ VARCHAR(500), 
+compliance_task_ VARCHAR(100), compliance_description_ TEXT
+)
+BEGIN
+  SELECT as_id
+  FROM tbl_download_assign_statutory_template WHERE
+  client_group = client_group_ AND legal_entity = legal_entity_ AND
+  domain = domain_ AND organization = organization_ AND 
+  unit_code = unit_code_ AND unit_name = unit_name_ AND 
+  unit_location = unit_location_ AND
+  perimary_legislation = primary_legislation_ AND 
+  secondary_legislation = secondary_legislation_ AND 
+  statutory_provision = statutory_provision_ AND
+  compliance_task_name = compliance_task_ AND
+  compliance_description = compliance_description_;
 END //
 
 DELIMITER ;

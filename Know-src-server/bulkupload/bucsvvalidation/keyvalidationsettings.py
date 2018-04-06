@@ -627,7 +627,7 @@ csv_params_as = {
     'S.No': make_required_validation(
         keyType='INT', isValidCharCheck=True, validation_method=is_numeric
     ),
-    'Secondary_Legislaion': make_required_validation(
+    'Secondary_Legislation': make_required_validation(
         keyType='STRING', isFoundCheck=True
     ),
     'Statutory_Provision': make_required_validation(
@@ -657,7 +657,7 @@ csv_params_as = {
     'Unit_Code': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
-    'Organisation': make_required_validation(
+    'Organization': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
     ),
     'Domain': make_required_validation(

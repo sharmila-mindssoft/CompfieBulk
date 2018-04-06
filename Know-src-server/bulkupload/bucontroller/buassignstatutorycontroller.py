@@ -574,6 +574,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
                                        result["ods_link"],
                                        result["txt_link"])
 
+
 def save_action(db, request_frame, session_user):
     try:
         save_action_from_view(
@@ -636,7 +637,7 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
     )
     is_declined = cObj.perform_validation_before_submit()
     if len(is_declined) > 0:
-        cObj.make_rejection(is_declined)
+        cObj.make_rejection(is_declined, user_id)
         cObj.save_executive_message(
             1, cObj._csv_name, cObj._client_group,
             cObj._legal_entity, session_user.user_id(),
