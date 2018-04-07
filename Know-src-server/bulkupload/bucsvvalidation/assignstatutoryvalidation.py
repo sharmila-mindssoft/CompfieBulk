@@ -476,8 +476,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
     def compare_csv_columns(self):
         res = collections.Counter(
             self._csv_column_name) == collections.Counter(self._csv_header)
-        if res is False:
-            raise ValueError("Invalid Csv file")
+        return res
     '''
         looped csv data to perform corresponding validation
         returns: valid and invalid return format
@@ -617,7 +616,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         mapped_error_dict = {}
         mapped_header_dict = {}
         invalid = 0
-        self.compare_csv_columns()
+        # self.compare_csv_columns()
         # self.check_duplicate_in_csv()
         duplicate = self.check_duplicate_compliance_for_same_unit_in_csv()
         duplicate_compliance_in_csv = duplicate[0]

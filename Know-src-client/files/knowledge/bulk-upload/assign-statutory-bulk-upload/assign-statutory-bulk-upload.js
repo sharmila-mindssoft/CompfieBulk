@@ -328,11 +328,7 @@ function pageControls() {
                     UPLOADFILE.val('');
                     
                 } else {
-                    if(error == 'Invalid Csv file'){
-                        displayMessage(error);
-                        $('.view-summary').hide();
-                        $('.dropbtn').hide();
-                    }else if(error == 'UploadAssignStatutoryCSVFailed'){
+                   if(error == 'UploadAssignStatutoryCSVFailed'){
                         displayMessage(message.upload_failed);
                         INVALIDFILENAME = data.invalid_file.split('.');;
                         TOTALRECORD.text(data.total);
@@ -363,7 +359,15 @@ function pageControls() {
                         $('#ods').attr("href", ods_path);
                         $('#txt').attr("href", txt_path);
                     }else{
-                        displayMessage(error);
+                        if(error == "InvalidCsvFile"){
+                            displayMessage(message.invalid_csv_file);
+                        }else if(error == "CsvFileBlank"){
+                            displayMessage(message.csv_file_blank);
+                        }else if(error == "RejectionMaxCountReached"){
+                            displayMessage(message.rejection_max_count_reached);
+                        }else{
+                            displayMessage(error);
+                        }
                         $('.view-summary').hide();
                         $('.dropbtn').hide();
                     }

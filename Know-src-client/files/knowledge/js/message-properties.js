@@ -498,6 +498,9 @@ var message = {
   "confirm_success": "Action taken successfully",
   "invalid_csv_file": "Invalid CSV File Uploaded",
   "client_unit_file_max": "Client Unit Upload File Reached the Max Limit",
+  "invalid_csv_file": "Invalid Csv File",
+  "csv_file_blank": "CSV file cannot be blank",
+  "rejection_max_count_reached": "Already reached the maximum count of rejected files",
 
 }
 

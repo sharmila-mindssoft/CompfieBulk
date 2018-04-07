@@ -1262,6 +1262,45 @@ class AssignStatutoryValidateSuccess(Response):
         }
 
 
+class InvalidCsvFile(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidCsvFile()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class CsvFileBlank(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CsvFileBlank()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class RejectionMaxCountReached(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return RejectionMaxCountReached()
+
+    def to_inner_structure(self):
+        return {}
+
+
 def _init_Response_class_map():
     classes = [
         GetClientInfoSuccess,
@@ -1279,7 +1318,10 @@ def _init_Response_class_map():
         ValidationSuccess,
         SaveActionSuccess,
         SubmitAssignStatutorySuccess,
-        AssignStatutoryValidateSuccess
+        AssignStatutoryValidateSuccess,
+        InvalidCsvFile,
+        CsvFileBlank,
+        RejectionMaxCountReached
     ]
 
     class_map = {}

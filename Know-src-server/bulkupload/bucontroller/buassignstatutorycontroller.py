@@ -206,9 +206,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
             pass
 
         if get_rejected_file_count(db, session_user) > 5:
-            raise ValueError(
-                "Already reached the maximum count of rejected files"
-                )
+            return bu_as.RejectionMaxCountReached()
 
         # save csv file
         csv_name = convert_base64_to_file(
@@ -219,15 +217,18 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
         header, assign_statutory_data = read_data_from_csv(csv_name)
 
         if len(assign_statutory_data) == 0:
-                raise ValueError("CSV file cannot be blank")
+                return bu_as.CsvFileBlank()
 
         # csv data validation
         cObj = ValidateAssignStatutoryCsvData(
             db, assign_statutory_data, session_user, request_frame.csv_name,
             header
         )
-        res_data = cObj.perform_validation()
 
+        if(cObj.compare_csv_columns() is False):
+            return bu_as.InvalidCsvFile()
+
+        res_data = cObj.perform_validation()
         if res_data["return_status"] is True:
             generate_valid_file(csv_name)
             d_ids = ",".join(map(str, cObj._domain_ids))
