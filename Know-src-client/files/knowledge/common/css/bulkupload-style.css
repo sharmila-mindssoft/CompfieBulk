@@ -114,7 +114,9 @@
     width: 94%;
 }
 
-
+.width-100 {
+    width: 100%;
+}
 
 
 
@@ -242,6 +244,11 @@
 .filter-multiselect .btn-group{
     width: 100% !important;
 }
+
 .download-options {
     display: inline-block;
+}
+
+.break-word {
+    word-wrap: break-word;
 }

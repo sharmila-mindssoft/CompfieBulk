@@ -501,6 +501,7 @@ var message = {
   "invalid_csv_file": "Invalid Csv File",
   "csv_file_blank": "CSV file cannot be blank",
   "rejection_max_count_reached": "Already reached the maximum count of rejected files",
+  "reason_invalid":"Reason should accept only 0-9, A-Z, a-z, dot, comma, hyphen.",
 
 }
 
