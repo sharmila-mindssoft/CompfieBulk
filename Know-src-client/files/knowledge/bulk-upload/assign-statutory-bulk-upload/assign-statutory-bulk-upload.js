@@ -310,7 +310,7 @@ function pageControls() {
                     LENGTHERROR.text("0");
                     INVALIDERROR.text("0");
                     $('.view-summary').hide();
-                    $('.dropbtn').hide();
+                    $('.download-options').hide();
                     displaySuccessMessage(message.upload_success);
                     hideLoader();
                     GROUPID.val('');
@@ -343,7 +343,7 @@ function pageControls() {
                         getInvaliddataCount = parseInt(data.invalid_char_error) 
                             + parseInt(data.invalid_data_error);
                         INVALIDERROR.text(getInvaliddataCount);
-                        $('.dropbtn').show();
+                        $('.download-options').show();
                         $('.view-summary').show();
                         
                         csv_path = "/invalid_file/csv/" + INVALIDFILENAME[0] + 
@@ -369,7 +369,7 @@ function pageControls() {
                             displayMessage(error);
                         }
                         $('.view-summary').hide();
-                        $('.dropbtn').hide();
+                        $('.download-options').hide();
                     }
                     hideLoader();
                 }
@@ -387,6 +387,13 @@ function initialize() {
 }
 
 $(function() {
+    $('.download-options').hide();
+    $('#units').multiselect({
+        includeSelectAllOption: true
+    });
+    $('#domains').multiselect({
+        includeSelectAllOption: true
+    });
     MULTISELECTDOMAIN.multiselect({
         buttonWidth: '100%'
     });

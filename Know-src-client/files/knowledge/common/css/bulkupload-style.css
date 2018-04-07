@@ -1,6 +1,8 @@
 .multiselect {
-    /*width: 296px !important;*/
-     width: 100% !important; 
+     width: 100%; 
+}
+.btn-group{
+    width:100%;
 }
 /* using width css classes instead of html width attribute */
 
@@ -135,7 +137,6 @@
     background-color: #FFF;
     border: 1px solid #a0a0a0;
     display: none;
-    margin-left: -78px;
     min-width: 120px;
     overflow: auto;
     position: absolute;
@@ -240,4 +241,7 @@
 
 .filter-multiselect .btn-group{
     width: 100% !important;
+}
+.download-options {
+    display: inline-block;
 }
