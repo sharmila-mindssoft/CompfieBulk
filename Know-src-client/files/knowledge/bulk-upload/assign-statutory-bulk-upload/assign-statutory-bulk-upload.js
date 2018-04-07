@@ -330,6 +330,8 @@ function pageControls() {
                 } else {
                     if(error == 'Invalid Csv file'){
                         displayMessage(error);
+                        $('.view-summary').hide();
+                        $('.dropbtn').hide();
                     }else if(error == 'UploadAssignStatutoryCSVFailed'){
                         displayMessage(message.upload_failed);
                         INVALIDFILENAME = data.invalid_file.split('.');;
@@ -362,6 +364,8 @@ function pageControls() {
                         $('#txt').attr("href", txt_path);
                     }else{
                         displayMessage(error);
+                        $('.view-summary').hide();
+                        $('.dropbtn').hide();
                     }
                     hideLoader();
                 }

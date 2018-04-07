@@ -263,17 +263,21 @@ class SourceDB(object):
             "client_id", "legal_entity_id", "unit_id",
             "domain_id", "statutory_id", "statutory_applicable_status",
             "remarks", "compliance_id", "compliance_applicable_status",
-            "is_approved", "approved_by", "approved_on",
+            "is_submitted", "is_approved", "approved_by", "approved_on",
             "updated_by", "updated_on"
         ]
 
         values = []
         for idx, d in enumerate(data):
             approval_status = 0
-            if d["Compliance_Applicable_Status"] == 3:
+            submitted_status = 0
+            if d["Compliance_Applicable_Status"] == 3 and d["action"] == 1:
                 approval_status = 3
-            else:
+            elif d["Compliance_Applicable_Status"] != 3 and d["action"] == 1:
                 approval_status = 5
+                submitted_status = 1
+            else:
+                approval_status = 4
 
             statu_id = self.Statutories.get(d["Primary_Legislation"]).get(
                 "statutory_id"
@@ -291,7 +295,7 @@ class SourceDB(object):
                 int(cs_id), cl_id, le_id, u_id, d_id, statu_id,
                 d["Statutory_Applicable_Status"],
                 d["Statutory_remarks"], comp_id,
-                d["Compliance_Applicable_Status"],
+                d["Compliance_Applicable_Status"], submitted_status,
                 approval_status, int(user_id), created_on,
                 int(user_id), created_on
             ))
@@ -488,7 +492,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 seen.add(t)
 
         if len(seen) != len(self._source_data):
-            raise ValueError("Duplicate dara found in CSV")
+            raise ValueError("Duplicate data found in CSV")
 
     def check_duplicate_compliance_for_same_unit_in_csv(self):
         # self._source_data.sort(key=lambda x: (

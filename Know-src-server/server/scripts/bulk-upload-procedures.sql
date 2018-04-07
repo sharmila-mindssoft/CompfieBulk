@@ -485,7 +485,7 @@ IN cl_id INT, le_id INT
 )
 BEGIN
     SELECT t1.csv_assign_statutory_id, t1.csv_name, t1.uploaded_by,
-    DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on, t1.total_records,
+    DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %H:%i') as uploaded_on, t1.total_records,
     (SELECT count(action) FROM tbl_bulk_assign_statutory WHERE
      action = 1 AND csv_assign_statutory_id = t1.csv_assign_statutory_id) as approved_count,
     (SELECT count(action) FROM tbl_bulk_assign_statutory WHERE

@@ -86,7 +86,7 @@ var message = {
   'compliance_selection_required': 'Atleast one Compliance should be added',
   'active_compliance_required': 'Atleast one Compliance should be Active',
   'location_selection_required': 'Atleast one Location should be selected',
-  'action_selection_required': 'Atleast one action should be selected',
+  'action_selection_required': 'All compliance should be selected before submit',
   'mapping_success': 'Statutory mapping saved successfully',
   'mapping_submit_success': 'Statutory mapping submitted successfully',
   'mapping_update_success': 'Statutory mapping updated successfully',
