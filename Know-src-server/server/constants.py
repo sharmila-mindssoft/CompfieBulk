@@ -63,13 +63,13 @@ BULK_UPLOAD_DB_PASSWORD = "root"
 BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_round_2"
 
 CSV_DELIMITER = '|;|'
-CSV_MAX_LINES = 1000
+CSV_MAX_LINES = 5
 MAX_REJECTED_COUNT = 5
 
 if IS_DEVELOPMENT is True:
     VERSION = time.time()
 
-TEMP_FILE_SERVER = "http://localhost:9000/temp/"
+TEMP_FILE_SERVER = "http://localhost:8083/temp/"
 
 #
 # Constants For Bulk Upload Reports & Rejected

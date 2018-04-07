@@ -33,7 +33,7 @@ from ..bulkuploadcommon import (
 )
 from ..bulkexport import ConvertJsonToCSV
 import datetime
-from server.constants import BULKUPLOAD_CSV_PATH
+from server.constants import (BULKUPLOAD_CSV_PATH, CSV_MAX_LINES)
 # from server.exceptionmessage import fetch_run_error
 
 from protocol import generalprotocol, technoreports
@@ -191,6 +191,10 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         if len(statutory_mapping_data) == 0:
             raise ValueError("CSV file cannot be blank")
 
+        if len(statutory_mapping_data) > CSV_MAX_LINES:
+            raise ValueError("CSV file exceeded MAX Lines")
+
+
         # csv data validation
         cObj = ValidateStatutoryMappingCsvData(
             db, statutory_mapping_data, session_user,
@@ -226,6 +230,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                         csv_name, request_frame.c_name,
                         request_frame.d_name, session_user.user_id()
                     )
+                    cObj.source_commit()
                     result = bu_sm.UploadStatutoryMappingCSVValidSuccess(
                         new_csv_id, res_data["csv_name"],
                         res_data["total"], res_data["valid"],

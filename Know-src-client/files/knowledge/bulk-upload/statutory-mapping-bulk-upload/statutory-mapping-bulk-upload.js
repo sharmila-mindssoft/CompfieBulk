@@ -228,7 +228,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     docNames = response.doc_names;
                     UploadDocument.show();
                     DocumentSummary.hide();
-                    changeTxttoLabel(countryAc.val(), domainAc.val(), response.csv_name)
+                    t_this.changeTxttoLabel(countryAc.val(), domainAc.val(), response.csv_name)
                 }
                 else {
                     DataSummary.hide();
@@ -289,7 +289,7 @@ BulkUploadStatutoryMapping.prototype.validateControls = function() {
     return true;
 };
 BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
-    c_name, d_name, cav_name
+    c_name, d_name, csv_name
 ) {
     txtCountryName.hide();
     txtDomainName.hide();
@@ -420,6 +420,7 @@ function PageControls() {
     if (buSmPage._ActionMode == "add") {
         if (buSmPage.validateControls() == true) {
             buSmPage.uploadCsv();
+
         }
     }
     else {

@@ -473,7 +473,7 @@ ClientUnitBulkReport.prototype.validateMandatory = function() {
     var isValid = true;
     if (GROUP_ID.val().trim() == '' || GROUP_ID.val().trim() == null) {
         displayMessage(message.group_required);
-        isValidisValid = false;
+        isValid = false;
     } else if (this.getValue("from_date") == "") {
         displayMessage(message.fromdate_required);
         isValid = false;
@@ -587,7 +587,6 @@ function loadCountwiseResult(filterList) {
 
         $('.tbl-approved-rejected-tasks', clone1)
         .text(approvedRejectedTasks);
-
         $('.tbl-approved-rejected-on', clone1).text(approvedRejectedOn);
         $('.tbl-approved-rejected-by', clone1).text(approvedRejectedBy);
         $('.tbl-reason-for-rejection', clone1).text(reasonForRejection);
