@@ -616,7 +616,6 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         mapped_error_dict = {}
         mapped_header_dict = {}
         invalid = 0
-        # self.compare_csv_columns()
         # self.check_duplicate_in_csv()
         duplicate = self.check_duplicate_compliance_for_same_unit_in_csv()
         duplicate_compliance_in_csv = duplicate[0]
@@ -704,6 +703,17 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                                         "invalid_data_error"
                                     ] += 1
 
+                if res is not True:
+                    err_str = (',').join(res)
+                    if err_str.find(key) != -1:
+                        head_idx = mapped_header_dict.get(key)
+                        if head_idx is None:
+                            head_idx = [row_idx]
+                        else:
+                            head_idx.append(row_idx)
+
+                        mapped_header_dict[key] = head_idx
+
                 if key == "Compliance_Task":
                     for x in duplicate_compliance_row:
                         if (
@@ -713,15 +723,6 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                         ):
                             dup_error = "Compliance_Task_Name - Duplicate Compliances"
                             res = make_error_desc(res, dup_error)
-
-            if not self.check_compliance_task_name_duplicate(
-                data.get("Domain"), data.get("Unit_Code"),
-                data.get("Statutory_Provision"), data.get("Compliance_Task"),
-                data.get("Compliance_Description"),
-            ):
-                self._error_summary["duplicate_error"] += 1
-                dup_error = "Compliance_Task_Name - Duplicate Compliances"
-                res = make_error_desc(res, dup_error)
 
             if res is not True:
                 error_list = mapped_error_dict.get(row_idx)
@@ -733,13 +734,13 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                 mapped_error_dict[row_idx] = error_list
 
-                head_idx = mapped_header_dict.get(key)
-                if head_idx is None:
-                    head_idx = [row_idx]
-                else:
-                    head_idx.append(row_idx)
+                # head_idx = mapped_header_dict.get(key)
+                # if head_idx is None:
+                #     head_idx = [row_idx]
+                # else:
+                #     head_idx.append(row_idx)
 
-                mapped_header_dict[key] = head_idx
+                # mapped_header_dict[key] = head_idx
                 invalid += 1
                 self._error_summary["mandatory_error"] += error_count[
                     "mandatory"
@@ -755,6 +756,16 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             self.check_uploaded_count_in_csv()
             for row_idx, data in enumerate(self._source_data):
                 res = True
+
+                if not self.check_compliance_task_name_duplicate(
+                    data.get("Domain"), data.get("Unit_Code"),
+                    data.get("Statutory_Provision"), data.get("Compliance_Task"),
+                    data.get("Compliance_Description"),
+                ):
+                    self._error_summary["duplicate_error"] += 1
+                    dup_error = "Compliance_Task_Name - Duplicate Compliances"
+                    res = make_error_desc(res, dup_error)
+
                 if not self.check_compliance_task_name_duplicate_in_knowledge(
                     data.get("Domain"), data.get("Unit_Code"),
                     data.get("Statutory_Provision"),
@@ -782,13 +793,13 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                     mapped_error_dict[row_idx] = error_list
 
-                    head_idx = mapped_header_dict.get(key)
-                    if head_idx is None:
-                        head_idx = [row_idx]
-                    else:
-                        head_idx.append(row_idx)
+                    # head_idx = mapped_header_dict.get(key)
+                    # if head_idx is None:
+                    #     head_idx = [row_idx]
+                    # else:
+                    #     head_idx.append(row_idx)
 
-                    mapped_header_dict[key] = head_idx
+                    # mapped_header_dict[key] = head_idx
                     invalid += 1
 
             self.get_master_table_info()
@@ -912,7 +923,6 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
                             if isFound is not True and isFound != "":
                                 declined_count += 1
-                                print "Not Found Error"
                                 print key, v
 
             if not self.check_compliance_task_name_duplicate_in_knowledge(

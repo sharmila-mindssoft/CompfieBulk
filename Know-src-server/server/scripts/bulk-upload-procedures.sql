@@ -1347,8 +1347,7 @@ BEGIN
     FROM tbl_bulk_assign_statutory_csv as t1
     WHERE t1.csv_assign_statutory_id = csvid;
 
-    SELECT distinct t1.csv_assign_statutory_id,
-    (SELECT count(0) FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id = t1.csv_assign_statutory_id) as total_count
+    SELECT count(t1.csv_assign_statutory_id) as total_count
     FROM tbl_bulk_assign_statutory_csv as t1
     inner join tbl_bulk_assign_statutory as t2 on
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid
