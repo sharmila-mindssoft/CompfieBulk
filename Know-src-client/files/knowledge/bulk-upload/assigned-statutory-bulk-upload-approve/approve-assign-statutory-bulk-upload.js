@@ -206,8 +206,12 @@ PageControls = function() {
         if ($(this).prop("checked") == true) {
             DETAILS_TBODY.find('.single-approve').removeAttr("checked");
             DETAILS_TBODY.find('.single-approve').trigger('click');
-        } else
+        } else{
             DETAILS_TBODY.find('.single-approve').removeAttr("checked");
+            DETAILS_TBODY.find(".single-approve").each(function(){
+               $(this).prop('checked', false).triggerHandler('click');
+            });
+        }
     });
     CHECK_ALL_REJECT.click(function() {
         if ($(this).prop("checked") == true) {
@@ -215,6 +219,9 @@ PageControls = function() {
         } else {
             DETAILS_TBODY.find('.single-reject').removeAttr("checked");
             DETAILS_TBODY.find('.rejected-reason').html('')
+            DETAILS_TBODY.find(".single-reject").each(function(){
+               $(this).prop('checked', false).triggerHandler('click');
+            });
         }
     });
     PASSWORD_SINGLE_REJECT_SUBMIT.click(function() {
@@ -1013,6 +1020,7 @@ singleApprove = function(id) {
         tempAction(id, 1);
         checkAllEnableDisable();
     } else {
+        tempAction(id, 0);
         checkAllEnableDisable();
     }
 }
@@ -1044,6 +1052,7 @@ singleReject = function(id, flag) {
             CHECK_ALL_APPROVE.removeAttr("checked");
         }
     } else {
+        tempAction(id, 0);
         checkAllEnableDisable();
         $('#rejected_reason' + id + ' i').remove();
     }

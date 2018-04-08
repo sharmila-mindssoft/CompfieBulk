@@ -1301,6 +1301,32 @@ class RejectionMaxCountReached(Response):
         return {}
 
 
+class CompleteActionBeforeSubmit(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CompleteActionBeforeSubmit()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class UnitsNotAssignedToUser(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UnitsNotAssignedToUser()
+
+    def to_inner_structure(self):
+        return {}
+
+
 def _init_Response_class_map():
     classes = [
         GetClientInfoSuccess,
@@ -1321,7 +1347,9 @@ def _init_Response_class_map():
         AssignStatutoryValidateSuccess,
         InvalidCsvFile,
         CsvFileBlank,
-        RejectionMaxCountReached
+        RejectionMaxCountReached,
+        CompleteActionBeforeSubmit,
+        UnitsNotAssignedToUser
     ]
 
     class_map = {}

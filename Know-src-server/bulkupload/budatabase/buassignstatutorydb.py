@@ -7,7 +7,7 @@ from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    CSV_DELIMITER, DM_USER_CATEGORY, DE_USER_CATEGORY
+    DM_USER_CATEGORY, DE_USER_CATEGORY
 )
 from server.exceptionmessage import fetch_error
 
@@ -30,7 +30,8 @@ __all__ = [
     "save_action_from_view",
     "get_validation_info",
     "get_rejected_file_count",
-    "delete_action_after_approval"
+    "delete_action_after_approval",
+    "verify_user_units"
     ]
 
 ########################################################
@@ -734,3 +735,22 @@ def delete_action_after_approval(db, csv_id):
         )
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
+
+
+def verify_user_units(db, session_user, u_ids):
+    _source_db_con = mysql.connector.connect(
+        user=KNOWLEDGE_DB_USERNAME,
+        password=KNOWLEDGE_DB_PASSWORD,
+        host=KNOWLEDGE_DB_HOST,
+        database=KNOWLEDGE_DATABASE_NAME,
+        port=KNOWLEDGE_DB_PORT,
+        autocommit=False,
+    )
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+
+    result = _source_db.call_proc(
+        "sp_bu_domain_executive_units", [session_user.user_id(), u_ids]
+    )
+    unit_count = len(result)
+    return unit_count

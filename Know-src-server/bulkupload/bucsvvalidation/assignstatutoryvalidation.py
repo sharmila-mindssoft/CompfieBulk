@@ -371,7 +371,7 @@ class SourceDB(object):
             return True
 
     def save_executive_message(
-        self, a_type, csv_name, clientgroup, legalentity, createdby, unitid
+        self, a_type, csv_name, clientgroup, legalentity, createdby, unitids
     ):
         admin_users_id = []
         res = self._source_db.call_proc("sp_users_under_user_category", (1,))
@@ -379,7 +379,7 @@ class SourceDB(object):
             admin_users_id.append(user["user_id"])
 
         domain_users_id = []
-        res = self._source_db.call_proc("sp_user_by_unit_id", (8, unitid))
+        res = self._source_db.call_proc("sp_bu_user_by_unit_ids", (8, unitids))
         for user in res:
             domain_users_id.append(user["user_id"])
 
@@ -407,7 +407,7 @@ class SourceDB(object):
             )
 
     def save_manager_message(
-        self, csv_name, domainname, unitname, createdby, unitid
+        self, csv_name, domainname, unitname, createdby, unitids
     ):
         admin_users_id = []
         res = self._source_db.call_proc("sp_users_under_user_category", (1,))
@@ -415,7 +415,7 @@ class SourceDB(object):
             admin_users_id.append(user["user_id"])
 
         domain_users_id = []
-        res = self._source_db.call_proc("sp_user_by_unit_id", (7, unitid))
+        res = self._source_db.call_proc("sp_bu_user_by_unit_ids", (7, unitids))
         for user in res:
             domain_users_id.append(user["user_id"])
 
@@ -455,7 +455,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         self.errorSummary()
         self._client_id = None
         self._client_group = None
-        self._unit_id = None
+        self._unit_ids = []
         self._legal_entity_id = None
         self._legal_entity = None
         self._domain_ids = []
@@ -547,7 +547,6 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         # ))
         self._domain_names = []
         self._domain_ids = []
-
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Domain"]
         )):
@@ -580,9 +579,18 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                         grouped_list[0].get("Client_Group")
                         ).get("client_id")
 
-                self._unit_id = self.Unit_Code.get(
-                        grouped_list[0].get("Unit_Code")
-                    ).get("unit_id")
+        self._unit_ids = []
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Unit_Code"]
+        )):
+            grouped_list = list(v)
+            if len(grouped_list) > 1:
+                if(
+                    self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
+                ) != None:
+                    self._unit_ids.append(self.Unit_Code.get(
+                        grouped_list[0].get("Unit_Code")).get("unit_id")
+                    )
 
     def check_invalid_compliance_in_csv(self, data):
         client_group = data.get("Client_Group")
@@ -651,15 +659,37 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     if (
                         key == 'Statutory_remarks' and
                         (
+                            (
+                                data.get(
+                                    'Statutory_Applicable_Status'
+                                ) == 'Not Applicable' or
+                                data.get(
+                                    'Statutory_Applicable_Status'
+                                ) == 'Do not Show'
+                            ) and
                             data.get(
-                                'Statutory_Applicable_Status'
-                            ) == 'Not Applicable' or
-                            data.get(
-                                'Statutory_Applicable_Status'
-                            ) == 'Do not Show'
+                                'Statutory_remarks'
+                            ) == ''
                         )
                     ):
-                        key = 'Statutory_remarks_'
+                        self._error_summary["mandatory_error"] += 1
+                        mandatory_error = "Statutory_remarks - Field is blank"
+                        res = make_error_desc(res, mandatory_error)
+
+                    if (
+                        key == 'Statutory_remarks' and
+                        (
+                            data.get(
+                                'Statutory_Applicable_Status'
+                            ) == 'Applicable' and
+                            data.get(
+                                'Statutory_remarks'
+                            ) != ''
+                        )
+                    ):
+                        self._error_summary["mandatory_error"] += 1
+                        mandatory_error = "Statutory_Remarks - Not Required"
+                        res = make_error_desc(res, mandatory_error)
 
                     valid_failed, error_cnt = parse_csv_dictionary_values_as(
                         key, v
@@ -759,7 +789,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                 if not self.check_compliance_task_name_duplicate(
                     data.get("Domain"), data.get("Unit_Code"),
-                    data.get("Statutory_Provision"), data.get("Compliance_Task"),
+                    data.get("Statutory_Provision"), data.get(
+                        "Compliance_Task"
+                    ),
                     data.get("Compliance_Description"),
                 ):
                     self._error_summary["duplicate_error"] += 1
@@ -872,7 +904,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self._legal_entity = None
         self._client_group = None
         self._csv_name = None
-        self._unit_id = None
+        self._unit_ids = None
 
     def get_source_data(self):
         self._source_data = self._db.call_proc(
@@ -884,14 +916,24 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self._declined_row_idx = []
         self.init_values(self._session_user_obj.user_id())
 
-        for row_idx, data in enumerate(self._source_data):
+        self._unit_ids = []
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Unit_Code"]
+        )):
+            grouped_list = list(v)
+            if len(grouped_list) > 1:
+                if(
+                    self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
+                ) != None:
+                    self._unit_ids.append(self.Unit_Code.get(
+                        grouped_list[0].get("Unit_Code")).get("unit_id")
+                    )
 
+        for row_idx, data in enumerate(self._source_data):
             if row_idx == 0:
                 self._legal_entity = data.get("Legal_Entity")
                 self._client_group = data.get("Client_Group")
                 self._csv_name = data.get("Csv_Name")
-                self._unit_id = self.Unit_Code.get(
-                    data.get("Unit_Code")).get("unit_id")
 
             for key in self._csv_column_name:
                 value = data.get(key)
