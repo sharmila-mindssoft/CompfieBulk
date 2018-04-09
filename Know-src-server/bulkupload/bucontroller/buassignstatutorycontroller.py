@@ -347,12 +347,12 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
         if action == 1:
             if len(is_declined.keys()) > 0:
                 update_approve_action_from_list(
-                    db, csv_id, action, remarks, session_user
+                    db, csv_id, action, remarks, session_user, "all"
                 )
                 return bu_as.ValidationSuccess(len(is_declined.keys()))
             else:
                 if(update_approve_action_from_list(
-                    db, csv_id, action, remarks, session_user
+                    db, csv_id, action, remarks, session_user, "all"
                 )
                 ):
                     cObj.frame_data_for_main_db_insert(user_id)
@@ -367,7 +367,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                     return bu_as.AssignStatutoryApproveActionInListSuccess()
         else:
             if(update_approve_action_from_list(
-                db, csv_id, action, remarks, session_user
+                db, csv_id, action, remarks, session_user, "all"
             )):
                 u_ids = ",".join(map(str, cObj._unit_ids))
                 cObj.save_executive_message(
@@ -623,7 +623,9 @@ def submit_assign_statutory(db, request_frame, session_user):
         if len(is_declined.keys()) > 0:
             return bu_as.ValidationSuccess(len(is_declined.keys()))
         else:
-            update_approve_action_from_list(db, csv_id, 1, None, session_user)
+            update_approve_action_from_list(
+                db, csv_id, 1, None, session_user, "single"
+            )
             u_ids = ",".join(map(str, cObj._unit_ids))
             cObj.save_executive_message(
                 1, cObj._csv_name, cObj._client_group,

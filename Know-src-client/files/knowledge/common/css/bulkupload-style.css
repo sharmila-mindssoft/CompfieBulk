@@ -1,5 +1,7 @@
 .multiselect {
-     width: 100%; 
+    width: 100%;
+    overflow: hidden; 
+
 }
 .btn-group{
     width:100%;

@@ -1420,11 +1420,11 @@ END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS `sp_assign_statutory_update_action`;
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_update_all_action`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_assign_statutory_update_action`(
+CREATE PROCEDURE `sp_assign_statutory_update_all_action`(
 IN csvid INT, action INT, _remarks VARCHAR(500),
 userid INT
 
@@ -1917,5 +1917,24 @@ BEGIN
   compliance_task_name = compliance_task_ AND
   compliance_description = compliance_description_;
 END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_update_action`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_assign_statutory_update_action`(
+IN csvid INT, userid INT
+)
+BEGIN
+  UPDATE tbl_bulk_assign_statutory_csv SET
+  approve_status = 1, approved_on = current_ist_datetime(),
+  approved_by = userid, is_fully_rejected = 0,
+  total_rejected_records = (select count(0) from
+  tbl_bulk_assign_statutory as t WHERE t.csv_assign_statutory_id = csvid)
+  WHERE csv_assign_statutory_id = csvid;
+END//
 
 DELIMITER ;
