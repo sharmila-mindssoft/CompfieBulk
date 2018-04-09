@@ -898,7 +898,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self._legal_entity_id = legal_entity_id
         self._session_user_obj = session_user
         self._source_data = None
-        self._declined_row_idx = []
+        self._declined_row_idx = {}
         self.get_source_data()
         self._legal_entity = None
         self._client_group = None
@@ -912,7 +912,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
     def perform_validation_before_submit(self):
         declined_count = 0
-        self._declined_row_idx = []
+        self._declined_row_idx = {}
         self.init_values(self._session_user_obj.user_id())
 
         self._unit_ids = []
@@ -929,6 +929,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                     )
 
         for row_idx, data in enumerate(self._source_data):
+            res = True
             declined_count = 0
             if row_idx == 0:
                 self._legal_entity = data.get("Legal_Entity")
@@ -965,7 +966,11 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
                             if isFound is not True and isFound != "":
                                 declined_count += 1
-                                print key, v
+                                msg = "%s - %s" % (key, isFound)
+                                if res is not True:
+                                    res.append(msg)
+                                else:
+                                    res = [msg]
 
             if not self.check_compliance_task_name_duplicate_in_knowledge(
                 data.get("Domain"), data.get("Unit_Code"),
@@ -973,11 +978,17 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 data.get("Compliance_Description"),
             ):
                 declined_count += 1
+                dup_error = "Compliance_Task - Duplicate data"
+                if res is not True:
+                    res.append(dup_error)
+                else:
+                    res = [dup_error]
 
             if declined_count > 0:
-                self._declined_row_idx.append(
+                self._declined_row_idx[
                     data.get("bulk_assign_statutory_id")
-                )
+                ] = res
+
         return self._declined_row_idx
 
     def frame_data_for_main_db_insert(self, user_id):
@@ -1010,18 +1021,23 @@ class ValidateAssignStatutoryForApprove(SourceDB):
     def make_rejection(self, declined_info, user_id):
         try:
             created_on = get_date_time()
-            q = "update tbl_bulk_assign_statutory set " + \
-                " action = 3 where bulk_assign_statutory_id in (%s)" % (
-                    ",".join(map(str, declined_info))
-                )
-            self._db.execute(q)
+            count = len(declined_info.keys())
+            for k, v in declined_info.items() :
+                remarks = ",".join(v)
+                q = "update tbl_bulk_assign_statutory set " + \
+                    "action = 3, remarks = %s where " + \
+                    "bulk_assign_statutory_id = %s"
+                print q
+                self._db.execute(q, [
+                    remarks, k
+                ])
 
             q1 = "update tbl_bulk_assign_statutory_csv set " + \
                 " declined_count = %s, approve_status = 1, " + \
                 " approved_by = %s, approved_on = %s where " + \
                 " csv_assign_statutory_id = %s"
             self._db.execute(q1, [
-                len(declined_info), user_id, created_on, self._csv_id
+                count, user_id, created_on, self._csv_id
             ])
 
         except Exception, e:

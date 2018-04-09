@@ -1419,32 +1419,35 @@ DROP PROCEDURE IF EXISTS `sp_assign_statutory_update_action`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_assign_statutory_update_action`(
-IN csvid INT, action INT, remarks VARCHAR(500),
+IN csvid INT, action INT, _remarks VARCHAR(500),
 userid INT
 
 )
 BEGIN
     IF action = 2 then
+        UPDATE tbl_bulk_assign_statutory SET
+        action = 2, remarks = _remarks
+        WHERE csv_assign_statutory_id = csvid;
+
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 2,
-        rejected_reason = remarks, is_fully_rejected = 1,
+        rejected_reason = _remarks, is_fully_rejected = 1,
         rejected_by = userid,
         rejected_on = current_ist_datetime(),
-        total_rejected_records = (SELECT count(0) FROM
-        tbl_bulk_assign_statutory AS t WHERE t.csv_assign_statutory_id = csvid)
+        total_rejected_records = (select count(0) from
+        tbl_bulk_assign_statutory as t WHERE t.csv_assign_statutory_id = csvid)
         WHERE csv_assign_statutory_id = csvid;
     else
+        UPDATE tbl_bulk_assign_statutory SET
+        action = 1, remarks = _remarks
+        WHERE csv_assign_statutory_id = csvid;
+
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
         approved_by = userid, is_fully_rejected = 0
         WHERE csv_assign_statutory_id = csvid;
     end if;
-
-    IF action = 3 then
-        UPDATE tbl_bulk_assign_statutory SET action = 3;
-
-    end if;
-END //
+END//
 
 DELIMITER ;
 
