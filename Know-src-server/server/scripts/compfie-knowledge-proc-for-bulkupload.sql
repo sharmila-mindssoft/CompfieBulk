@@ -102,6 +102,20 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_bu_statutory_level`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_statutory_level`(
+IN cId INT, dId INT
+)
+BEGIN
+   SELECT max(t.level_position) as statu_level FROM tbl_statutory_levels as t
+   where country_id = cId and domain_id =dId;
+END //
+
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- To get legal entities under a client for client units bulk upload
 -- --------------------------------------------------------------------------------
