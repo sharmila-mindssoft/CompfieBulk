@@ -241,6 +241,15 @@
     color: #E64C3D !important;
 }
 
+/**** Added For ApproveRejectStatu Mapping TaskID Alignment Fix ***/
+td.task-id {
+    word-wrap: break-word;
+}
+/**** Added For ApproveRejectStatu Mapping Alignment Fix ***/
+#no-record-templates .no_records{
+    padding:40px; font-size:1.2em;
+    }
+
 .filter-multiselect .btn-group{
     width: 100% !important;
 }
@@ -251,4 +260,5 @@
 
 .break-word {
     word-wrap: break-word;
+
 }

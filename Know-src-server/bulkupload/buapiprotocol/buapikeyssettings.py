@@ -480,6 +480,14 @@ bu_api_params = {
         'type': 'INT', 'length': None,
         'validation_method': None, 'is_optional': False
     },
+    'tsk_id': {
+        'type': 'STRING', 'length': 25,
+        'validation_method': is_alpha_numeric, 'is_optional': True
+    },
+    'tsk_type': {
+        'type': 'STRING', 'length': 25,
+        'validation_method': is_alphabet, 'is_optional': True
+    },
 
     'task_id': {
         'type': 'STRING', 'length': 25,

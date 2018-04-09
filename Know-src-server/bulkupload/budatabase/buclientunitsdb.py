@@ -2,6 +2,7 @@ from server.exceptionmessage import fetch_error
 import traceback
 from server import logger
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
+from server.constants import MAX_REJECTED_COUNT
 import datetime
 from server.constants import (
     DM_USER_CATEGORY, DE_USER_CATEGORY
@@ -193,7 +194,8 @@ def fetch_rejected_client_unit_report(db, session_user, user_id,
             str(d["remarks"]),
             d["action"],
             d["declined_count"],
-            d["rejected_file_name"]
+            d["rejected_file_name"],
+            d["rejected_reason"]
         ))
     return rejected_list
 
@@ -376,6 +378,7 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user) :
                 csv_name = d["csv_name"]
                 upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
                 upload_by = d["uploaded_by"]
+                total_records = d["total_records"]
 
             client_unit_data.append(bu_cu.BulkClientUnitList(
                 int(d["bulk_unit_id"]), d["legal_entity"], d["division"],
@@ -454,7 +457,7 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user) :
                             orga_names.append(d["organization"].strip())
 
     return bu_cu.GetBulkClientUnitViewAndFilterDataSuccess(
-        group_name, csv_name, upload_by, upload_on, csv_id,
+        group_name, csv_name, upload_by, upload_on, csv_id, total_records,
         le_names, div_names, cg_names, u_locations, u_codes,
         domain_names, orga_names, client_unit_data
     )
@@ -490,6 +493,7 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user) :
     orga_name = request_frame.bu_orgn
     f_count = request_frame.f_count
     f_range = request_frame.r_range
+    action = request_frame.bu_action
 
     if legal_entity is None or legal_entity == "" :
         legal_entity = '%'
@@ -512,38 +516,49 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user) :
     if orga_name is None or orga_name == "" :
         orga_name = '%'
 
-    unit_list = db.call_proc(
+    unit_list = db.call_proc_with_multiresult_set(
         "sp_bulk_client_unit_view_by_filter",
         [
             csv_id, legal_entity, division, category, unit_location,
-            unit_code, domain, orga_name, f_count, f_range
-        ]
+            unit_code, domain, orga_name, action, f_count, f_range
+        ], 2
     )
     group_name = None
     csv_name = None
     upload_by = session_user.user_full_name()
     upload_on = None
     client_unit_data = []
+    print "unit_list"
+    print unit_list
     if len(unit_list) > 0 :
-        for idx, d in enumerate(unit_list) :
-            if idx == 0 :
-                group_name = d["client_group"]
-                csv_name = d["csv_name"]
-                upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
-                upload_by = d["uploaded_by"]
+        if len(unit_list[1]) > 0:
+            total_records = unit_list[1][0]["total_records"]
+            if len(unit_list[0]) > 0:
+                for idx, d in enumerate(unit_list[0]) :
+                    if idx == 0 :
+                        group_name = d["client_group"]
+                        csv_name = d["csv_name"]
+                        upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+                        upload_by = d["uploaded_by"]
 
-            client_unit_data.append(bu_cu.BulkClientUnitList(
-                d["bulk_unit_id"], d["legal_entity"], d["division"],
-                d["category"], d["geography_level"], d["unit_location"],
-                d["unit_code"], d["unit_name"], d["address"], d["city"],
-                d["state"], str(d["postalcode"]), d["domain"], d["organization"],
-                d["action"], d["remarks"]
-            ))
+                    client_unit_data.append(bu_cu.BulkClientUnitList(
+                        d["bulk_unit_id"], d["legal_entity"], d["division"],
+                        d["category"], d["geography_level"], d["unit_location"],
+                        d["unit_code"], d["unit_name"], d["address"], d["city"],
+                        d["state"], str(d["postalcode"]), d["domain"], d["organization"],
+                        d["action"], d["remarks"]
+                    ))
 
-    return bu_cu.GetBulkClientUnitFilterDataSuccess(
-        group_name, csv_name, upload_by, upload_on, csv_id,
-        client_unit_data
-    )
+                return bu_cu.GetBulkClientUnitFilterDataSuccess(
+                    group_name, csv_name, upload_by, upload_on, csv_id, total_records,
+                    client_unit_data
+                )
+            else:
+                return bu_cu.EmptyFilteredData()
+        else:
+                return bu_cu.EmptyFilteredData()
+    else:
+        return bu_cu.EmptyFilteredData()
 
 ########################################################
 '''
@@ -641,7 +656,7 @@ def get_bulk_client_unit_file_count(db, request_frame) :
     args = [client_id]
     data = db.call_proc("sp_bulk_client_unit_file_count", args)
     if len(data) > 0 :
-        if int(data[0].get("file_count")) < 5 :
+        if int(data[0].get("file_count")) < MAX_REJECTED_COUNT:
             return True
         else:
             return False
