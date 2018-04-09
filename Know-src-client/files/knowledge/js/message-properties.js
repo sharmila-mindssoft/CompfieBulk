@@ -493,12 +493,14 @@ var message = {
   "document_upload_success": "Document uploaded successfully",
 
   "client_unit_upload_success": "Client Units uploaded successfully",
-  "client_unit_upload_failed": "Errors in uploading Client Units",
+  "client_unit_upload_failed": "Client Units not uploaded successfully",
   "upload_failed": "CSV file upload failed",
   "confirm_success": "Action taken successfully",
   "invalid_csv_file": "Invalid CSV File Uploaded",
   "client_unit_file_max": "Client Unit Upload File Reached the Max Limit",
-
+  "cg_required": "Client Group Required",
+  "csv_file_blank": "CSV File Cannot be Blank",
+  "csv_file_lines_max": "CSV File Lines Reached the Max Limit",
 }
 
 function clearMessage() {
