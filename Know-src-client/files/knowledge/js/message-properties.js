@@ -490,6 +490,7 @@ var message = {
   'clientgroup_required': 'Client Group Name Required',
   "no_compliance_assign_statutory": "No Compliance Available for Assign Statutory",
   "upload_limit": "CSV Upload limit exceeded",
+  "csv_max_lines_exceeded": "CSV Max lines exceeded \"MAX_LINES\" ",
   "document_upload_success": "Document uploaded successfully",
 
   "client_unit_upload_success": "Client Units uploaded successfully",

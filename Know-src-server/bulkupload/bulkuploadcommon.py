@@ -191,14 +191,15 @@ def rename_file_type(src_file_name, des_file_type):
     new_dst_file_name = os.path.join(dst_dir, new_file)
     if des_file_type == "txt":
         general_txt_file(src_file, new_dst_file_name)
-    else :
+    else:
         pyexcel.save_as(
             file_name=src_file, dest_file_name=new_dst_file_name
         )
 
+
 def generate_valid_file(src_file_name):
     f_types = ["xlsx", "ods", "txt"]
-    for f in f_types :
+    for f in f_types:
         src_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
         str_split = src_file_name.split('.')
         new_file = str_split[0] + "." + f

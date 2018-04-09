@@ -25,6 +25,8 @@ from server.database.forms import (
     frmStatutoryMappingBulkUpload,
     frmApproveStatutoryMappingBulkUpload
 )
+from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
+
 from server.exceptionmessage import process_error
 from server.database.knowledgetransaction import save_messages
 from keyvalidationsettings import csv_params, parse_csv_dictionary_values
@@ -760,8 +762,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             self._csv_column_name
         ) == collections.Counter(self._csv_header)
         if res is False:
-            # raise ValueError("Csv column mismatched")
-            raise ValueError("Invalid Csv file")
+            return "InvalidCsvFile"
+        return True
 
     def check_duplicate_in_csv(self):
         seen = set()
@@ -770,7 +772,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             t = tuple(d.items())
             if t not in seen:
                 seen.add(t)
-            else :
+            else:
                 duplicate_count += 1
         return duplicate_count
 
@@ -815,6 +817,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             s["Compliance_Task"], s["Task_ID"]
         )):
             grouped_list = list(v)
+            print "grouped_list-> ", grouped_list[0].get("Task_ID")
+            print "len(grouped_list)> ", len(grouped_list)
             if len(grouped_list) > 1:
                 duplicate_task_ids.append(grouped_list[0].get("Task_ID"))
 
@@ -835,7 +839,10 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         mapped_error_dict = {}
         mapped_header_dict = {}
         invalid = 0
-        self.compare_csv_columns()
+        csv_compare = self.compare_csv_columns()
+        if(csv_compare is not True):
+            return "InvalidCSV"
+
         # duplicate_row_in_csv = self.check_duplicate_in_csv()
         # self._error_summary["duplicate_error"] += duplicate_row_in_csv
         duplicate = self.check_duplicate_task_name_in_csv()
@@ -843,6 +850,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         duplicate_compliance_row = duplicate[1]
         self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
         duplicate_task_ids = self.check_duplicate_task_id_in_csv()
+        print "duplicate_task_ids", duplicate_task_ids
 
         self.init_values(self._country_id, self._domain_id)
 
@@ -860,9 +868,9 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             res = True
             error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
             for key in self._csv_column_name:
-                # print "key->  ", key
+                print "key->  ", key
                 value = data.get(key)
-                # print "value ->", value
+                print "value ->", value
                 isFound = ""
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
@@ -874,6 +882,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     valid_failed, error_cnt = parse_csv_dictionary_values(
                         key, v
                     )
+                    print "valid_failed----> ", valid_failed
                     if valid_failed is not True:
                         if res is True:
                             res = valid_failed
@@ -994,6 +1003,15 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         self._error_summary["duplicate_error"] += 1
                         dup_error = "Task_ID - Duplicate data"
                         res = make_error_desc(res, dup_error)
+
+            # if not self.check_compliance_duplicate(
+            #     self._country_id, self._domain_id,
+            #     data.get("Statutory"), data.get("Compliance_Task"),
+            #     data.get("Compliance_Description"),
+            # ):
+            #     self._error_summary["duplicate_error"] += 1
+            #     dup_error = "Compliance_Task - Duplicate data"
+            #     res = make_error_desc(res, dup_error)
 
             if res is not True:
                 error_list = mapped_error_dict.get(row_idx)

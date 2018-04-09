@@ -68,46 +68,63 @@ def is_numeric_with_delimiter(value) :
     else:
         return False
 
-def is_valid_statutory_date_input(value, irange) :
 
-    flag = True
-    if value != "" :
-        if only_numeric(value) :
-            if int(value) == 0:
-                flag = False
-            elif int(value) > irange:
-                flag = "cannot exceed maxlength %s" % (irange)
-        else :
-            flag = False
-    return flag
-
-def statutory_month(value) :
-    return is_valid_statutory_date_input(value, 12)
-
-def statutory_date(value) :
-    return is_valid_statutory_date_input(value, 31)
-
-def trigger_days(value) :
-    return is_valid_statutory_date_input(value, 100)
-
-
-def duration_and_repeats(value):
-
+def is_valid_statutory_month_input(value, irange):
     flag = True
     if value != "":
         if only_numeric(value):
             if int(value) == 0:
                 flag = False
-            elif int(value) > 999:
-                flag = "cannot exceed maxlength 999"
+            elif int(value) > irange:
+                flag = "%s should be between 1 - %s" % (value, irange)
         else:
             flag = False
     return flag
 
-def duration_and_repeats_type(value) :
+
+def is_valid_statutory_date_input(value, irange):
+    flag = True
+    if value != "":
+        if only_numeric(value):
+            if int(value) == 0:
+                flag = False
+
+            elif int(value) > irange:
+                flag = "%s cannot exceed %s" % (value, irange)
+        else:
+            flag = False
+    return flag
+
+
+def statutory_month(value):
+    return is_valid_statutory_month_input(value, 12)
+
+
+def statutory_date(value):
+    return is_valid_statutory_date_input(value, 31)
+
+
+def trigger_days(value):
+    return is_valid_statutory_date_input(value, 100)
+
+
+def duration_and_repeats(value):
+    flag = True
+    if value != "":
+        if only_numeric(value):
+            if int(value) == 0:
+                flag = False
+            # elif int(value) > 999:
+            #     flag = "cannot exceed maxlength 999"
+        else:
+            flag = False
+    return flag
+
+
+def duration_and_repeats_type(value):
 
     r = re.compile("^[a-zA-Z() ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
     else :
         return False
@@ -343,7 +360,7 @@ csv_params = {
     'Applicable_Location': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
         validation_method=is_applicable_location, isFoundCheck=True,
-        isActiveCheck=True
+        isActiveCheck=True, maxLengthCheck=500
     ),
     'Statutory_Nature': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
@@ -387,7 +404,7 @@ csv_params = {
         validation_method=is_alpha_numeric
     ),
     'Task_Type': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=150,
         isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
@@ -413,8 +430,8 @@ csv_params = {
         validation_method=trigger_days
     ),
     'Repeats_Every': make_required_validation(
-        keyType='INT', isValidCharCheck=True
-        # validation_method=duration_and_repeats
+        keyType='INT', isValidCharCheck=True,
+        validation_method=duration_and_repeats
     ),
 
     'Repeats_Type': make_required_validation(
@@ -426,8 +443,8 @@ csv_params = {
         keyType='STRING', isValidCharCheck=True, validation_method=repeats_by
     ),
     'Duration': make_required_validation(
-        keyType='INT', isValidCharCheck=True
-        # validation_method=duration_and_repeats
+        keyType='INT', isValidCharCheck=True,
+        validation_method=duration_and_repeats
     ),
     'Duration_Type': make_required_validation(
         keyType='STRING', maxLengthCheck=20, isValidCharCheck=True,
@@ -440,7 +457,7 @@ csv_params = {
         isFoundCheck=True
     ),
     'Format': make_required_validation(
-        keyType='STRING', maxLengthCheck="150", isValidCharCheck=True,
+        keyType='STRING', maxLengthCheck=150, isValidCharCheck=True,
         validation_method=is_alpha_numeric,
     ),
     'Legal_Entity': make_required_validation(

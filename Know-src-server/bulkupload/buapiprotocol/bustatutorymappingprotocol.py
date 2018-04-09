@@ -1472,6 +1472,49 @@ class DownloadActionSuccess(Response):
         }
 
 
+class CsvFileExeededMaxLines(Response):
+    def __init__(self, csv_max_lines):
+        self.csv_max_lines = csv_max_lines
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_max_lines"])
+        return CsvFileExeededMaxLines(
+            data.get("csv_max_lines")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_max_lines": self.csv_max_lines
+        }
+
+
+class InvalidCsvFile(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidCsvFile()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class CsvFileCannotBeBlank(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CsvFileCannotBeBlank()
+
+    def to_inner_structure(self):
+        return {}
+
+
 def _init_Response_class_map():
     classes = [
         GetStatutoryMappingCsvUploadedListSuccess,
@@ -1490,7 +1533,10 @@ def _init_Response_class_map():
         DeleteRejectedStatutoryMappingSuccess,
         SMRejecteUpdatedDownloadCountSuccess,
         DownloadActionSuccess,
-        SaveActionSuccess
+        SaveActionSuccess,
+        CsvFileExeededMaxLines,
+        InvalidCsvFile,
+        CsvFileCannotBeBlank
     ]
     class_map = {}
     for c in classes:

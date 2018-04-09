@@ -268,7 +268,13 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
         }
         else {
-            buSmPage.possibleFailures(error);
+                if (error == "CsvFileExeededMaxLines") {
+                    displayMessage(message.csv_max_lines_exceeded.replace(
+                        'MAX_LINES', response.csv_max_lines));
+                }
+                else{
+                    buSmPage.possibleFailures(error);
+                }
         }
     })
 };
