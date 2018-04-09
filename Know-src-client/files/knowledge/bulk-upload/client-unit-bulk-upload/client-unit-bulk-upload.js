@@ -74,13 +74,12 @@ CSVFILENAME.change(function(e){
         displayMessage("CSV file name should not exceed 100 characters");
         return false;
     }
-	if($.inArray(ext, ["csv"]) == -1) {
+	if(CSVFILENAME.val() != '' && $.inArray(ext, ["csv"]) == -1) {
 		displayMessage(message.invalid_file_format);
 		return false;
 	}
-	if(e.target.files != undefined){
+	if(e.target.files != undefined && e.target.files.length > 0){
 		mirror.uploadCSVFile(e, function result_data(data) {
-			console.log("1:"+data)
             if (data == "File max limit exceeded"){
                 displayMessage(message.file_maxlimit_exceed);
                 return false;
@@ -96,6 +95,7 @@ CSVUPLOADBUTTON.click(function () {
     $('.invaliddata').hide();
 	$('.view-summary').hide();
 	var clientId = GROUPID.val().trim();
+	console.log("client:"+GROUPID.val().trim())
 	var groupName = GROUPNAME.val().trim();
 	if (clientId != '' && CSVUPLOADEDFILE != '') {
 		var f_size = CSVUPLOADEDFILE.file_size;
@@ -105,22 +105,26 @@ CSVUPLOADBUTTON.click(function () {
 		    $('#myModal').modal('hide');
 			function onSuccess(response) {
 				GROUPNAME.val('');
+				GROUPID.val('');
 				CSVFILENAME.val('');
 				displaySuccessMessage(message.client_unit_upload_success);
 			}
 			function onFailure(error, response)
 			{
 				if(error == "EmptyCSVUploaded") {
-					displayMessage(message.file_content_empty);
+					displayMessage(message.csv_file_blank);
 				}
 				else if(error == "InvalidCSVUploaded") {
 					displayMessage(message.invalid_csv_file);
 				}
 				else if(error == "Csv Column Mismatched") {
-					displayMessage("Csv Column Mismatched");
+					displayMessage(message.invalid_csv_file);
 				}
 				else if(error == "ClientUnitUploadMaxReached"){
 					displayMessage(message.client_unit_file_max);
+				}
+				else if(error == "CSVFileLinesMaxREached") {
+					displayMessage(message.csv_file_lines_max)
 				}
 				else if (response.invalid_file != "" && response.invalid_file != null) {
 				    $('.invaliddata').show();
@@ -142,11 +146,14 @@ CSVUPLOADBUTTON.click(function () {
 					UNITCOUNTERRORSCOUNT.text(response.max_unit_count_error)
 					download_file();
 				}
+				else {
+					displayMessage(error);
+				}
 			}
 			bu.uploadClientUnitsBulkCSV(
 				parseInt(clientId), groupName, f_name, f_data, f_size, function(error, response)
 			{
-				console.log(error)
+				console.log("file err:"+error)
 			    if (error == null) {
 			        onSuccess(response);
 			    } else {
@@ -156,7 +163,7 @@ CSVUPLOADBUTTON.click(function () {
 		}, 2000);
 	} else {
 		if (clientId == '') {
-			displayMessage(message.client_required);
+			displayMessage(message.cg_required);
 			return false;
 		} else if(CSVUPLOADEDFILE == '') {
 			displayMessage(message.upload_csv);
@@ -209,7 +216,7 @@ function download_file() {
 				$("#ods").attr("href", "/invalid_file/ods/" + splitFileName+".ods");
 			}
 			else if(downloadTag[i].innerText == "Download Text") {
-				$("#text").attr("href", "/invalid_file/text/" + splitFileName+".txt");
+				$("#text").attr("href", "/invalid_file/txt/" + splitFileName+".txt");
 			}
 		}
 	}
