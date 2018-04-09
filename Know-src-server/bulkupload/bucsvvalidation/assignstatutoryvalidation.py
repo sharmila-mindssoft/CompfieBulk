@@ -512,7 +512,6 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     grouped_list[0].get("Compliance_Task"),
                     grouped_list[0].get("Compliance_Description"),
                 ])
-
         return duplicate_compliance, duplicate_compliance_row
 
     def check_uploaded_count_in_csv(self):
@@ -751,7 +750,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                             x[1] == data.get("Compliance_Task") and
                             x[2] == data.get("Compliance_Description")
                         ):
-                            dup_error = "Compliance_Task_Name - Duplicate Compliances"
+                            dup_error = "Compliance_Task_Name - Duplicate Compliances in CSV"
                             res = make_error_desc(res, dup_error)
 
             if res is not True:
@@ -795,7 +794,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     data.get("Compliance_Description"),
                 ):
                     self._error_summary["duplicate_error"] += 1
-                    dup_error = "Compliance_Task_Name - Duplicate Compliances"
+                    dup_error = "Compliance_Task_Name - Duplicate Compliances in Temp DB"
                     res = make_error_desc(res, dup_error)
 
                 if not self.check_compliance_task_name_duplicate_in_knowledge(
@@ -805,7 +804,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     data.get("Compliance_Description"),
                 ):
                     self._error_summary["duplicate_error"] += 1
-                    dup_error = "Compliance_Task_Name - Duplicate Compliances"
+                    dup_error = "Compliance_Task_Name - Duplicate Compliances in Knowledge"
                     res = make_error_desc(res, dup_error)
 
                 if not self.check_invalid_compliance_in_csv(

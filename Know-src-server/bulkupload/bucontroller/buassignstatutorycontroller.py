@@ -14,7 +14,9 @@ from ..bulkuploadcommon import (
     generate_valid_file
 )
 from ..bulkexport import ConvertJsonToCSV
-from server.constants import BULKUPLOAD_CSV_PATH
+from server.constants import (
+    BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT
+)
 import datetime
 from protocol import generalprotocol, technoreports
 __all__ = [
@@ -205,7 +207,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
         if request_frame.csv_size > 0:
             pass
 
-        if get_rejected_file_count(db, session_user) > 5:
+        if get_rejected_file_count(db, session_user) > MAX_REJECTED_COUNT:
             return bu_as.RejectionMaxCountReached()
 
         # save csv file
