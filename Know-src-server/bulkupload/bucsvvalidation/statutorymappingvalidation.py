@@ -872,7 +872,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         # duplicate_row_in_csv = self.check_duplicate_in_csv()
         # self._error_summary["duplicate_error"] += duplicate_row_in_csv
         duplicate = self.check_duplicate_task_name_in_csv()
-        duplicate_compliance_in_csv = duplicate[0]
+        # duplicate_compliance_in_csv = duplicate[0]
         duplicate_compliance_row = duplicate[1]
         # self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
         duplicate_task_ids = self.check_duplicate_task_id_in_csv()
