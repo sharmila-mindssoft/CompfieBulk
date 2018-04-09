@@ -163,17 +163,19 @@
                                 </div>
                             </div>
                             <div class="form-group text-center m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light m-t-5" type="submit" id="btn-submit" tabindex="4"> Upload </button>
-                                <a class="btn btn-primary default-display-none btn-trans dropbtn" onclick="showDownloadList()"><i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
-                                <div id="myDropdown" class="dropdown-content" >
+                                <button class="btn btn-primary waves-effect waves-light m-b-5" type="submit" id="btn-submit" tabindex="4"> Upload </button>
+                                <div class="download-options">
+                                <button class="btn btn-primary default-display-none btn-trans dropbtn m-b-5" onclick="showDownloadList()"><i class="fa fa-download text-primary"></i> Valid / Invalid Data</button>
+                                <div id="myDropdown" class="dropdown-content">
                                   <a id="xls-type">Download Excel</a>
                                   <a id="csv-type">Download CSV</a>
                                   <a id="ods-type">Download ODS</a>
                                   <a id="txt-type">Download Text</a>
                                 </div>
+                                </div>
                             </div>
                             <div class="clear"></div>
-                            <div class="view-summary" >
+                            <div class="view-summary">
                                 <div class="col-sm-6 no-padding"
                                 id="bu-data-summary">
                                     <div class="form-group bg-muted">

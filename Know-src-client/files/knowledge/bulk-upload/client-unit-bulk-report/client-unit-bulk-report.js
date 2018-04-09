@@ -655,7 +655,7 @@ ClientUnitBulkReport.prototype.exportData = function() {
     });
 };
 
-// Form Initalize
+// Form Initialize
 $(function() {
     mirror.getLoadConstants();
     loadItemsPerPage();

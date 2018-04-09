@@ -418,7 +418,7 @@ function loadCurrentUserDetails() {
 //get statutory mapping bulk report filter details from api
 function getUserMappingsList(loggedUserID) {
     $('.form-group-dename-dmanager').attr("style", "display:block !important");
-    DE_NAME.multiselect('rebuild');
+    $('#domain').multiselect('rebuild');
 
     function onSuccess(loggedUserID, data) {
         var userMappingData = data;
@@ -462,7 +462,7 @@ function getUserMappingsList(loggedUserID) {
                 option.val(value["user_id"]);
                 option.text(value["employee_code"] + " - "
                     + value["employee_name"]);
-                DE_NAME.append(option);
+                $('#domain').append(option);
                 domainName = value["employee_code"] + " - " +
                     value["employee_name"];
 
@@ -473,7 +473,7 @@ function getUserMappingsList(loggedUserID) {
                 ALLUSERS.push(domainUserDetails);
             }
         });
-        DE_NAME.multiselect('rebuild');
+        $('#domain').multiselect('rebuild');
     }
 
 
@@ -757,7 +757,7 @@ function processSubmit() {
     }
 
     /* multiple COUNTRY selection in to generate array */
-    if ($('#de_name option:selected').text() == "") {
+    if ($('#domain option:selected').text() == "") {
         selectedDEName = DOMAIN_EXECUTIVES; // When execute unselected the Field.
     } else {
         $.each(deIds, function(key, value) {
@@ -956,6 +956,7 @@ $(function() {
         $('#show-button').trigger("click");
     });
     loadItemsPerPage();
+    $('#domain').multiselect('rebuild');
 });
 
 //To export data
@@ -983,8 +984,8 @@ AssignStatutoryBulkReport.prototype.exportData = function() {
     if (UNIT.val()) {
         unitID = UNIT.val();
     }
-    /* multiple COUNTRY selection in to generate array */
-    if ($('#de_name option:selected').text() == "") {
+    /* multiple domain executives selection in to generate array */
+    if ($('#domain option:selected').text() == "") {
         selectedDEName = DOMAIN_EXECUTIVES; // When execute unselected the Field.
     } else {
         $.each(deIds, function(key, value) {
