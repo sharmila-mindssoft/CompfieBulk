@@ -480,6 +480,14 @@ bu_api_params = {
         'type': 'INT', 'length': None,
         'validation_method': None, 'is_optional': False
     },
+    'tsk_id': {
+        'type': 'STRING', 'length': 25,
+        'validation_method': is_alpha_numeric, 'is_optional': True
+    },
+    'tsk_type': {
+        'type': 'STRING', 'length': 25,
+        'validation_method': is_alphabet, 'is_optional': True
+    },
 
     'task_id': {
         'type': 'STRING', 'length': 25,
@@ -539,7 +547,7 @@ bu_api_params = {
     'clientdata': {
         'type': 'VECTOR_TYPE', 'length': None,
         'validation_method': None, 'is_optional': False,
-        'module_name': client_units, "class_name": "StatutoryReportData"
+        'module_name': client_units, "class_name": "ClientReportData"
     },
 
     'bu_legal_entity_id': {
@@ -553,7 +561,7 @@ bu_api_params = {
     'assign_statutory_data': {
         'type': 'VECTOR_TYPE', 'length': None,
         'validation_method': None, 'is_optional': False,
-        'module_name': assign_statutory, "class_name": "StatutoryReportData"
+        'module_name': assign_statutory, "class_name": "AssignStatutoryReportData"
     },
 
     'rejected_unit_data': {
@@ -606,7 +614,7 @@ bu_api_params = {
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
     's_prov': {
-        'type': 'STRING', 'length': 50,
+        'type': 'STRING', 'length': 500,
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
     's_remarks': {
@@ -651,7 +659,7 @@ bu_api_params = {
     },
     'rejected_reason': {
         'type': 'STRING', 'length': 500,
-        'validation_method': is_alphabet, 'is_optional': True
+        'validation_method': is_alpha_numeric, 'is_optional': True
     },
 
     "c_names": {

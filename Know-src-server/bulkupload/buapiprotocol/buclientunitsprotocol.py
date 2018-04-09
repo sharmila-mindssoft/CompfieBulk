@@ -535,7 +535,7 @@ class ClientReportData(object):
                  uploaded_on, csv_name, total_records, total_rejected_records,
                  approved_by, rejected_by, approved_on, rejected_on,
                  is_fully_rejected, total_approve_records,
-                 rejected_reason
+                 rejected_reason, declined_count
                  ):
         self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
@@ -549,6 +549,8 @@ class ClientReportData(object):
         self.is_fully_rejected = is_fully_rejected
         self.total_approve_records = total_approve_records
         self.rejected_reason = rejected_reason
+        self.declined_count = declined_count
+
 
     @staticmethod
     def parse_structure(data):
@@ -556,7 +558,7 @@ class ClientReportData(object):
             "uploaded_by", "uploaded_on", "csv_name", "total_records",
             "total_rejected_records", "approved_by", "rejected_by",
             "approved_on", "rejected_on", "is_fully_rejected",
-            "total_approve_records", "rejected_reason"
+            "total_approve_records", "rejected_reason", "declined_count"
         ])
         return ClientReportData(
                           data.get("uploaded_by"),
@@ -568,6 +570,7 @@ class ClientReportData(object):
                           data.get("is_fully_rejected"),
                           data.get("total_approve_records"),
                           data.get("rejected_reason"),
+                          data.get("declined_count")
                           )
 
     def to_structure(self):
@@ -583,7 +586,8 @@ class ClientReportData(object):
             "rejected_on": self.rejected_on,
             "is_fully_rejected": self.is_fully_rejected,
             "total_approve_records": self.total_approve_records,
-            "rejected_reason": self.rejected_reason
+            "rejected_reason": self.rejected_reason,
+            "declined_count": self.declined_count
         }
 
 
@@ -715,7 +719,8 @@ class ClientUnitRejectData(object):
                  uploaded_on, csv_name, total_records, total_rejected_records,
                  approved_by, rejected_by, approved_on, rejected_on,
                  is_fully_rejected, total_approve_records, file_download_count,
-                 remarks, statutory_action, declined_count, rejected_file
+                 remarks, statutory_action, declined_count, rejected_file,
+                 rejected_reason
                  ):
         self.csv_id = csv_id
         self.uploaded_by = uploaded_by
@@ -734,6 +739,7 @@ class ClientUnitRejectData(object):
         self.statutory_action = statutory_action
         self.declined_count = declined_count
         self.rejected_file = rejected_file
+        self.rejected_reason = rejected_reason        
 
     @staticmethod
     def parse_structure(data):
@@ -742,7 +748,8 @@ class ClientUnitRejectData(object):
             "total_records", "total_rejected_records", "approved_by",
             "rejected_by", "approved_on", "rejected_on", "is_fully_rejected",
             "total_approve_records", "file_download_count", "remarks",
-            "statutory_action", "declined_count", "rejected_file"
+            "statutory_action", "declined_count", "rejected_file",
+            "rejected_reason"
         ])
         return ClientUnitRejectData(
             data.get("csv_id"),
@@ -761,8 +768,9 @@ class ClientUnitRejectData(object):
             data.get("remarks"),
             data.get("statutory_action"),
             data.get("declined_count"),
-            data.get("rejected_file")
-        )
+            data.get("rejected_file"),
+            data.get("rejected_reason")
+            )
 
     def to_structure(self):
         return {
@@ -782,7 +790,8 @@ class ClientUnitRejectData(object):
             "remarks": self.remarks,
             "statutory_action": self.statutory_action,
             "declined_count": self.declined_count,
-            "rejected_file": self.rejected_file
+            "rejected_file": self.rejected_file,
+            "rejected_reason": self.rejected_reason
         }
 
 

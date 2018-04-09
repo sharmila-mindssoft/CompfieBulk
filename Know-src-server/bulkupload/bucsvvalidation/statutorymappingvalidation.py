@@ -487,7 +487,7 @@ class StatutorySource(object):
         created_on = get_date_time()
         mapping_value = [
             int(c_id), int(d_id),
-            int(n_id), 1, 1,
+            int(n_id), 1, 2,
             int(uploadedby), str(created_on), mapping
         ]
         q = "INSERT INTO tbl_statutory_mappings (country_id, domain_id, " + \
@@ -545,8 +545,7 @@ class StatutorySource(object):
             "is_active", "created_by", "created_on",
             "domain_id", "country_id", "is_approved",
             "duration", "duration_type_id", "repeats_every", "repeats_type_id",
-            "task_id", "task_type",
-
+            "task_id", "task_type", "approved_by", "approved_on", "remarks"
         ]
         values = []
 
@@ -572,12 +571,13 @@ class StatutorySource(object):
                 d["Format"], 0,
                 d["Penal_Consequences"], d["Reference_Link"], freq_id,
                 mapped_date, int(mapping_id), 1, d["uploaded_by"],
-                created_on, c_id, d_id, 1,
+                created_on, c_id, d_id, 2,
                 None if d["Duration"] == '' else d["Duration"],
                 duration_type_id,
                 None if d["Repeats_Every"] == '' else d["Repeats_Every"],
                 repeat_type_id,
-                d["Task_ID"], d["Task_Type"],
+                d["Task_ID"], d["Task_Type"], d["approved_by"],
+                d["approved_on"], d["remarks"]
             ))
 
         if values:
@@ -703,6 +703,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         }
 
     def compare_csv_columns(self):
+        print self._csv_column_name
+        print self._csv_header
         res = collections.Counter(
             self._csv_column_name
         ) == collections.Counter(self._csv_header)
@@ -848,6 +850,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
                                 if isFound is not True and isFound != "":
                                     msg = "%s - %s" % (key, isFound)
+                                    print msg
+                                    print row_idx
                                     if res is not True:
                                         res.append(msg)
                                     else:
@@ -903,8 +907,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
                         mapped_header_dict[key] = head_idx
 
-                print res
-                print data.get("Task_ID")
                 if key == "Format" and res is True:
                     if not self.check_compliance_task_name_duplicate(
                         self._country_id, self._domain_id,
@@ -948,6 +950,9 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 ]
                 res = True
 
+        print mapped_error_dict
+        print "\n"
+        print mapped_header_dict
         if invalid > 0:
             return self.make_invalid_return(
                 mapped_error_dict, mapped_header_dict
@@ -1006,7 +1011,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             "valid": total - invalid,
             "invalid": invalid,
             "doc_count": len(set(self._doc_names)),
-            "doc_names": list(set(self._doc_names))
+            "doc_names": list(set(self._doc_names)),
+            "csv_name": self._csv_name
         }
 
 
@@ -1020,78 +1026,109 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self._domain_id = domain_id
         self._session_user_obj = session_user
         self._source_data = None
-        self._declined_row_idx = []
-        self.get_source_data()
+        self._declined_row_idx = {}
         self._country_name = None
         self._domain_name = None
         self._csv_name = None
+        self._doc_count = 0
+        self.get_source_data()
+        self.get_file_count()
 
     def get_source_data(self):
         self._source_data = self._db.call_proc(
             "sp_statutory_mapping_by_csvid", [self._csv_id]
         )
+        if len(self._source_data) > 0 :
+            self._csv_name = self._source_data[0].get("csv_name")
+            self._country_name = self._source_data[0].get("country_name")
+            self._domain_name = self._source_data[0].get("domain_name")
+
+    def get_file_count(self):
+        data = self._db.call_proc("sp_sm_get_total_file_count", [self._csv_id])
+        if len(data) > 0 :
+            self._doc_count = data[0].get("total_documents")
 
     def perform_validation_before_submit(self):
-        declined_count = 0
-        self._declined_row_idx = []
-        self.init_values(self._country_id, self._domain_id)
+        try :
+            declined_count = 0
+            self._declined_row_idx = {}
+            self.init_values(self._country_id, self._domain_id)
 
-        for row_idx, data in enumerate(self._source_data):
+            for row_idx, data in enumerate(self._source_data):
+                res = True
+                if row_idx == 0:
+                    self._country_name = data.get("country_name")
+                    self._domain_name = data.get("domain_name")
+                    self._csv_name = data.get("csv_name")
 
-            if row_idx == 0:
-                self._country_name = data.get("country_name")
-                self._domain_name = data.get("domain_name")
-                self._csv_name = data.get("csv_name")
+                for key in self._csv_column_name:
+                    value = data.get(key)
+                    isFound = ""
+                    if value is None:
+                        continue
 
-            for key in self._csv_column_name:
-                value = data.get(key)
-                isFound = ""
-                if value is None:
-                    continue
+                    csvParam = csv_params.get(key)
+                    if csvParam is None:
+                        continue
 
-                csvParam = csv_params.get(key)
-                if csvParam is None:
-                    continue
+                    if type(value) is not int:
+                        values = value.strip().split(CSV_DELIMITER)
 
-                if type(value) is not int:
-                    values = value.strip().split(CSV_DELIMITER)
+                        for v in values:
+                            if type(v) is str:
+                                v = v.strip()
 
-                    for v in values:
-                        if type(v) is str:
-                            v = v.strip()
+                            if v != "":
+                                if (
+                                    csvParam.get("check_is_exists") is True or
+                                    csvParam.get("check_is_active") is True
+                                ):
+                                    unboundMethod = self._check_method_maps.get(
+                                        key
+                                    )
+                                    if unboundMethod is not None:
+                                        isFound = unboundMethod(v)
 
-                        if v != "":
-                            if (
-                                csvParam.get("check_is_exists") is True or
-                                csvParam.get("check_is_active") is True
-                            ):
-                                unboundMethod = self._check_method_maps.get(
-                                    key
-                                )
-                                if unboundMethod is not None:
-                                    isFound = unboundMethod(v)
+                                if isFound is not True and isFound != "":
+                                    declined_count += 1
+                                    msg = "%s - %s" % (key, isFound)
+                                    if res is not True:
+                                        res.append(msg)
+                                    else:
+                                        res = [msg]
 
-                            if isFound is not True and isFound != "":
-                                declined_count += 1
+                if not self.check_compliance_task_name_duplicate(
+                    self._country_id, self._domain_id, data.get("Statutory"),
+                    data.get("Statutory_Provision"), data.get("Compliance_Task")
+                ):
+                    declined_count += 1
+                    dup_error = "Compliance_Task - Duplicate data"
+                    if res is not True:
+                        res.append(dup_error)
+                    else:
+                        res = [dup_error]
 
-            if not self.check_compliance_task_name_duplicate(
-                self._country_id, self._domain_id, data.get("Statutory"),
-                data.get("Statutory_Provision"), data.get("Compliance_Task")
-            ):
-                declined_count += 1
+                if not self.check_task_id_duplicate(
+                    self._country_id, self._domain_id, data.get("Statutory"),
+                    data.get("Statutory_Provision"), data.get("Compliance_Task"),
+                    data.get("Task_ID")
+                ):
+                    declined_count += 1
+                    dup_error = "Task_ID - Duplicate data"
+                    if res is not True:
+                        res.append(dup_error)
+                    else:
+                        res = [dup_error]
 
-            if not self.check_task_id_duplicate(
-                self._country_id, self._domain_id, data.get("Statutory"),
-                data.get("Statutory_Provision"), data.get("Compliance_Task"),
-                data.get("Task_ID")
-            ):
-                declined_count += 1
+                if declined_count > 0:
+                    self._declined_row_idx[
+                        data.get("bulk_statutory_mapping_id")
+                    ] = res
 
-            if declined_count > 0:
-                self._declined_row_idx.append(
-                    data.get("bulk_statutory_mapping_id")
-                )
-        return self._declined_row_idx
+            return self._declined_row_idx
+        except Exception, e :
+            print e
+            print str(traceback.format_exc())
 
     def frame_data_for_main_db_insert(self):
         try:
@@ -1117,7 +1154,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     "Organization"
                 ).strip().split(CSV_DELIMITER):
                     org_info = self.Organization.get(org)
-                    if org_info is not None :
+                    if org_info is not None:
                         org_ids.append(
                             org_info.get("organisation_id")
                         )
@@ -1154,12 +1191,10 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     self._country_id, self._domain_id, nature_id,
                     uploaded_by, str(statu_mapping)
                 )
-
                 self.save_compliance_data(
                     self._country_id, self._domain_id,
                     mapping_id, grouped_list
                 )
-
                 self.save_industries(mapping_id, uploaded_by, org_ids)
 
                 self.save_statutories(mapping_id, uploaded_by, statu_ids)
@@ -1172,12 +1207,14 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
     def make_rejection(self, declined_info):
         try :
-            count = len(declined_info)
-            q = "update tbl_bulk_statutory_mapping set " + \
-                " action = 3 where bulk_statutory_mapping_id in (%s)" % (
-                    ",".join(map(str, declined_info))
-                )
-            self._db.execute(q)
+            count = len(declined_info.keys())
+            for k, v in declined_info.items() :
+                q = "update tbl_bulk_statutory_mapping set " + \
+                    " action = 3, remarks = %s where " + \
+                    " bulk_statutory_mapping_id  = %s" % (
+                        "|;|".join(v), k
+                    )
+                self._db.execute(q)
 
             q1 = "update tbl_bulk_statutory_mapping_csv set " + \
                 " declined_count = %s where csv_id = %s"
@@ -1188,9 +1225,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             raise (e)
 
     def format_download_process_initiate(self, csvid):
-        # call approve after initiate add time out to check zip status, if done
-        # call download once after complete download call remove
-        # and close the call time our
         self.file_server_approve_call(csvid)
         self._stop = False
 
@@ -1215,7 +1249,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             try :
                 _db_check.begin()
                 data = _db_check.call_proc("sp_sm_get_file_download_status", [csvid])
-                print data
                 if len(data) > 0 :
                     file_status = data[0].get("file_download_status")
 

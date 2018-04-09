@@ -4,6 +4,9 @@ from server import logger
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
 from server.constants import MAX_REJECTED_COUNT
 import datetime
+from server.constants import (
+    DM_USER_CATEGORY, DE_USER_CATEGORY
+)
 
 __all__ = [
     "save_client_units_mapping_csv",
@@ -191,7 +194,8 @@ def fetch_rejected_client_unit_report(db, session_user, user_id,
             str(d["remarks"]),
             d["action"],
             d["declined_count"],
-            d["rejected_file_name"]
+            d["rejected_file_name"],
+            d["rejected_reason"]
         ))
     return rejected_list
 
@@ -225,9 +229,10 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
     expected_result = 2
 
     if(len(dependent_users) > 0):
-        if(user_category_id == 5):
+        if(user_category_id == DM_USER_CATEGORY):
             user_ids = ",".join(map(str, dependent_users))
-        elif(user_category_id == 6 and user_category_id != 5):
+        elif(user_category_id == DE_USER_CATEGORY and
+             user_category_id != DM_USER_CATEGORY):
             user_ids = ",".join(map(str, dependent_users))
         else:
             user_ids = user_id
@@ -271,7 +276,8 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
                 str(rejected_on),
                 d["is_fully_rejected"],
                 d["total_approve_records"],
-                d["rejected_reason"]
+                d["rejected_reason"],
+                d["declined_count"]
             ))
     else:
             client_list = []

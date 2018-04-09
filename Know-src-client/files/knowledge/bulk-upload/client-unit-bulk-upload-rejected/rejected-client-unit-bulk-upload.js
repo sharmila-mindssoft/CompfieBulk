@@ -1,9 +1,6 @@
-var FULLYREJECTED = "Fully Rejected";
-var SYSTEMREJECTED = "COMPFIE";
-var SYSTEM_REJECTED_ACTION = 3;
-var GROUP_NAME = $('#countryval');
-var GROUP_ID = $('#country');
-var AC_GROUP = $('#ac-country');
+var GROUP_NAME = $('#groupval');
+var GROUP_ID = $('#group');
+var AC_GROUP = $('#ac-group');
 var SHOW_BTN = $('#show');
 var REPORT_VIEW = $('.grid-table-rpt');
 var PASSWORD_SUBMIT_BUTTON = $('#password-submit');
@@ -12,20 +9,8 @@ var REMOVE_UNIT_CSV_ID;
 var EXISTING_USER_ID = [];
 var ALL_USER_INFO = '';
 var USER_CATEGORY_ID = 0;
-
-/**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECTED = "COMPFIE";
-var REJECTED_FILE_DOWNLOADCOUNT = 2;
-
-
+var CLIENT_LIST;
 var rejClientUnit = new RejectedClientUnitBulk();
-
 function RejectedClientUnitBulk() {}
 
 // Handle All Page Controls like Button submit
@@ -36,47 +21,19 @@ function pageControls() {
         var textVal = $(this).val();
         commonAutoComplete(
             e, AC_GROUP, GROUP_ID, textVal,
-            _clients, "group_name", "client_id",
+            CLIENT_LIST, "group_name", "client_id",
             function(val) {
                 onAutoCompleteSuccess(GROUP_NAME, GROUP_ID, val);
             });
-
         resetFilter();
     });
 
     SHOW_BTN.click(function() {
         isValid = rejClientUnit.validateMandatory();
         if (isValid == true) {
-            $('#mapping_animation')
-                .removeClass()
-                .addClass('bounceInLeft animated')
-                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd ' +
-                    'oanimationend animationend',
-                    function() {
-                        $(this).removeClass();
-                    });
             processSubmit();
         }
     });
-}
-
-//
-function fetchFiltersData() {
-    displayLoader();
-    mirror.getClientLoginTraceFilter(
-        function(error, response) {
-            console.log(response)
-            if (error != null) {
-                hideLoader();
-                displayMessage(error);
-            } else {
-                _clientUsers = response.audit_client_users;
-                _clients = response.clients;
-                loadCurrentUserDetails();
-                hideLoader();
-            }
-        }
-    );
 }
 
 function onAutoCompleteSuccess(valueElement, idElement, val) {
@@ -97,15 +54,6 @@ function processSubmit() {
 
     function onSuccess(data) {
         $('.details').show();
-        $('#mapping_animation')
-            .removeClass()
-            .addClass('bounceInLeft animated')
-            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd ' +
-                'oanimationend animationend',
-                function() {
-                    $(this).removeClass();
-                    $(this).show();
-                });
         rejClientUnitData = data.rejected_unit_data;
         if (rejClientUnitData.length == 0) {
             $('.tbody-compliance').empty();
@@ -129,8 +77,6 @@ function processSubmit() {
     }
 
     bu.getClientUnitRejectedData(filterdata, function(error, response) {
-        console.log("error");
-        console.log(error);
         if (error == null) {
             onSuccess(response);
         } else {
@@ -140,7 +86,7 @@ function processSubmit() {
 }
 
 // Display Rejected Client Unit details accoring to count
-function loadCountwiseResult(filterList) {
+function loadCountwiseResult(data) {
     var sno = 0;
     var csvId;
     var csvName;
@@ -154,27 +100,22 @@ function loadCountwiseResult(filterList) {
     var isFullyRejected;
     var deleteStatus;
     $('.tbody-compliance').empty();
-    for (var entity in filterList) {
+    for (var entity in data) {
         deleteStatus = '';
         sno = parseInt(sno) + 1;
-        csvId = filterList[entity].csv_id;
-        csvName = filterList[entity].csv_name;
+        csvId = data[entity].csv_id;
+        csvName = data[entity].csv_name;
+        totalNoOfTasks = data[entity].total_records;
+        rejectedOn = data[entity].rejected_on;
+        rejectedBy = data[entity].rejected_by;
+        isFullyRejected = data[entity].is_fully_rejected;
+        statutoryAction = data[entity].statutory_action;
+        fileDownloadCount = data[entity].file_download_count;
+        rejectedReason = data[entity].rejected_reason;
+        declinedCount = data[entity].declined_count;
+        rejectedFileName = data[entity].rejected_file;
 
-        totalNoOfTasks = filterList[entity].total_records;
-
-        rejectedOn = filterList[entity].rejected_on;
-        rejectedBy = filterList[entity].rejected_by;
-
-        isFullyRejected = filterList[entity].is_fully_rejected;
-
-        statutoryAction = filterList[entity].statutory_action;
-        fileDownloadCount = filterList[entity].file_download_count;
-
-        rejectedReason = filterList[entity].rejected_reason;
-        declinedCount = filterList[entity].declined_count;
-        rejectedFileName = filterList[entity].rejected_file;
-
-        if (parseInt(isFullyRejected) == 1) {
+        if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
             removeHrefTag = '';
             reasonForRejection = rejectedReason;
             $(ALL_USER_INFO).each(function(key, value) {
@@ -184,9 +125,8 @@ function loadCountwiseResult(filterList) {
                     rejectedBy = EmpCode + " - " + EmpName.toUpperCase();
                 }
             });
-        } else if (parseInt(statutoryAction) == SYSTEM_REJECTED_ACTION) {
-            rejectedBy = SYSTEMREJECTED;
-            declinedCount = data[entity].declined_count;
+        } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {
+            rejectedBy = SYSTEM_REJECTED_BY;
             reasonForRejection = '';
         }
         var tblRow1 = $('#act-templates .table-act-list .table-row-act-list');
@@ -230,8 +170,7 @@ function loadCountwiseResult(filterList) {
             $('.tbl_rejected_file .rejected_i_cls', clone1)
             .addClass("default-display-none");
         }
-        if (parseInt(fileDownloadCount) < 1
-            && parseInt(fileDownloadCount) < REJECTED_FILE_DOWNLOADCOUNT){
+        if (parseInt(fileDownloadCount) < SHOW_REMOVE_ICON){
             $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
         }
         $('#datatable-responsive .tbody-compliance').append(clone1);
@@ -253,50 +192,21 @@ RejectedClientUnitBulk.prototype.validateMandatory = function() {
 //Initialize the page load user list
 function initialize() {
     function onSuccess(data) {
-        ALL_USER_INFO = data.user_details;
-        userDetails = data.user_details[0];
-        loadCurrentUserDetails();
+        CLIENT_LIST = data.client_group_list;
         hideLoader();
     }
-
+    
     function onFailure(error) {
         displayMessage(error);
         hideLoader();
     }
-    mirror.getAdminUserList(function(error, response) {
+    mirror.getClientGroupsList(function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
             onFailure(error);
         }
     });
-}
-
-function loadCurrentUserDetails() {
-    //alert('load Current User Details');
-    var user = mirror.getUserInfo();
-    var loggedUserId = 0;
-    if (ALL_USER_INFO) {
-        $.each(ALL_USER_INFO, function(key, value) {
-            if (user.user_id == value["user_id"]) {
-                USER_CATEGORY_ID = value["user_category_id"];
-                loggedUserId = value["user_id"];
-            }
-        });
-    }
-
-    if (USER_CATEGORY_ID == TE_USER_CATEGORY) {
-        // TE-Name  : Techno-Executive
-        $('.active-techno-executive').attr('style', 'display:block');
-        $('#techno-name').text(user.employee_code + " - " +
-            user.employee_name.toUpperCase());
-        EXISTING_USER_ID.push(loggedUserId);
-    } else if (USER_CATEGORY_ID == TM_USER_CATEGORY
-        && USER_CATEGORY_ID != TE_USER_CATEGORY
-        && loggedUserId > 0) {
-        // TE-Name  : Techno-Manager
-        getUserMappingsList(loggedUserId);
-    }
 }
 
 //validate password
@@ -315,7 +225,7 @@ function validateAuthentication() {
             hideLoader();
             isAuthenticate = true;
             Custombox.close();
-            CURRENT_PASWORD.empty();
+            CURRENT_PASWORD.val('');
         } else {
             hideLoader();
             if (error == 'InvalidPassword') {
@@ -331,6 +241,7 @@ PASSWORD_SUBMIT_BUTTON.click(function() {
 
 function confirm_alert(event) {
     var groupId = GROUP_ID.val();
+    CURRENT_PASWORD.val('');
 
     swal({
         title: "Are you sure",
@@ -363,17 +274,8 @@ function removeClientUnitCsvData(REMOVE_UNIT_CSV_ID, groupId) {
     displayLoader();
 
     function onSuccess(data) {
+        CURRENT_PASWORD.val('');
         $('.details').show();
-        $('#mapping_animation')
-            .removeClass()
-            .addClass('bounceInLeft animated')
-            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd ' +
-                'oanimationend animationend',
-                function() {
-                    $(this).removeClass();
-                    $(this).show();
-                });
-
         rejectedUnitData = data.rejected_unit_data;
         if (rejectedUnitData.length == 0) {
             $('.tbody-compliance').empty();
@@ -430,7 +332,7 @@ function downloadClick(csvId, event) {
 
         dataCSVid = updatedCount[0].csv_id;
         downloadCount = updatedCount[0].download_count;
-        if (parseInt(downloadCount) == VISIBLE_REMOVE_ICON) {
+        if (parseInt(downloadCount) == SHOW_REMOVE_ICON) {
             eventID = eventID + dataCSVid;
             document.getElementById(eventID).classList.toggle("show");
             $("#delete_action_" + dataCSVid).attr("style", "display:block");
@@ -525,18 +427,8 @@ window.onclick = function(event) {
 }
 
 $(function() {
+    mirror.getLoadConstants();
     REPORT_VIEW.hide();
     initialize();
-    fetchFiltersData();
     pageControls();
-    /*tempDatasetup();*/
 });
-
-/*function tempDatasetup() {
-  $('#countryval').val("India");
-  $('#domainval').val("Industrial Law");
-  $('#country').val(1);
-  $('#domain').val(3);
-  SHOW_BTN.click();
-}
-*/

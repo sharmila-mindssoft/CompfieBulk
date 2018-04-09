@@ -18,17 +18,12 @@ var REPORT_VIEW = $('.grid-table-rpt');
 var PASSWORD_SUBMIT_BTN = $('#password-submit');
 var CURRENT_PASSWORD = $('#current-password');
 var REMOVE_STATUTORY_CSV_ID;
-var SYSTEM_REJECTED_ACTION = 3;
 
 /**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECTED = "COMPFIE";
-var REJECTED_FILE_DOWNLOADCOUNT = 2;
+/*var REJECTED_FILE_DOWNLOADCOUNT = 2;
+var SHOW_REMOVE_ICON = 1;
+var SYSTEM_REJECT_ACTION_STATUS = 3;
+var IS_FULLY_REJECT_ACTION_STATUS = 1;*/
 
 
 // Creating New Class
@@ -206,7 +201,7 @@ function loadCountwiseResult(data) {
         statutoryAction = data[entity].statutory_action;
         fileDownloadCount = data[entity].file_download_count;
 
-        if (parseInt(isFullyRejected) == 1) {
+        if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
             removeAction = '';
             reasonForRejection = rejectedReason;
             $(ALL_USER_INFO).each(function(key, value) {
@@ -216,8 +211,8 @@ function loadCountwiseResult(data) {
                     rejectedBy = EMP_CODE + " - " + EMP_NAME;
                 }
             });
-        } else if (parseInt(statutoryAction) == SYSTEM_REJECTED_ACTION) {
-            rejectedBy = SYSTEM_REJECTED;
+        } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {
+            rejectedBy = SYSTEM_REJECTED_BY;
             declinedCount = data[entity].declined_count;
             reasonForRejection = '';
         }
@@ -238,9 +233,8 @@ function loadCountwiseResult(data) {
             'data-csv-id': csvId,
             onClick: "confirmAlert(this)",
         });
-
         /***** Rejected File Downloads ********/
-        if (parseInt(fileDownloadCount) < REJECTED_FILE_DOWNLOADCOUNT) {
+        if (parseInt(fileDownloadCount) < parseInt(REJECTED_FILE_DOWNLOADCOUNT)) {
             $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
@@ -254,11 +248,6 @@ function loadCountwiseResult(data) {
                 onclick: "downloadClick(" + csvId + ",this)"
             });
         }
-        else if (parseInt(fileDownloadCount) < 1
-            && parseInt(fileDownloadCount) < REJECTED_FILE_DOWNLOADCOUNT){
-            $('.tbl_remove .remove_a', clone1)
-        .addClass("default-display-none");
-        }
         else{
             $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
                 'id': "download_icon_" + csvId,
@@ -267,6 +256,9 @@ function loadCountwiseResult(data) {
             });
             $('.tbl_rejected_file .rejected_i_cls', clone1)
             .addClass("default-display-none");
+        }
+        if (parseInt(fileDownloadCount) < SHOW_REMOVE_ICON){
+            $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
         }
         $('#datatable-responsive .tbody-compliance').append(clone1);
     }
@@ -455,7 +447,7 @@ function downloadClick(CSV_ID, event) {
 
         dataCsvId = updatedCount[0].csv_id;
         downloadCount = updatedCount[0].download_count;
-        if (parseInt(downloadCount) == VISIBLE_REMOVE_ICON) {
+        if (parseInt(downloadCount) == SHOW_REMOVE_ICON) {
             eventId = eventId + dataCsvId;
             document.getElementById(eventId).classList.toggle("show");
             $("#delete_action_" + dataCsvId).attr("style", "display:block");
@@ -559,6 +551,7 @@ window.onclick = function(event) {
     }
 }
 $(function() {
+    mirror.getLoadConstants();
     $('.grid-table-rpt').hide();
     initialize();
     pageControls();
