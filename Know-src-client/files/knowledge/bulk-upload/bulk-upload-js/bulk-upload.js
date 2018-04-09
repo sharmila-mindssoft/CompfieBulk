@@ -501,7 +501,7 @@ function confirmClientUnitDeclination(csv_id, client_id, callback) {
 
 function getBulkClientUnitListForFilterView(csvid, f_count, r_range,
   filter_le, filter_div, filter_cg, filter_u_loc, filter_u_code,
-  filter_domain, filter_orgn, callback) {
+  filter_domain, filter_orgn, actionVal, callback) {
   var request = [
     'GetBulkClientUnitListForFilterView',
     {
@@ -514,7 +514,8 @@ function getBulkClientUnitListForFilterView(csvid, f_count, r_range,
         "bu_unit_location": filter_u_loc,
         "bu_unit_code": filter_u_code,
         "bu_domain": filter_domain,
-        "bu_orgn": filter_orgn
+        "bu_orgn": filter_orgn,
+        "bu_action": actionVal
     }
   ];
   apiRequest("bu/client_units", request, callback)
