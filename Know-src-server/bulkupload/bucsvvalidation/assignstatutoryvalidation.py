@@ -929,6 +929,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                     )
 
         for row_idx, data in enumerate(self._source_data):
+            declined_count = 0
             if row_idx == 0:
                 self._legal_entity = data.get("Legal_Entity")
                 self._client_group = data.get("Client_Group")
