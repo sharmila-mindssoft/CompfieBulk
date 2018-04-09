@@ -414,10 +414,10 @@ DROP PROCEDURE IF EXISTS `sp_client_units_csv_list`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_client_units_csv_list`(
-    IN _clientId INT, _groupName VARCHAR(50))
+    IN _clientId INT(11), _groupName VARCHAR(50))
 BEGIN
-    SELECT t1.csv_unit_id, t1.csv_name, t1.uploaded_by,
-    DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') AS uploaded_on,
+  SELECT t1.csv_unit_id, t1.csv_name, t1.uploaded_by,
+    DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %H:%i') AS uploaded_on,
     t1.total_records AS no_of_records,
     (SELECT count(*) FROM tbl_bulk_units WHERE csv_unit_id =
     t1.csv_unit_id AND action = 1) AS approved_count,
@@ -425,9 +425,10 @@ BEGIN
     t1.csv_unit_id AND action = 2) AS rej_count,
     (SELECT count(*) FROM tbl_bulk_units WHERE csv_unit_id =
     t1.csv_unit_id AND action = 3) AS declined_count
- FROM
+  FROM
     tbl_bulk_units_csv AS t1 WHERE t1.client_id = _clientId AND
-    t1.client_group = _groupName ORDER BY t1.uploaded_on desc;
+    (IFNULL(t1.is_fully_rejected, 0) = 0 AND IFNULL(t1.approve_status, 0) = 0)
+    AND t1.client_group = _groupName ORDER BY t1.uploaded_on DESC;
 END //
 
 DELIMITER ;
@@ -1344,7 +1345,7 @@ CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
     view_data INT, s_status INT, c_status INT
 )
 BEGIN
-    
+
     SELECT t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
@@ -1528,35 +1529,36 @@ CREATE PROCEDURE `sp_bulk_client_unit_update_action`(
     IN _csv_unit_id INT, _action TINYINT, _remarks TEXT, _user_id INT,
   _declinedCount INT)
 BEGIN
-    IF _action = 2 then
+    IF _action = 2 THEN
         UPDATE tbl_bulk_units SET
         action = 2, remarks = _remarks
         WHERE csv_unit_id = _csv_unit_id;
 
         UPDATE tbl_bulk_units_csv SET
         is_fully_rejected = 1,
+        approve_status = 2,
         rejected_by = _user_id,
         rejected_on = current_ist_datetime(),
         rejected_reason = _remarks,
-        total_rejected_records = (select count(0) from
-        tbl_bulk_units as t1 WHERE t1.csv_unit_id = _csv_unit_id)
+        total_rejected_records = (select COUNT(0) FROM
+        tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id)
         WHERE csv_unit_id = _csv_unit_id;
-    else
-    if _declinedCount = 0 then
-      delete from tbl_bulk_units
-      where csv_unit_id = _csv_unit_id
-      and (action = 1 or action = 0);
-    else
-      UPDATE tbl_bulk_units SET
-      action = 1 WHERE csv_unit_id = _csv_unit_id;
-    end if;
+    ELSE
+      IF _declinedCount = 0 THEN
+        DELETE FROM tbl_bulk_units
+        WHERE csv_unit_id = _csv_unit_id
+        AND (action = 1 or action = 0);
+      ELSE
+        UPDATE tbl_bulk_units SET
+        action = 1 WHERE csv_unit_id = _csv_unit_id;
+      END IF;
 
-        UPDATE tbl_bulk_units_csv SET
-        approve_status = 1, approved_on = current_ist_datetime(),
-        approved_by = _user_id, is_fully_rejected = 0,
-    declined_count = _declinedCount
-        WHERE csv_unit_id = _csv_unit_id;
-    end if;
+      UPDATE tbl_bulk_units_csv SET
+      approve_status = 1, approved_on = current_ist_datetime(),
+      approved_by = _user_id, is_fully_rejected = 0,
+      declined_count = _declinedCount
+      WHERE csv_unit_id = _csv_unit_id;
+    END IF;
 END //
 
 DELIMITER ;
@@ -1577,7 +1579,7 @@ BEGIN
     t2.unit_name, t2.address, t2.city, t2.state,
     t2.postalcode, t2.domain, t2.organization,
     t1.uploaded_by, t1.csv_name, t1.csv_unit_id, t1.uploaded_on,
-    t2.action, t2.remarks
+    t2.action, t2.remarks, t1.total_records
     FROM tbl_bulk_units_csv AS t1 inner join tbl_bulk_units AS t2
     on t2.csv_unit_id = t1.csv_unit_id
     WHERE t1.csv_unit_id = _csv_unit_id
@@ -1625,7 +1627,7 @@ CREATE PROCEDURE `sp_bulk_client_unit_view_by_filter`(
     IN _csv_unit_id INT, _le_name VARCHAR(50),
     _div_name VARCHAR(50), _cg_name VARCHAR(50),
     _u_location VARCHAR(200), _u_code VARCHAR(50),
-    _domain VARCHAR(200), _orgn VARCHAR(500),
+    _domain VARCHAR(200), _orgn VARCHAR(500), _action INT,
     _f_count INT, _f_limit INT
 )
 BEGIN
@@ -1641,8 +1643,26 @@ BEGIN
     AND legal_entity like legal_entity AND division like _div_name AND
     category like _cg_name AND unit_location like _u_location AND
     unit_code like _u_code AND domain like _domain AND
-    organization like _orgn
-    limit  _f_count, _f_limit;
+    organization like _orgn AND
+    CASE WHEN _action = 1 THEN
+      action = 0
+    ELSE
+      action != 0
+    END
+      limit  _f_count, _f_limit;
+
+    select count(distinct t2.bulk_unit_id) as total_records
+      from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
+      on t2.csv_unit_id = t1.csv_unit_id where t1.csv_unit_id = _csv_unit_id
+      and legal_entity like legal_entity and division like _div_name and
+      category like _cg_name and unit_location like _u_location and
+      unit_code like _u_code and domain like _domain and
+      organization like _orgn AND
+      CASE WHEN _action = 1 THEN
+        action = 0
+      ELSE
+        action != 0
+      END;
 END //
 
 DELIMITER ;
@@ -1921,21 +1941,21 @@ DROP PROCEDURE IF EXISTS `sp_check_invalid_compliance_in_csv`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_check_invalid_compliance_in_csv`(
-IN client_group_ VARCHAR(50), legal_entity_ VARCHAR(100), domain_ TEXT, 
-organization_ TEXT, unit_code_ VARCHAR(50), unit_name_ VARCHAR(50), 
+IN client_group_ VARCHAR(50), legal_entity_ VARCHAR(100), domain_ TEXT,
+organization_ TEXT, unit_code_ VARCHAR(50), unit_name_ VARCHAR(50),
 unit_location_ TEXT , primary_legislation_ VARCHAR(100),
-secondary_legislation_ TEXT, statutory_provision_ VARCHAR(500), 
+secondary_legislation_ TEXT, statutory_provision_ VARCHAR(500),
 compliance_task_ VARCHAR(100), compliance_description_ TEXT
 )
 BEGIN
   SELECT as_id
   FROM tbl_download_assign_statutory_template WHERE
   client_group = client_group_ AND legal_entity = legal_entity_ AND
-  domain = domain_ AND organization = organization_ AND 
-  unit_code = unit_code_ AND unit_name = unit_name_ AND 
+  domain = domain_ AND organization = organization_ AND
+  unit_code = unit_code_ AND unit_name = unit_name_ AND
   unit_location = unit_location_ AND
-  perimary_legislation = primary_legislation_ AND 
-  secondary_legislation = secondary_legislation_ AND 
+  perimary_legislation = primary_legislation_ AND
+  secondary_legislation = secondary_legislation_ AND
   statutory_provision = statutory_provision_ AND
   compliance_task_name = compliance_task_ AND
   compliance_description = compliance_description_;

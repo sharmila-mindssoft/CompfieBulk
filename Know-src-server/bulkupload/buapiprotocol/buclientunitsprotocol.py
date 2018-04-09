@@ -409,7 +409,7 @@ class GetBulkClientUnitListForFilterView(Request):
     def __init__(
         self, csv_id, f_count, r_range, bu_le_name, bu_division_name,
         bu_category_name, bu_unit_location, bu_unit_code, bu_domain,
-        bu_orgn
+        bu_orgn, bu_action
     ):
         self.csv_id = csv_id
         self.f_count = f_count
@@ -421,6 +421,7 @@ class GetBulkClientUnitListForFilterView(Request):
         self.bu_unit_code = bu_unit_code
         self.bu_domain = bu_domain
         self.bu_orgn = bu_orgn
+        self.bu_action = bu_action
 
     @staticmethod
     def parse_inner_structure(data):
@@ -428,14 +429,14 @@ class GetBulkClientUnitListForFilterView(Request):
         data = parse_dictionary(data, [
             "csv_id", "f_count", "r_range", "bu_le_name", "bu_division_name",
             "bu_category_name", "bu_unit_location", "bu_unit_code", "bu_domain",
-            "bu_orgn"
+            "bu_orgn", "bu_action"
         ])
         return GetBulkClientUnitListForFilterView(
             data.get("csv_id"), data.get("f_count"), data.get("r_range"),
             data.get("bu_le_name"), data.get("bu_division_name"),
             data.get("bu_category_name"), data.get("bu_unit_location"),
             data.get("bu_unit_code"), data.get("bu_domain"),
-            data.get("bu_orgn")
+            data.get("bu_orgn"), data.get("bu_action")
         )
 
     def to_inner_structure(self):
@@ -450,7 +451,8 @@ class GetBulkClientUnitListForFilterView(Request):
             "bu_unit_location": self.bu_unit_location,
             "bu_unit_code": self.bu_unit_code,
             "bu_domain": self.bu_domain,
-            "bu_orgn": self.bu_orgn
+            "bu_orgn": self.bu_orgn,
+            "bu_action": self.bu_action
         }
 
 
@@ -813,7 +815,6 @@ class UpdateUnitDownloadCount(object):
         }
 
 
-
 class BulkClientUnitList(object):
 
     def __init__(
@@ -991,7 +992,7 @@ class SubmitClientUnitDeclinationSuccess(Response):
 
 class GetBulkClientUnitViewAndFilterDataSuccess(Response):
     def __init__(
-        self, bu_group_name, csv_name, uploaded_by, uploaded_on, csv_id,
+        self, bu_group_name, csv_name, uploaded_by, uploaded_on, csv_id, total_records,
         le_names, div_names, cg_names, unit_locations, unit_codes, bu_domain_names,
         orga_names, client_unit_data
     ):
@@ -1000,6 +1001,7 @@ class GetBulkClientUnitViewAndFilterDataSuccess(Response):
         self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
         self.csv_id = csv_id
+        self.total_records = total_records
         self.le_names = le_names
         self.div_names = div_names
         self.cg_names = cg_names
@@ -1014,16 +1016,16 @@ class GetBulkClientUnitViewAndFilterDataSuccess(Response):
 
         data = parse_dictionary(data, [
             "bu_group_name", "csv_name", "uploaded_by", "uploaded_on", "csv_id",
-            "le_names", "div_names", "cg_names", "unit_locations", "unit_codes",
-            "bu_domain_names", "orga_names", "client_unit_data"
+            "total_records", "le_names", "div_names", "cg_names", "unit_locations",
+            "unit_codes", "bu_domain_names", "orga_names", "client_unit_data"
         ])
 
         return GetBulkClientUnitViewAndFilterDataSuccess(
             data.get("bu_group_name"), data.get("csv_name"), data.get("uploaded_by"),
-            data.get("uploaded_on"), data.get("csv_id"), data.get("le_names"),
-            data.get("div_names"), data.get("cg_names"), data.get("unit_locations"),
-            data.get("unit_codes"), data.get("bu_domain_names"), data.get("orga_names"),
-            data.get("client_unit_data")
+            data.get("uploaded_on"), data.get("csv_id"), data.get("total_records"),
+            data.get("le_names"), data.get("div_names"), data.get("cg_names"),
+            data.get("unit_locations"), data.get("unit_codes"), data.get("bu_domain_names"),
+            data.get("orga_names"), data.get("client_unit_data")
         )
 
     def to_inner_structure(self):
@@ -1034,6 +1036,7 @@ class GetBulkClientUnitViewAndFilterDataSuccess(Response):
             "uploaded_by": self.uploaded_by,
             "uploaded_on": self.uploaded_on,
             "csv_id": self.csv_id,
+            "total_records": self.total_records,
             "le_names": self.le_names,
             "div_names": self.div_names,
             "cg_names": self.cg_names,
@@ -1049,7 +1052,7 @@ class GetBulkClientUnitFilterDataSuccess(Response):
 
     def __init__(
         self, bu_group_name, csv_name, uploaded_by, uploaded_on, csv_id,
-        client_unit_data
+        total_records, client_unit_data
     ):
         self.bu_group_name = bu_group_name
         self.csv_name = csv_name
@@ -1057,18 +1060,20 @@ class GetBulkClientUnitFilterDataSuccess(Response):
         self.uploaded_on = uploaded_on
         self.csv_id = csv_id
         self.client_unit_data = client_unit_data
+        self.total_records = total_records
 
     @staticmethod
     def parse_inner_structure(data):
 
         data = parse_dictionary(data, [
             "bu_group_name", "csv_name", "uploaded_by", "uploaded_on", "csv_id",
-            "client_unit_data"
+            "total_records", "client_unit_data"
         ])
 
         return GetBulkClientUnitFilterDataSuccess(
             data.get("bu_group_name"), data.get("csv_name"), data.get("uploaded_by"),
-            data.get("uploaded_on"), data.get("csv_id"), data.get("client_unit_data")
+            data.get("uploaded_on"), data.get("csv_id"), data.get("total_records"),
+            data.get("client_unit_data")
         )
 
     def to_inner_structure(self):
@@ -1079,6 +1084,7 @@ class GetBulkClientUnitFilterDataSuccess(Response):
             "uploaded_by": self.uploaded_by,
             "uploaded_on": self.uploaded_on,
             "csv_id": self.csv_id,
+            "total_records": self.total_records,
             "client_unit_data": self.client_unit_data
         }
 
@@ -1174,6 +1180,33 @@ class ClientUnitUploadMaxReached(Response):
     def to_inner_structure(self):
         return {}
 
+class EmptyFilteredData(Response):
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+
+        data = parse_dictionary(data)
+        return EmptyFilteredData()
+
+    def to_inner_structure(self):
+        return {}
+
+class CSVFileLinesMaxREached(Response):
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+
+        data = parse_dictionary(data)
+        return CSVFileLinesMaxREached()
+
+    def to_inner_structure(self):
+        return {}
 
 def _init_Response_class_map():
 
@@ -1192,7 +1225,8 @@ def _init_Response_class_map():
         SaveClientUnitActionSuccess,
         SubmitClientUnitActionFromListFailure,
         EmptyCSVUploaded, ClientUnitUploadMaxReached,
-        InvalidCSVUploaded
+        InvalidCSVUploaded, EmptyFilteredData,
+        CSVFileLinesMaxREached
     ]
     class_map = {}
     for c in classes:
