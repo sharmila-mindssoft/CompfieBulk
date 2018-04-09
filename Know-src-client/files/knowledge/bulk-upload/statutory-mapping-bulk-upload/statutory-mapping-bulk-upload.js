@@ -6,6 +6,7 @@ var AddButton = $("#btn-csv-add");
 var CancelButton = $("#btn-sm-csv-cancel");
 var SubmitButton = $("#btn-submit");
 var ListRowTemplate = $('#templates .table-sm-csv-info .table-row');
+var INVALID_FILE_NAME = null;
 
 var TemplateDiv = $('.dwn-template')
 var FileUploadCsv = $("#bu-upload-csv");
@@ -257,15 +258,15 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                 SummaryInactive.text(response.inactive_error);
                 SummaryFrequencyInvalid.text(response.invalid_frequency_error);
 
-                invalid_file = response.invalid_file.split('.');
-                var csv_path = "/invalid_file/csv/" + invalid_file[0] + '.csv';
-                var xls_path = "/invalid_file/xlsx/" + invalid_file[0] + '.xlsx';
-                var ods_path = "/invalid_file/ods/" + invalid_file[0] + '.ods';
-                var txt_path = "/invalid_file/txt/" + invalid_file[0] + '.txt';
+                INVALID_FILE_NAME = response.invalid_file.split('.');
+                var csv_path = "/invalid_file/csv/" + INVALID_FILE_NAME[0] + '.csv';
+                var xls_path = "/invalid_file/xlsx/" + INVALID_FILE_NAME[0] + '.xlsx';
+                var ods_path = "/invalid_file/ods/" + INVALID_FILE_NAME[0] + '.ods';
+                // var txt_path = "/invalid_file/txt/" + invalid_file[0] + '.txt';
                 $('#csv-type').attr("href", csv_path);
                 $('#xls-type').attr("href", xls_path);
                 $('#ods-type').attr("href", ods_path);
-                $('#txt-type').attr("href", txt_path);
+                // $('#txt-type').attr("href", txt_path);
             }
 
         }
@@ -280,6 +281,32 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
         }
     })
 };
+
+document.getElementById("txt-type").addEventListener("click", function(){
+    if(INVALID_FILE_NAME != null) {
+        // var splitFileName = INVALID_FILE_NAME.split(".")[0];
+        $.get(
+            "/invalid_file/txt/" + INVALID_FILE_NAME[0] + ".txt", function(data)
+            {
+               download(INVALID_FILE_NAME[0]+".txt", "text/plain", data);
+            },
+        'text');
+    }
+});
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
 
 BulkUploadStatutoryMapping.prototype.validateControls = function() {
     if (countryVal.val() == '') {
