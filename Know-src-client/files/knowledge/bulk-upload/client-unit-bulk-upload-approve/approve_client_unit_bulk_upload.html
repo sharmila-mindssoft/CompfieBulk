@@ -27,7 +27,8 @@
                                                         <label class="col-md-4 control-label">Client Group
                                                         <span class="mandatory">*</span></label>
                                                         <div class="col-md-6">
-                                                            <input type="text" class="form-control input-sm" name="search-group-name" autofocus="autofocus" tabindex="1" maxlength="50" id="search_group_name"  />
+                                                            <input type="text" class="form-control input-sm" name="search-group-name" autofocus="autofocus" tabindex="1" maxlength="50" id="search_group_name"
+                                                             placeholder="Client Group"  />
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                             <input type="hidden" name="group-id" id="group_id" value="">
                                                             <div id="ac_group" class="ac-textbox default-display-none">
@@ -201,7 +202,7 @@
                                                         <tr>
                                                             <th class="b-t-0 p-t-0 p-b-0">
                                                                 <div class="icon-3x">
-                                                                    <i class="fa fa-check-square-o text-primary c-pointer" title="Approve"></i>
+                                                                    <i class="fa fa-check-square-o text-primary c-pointer" title="Approve" ></i>
                                                                 </div>
                                                             </th>
                                                             <th class="b-t-0 p-t-0 p-b-0">
@@ -215,13 +216,13 @@
                                                             <td></td>
                                                             <td class="text-center" >
                                                                 <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-                                                                    <input id="singleCheckbox2" value="option2" type="checkbox">
+                                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all_approve">
                                                                     <label> </label>
                                                                 </div>
                                                             </td>
                                                             <td class="text-center" >
                                                                 <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
-                                                                    <input id="singleCheckbox2" value="option2" type="checkbox" >
+                                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all_reject">
                                                                     <label> </label>
                                                                 </div>
                                                             </td>
@@ -316,13 +317,13 @@
                                             <tbody>
                                                 <tr>
                                                     <td>
-                                                        <span class="compliance-count">Showing 1 to 25 of 525 entries </span>
+                                                        <span class="compliance-count"></span>
                                                         <span class="divider-view"> | </span>
                                                         <span class="items-per-page"> Show
                                                         <select id="items_per_page" autocomplete="off">
-                                                            <option value="500">250</option>
-                                                            <option value="750">500</option>
-                                                            <option value="1000">750</option>
+                                                            <option value="25">25</option>
+                                                            <option value="50">50</option>
+                                                            <option value="75">75</option>
                                                         </select>
                                                         entries
                                                         </span>
@@ -330,12 +331,12 @@
                                                     <td class="width-250"></td>
                                                     <td class="pull-right right-align-class">
                                                         <ul id="pagination_rpt" class="pagination-rpt">
-                                                            <li class="first disabled"><a href="#">First</a></li>
+                                                            <!-- <li class="first disabled"><a href="#">First</a></li>
                                                             <li class="prev disabled"><a href="#">Previous</a></li>
                                                             <li class="page active"><a href="#">1</a></li>
                                                             <li class="page"><a href="#">2</a></li>
                                                             <li class="next disabled"><a href="#">Next</a></li>
-                                                            <li class="last disabled"><a href="#">Last</a></li>
+                                                            <li class="last disabled"><a href="#">Last</a></li> -->
                                                         </ul>
                                                     </td>
                                                 </tr>
@@ -437,7 +438,7 @@
     </table>
     <table class="approval-table-no-record">
         <tr>
-            <td colspan="16" class="text-center"> No Records Found</td>
+            <td colspan="17" class="text-center"> No Records Found</td>
         </tr>
     </table>
 </div>
@@ -452,16 +453,18 @@
             <label class="control-label">View Data</label>
             <div class="col-md-12 no-padding">
                 <div class="radio radio-info radio-inline">
-                    <input type="radio" id="inlineRadio1" value="option1" name="radioInline" tabindex="1" >
+                    <input type="radio" id="inlineRadio1" value="option1" name="radioInline" tabindex="1"
+                    class="verified-data" >
                     <label for="inlineRadio1"> Verified </label>
                 </div>
                 <div class="radio radio-info radio-inline">
-                    <input type="radio" id="inlineRadio2" value="option1" name="radioInline" tabindex="2">
+                    <input type="radio" id="inlineRadio2" value="option1" name="radioInline" tabindex="2"
+                    class="pending-data">
                     <label for="inlineRadio2"> Pending </label>
                 </div>
                 <div class="radio radio-info radio-inline">
                     <input type="radio" id="inlineRadio3" value="option1" name="radioInline" checked=""
-                    tabindex="3">
+                    tabindex="3" class="all-data">
                     <label for="inlineRadio3"> All </label>
                 </div>
             </div>
