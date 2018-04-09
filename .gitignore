@@ -6,6 +6,7 @@
 *.log
 *.xlsx
 *.zip
+*.pdf
 /Know-src-server/logs/
 /Know-src-server/processes/*.log
 /Know-src-server/server/knowledgeformat/

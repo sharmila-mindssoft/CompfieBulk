@@ -297,7 +297,7 @@ class GetApproveMappingFilter(Request):
 class GetApproveStatutoryMappingViewFilter(Request):
     def __init__(
         self, csv_id, orga_name, s_nature, f_types, statutory, geo_location,
-        c_task_name, c_desc, c_doc, f_count, r_range
+        c_task_name, c_desc, c_doc, f_count, r_range, tsk_id, tsk_type
     ):
         self.csv_id = csv_id
         self.orga_name = orga_name
@@ -310,20 +310,23 @@ class GetApproveStatutoryMappingViewFilter(Request):
         self.c_doc = c_doc
         self.f_count = f_count
         self.r_range = r_range
+        self.tsk_id = tsk_id
+        self.tsk_type = tsk_type
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "csv_id", "orga_name", "s_nature", "f_types", "statutory",
             "geo_location", "c_task_name", "c_desc", "c_doc",
-            "f_count", "r_range"
+            "f_count", "r_range", "tsk_id", "tsk_type"
         ])
         return GetApproveStatutoryMappingViewFilter(
             data.get("csv_id"), data.get("orga_name"), data.get("s_nature"),
             data.get("f_types"), data.get("statutory"),
             data.get("geo_location"),
             data.get("c_task_name"), data.get("c_desc"), data.get("c_doc"),
-            data.get("f_count"), data.get("r_range")
+            data.get("f_count"), data.get("r_range"), data.get("tsk_id"),
+            data.get("tsk_type")
 
         )
 
@@ -339,7 +342,9 @@ class GetApproveStatutoryMappingViewFilter(Request):
             "c_desc": self.c_desc,
             "c_doc": self.c_doc,
             "f_count": self.f_count,
-            "r_range": self.r_range
+            "r_range": self.r_range,
+            "tsk_id": self.tsk_id,
+            "tsk_type": self.tsk_type
         }
 
 

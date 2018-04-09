@@ -102,7 +102,8 @@ BEGIN
     FROM tbl_bulk_statutory_mapping_csv AS t1
     WHERE upload_status =  1 AND approve_status = 0 AND ifnull(t1.is_fully_rejected, 0) = 0
     AND country_id = cid AND domain_id = did
-    AND uploaded_by like uploadedby;
+    AND uploaded_by like uploadedby
+    ORDER BY uploaded_on DESC;
 END //
 
 DELIMITER ;
@@ -373,9 +374,13 @@ BEGIN
         rejected_reason = remarks, is_fully_rejected = 1,
         rejected_by = userid,
         rejected_on = current_ist_datetime(),
+        approve_status = 2,
         total_rejected_records = (SELECT count(0) FROM
         tbl_bulk_statutory_mapping AS t WHERE t.csv_id = csvid)
         WHERE csv_id = csvid;
+
+        UPDATE tbl_bulk_statutory_mapping SET action = 2 WHERE csv_id = csvid;
+
     else
         UPDATE tbl_bulk_statutory_mapping_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
@@ -446,8 +451,8 @@ BEGIN
     t2.duration_type as Duration_Type, t2.multiple_input as Multiple_Input_Section, t2.format_file as Format,
     t2.task_id as Task_ID, t2.task_type as Task_Type,
     t2.action, t2.remarks,
-    t1.uploaded_by, t1.country_name, t1.domain_name, t1.csv_name
-
+    t1.uploaded_by, t1.country_name, t1.domain_name, t1.csv_name,
+    t1.approved_by, t1.approved_on
     from tbl_bulk_statutory_mapping as t2
     inner join tbl_bulk_statutory_mapping_csv as t1
     on t1.csv_id = t2.csv_id
@@ -485,13 +490,14 @@ IN cl_id INT, le_id INT
 )
 BEGIN
     SELECT t1.csv_assign_statutory_id, t1.csv_name, t1.uploaded_by,
-    DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on, t1.total_records,
+    DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %H:%i') as uploaded_on, t1.total_records,
     (SELECT count(action) FROM tbl_bulk_assign_statutory WHERE
      action = 1 AND csv_assign_statutory_id = t1.csv_assign_statutory_id) as approved_count,
     (SELECT count(action) FROM tbl_bulk_assign_statutory WHERE
      action = 2 AND csv_assign_statutory_id = t1.csv_assign_statutory_id) as rejected_count
     FROM tbl_bulk_assign_statutory_csv as t1
-    WHERE t1.approve_status =  0 AND t1.client_id = cl_id AND t1.legal_entity_id = le_id;
+    WHERE t1.approve_status =  0 AND t1.client_id = cl_id AND t1.legal_entity_id = le_id
+    ORDER BY t1.uploaded_on DESC;
 END //
 
 DELIMITER ;
@@ -1338,17 +1344,20 @@ CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
     view_data INT, s_status INT, c_status INT
 )
 BEGIN
-
-    SELECT distinct t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
+    
+    SELECT t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') as uploaded_on,
-    (SELECT distinct client_group FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id = t1.csv_assign_statutory_id) as client_group,
-    (SELECT count(0) FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id = t1.csv_assign_statutory_id) as total_count
+    (SELECT distinct client_group FROM tbl_bulk_assign_statutory WHERE csv_assign_statutory_id = t1.csv_assign_statutory_id) as client_group
+    FROM tbl_bulk_assign_statutory_csv as t1
+    WHERE t1.csv_assign_statutory_id = csvid;
+
+    SELECT count(t1.csv_assign_statutory_id) as total_count
     FROM tbl_bulk_assign_statutory_csv as t1
     inner join tbl_bulk_assign_statutory as t2 on
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid
     AND IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
-    AND IF(unit_code IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_code), 1)
+    AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_name), 1)
     AND IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
     AND IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
@@ -1370,7 +1379,7 @@ BEGIN
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid
 
     AND IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
-    AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_name, unit_name), 1)
+    AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_name), 1)
     AND IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
     AND IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
@@ -1393,9 +1402,10 @@ BEGIN
     SELECT
     t2.csv_assign_statutory_id,
     t2.bulk_assign_statutory_id,
-    t2.domain AS Domain, t2.organization AS Organization,
+    t2.legal_entity AS Legal_Entity, t2.client_group AS Client_Group,
+    t1.csv_name AS Csv_Name, t2.domain AS Domain, t2.organization AS Organization,
     t2.unit_code AS Unit_Code, t2.unit_name AS Unit_Name, t2.unit_location AS Unit_Location,
-    t2.perimary_legislation AS Primary_Legislation, t2.secondary_legislation AS Secondary_Legislaion,
+    t2.perimary_legislation AS Primary_Legislation, t2.secondary_legislation AS Secondary_Legislation,
     t2.statutory_provision AS Statutory_Provision,
     t2.compliance_task_name AS Compliance_Task, t2.compliance_description AS Compliance_Description,
     t2.statutory_applicable_status AS Statutory_Applicable_Status, t2.statytory_remarks AS Statutory_remarks,
@@ -1414,32 +1424,35 @@ DROP PROCEDURE IF EXISTS `sp_assign_statutory_update_action`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_assign_statutory_update_action`(
-IN csvid INT, action INT, remarks VARCHAR(500),
+IN csvid INT, action INT, _remarks VARCHAR(500),
 userid INT
 
 )
 BEGIN
     IF action = 2 then
+        UPDATE tbl_bulk_assign_statutory SET
+        action = 2, remarks = _remarks
+        WHERE csv_assign_statutory_id = csvid;
+
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 2,
-        rejected_reason = remarks, is_fully_rejected = 1,
+        rejected_reason = _remarks, is_fully_rejected = 1,
         rejected_by = userid,
         rejected_on = current_ist_datetime(),
-        total_rejected_records = (SELECT count(0) FROM
-        tbl_bulk_assign_statutory AS t WHERE t.csv_assign_statutory_id = csvid)
+        total_rejected_records = (select count(0) from
+        tbl_bulk_assign_statutory as t WHERE t.csv_assign_statutory_id = csvid)
         WHERE csv_assign_statutory_id = csvid;
     else
+        UPDATE tbl_bulk_assign_statutory SET
+        action = 1, remarks = _remarks
+        WHERE csv_assign_statutory_id = csvid;
+
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
         approved_by = userid, is_fully_rejected = 0
         WHERE csv_assign_statutory_id = csvid;
     end if;
-
-    IF action = 3 then
-        UPDATE tbl_bulk_assign_statutory SET action = 3;
-
-    end if;
-END //
+END//
 
 DELIMITER ;
 
@@ -1706,7 +1719,6 @@ BEGIN
 
     update  tbl_bulk_statutory_mapping_csv set upload_status = 1 where
       uploaded_documents = total_documents and csv_id = csvid;
-
 END //
 DELIMITER ;
 
@@ -1902,6 +1914,31 @@ SELECT
       t2.country_id = countryid AND
       t2.domain_id = domainid AND
       t1.task_id = taskid;
+END //
+
+DELIMITER ;
+DROP PROCEDURE IF EXISTS `sp_check_invalid_compliance_in_csv`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_invalid_compliance_in_csv`(
+IN client_group_ VARCHAR(50), legal_entity_ VARCHAR(100), domain_ TEXT, 
+organization_ TEXT, unit_code_ VARCHAR(50), unit_name_ VARCHAR(50), 
+unit_location_ TEXT , primary_legislation_ VARCHAR(100),
+secondary_legislation_ TEXT, statutory_provision_ VARCHAR(500), 
+compliance_task_ VARCHAR(100), compliance_description_ TEXT
+)
+BEGIN
+  SELECT as_id
+  FROM tbl_download_assign_statutory_template WHERE
+  client_group = client_group_ AND legal_entity = legal_entity_ AND
+  domain = domain_ AND organization = organization_ AND 
+  unit_code = unit_code_ AND unit_name = unit_name_ AND 
+  unit_location = unit_location_ AND
+  perimary_legislation = primary_legislation_ AND 
+  secondary_legislation = secondary_legislation_ AND 
+  statutory_provision = statutory_provision_ AND
+  compliance_task_name = compliance_task_ AND
+  compliance_description = compliance_description_;
 
 END //
 

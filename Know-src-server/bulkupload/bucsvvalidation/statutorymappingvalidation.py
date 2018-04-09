@@ -539,7 +539,7 @@ class StatutorySource(object):
         created_on = get_date_time()
         mapping_value = [
             int(c_id), int(d_id),
-            int(n_id), 1, 1,
+            int(n_id), 1, 2,
             int(uploadedby), str(created_on), mapping
         ]
         q = "INSERT INTO tbl_statutory_mappings (country_id, domain_id, " + \
@@ -597,8 +597,7 @@ class StatutorySource(object):
             "is_active", "created_by", "created_on",
             "domain_id", "country_id", "is_approved",
             "duration", "duration_type_id", "repeats_every", "repeats_type_id",
-            "task_id", "task_type",
-
+            "task_id", "task_type", "approved_by", "approved_on", "remarks"
         ]
         values = []
 
@@ -624,12 +623,13 @@ class StatutorySource(object):
                 d["Format"], 0,
                 d["Penal_Consequences"], d["Reference_Link"], freq_id,
                 mapped_date, int(mapping_id), 1, d["uploaded_by"],
-                created_on, c_id, d_id, 1,
+                created_on, c_id, d_id, 2,
                 None if d["Duration"] == '' else d["Duration"],
                 duration_type_id,
                 None if d["Repeats_Every"] == '' else d["Repeats_Every"],
                 repeat_type_id,
-                d["Task_ID"], d["Task_Type"],
+                d["Task_ID"], d["Task_Type"], d["approved_by"],
+                d["approved_on"], d["remarks"]
             ))
 
         if values:
@@ -1293,7 +1293,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     "Organization"
                 ).strip().split(CSV_DELIMITER):
                     org_info = self.Organization.get(org)
-                    if org_info is not None :
+                    if org_info is not None:
                         org_ids.append(
                             org_info.get("organisation_id")
                         )
@@ -1330,12 +1330,10 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     self._country_id, self._domain_id, nature_id,
                     uploaded_by, str(statu_mapping)
                 )
-
                 self.save_compliance_data(
                     self._country_id, self._domain_id,
                     mapping_id, grouped_list
                 )
-
                 self.save_industries(mapping_id, uploaded_by, org_ids)
 
                 self.save_statutories(mapping_id, uploaded_by, statu_ids)

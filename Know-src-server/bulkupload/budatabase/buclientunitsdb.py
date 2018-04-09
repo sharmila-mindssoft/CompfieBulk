@@ -193,7 +193,8 @@ def fetch_rejected_client_unit_report(db, session_user, user_id,
             str(d["remarks"]),
             d["action"],
             d["declined_count"],
-            d["rejected_file_name"]
+            d["rejected_file_name"],
+            d["rejected_reason"]
         ))
     return rejected_list
 

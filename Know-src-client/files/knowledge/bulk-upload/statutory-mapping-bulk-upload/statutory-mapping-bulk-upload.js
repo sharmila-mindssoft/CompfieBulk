@@ -222,6 +222,8 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     csvId = response.csv_id;
                     DataSummary.show();
                     ErrorSummary.hide();
+                    DataSummary.removeClass("col-sm-6");
+                    DataSummary.addClass("col-sm-12");
                     SummaryTotal.text(response.total);
                     SummaryValid.text(response.valid);
                     SummaryInvalid.text(response.invalid);
@@ -332,13 +334,13 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
 };
 function key_search(mainList) {
     var csv_key = SearchCsvName.val().toLowerCase();
-
-
     var fList = [];
     for (var entity in mainList) {
         var csvName = mainList[entity].csv_name;
-
-        if (~csvName.toLowerCase().indexOf(csv_key)) {
+        var cname_split = csvName.split("_");
+        cname_split.pop();
+        var cname = cname_split.join("_");
+        if (~cname.toLowerCase().indexOf(csv_key)) {
             fList.push(mainList[entity]);
         }
     }

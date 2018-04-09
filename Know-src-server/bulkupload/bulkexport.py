@@ -87,9 +87,9 @@ class ConvertJsonToCSV(object):
                 if not is_header:
                     csv_headers = [
                         "S.No", "Client_Group", "Legal_Entity", "Domain",
-                        "Organisation", "Unit_Code", "Unit_Name",
+                        "Organization", "Unit_Code", "Unit_Name",
                         "Unit_Location", "Primary_Legislation",
-                        "Secondary_Legislaion", "Statutory_Provision",
+                        "Secondary_Legislation", "Statutory_Provision",
                         "Compliance_Task", "Compliance_Description",
                         "Statutory_Applicable_Status*", "Statutory_remarks",
                         "Compliance_Applicable_Status*"

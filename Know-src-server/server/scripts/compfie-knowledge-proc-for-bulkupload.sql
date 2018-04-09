@@ -759,3 +759,34 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_user_by_unit_ids`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_user_by_unit_ids`(
+    IN cat_id_ INT(11), IN unit_ids_ TEXT
+)
+BEGIN
+    SELECT distinct user_id FROM tbl_user_units
+    WHERE user_category_id = cat_id_ and FIND_IN_SET(unit_id, unit_ids_);
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_domain_executive_units`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_domain_executive_units`(
+    IN uid_ INT(11), unit_ids_ TEXT
+)
+BEGIN
+    SELECT distinct t03.unit_id
+    FROM tbl_user_units as t03
+    where t03.user_id = uid_ and FIND_IN_SET(t03.unit_id, unit_ids_);
+
+END //
+
+DELIMITER ;
