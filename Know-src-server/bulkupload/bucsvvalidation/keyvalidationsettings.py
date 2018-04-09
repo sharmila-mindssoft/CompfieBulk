@@ -225,18 +225,18 @@ def parse_csv_dictionary_values(key, val):
         msg.append(key + " - Field is blank")
         error_count["mandatory"] = 1
 
-    if _maxlength is not None and len(val) > _maxlength :
+    if _maxlength is not None and len(val) > _maxlength:
         if key == "Domain" or key == "Organization":
             msg.append(key + " - " + val + " Cannot exceed max length")
         else:
-        msg.append(key + " - " + val + " Cannot exceed max length")
+            msg.append(key + " - " + val + " Cannot exceed max length")
         error_count["max_length"] = 1
 
     if val != "":
         if _validation_method is not None:
             _result = _validation_method(val)
 
-            if _result is False :
+            if _result is False:
                 if key == "Domain" or key == "Organization":
                     msg.append(key + " - " + val + " Invalid character")
                 else:
