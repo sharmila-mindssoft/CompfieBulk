@@ -249,7 +249,6 @@ def save_assign_statutory_data(db, csv_id, csv_data):
             if c_status_text != "" and c_status_text.lower() == "do not show":
                 c_status = 3
 
-
             values.append((
                 csv_id, d["Client_Group"], d["Legal_Entity"],
                 d["Domain"], d["Organization"], d["Unit_Code"],

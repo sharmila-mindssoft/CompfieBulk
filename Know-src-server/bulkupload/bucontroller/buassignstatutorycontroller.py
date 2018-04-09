@@ -615,9 +615,6 @@ def submit_assign_statutory(db, request_frame, session_user):
         approved_count, un_saved_count = get_validation_info(db, csv_id)
         if un_saved_count > 0:
             return bu_as.CompleteActionBeforeSubmit()
-            # raise RuntimeError(
-            #     "Some records action still pending, Complete action before submit"
-            # )
 
         cObj = ValidateAssignStatutoryForApprove(
             db, csv_id, client_id, legal_entity_id, session_user

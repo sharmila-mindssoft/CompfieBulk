@@ -637,16 +637,20 @@ csv_params_as = {
         keyType='STRING', isFoundCheck=True
     ),
     'Statutory_Provision': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Compliance_Task': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Compliance_Description': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Unit_Name': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Primary_Legislation': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
@@ -658,19 +662,23 @@ csv_params_as = {
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
     'Unit_Location': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Unit_Code': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
     'Organization': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Domain': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Legal_Entity': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Client_Group': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
