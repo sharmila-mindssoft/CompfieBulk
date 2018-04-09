@@ -216,11 +216,24 @@ function download_file() {
 				$("#ods").attr("href", "/invalid_file/ods/" + splitFileName+".ods");
 			}
 			else if(downloadTag[i].innerText == "Download Text") {
-				$("#text").attr("href", "/invalid_file/txt/" + splitFileName+".txt");
+				//$("#text").attr({target: '_blank', href: "/invalid_file/txt/" + splitFileName+".txt"});
+				//$("#text").attr("onclick", getTextData(splitFileName));
 			}
 		}
 	}
 }
+
+document.getElementById("text").addEventListener("click", function(){
+	if(INVALIDFILENAME != null) {
+		var splitFileName = INVALIDFILENAME.split(".")[0];
+		$.get(
+			"/invalid_file/txt/" + splitFileName+".txt", function(data)
+			{
+			   download(splitFileName+".txt", "text/plain", data);
+			},
+		'text');
+	}
+});
 
 // Document initialization process
 $(document).ready(function(e) {
