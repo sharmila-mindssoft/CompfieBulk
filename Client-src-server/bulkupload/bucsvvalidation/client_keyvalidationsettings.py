@@ -253,6 +253,23 @@ def make_required_validation(
 # key name should be as it is in csv file
 
 csv_params = {
+    'Legal_Entity': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Domain': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=30, isValidCharCheck=True,
+        validation_method=is_domain, isFoundCheck=True, isActiveCheck=True
+    ),
+    'Unit_Code': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=20, isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True
+    ),
+    'Unit_Name': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True
+    ),
+
     'Statutory': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
         validation_method=is_statutory, isFoundCheck=True, isActiveCheck=True
@@ -326,26 +343,14 @@ csv_params = {
         keyType='STRING', isValidCharCheck=True, validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
-    'Legal_Entity': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
-    ),
+
     'Unit_Location': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
         validation_method=is_statutory, isFoundCheck=True, isActiveCheck=True
     ),
-    'Unit_Code': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=20, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True
-    ),
-    'Unit_Name': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True
-    ),
-    'Domain': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=30, isValidCharCheck=True,
-        validation_method=is_domain, isFoundCheck=True, isActiveCheck=True
-    ),
+
+
+
     'Primary_Legislation': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
         validation_method=is_alpha_numeric

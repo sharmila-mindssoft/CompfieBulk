@@ -1,5 +1,5 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
-
+<link href="/css/dropzone.css" rel="stylesheet" type="text/css" />
 <!-- Multiselect -->
 <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 <!-- Notification css (Toastr) -->
@@ -183,7 +183,7 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group has-feedback select_docs m-t-20" style="display: none;" id="divSuccessDocument">
+                                                        <!-- <div class="form-group has-feedback select_docs m-t-20" style="display: none;" id="divSuccessDocument">
                                                             <label class="col-sm-4 control-label">Select Documents:<span class="mandatory">*</span> </label>
                                                             <div class="col-sm-6">
                                                                 <input class="form-control input-sm" type="file" webkitdirectory="" multiple="">
@@ -196,10 +196,34 @@
                                                                     <li class="text-danger view-summary" style="display: none;">Remaining Documents: <b> 10</b></li>
                                                                 </ul>
                                                             </div>
+                                                        </div> -->
+
+                                                        <div class="form-group has-feedback divSuccessDocument" id="bu-upload-docs" style="display: none;">
+                                                            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">
+                                                            Select Documents:
+                                                            <span class="mandatory">*</span></label>
+                                                            <div class="dropzone dz-clickable" id="myDrop">
+                                                                <div class="dz-default dz-message" data-dz-message="">
+                                                                    <span>Upload or drag your files here</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 controls">
+                                                                <ul class="p-l-20 p-t-5 bu-doc-summary" style="display: none;">
+                                                                    <li>Required Documents:
+                                                                        <b><span id="bu-doc-total"></span></b>
+                                                                    </li>
+                                                                    <li class="view-summary" style="display: none;">Uploaded Documents:
+                                                                        <b><span id="bu-upload-total"></span></b>
+                                                                    </li>
+                                                                    <li class="text-danger view-summary" style="display: none;">Remaining Documents:
+                                                                        <b><span id="bu-remain-total"></span></b>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
                                                         </div>
 
                                                         <div class="col-sm-12 text-center m-b-20" id="divSuccessbutton" style="display: none;">
-                                                            <button class="btn btn-primary waves-effect waves-light btn_upload animateprogress1 m-r-5" type="button" data-toggle="modal" data-target="#myModal1" style="display: none;"> Upload</button>
+                                                            <!-- <button class="btn btn-primary waves-effect waves-light btn_upload animateprogress1 m-r-5" type="button" data-toggle="modal" data-target="#myModal1" style="display: none;"> Upload</button> -->
 
                                                             <a class="btn btn-primary btn-trans uploaded_data" style="display: inline-block;"><i class="fa fa-download text-primary"></i> Uploaded Data (.zip)</a>
                                                             <button class="btn btn-primary waves-effect waves-light btn_submit" type="button" style="display: inline-block;"> Submit</button>
@@ -207,7 +231,20 @@
 
                                                         </div>
 
-
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">Legal Entity:
+                                                                <span class="mandatory">*</span>
+                                                            </label>
+                                                            <p class="form-control-static legal-entity-name-upload default-display-none"></p>
+                                                            <div class="col-sm-6 has-feedback legal-entity-name-ac-upload default-display-none">
+                                                                <input type="text" class="form-control input-sm legal-entity-name-ac-upload" placeholder="Legal Entity name" id="legal_entity_name_upload" placeholder="Enter Legal Entity">
+                                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                                <input type="hidden" id="legal_entity_id_upload" value="">
+                                                                <div id="ac-entity-upload" class="ac-textbox default-display-none">
+                                                                    <ul class="width85Percent"></ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
                                                         <div id="divFileUpload">
                                                             <div class="form-group has-feedback">
@@ -222,8 +259,8 @@
                                                             </div>
                                                             <div class="form-group col-sm-12 text-center">
                                                                 <div class="col-sm-12 col-sm-offset-1">
-                                                                    <button class="btn btn-primary waves-effect waves-light animateprogress upload-btn" type="button" data-toggle="modal" data-target="#myModal" id="btnUpload">
-                                                                Upload </button>
+                                                                    <!-- <button class="btn btn-primary waves-effect waves-light animateprogress upload-btn" type="button" data-toggle="modal" data-target="#myModal" id="btnUpload">
+                                                                Upload </button> -->
                                                                     <a class="btn btn-primary btn-trans invaliddata dropbtn default-display-none" onclick="showDownloadList()">
                                                                         <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
                                                                     <div id="myDropdown" class="dropdown-content">
@@ -233,6 +270,12 @@
                                                                         <a id="txt">Download Text</a>
                                                                     </div>
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-12 text-center">
+                                                            <div class="col-sm-12 col-sm-offset-1">
+                                                                <button class="btn btn-primary waves-effect waves-light animateprogress upload-btn" type="button" data-toggle="modal" data-target="#myModal" id="btnUpload">
+                                                            Upload </button>
                                                             </div>
                                                         </div>
 
@@ -360,5 +403,8 @@
 </div>
 
 {% endblock %} {% block contentscript %}
+<script src="/js/dropzone.js"></script>
+<script src="/js/jszip.js"></script>
+<script src="/js/FileSaver.js"></script>
 <script src="/script/bulkupload/completed_task_current_year/Completed-task-current-year-BulkUpload.js"></script>
 {% endblock %}
