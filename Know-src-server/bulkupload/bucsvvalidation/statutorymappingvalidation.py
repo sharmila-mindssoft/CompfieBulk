@@ -816,6 +816,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
             s["Statutory"], s["Statutory_Provision"],
             s["Compliance_Task"], s["Task_ID"]
         )):
+            print "K-->>> ", k
+            print "V-->>> ", v
             grouped_list = list(v)
             print "grouped_list-> ", grouped_list[0].get("Task_ID")
             print "len(grouped_list)> ", len(grouped_list)
@@ -828,6 +830,30 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         #         ','.join(msg)
         #     )
         #     raise ValueError(str(error_msg))
+
+    def check_compliance_duplicate_in_tempDB(
+        self, country_id, domain_id, statutory, statutory_provision,
+        compliance_task
+    ):
+        data = self._db.call_proc("sp_check_duplicate_statu_mapping", [
+            country_id, domain_id, statutory, statutory_provision,
+            compliance_task
+        ])
+        if len(data) > 0:
+            return False
+        else:
+            return True
+
+    def check_duplicate_taskid_in_tempDB(
+        self, country_id, domain_id, task_id
+    ):
+        data = self._db.call_proc("sp_check_duplicate_task_id", [
+            country_id, domain_id, task_id
+        ])
+        if len(data) > 0:
+            return False
+        else:
+            return True
 
     '''
         looped csv data to perform corresponding validation
@@ -848,7 +874,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         duplicate = self.check_duplicate_task_name_in_csv()
         duplicate_compliance_in_csv = duplicate[0]
         duplicate_compliance_row = duplicate[1]
-        self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
+        # self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
         duplicate_task_ids = self.check_duplicate_task_id_in_csv()
         print "duplicate_task_ids", duplicate_task_ids
 
@@ -912,6 +938,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                             if unboundMethod is not None:
                                 isFound = unboundMethod(v)
 
+                            print "isFound-> ", isFound
+
                             if isFound is not True and isFound != "":
                                 msg = "%s - %s %s" % (key, v, isFound)
                                 print msg
@@ -940,7 +968,16 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 if key == "Task_ID":
                     if v in duplicate_task_ids:
                         dup_error = "Task_ID - Duplicate data"
+                        self._error_summary["duplicate_error"] += 1
                         res = make_error_desc(res, dup_error)
+
+                    if not self.check_duplicate_taskid_in_tempDB(
+                        self._country_id, self._domain_id, data.get("Task_ID")
+                    ):
+                        self._error_summary["duplicate_error"] += 1
+                        dup_error = "Task_ID - Duplicate in Temp DB"
+                        res = make_error_desc(res, dup_error)
+
                 if key == "Compliance_Task":
                     for x in duplicate_compliance_row:
                         if (
@@ -949,7 +986,17 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                             x[2] == data.get("Statutory_Provision")
                         ):
                             dup_err = "Compliance_Task - Duplicate data"
+                            self._error_summary["duplicate_error"] += 1
                             res = make_error_desc(res, dup_err)
+
+                    if not self.check_compliance_duplicate_in_tempDB(
+                        self._country_id, self._domain_id,
+                        data.get("Statutory"), data.get("Statutory_Provision"),
+                        data.get("Compliance_Task")
+                    ):
+                        self._error_summary["duplicate_error"] += 1
+                        dup_error = "Compliance_Task - Duplicate Compliances in Temp DB"
+                        res = make_error_desc(res, dup_error)
 
                 if key == "Compliance_Frequency":
                     msg = []
@@ -981,6 +1028,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                             head_idx.append(row_idx)
 
                         mapped_header_dict[key] = head_idx
+                print "Header Dict-->", mapped_header_dict
 
                 if key == "Format" and res is True:
                     if not self.check_compliance_task_name_duplicate(
@@ -990,7 +1038,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         data.get("Compliance_Task")
                     ):
                         self._error_summary["duplicate_error"] += 1
-                        dup_error = "Compliance_Task - Duplicate data"
+                        dup_error = "Compliance_Task - Duplicate compliances in Knowledge DB"
                         res = make_error_desc(res, dup_error)
 
                     if not self.check_task_id_duplicate(
@@ -1001,16 +1049,23 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         data.get("Task_ID")
                     ):
                         self._error_summary["duplicate_error"] += 1
-                        dup_error = "Task_ID - Duplicate data"
+                        dup_error = "Task_ID - Duplicate in Knowledge DB"
                         res = make_error_desc(res, dup_error)
 
-            # if not self.check_compliance_duplicate(
+            # if not self.check_compliance_duplicate_in_tempDB(
             #     self._country_id, self._domain_id,
-            #     data.get("Statutory"), data.get("Compliance_Task"),
-            #     data.get("Compliance_Description"),
+            #     data.get("Statutory"), data.get("Statutory_Provision"),
+            #     data.get("Compliance_Task")
             # ):
             #     self._error_summary["duplicate_error"] += 1
-            #     dup_error = "Compliance_Task - Duplicate data"
+            #     dup_error = "Compliance_Task - Duplicate Compliances in Temp DB"
+            #     res = make_error_desc(res, dup_error)
+
+            # if not self.check_duplicate_taskid_in_tempDB(
+            #     self._country_id, self._domain_id, data.get("Task_ID")
+            # ):
+            #     self._error_summary["duplicate_error"] += 1
+            #     dup_error = "Task_ID - Duplicate in Temp DB"
             #     res = make_error_desc(res, dup_error)
 
             if res is not True:
@@ -1021,7 +1076,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     error_list.extend(res)
 
                 mapped_error_dict[row_idx] = error_list
-
                 invalid += 1
                 self._error_summary["mandatory_error"] += error_count[
                     "mandatory"
