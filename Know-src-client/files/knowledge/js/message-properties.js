@@ -86,7 +86,7 @@ var message = {
   'compliance_selection_required': 'Atleast one Compliance should be added',
   'active_compliance_required': 'Atleast one Compliance should be Active',
   'location_selection_required': 'Atleast one Location should be selected',
-  'action_selection_required': 'Atleast one action should be selected',
+  'action_selection_required': 'All compliance should be selected before submit',
   'mapping_success': 'Statutory mapping saved successfully',
   'mapping_submit_success': 'Statutory mapping submitted successfully',
   'mapping_update_success': 'Statutory mapping updated successfully',
@@ -498,6 +498,11 @@ var message = {
   "confirm_success": "Action taken successfully",
   "invalid_csv_file": "Invalid CSV File Uploaded",
   "client_unit_file_max": "Client Unit Upload File Reached the Max Limit",
+  "invalid_csv_file": "Invalid Csv File",
+  "csv_file_blank": "CSV file cannot be blank",
+  "rejection_max_count_reached": "Already reached the maximum count of rejected files",
+  "reason_invalid":"Reason should accept only 0-9, A-Z, a-z, dot, comma, hyphen.",
+  "units_not_assigned_to_user": "Some Units not assigned to you"
 
 }
 

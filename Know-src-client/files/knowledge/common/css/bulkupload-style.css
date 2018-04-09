@@ -1,6 +1,8 @@
 .multiselect {
-    width: 296px !important;
-    /* width: 266px !important; */
+     width: 100%; 
+}
+.btn-group{
+    width:100%;
 }
 /* using width css classes instead of html width attribute */
 
@@ -112,7 +114,9 @@
     width: 94%;
 }
 
-
+.width-100 {
+    width: 100%;
+}
 
 
 
@@ -135,7 +139,6 @@
     background-color: #FFF;
     border: 1px solid #a0a0a0;
     display: none;
-    margin-left: -78px;
     min-width: 120px;
     overflow: auto;
     position: absolute;
@@ -188,7 +191,7 @@
 }
 
 .filter-by-div {
-  height: 550px;
+  height: 520px;
 }
 
 .mar-50-px {
@@ -245,4 +248,17 @@ td.task-id {
 /**** Added For ApproveRejectStatu Mapping Alignment Fix ***/
 #no-record-templates .no_records{
     padding:40px; font-size:1.2em;
+    }
+
+.filter-multiselect .btn-group{
+    width: 100% !important;
+}
+
+.download-options {
+    display: inline-block;
+}
+
+.break-word {
+    word-wrap: break-word;
+
 }

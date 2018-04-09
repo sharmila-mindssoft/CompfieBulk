@@ -614,7 +614,7 @@ bu_api_params = {
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
     's_prov': {
-        'type': 'STRING', 'length': 50,
+        'type': 'STRING', 'length': 500,
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
     's_remarks': {
