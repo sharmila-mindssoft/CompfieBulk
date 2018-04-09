@@ -102,7 +102,8 @@ BEGIN
     FROM tbl_bulk_statutory_mapping_csv AS t1
     WHERE upload_status =  1 AND approve_status = 0 AND ifnull(t1.is_fully_rejected, 0) = 0
     AND country_id = cid AND domain_id = did
-    AND uploaded_by like uploadedby;
+    AND uploaded_by like uploadedby
+    ORDER BY uploaded_on DESC;
 END //
 
 DELIMITER ;
@@ -373,9 +374,13 @@ BEGIN
         rejected_reason = remarks, is_fully_rejected = 1,
         rejected_by = userid,
         rejected_on = current_ist_datetime(),
+        approve_status = 2,
         total_rejected_records = (SELECT count(0) FROM
         tbl_bulk_statutory_mapping AS t WHERE t.csv_id = csvid)
         WHERE csv_id = csvid;
+
+        UPDATE tbl_bulk_statutory_mapping SET action = 2 WHERE csv_id = csvid;
+
     else
         UPDATE tbl_bulk_statutory_mapping_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
@@ -446,8 +451,8 @@ BEGIN
     t2.duration_type as Duration_Type, t2.multiple_input as Multiple_Input_Section, t2.format_file as Format,
     t2.task_id as Task_ID, t2.task_type as Task_Type,
     t2.action, t2.remarks,
-    t1.uploaded_by, t1.country_name, t1.domain_name, t1.csv_name
-
+    t1.uploaded_by, t1.country_name, t1.domain_name, t1.csv_name,
+    t1.approved_by, t1.approved_on
     from tbl_bulk_statutory_mapping as t2
     inner join tbl_bulk_statutory_mapping_csv as t1
     on t1.csv_id = t2.csv_id

@@ -25,6 +25,7 @@ var ON_CURRENT_PAGE = 1;
 var SNO = 0;
 var TOTAL_RECORD;
 var REPORT_VIEW = $('.grid-table-rpt');
+var CLIENT_LIST;
 
 
 // Instance Creation of the page class
@@ -139,6 +140,8 @@ function processPaging() {
 
 // Get Client Unit report data from api
 function processSubmit() {
+    var isValid = clientUnitBulkReport.validateMandatory();
+    if (isValid == true) {
     var clientGroup = parseInt(GROUP_ID.val());
     var teIds = TE_NAME.val();
     var unitID = "";
@@ -162,7 +165,7 @@ function processSubmit() {
             selectedTEName.push(parseInt(value));
         });
     }
-    console.log("selectedTEName-> " + selectedTEName);
+    
     displayLoader();
     filterdata = {
         "bu_client_id": clientGroup,
@@ -223,6 +226,7 @@ function processSubmit() {
     });
     //temp_act = act;
     //}
+    }
 }
 
 // Handle All Page Controls like Button submit
@@ -231,7 +235,7 @@ function PageControls() {
         var textval = $(this).val();
         commonAutoComplete(
             e, AC_GROUP, GROUP_ID, textval,
-            _clients, "group_name", "client_id",
+            CLIENT_LIST, "group_name", "client_id",
             function(val) {
                 onAutoCompleteSuccess(GROUP_NAME, GROUP_ID, val);
             });
@@ -276,15 +280,16 @@ function PageControls() {
 //
 function fetchFiltersData() {
     displayLoader();
-    mirror.getClientLoginTraceFilter(
-        function(error, response) {
-            console.log(response)
+    mirror.getClientGroupsList(
+        function(error, data) {
             if (error != null) {
                 hideLoader();
                 displayMessage(error);
             } else {
-                _clientUsers = response.audit_client_users;
-                _clients = response.clients;
+                CLIENT_LIST = data.client_group_list;
+                console.log("CLIENT_LIST");
+                console.log(CLIENT_LIST);
+
                 loadCurrentUserDetails();
                 hideLoader();
             }
@@ -292,65 +297,34 @@ function fetchFiltersData() {
     );
 }
 
-// Loading Page according to Current User ie., Techno exec or Techno Manager
-/*function loadCurrentUserDetails() {
-    var user = mirror.getUserInfo();
-    var loggedUserId = 0;
-    $.each(ALL_USER_INFO, function(key, value) {
-        if (user.user_id == value["user_id"]) {
-            USER_CATEGORY_ID = value["user_category_id"];
-            loggedUserId = value["user_id"];
-            console.log(USER_CATEGORY_ID);
-        }
-    });
-    if (USER_CATEGORY_ID == 6) {
-        // TE-Name  : Techno-Executive
-        $('.active-techno-executive').attr('style', 'display:block');
-        $('#techno_name').text(user.employee_code + " - " +
-                               user.employee_name.toUpperCase());
-        CLIENT_EXECUTIVES.push(loggedUserId);
-    } else if (USER_CATEGORY_ID == 5 && USER_CATEGORY_ID != 6
-        && loggedUserId > 0) {
-        // TE-Name  : Techno-Manager
-        getUserMappingsList(loggedUserId);
-    }
-}*/
-
 function loadCurrentUserDetails() {
     var user = mirror.getUserInfo();
     var loggedUserId = 0;
     var clientName;
     var clientUserDetails = {};
-    $.each(ALL_USER_INFO, function(key, value) {
-        if (user.user_id == value["user_id"]) {
-            console.log("==>>>>");
-            console.log(user.user_id +"=="+ value["user_id"]);
-            USER_CATEGORY_ID = value["user_category_id"];
-            loggedUserId = value["user_id"];
+    if(ALL_USER_INFO) {
+        $.each(ALL_USER_INFO, function(key, value) {
+            if (user.user_id == value["user_id"]) {
+                USER_CATEGORY_ID = value["user_category_id"];
+                loggedUserId = value["user_id"];
+            }
+        });
+        if (USER_CATEGORY_ID == TE_USER_CATEGORY) {
+            // KE-Name  : ClientUnit-Executive
+            clientName = user.employee_code + " - " + user.employee_name;
+            $('.active-techno-executive').removeClass("default-display-none");
+            $('#techno_name').html(clientName);
+            clientUserDetails = {
+                /*"user_name":clientName,*/
+                "user_id": user.user_id
+            }
+            ALLUSERS.push(clientUserDetails);
+            CLIENT_EXECUTIVES.push(user.user_id);
+        } else if (USER_CATEGORY_ID == TM_USER_CATEGORY
+            && USER_CATEGORY_ID != TE_USER_CATEGORY && loggedUserId > 0) {
+            // KE-Name  : ClientUnit-Manager
+            getUserMappingsList(loggedUserId);
         }
-    });
-    if (USER_CATEGORY_ID == TE_USER_CATEGORY) {
-        console.log("USER_CATEGORY_ID" +"=="+ "TE_USER_CATEGORY");
-
-        console.log(USER_CATEGORY_ID +"=="+ TE_USER_CATEGORY);
-        // KE-Name  : ClientUnit-Executive
-        clientName = user.employee_code + " - " + user.employee_name;
-        $('.active-techno-executive').removeClass("default-display-none");
-        $('#techno_name').html(clientName);
-        clientUserDetails = {
-            /*"user_name":clientName,*/
-            "user_id": user.user_id
-        }
-        ALLUSERS.push(clientUserDetails);
-        CLIENT_EXECUTIVES.push(user.user_id);
-    } else if (USER_CATEGORY_ID == TM_USER_CATEGORY
-        && USER_CATEGORY_ID != TE_USER_CATEGORY && loggedUserId > 0) {
-
-        console.log("USER_CATEGORY_ID" +"=="+ "TE_USER_CATEGORY");
-        console.log(USER_CATEGORY_ID +"=="+ TE_USER_CATEGORY);
-
-        // KE-Name  : ClientUnit-Manager
-        getUserMappingsList(loggedUserId);
     }
 }
 
@@ -360,19 +334,16 @@ function getUserMappingsList(loggedUserId) {
     $('#tename_tmanager').multiselect('rebuild');
 
     function onSuccess(loggedUserId, data) {
-        console.log("loggedUserId->" + loggedUserId);
+        
         var userMappingData = data;
         var d;
         var childUserId;
-        console.log(userMappingData.user_mappings);
+        
         $.each(userMappingData.user_mappings, function(key, value) {
             if (loggedUserId == value.parent_user_id) {
                 childUserId = value.child_user_id;
-
-                console.log(childUserId);
-                console.log(TECHNO_EXECUTIVES);
                 if (jQuery.inArray(childUserId, TECHNO_EXECUTIVES) == -1) {
-                    console.log("inif");
+                    
                     TECHNO_EXECUTIVES.push(value.child_user_id);
                     childUsersDetails(ALL_USER_INFO, loggedUserId,
                         value.child_user_id)
@@ -402,26 +373,6 @@ function getUserMappingsList(loggedUserId) {
         });
         $('#tename_tmanager').multiselect('rebuild');
     }
-
-
-/*    function childUsersDetails(parent_user_id, child_user_id) {
-        $.each(ALL_USER_INFO, function(key, value) {
-            if ($.inArray(parseInt(child_user_id), CLIENT_EXECUTIVES) == -1) {
-                if (child_user_id == value["user_id"] &&
-                    value["is_active"] == true) {
-                    var option = $('<option></option>');
-                    option.val(value["user_id"]);
-                    option.text(value["employee_code"] + " - " +
-                        value["employee_name"]);
-                    console.log(option)
-                    $('#tename_tmanager').append(option);
-                    CLIENT_EXECUTIVES.push(parseInt(child_user_id));
-                }
-            }
-        });
-        $('#tename_tmanager').multiselect('rebuild');
-    }*/
-
     function onFailure(error) {
         displayMessage(error);
         hideLoader();
@@ -440,7 +391,7 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
     valueElement.val(val[1]);
     idElement.val(val[0]);
     valueElement.focus();
-    console.log(idElement)
+    
     var currentId = idElement[0].id;
     // if (current_id == "group-id") {
     //     clearElement([users, userId]);
@@ -471,9 +422,9 @@ function getClientUnits() {
 // Fields mandatory validation
 ClientUnitBulkReport.prototype.validateMandatory = function() {
     var isValid = true;
-    if (GROUP_ID.val().trim() == '' || GROUP_ID.val().trim() == null) {
+    if (GROUP_NAME.val().trim().length == 0) {
         displayMessage(message.group_required);
-        isValidisValid = false;
+        isValid = false;
     } else if (this.getValue("from_date") == "") {
         displayMessage(message.fromdate_required);
         isValid = false;

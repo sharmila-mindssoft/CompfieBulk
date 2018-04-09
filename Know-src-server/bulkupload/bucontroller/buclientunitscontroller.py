@@ -399,7 +399,7 @@ def download_rejected_cu_report(db, request_frame, session_user):
                       "unit_name", "address",
                       "city", "state",
                       "postalcode", "domain", "organization",
-                      "rejected_reason", "remarks"]
+                      "remarks", "rejected_reason", "is_fully_rejected"]
 
     csv_column_name = ["Legal_Entity*", "Division*",
                        "Category*", "Geography_Level*",
@@ -408,7 +408,7 @@ def download_rejected_cu_report(db, request_frame, session_user):
                        "Unit_Address*", "City*",
                        "State*", "Postal_Code*",
                        "Domain*", "Organization*",
-                       "Rejected_Reason", "Error_Description"]
+                       "Error_Description"]
 
     csv_name = get_cu_csv_file_name_by_id(db, session_user, user_id, csv_id)
 
