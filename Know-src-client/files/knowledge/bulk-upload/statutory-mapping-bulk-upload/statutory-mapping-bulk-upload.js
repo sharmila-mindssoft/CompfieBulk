@@ -22,6 +22,7 @@ var SummaryDuplicate = $('#bu-summary-duplicate');
 var SummaryInvalidChar = $('#bu-summary-invalidchar');
 var SummaryInvalidData = $('#bu-summary-invaliddata');
 var SummaryInactive = $('#bu-summary-inactive');
+var SummaryFrequencyInvalid = $("#bu-frequency-invalid");
 
 var UploadDocument = $("#bu-upload-docs");
 var DocumentSummary = $('#bu-doc-summary');
@@ -211,6 +212,8 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
     };
     bu.uploadStatutoryMappingCSV(args, function (error, response) {
+        console.log("error-> "+ error);
+        console.log("Response-> "+ response);
         TemplateDiv.hide();
         if (error == null) {
             if (response.invalid == 0) {
@@ -227,7 +230,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     docNames = response.doc_names;
                     UploadDocument.show();
                     DocumentSummary.hide();
-                    buSmPage.changeTxttoLabel(countryAc.val(), domainAc.val(), response.csv_name);
+                    t_this.changeTxttoLabel(countryAc.val(), domainAc.val(), response.csv_name)
                 }
                 else {
                     DataSummary.hide();
@@ -252,6 +255,8 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                 SummaryInvalidChar.text(response.invalid_char_error);
                 SummaryInvalidData.text(response.invalid_data_error);
                 SummaryInactive.text(response.inactive_error);
+                SummaryFrequencyInvalid.text(response.invalid_frequency_error);
+
                 invalid_file = response.invalid_file.split('.');
                 var csv_path = "/invalid_file/csv/" + invalid_file[0] + '.csv';
                 var xls_path = "/invalid_file/xlsx/" + invalid_file[0] + '.xlsx';
@@ -265,7 +270,13 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
         }
         else {
-            buSmPage.possibleFailures(error);
+                if (error == "CsvFileExeededMaxLines") {
+                    displayMessage(message.csv_max_lines_exceeded.replace(
+                        'MAX_LINES', response.csv_max_lines));
+                }
+                else{
+                    buSmPage.possibleFailures(error);
+                }
         }
     })
 };
@@ -286,7 +297,7 @@ BulkUploadStatutoryMapping.prototype.validateControls = function() {
     return true;
 };
 BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
-    c_name, d_name, cav_name
+    c_name, d_name, csv_name
 ) {
     txtCountryName.hide();
     txtDomainName.hide();
@@ -417,6 +428,7 @@ function PageControls() {
     if (buSmPage._ActionMode == "add") {
         if (buSmPage.validateControls() == true) {
             buSmPage.uploadCsv();
+
         }
     }
     else {

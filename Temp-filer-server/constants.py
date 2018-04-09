@@ -4,8 +4,8 @@ import os
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
-KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new"
+KNOWLEDGE_DB_PASSWORD = "root"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new_round_2"
 ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 
 FORMAT_UPLOAD_PATH = os.path.join(ROOT_PATH, "bulkuploadcomplianceformat")
@@ -14,5 +14,5 @@ FORMAT_UPLOAD_PATH = os.path.join(ROOT_PATH, "bulkuploadcomplianceformat")
 BULK_UPLOAD_DB_HOST = "localhost"
 BULK_UPLOAD_DB_PORT = 3306
 BULK_UPLOAD_DB_USERNAME = "root"
-BULK_UPLOAD_DB_PASSWORD = "123456"
-BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload"
+BULK_UPLOAD_DB_PASSWORD = "root"
+BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_round_2"

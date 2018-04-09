@@ -29,12 +29,12 @@ __all__ = [
 # transaction method begin
 ########################################################
 # Return the uploaded statutory mapping csv list
-#:param db: database class object
-#:type db : Object
-#:param session_user: user id who currently logged in
-#:type session_user: String
-#:returns: upload_mmore: flag which defines user upload rights
-#:returns: csv_data: list of uploaded csv_data
+# param db: database class object
+# type db : Object
+# param session_user: user id who currently logged in
+# type session_user: String
+# returns: upload_mmore: flag which defines user upload rights
+# returns: csv_data: list of uploaded csv_data
 # rtypes: Boolean, lsit of Object
 ########################################################
 
@@ -44,21 +44,23 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
     upload_more = True
     doc_names = {}
     data = db.call_proc_with_multiresult_set("sp_statutory_mapping_csv_list", [session_user], 3)
-    print data
-    if len(data) == 3 :
+    print "DATA in DB file", data
+
+    print "Len DATA in DB file", len(data)
+    if len(data) == 3:
         if data[0][0]["max_count"] > MAX_REJECTED_COUNT:
             upload_more = False
         else:
             upload_more = True
-        print upload_more
+        print "upload_more--->> ", upload_more
 
         for d in data[2]:
             csv_id = d.get("csv_id")
             docname = d.get("format_file")
             doc_list = doc_names.get(csv_id)
-            if doc_list is None :
+            if doc_list is None:
                 doc_list = [docname]
-            else :
+            else:
                 doc_list.append(docname)
             doc_names[csv_id] = doc_list
 
