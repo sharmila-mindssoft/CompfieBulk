@@ -319,6 +319,8 @@ class StatutorySource(object):
             # msg.extend(self.check_single_input(d))
 
             if d["Repeats_Type"] == "Month(s)":
+                if (d["Multiple_Input_Section"] == ""):
+                    msg.append("Multiple_Input_Section - Field is blank")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 99:
                     msg.extend(
                         "Repeats_Every - Cannot exceed maximum 2 digits")
@@ -333,6 +335,8 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Year(s)":
+                if d["Multiple_Input_Section"] != "":
+                    msg.append("Multiple_Input_Section - Invalid data")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 9:
                     msg.append("Repeats_Every - Cannot exceed maximum 1 digit")
                 if d["Repeats_By (DOM/EOM)"] == "":
@@ -348,7 +352,8 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)":
-                msg.append("Multiple_Input_Section - Invalid data")
+                if d["Multiple_Input_Section"] != "":
+                    msg.append("Multiple_Input_Section - Invalid data")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999:
                     msg.append(
                         "Repeats_Every - Cannot exceed maximum 3 digits")
@@ -365,6 +370,20 @@ class StatutorySource(object):
             d["Multiple_Input_Section"] == "Yes" and
             d["Repeats_Type"] == "Month(s)"
         ):
+            if d["Repeats_By (DOM/EOM)"] == "":
+                msg.append("Repeats_By (DOM/EOM) - Field is blank")
+            elif d["Repeats_By (DOM/EOM)"] == "DOM":
+                if d["Statutory_Month"] == "":
+                        msg.append("Statutory_Month - Field is blank")
+                if d["Statutory_Date"] == "":
+                        msg.append("Statutory_Date - Field is blank")
+                if d["Trigger_Days"] == "":
+                        msg.append("Trigger_Days - Field is blank")
+            elif d["Repeats_By (DOM/EOM)"] == "EOM":
+                if d["Statutory_Month"] == "":
+                        msg.append("Statutory_Month - Field is blank")
+                if d["Trigger_Days"] == "":
+                        msg.append("Trigger_Days - Field is blank")
 
             if d["Repeats_Every"] == "":
                 msg.append("Repeats_Every - Field is blank")
@@ -385,8 +404,8 @@ class StatutorySource(object):
                 if d["Statutory_Date"] != "":
                     msg.append("Statutory_Date - Invalid data")
 
-        else:
-            msg.append("Multiple_Input_Section - Invalid data")
+        # else:
+        #     msg.append("Multiple_Input_Section - Invalid data")
 
         return msg
 
@@ -404,10 +423,14 @@ class StatutorySource(object):
             # msg.extend(self.check_single_input(d))
 
             if d["Repeats_Type"] == "Month(s)":
+                if (d["Multiple_Input_Section"] == ""):
+                    msg.append("Multiple_Input_Section - Field is blank")
                 if d["Repeats_Every"] == '':
                     msg.append("Repeats_Every - Field is blank")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 99:
-                    msg.append("Repeats_Every - Cannot exceed maximum 2 digits")
+                    msg.append(
+                        "Repeats_Every - Cannot exceed maximum 2 digits"
+                    )
                 if d["Repeats_By (DOM/EOM)"] == "":
                     msg.append("Repeats_By (DOM/EOM)- Field is blank")
                 if d["Statutory_Month"] != "":
@@ -419,8 +442,12 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Year(s)":
+                if d["Multiple_Input_Section"] != "":
+                    msg.append("Multiple_Input_Section - Invalid data")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 9:
-                    msg.append("Repeats_Every - Cannot exceed maximum 1 digits")
+                    msg.append(
+                        "Repeats_Every - Cannot exceed maximum 1 digits"
+                    )
                 if d["Repeats_By (DOM/EOM)"] == "":
                     msg.append("Repeats_By (DOM/EOM)- Field is blank")
                 if (
@@ -430,7 +457,9 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)":
-                msg.append("Multiple_Input_Section - Invalid data")
+
+                if d["Multiple_Input_Section"] != "":
+                    msg.append("Multiple_Input_Section - Invalid data")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999:
                     msg.append("Repeats_Every - Cannot exceed maximum 2 digits")
                 if d["Repeats_By (DOM/EOM)"] != "":
@@ -459,6 +488,20 @@ class StatutorySource(object):
             d["Multiple_Input_Section"] == "Yes" and
             d["Repeats_Type"] == "Month(s)"
         ):
+            if d["Repeats_By (DOM/EOM)"] == "":
+                msg.append("Repeats_By (DOM/EOM) - Field is blank")
+            elif d["Repeats_By (DOM/EOM)"] == "DOM":
+                if d["Statutory_Month"] == "":
+                        msg.append("Statutory_Month - Field is blank")
+                if d["Statutory_Date"] == "":
+                        msg.append("Statutory_Date - Field is blank")
+                if d["Trigger_Days"] == "":
+                        msg.append("Trigger_Days - Field is blank")
+            elif d["Repeats_By (DOM/EOM)"] == "EOM":
+                if d["Statutory_Month"] == "":
+                        msg.append("Statutory_Month - Field is blank")
+                if d["Trigger_Days"] == "":
+                        msg.append("Trigger_Days - Field is blank")
 
             if d["Repeats_Every"] == "":
                 msg.append("Repeats_Every - Field is blank")
@@ -480,8 +523,8 @@ class StatutorySource(object):
                 if d["Statutory_Date"] != "":
                     msg.append("Statutory_Date - Invalid data")
 
-        else:
-            msg.append("Multiple_Input_Section - Invalid data")
+        # else:
+        #     msg.append("Multiple_Input_Section - Invalid data")
 
         return msg
 

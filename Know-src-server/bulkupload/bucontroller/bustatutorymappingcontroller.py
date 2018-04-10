@@ -284,7 +284,7 @@ def get_mapping_list_for_approve(db, request_frame, session_user):
 
     pending_data = get_pending_mapping_list(
         db, request_frame.c_id, request_frame.d_id,
-        request_frame.uploaded_by
+        request_frame.uploaded_by, session_user
     )
     result = bu_sm.GetApproveStatutoryMappingListSuccess(
         pending_data
