@@ -295,7 +295,7 @@ function pageControls() {
                 "csv_data": CSVINFO["file_content"],
                 "csv_size": CSVINFO["file_size"]
             };
-            displayLoader();
+            $('#myModal').modal('show');
             bu.getUploadAssignStatutoryCSV(args, function(error, data) {
                 if (error == null) {
                     TOTALRECORD.text(data.total);
@@ -353,10 +353,10 @@ function pageControls() {
                         '.ods';
                         txt_path = "/invalid_file/txt/" + INVALIDFILENAME[0] + 
                         '.txt';
-                        $('#csv').attr("href", csv_path);
-                        $('#excel').attr("href", xls_path);
-                        $('#ods').attr("href", ods_path);
-                        $('#txt').attr("href", txt_path);
+                        $('#csv-type').attr("href", csv_path);
+                        $('#xls-type').attr("href", xls_path);
+                        $('#ods-type').attr("href", ods_path);
+                        $('#txt-type').attr("href", txt_path);
                     }else{
                         if(error == "InvalidCsvFile"){
                             displayMessage(message.invalid_csv_file);
@@ -372,7 +372,7 @@ function pageControls() {
                         $('.view-summary').hide();
                         $('.download-options').hide();
                     }
-                    hideLoader();
+                    $('#myModal').modal('hide');
                 }
             });
             
