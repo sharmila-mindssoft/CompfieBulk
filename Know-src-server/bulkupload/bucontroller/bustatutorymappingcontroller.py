@@ -420,6 +420,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
                 session_user.user_id()
             )
+            cObj.source_commit()
             return bu_sm.SubmitStatutoryMappingSuccess()
     except Exception, e:
         raise e

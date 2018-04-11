@@ -1022,12 +1022,11 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         try:
             created_on = get_date_time()
             count = len(declined_info.keys())
-            for k, v in declined_info.items() :
+            for k, v in declined_info.items():
                 remarks = ",".join(v)
                 q = "update tbl_bulk_assign_statutory set " + \
                     "action = 3, remarks = %s where " + \
                     "bulk_assign_statutory_id = %s"
-                print q
                 self._db.execute(q, [
                     remarks, k
                 ])
