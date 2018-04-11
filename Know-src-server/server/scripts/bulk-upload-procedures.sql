@@ -1433,35 +1433,35 @@ END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS `sp_assign_statutory_update_action`;
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_update_all_action`;
 
 DELIMITER //
-
-CREATE PROCEDURE `sp_assign_statutory_update_action`(
-IN csvid INT, action INT, remarks VARCHAR(500),
-userid INT
-
-)
+CREATE PROCEDURE `sp_assign_statutory_update_all_action`(
+IN csvid INT, action INT, _remarks VARCHAR(500),
+userid INT)
 BEGIN
     IF action = 2 then
+        UPDATE tbl_bulk_assign_statutory SET
+        action = 2, remarks = _remarks
+        WHERE csv_assign_statutory_id = csvid;
+
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 2,
-        rejected_reason = remarks, is_fully_rejected = 1,
+        rejected_reason = _remarks, is_fully_rejected = 1,
         rejected_by = userid,
         rejected_on = current_ist_datetime(),
-        total_rejected_records = (SELECT count(0) FROM
-        tbl_bulk_assign_statutory AS t WHERE t.csv_assign_statutory_id = csvid)
+        total_rejected_records = (select count(0) from
+        tbl_bulk_assign_statutory as t WHERE t.csv_assign_statutory_id = csvid)
         WHERE csv_assign_statutory_id = csvid;
     else
+        UPDATE tbl_bulk_assign_statutory SET
+        action = 1, remarks = _remarks
+        WHERE csv_assign_statutory_id = csvid;
+
         UPDATE tbl_bulk_assign_statutory_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
         approved_by = userid, is_fully_rejected = 0
         WHERE csv_assign_statutory_id = csvid;
-    end if;
-
-    IF action = 3 then
-        UPDATE tbl_bulk_assign_statutory SET action = 3;
-
     end if;
 END//
 
@@ -1931,7 +1931,6 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_task_id`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_check_duplicate_task_id`(
     IN countryid INT(11), IN domainid INT(11), IN taskid VARCHAR(100)
 )
@@ -1945,31 +1944,47 @@ SELECT
       t2.domain_id = domainid AND
       t1.task_id = taskid;
 END //
-
 DELIMITER ;
+
 DROP PROCEDURE IF EXISTS `sp_check_invalid_compliance_in_csv`;
 DELIMITER //
-
 CREATE PROCEDURE `sp_check_invalid_compliance_in_csv`(
-IN client_group_ VARCHAR(50), legal_entity_ VARCHAR(100), domain_ TEXT,
-organization_ TEXT, unit_code_ VARCHAR(50), unit_name_ VARCHAR(50),
-unit_location_ TEXT , primary_legislation_ VARCHAR(100),
-secondary_legislation_ TEXT, statutory_provision_ VARCHAR(500),
-compliance_task_ VARCHAR(100), compliance_description_ TEXT
+IN client_group VARCHAR(50), legal_entity VARCHAR(100), domain_ TEXT,
+organization TEXT, unit_code VARCHAR(50), unit_name_ VARCHAR(50),
+unit_location TEXT , primary_legislation VARCHAR(100),
+secondary_legislation TEXT, statutory_provision VARCHAR(500),
+compliance_task VARCHAR(100), compliance_description TEXT
 )
 BEGIN
   SELECT as_id
   FROM tbl_download_assign_statutory_template WHERE
-  client_group = client_group_ AND legal_entity = legal_entity_ AND
-  domain = domain_ AND organization = organization_ AND
-  unit_code = unit_code_ AND unit_name = unit_name_ AND
+  client_group = client_group AND legal_entity = legal_entity AND
+  domain = domain AND organization = organization AND
+  unit_code = unit_code AND unit_name = unit_name AND
   unit_location = unit_location_ AND
   perimary_legislation = primary_legislation_ AND
   secondary_legislation = secondary_legislation_ AND
   statutory_provision = statutory_provision_ AND
   compliance_task_name = compliance_task_ AND
   compliance_description = compliance_description_;
-
 END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_assign_statutory_update_action`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_assign_statutory_update_action`(
+IN csvid INT, userid INT
+)
+BEGIN
+  UPDATE tbl_bulk_assign_statutory_csv SET
+  approve_status = 1, approved_on = current_ist_datetime(),
+  approved_by = userid, is_fully_rejected = 0,
+  total_rejected_records = (select count(0) from
+  tbl_bulk_assign_statutory as t WHERE t.csv_assign_statutory_id = csvid)
+  WHERE csv_assign_statutory_id = csvid;
+END//
 
 DELIMITER ;

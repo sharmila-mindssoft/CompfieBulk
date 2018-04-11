@@ -249,7 +249,6 @@ def save_assign_statutory_data(db, csv_id, csv_data):
             if c_status_text != "" and c_status_text.lower() == "do not show":
                 c_status = 3
 
-
             values.append((
                 csv_id, d["Client_Group"], d["Legal_Entity"],
                 d["Domain"], d["Organization"], d["Unit_Code"],
@@ -453,10 +452,16 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
     )
 
 
-def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
+def update_approve_action_from_list(
+    db, csv_id, action, remarks, session_user, type
+):
     try:
-        args = [csv_id, action, remarks, session_user.user_id()]
-        db.call_proc("sp_assign_statutory_update_action", args)
+        if type == "all":
+            args = [csv_id, action, remarks, session_user.user_id()]
+            db.call_proc("sp_assign_statutory_update_all_action", args)
+        else:
+            args = [csv_id, session_user.user_id()]
+            db.call_proc("sp_assign_statutory_update_action", args)
         return True
 
     except Exception, e:
