@@ -383,7 +383,8 @@ BEGIN
     select distinct t1.domain_name, t3.domain_id, t3.legal_entity_id
     from tbl_domains as t1
     inner join tbl_user_units as t3 on t1.domain_id = t3.domain_id
-    where t3.user_id = uid and t1.is_active = 1;
+    inner join tbl_user_domains as t4 on t1.domain_id = t4.domain_id
+    where t3.user_id = uid and t4.user_id = uid and t1.is_active = 1;
 
     -- units
     SELECT t01.unit_id, t01.unit_code, t01.unit_name,
@@ -401,8 +402,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
-
 
 
 DROP PROCEDURE IF EXISTS `sp_know_executive_info`;

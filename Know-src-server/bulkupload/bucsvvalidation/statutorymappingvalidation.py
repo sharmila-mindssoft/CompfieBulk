@@ -658,6 +658,27 @@ class StatutorySource(object):
                 "tbl_mapped_statutories", columns, values
             )
 
+    def save_statutories_data(self, statu_name, statu_level):
+        # columns = ["statutory_name", "level_id"]
+        # values = []
+        # values.append((statu_name, statu_level))
+        # created_on = get_date_time()
+        mapping_value = [
+            statu_name, int(statu_level)
+        ]
+        q = "INSERT INTO tbl_statutories (statutory_name, level_id) VALUES (%s, %s)"
+        statutory_mapping_id = self._source_db.execute_insert(
+            q, mapping_value
+        )
+        print "statutory_mapping_id >>>"
+        print statutory_mapping_id
+        return statutory_mapping_id
+        # if values:
+        #     statu_id = self._source_db.execute_insert(
+        #         "tbl_statutories", columns, values
+        #     )
+        #     return statu_id
+
     def save_geograhy_location(self, mapping_id, uploaded_by, geo_ids):
         columns = ["statutory_mapping_id", "geography_id", "assigned_by"]
         values = []
@@ -1292,6 +1313,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 for org in value.get(
                     "Organization"
                 ).strip().split(CSV_DELIMITER):
+                    org = org.replace(" ", "")
                     org_info = self.Organization.get(org)
                     if org_info is not None:
                         org_ids.append(
@@ -1315,13 +1337,24 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
                 statu_mapping = value.get("Statutory").split(CSV_DELIMITER)
                 for statu_maps in statu_mapping:
+                    print "statu_maps >>"
+                    print statu_maps
+                    print "self.Statutories >>>"
+                    print self.Statutories
+                    print self.Statutories.get(statu_maps)
+                    print "self.Statu_level >>"
+                    print self.Statu_level
                     if self.Statutories.get(statu_maps) is not None:
                         statu_ids.append(
                             self.Statutories.get(statu_maps).get(
                                 "statutory_id"
                             )
                         )
-
+                    else:
+                        statu_level_data = statu_maps.split(">>")
+                        for data in statu_level_data:
+                            statu_id = self.save_statutories_data(data, statu_level)
+                            statu_ids.append(statu_id)
                 if len(grouped_list) > 1:
                     msg.append(grouped_list[0].get("Compliance_Task"))
                 uploaded_by = grouped_list[0].get("uploaded_by")
