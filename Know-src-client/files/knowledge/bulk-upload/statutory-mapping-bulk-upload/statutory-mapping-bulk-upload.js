@@ -461,8 +461,15 @@ function PageControls() {
         }
     }
     else {
-        displayLoader();
-        myDropzone.processQueue();
+        // Todo mandatory check
+        console.log($(".dropzone > .dz-preview").length)
+        if($(".dropzone > .dz-preview").length > 0){
+            displayLoader();
+            myDropzone.processQueue();
+        }
+        else{
+            displayMessage(message.document_required);
+            return false;        }
     }
   });
 

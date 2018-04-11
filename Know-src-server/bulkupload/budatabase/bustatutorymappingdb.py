@@ -201,7 +201,7 @@ def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
         [session_user.user_id(), cid, did]
     )
     print len(result)
-
+    _source_db_con.close()
     mapped_executives = ''
     if len(result) != 0:
         mapped_executives = ",".join(str(r["child_user_id"]) for r in result)
