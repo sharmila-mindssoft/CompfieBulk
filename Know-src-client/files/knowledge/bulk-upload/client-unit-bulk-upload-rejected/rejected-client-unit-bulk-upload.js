@@ -1,6 +1,6 @@
-var GROUP_NAME = $('#countryval');
-var GROUP_ID = $('#country');
-var AC_GROUP = $('#ac-country');
+var GROUP_NAME = $('#groupval');
+var GROUP_ID = $('#group');
+var AC_GROUP = $('#ac-group');
 var SHOW_BTN = $('#show');
 var REPORT_VIEW = $('.grid-table-rpt');
 var PASSWORD_SUBMIT_BUTTON = $('#password-submit');
@@ -9,22 +9,8 @@ var REMOVE_UNIT_CSV_ID;
 var EXISTING_USER_ID = [];
 var ALL_USER_INFO = '';
 var USER_CATEGORY_ID = 0;
-
-/**** User Level Category ***********/
-var KM_USER_CATEGORY = 3;
-var KE_USER_CATEGORY = 4;
-var TM_USER_CATEGORY = 5;
-var TE_USER_CATEGORY = 6;
-var DM_USER_CATEGORY = 7;
-var DE_USER_CATEGORY = 8;
-var SYSTEM_REJECTED_BY = "COMPFIE";
-var REJECTED_FILE_DOWNLOADCOUNT = 2;
-var SHOW_REMOVE_ICON = 1;
-var SYSTEM_REJECT_ACTION_STATUS = 3;
-var IS_FULLY_REJECT_ACTION_STATUS = 1;
-
+var CLIENT_LIST;
 var rejClientUnit = new RejectedClientUnitBulk();
-
 function RejectedClientUnitBulk() {}
 
 // Handle All Page Controls like Button submit
@@ -35,47 +21,19 @@ function pageControls() {
         var textVal = $(this).val();
         commonAutoComplete(
             e, AC_GROUP, GROUP_ID, textVal,
-            _clients, "group_name", "client_id",
+            CLIENT_LIST, "group_name", "client_id",
             function(val) {
                 onAutoCompleteSuccess(GROUP_NAME, GROUP_ID, val);
             });
-
         resetFilter();
     });
 
     SHOW_BTN.click(function() {
         isValid = rejClientUnit.validateMandatory();
         if (isValid == true) {
-            $('#mapping_animation')
-                .removeClass()
-                .addClass('bounceInLeft animated')
-                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd ' +
-                    'oanimationend animationend',
-                    function() {
-                        $(this).removeClass();
-                    });
             processSubmit();
         }
     });
-}
-
-//
-function fetchFiltersData() {
-    displayLoader();
-    mirror.getClientLoginTraceFilter(
-        function(error, response) {
-            console.log(response)
-            if (error != null) {
-                hideLoader();
-                displayMessage(error);
-            } else {
-                _clientUsers = response.audit_client_users;
-                _clients = response.clients;
-                loadCurrentUserDetails();
-                hideLoader();
-            }
-        }
-    );
 }
 
 function onAutoCompleteSuccess(valueElement, idElement, val) {
@@ -96,15 +54,6 @@ function processSubmit() {
 
     function onSuccess(data) {
         $('.details').show();
-        $('#mapping_animation')
-            .removeClass()
-            .addClass('bounceInLeft animated')
-            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd ' +
-                'oanimationend animationend',
-                function() {
-                    $(this).removeClass();
-                    $(this).show();
-                });
         rejClientUnitData = data.rejected_unit_data;
         if (rejClientUnitData.length == 0) {
             $('.tbody-compliance').empty();
@@ -128,8 +77,6 @@ function processSubmit() {
     }
 
     bu.getClientUnitRejectedData(filterdata, function(error, response) {
-        console.log("error");
-        console.log(error);
         if (error == null) {
             onSuccess(response);
         } else {
@@ -245,50 +192,21 @@ RejectedClientUnitBulk.prototype.validateMandatory = function() {
 //Initialize the page load user list
 function initialize() {
     function onSuccess(data) {
-        ALL_USER_INFO = data.user_details;
-        userDetails = data.user_details[0];
-        loadCurrentUserDetails();
+        CLIENT_LIST = data.client_group_list;
         hideLoader();
     }
-
+    
     function onFailure(error) {
         displayMessage(error);
         hideLoader();
     }
-    mirror.getAdminUserList(function(error, response) {
+    mirror.getClientGroupsList(function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
             onFailure(error);
         }
     });
-}
-
-function loadCurrentUserDetails() {
-    //alert('load Current User Details');
-    var user = mirror.getUserInfo();
-    var loggedUserId = 0;
-    if (ALL_USER_INFO) {
-        $.each(ALL_USER_INFO, function(key, value) {
-            if (user.user_id == value["user_id"]) {
-                USER_CATEGORY_ID = value["user_category_id"];
-                loggedUserId = value["user_id"];
-            }
-        });
-    }
-
-    if (USER_CATEGORY_ID == TE_USER_CATEGORY) {
-        // TE-Name  : Techno-Executive
-        $('.active-techno-executive').attr('style', 'display:block');
-        $('#techno-name').text(user.employee_code + " - " +
-            user.employee_name.toUpperCase());
-        EXISTING_USER_ID.push(loggedUserId);
-    } else if (USER_CATEGORY_ID == TM_USER_CATEGORY
-        && USER_CATEGORY_ID != TE_USER_CATEGORY
-        && loggedUserId > 0) {
-        // TE-Name  : Techno-Manager
-        getUserMappingsList(loggedUserId);
-    }
 }
 
 //validate password
@@ -307,7 +225,7 @@ function validateAuthentication() {
             hideLoader();
             isAuthenticate = true;
             Custombox.close();
-            CURRENT_PASWORD.empty();
+            CURRENT_PASWORD.val('');
         } else {
             hideLoader();
             if (error == 'InvalidPassword') {
@@ -323,6 +241,7 @@ PASSWORD_SUBMIT_BUTTON.click(function() {
 
 function confirm_alert(event) {
     var groupId = GROUP_ID.val();
+    CURRENT_PASWORD.val('');
 
     swal({
         title: "Are you sure",
@@ -355,17 +274,8 @@ function removeClientUnitCsvData(REMOVE_UNIT_CSV_ID, groupId) {
     displayLoader();
 
     function onSuccess(data) {
+        CURRENT_PASWORD.val('');
         $('.details').show();
-        $('#mapping_animation')
-            .removeClass()
-            .addClass('bounceInLeft animated')
-            .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd ' +
-                'oanimationend animationend',
-                function() {
-                    $(this).removeClass();
-                    $(this).show();
-                });
-
         rejectedUnitData = data.rejected_unit_data;
         if (rejectedUnitData.length == 0) {
             $('.tbody-compliance').empty();
@@ -517,18 +427,8 @@ window.onclick = function(event) {
 }
 
 $(function() {
+    mirror.getLoadConstants();
     REPORT_VIEW.hide();
     initialize();
-    fetchFiltersData();
     pageControls();
-    /*tempDatasetup();*/
 });
-
-/*function tempDatasetup() {
-  $('#countryval').val("India");
-  $('#domainval').val("Industrial Law");
-  $('#country').val(1);
-  $('#domain').val(3);
-  SHOW_BTN.click();
-}
-*/

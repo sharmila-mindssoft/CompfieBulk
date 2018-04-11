@@ -112,20 +112,24 @@ DELIMITER //
 CREATE PROCEDURE `sp_bu_legal_entities`(IN _client_id INT(11), _user_id INT(11))
 BEGIN
   SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
-    IF @u_cat_id = 5 THEN
+  IF @u_cat_id = 5 THEN
     SELECT t2.legal_entity_id, t2.legal_entity_name, t2.is_closed, t2.is_approved,
     t2.country_id, (select country_name from tbl_countries where country_id=
-    t2.country_id) as country_name, t2.business_group_id
+    t2.country_id) as country_name, t2.business_group_id,
+    DATEDIFF(t2.contract_to,curdate()) as le_contract_days,
+    t3.user_id
     FROM tbl_user_clients as t1 INNER JOIN tbl_legal_entities as t2 ON
-    t2.client_id = t1.client_id
+    t2.client_id = t1.client_id Left JOIN tbl_user_legalentity as t3 ON
+    t3.legal_entity_id = t2.legal_entity_id
     WHERE t1.client_id = _client_id and t1.user_id = _user_id;
   END IF;
   IF @u_cat_id = 6 THEN
     SELECT t2.legal_entity_id, t2.legal_entity_name, t2.is_closed, t2.is_approved,
     t2.country_id, (select country_name from tbl_countries where country_id=
-    t2.country_id) as country_name, t2.business_group_id
-    FROM tbl_user_legalentity as t1 INNER JOIN tbl_legal_entities as t2 ON
-    t2.client_id = t1.client_id
+    t2.country_id) as country_name, t2.business_group_id,
+    DATEDIFF(t2.contract_to,curdate()) as le_contract_days, t1.user_id
+    FROM tbl_user_legalentity as t1 inner JOIN tbl_legal_entities as t2 ON
+    t2.client_id = t1.client_id and t2.legal_entity_id = t1.legal_entity_id
     WHERE t1.client_id = _client_id and t1.user_id = _user_id;
   END IF;
 END //
@@ -742,6 +746,37 @@ BEGIN
   where domain_id = domain_
   and unit_id = unit_
   and compliance_id = compid_;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_user_by_unit_ids`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_user_by_unit_ids`(
+    IN cat_id_ INT(11), IN unit_ids_ TEXT
+)
+BEGIN
+    SELECT distinct user_id FROM tbl_user_units
+    WHERE user_category_id = cat_id_ and FIND_IN_SET(unit_id, unit_ids_);
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_domain_executive_units`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_domain_executive_units`(
+    IN uid_ INT(11), unit_ids_ TEXT
+)
+BEGIN
+    SELECT distinct t03.unit_id
+    FROM tbl_user_units as t03
+    where t03.user_id = uid_ and FIND_IN_SET(t03.unit_id, unit_ids_);
+
 END //
 
 DELIMITER ;

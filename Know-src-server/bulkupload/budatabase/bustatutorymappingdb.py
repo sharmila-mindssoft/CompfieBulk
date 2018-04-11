@@ -296,9 +296,12 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     c_doc = request_frame.c_doc
     f_count = request_frame.f_count
     f_range = request_frame.r_range
+    task_id = request_frame.tsk_id
+    task_type = request_frame.tsk_type
+
     if organization is None or organization == "":
         organization = '%'
-    else :
+    else:
         organization = organization + '%'
 
     if s_nature is None or s_nature == "":
@@ -311,13 +314,22 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
 
     if statutory is None or statutory == "":
         statutory = '%'
-    else :
+    else:
         statutory = statutory + '%'
 
     if geo_location is None or geo_location == "":
         geo_location = '%'
-    else :
+    else:
         geo_location = geo_location + '%'
+
+    if task_id is None or task_id == "":
+        task_id = '%'
+    else:
+        task_id = task_id + '%'
+    if task_type is None or task_type == "":
+        task_type = '%'
+    else:
+        task_type = task_type + '%'
 
     if c_task is None or c_task == "":
         c_task = '%'
@@ -333,7 +345,7 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
         [
             csv_id, organization, s_nature, frequency,
             statutory, geo_location, c_task, c_desc, c_doc,
-            f_count, f_range
+            f_count, f_range, task_id, task_type
         ], 2
     )
     country_name = None
@@ -420,6 +432,7 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
         country_name, domain_name, csv_name, upload_by,
         upload_on, csv_id, mapping_data, total
     )
+
 
 def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
     try:
@@ -529,7 +542,8 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
     uploaded_on = ''
     rejected_on = ''
     responseFormat = '%Y-%m-%d %H:%M:%S'
-    requestFormat = '%Y-%m-%d %H:%M:%S'
+    # requestFormat = '%Y-%m-%d %H:%M:%S'
+    requestFormat = '%d-%b-%Y %H:%M'
     date_time = datetime.datetime
     for d in data:
         if(d["uploaded_on"] is not None):
@@ -548,6 +562,9 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
             download_count = 0
         else:
             download_count = d["rejected_file_download_count"]
+
+        print "rejected_on >>>>>>"
+        print rejected_on
 
         rejected_list.append(bu_sm.StatutoryMappingRejectData(
             int(d["csv_id"]), int(d["uploaded_by"]), str(uploaded_on),
