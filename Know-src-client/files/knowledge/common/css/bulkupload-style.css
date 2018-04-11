@@ -1,9 +1,7 @@
 .multiselect {
     width: 100%;
 }
-.btn-group{
-    width: 100%;   
-}
+
 /* using width css classes instead of html width attribute */
 
 .width-1 {
@@ -247,4 +245,8 @@
 
 .download-options{
     display: inline-block;
+}
+
+.auto-text-box ul{
+    width: 91% !important;
 }

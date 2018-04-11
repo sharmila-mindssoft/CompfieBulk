@@ -49,7 +49,7 @@ KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new_1"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new_round_2"
 
 
 URL = "http://localhost:8080/"
@@ -62,7 +62,7 @@ BULK_UPLOAD_DB_HOST = "localhost"
 BULK_UPLOAD_DB_PORT = 3306
 BULK_UPLOAD_DB_USERNAME = "root"
 BULK_UPLOAD_DB_PASSWORD = "123456"
-BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_1"
+BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_round_2"
 
 CSV_DELIMITER = '|;|'
 CSV_MAX_LINES = 5
