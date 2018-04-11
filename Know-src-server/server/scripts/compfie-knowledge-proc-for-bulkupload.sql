@@ -447,6 +447,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
     IN unitid text, domainid INT(11)
 )
+
 BEGIN
     SET SESSION group_concat_max_len = 1000000;
     SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
@@ -456,8 +457,8 @@ BEGIN
             t4.unit_code,
             t4.unit_name,
             (SELECT geography_name FROM tbl_geographies WHERE geography_id = t4.geography_id) AS location,
-            SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping))),'>>',1),'>>',- 1) AS primary_legislation,
-            SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1) AS secondary_legislation,
+            SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING ''']' FROM TRIM(LEADING '[''' FROM t.statutory_mapping))),'>>',1),'>>',- 1) AS primary_legislation,
+            SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING ''']' FROM TRIM(LEADING '[''' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1) AS secondary_legislation,
             t1.statutory_provision,
             -- CONCAT(t1.document_name,' - ',t1.compliance_task) AS compliance_task_name,
             t1.compliance_task AS compliance_task_name,
@@ -499,7 +500,7 @@ BEGIN
     GROUP BY    t1.statutory_mapping_id , t1.compliance_id , t4.unit_id
     ORDER BY TRIM(LEADING '[' FROM t.statutory_mapping) , t1.compliance_id , t4.unit_id;
 
-END //
+END//
 
 DELIMITER ;
 

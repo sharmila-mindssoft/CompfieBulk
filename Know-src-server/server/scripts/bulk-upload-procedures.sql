@@ -1948,18 +1948,18 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_check_invalid_compliance_in_csv`;
 DELIMITER //
 CREATE PROCEDURE `sp_check_invalid_compliance_in_csv`(
-IN client_group VARCHAR(50), legal_entity VARCHAR(100), domain_ TEXT,
-organization TEXT, unit_code VARCHAR(50), unit_name_ VARCHAR(50),
-unit_location TEXT , primary_legislation VARCHAR(100),
-secondary_legislation TEXT, statutory_provision VARCHAR(500),
-compliance_task VARCHAR(100), compliance_description TEXT
+IN client_group_ VARCHAR(50), legal_entity_ VARCHAR(100), domain_ TEXT,
+organization_ TEXT, unit_code_ VARCHAR(50), unit_name_ VARCHAR(50),
+unit_location_ TEXT , primary_legislation_ VARCHAR(100),
+secondary_legislation_ TEXT, statutory_provision_ VARCHAR(500),
+compliance_task_ VARCHAR(100), compliance_description_ TEXT
 )
 BEGIN
   SELECT as_id
   FROM tbl_download_assign_statutory_template WHERE
-  client_group = client_group AND legal_entity = legal_entity AND
-  domain = domain AND organization = organization AND
-  unit_code = unit_code AND unit_name = unit_name AND
+  client_group = client_group_ AND legal_entity = legal_entity_ AND
+  domain = domain_ AND organization = organization_ AND
+  unit_code = unit_code_ AND unit_name = unit_name_ AND
   unit_location = unit_location_ AND
   perimary_legislation = primary_legislation_ AND
   secondary_legislation = secondary_legislation_ AND
