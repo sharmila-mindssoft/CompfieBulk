@@ -31,7 +31,7 @@
                                 <th class="text-center">Remaining Documents</th>
                                 <th>Upload Documents</th>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                               <td></td>
                               <td>
                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
@@ -46,7 +46,7 @@
                               <td></td>
                               <td></td>
                               <td></td>
-                            </tr>
+                            </tr> -->
                         </thead>
                         <tbody class="tbody-sm-csv-list1"></tbody>
                     </table>
@@ -164,7 +164,7 @@
                             </div>
                             <div class="form-group text-center m-b-0">
 
-                                <button class="btn btn-primary waves-effect waves-light m-b-5" type="submit" id="btn-submit" tabindex="4"> Upload </button>
+                                <button class="btn btn-primary waves-effect waves-light m-b-5" type="submit" id="btn-submit" tabindex="4" data-toggle="modal"> Upload </button>
                                 <div class="download-options">
                                 <button class="btn btn-primary m-b-5 default-display-none btn-trans dropbtn" onclick="showDownloadList()"><i class="fa fa-download text-primary"></i> Valid / Invalid Data</button>
                                 <div id="myDropdown" class="dropdown-content" >
@@ -215,10 +215,10 @@
                                         <b><span id="bu-summary-maxlength"></span></b>
                                         </li>
 
-                                        <!-- <li>Invalid Char Validation:
+                                        <li>Invalid Char Validation:
                                         <b><span id="bu-summary-invalidchar"></span></b>
                                         </li>
-                                        <li>Invaid Data validation:
+                                        <!-- <li>Invaid Data validation:
                                         <b><span id="bu-summary-invaliddata"></span></b>
                                         </li> -->
 
@@ -283,6 +283,28 @@
         </tr>
     </table>
 </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Upload</h4>
+                </div>
+                <div class="modal-body">
+                        <img src="/images/progress_loading.gif">
+                    <!-- <div class="progress skill-bar ">
+                        <img src="/images/progress_loading.gif"> -->
+                        <!-- <div class="progress-bar progress-bar-success" role="progressbar"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                            <span class="skill">Uploading <i class="val">100%</i></span>
+                        </div> -->
+                    <!-- </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block contentscript %}

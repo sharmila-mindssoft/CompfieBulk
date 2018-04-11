@@ -201,6 +201,7 @@ BulkUploadStatutoryMapping.prototype.fetchDropDownData = function() {
     });
 };
 BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
+    $('#myModal').modal('show');
     var t_this = this;
     var args = {
         "c_id": parseInt(countryVal.val()),
@@ -215,6 +216,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
     bu.uploadStatutoryMappingCSV(args, function (error, response) {
         console.log("error-> "+ error);
         console.log("Response-> "+ response);
+        $('#myModal').modal('hide');
         TemplateDiv.hide();
         if (error == null) {
             if (response.invalid == 0) {

@@ -3,7 +3,11 @@ import traceback
 from server import logger
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 import datetime
+import mysql.connector
+from server.dbase import Database
 from server.constants import (
+    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     MAX_REJECTED_COUNT, KM_USER_CATEGORY, KE_USER_CATEGORY
 )
 
@@ -180,11 +184,31 @@ def save_mapping_data(db, csv_id, csv_data):
 '''
 ########################################################
 
-def get_pending_mapping_list(db, cid, did, uploaded_by):
+def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
     csv_data = []
-    if uploaded_by is None:
-        uploaded_by = '%'
+    _source_db_con = mysql.connector.connect(
+        user=KNOWLEDGE_DB_USERNAME,
+        password=KNOWLEDGE_DB_PASSWORD,
+        host=KNOWLEDGE_DB_HOST,
+        database=KNOWLEDGE_DATABASE_NAME,
+        port=KNOWLEDGE_DB_PORT,
+        autocommit=False,
+    )
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc(
+        "sp_bu_get_mapped_knowledge_executives",
+        [session_user.user_id(), cid, did]
+    )
+    print len(result)
 
+    mapped_executives = ''
+    if len(result) != 0:
+        mapped_executives = ",".join(str(r["child_user_id"]) for r in result)
+    print "mapped_executives-> ", mapped_executives
+
+    if uploaded_by is None:
+        uploaded_by = mapped_executives
     data = db.call_proc("sp_pending_statutory_mapping_csv_list", [
         uploaded_by, cid, did
     ])

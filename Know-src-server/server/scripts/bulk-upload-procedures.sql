@@ -1925,7 +1925,6 @@ SELECT
       t1.compliance_task = compliance_task;
 
 END //
-
 DELIMITER ;
 
 
