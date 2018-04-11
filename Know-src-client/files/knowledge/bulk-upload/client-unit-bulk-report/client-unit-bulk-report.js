@@ -538,7 +538,6 @@ function loadCountwiseResult(filterList) {
 
         $('.tbl-approved-rejected-tasks', clone1)
         .text(approvedRejectedTasks);
-
         $('.tbl-approved-rejected-on', clone1).text(approvedRejectedOn);
         $('.tbl-approved-rejected-by', clone1).text(approvedRejectedBy);
         $('.tbl-reason-for-rejection', clone1).text(reasonForRejection);

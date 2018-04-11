@@ -1208,7 +1208,7 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
     def __init__(
         self, invalid_file, mandatory_error, max_length_error, duplicate_error,
         invalid_char_error, invalid_data_error, inactive_error,
-        total, invalid, valid
+        total, invalid, valid, invalid_frequency_error
 
     ):
         self.invalid_file = invalid_file
@@ -1221,6 +1221,7 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
         self.total = total
         self.invalid = invalid
         self.valid = valid
+        self.invalid_frequency_error = invalid_frequency_error
 
     @staticmethod
     def parse_inner_structure(data):
@@ -1228,7 +1229,7 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
             "invalid_file", "mandatory_error", "max_length_error",
             "duplicate_error",
             "invalid_char_error", "invalid_data_error", "inactive_error",
-            "total", "invalid", "valid"
+            "total", "invalid", "valid", "invalid_frequency_error"
         ])
         return UploadStatutoryMappingCSVInvalidSuccess(
             data.get("invalid_file"), data.get("mandatory_error"),
@@ -1236,7 +1237,8 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
             data.get("invalid_char_error"), data.get("invalid_data_error"),
             data.get("inactive_error"),
             data.get("total"),
-            data.get("invalid"), data.get("valid")
+            data.get("invalid"), data.get("valid"),
+            data.get("invalid_frequency_error")
         )
 
     def to_inner_structure(self):
@@ -1250,7 +1252,8 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
             "inactive_error": self.inactive_error,
             "total": self.total,
             "invalid": self.invalid,
-            "valid": self.valid
+            "valid": self.valid,
+            "invalid_frequency_error": self.invalid_frequency_error
         }
 
 
@@ -1474,6 +1477,49 @@ class DownloadActionSuccess(Response):
         }
 
 
+class CsvFileExeededMaxLines(Response):
+    def __init__(self, csv_max_lines):
+        self.csv_max_lines = csv_max_lines
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_max_lines"])
+        return CsvFileExeededMaxLines(
+            data.get("csv_max_lines")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_max_lines": self.csv_max_lines
+        }
+
+
+class InvalidCsvFile(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidCsvFile()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class CsvFileCannotBeBlank(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CsvFileCannotBeBlank()
+
+    def to_inner_structure(self):
+        return {}
+
+
 def _init_Response_class_map():
     classes = [
         GetStatutoryMappingCsvUploadedListSuccess,
@@ -1492,7 +1538,10 @@ def _init_Response_class_map():
         DeleteRejectedStatutoryMappingSuccess,
         SMRejecteUpdatedDownloadCountSuccess,
         DownloadActionSuccess,
-        SaveActionSuccess
+        SaveActionSuccess,
+        CsvFileExeededMaxLines,
+        InvalidCsvFile,
+        CsvFileCannotBeBlank
     ]
     class_map = {}
     for c in classes:

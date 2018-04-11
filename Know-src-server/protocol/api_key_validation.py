@@ -93,7 +93,7 @@ def is_industry(value):
 
 
 def is_file_name(value):
-    r = re.compile("^[a-zA-Z0-9_.-//@# ]*$")
+    r = re.compile("^[a-zA-Z0-9_.-//@#() ]*$")
     if r.match(value):
         return value
     else:

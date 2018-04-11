@@ -54,9 +54,9 @@ def bulkupload_db_connect():
 
 def validate_session(session_id):
     res_ponse_data = None
+    _db_con = knowledge_db_connect()
+    _db = Database(_db_con)
     try :
-        _db_con = knowledge_db_connect()
-        _db = Database(_db_con)
         _db.begin()
         if _db.validate_session_token(session_id) is None:
             res_ponse_data = False
@@ -73,9 +73,9 @@ def validate_session(session_id):
 
 def update_file_status(file_name, csv_id):
     res_ponse_data = None
+    _db_con = bulkupload_db_connect()
+    _db = Database(_db_con)
     try :
-        _db_con = bulkupload_db_connect()
-        _db = Database(_db_con)
         _db.begin()
         print "update file status"
         if _db.update_file_status(csv_id, file_name) is None:
@@ -94,9 +94,9 @@ def update_file_status(file_name, csv_id):
 
 def update_file_ddwnload_status(csv_id, status):
     res_ponse_data = None
+    _db_con = bulkupload_db_connect()
+    _db = Database(_db_con)
     try :
-        _db_con = bulkupload_db_connect()
-        _db = Database(_db_con)
         _db.begin()
         print "update format file status"
         if _db.update_format_file_status(csv_id, status) is None:

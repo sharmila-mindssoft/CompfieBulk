@@ -696,11 +696,11 @@ class SourceDB(object) :
             self.save_units_domain_organizations(last_id , cl_id , domain_orgn_ids)
 
         # To generate unit codes for all the auto_gen values from csv
+        inserted_records = 0
+        values = []
+        incre = 1
+        domain_orgn_ids = []
         if len(auto_gen_ids) > 0:
-            inserted_records = 0
-            values = []
-            incre = 1
-            domain_orgn_ids = []
             for b_u_id in auto_gen_ids:
                 unit_data = auto_gen_data.get(b_u_id)
                 if unit_data is not None:
