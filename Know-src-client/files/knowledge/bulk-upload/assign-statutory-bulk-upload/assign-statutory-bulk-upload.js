@@ -356,7 +356,7 @@ function pageControls() {
                         $('#csv-type').attr("href", csv_path);
                         $('#xls-type').attr("href", xls_path);
                         $('#ods-type').attr("href", ods_path);
-                        $('#txt-type').attr("href", txt_path);
+                        // $('#txt-type').attr("href", txt_path);
                     }else{
                         if(error == "InvalidCsvFile"){
                             displayMessage(message.invalid_csv_file);
@@ -374,14 +374,36 @@ function pageControls() {
                     }
                     $('#myModal').modal('hide');
                 }
-            });
-            
-
-
-            
+            });   
         }
 
     });
+}
+
+document.getElementById("txt-type").addEventListener("click", function(){
+    if(INVALIDFILENAME != null) {
+        // var splitFileName = INVALID_FILE_NAME.split(".")[0];
+        $.get(
+            "/invalid_file/txt/" + INVALIDFILENAME[0] + ".txt", function(data)
+            {
+               download(INVALIDFILENAME[0]+".txt", "text/plain", data);
+            },
+        'text');
+    }
+});
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 }
 
 //initialize function
