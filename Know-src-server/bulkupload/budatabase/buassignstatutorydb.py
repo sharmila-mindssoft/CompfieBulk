@@ -7,7 +7,7 @@ from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    CSV_DELIMITER, DM_USER_CATEGORY, DE_USER_CATEGORY
+    DM_USER_CATEGORY, DE_USER_CATEGORY
 )
 from server.exceptionmessage import fetch_error
 
@@ -30,7 +30,8 @@ __all__ = [
     "save_action_from_view",
     "get_validation_info",
     "get_rejected_file_count",
-    "delete_action_after_approval"
+    "delete_action_after_approval",
+    "verify_user_units"
     ]
 
 ########################################################
@@ -248,12 +249,11 @@ def save_assign_statutory_data(db, csv_id, csv_data):
             if c_status_text != "" and c_status_text.lower() == "do not show":
                 c_status = 3
 
-            org = d["Organisation"].replace(CSV_DELIMITER, ",")
             values.append((
                 csv_id, d["Client_Group"], d["Legal_Entity"],
-                d["Domain"], org, d["Unit_Code"],
+                d["Domain"], d["Organization"], d["Unit_Code"],
                 d["Unit_Name"], d["Unit_Location"],
-                d["Primary_Legislation"], d["Secondary_Legislaion"],
+                d["Primary_Legislation"], d["Secondary_Legislation"],
                 d["Statutory_Provision"], d["Compliance_Task"],
                 d["Compliance_Description"],
                 s_status, d["Statutory_remarks"], c_status
@@ -368,7 +368,10 @@ def get_assign_statutory_by_csv_id(db, request_frame, session_user):
             if idx == 0:
                 client_name = "Client Name"
                 legal_entity_name = d["legal_entity"]
-                csv_name = d["csv_name"]
+
+                file_name = d["csv_name"].split('.')
+                remove_code = file_name[0].split('_')
+                csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
                 upload_on = d["uploaded_on"]
                 upload_by = d["uploaded_by"]
             as_data.append(bu_as.AssignStatutoryData(
@@ -408,17 +411,25 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
             csv_id, domain_name, unit_name, p_legis,
             s_legis, s_prov, c_task, c_desc, f_count, r_range,
             view_data, s_status, c_status
-        ], 2)
+        ], 3)
     header_info = result[0]
-    compliance_info = result[1]
+    count_info = result[1]
+    compliance_info = result[2]
 
     client_name = header_info[0]["client_group"]
     legal_entity_name = header_info[0]["legal_entity"]
-    csv_name = header_info[0]["csv_name"]
+
+    file_name = header_info[0]["csv_name"].split('.')
+    remove_code = file_name[0].split('_')
+    csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
     upload_on = header_info[0]["uploaded_on"]
     upload_by = header_info[0]["uploaded_by"]
-    total_records = header_info[0]["total_count"]
+
+    total_records = 0
     as_data = []
+
+    if len(count_info) > 0:
+        total_records = count_info[0]["total_count"]
 
     if len(compliance_info) > 0:
         for idx, d in enumerate(compliance_info):
@@ -441,10 +452,16 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
     )
 
 
-def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
+def update_approve_action_from_list(
+    db, csv_id, action, remarks, session_user, type
+):
     try:
-        args = [csv_id, action, remarks, session_user.user_id()]
-        db.call_proc("sp_assign_statutory_update_action", args)
+        if type == "all":
+            args = [csv_id, action, remarks, session_user.user_id()]
+            db.call_proc("sp_assign_statutory_update_all_action", args)
+        else:
+            args = [csv_id, session_user.user_id()]
+            db.call_proc("sp_assign_statutory_update_action", args)
         return True
 
     except Exception, e:
@@ -723,3 +740,22 @@ def delete_action_after_approval(db, csv_id):
         )
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
+
+
+def verify_user_units(db, session_user, u_ids):
+    _source_db_con = mysql.connector.connect(
+        user=KNOWLEDGE_DB_USERNAME,
+        password=KNOWLEDGE_DB_PASSWORD,
+        host=KNOWLEDGE_DB_HOST,
+        database=KNOWLEDGE_DATABASE_NAME,
+        port=KNOWLEDGE_DB_PORT,
+        autocommit=False,
+    )
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+
+    result = _source_db.call_proc(
+        "sp_bu_domain_executive_units", [session_user.user_id(), u_ids]
+    )
+    unit_count = len(result)
+    return unit_count

@@ -11,6 +11,7 @@ var UnitCodeList = [];
 var DomainList = [];
 var OrganizationList = [];
 var userCategoryId = 5;
+var DownloadFile = null;
 
 // Initialization of controls
 var btnUploadedFileList = $('.showbtn');
@@ -57,18 +58,24 @@ var filterOrganization = $('#search_organization');
 var filterOrganizationID = $('#organization_id');
 var filterOrganizationName = $('#ac_organization');
 var filterSearch = $('#btn_go');
+var approveAllUnits = $('.select_all_approve');
+var rejectAllUnits = $('.select_all_reject');
 
 var CurrentPassword = null;
 var RejectReason = null;
 var isAuthenticate;
+var CSVID = null;
 
 var ItemsPerPage = $('#items_per_page');
 var PaginationView = $('.pagination-view');
-var Pagination = $('#pagination_rpt');
+var Pagination = $('.pagination-rpt');
 var CompliacneCount = $('.compliance-count');
 var _on_current_page = 1;
 var totalRecord;
 var _page_limit = 25;
+var showFrom = 0;
+var showClicked = true;
+var filterClicked = true;
 
 // To load the client groups under logged techno executive
 function initialize(type_of_initialization) {
@@ -112,6 +119,7 @@ btnUploadedFileList.click(function() {
 		    hideLoader();
 		}
 		bu.getClientGroupsClientUnitFilesList(clientId, groupName, function(error, response) {
+            console.log(response)
 		    if (error == null) {
 		        onSuccess(response);
 		    } else {
@@ -119,7 +127,7 @@ btnUploadedFileList.click(function() {
 		    }
 		});
 	} else {
-		displayMessage(message.group_required);
+		displayMessage(message.cg_required);
 	}
 });
 
@@ -156,7 +164,8 @@ function loadClientUnitCSVFilesList(){
 				.attr("id","myDropdown-"+value.csv_id)
 			);
 			var splitFileName = value.csv_name.split(".")[0];
-			var aTags = '<a href="/uploaded_file/xlsx/'+ splitFileName+'.xlsx">Download Excel</a><a href="/uploaded_file/csv/'+ splitFileName+'.csv">Download CSV</a><a href="/uploaded_file/ods/'+ splitFileName+'.ods">Download ODS</a><a href="/uploaded_file/text/'+ splitFileName+'.txt">Download Text</a>';
+            DownloadFile = value.csv_name.split(".")[0];
+			var aTags = '<a href="/uploaded_file/xlsx/'+ splitFileName+'.xlsx">Download Excel</a><a href="/uploaded_file/csv/'+ splitFileName+'.csv">Download CSV</a><a href="/uploaded_file/ods/'+ splitFileName+'.ods">Download ODS</a><a href="/uploaded_file/txt/'+ splitFileName+'.txt">Download Text</a>';
 			$('.download-invalidfile #myDropdown-'+value.csv_id, clone).html(aTags);
 
 			//approve all
@@ -172,15 +181,24 @@ function loadClientUnitCSVFilesList(){
                     displayPopUp('reject_all', value.csv_id, null);
                 }
             });
+
             if(value.approved_count > 0 || value.rej_count > 0 || value.declined_count > 0){
             	$('.viewbtn', clone).hide();
             	$('.editbtn', clone).show();
+                showClicked = true;
+                filterClicked = false;
+                approveAllUnits.prop("checked", false);
+                rejectAllUnits.prop("checked", false);
             	$('.editbtn', clone).on('click', function(){
                 	displayViewScreen(value.csv_id, 0, 25);
             	});
             } else {
             	$('.viewbtn', clone).show();
             	$('.editbtn', clone).hide();
+                showClicked = true;
+                filterClicked = false;
+                approveAllUnits.prop("checked", false);
+                rejectAllUnits.prop("checked", false);
             	$('.viewbtn', clone).on('click', function(){
 	                displayViewScreen(value.csv_id, 0, 25);
 	            });
@@ -232,6 +250,7 @@ function displayPopUp(TYPE, csv_id, b_u_id){
         targetid = "#custom-modal-approve"
         CurrentPassword = $('#current_password');
         CurrentPassword.val('');
+        RejectReason = null;
         CurrentPassword.keyup(function(e){
             console.log(e.keyCode)
             if (e.keyCode == 13)
@@ -284,15 +303,48 @@ function displayPopUp(TYPE, csv_id, b_u_id){
                             if (err != null) {
                                 displayMessage(err);
                             }
-                            /*else {
+                            else {
                                 loadRemarksOnView(b_u_id, $('.view-reason').val())
-                            }*/
+                            }
                             hideLoader();
                         });
                     }
                     else if (TYPE == "submit") {
                         submitAction(csv_id, 4, CurrentPassword.val(), null)
                     }
+                }, 500);
+            }
+        },
+    });
+}
+
+// Reject all check box in view units list screen
+function displayViewRejectAllPopUp(callback){
+    targetid = "#custom-modal-remarks";
+    CurrentPassword = null;
+    $('.view-reason').val('')
+
+    Custombox.open({
+        target: targetid,
+        effect: 'contentscale',
+        complete: function() {
+            if (CurrentPassword != null) {
+                CurrentPassword.focus();
+                CurrentPassword.val('');
+            }
+            isAuthenticate = false;
+        },
+        close: function() {
+            if (isAuthenticate) {
+                displayLoader();
+                setTimeout(function() {
+                    if ($('.view-reason').val() == '') {
+                        displayMessage(message.reason_required)
+                    }
+                    else {
+                        callback($('.view-reason').val());
+                    }
+
                 }, 500);
             }
         },
@@ -349,47 +401,53 @@ btnSubmit.click(function(){
     csvid = $('#view_csv_unit_id').val();
     displayPopUp('submit', parseInt(csvid), 0);
 });
-function submitAction(csv_id, actionType, pwd, remarksText) {
+function submitAction(csv_id, actionType, pwd, remarksText)
+{
     displayLoader();
     bu.submitClientUnitActionFromView(
-        csv_id, actionType, remarksText, pwd, parseInt(groupSelect_id.val().trim()),
-        function(error, response)
+    csv_id, actionType, remarksText, pwd, parseInt(groupSelect_id.val().trim()),
+    function(error, response)
+    {
+        console.log("submit action")
+        console.log(actionType, error, response)
+        if (error == null) {
+            if (actionType == 4) {
+                displaySuccessMessage(message.approve_success);
+                bulkClientUnitUploadedFileListviewPage.show();
+                bulkClientUnitUploadedApprovalListPage.hide();
+                initialize('list');
+            }
+        }
+        else
         {
-            console.log(error, response)
-            if (error == null) {
-                if (actionType == 4) {
-                    displaySuccessMessage(message.approve_success);
-                    initialize('list');
+            hideLoader();
+            if(error == "ReturnDeclinedCount") {
+                if(response.declined_count > 0)
+                {
+                    msg = response.declined_count + " units declined, Do you want to continue ?";
+                    confirm_alert(msg, function(isConfirm) {
+                        if (isConfirm) {
+                            console.log("inside confirm")
+                            bu.confirmClientUnitDeclination(csv_id, parseInt(groupSelect_id.val().trim()),
+                            function(error, response)
+                            {
+                                console.log("declined", error, response)
+                                if (error == null) {
+                                    displaySuccessMessage(message.approve_success);
+                                    bulkClientUnitUploadedFileListviewPage.show();
+                                    bulkClientUnitUploadedApprovalListPage.hide();
+                                    initialize('list');
+                                }
+                            });
+                        }
+                    });
                 }
             }
-            else
-            {
-                hideLoader();
-                if(error == "ReturnDeclinedCount") {
-                    if(response.declined_count > 0)
-                    {
-                        msg = response.declined_count + " units declined, Do you want to continue ?";
-                        confirm_alert(msg, function(isConfirm) {
-                            if (isConfirm) {
-                                console.log("inside confirm")
-                                bu.confirmClientUnitDeclination(csv_id, parseInt(groupSelect_id.val().trim()),
-                                function(error, response)
-                                {
-                                    console.log(error, response)
-                                    if (error == null) {
-                                        displaySuccessMessage(message.approve_success);
-                                        initialize('list');
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }
-                else if (error == "SubmitClientUnitActionFromListFailure"){
-                    displayMessage(
-                        "All the units has to be approved/ rejected.Partial Submission is not allowed."
-                    );
-                }
+            else if (error == "SubmitClientUnitActionFromListFailure"){
+                displayMessage(
+                    "All the units has to be approved/ rejected.Partial Submission is not allowed."
+                );
+            }
         }
     });
 }
@@ -430,17 +488,25 @@ function validateAuthentication() {
 }
 
 // To navigate to the approval list page of a selected csv file
-function displayViewScreen(csv_id, start_count, page_limit) {
+function displayViewScreen(csv_id, start_count, _page_limit) {
 	bulkClientUnitUploadedFileListviewPage.hide();
 	bulkClientUnitUploadedApprovalListPage.show();
-	getCSVFileApprovalList(csv_id, start_count, page_limit);
+    _page_limit = parseInt(ItemsPerPage.val());
+    if (_on_current_page == 1) {
+        showFrom = 0
+    } else {
+        showFrom = (_on_current_page - 1) * _page_limit;
+    }
+    console.log(showFrom)
+	getCSVFileApprovalList(csv_id, showFrom, _page_limit);
 }
 
 //To display the approval units list
-function getCSVFileApprovalList(csv_id, start_count, page_limit) {
+function getCSVFileApprovalList(csv_id, start_count, _page_limit) {
 	displayLoader();
+
 	bu.getBulkClientUnitApproveRejectList(
-        csv_id, start_count, page_limit, function(error, response){
+        csv_id, start_count, _page_limit, function(error, response){
         if (error == null) {
             console.log(response)
             viewClientUnitList = response.client_unit_data;
@@ -458,7 +524,20 @@ function getCSVFileApprovalList(csv_id, start_count, page_limit) {
             lblCSVFileName.text(cname);
             lblCSVFileDate.text(response.uploaded_on);
             lblCSVFileUser.text(fetchTechnoManager(response.uploaded_by));
+            totalRecord = response.total_records;
             $('#view_csv_unit_id').val(response.csv_id);
+            CSVID = response.csv_id;
+            if(totalRecord == 0) {
+                hidePagePan();
+                PaginationView.hide();
+                hidePageView();
+            }
+            else {
+                if (_on_current_page == 1) {
+                    createPageView();
+                    PaginationView.show();
+                }
+            }
             bindClientUnitList(viewClientUnitList);
             hideLoader();
         }
@@ -470,24 +549,52 @@ function getCSVFileApprovalList(csv_id, start_count, page_limit) {
 }
 
 // To load the remarks after successful rejection
-/*function loadRemarksOnView(b_u_id, remarksText) {
-    if(remarksText != null){
-        var rejectTool = ('<i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer" data-original-title="' + remarksText + '" data-toggle="tooltip"></i>');
-        $('[data-toggle="tooltip"]').tooltip();
-        tblClientUnitBulkUploadedApprovalList.find('td')[3].append(rejectTool);
+function loadRemarksOnView(b_u_id, remarksText) {
+    var viewList = tblClientUnitBulkUploadedApprovalList.find('tr').length;
+    for (var i=0; i<viewList; i++) {
+        var reasonIconCtrl = tblClientUnitBulkUploadedApprovalList.find('tr')[i].cells[3];
+        if (reasonIconCtrl.className.indexOf(b_u_id) != -1) {
+            if(remarksText != null){
+                var rejectTool = ('<i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer" data-original-title="' + remarksText + '" data-toggle="tooltip"></i>');
+                $('[data-toggle="tooltip"]').tooltip();
+                reasonIconCtrl.innerHTML = rejectTool;
+            }
+        }
     }
-}*/
+}
+
+// To load the remarks after successful rejection
+function loadRemarksOnViewRejectAll(remarksText) {
+    var viewList = tblClientUnitBulkUploadedApprovalList.find('tr').length;
+    for (var i=0; i<viewList; i++) {
+        value = viewClientUnitList[i];
+        b_u_id = value.bulk_unit_id;
+        var reasonIconCtrl = tblClientUnitBulkUploadedApprovalList.find('tr')[i].cells[3];
+        if (reasonIconCtrl.className.indexOf(b_u_id) != -1) {
+            if(remarksText != null){
+                var rejectTool = ('<i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer" data-original-title="' + remarksText + '" data-toggle="tooltip"></i>');
+                $('[data-toggle="tooltip"]').tooltip();
+                reasonIconCtrl.innerHTML = rejectTool;
+            }
+        }
+    }
+}
 
 // Bind data to view data list$('.unit-address', cloneRow).text(data.bu_address);
 function bindClientUnitList(data){
-    var sno = 1;
+    var sno = 0;
+    sno = showFrom;
     if(data.length > 0) {
+        approveAllUnits.prop("checked", false);
+        rejectAllUnits.prop("checked", false);
         tblClientUnitBulkUploadedApprovalList.empty();
         $.each(data, function(key, value) {
+            sno += 1;
             var tableRow = $('#templates .table-bulk-client-unit-file-details .table-row');
             var cloneRow = tableRow.clone();
 
             $('.sno', cloneRow).text(sno);
+            $('.reject-reason', cloneRow).addClass("-"+value.bulk_unit_id);
             if(value.bu_remarks != null){
                 $('.reject-reason', cloneRow).append(
                     '<i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer" data-original-title="' + value.bu_remarks + '" data-toggle="tooltip"></i>');
@@ -565,6 +672,25 @@ function bindClientUnitList(data){
                             displayMessage(err);
                         }
                         else {
+                            tblClientUnitBulkUploadedApprovalList.find(
+                                'td.reject-reason.-'+value.bulk_unit_id
+                            ).innerHTML = "";
+                            $('.view-reject-check',cloneRow).attr("checked", false);
+                        }
+                    });
+                }
+                else {
+                    csvid = $('#view_csv_unit_id').val();
+                    bu.updateClientUnitActionFromView(
+                        parseInt(csvid), value.bulk_unit_id, 0, null, function(err, res)
+                    {
+                        if (err != null) {
+                            displayMessage(err);
+                        }
+                        else {
+                            tblClientUnitBulkUploadedApprovalList.find(
+                                'td.reject-reason.-'+value.bulk_unit_id
+                            ).innerHTML = "";
                             $('.view-reject-check',cloneRow).attr("checked", false);
                         }
                     });
@@ -576,12 +702,24 @@ function bindClientUnitList(data){
                     displayPopUp('view-reject', parseInt(csvid), value.bulk_unit_id);
                     $('.view-approve-check',cloneRow).attr("checked", false);
                 }
+                else {
+                    csvid = $('#view_csv_unit_id').val();
+                    bu.updateClientUnitActionFromView(
+                        parseInt(csvid), value.bulk_unit_id, 0, null, function(err, res)
+                    {
+                        if (err != null) {
+                            displayMessage(err);
+                        }
+                        else {
+                            $('.view-approve-check',cloneRow).attr("checked", false);
+                        }
+                    });
+                }
             });
 
             tblClientUnitBulkUploadedApprovalList.append(cloneRow);
-            sno += 1;
-
         });
+        showPagePan((showFrom + 1), sno, totalRecord);
     } else {
         tblClientUnitBulkUploadedApprovalList.empty();
         var no_record_row = $("#templates .approval-table-no-record tr");
@@ -637,7 +775,7 @@ PasswordSubmitButton.click(function(){
 CancelButton.click(function() {
 	bulkClientUnitUploadedFileListviewPage.show();
 	bulkClientUnitUploadedApprovalListPage.hide();
-    initialize('list');
+    //initialize('list');
 });
 
 // filter display
@@ -718,65 +856,102 @@ filterOrganization.keyup(function(e){
 
 btnFilterGo.click(function(){
     var filterHead = null;
+    showClicked = false;
+    filterClicked = true;
+    actionVal = 0;
+    if ($('.verified-data').prop('checked')) {
+        actionVal = 2;
+        if (filterHead == null)
+            filterHead = "View Data : Verified";
+        else
+            filterHead = filterHead + "View Data : Verified" + " | ";
+    }
+    if ($('.pending-data').prop('checked')) {
+        actionVal = 1;
+        if (filterHead == null)
+            filterHead = "View Data : Pending";
+        else
+            filterHead = filterHead + "View Data : Pending" + " | ";
+    }
+    if ($('.all-data').prop('checked')) {
+        if (filterHead == null)
+            filterHead = "View Data : All";
+        else
+            filterHead = filterHead + "View Data : All" + " | ";
+    }
     if (filterLegalEntity.val().trim() != '') {
         if (filterHead == null)
             filterHead = "Legal Entity : " + filterLegalEntity.val().trim();
         else
-            filterHead = filterHead + "Legal Entity : " + filterLegalEntity.val().trim() + " | "
+            filterHead = filterHead + "Legal Entity : " + filterLegalEntity.val().trim() + " | ";
     }
 
     if (filterDivision.val().trim() != '') {
         if (filterHead == null)
             filterHead = "Division : " + filterDivision.val().trim();
         else
-            filterHead = filterHead + "Division : " + filterDivision.val().trim() + " | "
+            filterHead = filterHead + "Division : " + filterDivision.val().trim() + " | ";
     }
 
     if (filterCategory.val().trim() != '') {
         if (filterHead == null)
             filterHead = "Category : " + filterCategory.val().trim();
         else
-            filterHead = filterHead + "Category : " + filterCategory.val().trim() + " | "
+            filterHead = filterHead + "Category : " + filterCategory.val().trim() + " | ";
     }
 
     if (filterGeoLocation.val().trim() != '') {
         if (filterHead == null)
             filterHead = "Unit Location : " + filterGeoLocation.val().trim();
         else
-            filterHead = filterHead + "Unit Location : " + filterGeoLocation.val().trim() + " | "
+            filterHead = filterHead + "Unit Location : " + filterGeoLocation.val().trim() + " | ";
     }
 
     if (filterUnitCode.val().trim() != '') {
         if (filterHead == null)
             filterHead = "Unit Code : " + filterUnitCode.val().trim();
         else
-            filterHead = filterHead + "Unit Code : " + filterUnitCode.val().trim() + " | "
+            filterHead = filterHead + "Unit Code : " + filterUnitCode.val().trim() + " | ";
     }
 
     if (filterDomain.val().trim() != '') {
         if (filterHead == null)
             filterHead = "Domain : " + filterDomain.val().trim();
         else
-            filterHead = filterHead + "Domain : " + filterDomain.val().trim() + " | "
+            filterHead = filterHead + "Domain : " + filterDomain.val().trim() + " | ";
     }
 
     if (filterOrganization.val().trim() != '') {
         if (filterHead == null)
             filterHead = "Organization : " + filterOrganization.val().trim();
         else
-            filterHead = filterHead + "Organization : " + filterOrganization.val().trim() + " | "
+            filterHead = filterHead + "Organization : " + filterOrganization.val().trim() + " | ";
     }
     $('.filtered_items').text("Filtered By - " + filterHead);
-    bu.getBulkClientUnitListForFilterView(parseInt($('#view_csv_unit_id').val()), 0, 25,
+    _page_limit = parseInt(ItemsPerPage.val());
+    if (_on_current_page == 1) {
+        showFrom = 0
+    } else {
+        showFrom = (_on_current_page - 1) * _page_limit;
+    }
+    bu.getBulkClientUnitListForFilterView(parseInt($('#view_csv_unit_id').val()), showFrom, _page_limit,
     filterLegalEntity.val().trim(), filterDivision.val().trim(), filterCategory.val().trim(),
     filterGeoLocation.val().trim(), filterUnitCode.val().trim(), filterDomain.val().trim(),
-    filterOrganization.val().trim(), function(err, response)
+    filterOrganization.val().trim(), actionVal, function(err, response)
     {
         console.log(err, response)
         displayLoader();
         if(err != null) {
+            if (err == "EmptyFilteredData") {
+                totalRecord = 0;
+                hidePagePan();
+                PaginationView.hide();
+                hidePageView();
+                bindClientUnitList([]);
+            } else {
+                displayMessage(err);
+            }
             hideLoader();
-            displayMessage(err);
         }
         if(err == null) {
             viewClientUnitList = response.client_unit_data;
@@ -788,6 +963,19 @@ btnFilterGo.click(function(){
             lblCSVFileDate.text(response.uploaded_on);
             lblCSVFileUser.text(fetchTechnoManager(response.uploaded_by));
             $('#view_csv_unit_id').val(response.csv_id);
+            CSVID = response.csv_id;
+            totalRecord = response.total_records;
+            if(totalRecord == 0) {
+                hidePagePan();
+                PaginationView.hide();
+                hidePageView();
+            }
+            else {
+                if (_on_current_page == 1) {
+                    createPageView();
+                    PaginationView.show();
+                }
+            }
             bindClientUnitList(viewClientUnitList);
             hideLoader();
         }
@@ -806,17 +994,24 @@ function createPageView(page_type) {
     perPage = parseInt(ItemsPerPage.val());
     hidePageView();
     $('#pagination_rpt').twbsPagination({
-        totalPages: Math.ceil(STATU_TOTALS / perPage),
+        totalPages: Math.ceil(totalRecord / perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
-            cpage = parseInt(page);
-            if (parseInt(_on_current_page) != cpage) {
-                _on_current_page = cpage;
-                if(page_type == "show") {
-
+            cPage = parseInt(page);
+            if (parseInt(_on_current_page) != cPage) {
+                if(showClicked == true && filterClicked == false) {
+                    _on_current_page = cPage;
+                    _page_limit = parseInt(ItemsPerPage.val());
+                    if (_on_current_page == 1) {
+                        showFrom = 0;
+                    } else {
+                        showFrom = (_on_current_page - 1) * _page_limit;
+                    }
+                    console.log(CSVID, showFrom, _page_limit)
+                    getCSVFileApprovalList(CSVID, showFrom, _page_limit);
                 }
-                else {
-
+                else if(showClicked == false && filterClicked == true){
+                    btnFilterGo.click();
                 }
             }
         }
@@ -824,23 +1019,122 @@ function createPageView(page_type) {
 };
 
 function hidePagePan() {
-    $('compliance_count').text('');
+    $('.compliance-count').text('');
     $('.pagination-view').hide();
 };
 
 function showPagePan(showFrom, showTo, total) {
-    var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ' + total + ' compliances ';
-    $('.compliance_count').text(showText);
+    var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ' + total + ' units ';
+    $('.compliance-count').text(showText);
     $('.pagination-view').show();
 };
 
 ItemsPerPage.on('change', function(e) {
-    perPage = parseInt($(this).val());
+    _page_limit = parseInt($(this).val());
     _on_current_page = 1;
-    _sno = 0;
-    createPageView(_total_record);
-    csv = false;
-    fetchData();
+    showFrom = 0;
+    createPageView(totalRecord);
+    displayViewScreen(CSVID, showFrom, _page_limit);
+});
+
+
+// Approve all check box event in view screen
+approveAllUnits.on("change", function(e) {
+    rejectAllUnits.prop("checked", false);
+    var unitsList = tblClientUnitBulkUploadedApprovalList.find('tr').length;
+    var value = null;
+    if (unitsList > 0) {
+        displayLoader();
+        tblClientUnitBulkUploadedApprovalList.find('.view-approve-check').
+            prop('checked', false);
+        tblClientUnitBulkUploadedApprovalList.find('.view-reject-check').
+            prop('checked', false);
+        for(var i=0; i<unitsList; i++) {
+            value = viewClientUnitList[i];
+            if(e.target.checked && value != null) {
+                tblClientUnitBulkUploadedApprovalList.find('.view-approve-check').
+                    prop('checked', true);
+                tblClientUnitBulkUploadedApprovalList.find(
+                    'td.reject-reason.-'+value.bulk_unit_id
+                ).innerHTML = "";
+                csvid = $('#view_csv_unit_id').val();
+                bu.updateClientUnitActionFromView(
+                    parseInt(csvid), value.bulk_unit_id, 1, null, function(err, res)
+                {
+                    if (err != null) {
+                        displayMessage(err);
+                    }
+                });
+            }
+            else if(!e.target.checked && value != null) {
+                tblClientUnitBulkUploadedApprovalList.find('.view-approve-check').
+                    prop('checked', false);
+                tblClientUnitBulkUploadedApprovalList.find(
+                    'td.reject-reason.-'+value.bulk_unit_id
+                ).innerHTML = "";
+                csvid = $('#view_csv_unit_id').val();
+                bu.updateClientUnitActionFromView(
+                    parseInt(csvid), value.bulk_unit_id, 0, null, function(err, res)
+                {
+                    if (err != null) {
+                        displayMessage(err);
+                    }
+                });
+            }
+        }
+        hideLoader();
+    }
+});
+
+// Reject all event in view screen
+rejectAllUnits.on("change", function(e) {
+    approveAllUnits.prop("checked", false);
+    var unitsList = tblClientUnitBulkUploadedApprovalList.find('tr').length;
+    var value = null;
+    if (unitsList > 0) {
+        displayLoader();
+        displayViewRejectAllPopUp(function(reason) {
+            tblClientUnitBulkUploadedApprovalList.find('.view-approve-check').
+                prop('checked', false);
+            tblClientUnitBulkUploadedApprovalList.find('.view-reject-check').
+                prop('checked', false);
+            for(var i=0; i<unitsList; i++) {
+                value = viewClientUnitList[i];
+                if(e.target.checked && value != null) {
+                    tblClientUnitBulkUploadedApprovalList.find('.view-reject-check').
+                        prop('checked', true);
+                    csvid = $('#view_csv_unit_id').val();
+                    console.log("1:"+value.bulk_unit_id);
+                    bu.updateClientUnitActionFromView(
+                        parseInt(csvid), value.bulk_unit_id, 2, $('.view-reason').val(), function(err, res)
+                    {
+                        if (err != null) {
+                            displayMessage(err);
+                        }
+                        else {
+                            loadRemarksOnViewRejectAll($('.view-reason').val())
+                        }
+                    });
+                }
+                else if(!e.target.checked && value != null) {
+                    tblClientUnitBulkUploadedApprovalList.find('.view-reject-check').
+                        prop('checked', false);
+                    csvid = $('#view_csv_unit_id').val();
+                    bu.updateClientUnitActionFromView(
+                        parseInt(csvid), value.bulk_unit_id, 0, null, function(err, res)
+                    {
+                        if (err != null) {
+                            displayMessage(err);
+                        }
+                        else {
+                            tblClientUnitBulkUploadedApprovalList.find('tr')[i].cells[3].innerHTML = "";
+                        }
+                    });
+                }
+            }
+            hideLoader();
+        });
+    }
 });
 
 // Document initialization process

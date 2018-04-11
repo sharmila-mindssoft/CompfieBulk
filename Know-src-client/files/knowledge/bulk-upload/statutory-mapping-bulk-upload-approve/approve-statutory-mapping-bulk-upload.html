@@ -278,13 +278,15 @@
                             <th class=" columnfixed" width="2%"></th>
                             <th class="text-center columnfixed">
                               <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-                                <input id="singleCheckbox2" class="approve-all" value="option2" type="checkbox">
+                                <!-- id="singleCheckbox2" -->
+                                <input  class="approve-all" value="option2" type="checkbox">
                                 <label></label>
                               </div>
                             </th>
                             <th class="text-center columnfixed">
                               <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
-                                <input id="singleCheckbox2" class="reject-all" value="option2" type="checkbox" >
+                                <!-- id="singleCheckbox2" -->
+                                <input  class="reject-all" value="option2" type="checkbox" >
                                 <label></label>
                               </div>
                             </th>
@@ -413,9 +415,7 @@
                             </th>
                         </tr>
                       </thead>
-                      <tbody id="tbody-sm-approve-view">
-
-
+                      <tbody class="tbody-sm-approve-view">
                       </tbody>
                     </table>
                   </div>
@@ -477,12 +477,12 @@
         <tr class="table-row">
             <td class="sno" align="center"></td>
             <td class="csv-name"></td>
-            <td class="uploaded-on text-center"></td>
-            <td class="uploaded-by text-center"></td>
+            <td class="uploaded-on"></td>
+            <td class="uploaded-by"></td>
             <td class="tot-records text-center"></td>
             <td class="approve-reject text-center"></td>
-            <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer dropbtn" onclick="showDownloadList()"></i>
-              <div id="myDropdown" class="dropdown-content">
+            <td class="text-center icon-3x"><i class="fa fa-download text-primary c-pointer dropbtn" ></i>
+              <div class="dropdown-content">
                 <a class="dl-xls-file" >Download Excel</a>
                 <a class="dl-csv-file">Download CSV</a>
                 <a class="dl-ods-file">Download ODS</a>
@@ -516,21 +516,25 @@
     </table>
 
     <table class="table-sm-approve-info">
-      <tr class="clone-row columnfixed">
+      <tr>
         <th class="sno" width="1%">1</th>
         <th class="text-center action-approve" width="1%">
           <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-            <input id="singleCheckbox2" value="option2" class="view-approve-check" type="checkbox" title="Click here to approve">
+            <!-- id="singleCheckbox2" -->
+            <input  value="option2" class="view-approve-check" type="checkbox" title="Click here to approve">
             <label></label>
           </div>
         </th>
         <th class="text-center action-reject" width="1%">
           <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
-            <input id="singleCheckbox2" value="option2" class="view-reject-check" type="checkbox" title="Click here to reject">
+            <!-- id="singleCheckbox2" -->
+            <input  value="option2" class="view-reject-check" type="checkbox" title="Click here to reject">
             <label></label>
           </div>
         </th>
-        <th class="text-center reject-reason" width="1%"></th>
+        <th class="text-center reject-reason" width="1%">
+          <i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer default-display-none" data-toggle="tooltip" title="" data-original-title=""></i>
+        </th>
 
         <th class="divider-column statutory" width="5%"></th>
         <th width="1%"></th>
@@ -556,13 +560,15 @@
         <td class="multiple" width="3%"></td>
         <td class="format" width="4%"><a target="new"></a></td>
         <td class="geography" width="5%"></td>
+      </tr>
     </table>
 </div>
 
 <div id="no-record-templates" class="default-display-none">
     <table class="table-no-content">
         <tr align="left" class="table-row-no-content">
-            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+           <td align="center" colspan="13" class="no_records">No Records Found</td>
+           <td align="center" colspan="14"></td>
         </tr>
     </table>
 </div>

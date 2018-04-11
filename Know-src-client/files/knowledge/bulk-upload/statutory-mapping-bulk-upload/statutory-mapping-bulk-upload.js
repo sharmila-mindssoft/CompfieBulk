@@ -6,6 +6,7 @@ var AddButton = $("#btn-csv-add");
 var CancelButton = $("#btn-sm-csv-cancel");
 var SubmitButton = $("#btn-submit");
 var ListRowTemplate = $('#templates .table-sm-csv-info .table-row');
+var INVALID_FILE_NAME = null;
 
 var TemplateDiv = $('.dwn-template')
 var FileUploadCsv = $("#bu-upload-csv");
@@ -200,6 +201,7 @@ BulkUploadStatutoryMapping.prototype.fetchDropDownData = function() {
     });
 };
 BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
+    $('#myModal').modal('show');
     var t_this = this;
     var args = {
         "c_id": parseInt(countryVal.val()),
@@ -214,6 +216,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
     bu.uploadStatutoryMappingCSV(args, function (error, response) {
         console.log("error-> "+ error);
         console.log("Response-> "+ response);
+        $('#myModal').modal('hide');
         TemplateDiv.hide();
         if (error == null) {
             if (response.invalid == 0) {
@@ -222,6 +225,8 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     csvId = response.csv_id;
                     DataSummary.show();
                     ErrorSummary.hide();
+                    DataSummary.removeClass("col-sm-6");
+                    DataSummary.addClass("col-sm-12");
                     SummaryTotal.text(response.total);
                     SummaryValid.text(response.valid);
                     SummaryInvalid.text(response.invalid);
@@ -255,15 +260,15 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                 SummaryInactive.text(response.inactive_error);
                 SummaryFrequencyInvalid.text(response.invalid_frequency_error);
 
-                invalid_file = response.invalid_file.split('.');
-                var csv_path = "/invalid_file/csv/" + invalid_file[0] + '.csv';
-                var xls_path = "/invalid_file/xlsx/" + invalid_file[0] + '.xlsx';
-                var ods_path = "/invalid_file/ods/" + invalid_file[0] + '.ods';
-                var txt_path = "/invalid_file/txt/" + invalid_file[0] + '.txt';
+                INVALID_FILE_NAME = response.invalid_file.split('.');
+                var csv_path = "/invalid_file/csv/" + INVALID_FILE_NAME[0] + '.csv';
+                var xls_path = "/invalid_file/xlsx/" + INVALID_FILE_NAME[0] + '.xlsx';
+                var ods_path = "/invalid_file/ods/" + INVALID_FILE_NAME[0] + '.ods';
+                // var txt_path = "/invalid_file/txt/" + invalid_file[0] + '.txt';
                 $('#csv-type').attr("href", csv_path);
                 $('#xls-type').attr("href", xls_path);
                 $('#ods-type').attr("href", ods_path);
-                $('#txt-type').attr("href", txt_path);
+                // $('#txt-type').attr("href", txt_path);
             }
 
         }
@@ -278,6 +283,32 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
         }
     })
 };
+
+document.getElementById("txt-type").addEventListener("click", function(){
+    if(INVALID_FILE_NAME != null) {
+        // var splitFileName = INVALID_FILE_NAME.split(".")[0];
+        $.get(
+            "/invalid_file/txt/" + INVALID_FILE_NAME[0] + ".txt", function(data)
+            {
+               download(INVALID_FILE_NAME[0]+".txt", "text/plain", data);
+            },
+        'text');
+    }
+});
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
 
 BulkUploadStatutoryMapping.prototype.validateControls = function() {
     if (countryVal.val() == '') {
@@ -332,13 +363,13 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
 };
 function key_search(mainList) {
     var csv_key = SearchCsvName.val().toLowerCase();
-
-
     var fList = [];
     for (var entity in mainList) {
         var csvName = mainList[entity].csv_name;
-
-        if (~csvName.toLowerCase().indexOf(csv_key)) {
+        var cname_split = csvName.split("_");
+        cname_split.pop();
+        var cname = cname_split.join("_");
+        if (~cname.toLowerCase().indexOf(csv_key)) {
             fList.push(mainList[entity]);
         }
     }

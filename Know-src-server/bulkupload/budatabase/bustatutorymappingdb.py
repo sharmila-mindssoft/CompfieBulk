@@ -3,7 +3,11 @@ import traceback
 from server import logger
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 import datetime
+import mysql.connector
+from server.dbase import Database
 from server.constants import (
+    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     MAX_REJECTED_COUNT, KM_USER_CATEGORY, KE_USER_CATEGORY
 )
 
@@ -29,12 +33,12 @@ __all__ = [
 # transaction method begin
 ########################################################
 # Return the uploaded statutory mapping csv list
-#:param db: database class object
-#:type db : Object
-#:param session_user: user id who currently logged in
-#:type session_user: String
-#:returns: upload_mmore: flag which defines user upload rights
-#:returns: csv_data: list of uploaded csv_data
+# param db: database class object
+# type db : Object
+# param session_user: user id who currently logged in
+# type session_user: String
+# returns: upload_mmore: flag which defines user upload rights
+# returns: csv_data: list of uploaded csv_data
 # rtypes: Boolean, lsit of Object
 ########################################################
 
@@ -44,21 +48,23 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
     upload_more = True
     doc_names = {}
     data = db.call_proc_with_multiresult_set("sp_statutory_mapping_csv_list", [session_user], 3)
-    print data
-    if len(data) == 3 :
+    print "DATA in DB file", data
+
+    print "Len DATA in DB file", len(data)
+    if len(data) == 3:
         if data[0][0]["max_count"] > MAX_REJECTED_COUNT:
             upload_more = False
         else:
             upload_more = True
-        print upload_more
+        print "upload_more--->> ", upload_more
 
         for d in data[2]:
             csv_id = d.get("csv_id")
             docname = d.get("format_file")
             doc_list = doc_names.get(csv_id)
-            if doc_list is None :
+            if doc_list is None:
                 doc_list = [docname]
-            else :
+            else:
                 doc_list.append(docname)
             doc_names[csv_id] = doc_list
 
@@ -178,11 +184,31 @@ def save_mapping_data(db, csv_id, csv_data):
 '''
 ########################################################
 
-def get_pending_mapping_list(db, cid, did, uploaded_by):
+def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
     csv_data = []
-    if uploaded_by is None:
-        uploaded_by = '%'
+    _source_db_con = mysql.connector.connect(
+        user=KNOWLEDGE_DB_USERNAME,
+        password=KNOWLEDGE_DB_PASSWORD,
+        host=KNOWLEDGE_DB_HOST,
+        database=KNOWLEDGE_DATABASE_NAME,
+        port=KNOWLEDGE_DB_PORT,
+        autocommit=False,
+    )
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc(
+        "sp_bu_get_mapped_knowledge_executives",
+        [session_user.user_id(), cid, did]
+    )
+    print len(result)
 
+    mapped_executives = ''
+    if len(result) != 0:
+        mapped_executives = ",".join(str(r["child_user_id"]) for r in result)
+    print "mapped_executives-> ", mapped_executives
+
+    if uploaded_by is None:
+        uploaded_by = mapped_executives
     data = db.call_proc("sp_pending_statutory_mapping_csv_list", [
         uploaded_by, cid, did
     ])
@@ -296,9 +322,12 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     c_doc = request_frame.c_doc
     f_count = request_frame.f_count
     f_range = request_frame.r_range
+    task_id = request_frame.tsk_id
+    task_type = request_frame.tsk_type
+
     if organization is None or organization == "":
         organization = '%'
-    else :
+    else:
         organization = organization + '%'
 
     if s_nature is None or s_nature == "":
@@ -311,13 +340,22 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
 
     if statutory is None or statutory == "":
         statutory = '%'
-    else :
+    else:
         statutory = statutory + '%'
 
     if geo_location is None or geo_location == "":
         geo_location = '%'
-    else :
+    else:
         geo_location = geo_location + '%'
+
+    if task_id is None or task_id == "":
+        task_id = '%'
+    else:
+        task_id = task_id + '%'
+    if task_type is None or task_type == "":
+        task_type = '%'
+    else:
+        task_type = task_type + '%'
 
     if c_task is None or c_task == "":
         c_task = '%'
@@ -333,7 +371,7 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
         [
             csv_id, organization, s_nature, frequency,
             statutory, geo_location, c_task, c_desc, c_doc,
-            f_count, f_range
+            f_count, f_range, task_id, task_type
         ], 2
     )
     country_name = None
@@ -420,6 +458,7 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
         country_name, domain_name, csv_name, upload_by,
         upload_on, csv_id, mapping_data, total
     )
+
 
 def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
     try:
@@ -529,7 +568,8 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
     uploaded_on = ''
     rejected_on = ''
     responseFormat = '%Y-%m-%d %H:%M:%S'
-    requestFormat = '%Y-%m-%d %H:%M:%S'
+    # requestFormat = '%Y-%m-%d %H:%M:%S'
+    requestFormat = '%d-%b-%Y %H:%M'
     date_time = datetime.datetime
     for d in data:
         if(d["uploaded_on"] is not None):
@@ -548,6 +588,9 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
             download_count = 0
         else:
             download_count = d["rejected_file_download_count"]
+
+        print "rejected_on >>>>>>"
+        print rejected_on
 
         rejected_list.append(bu_sm.StatutoryMappingRejectData(
             int(d["csv_id"]), int(d["uploaded_by"]), str(uploaded_on),

@@ -295,7 +295,6 @@ function pageControls() {
                 "csv_data": CSVINFO["file_content"],
                 "csv_size": CSVINFO["file_size"]
             };
-            
             displayLoader();
             bu.getUploadAssignStatutoryCSV(args, function(error, data) {
                 if (error == null) {
@@ -310,7 +309,7 @@ function pageControls() {
                     LENGTHERROR.text("0");
                     INVALIDERROR.text("0");
                     $('.view-summary').hide();
-                    $('.dropbtn').hide();
+                    $('.download-options').hide();
                     displaySuccessMessage(message.upload_success);
                     hideLoader();
                     GROUPID.val('');
@@ -328,9 +327,7 @@ function pageControls() {
                     UPLOADFILE.val('');
                     
                 } else {
-                    if(error == 'Invalid Csv file'){
-                        displayMessage(error);
-                    }else if(error == 'UploadAssignStatutoryCSVFailed'){
+                   if(error == 'UploadAssignStatutoryCSVFailed'){
                         displayMessage(message.upload_failed);
                         INVALIDFILENAME = data.invalid_file.split('.');;
                         TOTALRECORD.text(data.total);
@@ -345,7 +342,7 @@ function pageControls() {
                         getInvaliddataCount = parseInt(data.invalid_char_error) 
                             + parseInt(data.invalid_data_error);
                         INVALIDERROR.text(getInvaliddataCount);
-                        $('.dropbtn').show();
+                        $('.download-options').show();
                         $('.view-summary').show();
                         
                         csv_path = "/invalid_file/csv/" + INVALIDFILENAME[0] + 
@@ -361,11 +358,27 @@ function pageControls() {
                         $('#ods').attr("href", ods_path);
                         $('#txt').attr("href", txt_path);
                     }else{
-                        displayMessage(error);
+                        if(error == "InvalidCsvFile"){
+                            displayMessage(message.invalid_csv_file);
+                        }else if(error == "CsvFileBlank"){
+                            displayMessage(message.csv_file_blank);
+                        }else if(error == "RejectionMaxCountReached"){
+                            displayMessage(message.rejection_max_count_reached);
+                        }else if(error == "UnitsNotAssignedToUser"){
+                            displayMessage(message.units_not_assigned_to_user);
+                        }else{
+                            displayMessage(error);
+                        }
+                        $('.view-summary').hide();
+                        $('.download-options').hide();
                     }
                     hideLoader();
                 }
             });
+            
+
+
+            
         }
 
     });
@@ -379,6 +392,13 @@ function initialize() {
 }
 
 $(function() {
+    $('.download-options').hide();
+    $('#units').multiselect({
+        includeSelectAllOption: true
+    });
+    $('#domains').multiselect({
+        includeSelectAllOption: true
+    });
     MULTISELECTDOMAIN.multiselect({
         buttonWidth: '100%'
     });

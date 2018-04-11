@@ -263,17 +263,21 @@ class SourceDB(object):
             "client_id", "legal_entity_id", "unit_id",
             "domain_id", "statutory_id", "statutory_applicable_status",
             "remarks", "compliance_id", "compliance_applicable_status",
-            "is_approved", "approved_by", "approved_on",
+            "is_submitted", "is_approved", "approved_by", "approved_on",
             "updated_by", "updated_on"
         ]
 
         values = []
         for idx, d in enumerate(data):
             approval_status = 0
-            if d["Compliance_Applicable_Status"] == 3:
+            submitted_status = 0
+            if d["Compliance_Applicable_Status"] == 3 and d["action"] == 1:
                 approval_status = 3
-            else:
+            elif d["Compliance_Applicable_Status"] != 3 and d["action"] == 1:
                 approval_status = 5
+                submitted_status = 1
+            else:
+                approval_status = 4
 
             statu_id = self.Statutories.get(d["Primary_Legislation"]).get(
                 "statutory_id"
@@ -291,7 +295,7 @@ class SourceDB(object):
                 int(cs_id), cl_id, le_id, u_id, d_id, statu_id,
                 d["Statutory_Applicable_Status"],
                 d["Statutory_remarks"], comp_id,
-                d["Compliance_Applicable_Status"],
+                d["Compliance_Applicable_Status"], submitted_status,
                 approval_status, int(user_id), created_on,
                 int(user_id), created_on
             ))
@@ -314,11 +318,11 @@ class SourceDB(object):
             "Unit_Code": self.check_unit_code,
             "Unit_Name": self.check_unit_name,
             "Primary_Legislation": self.check_statutories,
-            "Secondary_Legislaion": self.check_child_statutories,
+            "Secondary_Legislation": self.check_child_statutories,
             "Statutory_Provision": self.check_statutory_provision,
             "Compliance_Task": self.check_compliance_task,
             "Compliance_Description": self.check_compliance_description,
-            "Organisation": self.check_organisation,
+            "Organization": self.check_organisation,
             "Statutory_Applicable_Status": self.check_applicable_status,
             "Compliance_Applicable_Status": self.check_applicable_status
         }
@@ -326,8 +330,8 @@ class SourceDB(object):
     def csv_column_fields(self):
         self._csv_column_name = [
             "S.No", "Client_Group", "Legal_Entity", "Domain",
-            "Organisation", "Unit_Code", "Unit_Name",
-            "Unit_Location", "Primary_Legislation", "Secondary_Legislaion",
+            "Organization", "Unit_Code", "Unit_Name",
+            "Unit_Location", "Primary_Legislation", "Secondary_Legislation",
             "Statutory_Provision", "Compliance_Task",
             "Compliance_Description", "Statutory_Applicable_Status",
             "Statutory_remarks", "Compliance_Applicable_Status"
@@ -357,7 +361,6 @@ class SourceDB(object):
             [task_name, compliance_description]
         )
         comp_id = c_ids[0]["compliance_id"]
-
         data = self._source_db.call_proc(
             "sp_bu_check_duplicate_compliance_for_unit",
             [domain_id, unit_id, comp_id]
@@ -368,7 +371,7 @@ class SourceDB(object):
             return True
 
     def save_executive_message(
-        self, a_type, csv_name, clientgroup, legalentity, createdby, unitid
+        self, a_type, csv_name, clientgroup, legalentity, createdby, unitids
     ):
         admin_users_id = []
         res = self._source_db.call_proc("sp_users_under_user_category", (1,))
@@ -376,7 +379,7 @@ class SourceDB(object):
             admin_users_id.append(user["user_id"])
 
         domain_users_id = []
-        res = self._source_db.call_proc("sp_user_by_unit_id", (8, unitid))
+        res = self._source_db.call_proc("sp_bu_user_by_unit_ids", (8, unitids))
         for user in res:
             domain_users_id.append(user["user_id"])
 
@@ -404,7 +407,7 @@ class SourceDB(object):
             )
 
     def save_manager_message(
-        self, csv_name, domainname, unitname, createdby, unitid
+        self, csv_name, domainname, unitname, createdby, unitids
     ):
         admin_users_id = []
         res = self._source_db.call_proc("sp_users_under_user_category", (1,))
@@ -412,7 +415,7 @@ class SourceDB(object):
             admin_users_id.append(user["user_id"])
 
         domain_users_id = []
-        res = self._source_db.call_proc("sp_user_by_unit_id", (7, unitid))
+        res = self._source_db.call_proc("sp_bu_user_by_unit_ids", (7, unitids))
         for user in res:
             domain_users_id.append(user["user_id"])
 
@@ -452,7 +455,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         self.errorSummary()
         self._client_id = None
         self._client_group = None
-        self._unit_id = None
+        self._unit_ids = []
         self._legal_entity_id = None
         self._legal_entity = None
         self._domain_ids = []
@@ -473,8 +476,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
     def compare_csv_columns(self):
         res = collections.Counter(
             self._csv_column_name) == collections.Counter(self._csv_header)
-        if res is False:
-            raise ValueError("Invalid Csv file")
+        return res
     '''
         looped csv data to perform corresponding validation
         returns: valid and invalid return format
@@ -489,36 +491,33 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 seen.add(t)
 
         if len(seen) != len(self._source_data):
-            raise ValueError("Duplicate dara found in CSV")
+            raise ValueError("Duplicate data found in CSV")
 
     def check_duplicate_compliance_for_same_unit_in_csv(self):
-        self._source_data.sort(key=lambda x: (
-            x["Domain"], x["Unit_Code"], x["Statutory_Provision"],
-            x["Compliance_Task"]
-        ))
-        comp_name = []
+        # self._source_data.sort(key=lambda x: (
+        #     x["Domain"], x["Unit_Code"], x["Statutory_Provision"],
+        #     x["Compliance_Task"], x["Compliance_Description"]
+        # ))
+        duplicate_compliance = 0
+        duplicate_compliance_row = []
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Domain"], s["Unit_Code"], s["Statutory_Provision"],
-            ["Compliance_Task"]
+            s["Compliance_Task"], s["Compliance_Description"]
         )):
             grouped_list = list(v)
             if len(grouped_list) > 1:
-                comp_name.append(
-                    grouped_list[0].get("Compliance_Task") +
-                    ' for ' +
-                    grouped_list[0].get("Unit_Code")
-                )
-
-        if len(comp_name) > 0:
-            error_msg = "Duplicate compliance task found in csv %s" % (
-                ','.join(comp_name)
-            )
-            raise ValueError(str(error_msg))
+                duplicate_compliance += len(grouped_list)
+                duplicate_compliance_row.append([
+                    grouped_list[0].get("Statutory_Provision"),
+                    grouped_list[0].get("Compliance_Task"),
+                    grouped_list[0].get("Compliance_Description"),
+                ])
+        return duplicate_compliance, duplicate_compliance_row
 
     def check_uploaded_count_in_csv(self):
-        self._source_data.sort(key=lambda x: (
-            x["Domain"], x["Unit_Code"]
-        ))
+        # self._source_data.sort(key=lambda x: (
+        #     x["Domain"], x["Unit_Code"]
+        # ))
         unit_names = []
 
         for k, v in groupby(self._source_data, key=lambda s: (
@@ -542,12 +541,11 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     raise ValueError(str(error_msg))
 
     def get_master_table_info(self):
-        self._source_data.sort(key=lambda x: (
-            x["Domain"], x["Unit_Code"]
-        ))
+        # self._source_data.sort(key=lambda x: (
+        #     x["Domain"], x["Unit_Code"]
+        # ))
         self._domain_names = []
         self._domain_ids = []
-
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Domain"]
         )):
@@ -571,6 +569,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                             grouped_list[0].get("Legal_Entity")
                         ).get("legal_entity_id")
 
+                self._client_group = grouped_list[0].get("Client_Group")
+
                 if(
                     self.Client_Group.get(grouped_list[0].get("Client_Group"))
                 ) != None:
@@ -578,12 +578,57 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                         grouped_list[0].get("Client_Group")
                         ).get("client_id")
 
+        self._unit_ids = []
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Unit_Code"]
+        )):
+            grouped_list = list(v)
+            if len(grouped_list) > 1:
+                if(
+                    self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
+                ) != None:
+                    self._unit_ids.append(self.Unit_Code.get(
+                        grouped_list[0].get("Unit_Code")).get("unit_id")
+                    )
+
+    def check_invalid_compliance_in_csv(self, data):
+        client_group = data.get("Client_Group")
+        legal_entity = data.get("Legal_Entity")
+        domain = data.get("Domain")
+        organization = data.get("Organization").replace(CSV_DELIMITER, ",")
+        unit_code = data.get("Unit_Code")
+        unit_name = data.get("Unit_Name")
+        unit_location = data.get("Unit_Location")
+        primary_legislation = data.get("Primary_Legislation")
+        secondary_legislation = data.get("Secondary_Legislation")
+        statutory_provision = data.get("Statutory_Provision")
+        compliance_task = data.get("Compliance_Task")
+        compliance_description = data.get("Compliance_Description")
+
+        res = self._db.call_proc(
+            "sp_check_invalid_compliance_in_csv",
+            [
+                client_group, legal_entity, domain, organization, unit_code,
+                unit_name, unit_location, primary_legislation,
+                secondary_legislation, statutory_provision, compliance_task,
+                compliance_description
+            ]
+        )
+        if len(res) > 0:
+            return True
+        else:
+            return False
+
     def perform_validation(self):
         mapped_error_dict = {}
         mapped_header_dict = {}
         invalid = 0
-        self.compare_csv_columns()
-        self.check_duplicate_in_csv()
+        # self.check_duplicate_in_csv()
+        duplicate = self.check_duplicate_compliance_for_same_unit_in_csv()
+        duplicate_compliance_in_csv = duplicate[0]
+        duplicate_compliance_row = duplicate[1]
+        self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
+
         self.init_values(self._session_user_obj.user_id())
 
         def make_error_desc(res, msg):
@@ -596,13 +641,11 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     res.append(msg)
             return res
 
-        for row_idx, data in enumerate(self._source_data):
-            if row_idx == 0:
-                self._client_group = data.get("Client_Group")
-                self._unit_id = self.Unit_Code.get(data.get("Unit_Code")).get(
-                    "unit_id"
-                    )
+        # res = True
+        # dup_error = "Compliance_Task - Duplicate data"
+        # res = make_error_desc(res, dup_error)
 
+        for row_idx, data in enumerate(self._source_data):
             res = True
             error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
             for key in self._csv_column_name:
@@ -615,16 +658,41 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     if (
                         key == 'Statutory_remarks' and
                         (
-                            data.get('Statutory_Applicable_Status') == 'Not Applicable' 
-                            or data.get('Statutory_Applicable_Status') == 'Do not Show'
+                            (
+                                data.get(
+                                    'Statutory_Applicable_Status'
+                                ) == 'Not Applicable' or
+                                data.get(
+                                    'Statutory_Applicable_Status'
+                                ) == 'Do not Show'
+                            ) and
+                            data.get(
+                                'Statutory_remarks'
+                            ) == ''
                         )
                     ):
-                        key = 'Statutory_remarks_'
+                        self._error_summary["mandatory_error"] += 1
+                        mandatory_error = "Statutory_remarks - Field is blank"
+                        res = make_error_desc(res, mandatory_error)
+
+                    if (
+                        key == 'Statutory_remarks' and
+                        (
+                            data.get(
+                                'Statutory_Applicable_Status'
+                            ) == 'Applicable' and
+                            data.get(
+                                'Statutory_remarks'
+                            ) != ''
+                        )
+                    ):
+                        self._error_summary["mandatory_error"] += 1
+                        mandatory_error = "Statutory_Remarks - Not Required"
+                        res = make_error_desc(res, mandatory_error)
 
                     valid_failed, error_cnt = parse_csv_dictionary_values_as(
                         key, v
                         )
-
                     if valid_failed is not True:
                         if res is True:
                             res = valid_failed
@@ -638,7 +706,6 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                             error_count["invalid_char"] += error_cnt[
                                 "invalid_char"
                             ]
-
                     if v != "":
                         if (
                             csvParam.get("check_is_exists") is True or
@@ -665,14 +732,26 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                                         "invalid_data_error"
                                     ] += 1
 
-            if not self.check_compliance_task_name_duplicate(
-                data.get("Domain"), data.get("Unit_Code"),
-                data.get("Statutory_Provision"), data.get("Compliance_Task"),
-                data.get("Compliance_Description"),
-            ):
-                self._error_summary["duplicate_error"] += 1
-                dup_error = "Compliance_Task - Duplicate data"
-                res = make_error_desc(res, dup_error)
+                if res is not True:
+                    err_str = (',').join(res)
+                    if err_str.find(key) != -1:
+                        head_idx = mapped_header_dict.get(key)
+                        if head_idx is None:
+                            head_idx = [row_idx]
+                        else:
+                            head_idx.append(row_idx)
+
+                        mapped_header_dict[key] = head_idx
+
+                if key == "Compliance_Task":
+                    for x in duplicate_compliance_row:
+                        if (
+                            x[0] == data.get("Statutory_Provision") and
+                            x[1] == data.get("Compliance_Task") and
+                            x[2] == data.get("Compliance_Description")
+                        ):
+                            dup_error = "Compliance_Task_Name - Duplicate Compliances in CSV"
+                            res = make_error_desc(res, dup_error)
 
             if res is not True:
                 error_list = mapped_error_dict.get(row_idx)
@@ -684,13 +763,13 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                 mapped_error_dict[row_idx] = error_list
 
-                head_idx = mapped_header_dict.get(key)
-                if head_idx is None:
-                    head_idx = [row_idx]
-                else:
-                    head_idx.append(row_idx)
+                # head_idx = mapped_header_dict.get(key)
+                # if head_idx is None:
+                #     head_idx = [row_idx]
+                # else:
+                #     head_idx.append(row_idx)
 
-                mapped_header_dict[key] = head_idx
+                # mapped_header_dict[key] = head_idx
                 invalid += 1
                 self._error_summary["mandatory_error"] += error_count[
                     "mandatory"
@@ -701,10 +780,22 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 self._error_summary["invalid_char_error"] += error_count[
                     "invalid_char"
                 ]
-            else:
-                self.check_duplicate_compliance_for_same_unit_in_csv()
-                self.check_uploaded_count_in_csv()
-                self.get_master_table_info()
+
+        if invalid == 0:
+            self.check_uploaded_count_in_csv()
+            for row_idx, data in enumerate(self._source_data):
+                res = True
+
+                if not self.check_compliance_task_name_duplicate(
+                    data.get("Domain"), data.get("Unit_Code"),
+                    data.get("Statutory_Provision"), data.get(
+                        "Compliance_Task"
+                    ),
+                    data.get("Compliance_Description"),
+                ):
+                    self._error_summary["duplicate_error"] += 1
+                    dup_error = "Compliance_Task_Name - Duplicate Compliances in Temp DB"
+                    res = make_error_desc(res, dup_error)
 
                 if not self.check_compliance_task_name_duplicate_in_knowledge(
                     data.get("Domain"), data.get("Unit_Code"),
@@ -713,8 +804,15 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     data.get("Compliance_Description"),
                 ):
                     self._error_summary["duplicate_error"] += 1
-                    dup_error = "Compliance_Task - DDuplicate data"
+                    dup_error = "Compliance_Task_Name - Duplicate Compliances in Knowledge"
                     res = make_error_desc(res, dup_error)
+
+                if not self.check_invalid_compliance_in_csv(
+                    data
+                ):
+                    self._error_summary["invalid_data_error"] += 1
+                    invalid_error = "Invalid Compliance to this Unit"
+                    res = make_error_desc(res, invalid_error)
 
                 if res is not True:
                     error_list = mapped_error_dict.get(row_idx)
@@ -726,14 +824,16 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                     mapped_error_dict[row_idx] = error_list
 
-                    head_idx = mapped_header_dict.get(key)
-                    if head_idx is None:
-                        head_idx = [row_idx]
-                    else:
-                        head_idx.append(row_idx)
+                    # head_idx = mapped_header_dict.get(key)
+                    # if head_idx is None:
+                    #     head_idx = [row_idx]
+                    # else:
+                    #     head_idx.append(row_idx)
 
-                    mapped_header_dict[key] = head_idx
+                    # mapped_header_dict[key] = head_idx
                     invalid += 1
+
+            self.get_master_table_info()
 
         if invalid > 0:
             return self.make_invalid_return(
@@ -798,12 +898,12 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self._legal_entity_id = legal_entity_id
         self._session_user_obj = session_user
         self._source_data = None
-        self._declined_row_idx = []
+        self._declined_row_idx = {}
         self.get_source_data()
         self._legal_entity = None
         self._client_group = None
         self._csv_name = None
-        self._unit_id = None
+        self._unit_ids = None
 
     def get_source_data(self):
         self._source_data = self._db.call_proc(
@@ -812,17 +912,29 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
     def perform_validation_before_submit(self):
         declined_count = 0
-        self._declined_row_idx = []
+        self._declined_row_idx = {}
         self.init_values(self._session_user_obj.user_id())
 
-        for row_idx, data in enumerate(self._source_data):
+        self._unit_ids = []
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Unit_Code"]
+        )):
+            grouped_list = list(v)
+            if len(grouped_list) > 1:
+                if(
+                    self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
+                ) != None:
+                    self._unit_ids.append(self.Unit_Code.get(
+                        grouped_list[0].get("Unit_Code")).get("unit_id")
+                    )
 
+        for row_idx, data in enumerate(self._source_data):
+            res = True
+            declined_count = 0
             if row_idx == 0:
                 self._legal_entity = data.get("Legal_Entity")
                 self._client_group = data.get("Client_Group")
                 self._csv_name = data.get("Csv_Name")
-                self._unit_id = self.Unit_Code.get(
-                    data.get("Unit_Code")).get("unit_id")
 
             for key in self._csv_column_name:
                 value = data.get(key)
@@ -854,8 +966,11 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
                             if isFound is not True and isFound != "":
                                 declined_count += 1
-                                print "Not Found Error"
-                                print key, v
+                                msg = "%s - %s" % (key, isFound)
+                                if res is not True:
+                                    res.append(msg)
+                                else:
+                                    res = [msg]
 
             if not self.check_compliance_task_name_duplicate_in_knowledge(
                 data.get("Domain"), data.get("Unit_Code"),
@@ -863,11 +978,17 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 data.get("Compliance_Description"),
             ):
                 declined_count += 1
+                dup_error = "Compliance_Task - Duplicate data"
+                if res is not True:
+                    res.append(dup_error)
+                else:
+                    res = [dup_error]
 
             if declined_count > 0:
-                self._declined_row_idx.append(
+                self._declined_row_idx[
                     data.get("bulk_assign_statutory_id")
-                )
+                ] = res
+
         return self._declined_row_idx
 
     def frame_data_for_main_db_insert(self, user_id):
@@ -897,18 +1018,26 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 cs_id, grouped_list, user_id
                 )
 
-    def make_rejection(self, declined_info):
+    def make_rejection(self, declined_info, user_id):
         try:
-            q = "update tbl_bulk_assign_statutory set " + \
-                " action = 3 where bulk_assign_statutory_id in (%s)" % (
-                    ",".join(map(str, declined_info))
-                )
-            self._db.execute(q)
+            created_on = get_date_time()
+            count = len(declined_info.keys())
+            for k, v in declined_info.items():
+                remarks = ",".join(v)
+                q = "update tbl_bulk_assign_statutory set " + \
+                    "action = 3, remarks = %s where " + \
+                    "bulk_assign_statutory_id = %s"
+                self._db.execute(q, [
+                    remarks, k
+                ])
 
             q1 = "update tbl_bulk_assign_statutory_csv set " + \
-                " declined_count = %s, approve_status = 1 where " + \
+                " declined_count = %s, approve_status = 1, " + \
+                " approved_by = %s, approved_on = %s where " + \
                 " csv_assign_statutory_id = %s"
-            self._db.execute(q1, [len(declined_info), self._csv_id])
+            self._db.execute(q1, [
+                count, user_id, created_on, self._csv_id
+            ])
 
         except Exception, e:
             raise (e)

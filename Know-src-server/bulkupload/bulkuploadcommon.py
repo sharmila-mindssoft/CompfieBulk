@@ -148,7 +148,6 @@ def write_data_to_excel(
                     e = ""
                 else:
                     e = "|;|".join(error_text)
-
                 print e
 
                 worksheet.write_string(row, col + i, e)
@@ -272,9 +271,6 @@ def write_download_data_to_excel(
     for idx, dat in enumerate(column_data):
         for i, h in enumerate(headers):
             if(h == "remarks"):
-                print "is_fully_rejected >>>>>>"
-                print dat.get("is_fully_rejected")
-
                 if(dat.get("is_fully_rejected") == 1):
                     d = str(dat.get("rejected_reason"))
                 else:
@@ -298,7 +294,7 @@ def write_download_data_to_excel(
     remove_error_desc_row = []
     for i, col in enumerate(headers_column_data):
         if col is not None:
-            if (col == "Error_Description"):
+            if (col == "Error_Description" or col == "Rejected_Reason"):
                 remove_error_desc_row.append(srow)
             else:
                 summarySheet.write_string(srow, 0, col)
