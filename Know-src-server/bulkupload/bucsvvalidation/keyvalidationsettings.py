@@ -2,7 +2,8 @@
 import re
 
 __all__ = [
-    "csv_params", "parse_csv_dictionary_values", "parse_csv_dictionary_values_as", "csv_params_as"
+    "csv_params", "parse_csv_dictionary_values",
+    "parse_csv_dictionary_values_as", "csv_params_as", "is_numeric"
 ]
 
 
@@ -36,34 +37,36 @@ def is_applicable_location(value) :
     else:
         return False
 
-def is_statutory(value) :
+def is_statutory(value):
 
     r = re.compile("^[0-9a-zA-Z&@,-.>>| ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
     else:
         return False
 
-def only_numeric(value) :
+def only_numeric(value):
 
     r = re.compile("^[0-9]*$")
-    if r.match(str(value)) :
+    if r.match(str(value)):
         return True
     else:
         return False
 
-def is_numeric(value) :
+
+def is_numeric(value):
 
     r = re.compile("^[0-9 ]*$")  # 0-9 with space
-    if r.match(str(value)) :
+    if r.match(str(value)):
         return True
     else:
         return False
 
-def is_numeric_with_delimiter(value) :
+
+def is_numeric_with_delimiter(value):
 
     r = re.compile("^[0-9|;| ]*$")  # 0-9 with |;|
-    if r.match(str(value)) :
+    if r.match(str(value)):
         return True
     else:
         return False
@@ -327,6 +330,7 @@ def parse_csv_dictionary_values_as(key, val):
 '''
 ########################################################
 
+
 def make_required_validation(
     keyType,
     isMandatoryCheck=False, maxLengthCheck=None, isValidCharCheck=False,
@@ -337,19 +341,19 @@ def make_required_validation(
         'key_type': keyType
     }
 
-    if isMandatoryCheck is True :
+    if isMandatoryCheck is True:
         constraints["check_mandatory"] = True
 
-    if maxLengthCheck is not None :
+    if maxLengthCheck is not None:
         constraints["max_length"] = maxLengthCheck
 
     if isValidCharCheck is not False and validation_method is not None:
         constraints["validation_method"] = validation_method
 
-    if isFoundCheck is not False :
+    if isFoundCheck is not False:
         constraints["check_is_exists"] = True
 
-    if isActiveCheck is not False :
+    if isActiveCheck is not False:
         constraints["check_is_active"] = True
 
     return constraints
