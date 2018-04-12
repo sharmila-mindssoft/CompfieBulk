@@ -368,7 +368,7 @@ class StatutorySource(object):
                 if d["Statutory_Date"] != "":
                     msg.append("Statutory_Date - Invalid data")
                 if d["Repeats_Every"] < d["Trigger_Days"]:
-                    msg.append("Trigger_Days - Invalid data")
+                    msg.append("Trigger_Days - cannot be greater than Repeat every days")
 
         elif (
             d["Multiple_Input_Section"] == "Yes" and
@@ -476,7 +476,7 @@ class StatutorySource(object):
                 if d["Statutory_Date"] != "":
                     msg.append("Statutory_Date - Invalid data")
                 if d["Repeats_Every"] < d["Trigger_Days"]:
-                    msg.append("Trigger_Days - Invalid data")
+                    msg.append("Trigger_Days - cannot be greater than Repeat every days")
 
             # Added for BUC588
             if (
