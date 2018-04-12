@@ -200,6 +200,8 @@ def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
         "sp_bu_get_mapped_knowledge_executives",
         [session_user.user_id(), cid, did]
     )
+    print "result >>"
+    print result
     print len(result)
     _source_db_con.close()
     mapped_executives = ''

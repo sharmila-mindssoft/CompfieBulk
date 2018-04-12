@@ -295,7 +295,7 @@ function pageControls() {
                 "csv_data": CSVINFO["file_content"],
                 "csv_size": CSVINFO["file_size"]
             };
-            displayLoader();
+            $('#myModal').modal('show');
             bu.getUploadAssignStatutoryCSV(args, function(error, data) {
                 if (error == null) {
                     TOTALRECORD.text(data.total);
@@ -325,7 +325,7 @@ function pageControls() {
                     fetchUnitMultiselect()
                     MULTISELECTUNIT.multiselect('rebuild');
                     UPLOADFILE.val('');
-                    
+                    $('#myModal').modal('hide');
                 } else {
                    if(error == 'UploadAssignStatutoryCSVFailed'){
                         displayMessage(message.upload_failed);
@@ -353,10 +353,10 @@ function pageControls() {
                         '.ods';
                         txt_path = "/invalid_file/txt/" + INVALIDFILENAME[0] + 
                         '.txt';
-                        $('#csv').attr("href", csv_path);
-                        $('#excel').attr("href", xls_path);
-                        $('#ods').attr("href", ods_path);
-                        $('#txt').attr("href", txt_path);
+                        $('#csv-type').attr("href", csv_path);
+                        $('#xls-type').attr("href", xls_path);
+                        $('#ods-type').attr("href", ods_path);
+                        // $('#txt-type').attr("href", txt_path);
                     }else{
                         if(error == "InvalidCsvFile"){
                             displayMessage(message.invalid_csv_file);
@@ -372,16 +372,38 @@ function pageControls() {
                         $('.view-summary').hide();
                         $('.download-options').hide();
                     }
-                    hideLoader();
+                    $('#myModal').modal('hide');
                 }
-            });
-            
-
-
-            
+            });   
         }
 
     });
+}
+
+document.getElementById("txt-type").addEventListener("click", function(){
+    if(INVALIDFILENAME != null) {
+        // var splitFileName = INVALID_FILE_NAME.split(".")[0];
+        $.get(
+            "/invalid_file/txt/" + INVALIDFILENAME[0] + ".txt", function(data)
+            {
+               download(INVALIDFILENAME[0]+".txt", "text/plain", data);
+            },
+        'text');
+    }
+});
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 }
 
 //initialize function

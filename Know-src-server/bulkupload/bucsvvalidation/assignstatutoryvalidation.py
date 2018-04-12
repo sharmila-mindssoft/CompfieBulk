@@ -994,10 +994,10 @@ class ValidateAssignStatutoryForApprove(SourceDB):
     def frame_data_for_main_db_insert(self, user_id):
         self.get_source_data()
         self._source_data.sort(key=lambda x: (
-             x["Domain"], x["Unit_Name"]
+             x["Domain"], x["Unit_Code"]
         ))
         for k, v in groupby(self._source_data, key=lambda s: (
-            s["Domain"], s["Unit_Name"]
+            s["Domain"], s["Unit_Code"]
         )):
             grouped_list = list(v)
             if len(grouped_list) == 0:

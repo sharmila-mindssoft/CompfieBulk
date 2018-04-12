@@ -2,10 +2,6 @@
     width: 100%;
     overflow: hidden; 
 }
-.btn-group{
-     width: 100%;
-}
-
 /* using width css classes instead of html width attribute */
 
 .width-1 {
