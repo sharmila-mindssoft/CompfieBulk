@@ -59,6 +59,7 @@ class StatutorySource(object):
         self.Statutory_Nature = {}
         self.Geographies = {}
         self.Statutories = {}
+        self.Statu_dic = {}
         self.Task_Type = []
         self.Statu_level = {}
         self.StatuLevelPosition = {}
@@ -547,6 +548,7 @@ class StatutorySource(object):
 
     def save_mapping_data(self, c_id, d_id, n_id, uploadedby, mapping):
         created_on = get_date_time()
+        mapping = mapping.replace("'", '"')
         mapping_value = [
             int(c_id), int(d_id),
             int(n_id), 1, 2,
@@ -669,24 +671,19 @@ class StatutorySource(object):
             )
 
     def save_statutories_data(self, statu_name, statu_level,
-                              parent_id, parent_names, created_on):
-        # columns = ["statutory_name", "level_id"]
-        # values = []
-        # values.append((statu_name, statu_level))
-        # created_on = get_date_time()
-        print "statu_name, int(statu_level), int(parent_id), parent_names"
-        print statu_name, int(statu_level), parent_id, parent_names, created_on
+                              parent_id, parent_names, created_by):
+        created_on = get_date_time()
         mapping_value = [
-            statu_name, int(statu_level), parent_id, parent_names, created_on
+            statu_name, int(statu_level), parent_id, parent_names, created_on,
+            created_by
         ]
-        q = "INSERT INTO tbl_statutories"
-        q += "(statutory_name, level_id, parent_ids, parent_names, created_on)"
-        q += "VALUES (%s, %s, %s, %s)"
+        q = "INSERT INTO tbl_statutories (statutory_name, level_id, " + \
+            " parent_ids, parent_names, created_on, created_by)" + \
+            "values " + \
+            " (%s, %s, %s, %s, %s, %s)"
         statutory_mapping_id = self._source_db.execute_insert(
             q, mapping_value
         )
-        print "statutory_mapping_id >>>"
-        print statutory_mapping_id
         return statutory_mapping_id
         # if values:
         #     statu_id = self._source_db.execute_insert(
@@ -1301,7 +1298,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     ] = res
 
             return self._declined_row_idx
-        except Exception, e :
+        except Exception, e:
             print e
             print str(traceback.format_exc())
 
@@ -1312,6 +1309,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                  x["Statutory"], x["Applicable_Location"]
             ))
             msg = []
+            statu_exists_id = []
             for k, v in groupby(self._source_data, key=lambda s: (
                 s["Organization"], s["Statutory_Nature"],
                 s["Statutory"], s["Applicable_Location"]
@@ -1349,67 +1347,61 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                 "geography_id"
                             )
                         )
-
+                if len(grouped_list) > 1:
+                    msg.append(grouped_list[0].get("Compliance_Task"))
+                uploaded_by = grouped_list[0].get("uploaded_by")
                 statu_mapping = value.get("Statutory").split(CSV_DELIMITER)
-                parent_names = None
-                parent_id = 0
-                created_on = get_date_time()
                 for statu_maps in statu_mapping:
-                    parent_names = None
-                    parent_id = 0
-                    print "statu_maps >>"
-                    print statu_maps
-                    print "self.Statutories >>>"
-                    print self.Statutories
-                    print self.Statutories.get(statu_maps)
-                    print "self.Statu_level >>"
-                    print self.Statu_level
-                    # statu_level = self.Statu_level.get(2).get("statu_level")
                     statu_limit = [i for i in self.Statu_level]
                     statu_level_limit = statu_limit[0]
-
                     if self.Statutories.get(statu_maps) is not None:
                         statu_ids.append(
                             self.Statutories.get(statu_maps).get(
                                 "statutory_id"
                             )
                         )
+                        statu_exists_id.append(statu_maps)
                     else:
-                        legistation_data = statu_maps.split(">>")
-                        if(len(legistation_data) <= statu_level_limit):
-                            statu_level = 1
-                            for data in legistation_data:
-                                data = data.strip()
+                        statu_maps = statu_maps.replace(" >> ", ">>")
+                        legis_data = statu_maps.split(">>")
+                        if(len(legis_data) <= statu_level_limit):
+                            parent_names = ''
+                            parent_id = 0
+                            for statu_level, data in enumerate(legis_data, 1):
+                                strip_data = data.strip()
                                 statu_position = self.StatuLevelPosition
-                                print "statu_position >> ", statu_position
                                 level_id = statu_position.get(statu_level)
-                                if(statu_level == 1):
-                                    statu_id = self.save_statutories_data(
-                                        data, level_id, parent_id,
-                                        parent_names, created_on)
-                                    statu_ids.append(statu_id)
+                                if(self.Statu_dic.get(strip_data) is not None):
+                                    parent_id = self.Statu_dic.get(strip_data)
+                                    parent_names = str(strip_data)
 
-                                    parent_id = statu_id
-                                    parent_names = data
-                                    statu_level = statu_level + 1
-                                    print "parent_names >>"
-                                    print parent_names
-                                    print "parent_id >>"
-                                    print parent_id
+                                if (int(statu_level) == 1):
+                                    if(strip_data not in statu_exists_id):
+                                        statu_id = self.save_statutories_data(
+                                            str(strip_data), level_id,
+                                            parent_id, parent_names,
+                                            uploaded_by)
+                                        statu_ids.append(statu_id)
+                                        statu_exists_id.append(statu_maps)
+                                        self.Statu_dic[statu_maps] = statu_id
+                                        parent_id = statu_id
+                                        parent_names = str(strip_data)
                                 else:
-                                    statu_id = self.save_statutories_data(
-                                        data, level_id, parent_id,
-                                        parent_names, created_on)
-                                    statu_ids.append(statu_id)
-                                    parent_id = statu_id
-                                    parent_names = data
-                                    statu_level = statu_level + 1
-                                    print "parent_names >>"
-                                    print parent_names
-                                    print "parent_id >>"
-                                    print parent_id
-
-
+                                    if(
+                                       self.Statutories.get(statu_maps) is None
+                                       ):
+                                        if(
+                                           self.Statu_dic.get(statu_maps) is None
+                                           ):
+                                            statu_id = self.save_statutories_data(
+                                                str(strip_data), level_id,
+                                                parent_id, parent_names,
+                                                uploaded_by)
+                                            statu_ids.append(statu_id)
+                                            statu_exists_id.append(statu_maps)
+                                            self.Statu_dic[statu_maps] = statu_id
+                                            parent_id = statu_id
+                                            parent_names = str(strip_data)
                 if len(grouped_list) > 1:
                     msg.append(grouped_list[0].get("Compliance_Task"))
                 uploaded_by = grouped_list[0].get("uploaded_by")
@@ -1424,7 +1416,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 )
                 self.save_industries(mapping_id, uploaded_by, org_ids)
 
-                #self.save_statutories(mapping_id, uploaded_by, statu_ids)
+                self.save_statutories(mapping_id, uploaded_by, statu_ids)
 
                 self.save_geograhy_location(mapping_id, uploaded_by, geo_ids)
 
