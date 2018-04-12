@@ -325,7 +325,7 @@ function pageControls() {
                     fetchUnitMultiselect()
                     MULTISELECTUNIT.multiselect('rebuild');
                     UPLOADFILE.val('');
-                    
+                    $('#myModal').modal('hide');
                 } else {
                    if(error == 'UploadAssignStatutoryCSVFailed'){
                         displayMessage(message.upload_failed);
