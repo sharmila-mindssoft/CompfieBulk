@@ -646,7 +646,8 @@ function RenderInput() {
                 $('.slp' + v.l_position + ' #select-act').removeClass('fa-check');
                 $('#sid' + v.s_id).addClass('active');
                 $('#sid' + v.s_id + ' #select-act').addClass('fa-check');
-                if (v.p_ids != null) {
+                /*if (v.p_ids != null) {*/
+                 if (v.p_ids != null && v.p_maps != null) {
                     $.merge(_s_pids, v.p_ids);
                     _renderinput.l_one_id = v.p_ids[0];
                     _renderinput.l_one_name = v.p_maps[0];

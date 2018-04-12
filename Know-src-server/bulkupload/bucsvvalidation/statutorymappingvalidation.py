@@ -548,6 +548,7 @@ class StatutorySource(object):
 
     def save_mapping_data(self, c_id, d_id, n_id, uploadedby, mapping):
         created_on = get_date_time()
+        mapping = mapping.replace("'u", '"')
         mapping = mapping.replace("'", '"')
         mapping_value = [
             int(c_id), int(d_id),
@@ -1354,45 +1355,82 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 for statu_maps in statu_mapping:
                     statu_limit = [i for i in self.Statu_level]
                     statu_level_limit = statu_limit[0]
+
+                    statu_maps = statu_maps.replace(" >> ", ">>")
+                    legis_data = statu_maps.split(">>")
+
+                    print "self.Statutories.get(statu_maps)"
+                    print statu_maps
+                    print self.Statutories.get(statu_maps)
                     if self.Statutories.get(statu_maps) is not None:
-                        statu_ids.append(
-                            self.Statutories.get(statu_maps).get(
-                                "statutory_id"
+                        if(len(legis_data) == 1):
+                            statu_ids.append(
+                                self.Statutories.get(statu_maps).get(
+                                    "statutory_id"
+                                )
                             )
-                        )
                         statu_exists_id.append(statu_maps)
                     else:
-                        statu_maps = statu_maps.replace(" >> ", ">>")
-                        legis_data = statu_maps.split(">>")
+                        print "legis_data >>>"
+                        print legis_data
                         if(len(legis_data) <= statu_level_limit):
+                            print "IF Legis >>>"
                             parent_names = ''
-                            parent_id = 0
+                            parent_id = ''
                             for statu_level, data in enumerate(legis_data, 1):
                                 strip_data = data.strip()
                                 statu_position = self.StatuLevelPosition
                                 level_id = statu_position.get(statu_level)
+
                                 if(self.Statu_dic.get(strip_data) is not None):
                                     parent_id = self.Statu_dic.get(strip_data)
                                     parent_names = str(strip_data)
 
-                                if (int(statu_level) == 1):
+                                if(
+                                   self.Statutories.get(strip_data) is not None
+                                   ):
+                                    parent_id = self.Statutories.get(
+                                        strip_data).get("statutory_id")
+                                    parent_names = str(strip_data)
+
+                                print "parent_id >>>"
+                                print parent_id
+                                print "parent_names >>>"
+                                print parent_names
+
+                                if (int(statu_level) == 1 and
+                                   self.Statutories.get(strip_data) is None):
+                                    print "3 IF >>>"
+                                    print strip_data
                                     if(strip_data not in statu_exists_id):
+                                        print "4 IF >>>"
                                         statu_id = self.save_statutories_data(
                                             str(strip_data), level_id,
                                             parent_id, parent_names,
                                             uploaded_by)
-                                        statu_ids.append(statu_id)
-                                        statu_exists_id.append(statu_maps)
-                                        self.Statu_dic[statu_maps] = statu_id
+                                        if(len(legis_data) == 1):
+                                            statu_ids.append(statu_id)
+                                        statu_exists_id.append(strip_data)
+                                        self.Statu_dic[strip_data] = statu_id
                                         parent_id = statu_id
                                         parent_names = str(strip_data)
                                 else:
-                                    if(
+                                    print "5 IF >>>"
+                                    print statu_maps
+                                    print "self.Statutories"
+                                    print self.Statutories
+                                    print "self.Statu_dic"
+                                    print self.Statu_dic
+                                    if(int(statu_level) > 1 and
                                        self.Statutories.get(statu_maps) is None
                                        ):
+                                        print "6 IF >>>"
+                                        print statu_maps
                                         if(
                                            self.Statu_dic.get(statu_maps) is None
                                            ):
+                                            print "7 IF >>>"
+                                            print statu_maps
                                             statu_id = self.save_statutories_data(
                                                 str(strip_data), level_id,
                                                 parent_id, parent_names,
@@ -1402,6 +1440,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                             self.Statu_dic[statu_maps] = statu_id
                                             parent_id = statu_id
                                             parent_names = str(strip_data)
+                print "statu_ids >>>"
+                print statu_ids
+                print "statu_ids >>>"
                 if len(grouped_list) > 1:
                     msg.append(grouped_list[0].get("Compliance_Task"))
                 uploaded_by = grouped_list[0].get("uploaded_by")

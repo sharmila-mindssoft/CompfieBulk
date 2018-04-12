@@ -1411,10 +1411,10 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
     for org in org_info :
         org_list.append(org["organisation_id"])
     statu_list = []
-    for statu in statu_info :
+    for statu in statu_info:
         statu_list.append(statu["statutory_id"])
     geo_list = []
-    for geo in geo_info :
+    for geo in geo_info:
         geo_list.append(geo["geography_id"])
 
     compliance_list = []
@@ -1422,31 +1422,37 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
     domain_id = None
     nature_id = None
     mapping_id = None
-    for c in comp_info :
+    for c in comp_info:
         mapping_id = c["statutory_mapping_id"]
         country_id = c["country_id"]
         domain_id = c["domain_id"]
         nature_id = c["statutory_nature_id"]
         date_list = []
         statutory_dates = c["statutory_dates"]
-        if statutory_dates is not None :
+        if statutory_dates is not None:
             statutory_dates = json.loads(statutory_dates)
             date_list = []
             for date in statutory_dates:
+                statutory_date = date["statutory_date"]
+                statutory_month = date["statutory_month"]
+                trggr_bef_days = date["trigger_before_days"]
+                repeat_by = date.get("repeat_by")
                 s_date = core.StatutoryDate(
-                    date["statutory_date"],
-                    date["statutory_month"],
-                    date["trigger_before_days"],
-                    date.get("repeat_by")
+                     statutory_date is not None if statutory_date else None,
+                     statutory_month is not None if statutory_month else None,
+                     trggr_bef_days is not None if trggr_bef_days else None,
+                     repeat_by is not None if repeat_by else None,
                 )
                 date_list.append(s_date)
-        else :
+        else:
             date_list = None
+        print 'date_list, c["frequency_id"], c >>>'
+        print date_list, c["frequency_id"], c
         summary, dates = make_summary(date_list, c["frequency_id"], c)
         # if summary != "" and dates is not None or dates != "" :
         #     summary += ' on (%s)' % (dates)
         f_list = []
-        if int(c["format_file_size"]) > 0 :
+        if int(c["format_file_size"]) > 0:
             f_list.append(core.FileList(
                 int(c["format_file_size"]), c["format_file"], None
             ))
