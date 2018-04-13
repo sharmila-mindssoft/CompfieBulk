@@ -83,6 +83,7 @@ var acCompDesc = $('#compdesc');
 var ACCompDesc = $('#ac-compdesc');
 var acTaskType = $('#tasktype');
 var ACTaskType = $('#ac-tasktype');
+var acViewData = $('.view-data');
 var MultiSelectFrequency = $('#frequency');
 
 var ApproveSelectAll = $(".approve-all");
@@ -487,6 +488,19 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     searchFreq.val('');
     searchFormat.val('');
     searchGeography.val('');
+    
+    acOrgName.val('');
+    acNature.val('');
+    acStatutory.val('');
+    acGeoLocation.val('');
+    acCompTask.val('');
+    acTaskId.val('');
+    acCompDoc.val('');
+    acCompDesc.val('');
+    acTaskType.val('');
+    acViewData.val('');
+    MultiSelectFrequency.val('');
+
     onCurrentPage = 1;
     j = 1;
     $('.filtered-data').text('');
@@ -766,6 +780,7 @@ ApproveBulkMapping.prototype.renderViewFromFilter = function() {
     displayLoader();
     pageLimit = parseInt(ItemsPerPage.val());
     var showCount = 0;
+    var view_data = "";
     if (onCurrentPage == 1) {
         showCount = 0;
         tThis.showMapCount = 0;
@@ -782,6 +797,14 @@ ApproveBulkMapping.prototype.renderViewFromFilter = function() {
         fTypes.push($this.text());
        }
     });
+    if ($('input[id="verified-data"]:checked').length == 1)
+        view_data = 1;
+
+    if ($('input[id="pending-data"]:checked').length == 1)
+        view_data = 2;
+    if ($('input[id="all-data"]:checked').length == 1)
+        view_data = 3;
+
     args = {
         "csv_id": parseInt($('#view-csv-id').val()),
         "orga_name": acOrgName.val(),
@@ -795,7 +818,8 @@ ApproveBulkMapping.prototype.renderViewFromFilter = function() {
         "f_count": showCount,
         "r_range": pageLimit,
         "tsk_id": acTaskId.val(),
-        "tsk_type": acTaskType.val()
+        "tsk_type": acTaskType.val(),
+        "filter_view_data" : view_data
     }
 
     bu.getApproveMappingViewFromFilter(args, function(err, response){
@@ -1326,7 +1350,16 @@ function PageControls() {
                 filtered += "|" + val;
             }
         }
-
+        if ($('input[id="verified-data"]:checked').length == 1)
+        {
+            verified = "View Data : Verified";
+            appendFilter(verified);
+        }
+        if ($('input[id="pending-data"]:checked').length == 1)
+        {
+            pending = "View Data : Pending";
+            appendFilter(pending);
+        }
         if(acOrgName.val() != "") {
             orgs = "Organization : " + acOrgName.val();
             appendFilter(orgs);
