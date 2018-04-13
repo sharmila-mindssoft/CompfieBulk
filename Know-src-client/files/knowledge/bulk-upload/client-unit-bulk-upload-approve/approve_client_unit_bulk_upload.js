@@ -1140,4 +1140,5 @@ rejectAllUnits.on("change", function(e) {
 // Document initialization process
 $(document).ready(function() {
     initialize('list');
+    $(".nicescroll").niceScroll();
 });
