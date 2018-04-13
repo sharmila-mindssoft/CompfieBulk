@@ -509,6 +509,10 @@ class StatutorySource(object):
             msg.append(
                 "Format - Field is blank when Compliance_Document available"
             )
+        return msg
+
+    def check_compliance_doc_name(self, d):
+        msg = []
         if (d["Compliance_Document"] == "" and d["Format"] != ""):
             msg.append(
                 "Compliance_Document - Field is blank when Format available"
@@ -655,6 +659,8 @@ class StatutorySource(object):
                 d["Statutory_Date"], d["Statutory_Month"], d["Trigger_Days"],
                 d["Repeats_By (DOM/EOM)"]
             )
+            print "d[Statutory_Provision]->> ", d["Statutory_Provision"]
+            print "approved_by", d["approved_by"]
 
             values.append((
                 d["Statutory_Provision"], d["Compliance_Task"],
@@ -1027,7 +1033,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                             ):
                                 self._error_summary["invalid_frequency_error"] += 1
 
-
                 if key == "Task_ID":
                     if v in duplicate_task_ids:
                         dup_error = "Task_ID - Duplicate data"
@@ -1039,6 +1044,17 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     ):
                         self._error_summary["duplicate_error"] += 1
                         dup_error = "Task_ID - Duplicate in Temp DB"
+                        res = make_error_desc(res, dup_error)
+
+                    if not self.check_task_id_duplicate(
+                        self._country_id, self._domain_id,
+                        data.get("Statutory"),
+                        data.get("Statutory_Provision"),
+                        data.get("Compliance_Task"),
+                        data.get("Task_ID")
+                    ):
+                        self._error_summary["duplicate_error"] += 1
+                        dup_error = "Task_ID - Duplicate in Knowledge DB"
                         res = make_error_desc(res, dup_error)
 
                 if key == "Compliance_Task":
@@ -1061,6 +1077,18 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         dup_error = "Compliance_Task - Duplicate Compliances in Temp DB"
                         res = make_error_desc(res, dup_error)
 
+                    if not self.check_compliance_task_name_duplicate(
+                        self._country_id, self._domain_id,
+                        data.get("Statutory"),
+                        data.get("Statutory_Provision"),
+                        data.get("Compliance_Task")
+                    ):
+                        self._error_summary["duplicate_error"] += 1
+                        dup_error = "Compliance_Task - Duplicate compliances in Knowledge DB"
+                        res = make_error_desc(res, dup_error)
+
+
+
                 if key == "Compliance_Frequency":
                     msg = []
                     if value == "One Time":
@@ -1081,13 +1109,16 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     if len(msg) > 0:
                         res = make_error_desc(res, msg)
 
-                if key in ["Compliance_Document", "Format"]:
-                    msg = self.check_format_file_name(data)
-                    # todo if file extension is wrong include in invalid error count
+                if key is "Compliance_Document":
+                    msg = self.check_compliance_doc_name(data)
                     self._error_summary["mandatory_error"] += len(msg)
                     if len(msg) > 0:
                         res = make_error_desc(res, msg)
                 if key is "Format":
+                    msg = self.check_format_file_name(data)
+                    self._error_summary["mandatory_error"] += len(msg)
+                    if len(msg) > 0:
+                        res = make_error_desc(res, msg)
                     if (
                         data["Compliance_Document"] != "" and
                         data["Format"] != ""
@@ -1099,10 +1130,10 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                             msg.append("Format - Invalid File Format")
                             self._error_summary["invalid_data_error"] += 1
                             res = make_error_desc(res, msg)
-                # print "RES ->> ", res
+                print "RES ->> ", res
                 if res is not True:
                     err_str = (',').join(res)
-                    # print "err_str--> ", err_str
+                    print "err_str--> ", err_str
                     if err_str.find(key + " - ") != -1:
                         head_idx = mapped_header_dict.get(key)
                         if head_idx is None:
@@ -1113,44 +1144,27 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         mapped_header_dict[key] = head_idx
                 # print "Header Dict-->", mapped_header_dict
 
-                if key == "Format" and res is True:
-                    if not self.check_compliance_task_name_duplicate(
-                        self._country_id, self._domain_id,
-                        data.get("Statutory"),
-                        data.get("Statutory_Provision"),
-                        data.get("Compliance_Task")
-                    ):
-                        self._error_summary["duplicate_error"] += 1
-                        dup_error = "Compliance_Task - Duplicate compliances in Knowledge DB"
-                        res = make_error_desc(res, dup_error)
+                # if key == "Format" and res is True:
+                    # if not self.check_compliance_task_name_duplicate(
+                    #     self._country_id, self._domain_id,
+                    #     data.get("Statutory"),
+                    #     data.get("Statutory_Provision"),
+                    #     data.get("Compliance_Task")
+                    # ):
+                    #     self._error_summary["duplicate_error"] += 1
+                    #     dup_error = "Compliance_Task - Duplicate compliances in Knowledge DB"
+                    #     res = make_error_desc(res, dup_error)
 
-                    if not self.check_task_id_duplicate(
-                        self._country_id, self._domain_id,
-                        data.get("Statutory"),
-                        data.get("Statutory_Provision"),
-                        data.get("Compliance_Task"),
-                        data.get("Task_ID")
-                    ):
-                        self._error_summary["duplicate_error"] += 1
-                        dup_error = "Task_ID - Duplicate in Knowledge DB"
-                        res = make_error_desc(res, dup_error)
-
-            # if not self.check_compliance_duplicate_in_tempDB(
-            #     self._country_id, self._domain_id,
-            #     data.get("Statutory"), data.get("Statutory_Provision"),
-            #     data.get("Compliance_Task")
-            # ):
-            #     self._error_summary["duplicate_error"] += 1
-            #     dup_error = "Compliance_Task - Duplicate Compliances in Temp DB"
-            #     res = make_error_desc(res, dup_error)
-
-            # if not self.check_duplicate_taskid_in_tempDB(
-            #     self._country_id, self._domain_id, data.get("Task_ID")
-            # ):
-            #     self._error_summary["duplicate_error"] += 1
-            #     dup_error = "Task_ID - Duplicate in Temp DB"
-            #     res = make_error_desc(res, dup_error)
-
+                    # if not self.check_task_id_duplicate(
+                    #     self._country_id, self._domain_id,
+                    #     data.get("Statutory"),
+                    #     data.get("Statutory_Provision"),
+                    #     data.get("Compliance_Task"),
+                    #     data.get("Task_ID")
+                    # ):
+                    #     self._error_summary["duplicate_error"] += 1
+                    #     dup_error = "Task_ID - Duplicate in Knowledge DB"
+                    #     res = make_error_desc(res, dup_error)
             if res is not True:
                 error_list = mapped_error_dict.get(row_idx)
                 if error_list is None:
@@ -1219,7 +1233,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 "invalid": invalid,
                 "doc_count": len(set(self._doc_names))
             }
-        except Exception, e :
+        except Exception, e:
             print e
             print str(traceback.format_exc())
 
@@ -1260,18 +1274,18 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self._source_data = self._db.call_proc(
             "sp_statutory_mapping_by_csvid", [self._csv_id]
         )
-        if len(self._source_data) > 0 :
+        if len(self._source_data) > 0:
             self._csv_name = self._source_data[0].get("csv_name")
             self._country_name = self._source_data[0].get("country_name")
             self._domain_name = self._source_data[0].get("domain_name")
 
     def get_file_count(self):
         data = self._db.call_proc("sp_sm_get_total_file_count", [self._csv_id])
-        if len(data) > 0 :
+        if len(data) > 0:
             self._doc_count = data[0].get("total_documents")
 
     def perform_validation_before_submit(self):
-        try :
+        try:
             declined_count = 0
             self._declined_row_idx = {}
             self.init_values(self._country_id, self._domain_id)
@@ -1515,9 +1529,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             raise e
 
     def make_rejection(self, declined_info):
-        try :
+        try:
             count = len(declined_info.keys())
-            for k, v in declined_info.items() :
+            for k, v in declined_info.items():
                 q = "update tbl_bulk_statutory_mapping set " + \
                     " action = 3, remarks = %s where " + \
                     " bulk_statutory_mapping_id  = %s" % (
@@ -1529,7 +1543,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 " declined_count = %s where csv_id = %s"
             self._db.execute(q1, [count, self._csv_id])
 
-        except Exception, e :
+        except Exception, e:
             print str(traceback.format_exc())
             raise (e)
 
@@ -1538,15 +1552,16 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self._stop = False
 
         def check_status():
-            if self._stop :
+            if self._stop:
                 return
 
             file_status = get_file_stats(csvid)
+            print " file Status -> ", file_status
             if file_status == "completed":
                 self._stop = True
                 self.file_server_download_call(csvid)
 
-            if self._stop is False :
+            if self._stop is False:
                 t = threading.Timer(60, check_status)
                 t.daemon = True
                 t.start()
@@ -1555,17 +1570,18 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             file_status = None
             c_db_con = bulkupload_db_connect()
             _db_check = Database(c_db_con)
-            try :
+            try:
                 _db_check.begin()
                 data = _db_check.call_proc("sp_sm_get_file_download_status", [csvid])
-                if len(data) > 0 :
+                print "DAta -> ", data
+                if len(data) > 0:
                     file_status = data[0].get("file_download_status")
 
-            except Exception, e :
+            except Exception, e:
                 print e
                 _db_check.rollback()
 
-            finally :
+            finally:
                 _db_check.close()
                 c_db_con.close()
             return file_status
@@ -1574,13 +1590,14 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
     def file_server_approve_call(self, csvid):
         caller_name = "%sapprove?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        print "caller_name", caller_name
         response = requests.post(caller_name)
-        print response.text
+        print "response.text-> ", response.text
 
     def file_server_download_call(self, csvid):
         actual_zip_file = os.path.join(KNOWLEDGE_FORMAT_PATH, str(csvid) + ".zip")
         caller_name = "%sdownloadfile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
-        print caller_name
+        print "Cller nameeeeee", caller_name
         urllib.urlretrieve(caller_name, actual_zip_file)
         zip_ref = ZipFile(actual_zip_file, 'r')
         zip_ref.extractall(KNOWLEDGE_FORMAT_PATH)

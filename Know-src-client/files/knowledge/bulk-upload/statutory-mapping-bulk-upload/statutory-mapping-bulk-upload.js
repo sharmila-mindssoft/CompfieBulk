@@ -233,7 +233,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     docNames = response.doc_names;
 
                     UploadDocument.show();
-                    DocumentTotal.text(response.total);
+                    DocumentTotal.text(response.doc_count);
                     DocumentUploaded.text("0");
                     DocumentRemaining.text("0");
 
