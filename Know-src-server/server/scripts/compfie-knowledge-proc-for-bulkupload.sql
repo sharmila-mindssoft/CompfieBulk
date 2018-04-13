@@ -116,6 +116,20 @@ END //
 
 DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_levelposition`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_levelposition`(
+IN cId INT, dId INT
+)
+BEGIN
+   SELECT t.level_id, t.level_position  as statu_level FROM tbl_statutory_levels as t
+   where country_id = cId and domain_id =dId;
+END //
+DELIMITER ;
+
+
+
 -- --------------------------------------------------------------------------------
 -- To get legal entities under a client for client units bulk upload
 -- --------------------------------------------------------------------------------
@@ -433,6 +447,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
     IN unitid text, domainid INT(11)
 )
+
 BEGIN
     SET SESSION group_concat_max_len = 1000000;
     SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
@@ -485,7 +500,7 @@ BEGIN
     GROUP BY    t1.statutory_mapping_id , t1.compliance_id , t4.unit_id
     ORDER BY TRIM(LEADING '[' FROM t.statutory_mapping) , t1.compliance_id , t4.unit_id;
 
-END //
+END//
 
 DELIMITER ;
 
@@ -803,7 +818,7 @@ CREATE PROCEDURE `sp_bu_get_mapped_knowledge_executives`(
 )
 BEGIN
     SELECT DISTINCT child_user_id
-    AS emp_name FROM  tbl_user_mapping
+    FROM  tbl_user_mapping
     INNER JOIN tbl_users ON user_id = child_user_id AND is_active = 1
     AND is_disable = 0 AND country_id = countryid AND domain_id = domainid
     WHERE parent_user_id = manager_id ;

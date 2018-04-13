@@ -327,73 +327,74 @@ def make_summary(data, data_type, c):
     }
     summary = ""
     sdates = ""
-    if data_type == 1 :
+    if data_type == 1:
         if len(data) > 0:
             dat = data[0].statutory_date
             mon = data[0].statutory_month
             day = data[0].trigger_before_days
-            if mon is not None :
+            if mon is not None and mon != '':
                 summary += string_months.get(mon)
-            if dat is not None :
+            if dat is not None and dat != '':
                 summary += " " + str(dat)
 
-            if day is not None :
+            if day is not None and day != '':
                 summary += " Trigger: %s days" % (day)
 
             return summary, None
         else:
             return None, None
 
-    elif data_type in (2, 3) :
+    elif data_type in (2, 3):
         dates = []
         trigger = []
         if len(data) > 0:
-            for d in data :
+            for d in data:
                 dat_summary = ""
                 dat = d.statutory_date
                 mon = d.statutory_month
                 day = d.trigger_before_days
-                if mon is not None :
+                if mon is not None and mon != '':
                     dat_summary += string_months.get(mon)
-                if dat is not None :
+
+                if dat is not None and dat != '':
                     dat_summary += " " + str(dat)
 
                 dates.append(dat_summary)
-                if day is not None :
+                if day is not None and day != '':
                     trigger.append(" %s days " % (day))
 
             summary = "Repeats every %s - %s. " % (
                 c["repeats_every"], c["repeat_type"]
             )
             sdates = ", ".join(dates)
-            if len(trigger) > 0 :
+            if len(trigger) > 0:
                 sdates += " Trigger : " + ", ".join(trigger)
 
     elif data_type == 4:
         dates = []
         trigger = []
         if len(data) > 0:
-            for d in data :
+            for d in data:
                 dat_summary = ""
                 dat = d.statutory_date
                 mon = d.statutory_month
                 day = d.trigger_before_days
-                if mon is not None :
+                if mon is not None and mon != '':
                     dat_summary += string_months.get(mon)
-                if dat is not None :
+                if dat is not None and dat != '':
                     dat_summary += " " + str(dat)
 
                 dates.append(dat_summary)
 
-                if day is not None :
+                if day is not None and day != '':
                     trigger.append(" %s days " % (day))
             summary = "Repeats every "
             is_none = True
-            if c["repeats_every"] is not None :
+            if c["repeats_every"] is not None and c["repeats_every"] != '':
                 summary += str(c["repeats_every"])
                 is_none = False
 
-            if c["repeat_type"] is not None :
+            if c["repeat_type"] is not None and c["repeat_type"] != '':
                 summary += " - " + c["repeat_type"]
                 is_none = False
 
@@ -404,8 +405,12 @@ def make_summary(data, data_type, c):
                 sdates += " Trigger : " + ", ".join(trigger)
 
     elif data_type == 5 :
+
+        duration = c["duration"] is not None if c["duration"] else None
+        duration_type = c["duration_type"] is not None if c["duration_type"] else None
+
         summary = "To complete within %s - %s" % (
-            c["duration"], c["duration_type"]
+            duration, duration_type
         )
         sdates = None
 
