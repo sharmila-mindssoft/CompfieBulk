@@ -102,13 +102,11 @@ BEGIN
     FROM tbl_bulk_statutory_mapping_csv AS t1
     WHERE upload_status =  1 AND approve_status = 0 AND ifnull(t1.is_fully_rejected, 0) = 0
     AND country_id = cid AND domain_id = did
-    AND uploaded_by like uploadedby
+    AND FIND_IN_SET(uploaded_by, uploadedby)
     ORDER BY uploaded_on DESC;
 END //
 
 DELIMITER ;
-
-
 
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_rejected_list`;
@@ -1104,12 +1102,12 @@ SELECT
  asm.statutory_provision,
  asm.compliance_task_name,
  asm.compliance_description,
- (CASE WHEN asm.statutory_applicable_status = 1 THEN 'Applicable' 
+ (CASE WHEN asm.statutory_applicable_status = 1 THEN 'Applicable'
        WHEN asm.statutory_applicable_status = 2 THEN 'Not Applicable'
        WHEN asm.statutory_applicable_status = 3 THEN 'Do Not Show'
   END) AS statutory_applicable_status,
  asm.statytory_remarks,
- (CASE WHEN asm.compliance_applicable_status = 1 THEN 'Applicable' 
+ (CASE WHEN asm.compliance_applicable_status = 1 THEN 'Applicable'
        WHEN asm.compliance_applicable_status = 2 THEN 'Not Applicable'
        WHEN asm.compliance_applicable_status = 3 THEN 'Do Not Show'
   END) AS compliance_applicable_status,
@@ -1128,7 +1126,7 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statut
   (asm.action=3 OR asm_csv.is_fully_rejected=1)
   ORDER BY asm_csv.rejected_on, asm_csv.approved_on DESC;
 
-ELSE 
+ELSE
 
 SELECT
  asm.client_group,
@@ -1143,12 +1141,12 @@ SELECT
  asm.statutory_provision,
  asm.compliance_task_name,
  asm.compliance_description,
- (CASE WHEN asm.statutory_applicable_status = 1 THEN 'Applicable' 
+ (CASE WHEN asm.statutory_applicable_status = 1 THEN 'Applicable'
        WHEN asm.statutory_applicable_status = 2 THEN 'Not Applicable'
        WHEN asm.statutory_applicable_status = 3 THEN 'Do Not Show'
   END) AS statutory_applicable_status,
  asm.statytory_remarks,
- (CASE WHEN asm.compliance_applicable_status = 1 THEN 'Applicable' 
+ (CASE WHEN asm.compliance_applicable_status = 1 THEN 'Applicable'
        WHEN asm.compliance_applicable_status = 2 THEN 'Not Applicable'
        WHEN asm.compliance_applicable_status = 3 THEN 'Do Not Show'
   END) AS compliance_applicable_status,
