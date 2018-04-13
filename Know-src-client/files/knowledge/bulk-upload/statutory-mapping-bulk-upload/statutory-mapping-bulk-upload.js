@@ -231,7 +231,12 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     SummaryValid.text(response.valid);
                     SummaryInvalid.text(response.invalid);
                     docNames = response.doc_names;
+
                     UploadDocument.show();
+                    DocumentTotal.text(response.total);
+                    DocumentUploaded.text("0");
+                    DocumentRemaining.text("0");
+
                     DocumentSummary.hide();
                     t_this.changeTxttoLabel(countryAc.val(), domainAc.val(), response.csv_name)
                 }
@@ -276,6 +281,8 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                 if (error == "CsvFileExeededMaxLines") {
                     displayMessage(message.csv_max_lines_exceeded.replace(
                         'MAX_LINES', response.csv_max_lines));
+                }else if(error == "CsvFileCannotBeBlank") {
+                    displayMessage(message.csv_file_blank);
                 }
                 else{
                     buSmPage.possibleFailures(error);
@@ -353,6 +360,7 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     this.changeTxttoLabel(data.c_name, data.d_name, data.csv_name)
     UploadDocument.show();
     DocumentSummary.show();
+
     DocumentTotal.text(data.no_of_documents);
     DocumentUploaded.text(data.uploaded_documents);
     DocumentRemaining.text(
