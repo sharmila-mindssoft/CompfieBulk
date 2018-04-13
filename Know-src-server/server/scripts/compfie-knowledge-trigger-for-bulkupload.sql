@@ -1,15 +1,12 @@
-
-
-
-CREATE TRIGGER `compfie_knowledge_new`.`tbl_units_organizations_AFTER_INSERT` 
+DROP TRIGGER IF EXISTS `tbl_units_organizations_AFTER_INSERT`;
+DELIMITER //
+CREATE TRIGGER `tbl_units_organizations_AFTER_INSERT` 
 AFTER INSERT ON `tbl_units_organizations` FOR EACH ROW
 BEGIN
-
     SET @action = 0;
-
     IF (select is_approved from tbl_units where unit_id = NEW.unit_id) = 1 THEN
-
-        INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id, column_name, value, tbl_name)
+        INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id,
+            column_name, value, tbl_name)
         select @action, tbl_units.client_id, tbl_units.legal_entity_id, unit_org_id, 'unit_id' col_name, tbl_units_organizations.unit_id value, 'tbl_units_organizations' 
         from tbl_units_organizations 
         inner join tbl_units on tbl_units_organizations.unit_id = tbl_units.unit_id
@@ -26,10 +23,13 @@ BEGIN
         where tbl_units_organizations.unit_id = NEW.unit_id
         order by unit_org_id, col_name;
      END IF;        
-END
+END //
+DELIMITER ;
 
 
-CREATE TRIGGER `compfie_knowledge_new`.`tbl_compliances_AFTER_INSERT` AFTER INSERT ON `tbl_compliances` FOR EACH ROW
+DROP TRIGGER IF EXISTS `tbl_compliances_AFTER_INSERT`;
+DELIMITER //
+CREATE TRIGGER `tbl_compliances_AFTER_INSERT` AFTER INSERT ON `tbl_compliances` FOR EACH ROW
 BEGIN
 SET @action = 0;
    IF NEW.is_approved = 2 or NEW.is_approved = 3 THEN
@@ -338,10 +338,12 @@ SET @action = 0;
         is_group = 0 and
         client_id in (select legal_entity_id from tbl_legal_entity_domains where domain_id = NEW.domain_id);
    END IF;
-END
+END //
+DELIMITER ;
 
-
-CREATE TRIGGER `compfie_knowledge_new`.`tbl_units_AFTER_INSERT` AFTER INSERT ON `tbl_units` FOR EACH ROW
+DROP TRIGGER IF EXISTS `tbl_units_AFTER_INSERT`;
+DELIMITER //
+CREATE TRIGGER `tbl_units_AFTER_INSERT` AFTER INSERT ON `tbl_units` FOR EACH ROW
 BEGIN
 
    SET @action = 0;
@@ -547,10 +549,12 @@ BEGIN
 
    END IF;
    
-END
+END//
+DELIMITER ;
 
-
-CREATE TRIGGER `compfie_knowledge_new`.`tbl_client_statutories_AFTER_INSERT` AFTER INSERT ON `tbl_client_statutories` FOR EACH ROW
+DROP TRIGGER IF EXISTS `tbl_client_statutories_AFTER_INSERT`;
+DELIMITER //
+CREATE TRIGGER `tbl_client_statutories_AFTER_INSERT` AFTER INSERT ON `tbl_client_statutories` FOR EACH ROW
 BEGIN
 
 SET @action = 0;
@@ -591,323 +595,11 @@ SET @action = 0;
         WHERE client_id = @legal_entity_id and is_group = 0;
     END IF ;
     
-END
+END //
 
-
-CREATE TRIGGER `compfie_knowledge_new`.`tbl_compliances_AFTER_INSERT` AFTER INSERT ON `tbl_compliances` FOR EACH ROW
-BEGIN
-
-SET @action = 0;
-   IF NEW.is_approved = 2 or NEW.is_approved = 3 THEN
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             legal_entity_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-      SELECT @action, 0, 0, NEW.compliance_id,
-      'statutory_mapping', statutory_mapping,
-      'tbl_compliances' FROM tbl_statutory_mappings
-      WHERE statutory_mapping_id=NEW.statutory_mapping_id;
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'statutory_mapping_id',
-                    NEW.statutory_mapping_id,
-                    'tbl_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'country_id',
-                    NEW.country_id,
-                    'tbl_compliances');
-
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'domain_id',
-                    NEW.domain_id,
-                    'tbl_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'statutory_provision',
-                    NEW.statutory_provision,
-                    'tbl_compliances');
-
-
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'compliance_task',
-                    NEW.compliance_task,
-                    'tbl_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'document_name',
-                    NEW.document_name,
-                    'tbl_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'compliance_description',
-                    NEW.compliance_description,
-                    'tbl_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'penal_consequences',
-                    NEW.penal_consequences,
-                    'tbl_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'reference_link',
-                    NEW.reference_link,
-                    'tbl_compliances');
-
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'frequency_id',
-                    NEW.frequency_id,
-                    'tbl_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'statutory_dates',
-                    NEW.statutory_dates,
-                    'tbl_compliances');
-
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'repeats_type_id',
-                    NEW.repeats_type_id,
-                    'tbl_compliances');
-
-
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'duration_type_id',
-                    NEW.duration_type_id,
-                    'tbl_compliances');
-
-
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'repeats_every',
-                    NEW.repeats_every,
-                    'tbl_compliances');
-
-
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'duration',
-                    NEW.duration,
-                    'tbl_compliances');
-
-
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            SELECT @action, 0, 0, NEW.compliance_id,
-               'statutory_nature', statutory_nature_name,
-              'tbl_compliances' FROM tbl_statutory_natures
-              WHERE statutory_nature_id in (
-                select distinct statutory_nature_id from tbl_statutory_mappings where statutory_mapping_id = new.statutory_mapping_id
-            );
-
-
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'is_active',
-                    NEW.is_active,
-                    'tbl_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'status_changed_on',
-                    NEW.status_changed_on,
-                    'tbl_compliances');
-
-
-
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'format_file',
-                    NEW.format_file,
-                    'tbl_compliances');
-
-
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0, 0,
-                    NEW.compliance_id,
-                    'format_file_size',
-                    NEW.format_file_size,
-                    'tbl_compliances');
-
-        UPDATE tbl_client_replication_status set is_new_data = 1 where
-        is_group = 0 and
-        client_id in (select legal_entity_id from tbl_legal_entity_domains where domain_id = NEW.domain_id);
-   END IF;
-   
-END
-
-CREATE TRIGGER `compfie_knowledge_new`.`tbl_statutory_mappings_AFTER_INSERT` AFTER INSERT ON `tbl_statutory_mappings` FOR EACH ROW
+DROP TRIGGER IF EXISTS `tbl_statutory_mappings_AFTER_INSERT`;
+DELIMITER //
+CREATE TRIGGER `tbl_statutory_mappings_AFTER_INSERT` AFTER INSERT ON `tbl_statutory_mappings` FOR EACH ROW
 BEGIN
 
    SET @action = 1;
@@ -926,10 +618,12 @@ BEGIN
     client_id in (select distinct legal_entity_id from tbl_legal_entity_domains where domain_id = NEW.domain_id);
   END IF;
   
-END
+END //
+DELIMITER ;
 
-
-CREATE TRIGGER `compfie_knowledge_new`.`tbl_client_compliances_AFTER_INSERT` AFTER INSERT ON `tbl_client_compliances` FOR EACH ROW
+DROP TRIGGER IF EXISTS `tbl_client_compliances_AFTER_INSERT`;
+DELIMITER //
+CREATE TRIGGER `tbl_client_compliances_AFTER_INSERT` AFTER INSERT ON `tbl_client_compliances` FOR EACH ROW
 BEGIN
 
     SET @action = 0;
@@ -1077,4 +771,5 @@ BEGIN
         WHERE client_id = NEW.legal_entity_id and is_group = 0;
     END IF ;
     
-END
+END //
+DELIMITER ;
