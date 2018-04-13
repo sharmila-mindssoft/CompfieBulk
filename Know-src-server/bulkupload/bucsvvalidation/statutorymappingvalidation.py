@@ -503,6 +503,18 @@ class StatutorySource(object):
 
         return msg
 
+    def check_format_file_name(self, d):
+        msg = []
+        if (d["Compliance_Document"] != "" and d["Format"] == ""):
+            msg.append(
+                "Format - Field is blank when Compliance_Document available"
+            )
+        if (d["Compliance_Document"] == "" and d["Format"] != ""):
+            msg.append(
+                "Compliance_Document - Field is blank when Format available"
+            )
+        return msg
+
     # main db related validation mapped with field name
     def statusCheckMethods(self):
         self._check_method_maps = {
@@ -1008,6 +1020,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                             ):
                                 self._error_summary["invalid_frequency_error"] += 1
 
+
                 if key == "Task_ID":
                     if v in duplicate_task_ids:
                         dup_error = "Task_ID - Duplicate data"
@@ -1060,6 +1073,25 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     self._error_summary["invalid_frequency_error"] += len(msg)
                     if len(msg) > 0:
                         res = make_error_desc(res, msg)
+
+                if key in ["Compliance_Document", "Format"]:
+                    msg = self.check_format_file_name(data)
+                    # todo if file extension is wrong include in invalid error count
+                    self._error_summary["mandatory_error"] += len(msg)
+                    if len(msg) > 0:
+                        res = make_error_desc(res, msg)
+                if key is "Format":
+                    if (
+                        data["Compliance_Document"] != "" and
+                        data["Format"] != ""
+                    ):
+                        file_extension = os.path.splitext(data["Format"])
+                        allowed_file_formats = [".pdf", ".doc", ".docx",
+                                                ".xls", "xlsx"]
+                        if file_extension[1] not in allowed_file_formats:
+                            msg.append("Format - Invalid File Format")
+                            self._error_summary["invalid_data_error"] += 1
+                            res = make_error_desc(res, msg)
                 # print "RES ->> ", res
                 if res is not True:
                     err_str = (',').join(res)

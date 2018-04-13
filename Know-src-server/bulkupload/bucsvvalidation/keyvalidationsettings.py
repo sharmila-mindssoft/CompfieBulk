@@ -7,35 +7,38 @@ __all__ = [
 ]
 
 
-def expectation_error(expected, received) :
+def expectation_error(expected, received):
 
     msg = "expected %s, but received: %s"
     return ValueError(msg % (expected, str(received)))
 
 
-def allow_specialchar(value) :
+def allow_specialchar(value):
 
     r = re.compile("^[0-9a-zA-Z- _& ,.;:/+=$%@#&*()<>?:\n]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def is_alphabet(value) :
+
+def is_alphabet(value):
 
     r = re.compile("^[a-zA-Z ]*$")  # a-z with space
-    if r.match(value) :
+    if r.match(value):
         return True
     else:
         return False
 
-def is_applicable_location(value) :
+
+def is_applicable_location(value):
 
     r = re.compile("^[a-zA-Z>>| ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
     else:
         return False
+
 
 def is_statutory(value):
 
@@ -44,6 +47,7 @@ def is_statutory(value):
         return True
     else:
         return False
+
 
 def only_numeric(value):
 
@@ -129,33 +133,37 @@ def duration_and_repeats_type(value):
     r = re.compile("^[a-zA-Z() ]*$")
     if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def repeats_by(value) :
 
-    if value in ["DOM", "EOM"] :
+def repeats_by(value):
+
+    if value in ["DOM", "EOM"]:
         return True
-    else :
+    else:
         return False
 
-def multiple_input_selection(value) :
 
-    if value in ["Yes", "No"] :
+def multiple_input_selection(value):
+
+    if value in ["Yes", "No"]:
         return True
-    else :
+    else:
         return False
 
-def is_alpha_numeric(value) :
+
+def is_alpha_numeric(value):
 
     #    a-z and 0-9 with space
     r = re.compile("^[A-Za-z0-9-_.,@ ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def is_url(value) :
+
+def is_url(value):
 
     regex = re.compile(
         r'^https?://'  # http:// or https://
@@ -166,44 +174,48 @@ def is_url(value) :
         r'(?:/?|[/?]\S+)$', re.IGNORECASE
     )
 
-    if regex.search(value) :
+    if regex.search(value):
         return True
-    else :
+    else:
         return False
 
-def is_address(value) :
+
+def is_address(value):
 
     # a-z0-9 with special char and space
     r = re.compile("^[a-zA-Z0-9_.,-@# ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def is_alphabet_withdot(value) :
+
+def is_alphabet_withdot(value):
 
     r = re.compile("^[a-zA-Z-. ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def is_domain(value) :
+
+def is_domain(value):
 
     # a-z0-9 with special char and space with delimiter
     r = re.compile("^[a-zA-Z0-9|;| ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def is_domain_orgn(value) :
+
+def is_domain_orgn(value):
 
     # a-z0-9 with special char and space with delimiter
     r = re.compile("^[a-zA-Z0-9|;|>> ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
 
@@ -273,26 +285,26 @@ def parse_csv_dictionary_values_as(key, val):
     _validation_method = csvparam.get("validation_method")
 
     msg = []
-    if _mandatory is True and (len(val) == 0 or val == '') :
+    if _mandatory is True and (len(val) == 0 or val == ''):
         msg.append(key + " - Field is blank")
         error_count["mandatory"] = 1
 
-    if _maxlength is not None and len(val) > _maxlength :
+    if _maxlength is not None and len(val) > _maxlength:
         msg.append(key + " - Cannot exceed max length")
         error_count["max_length"] = 1
 
-    if _validation_method is not None :
-        if _validation_method(val) is False :
+    if _validation_method is not None:
+        if _validation_method(val) is False:
             msg.append(key + " - Invalid character")
             error_count["invalid_char"] = 1
-    if len(msg) == 0 :
+    if len(msg) == 0:
         return True, error_count
-    else :
+    else:
         return msg, error_count
 ########################################################
 '''
     frame the validation constraints based on the given param
-    :param
+   :param
 
         keyType: type of key name
         isMandatoryCheck=False: to enable mandatory validation value
@@ -313,7 +325,7 @@ def parse_csv_dictionary_values_as(key, val):
         maxlength param is not meant for INT type if the value not None
         means that will check maximum given value not length
 
-    :type
+   :type
         keyName: string
         keyType: type could be Int, String, Boolean, Float
         isMandatoryCheck: Boolean
@@ -323,7 +335,7 @@ def parse_csv_dictionary_values_as(key, val):
         isFoundCheck: Boolean
         isActiveCheck: Boolean
 
-    :returns
+   :returns
         result: formulated dictionary
     rtype:
         result: dictionary
