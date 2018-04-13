@@ -109,6 +109,20 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
       userVal.val('');
     }
 }
+function resetFilter(evt) {
+
+    if (evt == "country") {
+        domainAc.val('');
+        domainVal.val('');
+        userVal.val('');
+        userAc.val('');
+    }
+    if (evt == "domain") {
+        userVal.val('');
+        userAc.val('');
+    }
+    ListContainer.empty();
+}
 
 function displayPopUp(TYPE, csvId, smid, callback){
     if (TYPE == "reject") {
@@ -498,9 +512,11 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     acCompDoc.val('');
     acCompDesc.val('');
     acTaskType.val('');
-    acViewData.val('');
     MultiSelectFrequency.val('');
-
+    $('input[id="verified-data"]').removeAttr("checked");
+    $('input[id="pending-data"]').removeAttr("checked");
+    $('input[id="all-data"]').removeAttr("checked");
+    
     onCurrentPage = 1;
     j = 1;
     $('.filtered-data').text('');
@@ -1041,6 +1057,7 @@ function PageControls() {
                 onAutoCompleteSuccess(countryAc, countryVal, val);
             }, conditionFields, conditionValues
         );
+        resetFilter('country');
 
     });
 
@@ -1079,6 +1096,7 @@ function PageControls() {
         else{
           displayMessage(message.country_required);
         }
+        resetFilter('domain');
     });
 
     userAc.keyup(function(e){
@@ -1117,6 +1135,7 @@ function PageControls() {
                 displayMessage(message.domain_required);
             }
         }
+        resetFilter('user');
     });
 
     ShowButton.click(function(){
