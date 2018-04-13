@@ -1646,8 +1646,10 @@ BEGIN
     organization like _orgn AND
     CASE WHEN _action = 1 THEN
       action = 0
-    ELSE
+    WHEN _action = 2 THEN
       action != 0
+    ELSE
+      action >= 0
     END
       limit  _f_count, _f_limit;
 
@@ -1660,8 +1662,10 @@ BEGIN
       organization like _orgn AND
       CASE WHEN _action = 1 THEN
         action = 0
-      ELSE
+      WHEN _action = 2 THEN
         action != 0
+      ELSE
+        action >= 0
       END;
 END //
 
@@ -1865,10 +1869,10 @@ DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_file_count`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_bulk_client_unit_file_count`(
-  IN _client_id INT(11))
+  IN _user_id INT(11))
 BEGIN
   select count(csv_unit_id) as file_count from tbl_bulk_units_csv
-  where client_id = _client_id and approve_status < 4 and
+  where uploaded_by = _user_id and approve_status < 4 and
   (IFNULL(declined_count, 0) > 0 or IFNULL(is_fully_rejected, 0) = 1);
 END //
 
