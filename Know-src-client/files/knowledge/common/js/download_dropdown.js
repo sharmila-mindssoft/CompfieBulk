@@ -4,9 +4,10 @@ $(document).ready(function() {
 
 /* When the user clicks on the button,
 toggle between hiding and showing the dropdown content */
-/*function showDownloadList() {
+function showDownloadList() {
     document.getElementById("myDropdown").classList.toggle("show");
-}*/
+    return false;
+}
 // Close the dropdown if the user clicks outside of it
 
 

@@ -196,7 +196,6 @@ TEMPLATE_PATHS = [
     #     "files/knowledge/login/login.html",
     #     None, {}
     # ),
-
     (
         "/knowledge/login",
         "files/knowledge/login/login.html",

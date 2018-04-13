@@ -11,6 +11,7 @@ var UnitCodeList = [];
 var DomainList = [];
 var OrganizationList = [];
 var userCategoryId = 5;
+var DownloadFile = null;
 
 // Initialization of controls
 var btnUploadedFileList = $('.showbtn');
@@ -163,6 +164,7 @@ function loadClientUnitCSVFilesList(){
 				.attr("id","myDropdown-"+value.csv_id)
 			);
 			var splitFileName = value.csv_name.split(".")[0];
+            DownloadFile = value.csv_name.split(".")[0];
 			var aTags = '<a href="/uploaded_file/xlsx/'+ splitFileName+'.xlsx">Download Excel</a><a href="/uploaded_file/csv/'+ splitFileName+'.csv">Download CSV</a><a href="/uploaded_file/ods/'+ splitFileName+'.ods">Download ODS</a><a href="/uploaded_file/txt/'+ splitFileName+'.txt">Download Text</a>';
 			$('.download-invalidfile #myDropdown-'+value.csv_id, clone).html(aTags);
 
@@ -179,6 +181,7 @@ function loadClientUnitCSVFilesList(){
                     displayPopUp('reject_all', value.csv_id, null);
                 }
             });
+
             if(value.approved_count > 0 || value.rej_count > 0 || value.declined_count > 0){
             	$('.viewbtn', clone).hide();
             	$('.editbtn', clone).show();

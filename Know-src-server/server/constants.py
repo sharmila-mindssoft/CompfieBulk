@@ -80,4 +80,26 @@ MAX_REJECTED_COUNT = 5
 if IS_DEVELOPMENT is True :
     VERSION = time.time()
 
-TEMP_FILE_SERVER = "http://localhost:9000/temp/"
+TEMP_FILE_SERVER = "http://localhost:8083/temp/"
+
+#
+# Constants For Bulk Upload Reports & Rejected
+#
+REJECTED_DOWNLOAD_PATH = os.path.join(ROOT_PATH, "..", "..", "rejected-downloads")
+REJECTED_DOWNLOAD_BASE_PATH = "/knowledge/rejected/downloads/"
+
+KM_USER_CATEGORY = 3
+KE_USER_CATEGORY = 4
+TM_USER_CATEGORY = 5
+TE_USER_CATEGORY = 6
+DM_USER_CATEGORY = 7
+DE_USER_CATEGORY = 8
+
+SYSTEM_REJECTED_BY = "COMPFIE"
+REJECTED_FILE_DOWNLOADCOUNT = 2
+SHOW_REMOVE_ICON = 1
+SYSTEM_REJECT_ACTION_STATUS = 3
+IS_FULLY_REJECT_ACTION_STATUS = 1
+#
+# Constants For Bulk Upload Reports & Rejected;
+#

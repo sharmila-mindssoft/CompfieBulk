@@ -13,7 +13,7 @@ var ALLUSERS = [];
 
 var CSV = false;
 var USER_CATEGORY_ID = 0;
-var TECHNO_EXECUTIVES = [];
+/*var CLIENT_EXECUTIVES = [];*/
 var ITEMS_PER_PAGE = $('#items_per_page');
 var PAGE_LIMIT = 25;
 
@@ -287,10 +287,6 @@ function fetchFiltersData() {
                 displayMessage(error);
             } else {
                 CLIENT_LIST = data.client_group_list;
-                console.log("CLIENT_LIST");
-                console.log(CLIENT_LIST);
-
-                loadCurrentUserDetails();
                 hideLoader();
             }
         }
@@ -342,9 +338,9 @@ function getUserMappingsList(loggedUserId) {
         $.each(userMappingData.user_mappings, function(key, value) {
             if (loggedUserId == value.parent_user_id) {
                 childUserId = value.child_user_id;
-                if (jQuery.inArray(childUserId, TECHNO_EXECUTIVES) == -1) {
+                if (jQuery.inArray(childUserId, CLIENT_EXECUTIVES) == -1) {
                     
-                    TECHNO_EXECUTIVES.push(value.child_user_id);
+                    CLIENT_EXECUTIVES.push(value.child_user_id);
                     childUsersDetails(ALL_USER_INFO, loggedUserId,
                         value.child_user_id)
                 }
@@ -538,7 +534,6 @@ function loadCountwiseResult(filterList) {
 
         $('.tbl-approved-rejected-tasks', clone1)
         .text(approvedRejectedTasks);
-
         $('.tbl-approved-rejected-on', clone1).text(approvedRejectedOn);
         $('.tbl-approved-rejected-by', clone1).text(approvedRejectedBy);
         $('.tbl-reason-for-rejection', clone1).text(reasonForRejection);

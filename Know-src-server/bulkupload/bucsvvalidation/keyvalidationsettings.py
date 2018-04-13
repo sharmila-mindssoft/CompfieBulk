@@ -68,45 +68,63 @@ def is_numeric_with_delimiter(value) :
     else:
         return False
 
-def is_valid_statutory_date_input(value, irange) :
 
-    flag = True
-    if value != "" :
-        if only_numeric(value) :
-            if int(value) == 0:
-                flag = False
-            elif int(value) > irange:
-                flag = "cannot exceed maxlength %s" % (irange)
-        else :
-            flag = False
-    return flag
-
-def statutory_month(value) :
-    return is_valid_statutory_date_input(value, 12)
-
-def statutory_date(value) :
-    return is_valid_statutory_date_input(value, 31)
-
-def trigger_days(value) :
-    return is_valid_statutory_date_input(value, 100)
-
-def duration_and_repeats(value) :
-
+def is_valid_statutory_month_input(value, irange):
     flag = True
     if value != "":
         if only_numeric(value):
             if int(value) == 0:
                 flag = False
-            elif int(value) > 999 :
-                flag = "cannot exceed maxlength 999"
-        else :
+            elif int(value) > irange:
+                flag = "%s should be between 1 - %s" % (value, irange)
+        else:
             flag = False
     return flag
 
-def duration_and_repeats_type(value) :
+
+def is_valid_statutory_date_input(value, irange):
+    flag = True
+    if value != "":
+        if only_numeric(value):
+            if int(value) == 0:
+                flag = False
+
+            elif int(value) > irange:
+                flag = "%s cannot exceed %s" % (value, irange)
+        else:
+            flag = False
+    return flag
+
+
+def statutory_month(value):
+    return is_valid_statutory_month_input(value, 12)
+
+
+def statutory_date(value):
+    return is_valid_statutory_date_input(value, 31)
+
+
+def trigger_days(value):
+    return is_valid_statutory_date_input(value, 100)
+
+
+def duration_and_repeats(value):
+    flag = True
+    if value != "":
+        if only_numeric(value):
+            if int(value) == 0:
+                flag = False
+            # elif int(value) > 999:
+            #     flag = "cannot exceed maxlength 999"
+        else:
+            flag = False
+    return flag
+
+
+def duration_and_repeats_type(value):
 
     r = re.compile("^[a-zA-Z() ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
     else :
         return False
@@ -185,7 +203,8 @@ def is_domain_orgn(value) :
     else :
         return False
 
-def parse_csv_dictionary_values(key , val) :
+
+def parse_csv_dictionary_values(key, val):
 
     error_count = {
         "mandatory": 0,
@@ -194,7 +213,7 @@ def parse_csv_dictionary_values(key , val) :
     }
     csvparam = csv_params.get(key)
 
-    if csvparam is None :
+    if csvparam is None:
         raise ValueError('%s is not configured in csv parameter' % (key))
 
     _mandatory = csvparam.get("check_mandatory")
@@ -202,36 +221,36 @@ def parse_csv_dictionary_values(key , val) :
     _validation_method = csvparam.get("validation_method")
 
     msg = []
-    if _mandatory is True and (len(val) == 0 or val == '') :
+    if _mandatory is True and (len(val) == 0 or val == ''):
         msg.append(key + " - Field is blank")
         error_count["mandatory"] = 1
 
-    if _maxlength is not None and len(val) > _maxlength :
+    if _maxlength is not None and len(val) > _maxlength:
         if key == "Domain" or key == "Organization":
             msg.append(key + " - " + val + " Cannot exceed max length")
         else:
-            msg.append(key + " - Cannot exceed max length")
+            msg.append(key + " - " + val + " Cannot exceed max length")
         error_count["max_length"] = 1
 
     if val != "":
-        if _validation_method is not None :
+        if _validation_method is not None:
             _result = _validation_method(val)
-            if _result is False :
+
+            if _result is False:
                 if key == "Domain" or key == "Organization":
                     msg.append(key + " - " + val + " Invalid character")
                 else:
-                    msg.append(key + " - Invalid character")
+                    msg.append(key + " - " + val + " Invalid character")
                 error_count["invalid_char"] = 1
 
             elif _result is not True:
                 msg.append("%s - %s" % (key, _result))
                 error_count["max_length"] += 1
 
-    if len(msg) == 0 :
+    if len(msg) == 0:
         return True, error_count
-    else :
+    else:
         return msg, error_count
-
 
 
 def parse_csv_dictionary_values_as(key, val):
@@ -348,7 +367,7 @@ csv_params = {
     'Applicable_Location': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
         validation_method=is_applicable_location, isFoundCheck=True,
-        isActiveCheck=True
+        isActiveCheck=True, maxLengthCheck=500
     ),
     'Statutory_Nature': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
@@ -392,7 +411,7 @@ csv_params = {
         validation_method=is_alpha_numeric
     ),
     'Task_Type': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=150,
         isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
@@ -445,7 +464,7 @@ csv_params = {
         isFoundCheck=True
     ),
     'Format': make_required_validation(
-        keyType='STRING', maxLengthCheck="150", isValidCharCheck=True,
+        keyType='STRING', maxLengthCheck=150, isValidCharCheck=True,
         validation_method=is_alpha_numeric,
     ),
     'Legal_Entity': make_required_validation(
@@ -637,16 +656,20 @@ csv_params_as = {
         keyType='STRING', isFoundCheck=True
     ),
     'Statutory_Provision': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Compliance_Task': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Compliance_Description': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Unit_Name': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Primary_Legislation': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
@@ -658,19 +681,23 @@ csv_params_as = {
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
     'Unit_Location': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Unit_Code': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
     'Organization': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Domain': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Legal_Entity': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Client_Group': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True

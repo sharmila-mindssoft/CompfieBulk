@@ -29,11 +29,12 @@ from ..budatabase.bustatutorymappingdb import (
 from ..bulkuploadcommon import (
     convert_base64_to_file,
     read_data_from_csv,
-    generate_valid_file
+    generate_valid_file,
+    remove_uploaded_file
 )
 from ..bulkexport import ConvertJsonToCSV
 import datetime
-from server.constants import BULKUPLOAD_CSV_PATH
+from server.constants import (BULKUPLOAD_CSV_PATH, CSV_MAX_LINES)
 # from server.exceptionmessage import fetch_run_error
 
 from protocol import generalprotocol, technoreports
@@ -176,20 +177,25 @@ def get_statutory_mapping_csv_list(db, request_frame, session_user):
 '''
 ########################################################
 
+
 def upload_statutory_mapping_csv(db, request_frame, session_user):
     try:
         if request_frame.csv_size > 0:
             pass
         # save csv file
         csv_name = convert_base64_to_file(
-                BULKUPLOAD_CSV_PATH, request_frame.csv_name,
-                request_frame.csv_data
-            )
+            BULKUPLOAD_CSV_PATH, request_frame.csv_name, request_frame.csv_data
+        )
         # read data from csv file
         header, statutory_mapping_data = read_data_from_csv(csv_name)
 
         if len(statutory_mapping_data) == 0:
-            raise ValueError("CSV file cannot be blank")
+            return bu_sm.CsvFileCannotBeBlank()
+
+        if len(statutory_mapping_data) > CSV_MAX_LINES:
+            file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
+            remove_uploaded_file(file_path)
+            return bu_sm.CsvFileExeededMaxLines(CSV_MAX_LINES)
 
         # csv data validation
         cObj = ValidateStatutoryMappingCsvData(
@@ -197,10 +203,15 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             request_frame.c_id, request_frame.d_id,
             request_frame.csv_name, header
         )
+        print "cObj", cObj
         res_data = cObj.perform_validation()
-        print res_data
+        print "Res Data ->", res_data
 
-        if res_data is None :
+        if res_data == "InvalidCSV":
+            print "in res data"
+            return bu_sm.InvalidCsvFile()
+
+        if res_data is None:
             raise RuntimeError("Invalid Csv File")
 
         if res_data["return_status"] is True:
@@ -225,6 +236,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                         csv_name, request_frame.c_name,
                         request_frame.d_name, session_user.user_id()
                     )
+                    cObj.source_commit()
                     result = bu_sm.UploadStatutoryMappingCSVValidSuccess(
                         new_csv_id, res_data["csv_name"],
                         res_data["total"], res_data["valid"],
@@ -240,7 +252,8 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                 res_data["invalid_char_error"], res_data["invalid_data_error"],
                 res_data["inactive_error"], res_data["total"],
                 res_data["invalid"],
-                res_data["total"] - res_data["invalid"]
+                res_data["total"] - res_data["invalid"],
+                res_data["invalid_frequency_error"]
             )
 
         return result
@@ -271,7 +284,7 @@ def get_mapping_list_for_approve(db, request_frame, session_user):
 
     pending_data = get_pending_mapping_list(
         db, request_frame.c_id, request_frame.d_id,
-        request_frame.uploaded_by
+        request_frame.uploaded_by, session_user
     )
     result = bu_sm.GetApproveStatutoryMappingListSuccess(
         pending_data
@@ -407,6 +420,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
                 session_user.user_id()
             )
+            cObj.source_commit()
             return bu_sm.SubmitStatutoryMappingSuccess()
     except Exception, e:
         raise e
