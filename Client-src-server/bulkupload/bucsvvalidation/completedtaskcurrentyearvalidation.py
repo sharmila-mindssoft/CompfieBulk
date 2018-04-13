@@ -39,6 +39,7 @@ class SourceDB(object):
         self.Statutories = {}
         self.Compliance_Task = {}
         self.Compliance_Description = {}
+        self.Compliance_Frequency = {}
         self.connect_source_db()
         self._validation_method_maps = {}
         self.statusCheckMethods()
@@ -70,6 +71,7 @@ class SourceDB(object):
         self.get_statutories()
         self.get_compliance_task()
         self.get_compliance_description()
+        self.get_compliance_frequency()
 
     def get_legal_entities(self):
         query = "SELECT legal_entity_id, legal_entity_name, is_closed FROM tbl_legal_entities;"
@@ -114,6 +116,12 @@ class SourceDB(object):
         for d in rows:
             self.Compliance_Description[d["compliance_description"]] = d
 
+    def get_compliance_frequency(self):
+        query = "select frequency_id, frequency from tbl_compliance_frequency"
+        rows = self._source_db.select_all(query)
+        for d in rows:
+            self.Compliance_Frequency[d["frequency"]] = d
+
     def check_base(self, check_status, store, key_name, status_name):
         print"store>>>", store
         print"key_name>>>", key_name
@@ -156,6 +164,9 @@ class SourceDB(object):
 
     def check_compliance_description(self, compliance_description):
         return self.check_base(True, self.Compliance_Description, compliance_description, None)
+
+    def check_frequency(self, frequency):
+        return self.check_base(False, self.Compliance_Frequency, frequency, None)
 
 
     def save_completed_task_data(self, data):
@@ -214,9 +225,10 @@ class SourceDB(object):
             "Domain": self.check_domain,
             "Unit_Code": self.check_unit_code,
             "Unit_Name": self.check_unit_name,
-            "Primary_Legislation_": self.check_statutories,
+            "Primary_Legislation": self.check_statutories,
             "Compliance_Task": self.check_compliance_task,
-            "Compliance_Description": self.check_compliance_description
+            "Compliance_Description": self.check_compliance_description,
+            "Compliance_Frequency": self.check_frequency,
         }
 
     def csv_column_fields(self):
