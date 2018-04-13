@@ -36,7 +36,7 @@ from ..bulkuploadcommon import (
 )
 import datetime
 from ..bulkexport import ConvertJsonToCSV
-from server.constants import BULKUPLOAD_CSV_PATH
+from server.constants import BULKUPLOAD_CSV_PATH, CSV_MAX_LINES
 from protocol import generalprotocol, technoreports
 __all__ = [
     "process_bu_client_units_request"
@@ -133,7 +133,7 @@ def process_bu_client_units_request(request, db, session_user):
 
 def upload_client_units_bulk_csv(db, request_frame, session_user) :
 
-    if get_bulk_client_unit_file_count(db, request_frame) :
+    if get_bulk_client_unit_file_count(db, session_user.user_id()) :
         # save csv file
         csv_name = convert_base64_to_file(
                 BULKUPLOAD_CSV_PATH, request_frame.csv_name,
@@ -150,11 +150,13 @@ def upload_client_units_bulk_csv(db, request_frame, session_user) :
         validationResult = clientUnitObj.perform_validation()
         print "err-------------------------------------------------------------"
         print validationResult
-        print "No such file or directory" in validationResult
+        print "ordinal not in range(128)" in validationResult
         if (
             "No such file or directory" not in validationResult and
             validationResult != "Empty CSV File Uploaded" and
             validationResult != "CSV File lines reached max limit" and
+            validationResult != "Csv Column Mismatched" and
+            "ordinal not in range(128)" not in validationResult and
             (validationResult["return_status"] is not None and validationResult["return_status"] is True)
         ) :
             generate_valid_file(csv_name)
@@ -177,8 +179,10 @@ def upload_client_units_bulk_csv(db, request_frame, session_user) :
                     return result
         elif (
             "No such file or directory" not in validationResult and
+            "ordinal not in range(128)" not in validationResult and
             validationResult != "Empty CSV File Uploaded" and
             validationResult != "CSV File lines reached max limit" and
+            validationResult != "Csv Column Mismatched" and
             (validationResult["return_status"] is not None and validationResult["return_status"] is False)
         ) :
             result = bu_cu.UploadClientUnitBulkCSVFailed(
@@ -191,19 +195,32 @@ def upload_client_units_bulk_csv(db, request_frame, session_user) :
             return result
         elif (
             "No such file or directory" not in validationResult and
+            "ordinal not in range(128)" not in validationResult and
             validationResult != "CSV File lines reached max limit" and
+            validationResult != "Csv Column Mismatched" and
             validationResult == "Empty CSV File Uploaded"
         ) :
             return bu_cu.EmptyCSVUploaded()
         elif (
             "No such file or directory" not in validationResult and
+            "ordinal not in range(128)" not in validationResult and
+            validationResult != "Csv Column Mismatched" and
             validationResult == "CSV File lines reached max limit"
         ) :
             csv_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
             file_path = os.path.join(csv_path, csv_name)
             remove_uploaded_file(file_path)
-            return bu_cu.CSVFileLinesMaxREached()
-        elif "No such file or directory" in validationResult :
+            return bu_cu.CSVFileLinesMaxREached(csv_max_lines=CSV_MAX_LINES)
+        elif (
+            "No such file or directory" not in validationResult and
+            "ordinal not in range(128)" not in validationResult and
+            validationResult == "Csv Column Mismatched"
+        ) :
+            return bu_cu.CSVColumnMisMatched()
+        elif (
+            "No such file or directory" in validationResult or
+            "ordinal not in range(128)" in validationResult
+        ):
             return bu_cu.InvalidCSVUploaded()
     else :
         return bu_cu.ClientUnitUploadMaxReached()
@@ -347,9 +364,9 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user) :
                 db, csv_id, bu_client_id, session_user
             )
         if actionType == 1:
-            system_declined_count, system_declined_error = clientUnitObj.check_for_system_declination_errors()
+            system_declined_count, system_declined_error, manual_rejection_count = clientUnitObj.check_for_system_declination_errors()
             if len(system_declined_count) > 0 :
-                return bu_cu.ReturnDeclinedCount(len(system_declined_count))
+                return bu_cu.ReturnDeclinedCount(len(system_declined_count), int(manual_rejection_count))
             else:
                 if (
                     update_bulk_client_unit_approve_reject_list(
@@ -359,8 +376,8 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user) :
                     clientUnitObj.process_data_to_main_db_insert(system_declined_count)
                     clientUnitObj.save_manager_message(
                         actionType, clientUnitObj._csv_name, clientUnitObj._group_name,
-                        session_user.user_id(),
-                        clientUnitObj._uploaded_by
+                        session_user.user_id(), clientUnitObj._uploaded_by,
+                        None, 0
                     )
                     clientUnitObj.source_commit()
                     return bu_cu.UpdateApproveRejectActionFromListSuccess()
@@ -373,8 +390,8 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user) :
                 clientUnitObj.store_initial_values()
                 clientUnitObj.save_manager_message(
                     actionType, clientUnitObj._csv_name, clientUnitObj._group_name,
-                    session_user.user_id(),
-                    clientUnitObj._uploaded_by
+                    session_user.user_id(), clientUnitObj._uploaded_by,
+                    bu_remarks, 0
                 )
                 clientUnitObj.source_commit()
                 return bu_cu.UpdateApproveRejectActionFromListSuccess()
@@ -464,7 +481,7 @@ def perform_bulk_client_unit_declination(db, request_frame, session_user) :
             db, csv_id, bu_client_id, session_user
         )
 
-        system_declined_count, system_declined_error = clientUnitObj.check_for_system_declination_errors()
+        system_declined_count, system_declined_error, manual_rejection_count = clientUnitObj.check_for_system_declination_errors()
         if len(system_declined_count) > 0 :
             if (
                 update_bulk_client_unit_approve_reject_list(
@@ -476,7 +493,8 @@ def perform_bulk_client_unit_declination(db, request_frame, session_user) :
                 clientUnitObj.make_rejection(csv_id, system_declined_count, system_declined_error)
                 clientUnitObj.save_manager_message(
                     1, clientUnitObj._csv_name, clientUnitObj._group_name,
-                    session_user.user_id(), clientUnitObj._uploaded_by
+                    session_user.user_id(), clientUnitObj._uploaded_by,
+                    None, len(system_declined_count)
                 )
                 clientUnitObj.source_commit()
                 return bu_cu.SubmitClientUnitDeclinationSuccess()
@@ -557,14 +575,15 @@ def submit_bulk_client_unit_list_action(db, request_frame, session_user) :
             clientUnitObj = ValidateClientUnitsBulkDataForApprove(
                 db, csv_id, bu_client_id, session_user
             )
-            system_declined_count, system_declined_error = clientUnitObj.check_for_system_declination_errors()
+            system_declined_count, system_declined_error, manual_rejection_count = clientUnitObj.check_for_system_declination_errors()
             if len(system_declined_count) > 0 :
-                return bu_cu.ReturnDeclinedCount(len(system_declined_count))
+                return bu_cu.ReturnDeclinedCount(len(system_declined_count), int(manual_rejection_count))
             else:
                 clientUnitObj.process_data_to_main_db_insert(system_declined_count)
                 clientUnitObj.save_manager_message(
                     1, clientUnitObj._csv_name, clientUnitObj._group_name,
-                    session_user.user_id(), clientUnitObj._uploaded_by
+                    session_user.user_id(), clientUnitObj._uploaded_by,
+                    None, 0
                 )
                 clientUnitObj.source_commit()
                 update_bulk_client_unit_approve_reject_list(
@@ -604,13 +623,14 @@ def confirm_submit_bulk_client_unit_list_action(db, request_frame, session_user)
             db, csv_id, bu_client_id, session_user
         )
 
-        system_declined_count, system_declined_error = clientUnitObj.check_for_system_declination_errors()
+        system_declined_count, system_declined_error, manual_rejection_count = clientUnitObj.check_for_system_declination_errors()
         if len(system_declined_count) > 0 :
             clientUnitObj.process_data_to_main_db_insert(system_declined_count)
             clientUnitObj.make_rejection(csv_id, system_declined_count, system_declined_error)
             clientUnitObj.save_manager_message(
                 1, clientUnitObj._csv_name, clientUnitObj._group_name,
-                session_user.user_id(), clientUnitObj._uploaded_by
+                session_user.user_id(), clientUnitObj._uploaded_by,
+                None, len(system_declined_count)
             )
             clientUnitObj.source_commit()
             update_bulk_client_unit_approve_reject_list(
