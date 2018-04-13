@@ -471,12 +471,10 @@ class SourceDB(object) :
         store = self.Organization
         errDesc = []
         status = None
-        print "org name"
         newOrgnName = ''
         for org in organization_name.split('>>'):
             newOrgnName = newOrgnName + org.strip() + '>>'
         newOrgnName = newOrgnName[:-2]
-        print newOrgnName
 
         if newOrgnName.find(CSV_DELIMITER) > 0 :
             splittedOrg = newOrgnName.split(CSV_DELIMITER)
@@ -491,18 +489,15 @@ class SourceDB(object) :
                         errDesc.append(d.strip() + status)
                     else:
                         if int(data.get("created_units")) >= int(data.get("total_unit_count")):
-                            errDesc.append(d.strip() + " Unit count exceeds the limit")
+                            errDesc.append(d.strip() + " Unit count exceeds the limit in Main DB")
                 else:
                     errDesc.append(d.strip() + " Not Found")
 
         else :
-            print store
             data = store.get(str(self.Legal_Entity_Id) + "-" + newOrgnName.strip())
-            print str(self.Legal_Entity_Id) + "-" + newOrgnName.strip()
-            print data
             if data is not None :
                 if int(data.get("created_units")) >= int(data.get("total_unit_count")) :
-                    errDesc.append(d + " Unit count exceeds the limit")
+                    errDesc.append(d + " Unit count exceeds the limit in Main DB")
                 else:
                     return self.check_base(
                         True, self.Organization , (str(self.Legal_Entity_Id) + "-" + newOrgnName.strip()) ,
@@ -608,7 +603,10 @@ class SourceDB(object) :
         uc = self._source_db.select_one(
             q, select_param
         )
-        u_code = int(uc["code"])
+        if uc["code"] is not None:
+            u_code = int(uc["code"])
+        else:
+            u_code = 1
 
         if uc is False :
             raise process_error("E056")
@@ -678,7 +676,6 @@ class SourceDB(object) :
                     for ul in d["Unit_Location"].split('>>'):
                         newul = newul + ul.strip() + '>>'
                     newul = newul[:-2]
-                    print newul
                     if geo_level_id == self.Unit_Location.get(newul).get("level_id"):
                         main_geo_id = self.Unit_Location.get(newul).get("geography_id")
 
@@ -690,7 +687,6 @@ class SourceDB(object) :
                             for o in orgn.split('>>'):
                                 neworgn = neworgn + o.strip() + '>>'
                             neworgn = neworgn[:-2]
-                            print neworgn
 
                             domain_orgn_ids.append(
                                 str(unit_code) + "-" +
@@ -711,7 +707,6 @@ class SourceDB(object) :
                         for o in orgn.split('>>'):
                             neworgn = neworgn + o.strip() + '>>'
                         neworgn = neworgn[:-2]
-                        print neworgn
                         if domain == split_org[0].strip() :
                             domain_orgn_ids.append(
                                 str(unit_code) + "-" +
@@ -744,7 +739,6 @@ class SourceDB(object) :
         if len(auto_gen_ids) > 0:
             for b_u_id in auto_gen_ids:
                 unit_data = auto_gen_data.get(b_u_id)
-                print unit_data
                 if unit_data is not None:
                     if bg_id is not None :
                         bg_id = int(bg_id)
@@ -768,8 +762,6 @@ class SourceDB(object) :
                             unit_code = str(unit_code_start_letters) + '00' + str(u_code)
                         elif (u_code >= 1000 and u_code < 10000) :
                             unit_code = str(unit_code_start_letters) + '0' + str(u_code)
-                    print "start"
-                    print unit_code
                     main_geo_id = None
                     geo_level_id = self.Geography_Level.get(
                         str(country_id)+"-"+unit_data.get("Geography_Level")
@@ -780,11 +772,9 @@ class SourceDB(object) :
                     for ul in d["Unit_Location"].split('>>'):
                         newul = newul + ul.strip() + '>>'
                     newul = newul[:-2]
-                    print newul
                     if geo_level_id == self.Unit_Location.get(newul).get("level_id"):
                         main_geo_id = self.Unit_Location.get(newul).get("geography_id")
 
-                    print geo_level_id, main_geo_id
                     if unit_data.get("Organization").find(CSV_DELIMITER) > 0 :
                         for orgn in unit_data.get("Organization").strip().split(CSV_DELIMITER) :
                             split_org = orgn.split(">>")
@@ -793,7 +783,6 @@ class SourceDB(object) :
                             for o in orgn.split('>>'):
                                 neworgn = neworgn + o.strip() + '>>'
                             neworgn = neworgn[:-2]
-                            print neworgn
 
                             domain_orgn_ids.append(
                                 str(unit_code) + "-" +
@@ -814,7 +803,6 @@ class SourceDB(object) :
                         for o in orgn.split('>>'):
                             neworgn = neworgn + o.strip() + '>>'
                         neworgn = neworgn[:-2]
-                        print neworgn
                         if domain == split_org[0].strip() :
                             domain_orgn_ids.append(
                                 str(unit_code) + "-" +
@@ -824,11 +812,6 @@ class SourceDB(object) :
                                 str(
                                     self.Organization.get(str(le_id)+"-"+neworgn).get("organisation_id"))
                                 )
-
-                    print int(cl_id) , bg_id , int(le_id) , int(division_id) , int(category_id) ,
-                    int(country_id) , int(main_geo_id) , str(unit_code) , str(unit_name) ,
-                    str(unit_address) , str(post_code) , 1, int(createdby) , str(created_on),
-                    int(createdby) , str(created_on)
 
                     values.append((
                         int(cl_id) , bg_id , int(le_id) , int(division_id) , int(category_id) ,
@@ -1032,7 +1015,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
         self._temp_client_units = {}
         self._temp_units_count = {}
         self._legal_entity_name = None
-        self._valid_unit_count = 0
+        self._valid_unit_count = 1
         self._doc_names = []
         self._sheet_name = "Client Unit"
 
@@ -1064,7 +1047,6 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
     def compare_csv_columns(self) :
         res = collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
         if res is False :
-            print "Csv Column Mismatched"
             # raise ValueError("Csv Column Mismatched")
             return "Csv Column Mismatched"
 
@@ -1208,43 +1190,75 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
     #######################################################################################
 
     def check_organization_unit_count_in_tempDB(self , organization_name) :
+        print "inside temp db checking"
         mainStrore = self.Organization
         tempStore = self._temp_units_count
+        neworgn = ''
+        for o in organization_name.split('>>'):
+            neworgn = neworgn + o.strip() + '>>'
+        neworgn = neworgn[:-2]
+        print neworgn
         tempData = tempStore.get(
-            self._legal_entity_name + "-" + organization_name.strip()
+            self._legal_entity_name + "-" + neworgn.strip()
         )
         errDesc = []
-        if organization_name.find(CSV_DELIMITER) > 0 :
-            splittedOrg = organization_name.split(CSV_DELIMITER)
+        if neworgn.find(CSV_DELIMITER) > 0 :
+            splittedOrg = neworgn.split(CSV_DELIMITER)
             for d in splittedOrg :
                 mainData = mainStrore.get(str(self.Legal_Entity_Id) + "-" + d.strip())
                 if mainData is not None and tempData is not None :
+                    print "1", mainData.get("total_unit_count"), mainData.get("created_units"), tempData.get("saved_units"), self._valid_unit_count
                     main_temp_units = int(
                         mainData.get("total_unit_count")
                     ) - (int(mainData.get("created_units")) + int(tempData.get("saved_units")))
                     if main_temp_units == 0 :
-                        errDesc.append("Organization - " + d + " Unit count reached the limit")
+                        errDesc.append(
+                            "Organization - " + d +
+                            " Unit count reached the limit comparing TempDB and MainDB"
+                        )
                     else:
-                        if self._valid_unit_count > main_temp_units :
-                            errDesc.append("Organization - " + d + " Unit count reached the limit")
+                        if self._valid_unit_count > main_temp_units * len(splittedOrg):
+                            errDesc.append(
+                                "Organization - " + d +
+                                " Unit count reached the limit comparing TempDB and MainDB"
+                            )
                         else:
                             self._valid_unit_count += 1
         else:
+            print "AA"
             mainData = mainStrore.get(
-                str(self.Legal_Entity_Id) + "-" + organization_name
+                str(self.Legal_Entity_Id) + "-" + neworgn
             )
+            print mainData
+            print tempStore
             tempData = tempStore.get(
-                self._legal_entity_name + "-" + organization_name
+                self._legal_entity_name + "-" + neworgn.strip()
             )
+            if tempData is None:
+                for temp_d in tempStore:
+                    tempData = tempStore.get(temp_d)
+                    orgn_name = tempData.get("organization")
+                    if neworgn in orgn_name:
+                        saved_units = tempData.get("saved_units")
+            else:
+                saved_units = tempData.get("saved_units")
+            print saved_units
             if mainData is not None and tempData is not None :
+                print "1_1", mainData.get("total_unit_count"), mainData.get("created_units"), saved_units, self._valid_unit_count
                 main_temp_units = int(
                     mainData.get("total_unit_count")
-                ) - (int(mainData.get("created_units")) + int(tempData.get("saved_units")))
+                ) - (int(mainData.get("created_units")) + int(saved_units))
                 if main_temp_units == 0 :
-                    errDesc.append("Organization - " + organization_name + " Unit count reached the limit")
+                    errDesc.append(
+                        "Organization - " + neworgn +
+                        " Unit count reached the limit comparing TempDB and MainDB"
+                    )
                 else:
                     if self._valid_unit_count > main_temp_units :
-                        errDesc.append("Organization - " + organization_name + " Unit count reached the limit")
+                        errDesc.append(
+                            "Organization - " + neworgn +
+                            " Unit count reached the limit comparing TempDB and MainDB"
+                        )
                     else:
                         self._valid_unit_count += 1
         return '|;|'.join(errDesc)
@@ -1352,13 +1366,15 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
                                         else:
                                             res = [msg]
                                         self._error_summary["duplicate_error"] += 1
-                            unitCountErr = self.check_organization_unit_count_in_tempDB(value)
-                            if unitCountErr is not None and unitCountErr != "":
-                                if res is not True:
-                                    res.append(unitCountErr)
-                                else:
-                                    res = [unitCountErr]
-                                self._error_summary["max_unit_count_error"] += 1
+                            if orgn_row_last != row_idx:
+                                unitCountErr = self.check_organization_unit_count_in_tempDB(value)
+                                orgn_row_last = row_idx
+                                if unitCountErr is not None and unitCountErr != "":
+                                    if res is not True:
+                                        res.append(unitCountErr)
+                                    else:
+                                        res = [unitCountErr]
+                                    self._error_summary["max_unit_count_error"] += 1
 
                             # check organization under domain
                             checkOrgn = self.check_for_organization_under_domain(csv_domain_name, value)
@@ -1543,25 +1559,24 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
                 if error_col is None :
                     error_col = []
                 d = dat.get(h)
-                print "h"
-                print h
                 if h == "Error Description" :
                     error_text = data_error_dict.get(idx)
                     if error_text is None :
                         e = ""
                     else :
                         e = "|;|".join(error_text)
-                    print e
+                    # print e
                     # e.encode("utf8")
                     # e.decode('utf8')
 
                     worksheet.write_string(row, col+i, e)
                 else :
                     # d.decode('utf8')
-                    print "decode"
-                    print d
                     try:
                         d.decode("utf8")
+                        print "excel data"
+                        print d
+                        print h
                         if idx in error_col :
                             worksheet.write_string(row, col+i, d, error_format)
                         else :
@@ -1701,6 +1716,7 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB) :
                 self._declined_bulk_unit_id.append(data.get("bulk_unit_id"))
                 self._declined_bulk_unit_id_err.append(res)
                 res = True
+        print "rejection count"
         print self._declined_bulk_unit_id_err, manual_rejection_count
         return self._declined_bulk_unit_id, self._declined_bulk_unit_id_err, manual_rejection_count
 
@@ -1739,36 +1755,21 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB) :
 
                 # fetch division id
                 division = value.get("Division")
-                print "val division"
-                print division
-                print "self.Division.get(division)"
-                print self.Division.get(division)
                 if division != '' and self.Division.get(str(le_id) + "-" + division) is None :
-                    print "A"
                     main_division_id = self.save_division(
                         cl_id, le_id, bg_id, division, created_by
                     )
                 elif division != '':
-                    print "B"
                     main_division_id = self.Division.get(str(le_id) + "-" + division).get("division_id")
-                print "main_division_id"
-                print main_division_id
 
                 # fetch category id
-                print "val category"
                 category = value.get("Category")
-                print category
-                print "self.Category.get(category)"
-                print self.Category.get(category)
                 if category != '' and self.Category.get(str(le_id) + "-" + category) is None :
                     main_category_id = self.save_category(
                         cl_id, le_id, bg_id, main_division_id, category, created_by
                     )
                 elif category != '':
                     main_category_id = self.Category.get(str(le_id) + "-" + category).get("category_id")
-
-                print "main_category_id"
-                print main_category_id
 
                 self.save_units(
                     cl_id, bg_id, le_id, main_division_id, main_category_id,
