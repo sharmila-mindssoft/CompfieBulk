@@ -555,7 +555,7 @@ class StatutorySource(object):
 
     def save_mapping_data(self, c_id, d_id, n_id, uploadedby, mapping):
         created_on = get_date_time()
-        mapping = mapping.replace("'u", '"')
+        mapping = mapping.replace("u'", '"')
         mapping = mapping.replace("'", '"')
         mapping_value = [
             int(c_id), int(d_id),
@@ -585,6 +585,10 @@ class StatutorySource(object):
 
         sdate = []
         if multi_len == 0:
+            s_date = s_date is not None if s_date else None
+            s_month = s_month is not None if s_month else None
+            t_days = t_days is not None if t_days else None
+            r_by = r_by is not None if r_by else None
             sdate.append({
                 "statutory_date": s_date,
                 "statutory_month": s_month,
@@ -595,13 +599,16 @@ class StatutorySource(object):
             s_date = s_date.split(CSV_DELIMITER)
             s_month = s_month.split(CSV_DELIMITER)
             t_days = t_days.split(CSV_DELIMITER)
-
             for i in range(multi_len):
+                s_date_i = s_date[i] is not None if s_date[i] else None
+                s_month_i = s_month[i] is not None if s_month[i] else None
+                t_days_i = t_days[i] is not None if t_days[i] else None
+                r_by_i = r_by is not None if r_by else None
                 sdate.append({
-                    "statutory_date": s_date[i],
-                    "statutory_month": s_month[i],
-                    "trigger_before_days": t_days[i],
-                    "repeat_by": r_by
+                    "statutory_date": s_date_i,
+                    "statutory_month": s_month_i,
+                    "trigger_before_days": t_days_i,
+                    "repeat_by": r_by_i
                 })
 
         return json.dumps(sdate)

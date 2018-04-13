@@ -419,7 +419,7 @@ function getClientUnits() {
 ClientUnitBulkReport.prototype.validateMandatory = function() {
     var isValid = true;
     if (GROUP_NAME.val().trim().length == 0) {
-        displayMessage(message.group_required);
+        displayMessage(message.clientgroup_required);
         isValid = false;
     } else if (this.getValue("from_date") == "") {
         displayMessage(message.fromdate_required);
