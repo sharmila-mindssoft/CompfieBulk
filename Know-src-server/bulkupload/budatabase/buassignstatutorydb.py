@@ -152,7 +152,8 @@ def get_download_assing_statutory_list(
         ac_tuple = (
             cl_name, le_name, r["domain_name"], r["organizations"],
             r["unit_code"], r["unit_name"], r["location"],
-            r["primary_legislation"], r["secondary_legislation"],
+            r["primary_legislation"].strip(),
+            r["secondary_legislation"].strip(),
             r["statutory_provision"], r["compliance_task_name"],
             r["compliance_description"]
             )

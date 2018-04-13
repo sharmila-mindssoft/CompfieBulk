@@ -445,7 +445,7 @@ DROP PROCEDURE IF EXISTS `sp_get_assign_statutory_compliance`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
-    IN unitid text, domainid INT(11)
+    IN unitid text, domainid text
 )
 
 BEGIN
