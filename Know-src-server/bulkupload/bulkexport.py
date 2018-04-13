@@ -25,27 +25,22 @@ class ConvertJsonToCSV(object):
         self.documents_list = []
         if not os.path.exists(CSV_PATH):
             os.makedirs(CSV_PATH)
-        if report_type == "AssigneeWise":
-            self.generate_assignee_wise_report_and_zip(
-                    db, request, session_user
-                )
-        else:
-            with io.FileIO(self.FILE_PATH, "wb+") as f:
-                self.writer = csv.writer(f)
-                # self.header, quoting=csv.QUOTE_ALL)
-                # self.convert_json_to_csv(jsonObj)
-                if report_type == "DownloadAssignStatutory":
-                    self.generate_download_assign_statutory(
-                        db, request, session_user)
-                elif report_type == "ExportSMBulkReport":
-                    self.generate_export_statutory_mapping(
-                        db, request, session_user)
-                elif report_type == "ExportCUBulkReport":
-                    self.generate_export_client_unit_bulk(
-                        db, request, session_user)
-                elif report_type == "ExportASBulkReport":
-                    self.generate_export_assigned_statutory_bulk(
-                        db, request, session_user)
+        with io.FileIO(self.FILE_PATH, "wb+") as f:
+            self.writer = csv.writer(f)
+            # self.header, quoting=csv.QUOTE_ALL)
+            # self.convert_json_to_csv(jsonObj)
+            if report_type == "DownloadAssignStatutory":
+                self.generate_download_assign_statutory(
+                    db, request, session_user)
+            elif report_type == "ExportSMBulkReport":
+                self.generate_export_statutory_mapping(
+                    db, request, session_user)
+            elif report_type == "ExportCUBulkReport":
+                self.generate_export_client_unit_bulk(
+                    db, request, session_user)
+            elif report_type == "ExportASBulkReport":
+                self.generate_export_assigned_statutory_bulk(
+                    db, request, session_user)
 
     def to_string(self, s):
         try:
@@ -70,7 +65,7 @@ class ConvertJsonToCSV(object):
         download_assign_compliance_list = db.call_proc(
             'sp_download_assign_statutory_template',
             [client_group_name, le_name, domain_names, unit_names]
-            )
+        )
 
         sno = 0
         if len(download_assign_compliance_list) > 0:
@@ -128,12 +123,17 @@ class ConvertJsonToCSV(object):
             user_ids = session_user.user_id()
         user_name_list = ",".join(
             getUserNameAndCode(cnx_pool, e) for e in child_ids)
+        print "form date ", request.from_date
         from_date = datetime.datetime.strptime(request.from_date, '%d-%b-%Y')
         to_date = datetime.datetime.strptime(request.to_date, '%d-%b-%Y')
+
         export_bu_statutory_list = db.call_proc(
             'sp_export_statutory_mappings_bulk_reportdata',
             [user_ids, country_id_list, domain_id_list, from_date, to_date])
         sno = 0
+
+        exported_time = datetime.datetime.now().strftime('%d-%b-%Y %H:%M')
+        print "exported_time -> ", exported_time
         if len(export_bu_statutory_list) > 0:
             for ac in export_bu_statutory_list:
                 sno = sno + 1
@@ -141,14 +141,15 @@ class ConvertJsonToCSV(object):
                 domain_name = ac["domain_name"]
                 uploaded_by = ac["uploaded_by"]
                 uploaded_by_name = getUserNameAndCode(cnx_pool, uploaded_by)
-                uploaded_on = ac["uploaded_on"]
+                uploaded_on = datetime.datetime.strftime(ac["uploaded_on"],
+                                                         '%d-%b-%Y %H:%M')
                 domain_name = ac["domain_name"]
                 csv_name = ac["csv_name"]
                 total_records = ac["total_records"]
                 total_rejected_records = ac["total_rejected_records"]
                 rejected_by_name = ""
                 approved_by_name = ""
-                if ac["declined_count"] is not None:
+                if ac["declined_count"] is not None and ac["declined_count"] > 1:
                     rejected_by_name = SYSTEM_REJECTED_BY
                     approved_by_name = SYSTEM_REJECTED_BY
                 else:
@@ -163,10 +164,12 @@ class ConvertJsonToCSV(object):
                 approvedRejectedOn = ""
                 approvedRejectedBy = ""
                 if rejected_on is not None:
-                    approvedRejectedOn = rejected_on
+                    approvedRejectedOn = datetime.datetime.strftime(ac["rejected_on"],
+                                                        '%d-%b-%Y %H:%M')
                     approvedRejectedBy = rejected_by_name
                 if approved_on is not None:
-                    approvedRejectedOn = approved_on
+                    approvedRejectedOn = datetime.datetime.strftime(ac["approved_on"],
+                                                        '%d-%b-%Y %H:%M')
                     approvedRejectedBy = approved_by_name
                 approve_status = ac["total_approve_records"]
                 approve_reject_task = str(approve_status) + " / " + str(
@@ -175,7 +178,6 @@ class ConvertJsonToCSV(object):
                 if (ac["is_fully_rejected"] == 1):
                     approve_reject_task = "-"
                     reason_for_rejection = ac["rejected_reason"]
-                exported_time = datetime.datetime.now()
                 if not is_header:
                     text = "Statutory Mapping - Bulk Report"
                     csv_header_line1 = [
@@ -188,13 +190,13 @@ class ConvertJsonToCSV(object):
                     ]
                     self.write_csv(csv_header_line2, None)
                     csv_header_line3 = [
-                        "", "", "", "From Date", from_date, "", "To Date",
-                        to_date, "", "", ""
+                        "", "", "", "From Date", request.from_date, "",
+                        "To Date", request.to_date, "", "", ""
                     ]
                     self.write_csv(csv_header_line3, None)
                     csv_header_line4 = [
                         "", "", "", "User ", user_name_list, "",
-                        "Exported Time", exported_time, "", "", ""
+                        "Exported Date and Time", exported_time, "", "", ""
                     ]
                     self.write_csv(csv_header_line4, None)
                     csv_header_line5 = ["S.No", "Country", "Domain",
@@ -217,6 +219,7 @@ class ConvertJsonToCSV(object):
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
+        cnx_pool.close()
 
     def generate_export_client_unit_bulk(self, db, request, session_user):
         is_header = False
@@ -236,20 +239,22 @@ class ConvertJsonToCSV(object):
         export_bu_client_unit_report = db.call_proc(
             'sp_export_client_unit_bulk_reportdata',
             [clientGroupId, from_date, to_date, str(user_ids)]
-            )
+        )
         sno = 0
+        exported_time = datetime.datetime.now().strftime('%d-%b-%Y %H:%M')
         if len(export_bu_client_unit_report) > 0:
             for cu in export_bu_client_unit_report:
                 sno = sno + 1
                 uploaded_by = cu["uploaded_by"]
                 uploaded_by_name = getUserNameAndCode(cnx_pool, uploaded_by)
-                uploaded_on = cu["uploaded_on"]
+                uploaded_on = datetime.datetime.strftime(cu["uploaded_on"],
+                                                         '%d-%b-%Y %H:%M')
                 csv_name = cu["csv_name"]
                 total_records = cu["total_records"]
                 total_rejected_records = cu["total_rejected_records"]
                 rejected_by_name = ""
                 approved_by_name = ""
-                if cu["declined_count"] is not None:
+                if cu["declined_count"] is not None and cu["declined_count"] > 1:
                     rejected_by_name = SYSTEM_REJECTED_BY
                     approved_by_name = SYSTEM_REJECTED_BY
                 else:
@@ -264,10 +269,12 @@ class ConvertJsonToCSV(object):
                 approvedRejectedOn = ""
                 approvedRejectedBy = ""
                 if rejected_on is not None:
-                    approvedRejectedOn = rejected_on
+                    approvedRejectedOn = datetime.datetime.strftime(cu["rejected_on"],
+                                                         '%d-%b-%Y %H:%M')
                     approvedRejectedBy = rejected_by_name
                 if approved_on is not None:
-                    approvedRejectedOn = approved_on
+                    approvedRejectedOn = datetime.datetime.strftime(cu["approved_on"],
+                                                         '%d-%b-%Y %H:%M')
                     approvedRejectedBy = approved_by_name
                 approve_status = cu["total_approve_records"]
                 approve_reject_task = str(approve_status) + " / " + str(
@@ -276,7 +283,6 @@ class ConvertJsonToCSV(object):
                 if (cu["is_fully_rejected"] == 1):
                     approve_reject_task = "-"
                     reason_for_rejection = cu["rejected_reason"]
-                exported_time = datetime.datetime.now()
                 if not is_header:
                     text = "Client Unit - Bulk Report"
                     csv_header_line1 = [
@@ -289,12 +295,12 @@ class ConvertJsonToCSV(object):
                     ]
                     self.write_csv(csv_header_line2, None)
                     csv_header_line3 = [
-                        "", "", "", "From Date", from_date, "", "To Date",
-                        to_date, "", "", ""
+                        "", "", "", "From Date", request.from_date, "",
+                        "To Date", request.to_date, "", "", ""
                     ]
                     self.write_csv(csv_header_line3, None)
                     csv_header_line4 = [
-                        "", "", "", "Exported Time ", exported_time, "", "",
+                        "", "", "", "Exported Date and Time ", exported_time, "", "",
                         "", "", "", ""
                     ]
                     self.write_csv(csv_header_line4, None)
@@ -317,9 +323,10 @@ class ConvertJsonToCSV(object):
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
+        cnx_pool.close()
 
     def generate_export_assigned_statutory_bulk(
-        self, db, request,  session_user
+        self, db, request, session_user
     ):
         is_header = False
         cnx_pool = connectKnowledgeDB()
@@ -339,19 +346,21 @@ class ConvertJsonToCSV(object):
              request.bu_unit_id, from_date, to_date,
                 str(user_ids), domainIds])
         sno = 0
+        exported_time = datetime.datetime.now().strftime('%d-%b-%Y %H:%M')
         if len(export_bu_assigned_statutory_report) > 0:
             for asr in export_bu_assigned_statutory_report:
                 sno = sno + 1
                 uploaded_by = asr["uploaded_by"]
                 uploaded_by_name = getUserNameAndCode(cnx_pool, uploaded_by)
-                uploaded_on = asr["uploaded_on"]
+                uploaded_on = datetime.datetime.strftime(asr["uploaded_on"],
+                                                         '%d-%b-%Y %H:%M')
                 csv_name = asr["csv_name"]
                 total_records = asr["total_records"]
                 total_rejected_records = asr["total_rejected_records"]
                 result_domain = asr["domain_names"]
                 rejected_by_name = ""
                 approved_by_name = ""
-                if asr["declined_count"] is not None:
+                if asr["declined_count"] is not None and asr["declined_count"] > 1:
                     rejected_by_name = SYSTEM_REJECTED_BY
                     approved_by_name = SYSTEM_REJECTED_BY
                 else:
@@ -366,10 +375,12 @@ class ConvertJsonToCSV(object):
                 approvedRejectedOn = ""
                 approvedRejectedBy = ""
                 if rejected_on is not None:
-                    approvedRejectedOn = rejected_on
+                    approvedRejectedOn = datetime.datetime.strftime(asr["rejected_on"],
+                                                         '%d-%b-%Y %H:%M')
                     approvedRejectedBy = rejected_by_name
                 if approved_on is not None:
-                    approvedRejectedOn = approved_on
+                    approvedRejectedOn = datetime.datetime.strftime(asr["approved_on"],
+                                                         '%d-%b-%Y %H:%M')
                     approvedRejectedBy = approved_by_name
                 approve_status = asr["total_approve_records"]
                 approve_reject_task = str(approve_status) + " / " + str(
@@ -378,7 +389,6 @@ class ConvertJsonToCSV(object):
                 if (asr["is_fully_rejected"] == 1):
                     approve_reject_task = "-"
                     reason_for_rejection = asr["rejected_reason"]
-                exported_time = datetime.datetime.now()
                 if not is_header:
                     text = "Assigned Statutory - Bulk Report"
                     csv_header_line1 = [
@@ -396,19 +406,19 @@ class ConvertJsonToCSV(object):
                     ]
                     self.write_csv(csv_header_line3, None)
                     csv_header_line4 = [
-                        "", "", "", "From Date", from_date, "", "To Date",
-                        to_date, "", "", "", ""
+                        "", "", "", "From Date", request.from_date, "",
+                        "To Date", request.to_date, "", "", "", ""
                     ]
                     self.write_csv(csv_header_line4, None)
                     csv_header_line5 = [
-                        "", "", "", "Exported Time ", exported_time, "",
-                        "User", user_name_list, "", "", ""
+                        "", "", "", "Exported Date and Time", exported_time,
+                        "", "User", user_name_list, "", "", ""
                     ]
                     self.write_csv(csv_header_line5, None)
                     csv_header_line6 = ["S.No", "Domain", "Uploaded By",
                                         "Uploaded On", "Uploaded File Name",
-                                        "No. Of Units",
-                                        "Approved / Rejected Units",
+                                        "No. Of Tasks",
+                                        "Approved / Rejected Tasks",
                                         "Approved / Rejected On",
                                         "Approved / Rejected By",
                                         "Reason for Rejection"]
@@ -425,6 +435,7 @@ class ConvertJsonToCSV(object):
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
+        cnx_pool.close()
 
 
 def connectKnowledgeDB():
@@ -459,34 +470,3 @@ def getUserNameAndCode(cnx_pool, userId):
         else:
             user_name_res = row["employee_name"]
     return user_name_res
-
-
-def getCountryName(cnx_pool, countryId):
-    query = "select country_name " + \
-           "from tbl_countries  as t1 where t1.country_id = %s ;"
-    print query
-    condition_val = []
-    condition_val.append(countryId)
-    c = cnx_pool.cursor(dictionary=True, buffered=True)
-    result = c.execute(query, condition_val)
-    result = c.fetchall()
-    print "Res0", result[0]
-    for row in result:
-        countryName = row["country_name"]
-    print "countryName ", countryName
-    return countryName
-
-
-def getDomainName(cnx_pool, domainId):
-    query = "select domain_name " + \
-           "from tbl_domains  as t1 where t1.domain_id = %s ;"
-    condition_val = []
-    condition_val.append(domainId)
-    c = cnx_pool.cursor(dictionary=True, buffered=True)
-    result = c.execute(query, condition_val)
-    result = c.fetchall()
-    print "Res0", result[0]
-    for row in result:
-        domainName = row["domain_name"]
-    print "domName ", domainName
-    return domainName

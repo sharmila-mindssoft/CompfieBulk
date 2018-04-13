@@ -2,139 +2,168 @@
 import re
 
 __all__ = [
-    "csv_params", "parse_csv_dictionary_values", "parse_csv_dictionary_values_as", "csv_params_as"
+    "csv_params", "parse_csv_dictionary_values",
+    "parse_csv_dictionary_values_as", "csv_params_as", "is_numeric"
 ]
 
 
-def expectation_error(expected, received) :
+def expectation_error(expected, received):
 
     msg = "expected %s, but received: %s"
     return ValueError(msg % (expected, str(received)))
 
 
-def allow_specialchar(value) :
+def allow_specialchar(value):
 
     r = re.compile("^[0-9a-zA-Z- _& ,.;:/+=$%@#&*()<>?:\n]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def is_alphabet(value) :
+
+def is_alphabet(value):
 
     r = re.compile("^[a-zA-Z ]*$")  # a-z with space
-    if r.match(value) :
+    if r.match(value):
         return True
     else:
         return False
 
-def is_applicable_location(value) :
+
+def is_applicable_location(value):
 
     r = re.compile("^[a-zA-Z>>| ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
     else:
         return False
 
-def is_statutory(value) :
+
+def is_statutory(value):
 
     r = re.compile("^[0-9a-zA-Z&@,-.>>| ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
     else:
         return False
 
-def only_numeric(value) :
+
+def only_numeric(value):
 
     r = re.compile("^[0-9]*$")
-    if r.match(str(value)) :
+    if r.match(str(value)):
         return True
     else:
         return False
 
-def is_numeric(value) :
+
+def is_numeric(value):
 
     r = re.compile("^[0-9 ]*$")  # 0-9 with space
-    if r.match(str(value)) :
+    if r.match(str(value)):
         return True
     else:
         return False
 
-def is_numeric_with_delimiter(value) :
+
+def is_numeric_with_delimiter(value):
 
     r = re.compile("^[0-9|;| ]*$")  # 0-9 with |;|
-    if r.match(str(value)) :
+    if r.match(str(value)):
         return True
     else:
         return False
 
-def is_valid_statutory_date_input(value, irange) :
 
-    flag = True
-    if value != "" :
-        if only_numeric(value) :
-            if int(value) == 0:
-                flag = False
-            elif int(value) > irange:
-                flag = "cannot exceed maxlength %s" % (irange)
-        else :
-            flag = False
-    return flag
-
-def statutory_month(value) :
-    return is_valid_statutory_date_input(value, 12)
-
-def statutory_date(value) :
-    return is_valid_statutory_date_input(value, 31)
-
-def trigger_days(value) :
-    return is_valid_statutory_date_input(value, 100)
-
-def duration_and_repeats(value) :
-
+def is_valid_statutory_month_input(value, irange):
     flag = True
     if value != "":
         if only_numeric(value):
             if int(value) == 0:
                 flag = False
-            elif int(value) > 999 :
-                flag = "cannot exceed maxlength 999"
-        else :
+            elif int(value) > irange:
+                flag = "%s should be between 1 - %s" % (value, irange)
+        else:
             flag = False
     return flag
 
-def duration_and_repeats_type(value) :
+
+def is_valid_statutory_date_input(value, irange):
+    flag = True
+    if value != "":
+        if only_numeric(value):
+            if int(value) == 0:
+                flag = False
+
+            elif int(value) > irange:
+                flag = "%s cannot exceed %s" % (value, irange)
+        else:
+            flag = False
+    return flag
+
+
+def statutory_month(value):
+    return is_valid_statutory_month_input(value, 12)
+
+
+def statutory_date(value):
+    return is_valid_statutory_date_input(value, 31)
+
+
+def trigger_days(value):
+    return is_valid_statutory_date_input(value, 100)
+
+
+def duration_and_repeats(value):
+    flag = True
+    if value != "":
+        if only_numeric(value):
+            if int(value) == 0:
+                flag = False
+            # elif int(value) > 999:
+            #     flag = "cannot exceed maxlength 999"
+        else:
+            flag = False
+    return flag
+
+
+def duration_and_repeats_type(value):
 
     r = re.compile("^[a-zA-Z() ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def repeats_by(value) :
 
-    if value in ["DOM", "EOM"] :
+def repeats_by(value):
+
+    if value in ["DOM", "EOM"]:
         return True
-    else :
+    else:
         return False
 
-def multiple_input_selection(value) :
 
-    if value in ["Yes", "No"] :
+def multiple_input_selection(value):
+
+    if value in ["Yes", "No"]:
         return True
-    else :
+    else:
         return False
 
-def is_alpha_numeric(value) :
+
+def is_alpha_numeric(value):
 
     #    a-z and 0-9 with space
     r = re.compile("^[A-Za-z0-9-_.,@ ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def is_url(value) :
+
+def is_url(value):
 
     regex = re.compile(
         r'^https?://'  # http:// or https://
@@ -145,47 +174,52 @@ def is_url(value) :
         r'(?:/?|[/?]\S+)$', re.IGNORECASE
     )
 
-    if regex.search(value) :
+    if regex.search(value):
         return True
-    else :
+    else:
         return False
 
-def is_address(value) :
+
+def is_address(value):
 
     # a-z0-9 with special char and space
     r = re.compile("^[a-zA-Z0-9_.,-@# ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def is_alphabet_withdot(value) :
+
+def is_alphabet_withdot(value):
 
     r = re.compile("^[a-zA-Z-. ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def is_domain(value) :
+
+def is_domain(value):
 
     # a-z0-9 with special char and space with delimiter
     r = re.compile("^[a-zA-Z0-9|;| ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def is_domain_orgn(value) :
+
+def is_domain_orgn(value):
 
     # a-z0-9 with special char and space with delimiter
     r = re.compile("^[a-zA-Z0-9|;|>> ]*$")
-    if r.match(value) :
+    if r.match(value):
         return True
-    else :
+    else:
         return False
 
-def parse_csv_dictionary_values(key , val) :
+
+def parse_csv_dictionary_values(key, val):
 
     error_count = {
         "mandatory": 0,
@@ -194,7 +228,7 @@ def parse_csv_dictionary_values(key , val) :
     }
     csvparam = csv_params.get(key)
 
-    if csvparam is None :
+    if csvparam is None:
         raise ValueError('%s is not configured in csv parameter' % (key))
 
     _mandatory = csvparam.get("check_mandatory")
@@ -202,36 +236,36 @@ def parse_csv_dictionary_values(key , val) :
     _validation_method = csvparam.get("validation_method")
 
     msg = []
-    if _mandatory is True and (len(val) == 0 or val == '') :
+    if _mandatory is True and (len(val) == 0 or val == ''):
         msg.append(key + " - Field is blank")
         error_count["mandatory"] = 1
 
-    if _maxlength is not None and len(val) > _maxlength :
+    if _maxlength is not None and len(val) > _maxlength:
         if key == "Domain" or key == "Organization":
             msg.append(key + " - " + val + " Cannot exceed max length")
         else:
-            msg.append(key + " - Cannot exceed max length")
+            msg.append(key + " - " + val + " Cannot exceed max length")
         error_count["max_length"] = 1
 
     if val != "":
-        if _validation_method is not None :
+        if _validation_method is not None:
             _result = _validation_method(val)
-            if _result is False :
+
+            if _result is False:
                 if key == "Domain" or key == "Organization":
                     msg.append(key + " - " + val + " Invalid character")
                 else:
-                    msg.append(key + " - Invalid character")
+                    msg.append(key + " - " + val + " Invalid character")
                 error_count["invalid_char"] = 1
 
             elif _result is not True:
                 msg.append("%s - %s" % (key, _result))
                 error_count["max_length"] += 1
 
-    if len(msg) == 0 :
+    if len(msg) == 0:
         return True, error_count
-    else :
+    else:
         return msg, error_count
-
 
 
 def parse_csv_dictionary_values_as(key, val):
@@ -251,26 +285,26 @@ def parse_csv_dictionary_values_as(key, val):
     _validation_method = csvparam.get("validation_method")
 
     msg = []
-    if _mandatory is True and (len(val) == 0 or val == '') :
+    if _mandatory is True and (len(val) == 0 or val == ''):
         msg.append(key + " - Field is blank")
         error_count["mandatory"] = 1
 
-    if _maxlength is not None and len(val) > _maxlength :
+    if _maxlength is not None and len(val) > _maxlength:
         msg.append(key + " - Cannot exceed max length")
         error_count["max_length"] = 1
 
-    if _validation_method is not None :
-        if _validation_method(val) is False :
+    if _validation_method is not None:
+        if _validation_method(val) is False:
             msg.append(key + " - Invalid character")
             error_count["invalid_char"] = 1
-    if len(msg) == 0 :
+    if len(msg) == 0:
         return True, error_count
-    else :
+    else:
         return msg, error_count
 ########################################################
 '''
     frame the validation constraints based on the given param
-    :param
+   :param
 
         keyType: type of key name
         isMandatoryCheck=False: to enable mandatory validation value
@@ -291,7 +325,7 @@ def parse_csv_dictionary_values_as(key, val):
         maxlength param is not meant for INT type if the value not None
         means that will check maximum given value not length
 
-    :type
+   :type
         keyName: string
         keyType: type could be Int, String, Boolean, Float
         isMandatoryCheck: Boolean
@@ -301,12 +335,13 @@ def parse_csv_dictionary_values_as(key, val):
         isFoundCheck: Boolean
         isActiveCheck: Boolean
 
-    :returns
+   :returns
         result: formulated dictionary
     rtype:
         result: dictionary
 '''
 ########################################################
+
 
 def make_required_validation(
     keyType,
@@ -318,19 +353,19 @@ def make_required_validation(
         'key_type': keyType
     }
 
-    if isMandatoryCheck is True :
+    if isMandatoryCheck is True:
         constraints["check_mandatory"] = True
 
-    if maxLengthCheck is not None :
+    if maxLengthCheck is not None:
         constraints["max_length"] = maxLengthCheck
 
     if isValidCharCheck is not False and validation_method is not None:
         constraints["validation_method"] = validation_method
 
-    if isFoundCheck is not False :
+    if isFoundCheck is not False:
         constraints["check_is_exists"] = True
 
-    if isActiveCheck is not False :
+    if isActiveCheck is not False:
         constraints["check_is_active"] = True
 
     return constraints
@@ -348,7 +383,7 @@ csv_params = {
     'Applicable_Location': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
         validation_method=is_applicable_location, isFoundCheck=True,
-        isActiveCheck=True
+        isActiveCheck=True, maxLengthCheck=500
     ),
     'Statutory_Nature': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
@@ -392,7 +427,7 @@ csv_params = {
         validation_method=is_alpha_numeric
     ),
     'Task_Type': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=150,
         isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
@@ -445,7 +480,7 @@ csv_params = {
         isFoundCheck=True
     ),
     'Format': make_required_validation(
-        keyType='STRING', maxLengthCheck="150", isValidCharCheck=True,
+        keyType='STRING', maxLengthCheck=150, isValidCharCheck=True,
         validation_method=is_alpha_numeric,
     ),
     'Legal_Entity': make_required_validation(
@@ -637,16 +672,20 @@ csv_params_as = {
         keyType='STRING', isFoundCheck=True
     ),
     'Statutory_Provision': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Compliance_Task': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Compliance_Description': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Unit_Name': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Primary_Legislation': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
@@ -658,19 +697,23 @@ csv_params_as = {
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
     'Unit_Location': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Unit_Code': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
     'Organization': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Domain': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Legal_Entity': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Client_Group': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True

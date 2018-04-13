@@ -48,7 +48,7 @@ KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new_round_2"
 URL = "http://localhost:8080/"
 
 CLIENT_URL = URL
@@ -59,7 +59,7 @@ BULK_UPLOAD_DB_HOST = "localhost"
 BULK_UPLOAD_DB_PORT = 3306
 BULK_UPLOAD_DB_USERNAME = "root"
 BULK_UPLOAD_DB_PASSWORD = "123456"
-BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_april04"
+BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_round_2"
 
 CSV_DELIMITER = '|;|'
 CSV_MAX_LINES = 1000
@@ -68,7 +68,7 @@ MAX_REJECTED_COUNT = 5
 if IS_DEVELOPMENT is True:
     VERSION = time.time()
 
-TEMP_FILE_SERVER = "http://localhost:9000/temp/"
+TEMP_FILE_SERVER = "http://localhost:8083/temp/"
 
 #
 # Constants For Bulk Upload Reports & Rejected

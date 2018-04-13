@@ -102,6 +102,34 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_bu_statutory_level`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_statutory_level`(
+IN cId INT, dId INT
+)
+BEGIN
+   SELECT max(t.level_position) as statu_level FROM tbl_statutory_levels as t
+   where country_id = cId and domain_id =dId;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_levelposition`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_levelposition`(
+IN cId INT, dId INT
+)
+BEGIN
+   SELECT t.level_id, t.level_position  as statu_level FROM tbl_statutory_levels as t
+   where country_id = cId and domain_id =dId;
+END //
+DELIMITER ;
+
+
+
 -- --------------------------------------------------------------------------------
 -- To get legal entities under a client for client units bulk upload
 -- --------------------------------------------------------------------------------
@@ -369,7 +397,8 @@ BEGIN
     select distinct t1.domain_name, t3.domain_id, t3.legal_entity_id
     from tbl_domains as t1
     inner join tbl_user_units as t3 on t1.domain_id = t3.domain_id
-    where t3.user_id = uid and t1.is_active = 1;
+    inner join tbl_user_domains as t4 on t1.domain_id = t4.domain_id
+    where t3.user_id = uid and t4.user_id = uid and t1.is_active = 1;
 
     -- units
     SELECT t01.unit_id, t01.unit_code, t01.unit_name,
@@ -387,8 +416,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
-
 
 
 DROP PROCEDURE IF EXISTS `sp_know_executive_info`;
@@ -418,8 +445,9 @@ DROP PROCEDURE IF EXISTS `sp_get_assign_statutory_compliance`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
-    IN unitid text, domainid INT(11)
+    IN unitid text, domainid text
 )
+
 BEGIN
     SET SESSION group_concat_max_len = 1000000;
     SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
@@ -472,7 +500,7 @@ BEGIN
     GROUP BY    t1.statutory_mapping_id , t1.compliance_id , t4.unit_id
     ORDER BY TRIM(LEADING '[' FROM t.statutory_mapping) , t1.compliance_id , t4.unit_id;
 
-END //
+END//
 
 DELIMITER ;
 
@@ -777,6 +805,23 @@ BEGIN
     FROM tbl_user_units as t03
     where t03.user_id = uid_ and FIND_IN_SET(t03.unit_id, unit_ids_);
 
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_mapped_knowledge_executives`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_get_mapped_knowledge_executives`(
+    IN manager_id INT(11), IN countryid INT(11), IN domainid INT(11)
+)
+BEGIN
+    SELECT DISTINCT child_user_id
+    FROM  tbl_user_mapping
+    INNER JOIN tbl_users ON user_id = child_user_id AND is_active = 1
+    AND is_disable = 0 AND country_id = countryid AND domain_id = domainid
+    WHERE parent_user_id = manager_id ;
 END //
 
 DELIMITER ;

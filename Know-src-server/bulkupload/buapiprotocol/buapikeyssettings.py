@@ -121,7 +121,10 @@ bu_api_params = {
         'type': 'INT', 'length': None, 'validation_method': None,
         'is_optional': False
     },
-
+    'invalid_frequency_error': {
+        'type': 'INT', 'length': None, 'validation_method': None,
+        'is_optional': False
+    },
     'mandatory_failed': {
         'type': 'INT', 'length': None, 'validation_method': None,
         'is_optional': False

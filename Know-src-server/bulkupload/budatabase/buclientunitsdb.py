@@ -5,7 +5,7 @@ from ..buapiprotocol import buclientunitsprotocol as bu_cu
 from server.constants import MAX_REJECTED_COUNT
 import datetime
 from server.constants import (
-    DM_USER_CATEGORY, DE_USER_CATEGORY
+    TM_USER_CATEGORY, TE_USER_CATEGORY
 )
 
 __all__ = [
@@ -227,12 +227,11 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
 
     client_list = []
     expected_result = 2
-
     if(len(dependent_users) > 0):
-        if(user_category_id == DM_USER_CATEGORY):
+        if(user_category_id == TM_USER_CATEGORY):
             user_ids = ",".join(map(str, dependent_users))
-        elif(user_category_id == DE_USER_CATEGORY and
-             user_category_id != DM_USER_CATEGORY):
+        elif(user_category_id == TE_USER_CATEGORY and
+             user_category_id != TM_USER_CATEGORY):
             user_ids = ",".join(map(str, dependent_users))
         else:
             user_ids = user_id
