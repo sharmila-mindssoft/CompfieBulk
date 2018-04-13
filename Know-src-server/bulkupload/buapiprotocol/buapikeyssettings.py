@@ -816,7 +816,11 @@ bu_api_params = {
         'module_name': assign_statutory, "class_name": "AssignedUnits"
     },
     'csv_max_lines': {
-        'type': 'INT', 'length': None, 'validation_method': None,
-        'is_optional': True
+        'type': 'INT', 'length': None,
+        'validation_method': None, 'is_optional': False
+    },
+    'rejected_count': {
+        'type': 'INT', 'length': None,
+        'validation_method': None, 'is_optional': True
     },
 }
