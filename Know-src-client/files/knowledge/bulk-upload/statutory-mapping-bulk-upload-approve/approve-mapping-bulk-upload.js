@@ -110,6 +110,20 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
     }
 }
 function resetFilter(evt) {
+    if (evt == "country") {
+        domainAc.val('');
+        domainVal.val('');
+        userVal.val('');
+        userAc.val('');
+    }
+    if (evt == "domain") {
+        userVal.val('');
+        userAc.val('');
+    }
+    ListContainer.empty();
+}
+
+function RejectSelectAllFilter(evt) {
 
     if (evt == "country") {
         domainAc.val('');
@@ -353,13 +367,13 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
                     displayPopUp('reject', data.csv_id, null);
                 }
             });
-            $('.bu-view-mapping', cloneRow).on('click', function(){
+            /*$('.bu-view-mapping', cloneRow).on('click', function(){
                 tThis.CSVID = data.csv_id;
                 tThis.CountryId = data.c_id;
                 tThis.DomainId = data.d_id;
                 pageLimit = parseInt(ItemsPerPage.val());
                 tThis.showViewScreen(data.csv_id, 0, pageLimit);
-            });
+            });*/
             flname = data.csv_name.split('.')
             flname = flname[0]
 
@@ -392,6 +406,29 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             $('.dl-txt-file',cloneRow).attr(
                 "href", "/uploaded_file/txt/"+flname+'.txt'
             );
+            if(data.approve_count > 0 || data.rej_count > 0 || data.declined_count > 0){
+                $('.bu-view-mapping', cloneRow).hide();
+                $('.editbtn', cloneRow).show();
+
+                $('.editbtn', cloneRow).on('click', function(){
+                    tThis.CSVID = data.csv_id;
+                    tThis.CountryId = data.c_id;
+                    tThis.DomainId = data.d_id;
+                    pageLimit = parseInt(ItemsPerPage.val());
+                    tThis.showViewScreen(data.csv_id, 0, pageLimit);
+                });
+
+            } else {
+                $('.bu-view-mapping', cloneRow).show();
+                $('.editbtn', cloneRow).hide();
+                $('.bu-view-mapping', cloneRow).on('click', function(){
+                    tThis.CSVID = data.csv_id;
+                    tThis.CountryId = data.c_id;
+                    tThis.DomainId = data.d_id;
+                    pageLimit = parseInt(ItemsPerPage.val());
+                    tThis.showViewScreen(data.csv_id, 0, pageLimit);
+                });
+            }
             ListContainer.append(cloneRow);
             j += 1;
         });
@@ -616,8 +653,6 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
             var actionStatus;
 
             var cloneRow = ViewListRowTemplate.clone();
-            console.log("Sno");
-            console.log(j);
             $('.sno', cloneRow).text(j);
             $('.statutory', cloneRow).text(data.statutory);
             $('.organization', cloneRow).text(data.orga_name);
@@ -731,8 +766,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                         }
                     });
                 }
-                
-            });        
+            });
             ViewListContainer.append(cloneRow);
             j += 1;
         });
@@ -795,8 +829,8 @@ ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
 ApproveBulkMapping.prototype.renderViewFromFilter = function() {
     displayLoader();
     pageLimit = parseInt(ItemsPerPage.val());
+    var view_data = 3;
     var showCount = 0;
-    var view_data = "";
     if (onCurrentPage == 1) {
         showCount = 0;
         tThis.showMapCount = 0;

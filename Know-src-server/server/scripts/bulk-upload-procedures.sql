@@ -98,7 +98,8 @@ BEGIN
     (SELECT count(action) FROM tbl_bulk_statutory_mapping WHERE
      ifnull(action, 0) = 1 AND csv_id = t1.csv_id) AS approve_count,
     (SELECT count(action) FROM tbl_bulk_statutory_mapping WHERE
-     ifnull(action, 0) = 2 AND csv_id = t1.csv_id) AS rej_count
+    ifnull(action, 0) = 2 AND csv_id = t1.csv_id) AS rej_count,
+    ifnull(declined_count, 0) AS declined_count
     FROM tbl_bulk_statutory_mapping_csv AS t1
     WHERE upload_status =  1 AND approve_status = 0 AND ifnull(t1.is_fully_rejected, 0) = 0
     AND country_id = cid AND domain_id = did
@@ -282,7 +283,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_statutory_mapping_view_by_filter`(
 IN csvid INT, orga_name VARCHAR(50), s_nature VARCHAR(50),
-frequency VARCHAR(50), statu VARCHAR(200), geo_location VARCHAR(500),
+frequency VARCHAR(70), statu VARCHAR(200), geo_location VARCHAR(500),
 c_task VARCHAR(100), c_desc VARCHAR(500), c_doc VARCHAR(100),
 f_count INT, f_range INT, tsk_id VARCHAR(50), tsk_type VARCHAR(100),
 view_data INT
@@ -306,7 +307,8 @@ BEGIN
     t1.csv_id  = t2.csv_id WHERE t1.csv_id = csvid
     AND t2.organization like orga_name AND t2.geography_location like geo_location
     AND t2.statutory_nature like s_nature AND t2.statutory like statu
-    AND t2.compliance_frequency like frequency AND t2.compliance_task like c_task
+    -- AND t2.compliance_frequency like frequency
+    AND FIND_IN_SET(compliance_frequency, frequency) AND t2.compliance_task like c_task
     AND t2.compliance_description like c_desc AND t2.compliance_document like c_doc
     AND t2.task_id like tsk_id AND t2.task_type like tsk_type
     AND (CASE WHEN view_data =1 THEN IFNULL(t2.action, 0) > 0
@@ -322,13 +324,15 @@ BEGIN
     t1.csv_id  = t2.csv_id WHERE t1.csv_id = csvid
     AND t2.organization like orga_name AND t2.geography_location like geo_location
     AND t2.statutory_nature like s_nature AND t2.statutory like statu
-    AND t2.compliance_frequency like frequency AND t2.compliance_task like c_task
+    -- AND t2.compliance_frequency like frequency
+    AND FIND_IN_SET(compliance_frequency, frequency) AND t2.compliance_task like c_task
     AND t2.compliance_description like c_desc AND t2.compliance_document like c_doc
     AND t2.task_id like tsk_id AND t2.task_type like tsk_type
     AND (CASE WHEN view_data =1 THEN IFNULL(t2.action, 0) > 0
       WHEN view_data =2 THEN IFNULL(t2.action, 0) = 0
           ELSE IFNULL(t2.action, 0) like "%"
-    END);
+  END)
+    ;
 END //
 DELIMITER ;
 
