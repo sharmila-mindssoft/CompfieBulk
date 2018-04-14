@@ -153,61 +153,75 @@ function displayPopUp(TYPE, csvId, smid, callback){
         targetid = "#custom-modal-approve"
         CurrentPassword = $('#current-password');
     }
-    Custombox.open({
-        target: targetid,
-        effect: 'contentscale',
-        complete: function() {
-            if (CurrentPassword != null) {
-                CurrentPassword.focus();
-                CurrentPassword.val('');
-            }
-            isAuthenticate = false;
-        },
-        close: function() {
-            if (isAuthenticate) {
-                displayLoader();
-                setTimeout(function() {
-                    if (TYPE == "approve") {
-                        buApprovePage.actionFromList(
-                            csvId, 1, null, CurrentPassword.val()
-                        );
+
+    swal({
+        title: "Are you sure",
+        text: "You want to permanently delete the file?",
+        type: "success",
+        showCancelButton: true,
+        confirmButtonClass: 'btn-success waves-effect waves-light',
+        confirmButtonText: 'Yes'
+    }, function(isConfirm) {
+        if (isConfirm) {
+            alert("Confirmed");
+            return false;
+           /* Custombox.open({
+                target: targetid,
+                effect: 'contentscale',
+                complete: function() {
+                    if (CurrentPassword != null) {
+                        CurrentPassword.focus();
+                        CurrentPassword.val('');
                     }
-                    else if (TYPE == "reject") {
-                        if ($('.reject-reason-txt').val() == '') {
-                            displayMessage(message.reason_required)
-                        }
-                        else {
-                            
-                            buApprovePage.actionFromList(
-                                csvId, 2, $('.reject-reason-txt').val(),
-                                CurrentPassword.val()
-                            );
-                        }
+                    isAuthenticate = false;
+                },
+                close: function() {
+                    if (isAuthenticate) {
+                        displayLoader();
+                        setTimeout(function() {
+                            if (TYPE == "approve") {
+                                buApprovePage.actionFromList(
+                                    csvId, 1, null, CurrentPassword.val()
+                                );
+                            }
+                            else if (TYPE == "reject") {
+                                if ($('.reject-reason-txt').val() == '') {
+                                    displayMessage(message.reason_required)
+                                }
+                                else {
+                                    
+                                    buApprovePage.actionFromList(
+                                        csvId, 2, $('.reject-reason-txt').val(),
+                                        CurrentPassword.val()
+                                    );
+                                }
+                            }
+                            else if (TYPE == "submit") {
+                                buApprovePage.finalSubmit(
+                                    csvId, CurrentPassword.val()
+                                );
+                            }
+                            else if (TYPE == "view-reject") {
+                                if ($('.view-reason').val()== '') {
+                                    displayMessage(message.reason_required)
+                                }
+                                else {
+                                    bu.updateActionFromView(
+                                        csvId, smid, 2, $('.view-reason').val(),
+                                        function(err, res) {
+                                            if (err != null) {
+                                                tThis.possibleFailures(err);
+                                            }
+                                            hideLoader();
+                                    });
+                                    callback($('.view-reason').val());
+                                }
+                            }
+                        }, 500);
                     }
-                    else if (TYPE == "submit") {
-                        buApprovePage.finalSubmit(
-                            csvId, CurrentPassword.val()
-                        );
-                    }
-                    else if (TYPE == "view-reject") {
-                        if ($('.view-reason').val()== '') {
-                            displayMessage(message.reason_required)
-                        }
-                        else {
-                            bu.updateActionFromView(
-                                csvId, smid, 2, $('.view-reason').val(),
-                                function(err, res) {
-                                    if (err != null) {
-                                        tThis.possibleFailures(err);
-                                    }
-                                    hideLoader();
-                            });
-                            callback($('.view-reason').val());
-                        }
-                    }
-                }, 500);
-            }
-        },
+                },
+        });*/
+    }
     });
 }
 

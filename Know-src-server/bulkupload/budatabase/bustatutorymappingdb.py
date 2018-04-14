@@ -368,7 +368,7 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
 
     if c_doc is None or c_doc == "":
         c_doc = '%'
-        
+
     data = db.call_proc_with_multiresult_set(
         "sp_statutory_mapping_view_by_filter",
         [
