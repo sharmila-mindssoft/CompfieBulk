@@ -11,11 +11,12 @@ from ..budatabase.buassignstatutorydb import *
 from ..bulkuploadcommon import (
     convert_base64_to_file,
     read_data_from_csv,
-    generate_valid_file
+    generate_valid_file,
+    remove_uploaded_file
 )
 from ..bulkexport import ConvertJsonToCSV
 from server.constants import (
-    BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT
+    BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT, CSV_MAX_LINES
 )
 import datetime
 from protocol import generalprotocol, technoreports
@@ -220,6 +221,11 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
 
         if len(assign_statutory_data) == 0:
                 return bu_as.CsvFileBlank()
+
+        if len(assign_statutory_data) > CSV_MAX_LINES:
+            file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
+            remove_uploaded_file(file_path)
+            return bu_as.CsvFileExeededMaxLines(CSV_MAX_LINES)
 
         # csv data validation
         cObj = ValidateAssignStatutoryCsvData(
