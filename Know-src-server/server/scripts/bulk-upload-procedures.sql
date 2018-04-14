@@ -1853,10 +1853,10 @@ DELIMITER //
 CREATE PROCEDURE `sp_as_rejected_file_count`(
     IN user_ INT(11)
 )
-BEGIN
-    SELECT count(1) as rejected FROM tbl_bulk_assign_statutory_csv
-    WHERE (is_fully_rejected = 1 OR declined_count > 0) AND approve_status < 4
-    AND uploaded_by = user_;
+BEGIN 
+  SELECT count(1) as rejected FROM tbl_bulk_assign_statutory_csv 
+  WHERE (IFNULL(declined_count, 0) > 0 or IFNULL(is_fully_rejected, 0) = 1) 
+  AND approve_status < 4 AND uploaded_by = user_; 
 END //
 
 DELIMITER ;
