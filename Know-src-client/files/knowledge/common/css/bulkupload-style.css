@@ -2,6 +2,9 @@
     width: 100%;
     overflow: hidden; 
 }
+.multiselect-native-select > .btn-group{
+    width: 100% !important;
+}
 
 /* using width css classes instead of html width attribute */
 
@@ -264,5 +267,5 @@ td.task-id {
 
 .break-word {
     word-wrap: break-word;
-
 }
+
