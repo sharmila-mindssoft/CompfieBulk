@@ -222,9 +222,14 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
         if len(assign_statutory_data) == 0:
                 return bu_as.CsvFileBlank()
 
+        print 'len(assign_statutory_data)>>>>>', len(assign_statutory_data)
+        print 'CSV_MAX_LINES>>>>>>>>', CSV_MAX_LINES
+        print 'len(assign_statutory_data) > CSV_MAX_LINES', len(assign_statutory_data) > CSV_MAX_LINES
         if len(assign_statutory_data) > CSV_MAX_LINES:
+            print 'Enter into if>>>>>>>>>>>>'
             file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
             remove_uploaded_file(file_path)
+            print 'End if >>>>>>>>>>>>>>>>>'
             return bu_as.CsvFileExeededMaxLines(CSV_MAX_LINES)
 
         # csv data validation
