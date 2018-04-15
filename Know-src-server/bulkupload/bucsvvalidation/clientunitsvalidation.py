@@ -238,7 +238,8 @@ class SourceDB(object) :
     #######################################################################################
 
     def check_base(self , check_status , store, key_name , status_name) :
-
+        print "check base"
+        print key_name
         data = store.get(key_name)
         if (data is not None and check_status is True) :
             if status_name is None :
@@ -246,10 +247,16 @@ class SourceDB(object) :
                     return "Status Inactive"
             elif status_name == "domain_is_active" :
                 if data.get("domain_is_active") == 0 :
-                    return "Status Inactive"
+                    if key_name.find("-") != -1:
+                        return key_name.split("-")[1] + " Status Inactive"
+                    else:
+                        return key_name + " Status Inactive"
             elif status_name == "organization_is_active" :
                 if data.get("organization_is_active") == 0 :
-                    return "Status Inactive"
+                    if key_name.find("-") != -1:
+                        return key_name.split("-")[1] + " Status Inactive"
+                    else:
+                        return key_name + " Status Inactive"
         return True
 
     ######################################################################################
@@ -942,8 +949,8 @@ class SourceDB(object) :
                     csv_name, groupname, action_type
                 )
             if sys_decl_cnt > 0:
-                sysDeclText = "Client Unit File - %s %s has been declined by COMPFIE" % (
-                    groupname, sys_decl_cnt
+                sysDeclText = "Client Unit File %s - %s %s has been declined by COMPFIE" % (
+                    csv_name, groupname, sys_decl_cnt
                 )
         else:
             text = "Client Unit File %s of %s has been %s with %s" % (
