@@ -224,7 +224,7 @@ def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
             d["csv_id"], d["csv_name"], d["uploaded_by"],
             upload_on, d["total_records"], d["approve_count"],
             d["rej_count"],
-            d["csv_name"]
+            d["csv_name"], d["declined_count"]
         ))
 
     return csv_data
@@ -368,7 +368,7 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
 
     if c_doc is None or c_doc == "":
         c_doc = '%'
-
+        
     data = db.call_proc_with_multiresult_set(
         "sp_statutory_mapping_view_by_filter",
         [

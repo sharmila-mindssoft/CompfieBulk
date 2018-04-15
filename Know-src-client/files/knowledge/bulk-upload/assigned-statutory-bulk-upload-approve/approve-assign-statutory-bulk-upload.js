@@ -813,6 +813,7 @@ validateAuthentication = function(id, passwordField, reasonField) {
 
 // Server to approve & Reject send status. To check system rejected status
 approveOrRejectAction = function(id, clId, leId, action, reason, password) {
+    displayLoader();
     bu.assignStatutoryActionInList(parseInt(clId), parseInt(leId),
         parseInt(id), parseInt(action), reason, password,
         function(err1, res2) {
@@ -820,9 +821,11 @@ approveOrRejectAction = function(id, clId, leId, action, reason, password) {
             if (err1 == null) {
                 if (res2.hasOwnProperty("rej_count")) {
                     setTimeout(function() {
+                        hideLoader();
                         var statusmsg = res2.rej_count + ' ' + message.sys_rejected_confirm;
                         confirm_alert(statusmsg, function(isConfirm) {
                             if (isConfirm) {
+                                displayLoader();
                                 bu.confirmAssignStatutoryUpdateAction(parseInt(id),
                                     parseInt(clId), parseInt(leId),
                                     function(error, res3) {

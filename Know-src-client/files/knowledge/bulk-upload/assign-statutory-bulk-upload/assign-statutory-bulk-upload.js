@@ -362,6 +362,9 @@ function pageControls() {
                             displayMessage(message.invalid_csv_file);
                         }else if(error == "CsvFileBlank"){
                             displayMessage(message.csv_file_blank);
+                        }else if(error == "CsvFileExeededMaxLines") {
+                            displayMessage(message.csv_max_lines_exceeded.replace(
+                                'MAX_LINES', data.csv_max_lines));
                         }else if(error == "RejectionMaxCountReached"){
                             displayMessage(message.rejection_max_count_reached);
                         }else if(error == "UnitsNotAssignedToUser"){

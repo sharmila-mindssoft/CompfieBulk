@@ -1327,6 +1327,23 @@ class UnitsNotAssignedToUser(Response):
         return {}
 
 
+class CsvFileExeededMaxLines(Response):
+    def __init__(self, csv_max_lines):
+        self.csv_max_lines = csv_max_lines
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_max_lines"])
+        return CsvFileExeededMaxLines(
+            data.get("csv_max_lines")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_max_lines": self.csv_max_lines
+        }
+
+
 def _init_Response_class_map():
     classes = [
         GetClientInfoSuccess,
@@ -1349,7 +1366,8 @@ def _init_Response_class_map():
         CsvFileBlank,
         RejectionMaxCountReached,
         CompleteActionBeforeSubmit,
-        UnitsNotAssignedToUser
+        UnitsNotAssignedToUser,
+        CsvFileExeededMaxLines
     ]
 
     class_map = {}
