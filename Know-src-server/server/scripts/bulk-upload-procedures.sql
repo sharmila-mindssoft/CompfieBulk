@@ -98,7 +98,8 @@ BEGIN
     (SELECT count(action) FROM tbl_bulk_statutory_mapping WHERE
      ifnull(action, 0) = 1 AND csv_id = t1.csv_id) AS approve_count,
     (SELECT count(action) FROM tbl_bulk_statutory_mapping WHERE
-     ifnull(action, 0) = 2 AND csv_id = t1.csv_id) AS rej_count
+    ifnull(action, 0) = 2 AND csv_id = t1.csv_id) AS rej_count,
+    ifnull(declined_count, 0) AS declined_count
     FROM tbl_bulk_statutory_mapping_csv AS t1
     WHERE upload_status =  1 AND approve_status = 0 AND ifnull(t1.is_fully_rejected, 0) = 0
     AND country_id = cid AND domain_id = did
@@ -282,10 +283,10 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_statutory_mapping_view_by_filter`(
 IN csvid INT, orga_name VARCHAR(50), s_nature VARCHAR(50),
-frequency VARCHAR(50), statu VARCHAR(200), geo_location VARCHAR(500),
+frequency VARCHAR(70), statu VARCHAR(200), geo_location VARCHAR(500),
 c_task VARCHAR(100), c_desc VARCHAR(500), c_doc VARCHAR(100),
-f_count INT, f_range INT
-
+f_count INT, f_range INT, tsk_id VARCHAR(50), tsk_type VARCHAR(100),
+view_data INT
 )
 BEGIN
     SELECT distinct t1.csv_id, t1.country_name,
@@ -304,10 +305,16 @@ BEGIN
     FROM tbl_bulk_statutory_mapping_csv AS t1
     inner join tbl_bulk_statutory_mapping AS t2 on
     t1.csv_id  = t2.csv_id WHERE t1.csv_id = csvid
-    AND organization like orga_name AND geography_location like geo_location
-    AND statutory_nature like s_nature AND statutory like statu
-    AND compliance_frequency like frequency AND compliance_task like c_task
-    AND compliance_description like c_desc AND compliance_document like c_doc
+    AND t2.organization like orga_name AND t2.geography_location like geo_location
+    AND t2.statutory_nature like s_nature AND t2.statutory like statu
+    -- AND t2.compliance_frequency like frequency
+    AND FIND_IN_SET(compliance_frequency, frequency) AND t2.compliance_task like c_task
+    AND t2.compliance_description like c_desc AND t2.compliance_document like c_doc
+    AND t2.task_id like tsk_id AND t2.task_type like tsk_type
+    AND (CASE WHEN view_data =1 THEN IFNULL(t2.action, 0) > 0
+      WHEN view_data =2 THEN IFNULL(t2.action, 0) = 0
+          ELSE IFNULL(t2.action, 0) like "%"
+  END)
     limit  f_count, f_range;
 
     SELECT count(distinct t2.bulk_statutory_mapping_id) AS total
@@ -315,12 +322,18 @@ BEGIN
     FROM tbl_bulk_statutory_mapping_csv AS t1
     inner join tbl_bulk_statutory_mapping AS t2 on
     t1.csv_id  = t2.csv_id WHERE t1.csv_id = csvid
-    AND organization like orga_name AND geography_location like geo_location
-    AND statutory_nature like s_nature AND statutory like statu
-    AND compliance_frequency like frequency AND compliance_task like c_task
-    AND compliance_description like c_desc AND compliance_document like c_doc;
+    AND t2.organization like orga_name AND t2.geography_location like geo_location
+    AND t2.statutory_nature like s_nature AND t2.statutory like statu
+    -- AND t2.compliance_frequency like frequency
+    AND FIND_IN_SET(compliance_frequency, frequency) AND t2.compliance_task like c_task
+    AND t2.compliance_description like c_desc AND t2.compliance_document like c_doc
+    AND t2.task_id like tsk_id AND t2.task_type like tsk_type
+    AND (CASE WHEN view_data =1 THEN IFNULL(t2.action, 0) > 0
+      WHEN view_data =2 THEN IFNULL(t2.action, 0) = 0
+          ELSE IFNULL(t2.action, 0) like "%"
+  END)
+    ;
 END //
-
 DELIMITER ;
 
 
@@ -1371,7 +1384,9 @@ BEGIN
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     AND IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
     AND IF(c_desc IS NOT NULL, t2.compliance_description = c_desc, 1)
-    AND IF(view_data IS NOT NULL, t2.action = view_data, 1)
+    AND IF(view_data IS NULL, 1, 
+      IF(view_data = 0, t2.action is NULL, t2.action is NOT NULL)
+    )
     AND IF(s_status IS NOT NULL, t2.statutory_applicable_status = s_status, 1)
     AND IF(c_status IS NOT NULL, t2.compliance_applicable_status = c_status, 1);
 
@@ -1385,7 +1400,6 @@ BEGIN
     FROM tbl_bulk_assign_statutory_csv AS t1
     inner join tbl_bulk_assign_statutory AS t2 on
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid
-
     AND IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
     AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_name), 1)
     AND IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
@@ -1393,7 +1407,9 @@ BEGIN
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     AND IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
     AND IF(c_desc IS NOT NULL, t2.compliance_description = c_desc, 1)
-    AND IF(view_data IS NOT NULL, t2.action = view_data, 1)
+    AND IF(view_data IS NULL, 1, 
+      IF(view_data = 0, t2.action is NULL, t2.action is NOT NULL)
+    )
     AND IF(s_status IS NOT NULL, t2.statutory_applicable_status = s_status, 1)
     AND IF(c_status IS NOT NULL, t2.compliance_applicable_status = c_status, 1)
     LIMIT  f_count, f_range;
@@ -1840,10 +1856,10 @@ DELIMITER //
 CREATE PROCEDURE `sp_as_rejected_file_count`(
     IN user_ INT(11)
 )
-BEGIN
-    SELECT count(1) as rejected FROM tbl_bulk_assign_statutory_csv
-    WHERE (is_fully_rejected = 1 OR declined_count > 0) AND approve_status < 4
-    AND uploaded_by = user_;
+BEGIN 
+  SELECT count(1) as rejected FROM tbl_bulk_assign_statutory_csv 
+  WHERE (IFNULL(declined_count, 0) > 0 or IFNULL(is_fully_rejected, 0) = 1) 
+  AND approve_status < 4 AND uploaded_by = user_; 
 END //
 
 DELIMITER ;
@@ -1869,10 +1885,10 @@ DROP PROCEDURE IF EXISTS `sp_bulk_client_unit_file_count`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_bulk_client_unit_file_count`(
-  IN _client_id INT(11))
+  IN _user_id INT(11))
 BEGIN
   select count(csv_unit_id) as file_count from tbl_bulk_units_csv
-  where client_id = _client_id and approve_status < 4 and
+  where uploaded_by = _user_id and approve_status < 4 and
   (IFNULL(declined_count, 0) > 0 or IFNULL(is_fully_rejected, 0) = 1);
 END //
 

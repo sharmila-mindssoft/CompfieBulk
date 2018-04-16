@@ -225,7 +225,7 @@ def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
             d["csv_id"], d["csv_name"], d["uploaded_by"],
             upload_on, d["total_records"], d["approve_count"],
             d["rej_count"],
-            d["csv_name"]
+            d["csv_name"], d["declined_count"]
         ))
 
     return csv_data
@@ -327,11 +327,12 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     f_range = request_frame.r_range
     task_id = request_frame.tsk_id
     task_type = request_frame.tsk_type
+    view_data = request_frame.filter_view_data
 
     if organization is None or organization == "":
         organization = '%'
     else:
-        organization = organization + '%'
+        organization = '%' + organization + '%'
 
     if s_nature is None or s_nature == "":
         s_nature = '%'
@@ -374,7 +375,7 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
         [
             csv_id, organization, s_nature, frequency,
             statutory, geo_location, c_task, c_desc, c_doc,
-            f_count, f_range, task_id, task_type
+            f_count, f_range, task_id, task_type, view_data
         ], 2
     )
     country_name = None

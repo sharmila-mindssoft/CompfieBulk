@@ -297,7 +297,8 @@ class GetApproveMappingFilter(Request):
 class GetApproveStatutoryMappingViewFilter(Request):
     def __init__(
         self, csv_id, orga_name, s_nature, f_types, statutory, geo_location,
-        c_task_name, c_desc, c_doc, f_count, r_range, tsk_id, tsk_type
+        c_task_name, c_desc, c_doc, f_count, r_range, tsk_id, tsk_type,
+        filter_view_data
     ):
         self.csv_id = csv_id
         self.orga_name = orga_name
@@ -312,13 +313,14 @@ class GetApproveStatutoryMappingViewFilter(Request):
         self.r_range = r_range
         self.tsk_id = tsk_id
         self.tsk_type = tsk_type
+        self.filter_view_data = filter_view_data
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "csv_id", "orga_name", "s_nature", "f_types", "statutory",
             "geo_location", "c_task_name", "c_desc", "c_doc",
-            "f_count", "r_range", "tsk_id", "tsk_type"
+            "f_count", "r_range", "tsk_id", "tsk_type", "filter_view_data"
         ])
         return GetApproveStatutoryMappingViewFilter(
             data.get("csv_id"), data.get("orga_name"), data.get("s_nature"),
@@ -326,8 +328,7 @@ class GetApproveStatutoryMappingViewFilter(Request):
             data.get("geo_location"),
             data.get("c_task_name"), data.get("c_desc"), data.get("c_doc"),
             data.get("f_count"), data.get("r_range"), data.get("tsk_id"),
-            data.get("tsk_type")
-
+            data.get("tsk_type"), data.get("filter_view_data")
         )
 
     def to_inner_structure(self):
@@ -344,7 +345,8 @@ class GetApproveStatutoryMappingViewFilter(Request):
             "f_count": self.f_count,
             "r_range": self.r_range,
             "tsk_id": self.tsk_id,
-            "tsk_type": self.tsk_type
+            "tsk_type": self.tsk_type,
+            "filter_view_data": self.filter_view_data
         }
 
 
@@ -879,7 +881,8 @@ class RejectedList(object):
 class PendingCsvList(object):
     def __init__(
         self, csv_id, csv_name, uploaded_by,
-        uploaded_on, no_of_records, approve_count, rej_count, download_file
+        uploaded_on, no_of_records, approve_count, rej_count, download_file,
+        declined_count
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
@@ -889,12 +892,15 @@ class PendingCsvList(object):
         self.approve_count = approve_count
         self.rej_count = rej_count
         self.download_file = download_file
+        self.declined_count = declined_count
+
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "csv_id", "csv_name", "uploaded_by", "uploaded_on",
-            "no_of_records", "approve_count", "rej_count", "download_file"
+            "no_of_records", "approve_count", "rej_count", "download_file",
+            "declined_count"
 
         ])
         return PendingCsvList(
@@ -903,7 +909,7 @@ class PendingCsvList(object):
             data.get("uploaded_on"), data.get("no_of_records"),
             data.get("approve_count"),
             data.get("rej_count"),
-            data.get("download_file")
+            data.get("download_file"), data.get("declined_count")
         )
 
     def to_structure(self):
@@ -915,7 +921,8 @@ class PendingCsvList(object):
             "no_of_records": self.no_of_records,
             "approve_count": self.approve_count,
             "rej_count": self.rej_count,
-            "download_file": self.download_file
+            "download_file": self.download_file,
+            "declined_count": self.declined_count
         }
 
 

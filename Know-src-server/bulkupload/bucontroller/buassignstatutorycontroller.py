@@ -11,11 +11,12 @@ from ..budatabase.buassignstatutorydb import *
 from ..bulkuploadcommon import (
     convert_base64_to_file,
     read_data_from_csv,
-    generate_valid_file
+    generate_valid_file,
+    remove_uploaded_file
 )
 from ..bulkexport import ConvertJsonToCSV
 from server.constants import (
-    BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT
+    BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT, CSV_MAX_LINES
 )
 import datetime
 from protocol import generalprotocol, technoreports
@@ -219,7 +220,12 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
         header, assign_statutory_data = read_data_from_csv(csv_name)
 
         if len(assign_statutory_data) == 0:
-                return bu_as.CsvFileBlank()
+            return bu_as.CsvFileBlank()
+
+        if len(assign_statutory_data) > CSV_MAX_LINES:
+            file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
+            remove_uploaded_file(file_path)
+            return bu_as.CsvFileExeededMaxLines(CSV_MAX_LINES)
 
         # csv data validation
         cObj = ValidateAssignStatutoryCsvData(
@@ -360,7 +366,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                     cObj.save_executive_message(
                         action, cObj._csv_name, cObj._client_group,
                         cObj._legal_entity, session_user.user_id(),
-                        u_ids
+                        u_ids, None
                     )
                     cObj.source_commit()
                     delete_action_after_approval(db, csv_id)
@@ -373,7 +379,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                 cObj.save_executive_message(
                     action, cObj._csv_name, cObj._client_group,
                     cObj._legal_entity, session_user.user_id(),
-                    u_ids
+                    u_ids, remarks
                 )
                 cObj.source_commit()
                 return bu_as.AssignStatutoryApproveActionInListSuccess()
@@ -630,7 +636,7 @@ def submit_assign_statutory(db, request_frame, session_user):
             cObj.save_executive_message(
                 1, cObj._csv_name, cObj._client_group,
                 cObj._legal_entity, session_user.user_id(),
-                u_ids
+                u_ids, None
             )
             cObj.frame_data_for_main_db_insert(user_id)
             cObj.source_commit()
@@ -659,7 +665,7 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
         cObj.save_executive_message(
             1, cObj._csv_name, cObj._client_group,
             cObj._legal_entity, session_user.user_id(),
-            u_ids
+            u_ids, None
         )
         cObj.frame_data_for_main_db_insert(user_id)
         cObj.source_commit()

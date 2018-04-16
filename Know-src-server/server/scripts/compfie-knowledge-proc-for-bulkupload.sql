@@ -341,8 +341,8 @@ BEGIN
   (SELECT is_active from tbl_organisation
   WHERE organisation_id = t2.organisation_id) AS organization_is_active,
   t2.count AS total_unit_count, (SELECT COUNT(*) FROM tbl_units_organizations
-  WHERE domain_id = t2.domain_id AND organisation_id = t2.organisation_id and
-  unit_id = t3.unit_id)
+  WHERE domain_id = t2.domain_id AND organisation_id = t2.organisation_id)
+  -- and unit_id = t3.unit_id)
   AS created_units
   FROM tbl_legal_entities as t1 INNER join
   tbl_legal_entity_domains as t2 ON
@@ -406,7 +406,7 @@ BEGIN
     FROM tbl_units as t01
     INNER JOIN tbl_units_organizations as t02 on t01.unit_id = t02.unit_id
     INNER JOIN tbl_user_units as t03 on t01.unit_id = t03.unit_id
-    where t03.user_id = uid and t01.is_closed = 0
+    where t03.user_id = uid and t01.is_closed = 0 and t01.is_approved = 1
     group by t01.unit_id,t02.unit_id;
 
     -- check assigned units
@@ -445,7 +445,7 @@ DROP PROCEDURE IF EXISTS `sp_get_assign_statutory_compliance`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
-    IN unitid text, domainid INT(11)
+    IN unitid text, domainid text
 )
 
 BEGIN
@@ -737,9 +737,14 @@ DROP PROCEDURE IF EXISTS `sp_bu_organization_all`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_bu_organization_all`()
+CREATE PROCEDURE `sp_bu_organization_all`(
+IN country_id_ INT(11)
+)
 BEGIN
-   select organisation_id, organisation_name, is_active from tbl_organisation;
+   select t1.domain_id, t1.organisation_id, t1.organisation_name, t1.is_active, 
+   (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name
+   from tbl_organisation t1
+   WHERE t1.country_id = country_id_;
 END //
 
 DELIMITER ;
@@ -822,6 +827,20 @@ BEGIN
     INNER JOIN tbl_users ON user_id = child_user_id AND is_active = 1
     AND is_disable = 0 AND country_id = countryid AND domain_id = domainid
     WHERE parent_user_id = manager_id ;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_country_by_legal_entity_name`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_get_country_by_legal_entity_name`(
+    IN legal_entity_name_ text
+)
+BEGIN
+    SELECT country_id FROM tbl_legal_entities
+    WHERE legal_entity_name = legal_entity_name_;
 END //
 
 DELIMITER ;

@@ -629,6 +629,8 @@ class StatutorySource(object):
 
     def save_compliance_data(self, c_id, d_id, mapping_id, data):
         created_on = get_date_time()
+        approved_on = get_date_time()
+        approved_by = self._session_user_obj.user_id()
         columns = [
             "statutory_provision",
             "compliance_task", "compliance_description",
@@ -657,8 +659,6 @@ class StatutorySource(object):
                 d["Statutory_Date"], d["Statutory_Month"], d["Trigger_Days"],
                 d["Repeats_By (DOM/EOM)"]
             )
-            print "d[Statutory_Provision]->> ", d["Statutory_Provision"]
-            print "approved_by", d["approved_by"]
 
             values.append((
                 d["Statutory_Provision"], d["Compliance_Task"],
@@ -666,13 +666,13 @@ class StatutorySource(object):
                 d["Format"], 0,
                 d["Penal_Consequences"], d["Reference_Link"], freq_id,
                 mapped_date, int(mapping_id), 1, d["uploaded_by"],
-                created_on, c_id, d_id, 2,
+                created_on, d_id, c_id, 2,
                 None if d["Duration"] == '' else d["Duration"],
                 duration_type_id,
                 None if d["Repeats_Every"] == '' else d["Repeats_Every"],
                 repeat_type_id,
-                d["Task_ID"], d["Task_Type"], d["approved_by"],
-                d["approved_on"], d["remarks"]
+                d["Task_ID"], d["Task_Type"], approved_by,
+                approved_on, d["remarks"]
             ))
 
         if values:
