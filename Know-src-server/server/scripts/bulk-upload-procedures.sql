@@ -1577,6 +1577,7 @@ BEGIN
         rejected_reason = _remarks,
         total_rejected_records = (select COUNT(0) FROM
         tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id)
+        and t1.action = 2
         WHERE csv_unit_id = _csv_unit_id;
     ELSE
       IF _declinedCount = 0 THEN
@@ -1996,9 +1997,7 @@ DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_assign_statutory_update_action`;
-
 DELIMITER //
-
 CREATE PROCEDURE `sp_assign_statutory_update_action`(
 IN csvid INT, userid INT
 )
@@ -2007,10 +2006,10 @@ BEGIN
   approve_status = 1, approved_on = current_ist_datetime(),
   approved_by = userid, is_fully_rejected = 0,
   total_rejected_records = (select count(0) from
-  tbl_bulk_assign_statutory as t WHERE t.csv_assign_statutory_id = csvid)
+  tbl_bulk_assign_statutory as t WHERE 
+  t.action = 2 and t.csv_assign_statutory_id = csvid)
   WHERE csv_assign_statutory_id = csvid;
 END//
-
 DELIMITER ;
 
 
@@ -2026,7 +2025,8 @@ BEGIN
   approve_status = 1, approved_on = current_ist_datetime(),
   approved_by = userid, is_fully_rejected = 0,
   total_rejected_records = (select count(0) from
-  tbl_bulk_statutory_mapping as t WHERE t.csv_id = csvid)
+  tbl_bulk_statutory_mapping as t WHERE t.csv_id = csvid 
+  and t.action = 2)
   WHERE csv_id = csvid;
 END //
 
