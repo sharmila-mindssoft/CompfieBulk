@@ -145,7 +145,7 @@ btnUploadedFileList.click(function() {
 
 
 // To display the uploaded CSV files list
-function loadClientUnitCSVFilesList(){
+function loadClientUnitCSVFilesList() {
 	var data = clientUnitCSVFilesList;
 	var sno = 0;
 	if(data.length > 0) {
@@ -382,8 +382,7 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText){
     displayLoader();
     bu.performClientUnitApproveReject(
         csv_id, actionType, remarksText, pwd, parseInt(groupSelect_id.val().trim()),
-    function(error, response)
-    {
+    function(error, response) {
         console.log(error, response);
         if (error == null) {
             if (actionType == 1) {
@@ -422,8 +421,9 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText){
         }
     });
 }
-function performApproveRejectDeclination(csv_id, actionType, pwd, remarksText, declined_count)
-{
+function performApproveRejectDeclination(
+    csv_id, actionType, pwd, remarksText, declined_count
+) {
     if (declined_count > 0) {
         setTimeout(function() {
             msg_decl= declined_count + " units declined, Do you want to continue ?";
@@ -464,8 +464,7 @@ btnSubmit.click(function(){
     csvid = $('#view_csv_unit_id').val();
     displayPopUp('submit', parseInt(csvid), 0);
 });
-function submitAction(csv_id, actionType, pwd, remarksText)
-{
+function submitAction(csv_id, actionType, pwd, remarksText) {
     displayLoader();
     bu.submitClientUnitActionFromView(
         csv_id, actionType, remarksText, pwd, parseInt(groupSelect_id.val().trim()),
@@ -575,7 +574,7 @@ function displayViewScreen(csv_id, start_count, _page_limit) {
 //To display the approval units list
 function getCSVFileApprovalList(csv_id, start_count, _page_limit) {
 	displayLoader();
-
+    var cname_split = "", cname = "";
 	bu.getBulkClientUnitApproveRejectList(
         csv_id, start_count, _page_limit, function(error, response){
         if (error == null) {
@@ -1115,6 +1114,7 @@ btnFilterGo.click(function(){
         if(err == null) {
             viewClientUnitList = response.client_unit_data;
             lblGroupName.text(response.bu_group_name);
+            var cname_split = "", cname = "";
             cname_split = response.csv_name.split("_");
             cname_split.pop();
             cname = cname_split.join("_");
