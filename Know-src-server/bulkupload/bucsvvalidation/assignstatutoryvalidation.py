@@ -270,6 +270,8 @@ class SourceDB(object):
         ]
 
         values = []
+        is_rejected = False
+        rej_reason = ''
         for idx, d in enumerate(data):
             approval_status = 0
             submitted_status = 0
@@ -280,6 +282,8 @@ class SourceDB(object):
                 submitted_status = 1
             else:
                 approval_status = 4
+                is_rejected = True
+                rej_reason = d["remarks"]
 
             statu_id = self.Statutories.get(d["Primary_Legislation"]).get(
                 "statutory_id"
@@ -306,6 +310,13 @@ class SourceDB(object):
             self._source_db.bulk_insert(
                 "tbl_client_compliances", columns, values
             )
+
+            if is_rejected is True:
+                q = "update tbl_client_statutories set reason = %s," + \
+                    "status = 4 where client_statutory_id = %s"
+                params = [rej_reason, int(cs_id)]
+                self._source_db.execute(q, params)
+
             return True
         else:
             return False
