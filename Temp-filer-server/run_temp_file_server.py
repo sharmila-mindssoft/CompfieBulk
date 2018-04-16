@@ -23,6 +23,8 @@ from database import Database
 
 app = Flask(__name__)
 app.config['UPLOAD_PATH'] = 'bulkuploadcomplianceformat'
+app.config['CLIENT_DOCUMENT_UPLOAD_PATH'] = 'bulkuploadclientdocuments'
+
 print app.config['UPLOAD_PATH']
 zipping_in_process = []
 
@@ -144,6 +146,33 @@ def upload():
             os.remove(zip_f_name)
             if update_file_status(f.filename, csvid) is False :
                 return "update failed"
+
+        return "success"
+
+@app.route('/client/temp/upload', methods=['POST'])
+def upload_client():
+    print request
+    if request.method == 'POST':
+        f = request.files['file']
+
+        session_id = request.args.get('session_id')
+        session_output = validate_session(session_id)
+
+        csvid = request.args.get("csvid")
+        load_path = os.path.join(app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], csvid)
+        if not os.path.exists(load_path):
+            os.makedirs(load_path)
+            os.chmod(load_path, 0777)
+
+        actual_file = os.path.join(load_path, f.filename)
+        zip_f_name = actual_file + ".zip"
+        f.save(zip_f_name)
+        zip_ref = zipfile.ZipFile(zip_f_name, 'r')
+        zip_ref.extractall(load_path)
+        zip_ref.close()
+        os.remove(zip_f_name)
+        if update_file_status(f.filename, csvid) is False :
+            return "update failed"
 
         return "success"
 
