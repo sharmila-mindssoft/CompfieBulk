@@ -99,6 +99,7 @@ function loadCountwiseResult(data) {
     var fileDownloadCount;
     var isFullyRejected;
     var deleteStatus;
+    var approvedOn;
     $('.tbody-compliance').empty();
     for (var entity in data) {
         deleteStatus = '';
@@ -107,6 +108,7 @@ function loadCountwiseResult(data) {
         csvName = data[entity].csv_name;
         totalNoOfTasks = data[entity].total_records;
         rejectedOn = data[entity].rejected_on;
+        approvedOn = data[entity].approved_on;
         rejectedBy = data[entity].rejected_by;
         isFullyRejected = data[entity].is_fully_rejected;
         statutoryAction = data[entity].statutory_action;
@@ -127,6 +129,7 @@ function loadCountwiseResult(data) {
             });
         } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {
             rejectedBy = SYSTEM_REJECTED_BY;
+            rejectedOn = approvedOn;
             reasonForRejection = '';
         }
         var tblRow1 = $('#act-templates .table-act-list .table-row-act-list');

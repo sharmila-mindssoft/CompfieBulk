@@ -438,13 +438,13 @@ def update_rejected_asm_download_count(db, request_frame, session_user):
 def delete_rejected_asm_data(db, request_frame, session_user):
     client_id = request_frame.client_id
     le_id = request_frame.le_id
-    domain_ids = request_frame.domain_ids
+    d_id = request_frame.d_id
     unit_code = request_frame.asm_unit_code
     csv_id = request_frame.csv_id
     user_id = session_user.user_id()
     rejected_data = get_list_and_delete_rejected_asm(db, session_user, user_id,
                                                      client_id, le_id,
-                                                     domain_ids, unit_code,
+                                                     d_id, unit_code,
                                                      csv_id)
     result = bu_as.GetRejectedASMDataSuccess(rejected_data)
     return result
@@ -473,12 +473,12 @@ def get_rejected_assign_sm_data(db, request_frame, session_user):
 
     client_id = request_frame.client_id
     le_id = request_frame.le_id
-    domain_ids = request_frame.domain_ids
+    d_id = request_frame.d_id
     unit_code = request_frame.asm_unit_code
     user_id = session_user.user_id()
 
     asm_rejected_data = fetch_rejected_assign_sm_data(
-        db, session_user, user_id, client_id, le_id, domain_ids, unit_code)
+        db, session_user, user_id, client_id, le_id, d_id, unit_code)
     result = bu_as.GetRejectedASMBulkUploadDataSuccess(asm_rejected_data)
     return result
 
@@ -507,7 +507,7 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     clientGroupId = request_frame.bu_client_id
     legalEntityId = request_frame.bu_legal_entity_id
     unitId = request_frame.bu_unit_id
-    domainIds = request_frame.domain_ids
+    domainId = request_frame.d_id
     from_date = request_frame.from_date
     to_date = request_frame.to_date
     record_count = request_frame.r_count
@@ -519,7 +519,7 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
     asm_reportdata, total_record = fetch_assigned_statutory_bulk_report(
         db, session_user, session_user.user_id(), clientGroupId, legalEntityId,
-        unitId, domainIds, from_date, to_date, record_count, page_count,
+        unitId, domainId, from_date, to_date, record_count, page_count,
         child_ids, user_category_id)
 
     result = bu_as.GetAssignedStatutoryReportDataSuccess(asm_reportdata,
@@ -547,7 +547,7 @@ def export_assigned_statutory_bulk_report_data(db, request, session_user):
 def download_rejected_asm_report(db, request_frame, session_user):
     client_id = request_frame.client_id
     le_id = request_frame.le_id
-    domain_ids = request_frame.domain_ids
+    d_id = request_frame.d_id
     asm_unit_code = request_frame.asm_unit_code
     csv_id = request_frame.csv_id
     download_format = request_frame.download_format
@@ -579,7 +579,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
     csv_name = get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id)
 
     source_data = fetch_rejected_asm_download_csv_report(
-        db, session_user, user_id, client_id, le_id, domain_ids, asm_unit_code,
+        db, session_user, user_id, client_id, le_id, d_id, asm_unit_code,
         csv_id)
 
     # cObj = ValidateRejectedDownloadBulkData(

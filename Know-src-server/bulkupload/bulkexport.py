@@ -330,7 +330,7 @@ class ConvertJsonToCSV(object):
     ):
         is_header = False
         cnx_pool = connectKnowledgeDB()
-        domainIds = ",".join(str(e) for e in request.domain_ids)
+        domainIds = request.d_id
         from_date = datetime.datetime.strptime(request.from_date, '%d-%b-%Y')
         to_date = datetime.datetime.strptime(request.to_date, '%d-%b-%Y')
         child_ids = request.child_ids

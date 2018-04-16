@@ -196,6 +196,7 @@ function loadCountwiseResult(data) {
         csvName = data[entity].csv_name_text;
         totalNoofTasks = data[entity].total_records;
         rejectedOn = data[entity].rejected_on;
+        approvedOn = data[entity].approved_on;
         isFullyRejected = data[entity].is_fully_rejected;
         rejectedReason = data[entity].rejected_reason;
         statutoryAction = data[entity].statutory_action;
@@ -215,6 +216,7 @@ function loadCountwiseResult(data) {
             rejectedBy = SYSTEM_REJECTED_BY;
             declinedCount = data[entity].declined_count;
             reasonForRejection = '';
+            rejectedOn = approvedOn;
         }
 
         var tr = $('#act-templates .table-act-list .table-row-act-list');
