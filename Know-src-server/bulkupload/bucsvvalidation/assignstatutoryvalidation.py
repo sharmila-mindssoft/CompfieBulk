@@ -1060,10 +1060,14 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
             q1 = "update tbl_bulk_assign_statutory_csv set " + \
                 " declined_count = %s, approve_status = 1, " + \
-                " approved_by = %s, approved_on = %s where " + \
+                " approved_by = %s, approved_on = %s, " + \
+                " total_rejected_records = (select count(0) from " + \
+                " tbl_bulk_assign_statutory as t WHERE t.action = 2 and " + \
+                " t.csv_assign_statutory_id = %s) WHERE " + \
                 " csv_assign_statutory_id = %s"
+
             self._db.execute(q1, [
-                count, user_id, created_on, self._csv_id
+                count, user_id, created_on, self._csv_id, self._csv_id
             ])
 
         except Exception, e:
