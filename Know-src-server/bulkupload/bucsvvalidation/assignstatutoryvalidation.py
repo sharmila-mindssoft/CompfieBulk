@@ -1022,3 +1022,13 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
         except Exception, e:
             raise (e)
+
+    def update_child(self, csv_id):
+        try:
+            q = "update tbl_bulk_assign_statutory set " + \
+                " action = 1 where " + \
+                " csv_assign_statutory_id = %s"
+            self._db.execute(q, [csv_id])
+
+        except Exception, e:
+            raise (e)
