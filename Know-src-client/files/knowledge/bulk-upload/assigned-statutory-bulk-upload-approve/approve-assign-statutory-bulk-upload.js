@@ -1003,8 +1003,9 @@ ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
         });
         checkAllEnableDisable();
         PAGINATION_VIEW.show();
-        if (flag == false)
-            showPagePan(showFrom, SNO, TOTAL_RECORD);
+        // if (flag == false)
+        if(showFrom == undefined) showFrom = 1;
+        showPagePan(showFrom, SNO, TOTAL_RECORD);
     } else {
         PAGINATION_VIEW.hide();
         hideLoader();
@@ -1191,7 +1192,7 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
         cStatus = null;
     else
         cStatus = parseInt(cStatus);
-    if (vData == "" || vData == 0)
+    if (vData == "")
         vData = null;
     else
         vData = parseInt(vData);
@@ -1213,7 +1214,7 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
             if (error == null) {
                 statute.dataListDetails = response.assign_statutory_data_list;
                 TOTAL_RECORD = response.count;
-                if (SNO == 0)
+                if (SNO == 0 && TOTAL_RECORD > 0)
                     createPageView(TOTAL_RECORD);
                 statute.displayDetailsPage(statute.dataListDetails, false);
                 ASID.val(id);
