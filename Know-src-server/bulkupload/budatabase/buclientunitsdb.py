@@ -1,17 +1,19 @@
-from server.exceptionmessage import fetch_error
 import traceback
-from server import logger
-from ..buapiprotocol import buclientunitsprotocol as bu_cu
-from server.constants import MAX_REJECTED_COUNT
 import datetime
+
+from server.exceptionmessage import fetch_error
+from server import logger
+from server.constants import MAX_REJECTED_COUNT
 from server.constants import (
     TM_USER_CATEGORY, TE_USER_CATEGORY
 )
 
+from ..buapiprotocol import buclientunitsprotocol as bu_cu
+
 __all__ = [
     "save_client_units_mapping_csv",
     "save_mapping_client_unit_data",
-    "get_ClientUnits_Uploaded_CSVList",
+    "get_clientunits_uploaded_csvList",
     "fetch_rejected_client_unit_report",
     "update_unit_count",
     "get_list_and_delete_rejected_unit",
@@ -29,13 +31,13 @@ __all__ = [
 ########################################################
 '''
     returns new primary key from table
-    :param
+   :param
         db: database object
         args: list of procedure params
-    :type
+   :type
         db: Object
         args: List
-    :returns
+   :returns
         result: return new id
     rtype:
         result: Integer
@@ -43,7 +45,7 @@ __all__ = [
 ########################################################
 
 
-def save_client_units_mapping_csv(db, args) :
+def save_client_units_mapping_csv(db, args):
 
     newid = db.call_insert_proc("sp_client_units_bulk_csv_save", args)
     return newid
@@ -52,15 +54,15 @@ def save_client_units_mapping_csv(db, args) :
 ########################################################
 '''
     returns true if the data save properply
-    :param
+   :param
         db: database object
         csv_id: parent table id
         csv_data: list of data to save
-    :type
+   :type
         db: Object
         csv_id: Integer
         csv_data: List
-    :returns
+   :returns
         result: return boolean
     rtype:
         result: Boolean
@@ -68,9 +70,9 @@ def save_client_units_mapping_csv(db, args) :
 ########################################################
 
 
-def save_mapping_client_unit_data(db, csv_id, csv_data) :
+def save_mapping_client_unit_data(db, csv_id, csv_data):
 
-    try :
+    try:
         columns = [
             "csv_unit_id", "legal_entity", "division", "category",
             "geography_level", "unit_location", "unit_code",
@@ -79,7 +81,7 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
         ]
         values = []
 
-        for idx, d in enumerate(csv_data) :
+        for idx, d in enumerate(csv_data):
             values.append((
                 csv_id, d["Legal_Entity"], d["Division"],
                 d["Category"], d["Geography_Level"], d["Unit_Location"],
@@ -88,25 +90,25 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
                 0
             ))
 
-        if values :
+        if values:
             db.bulk_insert("tbl_bulk_units", columns, values)
             return True
-        else :
+        else:
             return False
-    except Exception, e :
+    except Exception, e:
         print e
         raise ValueError("Transaction failed")
 
 ########################################################
 '''
     returns result set from table
-    :param
+   :param
         db: database object
         args: list of procedure params
-    :type
+   :type
         db: Object
         args: List
-    :returns
+   :returns
         result: return result set of csv uploaded list
     rtype:
         result: Datatable
@@ -114,7 +116,7 @@ def save_mapping_client_unit_data(db, csv_id, csv_data) :
 ########################################################
 
 
-def get_ClientUnits_Uploaded_CSVList(db, clientId, groupName) :
+def get_clientunits_uploaded_csvList(db, clientId, groupName):
 
     csv_list = []
     result = db.call_proc("sp_client_units_csv_list", [clientId, groupName])
@@ -131,13 +133,13 @@ def get_ClientUnits_Uploaded_CSVList(db, clientId, groupName) :
 ########################################################
 '''
     returns statutory mapping bulk report list
-    :param
+   :param
         db: database object
         session_user: logged in user details
-    :type
+   :type
         db: Object
         session_user: Object
-    :returns
+   :returns
         result: list of bulk data records by mulitple country,
         domain, KnowledgeExecutives selections based.
     rtype:
@@ -303,19 +305,19 @@ def get_cu_csv_file_name_by_id(db, session_user, user_id, csv_id):
 ########################################################
 '''
     returns true if the data updates properply
-    :param
+   :param
         db: database object
         csv_id: parent table id
         action: approve or reject action
         remarks: remarks reason if required
         user_id: logged user
-    :type
+   :type
         db: Object
         csv_id: Integer
         action: Integer
         remarks: String
         user_id: Integer
-    :returns
+   :returns
         result: return boolean
     rtype:
         result: Boolean
@@ -323,32 +325,40 @@ def get_cu_csv_file_name_by_id(db, session_user, user_id, csv_id):
 ########################################################
 
 
-def update_bulk_client_unit_approve_reject_list(db, csv_unit_id, action, remarks, declined_count, session_user) :
+def update_bulk_client_unit_approve_reject_list(
+    db, csv_unit_id, action, remarks, declined_count, session_user
+):
 
-    try :
-        args = [csv_unit_id, action, remarks, session_user.user_id(), declined_count]
+    try:
+        args = [
+            csv_unit_id, action, remarks,
+            session_user.user_id(), declined_count
+        ]
         data = db.call_proc("sp_bulk_client_unit_update_action", args)
         print "here"
         print data
         return True
 
-    except Exception, e :
-        logger.logKnowledge("error", "update action from list", str(traceback.format_exc()))
+    except Exception, e:
+        logger.logKnowledge(
+            "error", "update action from list",
+            str(traceback.format_exc())
+        )
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
 
 ########################################################
 '''
     returns sets of dataset
-    :param
+   :param
         db: database object
         csv_id: parent table id
         user_id: logged user
-    :type
+   :type
         db: Object
         csv_id: Integer
         user_id: Integer
-    :returns
+   :returns
         result: return sets of dataset
     rtype:
         result: Object
@@ -356,7 +366,7 @@ def update_bulk_client_unit_approve_reject_list(db, csv_unit_id, action, remarks
 ########################################################
 
 
-def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user) :
+def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
 
     csv_id = request.csv_id
     f_count = request.f_count
@@ -370,9 +380,9 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user) :
     upload_by = session_user.user_full_name()
     upload_on = None
     client_unit_data = []
-    if len(unit_list) > 0 :
-        for idx, d in enumerate(unit_list) :
-            if idx == 0 :
+    if len(unit_list) > 0:
+        for idx, d in enumerate(unit_list):
+            if idx == 0:
                 group_name = d["client_group"]
                 csv_name = d["csv_name"]
                 upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
@@ -383,12 +393,15 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user) :
                 int(d["bulk_unit_id"]), d["legal_entity"], d["division"],
                 d["category"], d["geography_level"], d["unit_location"],
                 d["unit_code"], d["unit_name"], d["address"], d["city"],
-                d["state"], str(d["postalcode"]), d["domain"], d["organization"],
+                d["state"], str(d["postalcode"]), d["domain"],
+                d["organization"],
                 d["action"], d["remarks"]
             ))
 
     # fetch data for filter
-    filter_data = db.call_proc_with_multiresult_set("sp_bulk_client_unit_filter_data", [csv_id], 7)
+    filter_data = db.call_proc_with_multiresult_set(
+        "sp_bulk_client_unit_filter_data", [csv_id], 7
+    )
     print "filtered data"
     print filter_data
     le_names = []
@@ -399,59 +412,59 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user) :
     domain_names = []
     orga_names = []
 
-    if len(filter_data) > 0 :
-        if len(filter_data[0]) > 0 :
+    if len(filter_data) > 0:
+        if len(filter_data[0]) > 0:
             for d in filter_data[0]:
                 le_names.append(d["legal_entity"])
 
-        if len(filter_data[1]) > 0 :
-            for d in filter_data[1] :
+        if len(filter_data[1]) > 0:
+            for d in filter_data[1]:
                 div_names.append(d["division"])
 
-        if len(filter_data[2]) > 0 :
-            for d in filter_data[2] :
+        if len(filter_data[2]) > 0:
+            for d in filter_data[2]:
                 cg_names.append(d["category"])
 
-        if len(filter_data[3]) > 0 :
-            for d in filter_data[3] :
+        if len(filter_data[3]) > 0:
+            for d in filter_data[3]:
                 u_locations.append(d["unit_location"])
 
-        if len(filter_data[4]) > 0 :
-            for d in filter_data[4] :
+        if len(filter_data[4]) > 0:
+            for d in filter_data[4]:
                 u_codes.append(d["unit_code"])
 
         last = object()
-        if len(filter_data[5]) > 0 :
-            for d in filter_data[5] :
-                if d["domain"].find('|;|') > 0 :
+        if len(filter_data[5]) > 0:
+            for d in filter_data[5]:
+                if d["domain"].find('|;|') > 0:
                     dom = d["domain"].split('|;|')
                     for domain in dom:
                         if last != domain:
                             last = domain
                             domain_names.append(domain)
                 else:
-                    if last != d["domain"] :
+                    if last != d["domain"]:
                         last = d["domain"]
                         domain_names.append(d["domain"])
 
         last = object()
-        if len(filter_data[6]) > 0 :
-            for d in filter_data[6] :
-                if d["organization"].find('|;|') > 0 :
+        if len(filter_data[6]) > 0:
+            for d in filter_data[6]:
+                if d["organization"].find('|;|') > 0:
                     org = d["organization"].split('|;|')
-                    for d_o in org :
+                    for d_o in org:
                         o = d_o.split(">>")
                         if last != o[1].strip():
                             last = o[1].strip()
                             orga_names.append(o[1].strip())
                 else:
-                    if d["organization"].find(">>") > 0 :
+                    if d["organization"].find(">>") > 0:
                         o = d["organization"].split(">>")
-                        if last != o[1].strip() :
+                        if last != o[1].strip():
                             last = o[1].strip()
                             orga_names.append(o[1].strip())
                     else:
-                        if last != d["organization"].strip() :
+                        if last != d["organization"].strip():
                             last = d["organization"].strip()
                             orga_names.append(d["organization"].strip())
 
@@ -464,15 +477,15 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user) :
 ########################################################
 '''
     returns a dataset
-    :param
+   :param
         db: database object
         csv_id: parent table id
         user_id: logged user
-    :type
+   :type
         db: Object
         csv_id: Integer
         user_id: Integer
-    :returns
+   :returns
         result: return a dataset
     rtype:
         result: Object
@@ -480,7 +493,7 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user) :
 ########################################################
 
 
-def get_bulk_client_unit_list_by_filter(db, request_frame, session_user) :
+def get_bulk_client_unit_list_by_filter(db, request_frame, session_user):
 
     csv_id = request_frame.csv_id
     legal_entity = request_frame.bu_le_name
@@ -494,25 +507,25 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user) :
     f_range = request_frame.r_range
     action = request_frame.bu_action
 
-    if legal_entity is None or legal_entity == "" :
+    if legal_entity is None or legal_entity == "":
         legal_entity = '%'
 
-    if division is None or division == "" :
+    if division is None or division == "":
         division = '%'
 
-    if category is None or category == "" :
+    if category is None or category == "":
         category = '%'
 
-    if unit_location is None or unit_location == "" :
+    if unit_location is None or unit_location == "":
         unit_location = '%'
 
-    if unit_code is None or unit_code == "" :
+    if unit_code is None or unit_code == "":
         unit_code = '%'
 
-    if domain is None or domain == "" :
+    if domain is None or domain == "":
         domain = '%'
 
-    if orga_name is None or orga_name == "" :
+    if orga_name is None or orga_name == "":
         orga_name = '%'
 
     unit_list = db.call_proc_with_multiresult_set(
@@ -529,27 +542,30 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user) :
     client_unit_data = []
     print "unit_list"
     print unit_list
-    if len(unit_list) > 0 :
+    if len(unit_list) > 0:
         if len(unit_list[1]) > 0:
             total_records = unit_list[1][0]["total_records"]
             if len(unit_list[0]) > 0:
-                for idx, d in enumerate(unit_list[0]) :
-                    if idx == 0 :
+                for idx, d in enumerate(unit_list[0]):
+                    if idx == 0:
                         group_name = d["client_group"]
                         csv_name = d["csv_name"]
                         upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
                         upload_by = d["uploaded_by"]
 
                     client_unit_data.append(bu_cu.BulkClientUnitList(
-                        d["bulk_unit_id"], d["legal_entity"], d["division"],
-                        d["category"], d["geography_level"], d["unit_location"],
-                        d["unit_code"], d["unit_name"], d["address"], d["city"],
-                        d["state"], str(d["postalcode"]), d["domain"], d["organization"],
+                        d["bulk_unit_id"], d["legal_entity"],
+                        d["division"], d["category"], d["geography_level"],
+                        d["unit_location"], d["unit_code"], d["unit_name"],
+                        d["address"], d["city"], d["state"],
+                        str(d["postalcode"]),
+                        d["domain"], d["organization"],
                         d["action"], d["remarks"]
                     ))
 
                 return bu_cu.GetBulkClientUnitFilterDataSuccess(
-                    group_name, csv_name, upload_by, upload_on, csv_id, total_records,
+                    group_name, csv_name, upload_by,
+                    upload_on, csv_id, total_records,
                     client_unit_data
                 )
             else:
@@ -562,20 +578,20 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user) :
 ########################################################
 '''
     returns true if the data updates properply
-    :param
+   :param
         db: database object
         csv_id: parent table id
         bulk_unit_id: sub table primary id
         action: approve or reject action
         remarks: remarks reason if required
         user_id: logged user
-    :type
+   :type
         db: Object
         csv_id: Integer
         action: Integer
         remarks: String
         user_id: Integer
-    :returns
+   :returns
         result: return boolean
     rtype:
         result: Boolean
@@ -583,15 +599,17 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user) :
 ########################################################
 
 
-def save_client_unit_action_from_view(db, csv_id, bulk_unit_id, action, remarks, session_user) :
+def save_client_unit_action_from_view(
+    db, csv_id, bulk_unit_id, action, remarks, session_user
+):
 
-    try :
+    try:
         args = [csv_id, bulk_unit_id, action, remarks]
         data = db.call_proc("sp_bulk_client_unit_id_save", args)
         print data
         return True
 
-    except Exception, e :
+    except Exception, e:
         logger.logKnowledge(
             "error",
             "update action from view",
@@ -603,15 +621,15 @@ def save_client_unit_action_from_view(db, csv_id, bulk_unit_id, action, remarks,
 ########################################################
 '''
     returns boolean value
-    :param
+   :param
         db: database object
         csv_id: parent table id
         user_id: logged user
-    :type
+   :type
         db: Object
         csv_id: Integer
         user_id: Integer
-    :returns
+   :returns
         result: return a boolean value
     rtype:
         result: boolean value
@@ -619,13 +637,13 @@ def save_client_unit_action_from_view(db, csv_id, bulk_unit_id, action, remarks,
 ########################################################
 
 
-def get_bulk_client_unit_null_action_count(db, request_frame, session_user) :
+def get_bulk_client_unit_null_action_count(db, request_frame, session_user):
 
     csv_id = request_frame.csv_id
     args = [csv_id]
     data = db.call_proc("sp_bulk_client_unit_action_count", args)
-    if len(data) > 0 :
-        if int(data[0].get("null_action_count")) > 0 :
+    if len(data) > 0:
+        if int(data[0].get("null_action_count")) > 0:
             return False
         else:
             return True
@@ -633,15 +651,15 @@ def get_bulk_client_unit_null_action_count(db, request_frame, session_user) :
 ########################################################
 '''
     returns boolean value
-    :param
+   :param
         db: database object
         csv_id: parent table id
         user_id: logged user
-    :type
+   :type
         db: Object
         csv_id: Integer
         user_id: Integer
-    :returns
+   :returns
         result: return a boolean value
     rtype:
         result: boolean value
@@ -649,12 +667,12 @@ def get_bulk_client_unit_null_action_count(db, request_frame, session_user) :
 ########################################################
 
 
-def get_bulk_client_unit_file_count(db, user_id) :
+def get_bulk_client_unit_file_count(db, user_id):
 
     # client_id = request_frame.bu_client_id
     args = [user_id]
     data = db.call_proc("sp_bulk_client_unit_file_count", args)
-    if len(data) > 0 :
+    if len(data) > 0:
         if int(data[0].get("file_count")) < MAX_REJECTED_COUNT:
             return True
         else:
