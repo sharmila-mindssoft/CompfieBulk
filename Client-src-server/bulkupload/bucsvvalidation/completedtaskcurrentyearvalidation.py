@@ -439,7 +439,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         # make ods file
         rename_file_type(file_name, "ods")
         # make text file
-        # rename_file_type(file_name, "txt")
+        rename_file_type(file_name, "txt")
         return {
             "return_status": False,
             "invalid_file": file_name,

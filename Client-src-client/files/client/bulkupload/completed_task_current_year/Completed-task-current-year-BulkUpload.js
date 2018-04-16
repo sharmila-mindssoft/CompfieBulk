@@ -266,28 +266,6 @@ function validateUpload() {
                     $('#ods').attr("href", ods_path);
                     $('#txt').attr("href", txt_path);
 
-                    // InvalidFileName = data.invalid_file.split('.');;
-                    // TotalRecordsCount.text(data.total);
-                    // var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
-                    // ValidRecordsCount.text(getValidCount);
-                    // InvalidRecordsCount.text(data.invalid);
-                    // MandatoryErrorsCount.text(data.mandatory_error);
-                    // DuplicateErrorsCount.text(data.duplicate_error);
-                    // StatusErrorsCount.text(data.inactive_error);
-                    // LengthErrorsCount.text(data.max_length_error);
-                    // getInvaliddataCount = parseInt(data.invalid_char_error) + parseInt(data.invalid_data_error);
-                    // InvalidErrorsCount.text(getInvaliddataCount);
-                    // $('.invaliddata').show();
-                    // $('.view-summary').show();
-
-                    // csv_path = "/invalid_file/csv/" + InvalidFileName[0] + '.csv';
-                    // xls_path = "/invalid_file/xlsx/" + InvalidFileName[0] + '.xlsx';
-                    // ods_path = "/invalid_file/ods/" + InvalidFileName[0] + '.ods';
-                    // txt_path = "/invalid_file/txt/" + InvalidFileName[0] + '.txt';
-                    // $('#csv').attr("href", csv_path);
-                    // $('#excel').attr("href", xls_path);
-                    // $('#ods').attr("href", ods_path);
-                    // $('#txt').attr("href", txt_path);
                     hideLoader();
                 }
             });
