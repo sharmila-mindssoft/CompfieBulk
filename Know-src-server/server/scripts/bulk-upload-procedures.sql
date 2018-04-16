@@ -1576,8 +1576,7 @@ BEGIN
         rejected_on = current_ist_datetime(),
         rejected_reason = _remarks,
         total_rejected_records = (select COUNT(0) FROM
-        tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id)
-        and t1.action = 2
+        tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id)        
         WHERE csv_unit_id = _csv_unit_id;
     ELSE
       IF _declinedCount = 0 THEN
