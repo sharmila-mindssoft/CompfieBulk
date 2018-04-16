@@ -149,7 +149,7 @@ class SourceDB(object) :
 
         data = self._source_db.call_proc("sp_bu_divisions" , [client_id])
         for d in data :
-            self.Division[d["division_name"]] = d
+            self.Division[str(d["legal_entity_id"]) + "-" + d["division_name"]] = d
 
     ###########################################################################
     '''
@@ -162,7 +162,7 @@ class SourceDB(object) :
 
         data = self._source_db.call_proc("sp_bu_categories" , [client_id])
         for d in data :
-            self.Category[d["category_name"]] = d
+            self.Category[str(d["legal_entity_id"]) + "-" + d["category_name"]] = d
 
     ###########################################################################
     '''
@@ -188,7 +188,11 @@ class SourceDB(object) :
 
         data = self._source_db.call_proc("sp_bu_client_unit_geographies")
         for d in data :
-            self.Unit_Location[d["parent_names"]] = d
+            newUnitLocation = ''
+            for parentname in d["parent_names"].split('>>'):
+                newUnitLocation = newUnitLocation + parentname.strip() + '>>'
+            newUnitLocation = newUnitLocation[:-2]
+            self.Unit_Location[newUnitLocation] = d
 
     ###########################################################################
     '''
@@ -222,7 +226,7 @@ class SourceDB(object) :
             self.Organization[
                 str(d["legal_entity_id"]) +
                 "-" + d["domain_name"] +
-                " >> " + d["organization_name"]
+                ">>" + d["organization_name"]
             ] = d
 
     ######################################################################################
@@ -234,7 +238,8 @@ class SourceDB(object) :
     #######################################################################################
 
     def check_base(self , check_status , store, key_name , status_name) :
-
+        print "check base"
+        print key_name
         data = store.get(key_name)
         if (data is not None and check_status is True) :
             if status_name is None :
@@ -242,10 +247,16 @@ class SourceDB(object) :
                     return "Status Inactive"
             elif status_name == "domain_is_active" :
                 if data.get("domain_is_active") == 0 :
-                    return "Status Inactive"
+                    if key_name.find("-") != -1:
+                        return key_name.split("-")[1] + " Status Inactive"
+                    else:
+                        return key_name + " Status Inactive"
             elif status_name == "organization_is_active" :
                 if data.get("organization_is_active") == 0 :
-                    return "Status Inactive"
+                    if key_name.find("-") != -1:
+                        return key_name.split("-")[1] + " Status Inactive"
+                    else:
+                        return key_name + " Status Inactive"
         return True
 
     ######################################################################################
@@ -294,7 +305,7 @@ class SourceDB(object) :
     def check_division(self , division_name) :
 
         store = self.Division
-        data = store.get(division_name)
+        data = store.get(str(self.Legal_Entity_Id) + "-" + division_name)
         if data is not None :
             return self.check_base(False , self.Division , division_name , None)
         else :
@@ -311,9 +322,12 @@ class SourceDB(object) :
     def check_category(self , category_name) :
 
         store = self.Category
-        data = store.get(category_name)
+        data = store.get(str(self.Legal_Entity_Id) + "-" + category_name)
         if data is not None :
-            return self.check_base(False , self.Category , category_name , None)
+            if (data.get("legal_entity_id") == self.Legal_Entity_Id) :
+                return self.check_base(False , self.Category , category_name , None)
+            else:
+                return True
         else:
             return True
 
@@ -352,12 +366,15 @@ class SourceDB(object) :
     #######################################################################################
 
     def check_unit_location(self , geography_name) :
-
         store = self.Unit_Location
-        data = store.get(geography_name)
+        newGeoName = ''
+        for geo in geography_name.split('>>'):
+            newGeoName = newGeoName + geo.strip() + '>>'
+        newGeoName = newGeoName[:-2]
+        data = store.get(newGeoName)
         if data is not None :
             if (data.get("level_id") == self.Level_Id) :
-                return self.check_base(True, self.Unit_Location, geography_name, None)
+                return self.check_base(True, self.Unit_Location, newGeoName, None)
             else :
                 return "Not found"
         else :
@@ -398,6 +415,10 @@ class SourceDB(object) :
         store = self.Domain
         errDesc = []
         status = None
+        newDomainName = ''
+        for domain in domain_name.split('|;|'):
+            newDomainName = newDomainName + domain.strip() + '|;|'
+        newDomainName = newDomainName[:-2]
         if domain_name.find(CSV_DELIMITER) > 0 :
             splittedDomain = domain_name.split(CSV_DELIMITER)
             for d in splittedDomain:
@@ -457,8 +478,13 @@ class SourceDB(object) :
         store = self.Organization
         errDesc = []
         status = None
-        if organization_name.find(CSV_DELIMITER) > 0 :
-            splittedOrg = organization_name.split(CSV_DELIMITER)
+        newOrgnName = ''
+        for org in organization_name.split('>>'):
+            newOrgnName = newOrgnName + org.strip() + '>>'
+        newOrgnName = newOrgnName[:-2]
+
+        if newOrgnName.find(CSV_DELIMITER) > 0 :
+            splittedOrg = newOrgnName.split(CSV_DELIMITER)
             for d in splittedOrg:
                 data = store.get(str(self.Legal_Entity_Id) + "-" + d.strip())
                 if data is not None :
@@ -470,21 +496,21 @@ class SourceDB(object) :
                         errDesc.append(d.strip() + status)
                     else:
                         if int(data.get("created_units")) >= int(data.get("total_unit_count")):
-                            errDesc.append(d.strip() + " Unit count exceeds the limit")
+                            errDesc.append(d.strip() + " Unit count exceeds the limit in Main DB")
                 else:
                     errDesc.append(d.strip() + " Not Found")
 
         else :
-            data = store.get(str(self.Legal_Entity_Id) + "-" + organization_name.strip())
+            data = store.get(str(self.Legal_Entity_Id) + "-" + newOrgnName.strip())
             if data is not None :
                 if int(data.get("created_units")) >= int(data.get("total_unit_count")) :
-                    errDesc.append(d + " Unit count exceeds the limit")
+                    errDesc.append(d + " Unit count exceeds the limit in Main DB")
                 else:
                     return self.check_base(
-                        True, self.Organization , (str(self.Legal_Entity_Id) + "-" + organization_name.strip()) ,
+                        True, self.Organization , (str(self.Legal_Entity_Id) + "-" + newOrgnName.strip()) ,
                         "organization_is_active")
             else :
-                errDesc.append(organization_name.strip() + " Not Found")
+                errDesc.append(newOrgnName.strip() + " Not Found")
 
         if len(errDesc) > 0:
             return ','.join(errDesc)
@@ -584,7 +610,10 @@ class SourceDB(object) :
         uc = self._source_db.select_one(
             q, select_param
         )
-        u_code = int(uc["code"])
+        if uc["code"] is not None:
+            u_code = int(uc["code"])
+        else:
+            u_code = 1
 
         if uc is False :
             raise process_error("E056")
@@ -649,13 +678,23 @@ class SourceDB(object) :
                     geo_level_id = self.Geography_Level.get(
                         str(country_id)+"-"+d["Geography_Level"]
                     ).get("level_id")
-                    ul = d["Unit_Location"]
-                    if geo_level_id == self.Unit_Location.get(ul).get("level_id"):
-                        main_geo_id = self.Unit_Location.get(ul).get("geography_id")
+                    # ul = d["Unit_Location"]
+                    newul = ''
+                    for ul in d["Unit_Location"].split('>>'):
+                        newul = newul + ul.strip() + '>>'
+                    newul = newul[:-2]
+                    if geo_level_id == self.Unit_Location.get(newul).get("level_id"):
+                        main_geo_id = self.Unit_Location.get(newul).get("geography_id")
 
                     if d["Organization"].find(CSV_DELIMITER) > 0 :
                         for orgn in d["Organization"].strip().split(CSV_DELIMITER) :
                             split_org = orgn.split(">>")
+
+                            neworgn = ''
+                            for o in orgn.split('>>'):
+                                neworgn = neworgn + o.strip() + '>>'
+                            neworgn = neworgn[:-2]
+
                             domain_orgn_ids.append(
                                 str(unit_code) + "-" +
                                 str(
@@ -663,7 +702,7 @@ class SourceDB(object) :
                                         str(le_id) + "-" + split_org[0].strip()
                                     ).get("domain_id")) + "-" +
                                 str(
-                                    self.Organization.get(str(le_id) + "-" + orgn.strip())
+                                    self.Organization.get(str(le_id) + "-" + neworgn.strip())
                                     .get("organisation_id")
                                 )
                             )
@@ -671,6 +710,10 @@ class SourceDB(object) :
                         domain = d["Domain"].strip()
                         orgn = d["Organization"].strip()
                         split_org = orgn.split(">>")
+                        neworgn = ''
+                        for o in orgn.split('>>'):
+                            neworgn = neworgn + o.strip() + '>>'
+                        neworgn = neworgn[:-2]
                         if domain == split_org[0].strip() :
                             domain_orgn_ids.append(
                                 str(unit_code) + "-" +
@@ -678,7 +721,7 @@ class SourceDB(object) :
                                     self.Domain.get(str(le_id) + "-" + domain).get("domain_id")
                                 ) + "-" +
                                 str(
-                                    self.Organization.get(str(le_id)+"-"+orgn).get("organisation_id"))
+                                    self.Organization.get(str(le_id)+"-"+neworgn).get("organisation_id"))
                                 )
 
                     self._auto_unit_code = unit_code
@@ -712,28 +755,42 @@ class SourceDB(object) :
                     unit_name = unit_data.get("Unit_Name")
                     unit_address = unit_data.get("Unit_Address") + "," + unit_data.get("City") + "," + unit_data.get("State")
                     post_code = unit_data.get("Postal_Code")
-                    u_code = int(self._auto_unit_code[2:]) + incre
-                    unit_code_start_letters = groupName[:2].upper()
+                    if self._auto_unit_code is None:
+                        unit_code = self.generate_unit_code(cl_id, groupName)
+                    else:
+                        u_code = int(self._auto_unit_code[2:]) + incre
+                        unit_code_start_letters = groupName[:2].upper()
 
-                    if (u_code > 0 and u_code < 10) :
-                        unit_code = str(unit_code_start_letters) + '0000' + str(u_code)
-                    elif (u_code >= 10 and u_code < 100) :
-                        unit_code = str(unit_code_start_letters) + '000' + str(u_code)
-                    elif (u_code >= 100 and u_code < 1000) :
-                        unit_code = str(unit_code_start_letters) + '00' + str(u_code)
-                    elif (u_code >= 1000 and u_code < 10000) :
-                        unit_code = str(unit_code_start_letters) + '0' + str(u_code)
+                        if (u_code > 0 and u_code < 10) :
+                            unit_code = str(unit_code_start_letters) + '0000' + str(u_code)
+                        elif (u_code >= 10 and u_code < 100) :
+                            unit_code = str(unit_code_start_letters) + '000' + str(u_code)
+                        elif (u_code >= 100 and u_code < 1000) :
+                            unit_code = str(unit_code_start_letters) + '00' + str(u_code)
+                        elif (u_code >= 1000 and u_code < 10000) :
+                            unit_code = str(unit_code_start_letters) + '0' + str(u_code)
                     main_geo_id = None
                     geo_level_id = self.Geography_Level.get(
                         str(country_id)+"-"+unit_data.get("Geography_Level")
                     ).get("level_id")
-                    ul = unit_data.get("Unit_Location")
-                    if geo_level_id == self.Unit_Location.get(ul).get("level_id"):
-                        main_geo_id = self.Unit_Location.get(ul).get("geography_id")
+
+                    # ul = d["Unit_Location"]
+                    newul = ''
+                    for ul in d["Unit_Location"].split('>>'):
+                        newul = newul + ul.strip() + '>>'
+                    newul = newul[:-2]
+                    if geo_level_id == self.Unit_Location.get(newul).get("level_id"):
+                        main_geo_id = self.Unit_Location.get(newul).get("geography_id")
 
                     if unit_data.get("Organization").find(CSV_DELIMITER) > 0 :
                         for orgn in unit_data.get("Organization").strip().split(CSV_DELIMITER) :
                             split_org = orgn.split(">>")
+
+                            neworgn = ''
+                            for o in orgn.split('>>'):
+                                neworgn = neworgn + o.strip() + '>>'
+                            neworgn = neworgn[:-2]
+
                             domain_orgn_ids.append(
                                 str(unit_code) + "-" +
                                 str(
@@ -741,7 +798,7 @@ class SourceDB(object) :
                                         str(le_id) + "-" + split_org[0].strip()
                                     ).get("domain_id")) + "-" +
                                 str(
-                                    self.Organization.get(str(le_id) + "-" + orgn.strip())
+                                    self.Organization.get(str(le_id) + "-" + neworgn.strip())
                                     .get("organisation_id")
                                 )
                             )
@@ -749,6 +806,10 @@ class SourceDB(object) :
                         domain = unit_data.get("Domain").strip()
                         orgn = unit_data.get("Organization").strip()
                         split_org = orgn.split(">>")
+                        neworgn = ''
+                        for o in orgn.split('>>'):
+                            neworgn = neworgn + o.strip() + '>>'
+                        neworgn = neworgn[:-2]
                         if domain == split_org[0].strip() :
                             domain_orgn_ids.append(
                                 str(unit_code) + "-" +
@@ -756,7 +817,7 @@ class SourceDB(object) :
                                     self.Domain.get(str(le_id) + "-" + domain).get("domain_id")
                                 ) + "-" +
                                 str(
-                                    self.Organization.get(str(le_id)+"-"+orgn).get("organisation_id"))
+                                    self.Organization.get(str(le_id)+"-"+neworgn).get("organisation_id"))
                                 )
 
                     values.append((
@@ -765,6 +826,7 @@ class SourceDB(object) :
                         str(unit_address) , str(post_code) , 1, int(createdby) , str(created_on),
                         int(createdby) , str(created_on)
                     ))
+
                     self._auto_unit_code = unit_code
                     inserted_records += 1
                     # incre += 1
@@ -816,10 +878,13 @@ class SourceDB(object) :
     '''
     #######################################################################################
 
-    def save_executive_message(self , csv_name , groupname , createdby) :
+    def save_executive_message(self , full_csv_name , groupname , createdby) :
         # Message for techno manager
         msg_user_id = []
-        text = "Client Unit file %s of %s uploaded for  your approval" % (
+        csv_name = full_csv_name.split('_')
+        csv_name = "_".join(csv_name[:-1])
+
+        text = "Client Unit File %s of %s uploaded for  your approval" % (
                 csv_name , groupname ,
             )
         link = "/knowledge/approve_client_unit_bu"
@@ -865,23 +930,42 @@ class SourceDB(object) :
     '''
     #######################################################################################
 
-    def save_manager_message(self , a_type , csv_name , groupname , createdby , uploaded_by) :
+    def save_manager_message(
+        self , a_type , full_csv_name , groupname , createdby ,
+        uploaded_by, reject_reason, sys_decl_cnt
+    ) :
         if a_type == 1 :
             action_type = "approved"
         else :
             action_type = "rejected"
 
+        csv_name = full_csv_name.split('_')
+        csv_name = "_".join(csv_name[:-1])
+
         # Message for techno executive
         msg_user_id = []
-        text = "Client Unit file %s of %s has been %s" % (
-                csv_name, groupname, action_type
-            )
+        if a_type == 1:
+            text = "Client Unit File %s of %s has been %s" % (
+                    csv_name, groupname, action_type
+                )
+            if sys_decl_cnt > 0:
+                sysDeclText = "Client Unit File %s - %s %s has been declined by COMPFIE" % (
+                    csv_name, groupname, sys_decl_cnt
+                )
+        else:
+            text = "Client Unit File %s of %s has been %s with %s" % (
+                    csv_name, groupname, action_type, reject_reason
+                )
         link = "/knowledge/client-unit-bu"
         msg_user_id.append(uploaded_by)
         self._source_db.save_toast_messages(
             6 , "Approve Client Unit Bulk Upload" , text , link , msg_user_id , createdby
         )
 
+        if sys_decl_cnt > 0:
+            self._source_db.save_toast_messages(
+                6 , "Approve Client Unit Bulk Upload" , sysDeclText , link , msg_user_id , createdby
+            )
         q1 = "select user_id from tbl_user_login_details where is_active = 1 and user_category_id = 1"
         row1 = self._source_db.select_all(q1)
         c_admin = []
@@ -892,6 +976,10 @@ class SourceDB(object) :
             self._source_db.save_toast_messages(
                 1, "Approve Client Unit Bulk Upload", text, link, c_admin, createdby
             )
+            if sys_decl_cnt > 0:
+                self._source_db.save_toast_messages(
+                    1, "Approve Client Unit Bulk Upload", sysDeclText, link, c_admin, createdby
+                )
 
         action = "Client Unit file  %s of %s has been %s" % (
             csv_name, groupname, action_type
@@ -934,7 +1022,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
         self._temp_client_units = {}
         self._temp_units_count = {}
         self._legal_entity_name = None
-        self._valid_unit_count = 0
+        self._valid_unit_count = 1
         self._doc_names = []
         self._sheet_name = "Client Unit"
 
@@ -966,7 +1054,8 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
     def compare_csv_columns(self) :
         res = collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
         if res is False :
-            raise ValueError("Csv Column Mismatched")
+            # raise ValueError("Csv Column Mismatched")
+            return "Csv Column Mismatched"
 
     ######################################################################################
     '''
@@ -996,19 +1085,17 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
         self._source_data.sort(key=lambda x: (
             x["Legal_Entity"] , x["Unit_Code"]
         ))
-        msg = []
+        unit_codes = []
+        unit_code_occur = 0
         for k, v in groupby(self._source_data, key=lambda s : (
             s["Legal_Entity"] , s["Unit_Code"]
         )):
             grouped_list = list(v)
             if len(grouped_list) > 1 and grouped_list[0].get("Unit_Code") != "auto_gen" :
-                msg.append(grouped_list[0].get("Unit_Code"))
+                unit_code_occur += len(grouped_list)
+                unit_codes.append(grouped_list[0].get("Unit_Code"))
 
-        if len(msg) > 0 :
-            error_msg = "Duplicate unit code found in csv %s" % (
-                ','.join(msg)
-            )
-            raise ValueError(str(error_msg))
+        return unit_code_occur, unit_codes
 
     ######################################################################################
     '''
@@ -1021,28 +1108,23 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
         self._source_data.sort(key=lambda x: (
             x["Legal_Entity"] , x["Domain"]
         ))
-        msg = []
+        domain_duplicates = []
+        occur = 0
         for k, v in groupby(self._source_data, key=lambda s : (
             s["Legal_Entity"] , s["Domain"]
         )):
             grouped_list = list(v)
-            occur = 0
             if grouped_list[0].get("Domain").find('|;|') >= 0 :
                 splitDomain = grouped_list[0].get("Domain").split('|;|')
                 last = object()
                 for val in splitDomain :
-                    if last != val :
-                        last = val
+                    if last != val.strip() :
+                        last = val.strip()
                     else:
                         occur += 1
             if occur > 0 :
-                msg.append(grouped_list[0].get("Domain"))
-
-        if len(msg) > 0 :
-            error_msg = "Duplicate Domain found in csv %s" % (
-                ','.join(msg)
-            )
-            raise ValueError(str(error_msg))
+                domain_duplicates.append(grouped_list[0].get("Domain"))
+        return domain_duplicates
 
     ######################################################################################
     '''
@@ -1055,7 +1137,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
         self._source_data.sort(key=lambda x: (
             x["Legal_Entity"] , x["Organization"]
         ))
-        msg = []
+        orgn_duplicates = []
         for k, v in groupby(self._source_data, key=lambda s : (
             s["Legal_Entity"] , s["Organization"]
         )):
@@ -1065,18 +1147,14 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
                 splitOrgn = grouped_list[0].get("Organization").split('|;|')
                 last = object()
                 for val in splitOrgn :
-                    if last != val :
-                        last = val
+                    if last != val.strip():
+                        last = val.strip()
                     else:
                         occur += 1
             if occur > 0 :
-                msg.append(grouped_list[0].get("Organization"))
+                orgn_duplicates.append(grouped_list[0].get("Organization"))
 
-        if len(msg) > 0 :
-            error_msg = "Duplicate Organization found in csv %s" % (
-                ','.join(msg)
-            )
-            raise ValueError(str(error_msg))
+        return orgn_duplicates
 
     ######################################################################################
     '''
@@ -1119,43 +1197,75 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
     #######################################################################################
 
     def check_organization_unit_count_in_tempDB(self , organization_name) :
+        print "inside temp db checking"
         mainStrore = self.Organization
         tempStore = self._temp_units_count
+        neworgn = ''
+        for o in organization_name.split('>>'):
+            neworgn = neworgn + o.strip() + '>>'
+        neworgn = neworgn[:-2]
+        print neworgn
         tempData = tempStore.get(
-            self._legal_entity_name + "-" + organization_name.strip()
+            self._legal_entity_name + "-" + neworgn.strip()
         )
         errDesc = []
-        if organization_name.find(CSV_DELIMITER) > 0 :
-            splittedOrg = organization_name.split(CSV_DELIMITER)
+        if neworgn.find(CSV_DELIMITER) > 0 :
+            splittedOrg = neworgn.split(CSV_DELIMITER)
             for d in splittedOrg :
                 mainData = mainStrore.get(str(self.Legal_Entity_Id) + "-" + d.strip())
                 if mainData is not None and tempData is not None :
+                    print "1", mainData.get("total_unit_count"), mainData.get("created_units"), tempData.get("saved_units"), self._valid_unit_count
                     main_temp_units = int(
                         mainData.get("total_unit_count")
                     ) - (int(mainData.get("created_units")) + int(tempData.get("saved_units")))
                     if main_temp_units == 0 :
-                        errDesc.append("Organization - " + d + " Unit count reached the limit")
+                        errDesc.append(
+                            "Organization - " + d +
+                            " Unit count reached the limit comparing TempDB and MainDB"
+                        )
                     else:
-                        if self._valid_unit_count > main_temp_units :
-                            errDesc.append("Organization - " + d + " Unit count reached the limit")
+                        if self._valid_unit_count > main_temp_units * len(splittedOrg):
+                            errDesc.append(
+                                "Organization - " + d +
+                                " Unit count reached the limit comparing TempDB and MainDB"
+                            )
                         else:
                             self._valid_unit_count += 1
         else:
+            print "AA"
             mainData = mainStrore.get(
-                str(self.Legal_Entity_Id) + "-" + organization_name
+                str(self.Legal_Entity_Id) + "-" + neworgn
             )
+            print mainData
+            print tempStore
             tempData = tempStore.get(
-                self._legal_entity_name + "-" + organization_name
+                self._legal_entity_name + "-" + neworgn.strip()
             )
+            if tempData is None:
+                for temp_d in tempStore:
+                    tempData = tempStore.get(temp_d)
+                    orgn_name = tempData.get("organization")
+                    if neworgn in orgn_name:
+                        saved_units = tempData.get("saved_units")
+            else:
+                saved_units = tempData.get("saved_units")
+            print saved_units
             if mainData is not None and tempData is not None :
+                print "1_1", mainData.get("total_unit_count"), mainData.get("created_units"), saved_units, self._valid_unit_count
                 main_temp_units = int(
                     mainData.get("total_unit_count")
-                ) - (int(mainData.get("created_units")) + int(tempData.get("saved_units")))
+                ) - (int(mainData.get("created_units")) + int(saved_units))
                 if main_temp_units == 0 :
-                    errDesc.append("Organization - " + organization_name + " Unit count reached the limit")
+                    errDesc.append(
+                        "Organization - " + neworgn +
+                        " Unit count reached the limit comparing TempDB and MainDB"
+                    )
                 else:
                     if self._valid_unit_count > main_temp_units :
-                        errDesc.append("Organization - " + organization_name + " Unit count reached the limit")
+                        errDesc.append(
+                            "Organization - " + neworgn +
+                            " Unit count reached the limit comparing TempDB and MainDB"
+                        )
                     else:
                         self._valid_unit_count += 1
         return '|;|'.join(errDesc)
@@ -1171,11 +1281,14 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
         mapped_header_dict = {}
         invalid = 0
         csv_domain_name = None
-        self.compare_csv_columns()
-        # self.check_duplicate_in_csv()
-        self.check_duplicate_unit_code_in_csv()
-        self.check_duplicate_domain_in_csv_row()
-        self.check_duplicate_organization_in_csv_row()
+        csv_column_compare = None
+        csv_column_compare = self.compare_csv_columns()
+        if csv_column_compare == "Csv Column Mismatched":
+            return "Csv Column Mismatched"
+        csv_unitcode_duplicate = self.check_duplicate_unit_code_in_csv()
+        self._error_summary["duplicate_error"] += csv_unitcode_duplicate[0]
+        csv_domain_duplicate = self.check_duplicate_domain_in_csv_row()
+        csv_orgn_duplicate = self.check_duplicate_organization_in_csv_row()
         self.get_tempDB_data()
         self._uploaded_by = self._session_user_obj.user_id()
         self.init_values(self._session_user_obj.user_id(), self._client_id)
@@ -1192,6 +1305,8 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
                     csvParam = csv_params.get(key)
                     unitCodeErr = None
                     unitCountErr = None
+                    domain_row_last = object()
+                    orgn_row_last = object()
 
                     if (key == "Format" and value != '') :
                         self._doc_names.append(value)
@@ -1199,6 +1314,14 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
                         if key == "Legal_Entity":
                             self._legal_entity_name = v
                         elif key == "Unit_Code" and v != "auto_gen" :
+                            if csv_unitcode_duplicate[0] > 0 :
+                                for u in csv_unitcode_duplicate[1]:
+                                    if u == v:
+                                        msg = "%s - %s" % (key, v + " Duplicated in CSV")
+                                        if res is not True :
+                                            res.append(msg)
+                                        else:
+                                            res = [msg]
                             unitCodeErr = self.check_duplicate_unit_code_in_tempDB(v)
                             if unitCodeErr is not None and unitCodeErr != "":
                                 if res is not True :
@@ -1213,16 +1336,52 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
                                     res.append(msg)
                                 else:
                                     res = [msg]
+                                self._error_summary["invalid_data_error"] += 1
+                            elif v != '':
+                                try:
+                                    typeVal = long(v)
+                                    print typeVal
+                                except Exception, e:
+                                    print e
+                                    msg = "%s - %s" % (key, "invalid Postal Code")
+                                    if res is not True:
+                                        res.append(msg)
+                                    else:
+                                        res = [msg]
+                                    self._error_summary["invalid_data_error"] += 1
                         elif key == "Domain":
                             csv_domain_name = value
+                            if csv_domain_duplicate is not None:
+                                for d in csv_domain_duplicate:
+                                    if d == value and domain_row_last != row_idx:
+                                        domain_row_last = row_idx
+                                        msg = "%s - %s" % (key, value + " Duplicated in CSV")
+                                        if res is not True :
+                                            res.append(msg)
+                                        else:
+                                            res = [msg]
+                                        self._error_summary["duplicate_error"] += 1
+
                         elif key == "Organization" :
-                            unitCountErr = self.check_organization_unit_count_in_tempDB(value)
-                            if unitCountErr is not None and unitCountErr != "":
-                                if res is not True:
-                                    res.append(unitCountErr)
-                                else:
-                                    res = [unitCountErr]
-                                self._error_summary["max_unit_count_error"] += 1
+                            if csv_orgn_duplicate is not None:
+                                for o in csv_orgn_duplicate:
+                                    if o == value and orgn_row_last != row_idx:
+                                        orgn_row_last = row_idx
+                                        msg = "%s - %s" % (key, value + " Duplicated in CSV")
+                                        if res is not True :
+                                            res.append(msg)
+                                        else:
+                                            res = [msg]
+                                        self._error_summary["duplicate_error"] += 1
+                            if orgn_row_last != row_idx:
+                                unitCountErr = self.check_organization_unit_count_in_tempDB(value)
+                                orgn_row_last = row_idx
+                                if unitCountErr is not None and unitCountErr != "":
+                                    if res is not True:
+                                        res.append(unitCountErr)
+                                    else:
+                                        res = [unitCountErr]
+                                    self._error_summary["max_unit_count_error"] += 1
 
                             # check organization under domain
                             checkOrgn = self.check_for_organization_under_domain(csv_domain_name, value)
@@ -1413,19 +1572,24 @@ class ValidateClientUnitsBulkCsvData(SourceDB) :
                         e = ""
                     else :
                         e = "|;|".join(error_text)
-                    print e
+                    # print e
                     # e.encode("utf8")
                     # e.decode('utf8')
 
                     worksheet.write_string(row, col+i, e)
                 else :
                     # d.decode('utf8')
-                    d.decode("utf8")
-                    if idx in error_col :
+                    try:
+                        d.decode("utf8")
+                        print "excel data"
+                        print d
+                        print h
+                        if idx in error_col :
+                            worksheet.write_string(row, col+i, d, error_format)
+                        else :
+                            worksheet.write_string(row, col+i, d)
+                    except Exception, e :
                         worksheet.write_string(row, col+i, d, error_format)
-                    else :
-                        worksheet.write_string(row, col+i, d)
-
             row += 1
 
         # summary sheet
@@ -1510,6 +1674,7 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB) :
         sys_declined_count = 0
         self._declined_bulk_unit_id = []
         self._declined_bulk_unit_id_err = []
+        manual_rejection_count = 0
         self.init_values(self._session_user_obj.user_id(), self._client_id)
 
         for row_idx, data in enumerate(self._temp_data) :
@@ -1518,7 +1683,8 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB) :
                 self._group_name = data.get("client_group")
                 self._csv_name = data.get("csv_name")
                 self._uploaded_by = data.get("uploaded_by")
-
+            if data.get("action") == 2:
+                manual_rejection_count += 1
             for key in self._csv_column_name :
                 value = data.get(key)
                 if key == "Postal_Code" :
@@ -1557,7 +1723,9 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB) :
                 self._declined_bulk_unit_id.append(data.get("bulk_unit_id"))
                 self._declined_bulk_unit_id_err.append(res)
                 res = True
-        return self._declined_bulk_unit_id, self._declined_bulk_unit_id_err
+        print "rejection count"
+        print self._declined_bulk_unit_id_err, manual_rejection_count
+        return self._declined_bulk_unit_id, self._declined_bulk_unit_id_err, manual_rejection_count
 
     ###############################################################################################
     '''
@@ -1585,8 +1753,8 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB) :
             c_id = self.Country_Id
             groupName = value.get("client_group")
             created_by = value.get("uploaded_by")
-            main_division_id = None
-            main_category_id = None
+            main_division_id = 0
+            main_category_id = 0
 
             # fetch legal_entity_id
             if self.Legal_Entity.get(value.get("Legal_Entity")) is not None :
@@ -1594,21 +1762,21 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB) :
 
                 # fetch division id
                 division = value.get("Division")
-                if self.Division.get(division) is None :
+                if division != '' and self.Division.get(str(le_id) + "-" + division) is None :
                     main_division_id = self.save_division(
                         cl_id, le_id, bg_id, division, created_by
                     )
-                else:
-                    main_division_id = self.Division.get(division).get("division_id")
+                elif division != '':
+                    main_division_id = self.Division.get(str(le_id) + "-" + division).get("division_id")
 
                 # fetch category id
                 category = value.get("Category")
-                if self.Category.get(category) is None :
+                if category != '' and self.Category.get(str(le_id) + "-" + category) is None :
                     main_category_id = self.save_category(
                         cl_id, le_id, bg_id, main_division_id, category, created_by
                     )
-                else:
-                    main_category_id = self.Category.get(category).get("category_id")
+                elif category != '':
+                    main_category_id = self.Category.get(str(le_id) + "-" + category).get("category_id")
 
                 self.save_units(
                     cl_id, bg_id, le_id, main_division_id, main_category_id,

@@ -7,7 +7,6 @@ var ASSIGNED_UNIT_LIST = [];
 var MAPPED_USER_LIST = [];
 var USER_MAPPING_LIST = [];
 var CSV = false;
-var DOMAIN_EXECUTIVES = [];
 var USER_CATEGORY_ID;
 var DOMAIN_EXECUTIVES = [];
 var ALLUSERS = [];
@@ -104,7 +103,7 @@ function resetFilter(evt) {
 
         DOMAIN.empty();
         DOMAIN.html();
-        DOMAIN.multiselect('rebuild');
+        
 
         UNIT_VAL.val('');
         UNIT.val('');
@@ -118,7 +117,7 @@ function resetFilter(evt) {
     if (evt == 'le') {
         DOMAIN.empty();
         DOMAIN.html();
-        DOMAIN.multiselect('rebuild');
+        
 
         UNIT_VAL.val('');
         UNIT_VAL.val('');
@@ -554,9 +553,7 @@ UNIT_VAL.keyup(function(e) {
         var unitList = [];
         var textVal = $(this).val();
         if(DOMAIN.val() != null){
-            checkDomain = DOMAIN.val().map(Number);
-            checkDomain = integerArrayValue(checkDomain);
-
+            checkDomain = DOMAIN.val();
             if (UNITS.length > 0 && checkDomain.length > 0) {
                 for (var i in UNITS) {
                     if(UNITS[i].le_id == LEGAL_ENTITY.val() &&
@@ -673,7 +670,7 @@ function fetchDomainMultiselect() {
             }                
         }
         DOMAIN.append(str);
-        DOMAIN.multiselect('rebuild');
+        
     }
 }
 
@@ -683,7 +680,7 @@ function processSubmit() {
     var clientGroup = parseInt(GROUP.val());
     var legalEntityID = parseInt(LEGAL_ENTITY.val());
     var deIds = DE_NAME.val();
-    var domain_ids = DOMAIN.val();
+    var domainId = DOMAIN.val();
     var unitID = "";
 
     var fromDate = FROM_DATE.val();
@@ -691,11 +688,6 @@ function processSubmit() {
 
     var selectedDEName = [];
     var splitValues;
-
-    var selectedDomain = [];
-    $.each(domain_ids, function(key, value) {
-        selectedDomain.push(parseInt(value));
-    });
 
     if (UNIT.val()) {
         unitID = UNIT.val();
@@ -724,7 +716,7 @@ function processSubmit() {
         "bu_client_id": clientGroup,
         "bu_legal_entity_id": legalEntityID,
         "bu_unit_id": unitID,
-        "domain_ids": selectedDomain,
+        "d_id": parseInt(domainId),
         "from_date": fromDate,
         "to_date": toDate,
         "r_count": SNO,
@@ -916,7 +908,7 @@ AssignStatutoryBulkReport.prototype.exportData = function() {
     var legalEntityID = parseInt(LEGAL_ENTITY.val());
     var legalEntityName = LEGAL_ENTITY_VAL.val();
     var deIds = DE_NAME.val();
-    var domainIds = DOMAIN.val();
+    var domainId = DOMAIN.val();
     var unitID = "";
     var unitName = UNIT_VAL.val();
     var fromDate = FROM_DATE.val();
@@ -924,11 +916,6 @@ AssignStatutoryBulkReport.prototype.exportData = function() {
 
     var selectedDEName = [];
     var splitValues;
-
-    var selectedDomain = [];
-    $.each(domainIds, function(key, value) {
-        selectedDomain.push(parseInt(value));
-    });
 
     if (UNIT.val()) {
         unitID = UNIT.val();
@@ -955,7 +942,7 @@ AssignStatutoryBulkReport.prototype.exportData = function() {
         "legal_entity_name": legalEntityName,
         "bu_unit_id": unitID,
         "unit_name": unitName,
-        "domain_ids": selectedDomain,
+        "d_id": parseInt(domainId),
         "d_names": domainNames,
         "from_date": fromDate,
         "to_date": toDate,

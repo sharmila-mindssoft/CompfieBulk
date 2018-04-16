@@ -167,11 +167,11 @@ def write_data_to_excel(
         summarySheet.write(c, h, bold)
 
     srow = 1
-    for i, col in enumerate(headers[:-1]) :
+    for i, col in enumerate(headers[:-1]):
         value = 0
         col = col.replace('*', '')
         error_count = header_dict.get(col)
-        if error_count is not None :
+        if error_count is not None:
             value = len(error_count)
         summarySheet.write(srow, 0, col)
         summarySheet.write(srow, 1, value)

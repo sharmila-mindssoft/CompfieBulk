@@ -649,10 +649,10 @@ def get_bulk_client_unit_null_action_count(db, request_frame, session_user) :
 ########################################################
 
 
-def get_bulk_client_unit_file_count(db, request_frame) :
+def get_bulk_client_unit_file_count(db, user_id) :
 
-    client_id = request_frame.bu_client_id
-    args = [client_id]
+    # client_id = request_frame.bu_client_id
+    args = [user_id]
     data = db.call_proc("sp_bulk_client_unit_file_count", args)
     if len(data) > 0 :
         if int(data[0].get("file_count")) < MAX_REJECTED_COUNT:

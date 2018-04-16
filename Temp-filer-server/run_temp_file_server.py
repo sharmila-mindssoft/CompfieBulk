@@ -95,21 +95,27 @@ def update_file_status(file_name, csv_id):
 def update_file_ddwnload_status(csv_id, status):
     res_ponse_data = None
     _db_con = bulkupload_db_connect()
+    print "DB CON ", _db_con
     _db = Database(_db_con)
-    try :
+    print "_db- >", _db
+    try:
         _db.begin()
-        print "update format file status"
-        if _db.update_format_file_status(csv_id, status) is None:
+        print "update format file status *** db ", _db
+        db_stat = _db.update_format_file_status(csv_id, status)
+        print "db_stat-> ", db_stat
+        if db_stat is None:
             res_ponse_data = False
             print "update failed"
         _db.commit()
     except Exception:
+        print "In Exception"
         _db.rollback()
 
     finally:
         _db.close()
         _db_con.close()
 
+    print "res_ponse_data-> ", res_ponse_data
     return res_ponse_data
 
 @app.route('/temp/upload', methods=['POST'])
@@ -152,9 +158,9 @@ def zip_folder(folder_name, folder_path):
     zipping_in_process.append(folder_name)
     file_status[folder_name] = "Zipping Started"
     zip_f_name = get_zip_file(folder_name)
-    print folder_path
+    print "folder_path-> ", folder_path
     files = glob.glob(os.path.join(folder_path, "*"))
-    print files
+    print "Files ->", files
     files = [x for x in files if os.path.isfile(x)]
     print files
     with zipfile.ZipFile(zip_f_name, "w", zipfile.ZIP_DEFLATED) as newzip:
@@ -164,14 +170,17 @@ def zip_folder(folder_name, folder_path):
     print "*" * 10
     print "Completed", zip_f_name
     print "*" * 10
-    if update_file_ddwnload_status(folder_name, "completed") is False :
+    if update_file_ddwnload_status(folder_name, "completed") is False:
         return "download status update failed"
     zipping_in_process.remove(folder_name)
     file_status[folder_name] = "Zipping Completed"
 
+
 @app.route('/temp/approve', methods=['POST'])
 def approve():
+    print "CAME IN APPROVE"
     folder_name = request.args.get('csvid')
+    print "folder_name-> ", folder_name
     assert folder_name is not None
     folder_path = os.path.join(app.config['UPLOAD_PATH'], folder_name)
     if not os.path.exists(folder_path):
@@ -179,15 +188,19 @@ def approve():
     if folder_name in zipping_in_process:
         return "Already Started"
     thread.start_new_thread(zip_folder, (folder_name, folder_path))
-    if update_file_ddwnload_status(folder_name, "inprogress") is False :
-        return "download status update failed"
+    print "Thred ", thread
+    # if update_file_ddwnload_status(folder_name, "inprogress") is False:
+        # return "download status update failed"
+    print " at before started zippng"
     return "started zipping"
+
 
 @app.route('/temp/downloadfile', methods=['GET'])
 def downloadfile():
     folder_name = request.args.get('csvid')
     assert folder_name is not None
     folder_path = os.path.join(app.config['UPLOAD_PATH'], folder_name)
+    print "FOLDER pATH IN DOWNLOAD"
     zip_f_name = get_zip_file(folder_name)
     if not os.path.exists(folder_path):
         return "Error"

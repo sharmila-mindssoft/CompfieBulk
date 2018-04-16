@@ -739,7 +739,7 @@ class ClientUnitRejectData(object):
         self.statutory_action = statutory_action
         self.declined_count = declined_count
         self.rejected_file = rejected_file
-        self.rejected_reason = rejected_reason        
+        self.rejected_reason = rejected_reason
 
     @staticmethod
     def parse_structure(data):
@@ -941,19 +941,23 @@ class ClientUnitsUploadedCSVFilesListSuccess(Response):
 
 
 class ReturnDeclinedCount(Response):
-    def __init__(self, declined_count):
+    def __init__(self, declined_count, rejected_count):
         self.declined_count = declined_count
+        self.rejected_count = rejected_count
 
     @staticmethod
     def parse_inner_structure(data):
 
-        data = parse_dictionary(data, ["declined_count"])
-        return ReturnDeclinedCount(data.get("declined_count"))
+        data = parse_dictionary(data, ["declined_count", "rejected_count"])
+        return ReturnDeclinedCount(
+            data.get("declined_count"), data.get("rejected_count")
+        )
 
     def to_inner_structure(self):
 
         return {
-            "declined_count": self.declined_count
+            "declined_count": self.declined_count,
+            "rejected_count": self.rejected_count
         }
 
 
@@ -1194,7 +1198,7 @@ class EmptyFilteredData(Response):
     def to_inner_structure(self):
         return {}
 
-class CSVFileLinesMaxREached(Response):
+class CSVColumnMisMatched(Response):
 
     def __init__(self):
         pass
@@ -1203,10 +1207,26 @@ class CSVFileLinesMaxREached(Response):
     def parse_inner_structure(data):
 
         data = parse_dictionary(data)
-        return CSVFileLinesMaxREached()
+        return CSVColumnMisMatched()
 
     def to_inner_structure(self):
         return {}
+
+class CSVFileLinesMaxREached(Response):
+
+    def __init__(self, csv_max_lines):
+        self.csv_max_lines = csv_max_lines
+
+    @staticmethod
+    def parse_inner_structure(data):
+
+        data = parse_dictionary(data, ["csv_max_lines"])
+        return CSVFileLinesMaxREached(data.get("csv_max_lines"))
+
+    def to_inner_structure(self):
+        return {
+            "csv_max_lines": self.csv_max_lines
+        }
 
 def _init_Response_class_map():
 
@@ -1226,7 +1246,7 @@ def _init_Response_class_map():
         SubmitClientUnitActionFromListFailure,
         EmptyCSVUploaded, ClientUnitUploadMaxReached,
         InvalidCSVUploaded, EmptyFilteredData,
-        CSVFileLinesMaxREached
+        CSVFileLinesMaxREached, CSVColumnMisMatched
     ]
     class_map = {}
     for c in classes:

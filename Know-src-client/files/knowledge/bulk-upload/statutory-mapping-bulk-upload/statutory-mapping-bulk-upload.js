@@ -231,9 +231,15 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     SummaryValid.text(response.valid);
                     SummaryInvalid.text(response.invalid);
                     docNames = response.doc_names;
+
                     UploadDocument.show();
+                    DocumentTotal.text(response.doc_count);
+                    DocumentUploaded.text("0");
+                    DocumentRemaining.text("0");
+
                     DocumentSummary.hide();
-                    t_this.changeTxttoLabel(countryAc.val(), domainAc.val(), response.csv_name)
+                    t_this.changeTxttoLabel(countryAc.val(), domainAc.val(),
+                                            response.csv_name)
                 }
                 else {
                     DataSummary.hide();
@@ -276,6 +282,8 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                 if (error == "CsvFileExeededMaxLines") {
                     displayMessage(message.csv_max_lines_exceeded.replace(
                         'MAX_LINES', response.csv_max_lines));
+                }else if(error == "CsvFileCannotBeBlank") {
+                    displayMessage(message.csv_file_blank);
                 }
                 else{
                     buSmPage.possibleFailures(error);
@@ -336,23 +344,24 @@ BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
     lblDomainName.text(d_name);
     inputFileControl.hide();
     displayFileControl.show();
-    var cname_split = csv_name.split("_");
-    cname_split.pop();
-    var cname = cname_split.join("_") + ".csv";
-    $('.csv-file-name').text(cname);
+    $('.csv-file-name').text(csv_name);
     $('.csv-file-view').attr("href", "/uploaded_file/csv/"+csv_name);
     $('.csv-file-download').attr("href", "/uploaded_file/csv/"+csv_name);
     this._ActionMode = "upload"
 };
 BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     this.showAddScreen();
+
+    var uploadedCsvName = data.csv_name
+    var csv_split_name = uploadedCsvName.substring(0, uploadedCsvName.lastIndexOf("_") )
     countryAc.val(data.c_name);
     countryVal.val(data.c_id);
     domainAc.val(data.d_name);
     domainVal.val(data.d_id);
-    this.changeTxttoLabel(data.c_name, data.d_name, data.csv_name)
+    this.changeTxttoLabel(data.c_name, data.d_name, csv_split_name + ".csv")
     UploadDocument.show();
     DocumentSummary.show();
+
     DocumentTotal.text(data.no_of_documents);
     DocumentUploaded.text(data.uploaded_documents);
     DocumentRemaining.text(
@@ -461,8 +470,15 @@ function PageControls() {
         }
     }
     else {
-        displayLoader();
-        myDropzone.processQueue();
+        // Todo mandatory check
+        console.log($(".dropzone > .dz-preview").length)
+        if($(".dropzone > .dz-preview").length > 0){
+            displayLoader();
+            myDropzone.processQueue();
+        }
+        else{
+            displayMessage(message.document_required);
+            return false;        }
     }
   });
 
