@@ -2,7 +2,23 @@
 
 {% block content %}
 <link href="/css/multifreezer.css" rel="stylesheet" type="text/css" />
-
+<style>
+/*.table-fixed thead {
+  width: 97%;
+}
+.table-fixed tbody {
+  height: 230px;
+  overflow-y: auto;
+  width: 100%;
+}
+.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
+  display: block;
+}
+.table-fixed tbody td, .table-fixed thead > tr> th {
+  float: left;
+  border-bottom-width: 0;
+}*/
+</style>
 <div class="content">
 <div class="container" id="sm-approve-list">
     <div class="row">
@@ -27,8 +43,8 @@
                                                     <input type="text" id="countryname" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="" tabindex="1">
                                                     <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                                     <input id="countryid" type="hidden">
-                                                    <div id="ac-country" class="ac-textbox default-display-none">
-                                                        <ul style="width:94%;"></ul>
+                                                    <div id="ac-country" class="ac-textbox auto-text-box default-display-none">
+                                                        <ul></ul>
                                                     </div>
                                                 </div>
                                             </div>
@@ -40,8 +56,8 @@
                                                     <input type="text" id="domainname" name="example-input-small" class="form-control input-sm" placeholder="Enter Domain Name" value="" tabindex="2">
                                                     <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                                     <input id="domainid" type="hidden">
-                                                    <div id="ac-domain" class="ac-textbox default-display-none">
-                                                        <ul style="width:94%;"></ul>
+                                                    <div id="ac-domain" class="ac-textbox auto-text-box default-display-none">
+                                                        <ul></ul>
                                                     </div>
                                                 </div>
                                             </div>
@@ -53,8 +69,8 @@
                                                     <input type="text" id="username" name="example-input-small" class="form-control input-sm" placeholder="Enter User Name" value="" tabindex="3">
                                                     <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                                     <input id="userid" type="hidden">
-                                                    <div id="ac-user" class="ac-textbox default-display-none">
-                                                        <ul style="width:94%;"></ul>
+                                                    <div id="ac-user" class="ac-textbox auto-text-box default-display-none">
+                                                        <ul></ul>
                                                     </div>
                                                 </div>
                                             </div>
@@ -70,7 +86,7 @@
                                         <!-- end col -->
                                     </form>
                                 </div>
-                                <table id="datatable-responsive" class="table table-striped dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+                                <table id="datatable-responsive" class="table table-fixed table-striped dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -183,6 +199,7 @@
                         </div>
                       </div>
                     </div>
+                    <div class="clearfix"></div>
                     <div class="col-lg-4">
                       <div class="form-group has-feedback m-b-0">
                         <label class="col-md-5 control-label">Uploaded File Name</label>
@@ -539,21 +556,21 @@
           <i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer default-display-none" data-toggle="tooltip" title="" data-original-title=""></i>
         </th>
 
-        <th class="divider-column statutory" width="5%"></th>
+        <th class="divider-column statutory break-word" width="5%"></th>
         <th width="1%"></th>
 
-        <td class="organization" width="4%"></td>
-        <td class="nature" width="3%"></td>
-        <td class="provision" width="4%"></td>
-        <td class="task" width="3%"></td>
-        <td class="doc-name" width="3%"></td>
-        <td class="task-id" width="3%"></td>
-        <td class="comp-desc" width="7%"></td>
-        <td class="penal" width="4%"></td>
-        <td class="task-type" width="4%"></td>
-        <td class="refer-link" width="10%"></td>
-        <td class="freq" width="4%"></td>
-        <td class="statu-month" width="3%"></td>
+        <td class="organization break-word" width="4%"></td>
+        <td class="nature break-word" width="3%"></td>
+        <td class="provision break-word" width="4%"></td>
+        <td class="task break-word" width="3%"></td>
+        <td class="doc-name break-word" width="3%"></td>
+        <td class="task-id break-word" width="3%"></td>
+        <td class="comp-desc break-word" width="7%"></td>
+        <td class="penal break-word" width="4%"></td>
+        <td class="task-type break-word" width="4%"></td>
+        <td class="refer-link break-word" width="10%"></td>
+        <td class="freq break-word" width="4%"></td>
+        <td class="statu-month break-word" width="3%"></td>
         <td class="statu-date" width="3%"></td>
         <td class="trigger-before" width="3%"></td>
         <td class=repeats-every width="3%"></td>
@@ -562,7 +579,7 @@
         <td class="duration-type" width="3%"></td>
         <td class="multiple" width="3%"></td>
         <td class="format" width="4%"><a target="new"></a></td>
-        <td class="geography" width="5%"></td>
+        <td class="geography break-word" width="5%"></td>
       </tr>
     </table>
 </div>
@@ -637,7 +654,8 @@
   <a id="custom-filter" class="right-bar-toggle close-button c-pointer"> <i class="zmdi zmdi-close-circle-o"></i> </a>
   <!-- <a href="javascript:void(0);" class="right-bar-toggle close-button"> <i class="zmdi zmdi-close-circle-o"></i> </a> -->
   <h4 class="filter-text bg-info" style="padding: 10px; text-transform: none; color: #fff !important; margin-top: 0px;">Filter By</h4>
-  <div class="notification-list nicescroll" style="overflow-y: scroll !important; height: 550px;">
+  <div class="notification-list nicescroll">
+  <div class="filter-data nicescroll">
     <div class="form-group col-sm-12">
         <label class="control-label">View Data</label>
         <div class="col-md-12 no-padding">
@@ -764,7 +782,7 @@
         </div>
       </div>
     </div>
-
+</div>
     <div class="form-group col-sm-12">
       <button class="btn btn-info" id="go">Search</button>
     </div>

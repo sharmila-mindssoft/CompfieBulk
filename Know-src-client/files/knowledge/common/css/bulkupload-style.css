@@ -2,6 +2,10 @@
     width: 100%;
     overflow: hidden; 
 }
+.multiselect-native-select > .btn-group{
+    width: 100% !important;
+}
+
 /* using width css classes instead of html width attribute */
 
 .width-1 {
@@ -170,6 +174,7 @@
 
 
 
+
 /* pagination */
 
 .pagination-space {
@@ -186,10 +191,6 @@
   text-transform: none;
   color: #fff !important;
   margin-top: 0px;
-}
-
-.filter-by-div {
-  height: 520px;
 }
 
 .mar-50-px {
@@ -239,6 +240,14 @@
     color: #E64C3D !important;
 }
 
+
+.download-options{
+    display: inline-block;
+}
+
+.auto-text-box ul{
+    width: 91% !important;
+}
 /**** Added For ApproveRejectStatu Mapping TaskID Alignment Fix ***/
 td.task-id {
     word-wrap: break-word;
@@ -252,11 +261,10 @@ td.task-id {
     width: 100% !important;
 }
 
-.download-options {
-    display: inline-block;
-}
-
 .break-word {
-    word-wrap: break-word;
-
+    word-wrap: break-word !important;
 }
+.filter-data{
+    height:450px !important;
+}
+
