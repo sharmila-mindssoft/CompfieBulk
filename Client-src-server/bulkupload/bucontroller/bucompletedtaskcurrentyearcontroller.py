@@ -82,7 +82,6 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
         new_csv_id = save_completed_task_current_year_csv(db, csv_args, session_user)
         if new_csv_id:
             if save_completed_task_data(db, new_csv_id, res_data["data"]) is True:
-                print "csv_name>>>", csv_name
                 result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
                     res_data["total"], res_data["valid"], res_data["invalid"],
                     new_csv_id, csv_name)

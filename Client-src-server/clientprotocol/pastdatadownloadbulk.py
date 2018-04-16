@@ -181,13 +181,8 @@ def get_download_bulk_compliance_data(
 ):
     condition = ""
     condition_val = []
-    if frequency_name is not None:
-        condition += "AND c.frequency_id = (SELECT frequency_id " + \
-            " FROM tbl_compliance_frequency WHERE " + \
-            " frequency = %s)"
-        condition_val.append(frequency_name)
-    else:
-        condition += "AND c.frequency_id in (1,2,3)"
+
+    condition += "AND c.frequency_id in (2,3)"
 
     if level_1_statutory_name is not None:
         condition += " AND statutory_mapping like %s"
