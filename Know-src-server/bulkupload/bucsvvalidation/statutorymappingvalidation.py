@@ -965,8 +965,23 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
                 if (key == "Format" and value != ''):
                     self._doc_names.append(value)
-                # if key is "Statutory_Nature":
-                #     self.check_single_value_input()
+                if key is "Statutory_Nature":
+                    if CSV_DELIMITER in value:
+                        msg = "Statutory_Nature - Invalid Data"
+                        if res is not True:
+                            res.append(msg)
+                        else:
+                            res = [msg]
+                        error_count["invalid_char"] += 1
+
+                if key is "Compliance_Frequency":
+                    if CSV_DELIMITER in value:
+                        msg = "Compliance_Frequency - Invalid Data"
+                        if res is not True:
+                            res.append(msg)
+                        else:
+                            res = [msg]
+                        error_count["invalid_char"] += 1
 
                 for v in [v.strip() for v in values]:
 
