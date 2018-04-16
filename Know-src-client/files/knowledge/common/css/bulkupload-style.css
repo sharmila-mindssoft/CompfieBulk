@@ -193,10 +193,6 @@
   margin-top: 0px;
 }
 
-.filter-by-div {
-  height: 520px;
-}
-
 .mar-50-px {
   margin-bottom: 50px;
 }
@@ -251,7 +247,7 @@
 
 .auto-text-box ul{
     width: 91% !important;
-
+}
 /**** Added For ApproveRejectStatu Mapping TaskID Alignment Fix ***/
 td.task-id {
     word-wrap: break-word;
@@ -266,6 +262,9 @@ td.task-id {
 }
 
 .break-word {
-    word-wrap: break-word;
+    word-wrap: break-word !important;
+}
+.filter-data{
+    height:450px !important;
 }
 
