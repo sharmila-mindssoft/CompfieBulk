@@ -1388,7 +1388,9 @@ BEGIN
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     AND IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
     AND IF(c_desc IS NOT NULL, t2.compliance_description = c_desc, 1)
-    AND IF(view_data IS NOT NULL, t2.action = view_data, 1)
+    AND IF(view_data IS NULL, 1, 
+      IF(view_data = 0, t2.action is NULL, t2.action is NOT NULL)
+    )
     AND IF(s_status IS NOT NULL, t2.statutory_applicable_status = s_status, 1)
     AND IF(c_status IS NOT NULL, t2.compliance_applicable_status = c_status, 1);
 
@@ -1402,7 +1404,6 @@ BEGIN
     FROM tbl_bulk_assign_statutory_csv AS t1
     inner join tbl_bulk_assign_statutory AS t2 on
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid
-
     AND IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
     AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_name), 1)
     AND IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
@@ -1410,7 +1411,9 @@ BEGIN
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     AND IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
     AND IF(c_desc IS NOT NULL, t2.compliance_description = c_desc, 1)
-    AND IF(view_data IS NOT NULL, t2.action = view_data, 1)
+    AND IF(view_data IS NULL, 1, 
+      IF(view_data = 0, t2.action is NULL, t2.action is NOT NULL)
+    )
     AND IF(s_status IS NOT NULL, t2.statutory_applicable_status = s_status, 1)
     AND IF(c_status IS NOT NULL, t2.compliance_applicable_status = c_status, 1)
     LIMIT  f_count, f_range;
