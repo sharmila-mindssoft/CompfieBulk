@@ -352,9 +352,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
         is_declined = cObj.perform_validation_before_submit()
         if action == 1:
             if len(is_declined.keys()) > 0:
-                update_approve_action_from_list(
-                    db, csv_id, action, remarks, session_user, "all"
-                )
+                cObj.update_child(csv_id)
                 return bu_as.ValidationSuccess(len(is_declined.keys()))
             else:
                 if(update_approve_action_from_list(
