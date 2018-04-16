@@ -1388,7 +1388,7 @@ BEGIN
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     AND IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
     AND IF(c_desc IS NOT NULL, t2.compliance_description = c_desc, 1)
-    AND IF(view_data IS NULL, 1, 
+    AND IF(view_data IS NULL, 1,
       IF(view_data = 0, t2.action is NULL, t2.action is NOT NULL)
     )
     AND IF(s_status IS NOT NULL, t2.statutory_applicable_status = s_status, 1)
@@ -1411,7 +1411,7 @@ BEGIN
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     AND IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
     AND IF(c_desc IS NOT NULL, t2.compliance_description = c_desc, 1)
-    AND IF(view_data IS NULL, 1, 
+    AND IF(view_data IS NULL, 1,
       IF(view_data = 0, t2.action is NULL, t2.action is NOT NULL)
     )
     AND IF(s_status IS NOT NULL, t2.statutory_applicable_status = s_status, 1)
@@ -1580,7 +1580,10 @@ BEGIN
       UPDATE tbl_bulk_units_csv SET
       approve_status = 1, approved_on = current_ist_datetime(),
       approved_by = _user_id, is_fully_rejected = 0,
-      declined_count = _declinedCount
+      declined_count = _declinedCount,
+      total_rejected_records = (select COUNT(0) FROM
+      tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id
+      and action = 2)
       WHERE csv_unit_id = _csv_unit_id;
     END IF;
 END //
@@ -1860,10 +1863,10 @@ DELIMITER //
 CREATE PROCEDURE `sp_as_rejected_file_count`(
     IN user_ INT(11)
 )
-BEGIN 
-  SELECT count(1) as rejected FROM tbl_bulk_assign_statutory_csv 
-  WHERE (IFNULL(declined_count, 0) > 0 or IFNULL(is_fully_rejected, 0) = 1) 
-  AND approve_status < 4 AND uploaded_by = user_; 
+BEGIN
+  SELECT count(1) as rejected FROM tbl_bulk_assign_statutory_csv
+  WHERE (IFNULL(declined_count, 0) > 0 or IFNULL(is_fully_rejected, 0) = 1)
+  AND approve_status < 4 AND uploaded_by = user_;
 END //
 
 DELIMITER ;
