@@ -76,7 +76,7 @@ class SourceDB(object):
         self._source_db.close()
         self.__source_db_con.close()
 
-    def init_values(self, user_id, country_id):
+    def init_values(self, user_id):
         self.get_client_groups(user_id)
         self.get_legal_entities(user_id)
         self.get_domains(user_id)
@@ -88,7 +88,7 @@ class SourceDB(object):
         self.get_statutory_provision()
         self.get_compliance_task()
         self.get_compliance_description()
-        self.get_organisation(country_id)
+        self.get_organisation()
         self.get_applicable_status()
 
     def get_client_groups(self, user_id):
@@ -154,12 +154,10 @@ class SourceDB(object):
         for d in data:
             self.Compliance_Description[d["compliance_description"]] = d
 
-    def get_organisation(self, country_id):
-        data = self._source_db.call_proc(
-            "sp_bu_organization_all", [country_id]
-        )
+    def get_organisation(self):
+        data = self._source_db.call_proc("sp_bu_organization_all")
         for d in data:
-            self.Organisation[d["organisation_name"]+'-'+d["domain_name"]] = d
+            self.Organisation[d["organisation_name"]] = d
 
     def get_applicable_status(self):
         data = [
@@ -373,8 +371,7 @@ class SourceDB(object):
             return True
 
     def save_executive_message(
-        self, a_type, csv_name, clientgroup, legalentity, createdby, unitids,
-        reason
+        self, a_type, csv_name, clientgroup, legalentity, createdby, unitids
     ):
         admin_users_id = []
         res = self._source_db.call_proc("sp_users_under_user_category", (1,))
@@ -389,7 +386,7 @@ class SourceDB(object):
         if a_type == 1:
             action_type = "approved"
         else:
-            action_type = "rejected with following reason %s" % (reason)
+            action_type = "rejected"
 
         msg = "Assign statutory file %s of %s - %s has been %s" % (
                 csv_name, clientgroup, legalentity, action_type
@@ -439,21 +436,6 @@ class SourceDB(object):
         self._source_db.save_activity(
             createdby, frmAssignStatutoryBulkUpload, msg
             )
-
-    def get_country_id(self):
-        country_id = 0
-
-        for k, v in groupby(self._source_data, key=lambda s: (
-            s["Legal_Entity"]
-        )):
-            grouped_list = list(v)
-            legal_entity_name = grouped_list[0].get("Legal_Entity")
-            res = self._source_db.call_proc(
-                "sp_bu_get_country_by_legal_entity_name", [legal_entity_name]
-            )
-            for le in res:
-                country_id = le["country_id"]
-        return country_id
 
     def source_commit(self):
         self._source_db.commit()
@@ -649,8 +631,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         duplicate_compliance_row = duplicate[1]
         self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
 
-        country_id = self.get_country_id()
-        self.init_values(self._session_user_obj.user_id(), country_id)
+        self.init_values(self._session_user_obj.user_id())
 
         def make_error_desc(res, msg):
             if res is True:
@@ -736,18 +717,10 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                                 key
                             )
                             if unboundMethod is not None:
-                                if key == "Organization":
-                                    org_val = v+'-'+data.get('Domain')
-                                    isFound = unboundMethod(org_val)
-                                else:
-                                    isFound = unboundMethod(v)
+                                isFound = unboundMethod(v)
 
                             if isFound is not True and isFound != "":
-                                if key == "Organization":
-                                    msg = "%s - %s %s" % (key, v, isFound)
-                                else:
-                                    msg = "%s - %s" % (key, isFound)
-
+                                msg = "%s - %s" % (key, isFound)
                                 if res is not True:
                                     res.append(msg)
                                 else:
@@ -921,8 +894,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
     def perform_validation_before_submit(self):
         declined_count = 0
         self._declined_row_idx = {}
-        country_id = self.get_country_id()
-        self.init_values(self._session_user_obj.user_id(), country_id)
+        self.init_values(self._session_user_obj.user_id())
 
         self._unit_ids = []
         for k, v in groupby(self._source_data, key=lambda s: (
@@ -970,19 +942,12 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                                 unboundMethod = self._validation_method_maps.get(
                                     key
                                 )
-                                if key == "Organization":
-                                    org_val = v+'-'+data.get('Domain')
-                                    isFound = unboundMethod(org_val)
-                                else:
+                                if unboundMethod is not None:
                                     isFound = unboundMethod(v)
 
                             if isFound is not True and isFound != "":
                                 declined_count += 1
-                                if key == "Organization":
-                                    msg = "%s - %s %s" % (key, v, isFound)
-                                else:
-                                    msg = "%s - %s" % (key, isFound)
-
+                                msg = "%s - %s" % (key, isFound)
                                 if res is not True:
                                     res.append(msg)
                                 else:
@@ -1054,6 +1019,16 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             self._db.execute(q1, [
                 count, user_id, created_on, self._csv_id
             ])
+
+        except Exception, e:
+            raise (e)
+
+    def update_child(self, csv_id):
+        try:
+            q = "update tbl_bulk_assign_statutory set " + \
+                " action = 1 where " + \
+                " csv_assign_statutory_id = %s"
+            self._db.execute(q, [csv_id])
 
         except Exception, e:
             raise (e)

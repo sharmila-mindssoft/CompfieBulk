@@ -509,11 +509,18 @@ BEGIN
 END //
 
 DELIMITER ;
-
-
 DROP PROCEDURE IF EXISTS `sp_assgined_statutory_bulk_reportdata`;
 DELIMITER //
-CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(IN `client_group_id` int(11), IN `legal_entity_id` int(11), IN `unit_id` varchar(100), IN `from_date` date, IN `to_date` date, IN `from_limit` int, IN `to_limit` int, IN `user_ids` varchar(100), IN `domain_ids` varchar(100))
+CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(
+  IN `client_group_id` int(11),
+  IN `legal_entity_id` int(11),
+  IN `unit_id` varchar(100),
+  IN `from_date` date,
+  IN `to_date` date,
+  IN `from_limit` int,
+  IN `to_limit` int,
+  IN `user_ids` varchar(100),
+  IN `domain_id` int(11))
 BEGIN
 IF (unit_id='') THEN
   SELECT t1.csv_assign_statutory_id, t1.domain_names,
@@ -537,7 +544,7 @@ IF (unit_id='') THEN
   t1.client_id = client_group_id AND
   t1.legal_entity_id = legal_entity_id AND
    FIND_IN_SET(t1.uploaded_by, user_ids) AND
-   FIND_IN_SET(t1.domain_ids, domain_ids) AND
+   FIND_IN_SET(domain_id, t1.domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC
   LIMIT from_limit, to_limit;
@@ -549,7 +556,7 @@ IF (unit_id='') THEN
   t1.client_id = client_group_id AND
   t1.legal_entity_id = legal_entity_id AND
   FIND_IN_SET(t1.uploaded_by, user_ids) AND
-  FIND_IN_SET(t1.domain_ids, domain_ids) AND
+  FIND_IN_SET(domain_id, t1.domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
 ELSE
@@ -576,7 +583,7 @@ ELSE
    t1.client_id = client_group_id AND
    t1.legal_entity_id = legal_entity_id AND
    FIND_IN_SET(t1.uploaded_by, user_ids) AND
-   FIND_IN_SET(t1.domain_ids, domain_ids) AND
+   FIND_IN_SET(domain_id, t1.domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   GROUP BY t2.csv_assign_statutory_id
   ORDER BY t1.uploaded_on DESC
@@ -590,7 +597,7 @@ ELSE
   t2.unit_code=unit_id AND
   t1.client_id = client_group_id AND
   t1.legal_entity_id = legal_entity_id AND
-  FIND_IN_SET(t1.domain_ids, domain_ids) AND
+  FIND_IN_SET(domain_id, t1.domain_ids) AND
   FIND_IN_SET(t1.uploaded_by, user_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date));
 END IF;
@@ -817,7 +824,9 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_rejected_assign_sm_reportdata`;
 DELIMITER //
-CREATE PROCEDURE `sp_rejected_assign_sm_reportdata`(IN `client_id` int(11), IN `le_id` int(11), IN `domain_ids` varchar(100), IN `unit_id` varchar(100), IN `user_id` int(11))
+CREATE PROCEDURE `sp_rejected_assign_sm_reportdata`(
+  IN `client_id` int(11), IN `le_id` int(11), IN `domain_id` int(11), 
+  IN `unit_id` varchar(100), IN `user_id` int(11))
 BEGIN
 
 IF(unit_id!='') THEN
@@ -843,7 +852,7 @@ sm_csv.rejected_reason,
 FROM tbl_bulk_assign_statutory AS sm
 INNER JOIN tbl_bulk_assign_statutory_csv AS sm_csv ON sm_csv.csv_assign_statutory_id=sm.csv_assign_statutory_id
  WHERE
-  FIND_IN_SET(sm_csv.domain_ids, domain_ids) AND
+  FIND_IN_SET(domain_id, sm_csv.domain_ids) AND
   sm_csv.client_id=client_id AND
   sm_csv.legal_entity_id=le_id AND
   sm.unit_code=unit_id AND
@@ -875,7 +884,7 @@ sm_csv.rejected_reason,
 FROM tbl_bulk_assign_statutory AS sm
 INNER JOIN tbl_bulk_assign_statutory_csv AS sm_csv ON sm_csv.csv_assign_statutory_id=sm.csv_assign_statutory_id
  WHERE
-  FIND_IN_SET(sm_csv.domain_ids, domain_ids) AND
+  FIND_IN_SET(domain_id, sm_csv.domain_ids) AND
   sm_csv.client_id=client_id AND
   sm_csv.legal_entity_id=le_id AND
   sm_csv.uploaded_by=user_id AND
@@ -1008,7 +1017,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_export_assigned_statutory_bulk_reportdata`(
   IN `client_group_id` int(11), IN `legal_entity_id` int(11),
   IN `unit_id` varchar(100), IN `FROM_date` date, IN `to_date` date,
-  IN `user_ids` varchar(100), IN `domain_ids` varchar(100))
+  IN `user_ids` varchar(100), IN `domain_id` int(11))
 BEGIN
 IF (unit_id='') THEN
   SELECT t1.csv_assign_statutory_id, t1.domain_names,
@@ -1032,7 +1041,7 @@ IF (unit_id='') THEN
   t1.client_id = client_group_id AND
   t1.legal_entity_id = legal_entity_id AND
    FIND_IN_SET(t1.uploaded_by, user_ids) AND
-   FIND_IN_SET(t1.domain_ids, domain_ids) AND
+   FIND_IN_SET(domain_id, t1.domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
 
@@ -1043,7 +1052,7 @@ IF (unit_id='') THEN
   t1.client_id = client_group_id AND
   t1.legal_entity_id = legal_entity_id AND
   FIND_IN_SET(t1.uploaded_by, user_ids) AND
-  FIND_IN_SET(t1.domain_ids, domain_ids) AND
+  FIND_IN_SET(domain_id, t1.domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
 ELSE
@@ -1070,7 +1079,7 @@ ELSE
    t1.client_id = client_group_id AND
    t1.legal_entity_id = legal_entity_id AND
    FIND_IN_SET(t1.uploaded_by, user_ids) AND
-   FIND_IN_SET(t1.domain_ids, domain_ids) AND
+   FIND_IN_SET(domain_id, t1.domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   GROUP BY t2.csv_assign_statutory_id
   ORDER BY t1.uploaded_on DESC;
@@ -1083,7 +1092,7 @@ ELSE
   t2.unit_code=unit_id AND
   t1.client_id = client_group_id AND
   t1.legal_entity_id = legal_entity_id AND
-  FIND_IN_SET(t1.domain_ids, domain_ids) AND
+  FIND_IN_SET(domain_id, t1.domain_ids) AND
   FIND_IN_SET(t1.uploaded_by, user_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date));
 END IF;
@@ -1093,7 +1102,13 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_rejected_asm_csv_report`;
 DELIMITER //
-CREATE PROCEDURE `sp_rejected_asm_csv_report`(IN `client_id` int(11), IN `le_id` int(11), IN `domain_ids` varchar(100), IN `unit_id` varchar(100), IN `csv_id` int(11), IN `user_id` int(11))
+CREATE PROCEDURE `sp_rejected_asm_csv_report`(
+  IN `client_id` int(11),
+  IN `le_id` int(11),
+  IN `d_id` int(11),
+  IN `unit_id` varchar(100),
+  IN `csv_id` int(11),
+  IN `user_id` int(11))
 BEGIN
 
 IF(unit_id!='') THEN
@@ -1126,7 +1141,7 @@ SELECT
 FROM tbl_bulk_assign_statutory AS asm
 INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statutory_id=asm.csv_assign_statutory_id
  WHERE
-  FIND_IN_SET(asm_csv.domain_ids, domain_ids) AND
+  FIND_IN_SET(d_id, asm_csv.domain_ids) AND
   asm_csv.client_id=client_id AND
   asm_csv.legal_entity_id=le_id AND
   asm.unit_code=unit_id AND
@@ -1166,7 +1181,7 @@ SELECT
 FROM tbl_bulk_assign_statutory AS asm
 INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statutory_id=asm.csv_assign_statutory_id
  WHERE
-  FIND_IN_SET(asm_csv.domain_ids, domain_ids) AND
+  FIND_IN_SET(d_id, asm_csv.domain_ids) AND
   asm_csv.client_id=client_id AND
   asm_csv.legal_entity_id=le_id AND
   asm_csv.uploaded_by=user_id AND
