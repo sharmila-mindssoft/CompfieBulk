@@ -357,17 +357,20 @@ DELIMITER ;
 
 
 
-DROP PROCEDURE IF EXISTS `sp_statutory_mapping_update_action`;
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_update_all_action`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_statutory_mapping_update_action`(
+CREATE PROCEDURE `sp_statutory_mapping_update_all_action`(
 IN csvid INT, action INT, remarks VARCHAR(500),
 userid INT
 
 )
 BEGIN
     IF action = 2 then
+        UPDATE tbl_bulk_statutory_mapping SET action = 2
+        WHERE csv_id = csvid;
+
         UPDATE tbl_bulk_statutory_mapping_csv SET
         rejected_reason = remarks, is_fully_rejected = 1,
         rejected_by = userid,
@@ -377,9 +380,11 @@ BEGIN
         tbl_bulk_statutory_mapping AS t WHERE t.csv_id = csvid)
         WHERE csv_id = csvid;
 
-        UPDATE tbl_bulk_statutory_mapping SET action = 2 WHERE csv_id = csvid;
-
     else
+        UPDATE tbl_bulk_statutory_mapping SET
+        action = 1, remarks = remarks
+        WHERE csv_id = csvid;
+
         UPDATE tbl_bulk_statutory_mapping_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
         approved_by = userid, is_fully_rejected = 0,
@@ -389,16 +394,7 @@ BEGIN
           t.csv_id = csvid
         )
         WHERE csv_id = csvid;
-
-        delete from tbl_bulk_statutory_mapping where csv_id = csvid
-          and ifnull(action, 0) != 3;
     end if;
-
-    IF action = 3 then
-        UPDATE tbl_bulk_statutory_mapping SET action = 3;
-
-    end if;
-
 END //
 
 DELIMITER ;
@@ -455,7 +451,7 @@ BEGIN
     from tbl_bulk_statutory_mapping as t2
     inner join tbl_bulk_statutory_mapping_csv as t1
     on t1.csv_id = t2.csv_id
-    where t2.csv_id = csvid;
+    where (t2.action is null or t2.action != 3) and t2.csv_id = csvid;
 
 END//
 
@@ -1983,5 +1979,38 @@ BEGIN
   tbl_bulk_assign_statutory as t WHERE t.csv_assign_statutory_id = csvid)
   WHERE csv_assign_statutory_id = csvid;
 END//
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_statutory_update_action`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_update_action`(
+IN csvid INT, userid INT
+)
+BEGIN
+  UPDATE tbl_bulk_statutory_mapping_csv SET
+  approve_status = 1, approved_on = current_ist_datetime(),
+  approved_by = userid, is_fully_rejected = 0,
+  total_rejected_records = (select count(0) from
+  tbl_bulk_statutory_mapping as t WHERE t.csv_id = csvid)
+  WHERE csv_id = csvid;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_statutory_mapping_delete`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_statutory_mapping_delete`(
+IN csvid INT
+)
+BEGIN
+    DELETE FROM tbl_bulk_statutory_mapping
+    WHERE (action = 1 or action = 2) AND csv_id = csvid;
+END //
 
 DELIMITER ;

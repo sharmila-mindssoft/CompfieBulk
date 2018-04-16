@@ -193,7 +193,6 @@ class StatutorySource(object):
     def check_base(self, check_status, store, key_name):
         data = None
         key_name = key_name.strip()
-        print "keyNAME-> ", key_name
         if type(store) is list:
             if key_name in store:
                 data = key_name
@@ -216,7 +215,6 @@ class StatutorySource(object):
         return self.check_base(True, self.Statutory_Nature, nature)
 
     def check_geography(self, geo_names):
-        print "self.Geographies-> ", self.Geographies
         return self.check_base(True, self.Geographies, geo_names)
 
     def check_frequency(self, frequency):
@@ -530,7 +528,7 @@ class StatutorySource(object):
             "Compliance_Frequency": self.check_frequency,
             "Repeats_Type": self.check_repeat_type,
             "Duration_Type": self.check_duration_type,
-            "Task_Type": self.check_task_type,
+            # "Task_Type": self.check_task_type,
         }
 
     def check_compliance_task_name_duplicate(
@@ -967,8 +965,11 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
                 if (key == "Format" and value != ''):
                     self._doc_names.append(value)
+                # if key is "Statutory_Nature":
+                #     self.check_single_value_input()
 
                 for v in [v.strip() for v in values]:
+
                     valid_failed, error_cnt = parse_csv_dictionary_values(
                         key, v
                     )
@@ -988,8 +989,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                             error_count["invalid_char"] += error_cnt[
                                 "invalid_char"
                             ]
-                    # Usha's code Commented by vaishnavi for bugBUC543
-                    # if v != "" and res is True:
                     if v != "":
                         if (
                             csvParam.get("check_is_exists") is True or
@@ -1087,8 +1086,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         dup_error = "Compliance_Task - Duplicate compliances in Knowledge DB"
                         res = make_error_desc(res, dup_error)
 
-
-
                 if key == "Compliance_Frequency":
                     msg = []
                     if value == "One Time":
@@ -1125,7 +1122,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     ):
                         file_extension = os.path.splitext(data["Format"])
                         allowed_file_formats = [".pdf", ".doc", ".docx",
-                                                ".xls", "xlsx"]
+                                                ".xls", ".xlsx"]
                         if file_extension[1] not in allowed_file_formats:
                             msg.append("Format - Invalid File Format")
                             self._error_summary["invalid_data_error"] += 1
@@ -1271,9 +1268,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self.get_file_count()
 
     def get_source_data(self):
+        print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         self._source_data = self._db.call_proc(
             "sp_statutory_mapping_by_csvid", [self._csv_id]
         )
+        print "len(self._source_data)->>>>>>>> ", len(self._source_data)
         if len(self._source_data) > 0:
             self._csv_name = self._source_data[0].get("csv_name")
             self._country_name = self._source_data[0].get("country_name")
@@ -1292,6 +1291,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
             for row_idx, data in enumerate(self._source_data):
                 res = True
+                declined_count = 0
                 if row_idx == 0:
                     self._country_name = data.get("country_name")
                     self._domain_name = data.get("domain_name")
@@ -1310,7 +1310,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     if type(value) is not int:
                         values = value.strip().split(CSV_DELIMITER)
 
-                        for v in values:
+                        for v in [v.strip() for v in values]:
                             if type(v) is str:
                                 v = v.strip()
 
@@ -1327,15 +1327,20 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
                                 if isFound is not True and isFound != "":
                                     declined_count += 1
-                                    msg = "%s - %s" % (key, isFound)
+                                    msg = "%s - %s %s" % (key, v, isFound)
+                                    print "msg->>>", msg
                                     if res is not True:
                                         res.append(msg)
                                     else:
+                                        print "msg-> in else -> ", msg
                                         res = [msg]
+                                        print "RES in else-> ", res
 
                 if not self.check_compliance_task_name_duplicate(
-                    self._country_id, self._domain_id, data.get("Statutory"),
-                    data.get("Statutory_Provision"), data.get("Compliance_Task")
+                    self._country_id, self._domain_id,
+                    data.get("Statutory"),
+                    data.get("Statutory_Provision"),
+                    data.get("Compliance_Task")
                 ):
                     declined_count += 1
                     dup_error = "Compliance_Task - Duplicate data"
@@ -1345,9 +1350,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                         res = [dup_error]
 
                 if not self.check_task_id_duplicate(
-                    self._country_id, self._domain_id, data.get("Statutory"),
-                    data.get("Statutory_Provision"), data.get("Compliance_Task"),
-                    data.get("Task_ID")
+                    self._country_id, self._domain_id,
+                    data.get("Statutory"), data.get("Statutory_Provision"),
+                    data.get("Compliance_Task"), data.get("Task_ID")
                 ):
                     declined_count += 1
                     dup_error = "Task_ID - Duplicate data"
@@ -1360,6 +1365,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     self._declined_row_idx[
                         data.get("bulk_statutory_mapping_id")
                     ] = res
+                print "REsSULT In perform validation before submit-", res
 
             return self._declined_row_idx
         except Exception, e:
@@ -1368,6 +1374,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
     def frame_data_for_main_db_insert(self):
         try:
+            self.get_source_data()
             self._source_data.sort(key=lambda x: (
                  x["Organization"], x["Statutory_Nature"],
                  x["Statutory"], x["Applicable_Location"]
@@ -1422,9 +1429,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     statu_maps = statu_maps.replace(" >> ", ">>")
                     legis_data = statu_maps.split(">>")
 
-                    print "self.Statutories.get(statu_maps)"
-                    print statu_maps
-                    print self.Statutories.get(statu_maps)
+                    # print "self.Statutories.get(statu_maps)"
+                    # print statu_maps
+                    # print self.Statutories.get(statu_maps)
                     if self.Statutories.get(statu_maps) is not None:
                         if(len(legis_data) == 1):
                             statu_ids.append(
@@ -1434,10 +1441,10 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                             )
                         statu_exists_id.append(statu_maps)
                     else:
-                        print "legis_data >>>"
-                        print legis_data
+                        # print "legis_data >>>"
+                        # print legis_data
                         if(len(legis_data) <= statu_level_limit):
-                            print "IF Legis >>>"
+                            # print "IF Legis >>>"
                             parent_names = ''
                             parent_id = ''
                             for statu_level, data in enumerate(legis_data, 1):
@@ -1456,17 +1463,17 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                         strip_data).get("statutory_id")
                                     parent_names = str(strip_data)
 
-                                print "parent_id >>>"
-                                print parent_id
-                                print "parent_names >>>"
-                                print parent_names
+                                # print "parent_id >>>"
+                                # print parent_id
+                                # print "parent_names >>>"
+                                # print parent_names
 
                                 if (int(statu_level) == 1 and
                                    self.Statutories.get(strip_data) is None):
-                                    print "3 IF >>>"
-                                    print strip_data
+                                    # print "3 IF >>>"
+                                    # print strip_data
                                     if(strip_data not in statu_exists_id):
-                                        print "4 IF >>>"
+                                        # print "4 IF >>>"
                                         statu_id = self.save_statutories_data(
                                             str(strip_data), level_id,
                                             parent_id, parent_names,
@@ -1478,22 +1485,22 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                         parent_id = statu_id
                                         parent_names = str(strip_data)
                                 else:
-                                    print "5 IF >>>"
-                                    print statu_maps
-                                    print "self.Statutories"
-                                    print self.Statutories
-                                    print "self.Statu_dic"
-                                    print self.Statu_dic
+                                    # print "5 IF >>>"
+                                    # print statu_maps
+                                    # print "self.Statutories"
+                                    # print self.Statutories
+                                    # print "self.Statu_dic"
+                                    # print self.Statu_dic
                                     if(int(statu_level) > 1 and
                                        self.Statutories.get(statu_maps) is None
                                        ):
-                                        print "6 IF >>>"
-                                        print statu_maps
+                                        # print "6 IF >>>"
+                                        # print statu_maps
                                         if(
                                            self.Statu_dic.get(statu_maps) is None
                                            ):
-                                            print "7 IF >>>"
-                                            print statu_maps
+                                            # print "7 IF >>>"
+                                            # print statu_maps
                                             statu_id = self.save_statutories_data(
                                                 str(strip_data), level_id,
                                                 parent_id, parent_names,
@@ -1503,9 +1510,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                             self.Statu_dic[statu_maps] = statu_id
                                             parent_id = statu_id
                                             parent_names = str(strip_data)
-                print "statu_ids >>>"
-                print statu_ids
-                print "statu_ids >>>"
+                # print "statu_ids >>>"
+                # print statu_ids
+                # print "statu_ids >>>"
                 if len(grouped_list) > 1:
                     msg.append(grouped_list[0].get("Compliance_Task"))
                 uploaded_by = grouped_list[0].get("uploaded_by")
@@ -1528,20 +1535,26 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             print str(traceback.format_exc())
             raise e
 
-    def make_rejection(self, declined_info):
+    def make_rejection(self, declined_info, user_id):
         try:
             count = len(declined_info.keys())
+            created_on = get_date_time()
+            print "declined Coun info > ", declined_info
             for k, v in declined_info.items():
+                print "k, ", k
+                print "V > ", v
+                remarks = ",".join(v)
                 q = "update tbl_bulk_statutory_mapping set " + \
                     " action = 3, remarks = %s where " + \
-                    " bulk_statutory_mapping_id  = %s" % (
-                        "|;|".join(v), k
-                    )
-                self._db.execute(q)
+                    " bulk_statutory_mapping_id  = %s"
+                self._db.execute(q, [
+                    remarks, k
+                ])
 
             q1 = "update tbl_bulk_statutory_mapping_csv set " + \
-                " declined_count = %s where csv_id = %s"
-            self._db.execute(q1, [count, self._csv_id])
+                " declined_count = %s,  approve_status = 1 " +\
+                " approved_by = %s, approved_on = %s where csv_id = %s"
+            self._db.execute(q1, [count, user_id, created_on, self._csv_id])
 
         except Exception, e:
             print str(traceback.format_exc())
