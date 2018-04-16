@@ -1191,7 +1191,7 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
         cStatus = null;
     else
         cStatus = parseInt(cStatus);
-    if (vData == "" || vData == 0)
+    if (vData == "")
         vData = null;
     else
         vData = parseInt(vData);

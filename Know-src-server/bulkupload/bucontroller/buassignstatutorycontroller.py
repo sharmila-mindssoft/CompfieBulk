@@ -366,7 +366,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                     cObj.save_executive_message(
                         action, cObj._csv_name, cObj._client_group,
                         cObj._legal_entity, session_user.user_id(),
-                        u_ids
+                        u_ids, None
                     )
                     cObj.source_commit()
                     delete_action_after_approval(db, csv_id)
@@ -379,7 +379,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                 cObj.save_executive_message(
                     action, cObj._csv_name, cObj._client_group,
                     cObj._legal_entity, session_user.user_id(),
-                    u_ids
+                    u_ids, remarks
                 )
                 cObj.source_commit()
                 return bu_as.AssignStatutoryApproveActionInListSuccess()
@@ -636,7 +636,7 @@ def submit_assign_statutory(db, request_frame, session_user):
             cObj.save_executive_message(
                 1, cObj._csv_name, cObj._client_group,
                 cObj._legal_entity, session_user.user_id(),
-                u_ids
+                u_ids, None
             )
             cObj.frame_data_for_main_db_insert(user_id)
             cObj.source_commit()
@@ -665,7 +665,7 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
         cObj.save_executive_message(
             1, cObj._csv_name, cObj._client_group,
             cObj._legal_entity, session_user.user_id(),
-            u_ids
+            u_ids, None
         )
         cObj.frame_data_for_main_db_insert(user_id)
         cObj.source_commit()
