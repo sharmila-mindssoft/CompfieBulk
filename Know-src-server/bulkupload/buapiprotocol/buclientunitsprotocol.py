@@ -392,7 +392,7 @@ class ConfirmSubmitClientUnitFromView(Request):
     def parse_inner_structure(data):
 
         data = parse_dictionary(data, ["csv_id", "bu_client_id"])
-        return SubmitBulkClientUnitListFromView(
+        return ConfirmSubmitClientUnitFromView(
             data.get("csv_id"), data.get("bu_client_id")
         )
 
