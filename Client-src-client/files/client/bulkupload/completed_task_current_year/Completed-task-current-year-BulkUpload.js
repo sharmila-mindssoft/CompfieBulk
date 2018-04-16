@@ -176,14 +176,15 @@ function validateUpload() {
         $('#myModal').modal('show');
         return false;
     } else {
-        setTimeout(function() {
-            // $('.invaliddata').show();
-            // $('.view-summary').show();
-            // $('#divSuccessFile').show();
-            // $('#divSuccessDocument').show();
-            // $('#divSuccessbutton').show();
-        }, 1000);
+        // setTimeout(function() {
+        //     // $('.invaliddata').show();
+        //     // $('.view-summary').show();
+        //     // $('#divSuccessFile').show();
+        //     // $('#divSuccessDocument').show();
+        //     // $('#divSuccessbutton').show();
+        // }, 1000);
 
+        $('#myModal').modal('show');
         console.log("_ActionMode>>", buCtPage._ActionMode);
         if (buCtPage._ActionMode == "add") {
 
@@ -196,9 +197,10 @@ function validateUpload() {
 
             buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
                 if (error == null) {
+                    var csv_split_name = data.csv_name.substring(0, data.csv_name.lastIndexOf("_"));
+                    $('#myModal').modal('hide');
                     TOTALRECORD.text(data.total);
-                    VALIDRECORD.text(parseInt(data.valid) -
-                        parseInt(data.invalid));
+                    VALIDRECORD.text(parseInt(data.valid) - parseInt(data.invalid));
                     INVALIDRECORD.text(data.invalid);
                     INVALIDFILENAME = null;
                     MANDATORYERROR.text("0");
@@ -210,11 +212,10 @@ function validateUpload() {
                     $('.dropbtn').hide();
                     $('#hdnCsvId').val(data.new_csv_id);
                     csvId = data.new_csv_id;
-                    $('.successFileName').text(data.csv_name);
-                    csv_path = "../../../../../uploaded_file/csv/" + data.csv_name;
+                    $('.successFileName').text(csv_split_name);
+                    csv_path = "../../../../../uploaded_file/csv/" + csv_split_name + '.csv';
                     $('.uploaded_data').attr("href", csv_path);
                     $('.uploaded_data').attr("download", csv_path);
-                    // attr("href", "/files/client/bulkupload/Completed_Task_Current_Year-Past_Data.csv");
 
                     $('.invaliddata').hide();
                     $('.view-summary').hide();
@@ -227,6 +228,7 @@ function validateUpload() {
                     displaySuccessMessage("Records uploaded successfully");
                     hideLoader();
                 } else {
+                    $('#myModal').modal('hide');
                     displayMessage(message.upload_failed);
                     INVALIDFILENAME = data.invalid_file.split('.');
                     TOTALRECORD.text(data.total);
@@ -290,7 +292,10 @@ function validateUpload() {
                 }
             });
         } else {
+            $('#myModal').modal('hide');
+            displayLoader();
             myDropzone.processQueue();
+            hideLoader();
         }
     }
 }
@@ -424,7 +429,7 @@ BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
 function file_upload_rul() {
     var session_id = client_mirror.getSessionToken();
 
-    var file_base_url = "/temp/upload?session_id=" +
+    var file_base_url = "/client/temp/upload?session_id=" +
         session_id + "&csvid=" + csvId;
     console.log(file_base_url);
     return file_base_url;

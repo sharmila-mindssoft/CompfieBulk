@@ -269,164 +269,39 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
-
-    'Statutory': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
-        validation_method=is_statutory, isFoundCheck=True, isActiveCheck=True
-    ),
-
-    'Statutory_Provision': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-
-    'Compliance_Task': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-    'Compliance_Document': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-    'Task_ID': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True,  isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-    'Compliance_Description': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-    'Task_Type': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True
-    ),
     'Compliance_Frequency': make_required_validation(
         keyType='STRING', isValidCharCheck=True,
         validation_method=is_alphabet, isFoundCheck=True
     ),
-    'Statutory_Month': make_required_validation(
-        keyType='STRING', isValidCharCheck=True,
-        validation_method=statutory_month
-    ),
-    'Statutory_Date': make_required_validation(
-        keyType='STRING', isValidCharCheck=False
-    ),
-    'Due_Date': make_required_validation(
-        keyType='STRING', isValidCharCheck=False
-    ),
-
-    'Assignee': make_required_validation(
-        keyType='STRING', isValidCharCheck=False
-    ),
-    'Completion_Date': make_required_validation(
-        keyType='STRING', isValidCharCheck=False
-    ),
-    'Document_Name': make_required_validation(
-        keyType='STRING', isValidCharCheck=False
-    ),
-
-    'Trigger_Days': make_required_validation(
-    keyType='STRING', isValidCharCheck=True,
-    validation_method=trigger_days
-    ),
-    'Repeats_Every': make_required_validation(
-        keyType='INT', isValidCharCheck=True, validation_method=duration_and_repeats
-    ),
-    'Repeats_Type': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=duration_and_repeats_type,
-        isFoundCheck=True
-    ),
-    'Duration': make_required_validation(
-        keyType='INT', isValidCharCheck=True, validation_method=duration_and_repeats
-    ),
-    'Duration_Type': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, validation_method=duration_and_repeats_type,
-        isFoundCheck=True
-    ),
-
-    'Unit_Location': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
-        validation_method=is_statutory, isFoundCheck=True, isActiveCheck=True
-    ),
-
-
-
     'Primary_Legislation': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        validation_method=is_alpha_numeric, isFoundCheck=True
     ),
     'Secondary_Legislation': make_required_validation(
         keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        validation_method=is_alpha_numeric, isFoundCheck=True
     ),
-    'Client_Group': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
-        validation_method=is_alphabet, isFoundCheck=True
-    ),
-    'csv_name': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-
-    'uploaded_by': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-    'uploaded_on': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-    'total_records': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-
-    'total_rejected_records': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-
-    'approved_by': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-
-    'rejected_by': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-
-    'approved_on': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-
-    'rejected_on': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-    'approve_status': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
-    ),
-    'Statutory_Provision_': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
-    ),
-    'Compliance_Task_': make_required_validation(
+    'Compliance_Task': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+        validation_method=is_alpha_numeric, isFoundCheck=True
     ),
-    'Compliance_Description_': make_required_validation(
+    'Compliance_Description': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+        validation_method=is_alpha_numeric, isFoundCheck=True
     ),
-    'Unit_Name_': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    'Statutory_Date': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False
     ),
-    'Primary_Legislation_': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True, isActiveCheck=True
+    'Due_Date': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False
+    ),
+    'Assignee': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False, isFoundCheck=True
+    ),
+    'Completion_Date': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False
+    ),
+    'Document_Name': make_required_validation(
+        keyType='STRING', isValidCharCheck=False
     ),
 }

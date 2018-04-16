@@ -7,8 +7,10 @@ from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
-
 )
+
+
+
 from client_keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..client_bulkuploadcommon import (
     write_data_to_excel, rename_file_type
@@ -16,6 +18,8 @@ from ..client_bulkuploadcommon import (
 from server.common import (
     get_date_time
 )
+
+
 
 __all__ = [
     "ValidateCompletedTaskCurrentYearCsvData",
@@ -40,6 +44,7 @@ class SourceDB(object):
         self.Compliance_Task = {}
         self.Compliance_Description = {}
         self.Compliance_Frequency = {}
+        self.Assignee = {}
         self.connect_source_db()
         self._validation_method_maps = {}
         self.statusCheckMethods()
@@ -47,6 +52,13 @@ class SourceDB(object):
         self.csv_column_fields()
 
     def connect_source_db(self):
+        # print "API.bulk_db_connect", bulk_db_connect
+        # print "completedtaskcurrentyearvalidation>user>>", BULK_LE_DB_CONNECT["db_username"]
+        # print "completedtaskcurrentyearvalidation>password>>", BULK_LE_DB_CONNECT["db_password"]
+        # print "completedtaskcurrentyearvalidation>host>>", BULK_LE_DB_CONNECT["ip_address"]
+        # print "completedtaskcurrentyearvalidation>database>>", BULK_LE_DB_CONNECT["db_name"]
+        # print "completedtaskcurrentyearvalidation>port>>", BULK_LE_DB_CONNECT["db_ip.port"]
+
         self._source_db_con = mysql.connector.connect(
             user=KNOWLEDGE_DB_USERNAME,
             password=KNOWLEDGE_DB_PASSWORD,
@@ -68,10 +80,12 @@ class SourceDB(object):
         self.get_domains()
         self.get_unit_code()
         self.get_unit_name()
-        self.get_statutories()
+        self.get_primary_legislation()
+        self.get_secondary_legislation()
         self.get_compliance_task()
         self.get_compliance_description()
         self.get_compliance_frequency()
+        self.get_assignee()
 
     def get_legal_entities(self):
         query = "SELECT legal_entity_id, legal_entity_name, is_closed FROM tbl_legal_entities;"
@@ -97,15 +111,20 @@ class SourceDB(object):
         for d in rows:
             self.Unit_Name[d["unit_name"]] = d
 
-    def get_statutories(self):
-        query = "SELECT DISTINCT SUBSTRING_INDEX(substring(substring(statutory_mapping,3),1, char_length(statutory_mapping) -4), '>>', 1) as statutory_name FROM tbl_compliances"
+    def get_primary_legislation(self):
+        query = "select trim(SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '\"]' FROM TRIM(LEADING '[\"' FROM t.statutory_mapping))),'>>',1),'>>',- 1)) AS primary_legislation, trim(SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '\"]' FROM TRIM(LEADING '[\"' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1)) AS secondary_legislation from tbl_compliances t"
         rows = self._source_db.select_all(query)
-        print "get_statutories>rows>>>", rows
         for d in rows:
-            self.Statutories[d["statutory_name"]] = d
+            self.Statutories[d["primary_legislation"]] = d
+
+    def get_secondary_legislation(self):
+        query = "select trim(SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '\"]' FROM TRIM(LEADING '[\"' FROM t.statutory_mapping))),'>>',1),'>>',- 1)) AS primary_legislation, trim(SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '\"]' FROM TRIM(LEADING '[\"' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1)) AS secondary_legislation from tbl_compliances t;"
+        rows = self._source_db.select_all(query)
+        for d in rows:
+            self.Statutories[d["secondary_legislation"]] = d
 
     def get_compliance_task(self):
-        query = "SELECT compliance_id, statutory_provision, compliance_task, compliance_description, is_active from tbl_compliances"
+        query = "SELECT compliance_id, statutory_provision, case when ifnull(document_name,'') = '' then trim(compliance_task) else trim(Concat_ws(' - ',document_name, compliance_task)) end AS compliance_task, compliance_description, is_active from tbl_compliances"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.Compliance_Task[d["compliance_task"]] = d
@@ -121,6 +140,14 @@ class SourceDB(object):
         rows = self._source_db.select_all(query)
         for d in rows:
             self.Compliance_Frequency[d["frequency"]] = d
+
+    def get_assignee(self):
+        query = "SELECT Distinct assignee as ID, employee_code, employee_name, " + \
+                " CONCAT_WS(' - ', employee_code, employee_name) As Assignee " + \
+                " FROM tbl_assign_compliances ac INNER JOIN tbl_users u ON (ac.assignee = u.user_id)"
+        rows = self._source_db.select_all(query)
+        for d in rows:
+            self.Assignee[d["Assignee"]] = d
 
     def check_base(self, check_status, store, key_name, status_name):
         print"store>>>", store
@@ -155,9 +182,8 @@ class SourceDB(object):
     def check_unit_name(self, unit_name):
         return self.check_base(True, self.Unit_Name, unit_name, None)
 
-    def check_statutories(self, statutories):
-        print "check_statutories>>151"
-        return self.check_base(True, self.Statutories, statutories, None)
+    def check_primary_legislation(self, statutories):
+        return self.check_base(False, self.Statutories, statutories, None)
 
     def check_compliance_task(self, compliance_task):
         return self.check_base(True, self.Compliance_Task, compliance_task, None)
@@ -167,6 +193,9 @@ class SourceDB(object):
 
     def check_frequency(self, frequency):
         return self.check_base(False, self.Compliance_Frequency, frequency, None)
+
+    def check_assignee(self, assignee):
+        return self.check_base(False, self.Assignee, assignee, None)
 
 
     def save_completed_task_data(self, data):
@@ -225,10 +254,12 @@ class SourceDB(object):
             "Domain": self.check_domain,
             "Unit_Code": self.check_unit_code,
             "Unit_Name": self.check_unit_name,
-            "Primary_Legislation": self.check_statutories,
+            "Primary_Legislation": self.check_primary_legislation,
+            # "Secondary_Legislation": self.get_secondary_legislation,
             "Compliance_Task": self.check_compliance_task,
             "Compliance_Description": self.check_compliance_description,
             "Compliance_Frequency": self.check_frequency,
+            "Assignee": self.check_assignee,
         }
 
     def csv_column_fields(self):
