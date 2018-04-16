@@ -369,6 +369,8 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user) :
                 return bu_cu.ReturnDeclinedCount(len(system_declined_count), int(manual_rejection_count))
             elif len(system_declined_count) > 0 and manual_rejection_count == 0:
                 return bu_cu.ReturnDeclinedCount(len(system_declined_count), int(manual_rejection_count))
+            elif len(system_declined_count) > 0 and manual_rejection_count > 0:
+                return bu_cu.ReturnDeclinedCount(len(system_declined_count), int(manual_rejection_count))
             else:
                 if (
                     update_bulk_client_unit_approve_reject_list(
@@ -596,6 +598,8 @@ def submit_bulk_client_unit_list_action(db, request_frame, session_user) :
             if len(system_declined_count) == 0 and manual_rejection_count > 0:
                 return bu_cu.ReturnDeclinedCount(len(system_declined_count), int(manual_rejection_count))
             elif len(system_declined_count) > 0 and manual_rejection_count == 0:
+                return bu_cu.ReturnDeclinedCount(len(system_declined_count), int(manual_rejection_count))
+            elif len(system_declined_count) > 0 and manual_rejection_count > 0:
                 return bu_cu.ReturnDeclinedCount(len(system_declined_count), int(manual_rejection_count))
             else:
                 clientUnitObj.process_data_to_main_db_insert(system_declined_count)

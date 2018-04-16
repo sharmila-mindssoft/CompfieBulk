@@ -510,7 +510,7 @@ function submitAction(csv_id, actionType, pwd, remarksText)
             }
             else if (error == "SubmitClientUnitActionFromListFailure"){
                 displayMessage(
-                    "All the units has to be approved/ rejected.Partial Submission is not allowed."
+                    "All the units should be selected before Submit."
                 );
             }
         }
@@ -879,14 +879,22 @@ function displayPage(page_mode) {
 
 // To invoke loading of client groups list
 groupSelect_name.keyup(function(e){
-    var condition_fields = ["is_active"];
-    var condition_values = [true];
     var text_val = $(this).val();
-    commonAutoComplete(
-      e, groupListBox, groupSelect_id, text_val,
-      clientGroupsList, "group_name", "client_id", function (val) {
-          onAutoCompleteSuccess(groupSelect_name, groupSelect_id, val);
-    }, condition_fields, condition_values);
+    if (text_val != '') {
+        var condition_fields = ["is_active"];
+        var condition_values = [true];
+        commonAutoComplete(
+          e, groupListBox, groupSelect_id, text_val,
+          clientGroupsList, "group_name", "client_id", function (val) {
+              onAutoCompleteSuccess(groupSelect_name, groupSelect_id, val);
+        }, condition_fields, condition_values);
+    } else {
+        tblClientUnitBulkUploadedList.empty();
+        var no_record_row = $("#templates .table-no-record tr");
+        var clone = no_record_row.clone();
+        tblClientUnitBulkUploadedList.append(clone);
+    }
+
 });
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
