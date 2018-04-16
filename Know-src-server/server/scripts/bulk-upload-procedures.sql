@@ -102,13 +102,11 @@ BEGIN
     FROM tbl_bulk_statutory_mapping_csv AS t1
     WHERE upload_status =  1 AND approve_status = 0 AND ifnull(t1.is_fully_rejected, 0) = 0
     AND country_id = cid AND domain_id = did
-    AND uploaded_by like uploadedby
+    AND FIND_IN_SET(uploaded_by, uploadedby)
     ORDER BY uploaded_on DESC;
 END //
 
 DELIMITER ;
-
-
 
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_rejected_list`;
@@ -286,8 +284,8 @@ CREATE PROCEDURE `sp_statutory_mapping_view_by_filter`(
 IN csvid INT, orga_name VARCHAR(50), s_nature VARCHAR(50),
 frequency VARCHAR(50), statu VARCHAR(200), geo_location VARCHAR(500),
 c_task VARCHAR(100), c_desc VARCHAR(500), c_doc VARCHAR(100),
-f_count INT, f_range INT
-
+f_count INT, f_range INT, tsk_id VARCHAR(50), tsk_type VARCHAR(100),
+view_data INT
 )
 BEGIN
     SELECT distinct t1.csv_id, t1.country_name,
@@ -306,10 +304,15 @@ BEGIN
     FROM tbl_bulk_statutory_mapping_csv AS t1
     inner join tbl_bulk_statutory_mapping AS t2 on
     t1.csv_id  = t2.csv_id WHERE t1.csv_id = csvid
-    AND organization like orga_name AND geography_location like geo_location
-    AND statutory_nature like s_nature AND statutory like statu
-    AND compliance_frequency like frequency AND compliance_task like c_task
-    AND compliance_description like c_desc AND compliance_document like c_doc
+    AND t2.organization like orga_name AND t2.geography_location like geo_location
+    AND t2.statutory_nature like s_nature AND t2.statutory like statu
+    AND t2.compliance_frequency like frequency AND t2.compliance_task like c_task
+    AND t2.compliance_description like c_desc AND t2.compliance_document like c_doc
+    AND t2.task_id like tsk_id AND t2.task_type like tsk_type
+    AND (CASE WHEN view_data =1 THEN IFNULL(t2.action, 0) > 0
+      WHEN view_data =2 THEN IFNULL(t2.action, 0) = 0
+          ELSE IFNULL(t2.action, 0) like "%"
+  END)
     limit  f_count, f_range;
 
     SELECT count(distinct t2.bulk_statutory_mapping_id) AS total
@@ -317,12 +320,16 @@ BEGIN
     FROM tbl_bulk_statutory_mapping_csv AS t1
     inner join tbl_bulk_statutory_mapping AS t2 on
     t1.csv_id  = t2.csv_id WHERE t1.csv_id = csvid
-    AND organization like orga_name AND geography_location like geo_location
-    AND statutory_nature like s_nature AND statutory like statu
-    AND compliance_frequency like frequency AND compliance_task like c_task
-    AND compliance_description like c_desc AND compliance_document like c_doc;
+    AND t2.organization like orga_name AND t2.geography_location like geo_location
+    AND t2.statutory_nature like s_nature AND t2.statutory like statu
+    AND t2.compliance_frequency like frequency AND t2.compliance_task like c_task
+    AND t2.compliance_description like c_desc AND t2.compliance_document like c_doc
+    AND t2.task_id like tsk_id AND t2.task_type like tsk_type
+    AND (CASE WHEN view_data =1 THEN IFNULL(t2.action, 0) > 0
+      WHEN view_data =2 THEN IFNULL(t2.action, 0) = 0
+          ELSE IFNULL(t2.action, 0) like "%"
+    END);
 END //
-
 DELIMITER ;
 
 
@@ -1104,12 +1111,12 @@ SELECT
  asm.statutory_provision,
  asm.compliance_task_name,
  asm.compliance_description,
- (CASE WHEN asm.statutory_applicable_status = 1 THEN 'Applicable' 
+ (CASE WHEN asm.statutory_applicable_status = 1 THEN 'Applicable'
        WHEN asm.statutory_applicable_status = 2 THEN 'Not Applicable'
        WHEN asm.statutory_applicable_status = 3 THEN 'Do Not Show'
   END) AS statutory_applicable_status,
  asm.statytory_remarks,
- (CASE WHEN asm.compliance_applicable_status = 1 THEN 'Applicable' 
+ (CASE WHEN asm.compliance_applicable_status = 1 THEN 'Applicable'
        WHEN asm.compliance_applicable_status = 2 THEN 'Not Applicable'
        WHEN asm.compliance_applicable_status = 3 THEN 'Do Not Show'
   END) AS compliance_applicable_status,
@@ -1128,7 +1135,7 @@ INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statut
   (asm.action=3 OR asm_csv.is_fully_rejected=1)
   ORDER BY asm_csv.rejected_on, asm_csv.approved_on DESC;
 
-ELSE 
+ELSE
 
 SELECT
  asm.client_group,
@@ -1143,12 +1150,12 @@ SELECT
  asm.statutory_provision,
  asm.compliance_task_name,
  asm.compliance_description,
- (CASE WHEN asm.statutory_applicable_status = 1 THEN 'Applicable' 
+ (CASE WHEN asm.statutory_applicable_status = 1 THEN 'Applicable'
        WHEN asm.statutory_applicable_status = 2 THEN 'Not Applicable'
        WHEN asm.statutory_applicable_status = 3 THEN 'Do Not Show'
   END) AS statutory_applicable_status,
  asm.statytory_remarks,
- (CASE WHEN asm.compliance_applicable_status = 1 THEN 'Applicable' 
+ (CASE WHEN asm.compliance_applicable_status = 1 THEN 'Applicable'
        WHEN asm.compliance_applicable_status = 2 THEN 'Not Applicable'
        WHEN asm.compliance_applicable_status = 3 THEN 'Do Not Show'
   END) AS compliance_applicable_status,
