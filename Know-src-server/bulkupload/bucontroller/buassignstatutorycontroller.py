@@ -11,11 +11,12 @@ from ..budatabase.buassignstatutorydb import *
 from ..bulkuploadcommon import (
     convert_base64_to_file,
     read_data_from_csv,
-    generate_valid_file
+    generate_valid_file,
+    remove_uploaded_file
 )
 from ..bulkexport import ConvertJsonToCSV
 from server.constants import (
-    BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT
+    BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT, CSV_MAX_LINES
 )
 import datetime
 from protocol import generalprotocol, technoreports
@@ -219,7 +220,12 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
         header, assign_statutory_data = read_data_from_csv(csv_name)
 
         if len(assign_statutory_data) == 0:
-                return bu_as.CsvFileBlank()
+            return bu_as.CsvFileBlank()
+
+        if len(assign_statutory_data) > CSV_MAX_LINES:
+            file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
+            remove_uploaded_file(file_path)
+            return bu_as.CsvFileExeededMaxLines(CSV_MAX_LINES)
 
         # csv data validation
         cObj = ValidateAssignStatutoryCsvData(
@@ -346,9 +352,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
         is_declined = cObj.perform_validation_before_submit()
         if action == 1:
             if len(is_declined.keys()) > 0:
-                update_approve_action_from_list(
-                    db, csv_id, action, remarks, session_user, "all"
-                )
+                cObj.update_child(csv_id)
                 return bu_as.ValidationSuccess(len(is_declined.keys()))
             else:
                 if(update_approve_action_from_list(
@@ -360,7 +364,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                     cObj.save_executive_message(
                         action, cObj._csv_name, cObj._client_group,
                         cObj._legal_entity, session_user.user_id(),
-                        u_ids
+                        u_ids, None
                     )
                     cObj.source_commit()
                     delete_action_after_approval(db, csv_id)
@@ -373,7 +377,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                 cObj.save_executive_message(
                     action, cObj._csv_name, cObj._client_group,
                     cObj._legal_entity, session_user.user_id(),
-                    u_ids
+                    u_ids, remarks
                 )
                 cObj.source_commit()
                 return bu_as.AssignStatutoryApproveActionInListSuccess()
@@ -432,13 +436,13 @@ def update_rejected_asm_download_count(db, request_frame, session_user):
 def delete_rejected_asm_data(db, request_frame, session_user):
     client_id = request_frame.client_id
     le_id = request_frame.le_id
-    domain_ids = request_frame.domain_ids
+    d_id = request_frame.d_id
     unit_code = request_frame.asm_unit_code
     csv_id = request_frame.csv_id
     user_id = session_user.user_id()
     rejected_data = get_list_and_delete_rejected_asm(db, session_user, user_id,
                                                      client_id, le_id,
-                                                     domain_ids, unit_code,
+                                                     d_id, unit_code,
                                                      csv_id)
     result = bu_as.GetRejectedASMDataSuccess(rejected_data)
     return result
@@ -467,12 +471,12 @@ def get_rejected_assign_sm_data(db, request_frame, session_user):
 
     client_id = request_frame.client_id
     le_id = request_frame.le_id
-    domain_ids = request_frame.domain_ids
+    d_id = request_frame.d_id
     unit_code = request_frame.asm_unit_code
     user_id = session_user.user_id()
 
     asm_rejected_data = fetch_rejected_assign_sm_data(
-        db, session_user, user_id, client_id, le_id, domain_ids, unit_code)
+        db, session_user, user_id, client_id, le_id, d_id, unit_code)
     result = bu_as.GetRejectedASMBulkUploadDataSuccess(asm_rejected_data)
     return result
 
@@ -501,7 +505,7 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     clientGroupId = request_frame.bu_client_id
     legalEntityId = request_frame.bu_legal_entity_id
     unitId = request_frame.bu_unit_id
-    domainIds = request_frame.domain_ids
+    domainId = request_frame.d_id
     from_date = request_frame.from_date
     to_date = request_frame.to_date
     record_count = request_frame.r_count
@@ -513,7 +517,7 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
     asm_reportdata, total_record = fetch_assigned_statutory_bulk_report(
         db, session_user, session_user.user_id(), clientGroupId, legalEntityId,
-        unitId, domainIds, from_date, to_date, record_count, page_count,
+        unitId, domainId, from_date, to_date, record_count, page_count,
         child_ids, user_category_id)
 
     result = bu_as.GetAssignedStatutoryReportDataSuccess(asm_reportdata,
@@ -541,7 +545,7 @@ def export_assigned_statutory_bulk_report_data(db, request, session_user):
 def download_rejected_asm_report(db, request_frame, session_user):
     client_id = request_frame.client_id
     le_id = request_frame.le_id
-    domain_ids = request_frame.domain_ids
+    d_id = request_frame.d_id
     asm_unit_code = request_frame.asm_unit_code
     csv_id = request_frame.csv_id
     download_format = request_frame.download_format
@@ -573,7 +577,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
     csv_name = get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id)
 
     source_data = fetch_rejected_asm_download_csv_report(
-        db, session_user, user_id, client_id, le_id, domain_ids, asm_unit_code,
+        db, session_user, user_id, client_id, le_id, d_id, asm_unit_code,
         csv_id)
 
     # cObj = ValidateRejectedDownloadBulkData(
@@ -630,7 +634,7 @@ def submit_assign_statutory(db, request_frame, session_user):
             cObj.save_executive_message(
                 1, cObj._csv_name, cObj._client_group,
                 cObj._legal_entity, session_user.user_id(),
-                u_ids
+                u_ids, None
             )
             cObj.frame_data_for_main_db_insert(user_id)
             cObj.source_commit()
@@ -659,7 +663,7 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
         cObj.save_executive_message(
             1, cObj._csv_name, cObj._client_group,
             cObj._legal_entity, session_user.user_id(),
-            u_ids
+            u_ids, None
         )
         cObj.frame_data_for_main_db_insert(user_id)
         cObj.source_commit()

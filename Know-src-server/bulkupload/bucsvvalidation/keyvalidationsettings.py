@@ -429,7 +429,7 @@ csv_params = {
     'Task_Type': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=150,
         isValidCharCheck=True,
-        validation_method=is_alpha_numeric, isFoundCheck=True
+        validation_method=is_alphabet, isFoundCheck=True
     ),
     'Reference_Link': make_required_validation(
         keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,

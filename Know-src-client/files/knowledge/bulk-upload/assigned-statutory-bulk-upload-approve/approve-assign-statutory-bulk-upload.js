@@ -813,6 +813,7 @@ validateAuthentication = function(id, passwordField, reasonField) {
 
 // Server to approve & Reject send status. To check system rejected status
 approveOrRejectAction = function(id, clId, leId, action, reason, password) {
+    displayLoader();
     bu.assignStatutoryActionInList(parseInt(clId), parseInt(leId),
         parseInt(id), parseInt(action), reason, password,
         function(err1, res2) {
@@ -820,9 +821,11 @@ approveOrRejectAction = function(id, clId, leId, action, reason, password) {
             if (err1 == null) {
                 if (res2.hasOwnProperty("rej_count")) {
                     setTimeout(function() {
+                        hideLoader();
                         var statusmsg = res2.rej_count + ' ' + message.sys_rejected_confirm;
                         confirm_alert(statusmsg, function(isConfirm) {
                             if (isConfirm) {
+                                displayLoader();
                                 bu.confirmAssignStatutoryUpdateAction(parseInt(id),
                                     parseInt(clId), parseInt(leId),
                                     function(error, res3) {
@@ -1000,8 +1003,9 @@ ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
         });
         checkAllEnableDisable();
         PAGINATION_VIEW.show();
-        if (flag == false)
-            showPagePan(showFrom, SNO, TOTAL_RECORD);
+        // if (flag == false)
+        if(showFrom == undefined) showFrom = 1;
+        showPagePan(showFrom, SNO, TOTAL_RECORD);
     } else {
         PAGINATION_VIEW.hide();
         hideLoader();
@@ -1188,7 +1192,7 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
         cStatus = null;
     else
         cStatus = parseInt(cStatus);
-    if (vData == "" || vData == 0)
+    if (vData == "")
         vData = null;
     else
         vData = parseInt(vData);
@@ -1210,7 +1214,7 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
             if (error == null) {
                 statute.dataListDetails = response.assign_statutory_data_list;
                 TOTAL_RECORD = response.count;
-                if (SNO == 0)
+                if (SNO == 0 && TOTAL_RECORD > 0)
                     createPageView(TOTAL_RECORD);
                 statute.displayDetailsPage(statute.dataListDetails, false);
                 ASID.val(id);

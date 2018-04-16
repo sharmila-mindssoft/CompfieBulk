@@ -881,7 +881,8 @@ class RejectedList(object):
 class PendingCsvList(object):
     def __init__(
         self, csv_id, csv_name, uploaded_by,
-        uploaded_on, no_of_records, approve_count, rej_count, download_file
+        uploaded_on, no_of_records, approve_count, rej_count, download_file,
+        declined_count
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
@@ -891,12 +892,15 @@ class PendingCsvList(object):
         self.approve_count = approve_count
         self.rej_count = rej_count
         self.download_file = download_file
+        self.declined_count = declined_count
+
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "csv_id", "csv_name", "uploaded_by", "uploaded_on",
-            "no_of_records", "approve_count", "rej_count", "download_file"
+            "no_of_records", "approve_count", "rej_count", "download_file",
+            "declined_count"
 
         ])
         return PendingCsvList(
@@ -905,7 +909,7 @@ class PendingCsvList(object):
             data.get("uploaded_on"), data.get("no_of_records"),
             data.get("approve_count"),
             data.get("rej_count"),
-            data.get("download_file")
+            data.get("download_file"), data.get("declined_count")
         )
 
     def to_structure(self):
@@ -917,7 +921,8 @@ class PendingCsvList(object):
             "no_of_records": self.no_of_records,
             "approve_count": self.approve_count,
             "rej_count": self.rej_count,
-            "download_file": self.download_file
+            "download_file": self.download_file,
+            "declined_count": self.declined_count
         }
 
 
