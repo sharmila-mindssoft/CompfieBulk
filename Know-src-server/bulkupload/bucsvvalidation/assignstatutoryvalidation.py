@@ -1077,7 +1077,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         try:
             q = "update tbl_bulk_assign_statutory set " + \
                 " action = 1 where " + \
-                " csv_assign_statutory_id = %s"
+                " csv_assign_statutory_id = %s "
             self._db.execute(q, [csv_id])
 
         except Exception, e:
