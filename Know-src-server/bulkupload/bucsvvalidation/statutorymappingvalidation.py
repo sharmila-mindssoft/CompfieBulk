@@ -6,6 +6,7 @@ import mysql.connector
 import urllib
 import threading
 import requests
+import calendar
 from zipfile import ZipFile
 from itertools import groupby
 from server.dbase import Database
@@ -589,20 +590,40 @@ class StatutorySource(object):
 
     def map_statutory_date(self, s_date, s_month, t_days, r_by):
         if r_by == "EOM":
+            r_by = 2
+        elif r_by == "DOM":
             r_by = 1
         else:
             r_by = None
+
+        multi_len = 0
         if len(s_date.split(CSV_DELIMITER)) > 1:
             multi_len = len(s_date.split(CSV_DELIMITER))
-        else:
-            multi_len = 0
+
+        if (len(s_date.split(CSV_DELIMITER)) <= 1 and
+                len(s_month.split(CSV_DELIMITER)) > 1):
+            multi_len = len(s_month.split(CSV_DELIMITER))
+
+        if(len(s_date.split(CSV_DELIMITER)) <= 1 and
+            len(s_month.split(CSV_DELIMITER)) <= 1 and
+                len(t_days.split(CSV_DELIMITER)) > 1):
+            multi_len = len(t_days.split(CSV_DELIMITER))
 
         sdate = []
         if multi_len == 0:
-            s_date = None if s_date is None else s_date
-            s_month = None if s_month is None else s_month
-            t_days = None if t_days is None else t_days
-            r_by = None if r_by is None else r_by
+            if(s_date is not None and s_date != ''):
+                s_date = int(s_date)
+
+            if(s_month is not None and s_month != ''):
+                s_month = int(s_month)
+
+            if(t_days is not None and t_days != ''):
+                t_days = int(t_days)
+
+            if(r_by is not None and r_by == 2):
+                end_of_month = calendar.mdays[s_month]
+                s_date = int(end_of_month)
+
             sdate.append({
                 "statutory_date": s_date,
                 "statutory_month": s_month,
@@ -613,18 +634,31 @@ class StatutorySource(object):
             s_date = s_date.split(CSV_DELIMITER)
             s_month = s_month.split(CSV_DELIMITER)
             t_days = t_days.split(CSV_DELIMITER)
-
             for i in range(multi_len):
-                s_date_i = None if s_date[i] is None else s_date[i]
-                s_month_i = None if s_month[i] is None else s_month[i]
-                t_days_i = None if t_days[i] is None else t_days[i]
-                r_by_i = None if r_by is None else r_by
+                s_date_i = None
+                s_month_i = None
+                t_days_i = None
+
+                if(type(s_date) != int or type(s_date) != float):
+                    if(len(s_date) > 1):
+                        s_date_i = int(s_date[i])
+
+                if(type(s_month) != int or type(s_month) != float):
+                    if(len(s_month) > 1):
+                        s_month_i = int(s_month[i])
+
+                if(type(t_days) != int or type(t_days) != float):
+                    if(len(t_days) > 1):
+                        t_days_i = int(t_days[i])
+                if(r_by is not None and r_by == 2):
+                    end_of_month = calendar.mdays[s_month_i]
+                    s_date_i = int(end_of_month)
 
                 sdate.append({
                     "statutory_date": s_date_i,
                     "statutory_month": s_month_i,
                     "trigger_before_days": t_days_i,
-                    "repeat_by": r_by_i
+                    "repeat_by": r_by
                 })
         return json.dumps(sdate)
 
@@ -656,10 +690,15 @@ class StatutorySource(object):
             if d["Repeats_Type"] != '':
                 repeat_type_id = self.Repeats_Type.get(d["Repeats_Type"])
 
-            mapped_date = self.map_statutory_date(
-                d["Statutory_Date"], d["Statutory_Month"], d["Trigger_Days"],
-                d["Repeats_By (DOM/EOM)"]
-            )
+            Statutory_Date = d["Statutory_Date"] if d["Statutory_Date"] is not None else None
+            Statutory_Month = d["Statutory_Month"] if d["Statutory_Month"] is not None else None
+            Trigger_Days = d["Trigger_Days"] if d["Trigger_Days"] is not None else None
+            Repeats_By = d["Repeats_By (DOM/EOM)"] if d["Repeats_By (DOM/EOM)"] is not None else None
+
+            mapped_date = self.map_statutory_date(Statutory_Date,
+                                                  Statutory_Month,
+                                                  Trigger_Days,
+                                                  Repeats_By)
 
             values.append((
                 d["Statutory_Provision"], d["Compliance_Task"],
