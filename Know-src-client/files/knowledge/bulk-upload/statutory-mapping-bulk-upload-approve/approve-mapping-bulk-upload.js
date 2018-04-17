@@ -1633,3 +1633,5 @@ $(document).ready(function() {
     // $(".nicescroll").niceScroll();
     buApprovePage.showList()
 });
+
+$(".nicescroll").niceScroll();

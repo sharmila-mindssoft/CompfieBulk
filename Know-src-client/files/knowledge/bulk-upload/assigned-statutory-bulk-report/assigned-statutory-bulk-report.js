@@ -897,6 +897,7 @@ $(function() {
         $('#show-button').trigger("click");
     });
     loadItemsPerPage();
+    $('#domain').multiselect('rebuild');
 });
 
 //To export data

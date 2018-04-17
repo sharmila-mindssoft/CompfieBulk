@@ -144,7 +144,7 @@
                                                     <div class="form-group has-feedback m-b-0">
                                                         <label class="col-md-6 control-label">Uploaded File Name:</label>
                                                         <div class="col-md-6">
-                                                            <p class="form-control-static approve-file-name"></p>
+                                                            <p class="form-control-static approve-file-name break-word"></p>
                                                             <input id="view_csv_unit_id" type="hidden">
                                                         </div>
                                                     </div>
@@ -157,6 +157,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="clearfix"></div>
                                                 <div class="col-lg-4">
                                                     <div class="form-group has-feedback m-b-0">
                                                         <label class="col-sm-4 control-label">Uploaded By:</label>
@@ -176,13 +177,7 @@
                                             </div>
                                         </div>
                                         <div class="clearfix"></div>
-                                        <!-- <div class="col-md-12 p-0 filtered_items">    </div> -->
-                                        <div class="col-md-12 p-0">
-                                        <span class="pull-left p-r-5 filtered_items"></span>
-                                            <span class="pull-left p-r-5 clear-filtered default-display-none"> &nbsp;
-                                                <i class="fa fa-times fa-1-3x text-primary text-muted c-pointer" data-toggle="tooltip" title="" data-original-title="Click here to clear filter"></i>
-                                            </span>
-                                        </div>
+                                        <div class="col-md-12 p-0 filtered_items">    </div>
                                         <div class="clearfix"></div>
                                         <div id="freezer-example">
                                             <div class="table-responsive vertical-scroll" >
@@ -222,105 +217,93 @@
                                                             <td></td>
                                                             <td class="text-center" >
                                                                 <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-                                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all_approve"
-                                                                    title="Click here to approve all">
+                                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all_approve">
                                                                     <label> </label>
                                                                 </div>
                                                             </td>
                                                             <td class="text-center" >
                                                                 <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
-                                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all_reject"
-                                                                    title="Click here to reject all">
+                                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all_reject">
                                                                     <label> </label>
                                                                 </div>
                                                             </td>
                                                             <td></td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Legal Entity"
-                                                                    id="filter_legal_entity">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Legal Entity">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Division"
-                                                                    id="filter_division">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Division">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Category"
-                                                                    id="filter_category">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Category">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Geography Level" id="filter_geo_level">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Geography Level">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" id="filter_location"
+                                                                    <input type="text" class="form-control input-sm js-filter-view"
                                                                     placeholder="Unit Location">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Code"
-                                                                    id="filter_unit_code">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Code">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Name"
-                                                                    id="filter_unit_name">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Name">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Address"
-                                                                    id="filter_address">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Address">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="City" id="filter_city">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="City">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="State"
-                                                                    id="filter_state">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="State">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Postal Code"
-                                                                    id="filter_post_code">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Postal Code">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Domain"
-                                                                    id="filter_domain">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Domain">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Organization"
-                                                                    id="filter_orgn">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Organization">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
@@ -393,7 +376,7 @@
                 <button class="btn btn-primary text-center waves-effect waves-light viewbtn" type="button">
                 View </button>
                 <a href="#" class="editbtn default-display-none">
-                    <i class="fa fa-pencil text-primary c-pointer" title="Click here to Edit"></i>
+                    <i class="fa fa-pencil text-primary c-pointer"></i>
                 </a>
             </td>
             <td class="text-center">
@@ -466,7 +449,8 @@
         <i class="zmdi zmdi-close-circle-o"></i>
     </a>
     <h4 class="filter-text bg-info filter-by-class">Filter By</h4>
-    <div class="notification-list nicescroll overflow-class">
+    <div class="notification-list nicescroll">
+    <div class="filter-data nicescroll">
         <div class="form-group col-sm-12">
             <label class="control-label">View Data</label>
             <div class="col-md-12 no-padding">
@@ -523,7 +507,7 @@
         <div class="form-group col-sm-12">
             <label class="control-label">Unit Location</label>
             <div class="has-feedback">
-                <input type="text" class="form-control input-sm" placeholder="Enter Unit Location" value="" id="search_geo_location" maxlength="50" autofocus="autofocus" tabindex="7">
+                <input type="text" class="form-control input-sm" placeholder="Enter Geography Location" value="" id="search_geo_location" maxlength="50" autofocus="autofocus" tabindex="7">
                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                 <input type="hidden" name="geography-id" id="geography_id" value="">
                 <div id="ac_geography" class="ac-textbox default-display-none">
@@ -564,6 +548,7 @@
                 </div>
             </div>
         </div>
+    </div>
         <div class="form-group col-sm-12">
             <button class="btn btn-info" id="btn_go">Search</button>
         </div>
