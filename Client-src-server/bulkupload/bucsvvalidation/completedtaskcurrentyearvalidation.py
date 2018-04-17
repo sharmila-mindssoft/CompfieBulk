@@ -61,9 +61,6 @@ class SourceDB(object):
         port=KNOWLEDGE_DB_PORT,
         autocommit=False, )
 
-        # args = [None, legal_entity_id]
-        # result = cnx.call_proc("sp_get_le_db_server_details", args, None)
-        print "_knowledge_db_con>>", self._knowledge_db_con
         self._knowledge_db = Database(self._knowledge_db_con)
         self._knowledge_db.begin()
 
@@ -73,7 +70,6 @@ class SourceDB(object):
 
         result = self._knowledge_db.select_all(query, param)
 
-        print "cnx>result>>", result
         if len(result) > 0:
             for row in result:
                 dhost = row["database_ip"]
@@ -108,7 +104,6 @@ class SourceDB(object):
 
     def init_values(self, legal_entity_id):
         print "init_values(self)>>>>"
-        print "init_values(self)>legal_entity_id", legal_entity_id
         self.connect_source_db(legal_entity_id)
         self.get_legal_entities()
         self.get_domains()
