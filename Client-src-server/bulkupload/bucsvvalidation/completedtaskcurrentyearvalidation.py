@@ -9,8 +9,6 @@ from server.constants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
 )
 
-
-
 from client_keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..client_bulkuploadcommon import (
     write_data_to_excel, rename_file_type
@@ -18,8 +16,6 @@ from ..client_bulkuploadcommon import (
 from server.common import (
     get_date_time
 )
-
-
 
 __all__ = [
     "ValidateCompletedTaskCurrentYearCsvData",
@@ -35,6 +31,8 @@ class SourceDB(object):
     def __init__(self):
         self._source_db = None
         self._source_db_con = None
+        self._knowledge_db = None
+        self._knowledge_db_con = None
         # self.Client_Group = {}
         self.Legal_Entity = {}
         self.Domain = {}
@@ -45,28 +43,62 @@ class SourceDB(object):
         self.Compliance_Description = {}
         self.Compliance_Frequency = {}
         self.Assignee = {}
-        self.connect_source_db()
+        # self.connect_source_db()
         self._validation_method_maps = {}
         self.statusCheckMethods()
         self._csv_column_name = []
         self.csv_column_fields()
+        self._doc_names = []
 
-    def connect_source_db(self):
-        # print "API.bulk_db_connect", bulk_db_connect
-        # print "completedtaskcurrentyearvalidation>user>>", BULK_LE_DB_CONNECT["db_username"]
-        # print "completedtaskcurrentyearvalidation>password>>", BULK_LE_DB_CONNECT["db_password"]
-        # print "completedtaskcurrentyearvalidation>host>>", BULK_LE_DB_CONNECT["ip_address"]
-        # print "completedtaskcurrentyearvalidation>database>>", BULK_LE_DB_CONNECT["db_name"]
-        # print "completedtaskcurrentyearvalidation>port>>", BULK_LE_DB_CONNECT["db_ip.port"]
+    def connect_source_db(self, legal_entity_id):
+        print "completedtaskcurrentyearvalidation>self.legal_entity_id>>", legal_entity_id
 
-        self._source_db_con = mysql.connector.connect(
-            user=KNOWLEDGE_DB_USERNAME,
-            password=KNOWLEDGE_DB_PASSWORD,
-            host=KNOWLEDGE_DB_HOST,
-            database="compfie_le_att_1",
-            port=KNOWLEDGE_DB_PORT,
-            autocommit=False,
-        )
+        self._knowledge_db_con = mysql.connector.connect(
+        user=KNOWLEDGE_DB_USERNAME,
+        password=KNOWLEDGE_DB_PASSWORD,
+        host=KNOWLEDGE_DB_HOST,
+        database=KNOWLEDGE_DATABASE_NAME,
+        port=KNOWLEDGE_DB_PORT,
+        autocommit=False, )
+
+        # args = [None, legal_entity_id]
+        # result = cnx.call_proc("sp_get_le_db_server_details", args, None)
+        print "_knowledge_db_con>>", self._knowledge_db_con
+        self._knowledge_db = Database(self._knowledge_db_con)
+        self._knowledge_db.begin()
+
+        query = "select t1.client_database_id, t1.database_name, t1.database_username, t1.database_password, t3.database_ip, database_port from tbl_client_database_info as t1 inner join tbl_client_database as t2 on t2.client_database_id = t1.client_database_id inner join tbl_database_server as t3 on t3.database_server_id = t2.database_server_id where t1.db_owner_id = %s and t1.is_group = 0;"
+
+        param = [legal_entity_id]
+
+        result = self._knowledge_db.select_all(query, param)
+
+        print "cnx>result>>", result
+        if len(result) > 0:
+            for row in result:
+                dhost = row["database_ip"]
+                uname = row["database_username"]
+                pwd = row["database_password"]
+                port = row["database_port"]
+                db_name = row["database_name"]
+
+                self._source_db_con = mysql.connector.connect(
+                    user=uname,
+                    password=pwd,
+                    host=dhost,
+                    database=db_name,
+                    port=port,
+                    autocommit=False,
+                )
+
+        # self._source_db_con = mysql.connector.connect(
+        #     user=KNOWLEDGE_DB_USERNAME,
+        #     password=KNOWLEDGE_DB_PASSWORD,
+        #     host=KNOWLEDGE_DB_HOST,
+        #     database="compfie_le_att_1",
+        #     port=KNOWLEDGE_DB_PORT,
+        #     autocommit=False,
+        # )
         self._source_db = Database(self._source_db_con)
         self._source_db.begin()
 
@@ -74,8 +106,10 @@ class SourceDB(object):
         self._source_db.close()
         self.__source_db_con.close()
 
-    def init_values(self):
+    def init_values(self, legal_entity_id):
         print "init_values(self)>>>>"
+        print "init_values(self)>legal_entity_id", legal_entity_id
+        self.connect_source_db(legal_entity_id)
         self.get_legal_entities()
         self.get_domains()
         self.get_unit_code()
@@ -274,13 +308,14 @@ class SourceDB(object):
         ]
 
 class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
-    def __init__(self, db, source_data, session_user, csv_name, csv_header):
+    def __init__(self, db, source_data, session_user, csv_name, csv_header,legal_entity_id):
         SourceDB.__init__(self)
         self._db = db
         self._source_data = source_data
         self._session_user_obj = session_user
         self._csv_name = csv_name
         self._csv_header = csv_header
+        self.legal_entity_id = legal_entity_id
         self._legal_entity_names = None
         self._Domains = None
         # self._Unit_Codes = None
@@ -312,12 +347,12 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
     '''
 
 
-    def perform_validation(self):
+    def perform_validation(self, legal_entity_id):
         mapped_error_dict = {}
         mapped_header_dict = {}
         invalid = 0
         self.compare_csv_columns()
-        self.init_values()
+        self.init_values(legal_entity_id)
 
         def make_error_desc(res, msg):
             if res is True :
@@ -359,6 +394,9 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 isFound = ""
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
+
+                if (key == "Document_Name" and value != ''):
+                    self._doc_names.append(value)
 
                 for v in [v.strip() for v in values] :
                     valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
@@ -450,7 +488,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "invalid_data_error": self._error_summary["invalid_data_error"],
             "inactive_error": self._error_summary["inactive_error"],
             "total": total,
-            "invalid": invalid
+            "invalid": invalid,
+            "doc_count": len(set(self._doc_names))
         }
 
 
@@ -462,7 +501,9 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "data": self._source_data,
             "total": total,
             "valid": total - invalid,
-            "invalid": invalid
+            "invalid": invalid,
+            "doc_count": len(set(self._doc_names)),
+            "doc_names": list(set(self._doc_names)),
         }
 
 

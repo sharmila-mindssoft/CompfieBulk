@@ -117,9 +117,9 @@
                                                         </label>
                                                         <p class="form-control-static legal-entity-name default-display-none"></p>
                                                         <div class="col-sm-6 has-feedback default-display-none legal-entity-name-ac">
-                                                            <input type="text" class="form-control input-sm legal-entity-name-ac" placeholder="Legal Entity name" id="legal_entity_name" placeholder="Enter Legal Entity">
+                                                            <input type="text" class="form-control input-sm" placeholder="Legal Entity name" id="txt_legal_entity_name" placeholder="Enter Legal Entity">
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                                                            <input type="hidden" id="legal_entity_id" value="">
+                                                            <input type="hidden" id="hdn_legal_entity_id" value="">
                                                             <div id="ac-entity" class="ac-textbox default-display-none">
                                                                 <ul class="width85Percent"></ul>
                                                             </div>
@@ -168,12 +168,7 @@
 
 
 
-                                                        <div class="col-sm-12 text-center m-b-20" id="divSuccessbutton" style="display: none;">
-                                                            <a class="btn btn-primary btn-trans uploaded_data" style="display: inline-block;"><i class="fa fa-download text-primary"></i> Uploaded Data (.zip)</a>
-                                                            <button class="btn btn-primary waves-effect waves-light btn_submit" type="button" style="display: inline-block;"> Submit</button>
-                                                            <input type="hidden" id="hdnCsvId" value="">
 
-                                                        </div>
 
                                                         <div class="form-group">
                                                             <label class="col-sm-4 control-label">Legal Entity:
@@ -181,9 +176,9 @@
                                                             </label>
                                                             <p class="form-control-static legal-entity-name-upload default-display-none"></p>
                                                             <div class="col-sm-6 has-feedback legal-entity-name-ac-upload default-display-none">
-                                                                <input type="text" class="form-control input-sm legal-entity-name-ac-upload" placeholder="Legal Entity name" id="legal_entity_name_upload" placeholder="Enter Legal Entity">
+                                                                <input type="text" class="form-control input-sm " placeholder="Legal Entity name" id="txt_legal_entity_name_upload" placeholder="Enter Legal Entity">
                                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                                                                <input type="hidden" id="legal_entity_id_upload" value="">
+                                                                <input type="hidden" id="hdn_legal_entity_id_upload" value="">
                                                                 <div id="ac-entity-upload" class="ac-textbox default-display-none">
                                                                     <ul class="width85Percent"></ul>
                                                                 </div>
@@ -264,6 +259,13 @@
                                                                     <a id="txt">Download Text</a>
                                                                 </div>
                                                             </div>
+                                                        </div>
+
+                                                        <div class="col-sm-12 text-center m-b-20" id="divSuccessbutton" style="display: none;">
+                                                            <a class="btn btn-primary btn-trans uploaded_data" style="display: inline-block;"><i class="fa fa-download text-primary"></i> Uploaded Data</a>
+                                                            <button class="btn btn-primary waves-effect waves-light btn_submit" type="button" style="display: inline-block;"> Submit</button>
+                                                            <input type="hidden" id="hdnCsvId" value="">
+
                                                         </div>
 
 

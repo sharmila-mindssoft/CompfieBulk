@@ -93,6 +93,25 @@ def update_file_status(file_name, csv_id):
 
     return res_ponse_data
 
+def update_file_status_client(file_name, csv_id):
+    res_ponse_data = None
+    _db_con = bulkupload_db_connect()
+    _db = Database(_db_con)
+    try :
+        _db.begin()
+        print "update file status"
+        if _db.update_file_status_client(csv_id, file_name) is None:
+            res_ponse_data = False
+            print "update failed"
+        _db.commit()
+    except Exception:
+        _db.rollback()
+
+    finally:
+        _db.close()
+        _db_con.close()
+
+    return res_ponse_data
 
 def update_file_ddwnload_status(csv_id, status):
     res_ponse_data = None
@@ -171,7 +190,7 @@ def upload_client():
         zip_ref.extractall(load_path)
         zip_ref.close()
         os.remove(zip_f_name)
-        if update_file_status(f.filename, csvid) is False :
+        if update_file_status_client(f.filename, csvid) is False :
             return "update failed"
 
         return "success"
