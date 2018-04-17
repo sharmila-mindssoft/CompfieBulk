@@ -598,62 +598,34 @@ class StatutorySource(object):
             multi_len = 0
 
         sdate = []
-
-        print "s_date"
-        print "s_month"
-        print "t_days"
-        print "r_by"
-
-        print s_date
-        print s_month
-        print t_days
-        print r_by
         if multi_len == 0:
-            s_date = s_date is not None if s_date else None
-            s_month = s_month is not None if s_month else None
-            t_days = t_days is not None if t_days else None
-            r_by = r_by is not None if r_by else None
+            s_date = None if s_date is None else s_date
+            s_month = None if s_month is None else s_month
+            t_days = None if t_days is None else t_days
+            r_by = None if r_by is None else r_by
             sdate.append({
                 "statutory_date": s_date,
                 "statutory_month": s_month,
                 "trigger_before_days": t_days,
                 "repeat_by": r_by
             })
-            print "IFFFFFFF >>>"
-            print "s_date"
-            print "s_month"
-            print "t_days"
-            print "r_by"
-
-            print s_date
-            print s_month
-            print t_days
-            print r_by
         else:
             s_date = s_date.split(CSV_DELIMITER)
             s_month = s_month.split(CSV_DELIMITER)
             t_days = t_days.split(CSV_DELIMITER)
+
             for i in range(multi_len):
-                s_date_i = s_date[i] is not None if s_date[i] else None
-                s_month_i = s_month[i] is not None if s_month[i] else None
-                t_days_i = t_days[i] is not None if t_days[i] else None
-                r_by_i = r_by is not None if r_by else None
+                s_date_i = None if s_date[i] is None else s_date[i]
+                s_month_i = None if s_month[i] is None else s_month[i]
+                t_days_i = None if t_days[i] is None else t_days[i]
+                r_by_i = None if r_by is None else r_by
+
                 sdate.append({
                     "statutory_date": s_date_i,
                     "statutory_month": s_month_i,
                     "trigger_before_days": t_days_i,
                     "repeat_by": r_by_i
                 })
-                print "Else >>>"
-                print "s_date_i"
-                print "s_month_i"
-                print "t_days_i"
-                print "r_by_i"
-
-                print s_date_i
-                print s_month_i
-                print t_days_i
-                print r_by_i
         return json.dumps(sdate)
 
     def save_compliance_data(self, c_id, d_id, mapping_id, data):
