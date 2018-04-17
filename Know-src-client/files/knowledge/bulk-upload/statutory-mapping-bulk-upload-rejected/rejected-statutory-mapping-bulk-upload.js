@@ -508,9 +508,13 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                 hideLoader();
                 return false;
             } else if (downloadFileFormat == "text") {
-                $(location).attr('href', response.txt_link);
-                hideLoader();
-                return false;
+                    $.get(response.txt_link, function(data){
+                        txt_file_name = response.txt_link
+                        txt_file_name = txt_file_name.split('\\');
+                        download(txt_file_name[1], "text/plain", data);
+                    },
+                    'text');
+                    hideLoader();
             } else if (downloadFileFormat == "ods") {
                 $(location).attr('href', response.ods_link);
                 hideLoader();
@@ -523,7 +527,19 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
 
     });
 }
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
 
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
 // File Download
 function downloadFile(filePath) {
     var link = document.createElement('a');

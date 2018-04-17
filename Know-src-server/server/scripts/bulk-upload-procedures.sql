@@ -1228,7 +1228,11 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_rejected_sm_csv_report`;
 DELIMITER //
-CREATE PROCEDURE `sp_rejected_sm_csv_report`(IN `country_id` tinyint, IN `domain_id` tinyint, IN `user_id` tinyint, IN `csv_id` tinyint)
+CREATE PROCEDURE `sp_rejected_sm_csv_report`(
+  IN `country_id` int(11),
+  IN `domain_id` int(11),
+  IN `user_id` int(11),
+  IN `csv_id` int(11))
 BEGIN
 
 SELECT
