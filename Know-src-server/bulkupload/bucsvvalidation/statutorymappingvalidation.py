@@ -597,6 +597,16 @@ class StatutorySource(object):
             multi_len = 0
 
         sdate = []
+
+        print "s_date"
+        print "s_month"
+        print "t_days"
+        print "r_by"
+
+        print s_date
+        print s_month
+        print t_days
+        print r_by
         if multi_len == 0:
             s_date = s_date is not None if s_date else None
             s_month = s_month is not None if s_month else None
@@ -608,6 +618,16 @@ class StatutorySource(object):
                 "trigger_before_days": t_days,
                 "repeat_by": r_by
             })
+            print "IFFFFFFF >>>"
+            print "s_date"
+            print "s_month"
+            print "t_days"
+            print "r_by"
+
+            print s_date
+            print s_month
+            print t_days
+            print r_by
         else:
             s_date = s_date.split(CSV_DELIMITER)
             s_month = s_month.split(CSV_DELIMITER)
@@ -623,7 +643,16 @@ class StatutorySource(object):
                     "trigger_before_days": t_days_i,
                     "repeat_by": r_by_i
                 })
+                print "Else >>>"
+                print "s_date_i"
+                print "s_month_i"
+                print "t_days_i"
+                print "r_by_i"
 
+                print s_date_i
+                print s_month_i
+                print t_days_i
+                print r_by_i
         return json.dumps(sdate)
 
     def save_compliance_data(self, c_id, d_id, mapping_id, data):

@@ -2062,3 +2062,19 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS sp_ct_format_file_status_update;
+DELIMITER //
+CREATE PROCEDURE `sp_ct_format_file_status_update`(
+    IN csvid INT, filename VARCHAR(150)
+)
+BEGIN
+
+    update tbl_bulk_past_data_csv
+      set uploaded_documents = uploaded_documents + 1
+      where csv_past_id = csvid and uploaded_documents < total_documents;
+
+    update  tbl_bulk_past_data_csv set upload_status = 1 where
+      uploaded_documents = total_documents and csv_past_id = csvid;
+END //
+DELIMITER ;
