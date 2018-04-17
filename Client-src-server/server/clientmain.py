@@ -40,14 +40,10 @@ from bulkupload.client_bulkuploadmain import BulkAPI
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 app = Flask(__name__)
 
-
 __all__ = [
     "bulk_upload_api_request",
     "API", "bulk_db_connect"
 ]
-BULK_LE_DB_CONNECT = {}
-# BULK_LE_DB_IP = "192.168.0.1"
-
 
 #
 # api_request

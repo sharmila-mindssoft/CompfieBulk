@@ -9,20 +9,18 @@ var SUBMITBUTTON = $(".btn_submit");
 
 var DIVUPLOAD = $('#divUploadFile');
 var UploadFile = $("#fileInput");
+
+var LegalEntityName = $("#txt_legal_entity_name");
+var LegalEntityId = $("#hdn_legal_entity_id");
 var LegalEntityNameLabel = $(".legal-entity-name");
-var LEGALENTITYNAMELABELUPLOAD = $(".legal-entity-name-upload");
-
-var LegalEntityNameAC = $(".legal-entity-name-ac");
-var LEGALENTITYNAMEACUPLOAD = $(".legal-entity-name-ac-upload");
-
-var LegalEntityId = $("#legal_entity_id");
-var LEGALENTITYIDUPLOAD = $("#legal_entity_id_upload");
-
-var LegalEntityName = $("#legal_entity_name");
-var LEGALENTITYNAMEUPLOAD = $("#legal_entity_name_upload");
-
 var ACLegalEntity = $("#ac-entity");
+var LegalEntityNameAC = $(".legal-entity-name-ac");
+
+var LEGALENTITYNAMEUPLOAD = $("#txt_legal_entity_name_upload");
+var LEGALENTITYIDUPLOAD = $("#hdn_legal_entity_id_upload");
+var LEGALENTITYNAMELABELUPLOAD = $(".legal-entity-name-upload");
 var ACLEGALENTITYUPLOAD = $("#ac-entity-upload");
+var LEGALENTITYNAMEACUPLOAD = $(".legal-entity-name-ac-upload");
 
 var txtdomain = $("#txtdomain");
 var hdnDomain = $("#hdnDomain");
@@ -33,6 +31,7 @@ var hdnUnit = $('#hdnUnit');
 var divUnit = $('#divUnit');
 
 var BTNUPLOAD = $('#btnUpload');
+var INVALIDFILENAME = null;
 
 var unitList = [];
 var domainList = [];
@@ -84,7 +83,7 @@ function loadUnits(le_id, unit_id) {
         if (error == null) {
             unitList = response.user_units;
             $.each(unitList, function(key, u) {
-                unit_list_map[parseInt(u["unit_id"])] = u["unit_code"]
+                unit_list_map[parseInt(u["unit_id"])] = u["unit_code"];
             });
         }
     });
@@ -108,13 +107,10 @@ LEGALENTITYNAMEUPLOAD.keyup(function(e) {
         });
 });
 
-
-
-
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
-    if (id_element[0].id == 'legal_entity_id') {
+    if (id_element[0].id == 'hdn_legal_entity_id') {
         getPastRecords(parseInt(LegalEntityId.val()));
         loadUnits(parseInt(LegalEntityId.val()));
     }
@@ -217,13 +213,22 @@ function validateUpload() {
                     $('.uploaded_data').attr("href", csv_path);
                     $('.uploaded_data').attr("download", csv_path);
 
+                    if (data.doc_count > 0) {
+                        $('.divSuccessDocument').show();
+                        $('#divSuccessbutton').hide();
+                        buCtPage._ActionMode = "upload";
+                        BTNUPLOAD.show();
+                    } else {
+                        $('.divSuccessDocument').hide();
+                        $('#divSuccessbutton').show();
+                        // buCtPage._ActionMode = "upload";
+                        BTNUPLOAD.hide();
+                    }
+
                     $('.invaliddata').hide();
                     $('.view-summary').hide();
                     $('#divFileUpload').hide();
                     $('#divSuccessFile').show();
-                    $('.divSuccessDocument').show();
-                    $('#divSuccessbutton').hide();
-                    buCtPage._ActionMode = "upload";
 
                     displaySuccessMessage("Records uploaded successfully");
                     hideLoader();
@@ -232,8 +237,7 @@ function validateUpload() {
                     displayMessage(message.upload_failed);
                     INVALIDFILENAME = data.invalid_file.split('.');
                     TOTALRECORD.text(data.total);
-                    var getValidCount = (parseInt(data.total) -
-                        parseInt(data.invalid));
+                    var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
                     VALIDRECORD.text(getValidCount);
                     INVALIDRECORD.text(data.invalid);
                     MANDATORYERROR.text(data.mandatory_error);
@@ -259,35 +263,10 @@ function validateUpload() {
                         '.xlsx';
                     ods_path = "/invalid_file/ods/" + INVALIDFILENAME[0] +
                         '.ods';
-                    txt_path = "/invalid_file/txt/" + INVALIDFILENAME[0] +
-                        '.txt';
                     $('#csv').attr("href", csv_path);
                     $('#excel').attr("href", xls_path);
                     $('#ods').attr("href", ods_path);
-                    $('#txt').attr("href", txt_path);
 
-                    // InvalidFileName = data.invalid_file.split('.');;
-                    // TotalRecordsCount.text(data.total);
-                    // var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
-                    // ValidRecordsCount.text(getValidCount);
-                    // InvalidRecordsCount.text(data.invalid);
-                    // MandatoryErrorsCount.text(data.mandatory_error);
-                    // DuplicateErrorsCount.text(data.duplicate_error);
-                    // StatusErrorsCount.text(data.inactive_error);
-                    // LengthErrorsCount.text(data.max_length_error);
-                    // getInvaliddataCount = parseInt(data.invalid_char_error) + parseInt(data.invalid_data_error);
-                    // InvalidErrorsCount.text(getInvaliddataCount);
-                    // $('.invaliddata').show();
-                    // $('.view-summary').show();
-
-                    // csv_path = "/invalid_file/csv/" + InvalidFileName[0] + '.csv';
-                    // xls_path = "/invalid_file/xlsx/" + InvalidFileName[0] + '.xlsx';
-                    // ods_path = "/invalid_file/ods/" + InvalidFileName[0] + '.ods';
-                    // txt_path = "/invalid_file/txt/" + InvalidFileName[0] + '.txt';
-                    // $('#csv').attr("href", csv_path);
-                    // $('#excel').attr("href", xls_path);
-                    // $('#ods').attr("href", ods_path);
-                    // $('#txt').attr("href", txt_path);
                     hideLoader();
                 }
             });
@@ -298,6 +277,31 @@ function validateUpload() {
             hideLoader();
         }
     }
+}
+
+document.getElementById("txt").addEventListener("click", function() {
+    if (INVALIDFILENAME != null) {
+        $.get(
+            "/invalid_file/txt/" + INVALIDFILENAME[0] + ".txt",
+            function(data) {
+                download(INVALIDFILENAME[0] + ".txt", "text/plain", data);
+            },
+            'text');
+    }
+});
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 }
 
 UploadFile.change(function(e) {
@@ -329,6 +333,7 @@ function pageControls() {
         VIEWSCREEN.hide();
         ADDSCREEN.show();
         buCtPage._ActionMode = "add";
+        resetAdd();
     });
 
     //Add Button Click Event
@@ -351,6 +356,8 @@ BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
 };
 
 function downloadData() {
+    var legalEntityName;
+
     if (LegalEntityId.val().trim() == "") {
         displayMessage(message.legalentity_required);
         LegalEntityName.focus();
@@ -366,7 +373,12 @@ function downloadData() {
         txtUnit.focus();
         return false;
     }
-    var legalEntityName = LegalEntityNameLabel.text();
+    if (LegalEntityNameLabel.text() == "") {
+        legalEntityName = LegalEntityName.val().trim();
+    } else {
+        legalEntityName = LegalEntityNameLabel.text();
+    }
+
     var domainName = txtdomain.val();
     var unitName = txtUnit.val();
     var leId = LegalEntityId.val();
@@ -417,10 +429,10 @@ function submitUpload() {
 
 
 
-$(function() {
-    loadEntityDetails();
+// $(function() {
+//     loadEntityDetails();
 
-});
+// });
 
 BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
     displayMessage(error);
@@ -433,6 +445,10 @@ function file_upload_rul() {
         session_id + "&csvid=" + csvId;
     console.log(file_base_url);
     return file_base_url;
+}
+
+function resetAdd() {
+
 }
 
 Dropzone.autoDiscover = false;
@@ -503,6 +519,8 @@ var myDropzone = new Dropzone("div#myDrop", {
                 hideLoader();
                 displaySuccessMessage(message.document_upload_success);
                 // buSmPage.showList();
+                VIEWSCREEN.show();
+                ADDSCREEN.hide();
             }
         });
 
