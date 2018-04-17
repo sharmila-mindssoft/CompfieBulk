@@ -1054,7 +1054,7 @@ class SourceDB(object):
                 sysDeclText = "Client Unit File %s - %s %s has "\
                     "been declined by COMPFIE" % \
                     (csv_name, groupname, sys_decl_cnt)
-            print sysDeclText
+            # print sysDeclText
         else:
             text = "Client Unit File %s of %s has been %s with %s" % (
                     csv_name, groupname, action_type, reject_reason
