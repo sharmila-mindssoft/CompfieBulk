@@ -394,12 +394,17 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
                 db, csv_id, bu_client_id, session_user
             )
         if actionType == 1:
-            system_declined_count, system_declined_error, manual_rejection_count = clientUnitObj.check_for_system_declination_errors()
+            system_declined_count, system_declined_error, \
+                manual_rejection_count = \
+                clientUnitObj.check_for_system_declination_errors()
             if len(system_declined_count) == 0 and manual_rejection_count > 0:
                 return bu_cu.ReturnDeclinedCount(
                     len(system_declined_count), int(manual_rejection_count)
                 )
-            elif len(system_declined_count) > 0 and manual_rejection_count == 0:
+            elif (
+                    len(system_declined_count) > 0 and
+                    manual_rejection_count == 0
+            ):
                 return bu_cu.ReturnDeclinedCount(
                     len(system_declined_count), int(manual_rejection_count)
                 )
@@ -525,7 +530,9 @@ def perform_bulk_client_unit_declination(db, request_frame, session_user):
             db, csv_id, bu_client_id, session_user
         )
 
-        system_declined_count, system_declined_error, manual_rejection_count = clientUnitObj.check_for_system_declination_errors()
+        system_declined_count, system_declined_error, \
+            manual_rejection_count = \
+            clientUnitObj.check_for_system_declination_errors()
         if len(system_declined_count) > 0:
             if (
                 update_bulk_client_unit_approve_reject_list(
@@ -654,12 +661,17 @@ def submit_bulk_client_unit_list_action(db, request_frame, session_user):
             clientUnitObj = ValidateClientUnitsBulkDataForApprove(
                 db, csv_id, bu_client_id, session_user
             )
-            system_declined_count, system_declined_error, manual_rejection_count = clientUnitObj.check_for_system_declination_errors()
+            system_declined_count, system_declined_error, \
+                manual_rejection_count = \
+                clientUnitObj.check_for_system_declination_errors()
             if len(system_declined_count) == 0 and manual_rejection_count > 0:
                 return bu_cu.ReturnDeclinedCount(
                     len(system_declined_count), int(manual_rejection_count)
                 )
-            elif len(system_declined_count) > 0 and manual_rejection_count == 0:
+            elif (
+                    len(system_declined_count) > 0 and
+                    manual_rejection_count == 0
+            ):
                 return bu_cu.ReturnDeclinedCount(
                     len(system_declined_count), int(manual_rejection_count)
                 )
@@ -678,7 +690,7 @@ def submit_bulk_client_unit_list_action(db, request_frame, session_user):
                 )
                 clientUnitObj.source_commit()
                 update_bulk_client_unit_approve_reject_list(
-                    db, csv_id, 1, None, 0, session_user
+                    db, csv_id, 4, None, 0, session_user
                 )
                 return bu_cu.SubmitClientUnitActionFromListSuccess()
         else:
@@ -718,7 +730,9 @@ def confirm_submit_bulk_client_unit_list_action(
             db, csv_id, bu_client_id, session_user
         )
 
-        system_declined_count, system_declined_error, manual_rejection_count = clientUnitObj.check_for_system_declination_errors()
+        system_declined_count, system_declined_error, \
+            manual_rejection_count = \
+            clientUnitObj.check_for_system_declination_errors()
         if len(system_declined_count) > 0:
             clientUnitObj.process_data_to_main_db_insert(system_declined_count)
             clientUnitObj.make_rejection(
@@ -731,7 +745,7 @@ def confirm_submit_bulk_client_unit_list_action(
             )
             clientUnitObj.source_commit()
             update_bulk_client_unit_approve_reject_list(
-                db, csv_id, 1, None, len(system_declined_count), session_user
+                db, csv_id, 4, None, len(system_declined_count), session_user
             )
             return bu_cu.SubmitClientUnitActionFromListSuccess()
     except Exception, e:

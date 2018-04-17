@@ -334,6 +334,7 @@ def update_bulk_client_unit_approve_reject_list(
             csv_unit_id, action, remarks,
             session_user.user_id(), declined_count
         ]
+        print args
         data = db.call_proc("sp_bulk_client_unit_update_action", args)
         print "here"
         print data

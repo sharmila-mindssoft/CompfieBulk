@@ -490,7 +490,7 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
                     confirm_alert(msg, function(isConfirm) {
                         if (isConfirm) {
                             console.log("inside confirm")
-                            bu.confirmClientUnitDeclination(
+                            bu.confirmSubmitClientUnitFromView(
                                 csv_id, parseInt(groupSelect_id.val().trim()),
                                 function(error, response)
                                 {
