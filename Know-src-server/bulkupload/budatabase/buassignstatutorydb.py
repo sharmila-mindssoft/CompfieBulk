@@ -145,18 +145,45 @@ def get_download_assing_statutory_list(
         "secondary_legislation", "statutory_provision", "compliance_task_name",
         "compliance_description"
     ]
-    result = _source_db.call_proc("sp_get_assign_statutory_compliance", [u, d])
+    result = _source_db.call_proc_with_multiresult_set(
+        "sp_get_assign_statutory_compliance", [u, d], 2
+    )
+
+    def status_list(map_id):
+        s_legislation = None
+        p_legislation = None
+        for s in result[0]:
+            if s["statutory_mapping_id"] == map_id:
+                if(
+                    s["parent_ids"] == '' or s["parent_ids"] == 0 or
+                    s["parent_ids"] == '0,'
+                ):
+                    s_legislation = s["statutory_name"]
+                    p_legislation = s_legislation
+                else:
+                    names = [
+                        x.strip() for x in s["parent_names"].split('>>')
+                        if x != ''
+                    ]
+                    p_legislation = names[0]
+                    if len(names) > 1:
+                        s_legislation = names[1]
+                    else:
+                        s_legislation = s["statutory_name"]
+        return p_legislation, s_legislation
 
     ac_list = []
-    for r in result:
+    for r in result[1]:
+        p_legislation, s_legislation = status_list(r["statutory_mapping_id"])
+        if s_legislation == p_legislation:
+            s_legislation = ""
         ac_tuple = (
             cl_name, le_name, r["domain_name"], r["organizations"],
             r["unit_code"], r["unit_name"], r["location"],
-            r["primary_legislation"].strip(),
-            r["secondary_legislation"].strip(),
+            p_legislation.strip(), s_legislation.strip(),
             r["statutory_provision"], r["compliance_task_name"],
             r["compliance_description"]
-            )
+        )
         ac_list.append(ac_tuple)
 
     db.call_proc("sp_delete_assign_statutory_template", (
