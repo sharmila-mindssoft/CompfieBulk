@@ -1054,7 +1054,7 @@ class SourceDB(object):
                 sysDeclText = "Client Unit File %s - %s %s has "\
                     "been declined by COMPFIE" % \
                     (csv_name, groupname, sys_decl_cnt)
-            print sysDeclText
+            # print sysDeclText
         else:
             text = "Client Unit File %s of %s has been %s with %s" % (
                     csv_name, groupname, action_type, reject_reason
@@ -1336,6 +1336,9 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                 mainData = mainStrore.get(
                     str(self.Legal_Entity_Id) + "-" + d.strip()
                 )
+                print "AAAA"
+                print mainData
+                print tempData
                 if mainData is not None and tempData is not None:
                     main_temp_units = int(
                         mainData.get("total_unit_count")
@@ -1361,6 +1364,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                             self._valid_unit_count += 1
         else:
             print "AA"
+            saved_units = 0
             mainData = mainStrore.get(
                 str(self.Legal_Entity_Id) + "-" + neworgn
             )
@@ -1369,12 +1373,21 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
             tempData = tempStore.get(
                 self._legal_entity_name + "-" + neworgn.strip()
             )
+            print tempData
+
             if tempData is None:
                 for temp_d in tempStore:
-                    tempData = tempStore.get(temp_d)
-                    orgn_name = tempData.get("organization")
-                    if neworgn in orgn_name:
-                        saved_units = tempData.get("saved_units")
+                    print "temp_d"
+                    print temp_d
+                    if (
+                        temp_d.split('-')[0].strip() ==
+                        self._legal_entity_name.strip()
+                    ):
+                        tempData = tempStore.get(temp_d)
+                        orgn_name = tempData.get("organization")
+                        if neworgn in orgn_name.strip():
+                            saved_units = saved_units +\
+                                int(tempData.get("saved_units"))
             else:
                 saved_units = tempData.get("saved_units")
             print saved_units
