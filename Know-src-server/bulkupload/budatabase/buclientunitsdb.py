@@ -152,13 +152,13 @@ def fetch_rejected_client_unit_report(db, session_user, user_id,
                                       client_group_id):
 
     rejected_list = []
-    uploaded_on = ''
-    approved_on = ''
-    rejected_on = ''
-
     args = [client_group_id, user_id]
     data = db.call_proc('sp_rejected_client_unit_data', args)
     for d in data:
+        uploaded_on = ''
+        approved_on = ''
+        rejected_on = ''
+
         if(d["uploaded_on"] is not None):
             uploaded_on = datetime.datetime.strptime(
                 str(d["uploaded_on"]),
@@ -244,12 +244,11 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
 
     client_data = data[0]
     total_record = data[1][0]["total"]
-    approved_on = ""
-    rejected_on = ""
-    uploaded_on = ""
     if(client_data):
         for d in client_data:
-
+            approved_on = ""
+            rejected_on = ""
+            uploaded_on = ""
             if(d["uploaded_on"] is not None):
                 uploaded_on = d["uploaded_on"].strptime(
                     str(d["uploaded_on"]),

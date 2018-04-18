@@ -117,6 +117,7 @@ function pageControls() {
 function resetfilter(evt) {
     if (evt == "domain") {
         DOMAIN_VAL.val('');
+        DOMAIN.val('');
     }
     $('.tbody-usermappingdetails-list').empty();
     $('.grid-table-rpt').hide();

@@ -46,7 +46,10 @@ class ValidateRejectedDownloadBulkData():
                         if(row_value is not None and len(row_value) >= 2):
                             summary_key = row_value[0].lower()
                             summary_key = summary_key.replace(" ", "_")
-                            e_count = mapped_header_dict[summary_key]
+                            if(summary_key == "applicable_location"):
+                                e_count = mapped_header_dict["geography_location"]
+                            else:
+                                e_count = mapped_header_dict[summary_key]
 
                             if(int(e_count) >= 1):
                                 e_count = e_count + 1
