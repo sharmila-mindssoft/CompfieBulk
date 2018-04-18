@@ -519,7 +519,8 @@ csv_params = {
     ),
     'Unit_Code': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=20,
-        isValidCharCheck=True, validation_method=is_alpha_numeric, isFoundCheck=True
+        isValidCharCheck=True, validation_method=is_alpha_numeric,
+        isFoundCheck=True
     ),
     'Unit_Name': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
