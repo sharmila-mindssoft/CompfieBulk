@@ -215,7 +215,7 @@ function downloadRejectedASMReportData(args, callback) {
 }
 
 function getDownloadAssignStatutory(cl_id, le_id, d_ids, u_ids, cl_name,
-  le_name, d_names, u_names, callback) {
+    le_name, d_names, u_names, callback) {
     var request = [
         'DownloadAssignStatutory',
         {
@@ -371,7 +371,8 @@ function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
     apiRequest("bu/assign_statutory", request, callback);
 }
 
-function assignStatutoryActionInList(cl_id, le_id, csvid, action, remarks, password, callback) {
+function assignStatutoryActionInList(cl_id, le_id, csvid, action,
+    remarks, password, callback) {
     var request = [
         'AssignStatutoryApproveActionInList',
         {
@@ -461,7 +462,7 @@ function getBulkClientUnitApproveRejectList(csv_id, f_count, r_range, callback) 
 }
 
 function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks,
-  callback) {
+    callback) {
     var request = [
         'SaveAction',
         {
@@ -498,25 +499,25 @@ function confirmClientUnitDeclination(csv_id, client_id, callback) {
 }
 
 function getBulkClientUnitListForFilterView(csvid, f_count, r_range,
-  filter_le, filter_div, filter_cg, filter_u_loc, filter_u_code,
-  filter_domain, filter_orgn, actionVal, callback) {
-  var request = [
-    'GetBulkClientUnitListForFilterView',
-    {
-        "csv_id": csvid,
-        "f_count": f_count,
-        "r_range": r_range,
-        "bu_le_name": filter_le,
-        "bu_division_name": filter_div,
-        "bu_category_name": filter_cg,
-        "bu_unit_location": filter_u_loc,
-        "bu_unit_code": filter_u_code,
-        "bu_domain": filter_domain,
-        "bu_orgn": filter_orgn,
-        "bu_action": actionVal
-    }
-  ];
-  apiRequest("bu/client_units", request, callback)
+    filter_le, filter_div, filter_cg, filter_u_loc, filter_u_code,
+    filter_domain, filter_orgn, actionVal, callback) {
+    var request = [
+        'GetBulkClientUnitListForFilterView',
+        {
+            "csv_id": csvid,
+            "f_count": f_count,
+            "r_range": r_range,
+            "bu_le_name": filter_le,
+            "bu_division_name": filter_div,
+            "bu_category_name": filter_cg,
+            "bu_unit_location": filter_u_loc,
+            "bu_unit_code": filter_u_code,
+            "bu_domain": filter_domain,
+            "bu_orgn": filter_orgn,
+            "bu_action": actionVal
+        }
+    ];
+    apiRequest("bu/client_units", request, callback)
 }
 
 function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback) {

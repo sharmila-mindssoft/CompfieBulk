@@ -1,4 +1,4 @@
-ALTER TABLE `compfie_knowledge_new`.`tbl_compliances`
+ALTER TABLE `tbl_compliances`
 ADD COLUMN `task_id` VARCHAR(25) NOT NULL AFTER `is_updated`,
 ADD COLUMN `task_type` VARCHAR(150) NOT NULL AFTER `task_id`;
 
@@ -115,6 +115,20 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_levelposition`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_levelposition`(
+IN cId INT, dId INT
+)
+BEGIN
+   SELECT t.level_id, t.level_position  as statu_level FROM tbl_statutory_levels as t
+   where country_id = cId and domain_id =dId;
+END //
+DELIMITER ;
+
+
 
 -- --------------------------------------------------------------------------------
 -- To get legal entities under a client for client units bulk upload
@@ -327,8 +341,8 @@ BEGIN
   (SELECT is_active from tbl_organisation
   WHERE organisation_id = t2.organisation_id) AS organization_is_active,
   t2.count AS total_unit_count, (SELECT COUNT(*) FROM tbl_units_organizations
-  WHERE domain_id = t2.domain_id AND organisation_id = t2.organisation_id and
-  unit_id = t3.unit_id)
+  WHERE domain_id = t2.domain_id AND organisation_id = t2.organisation_id)
+  -- and unit_id = t3.unit_id)
   AS created_units
   FROM tbl_legal_entities as t1 INNER join
   tbl_legal_entity_domains as t2 ON
@@ -809,7 +823,7 @@ CREATE PROCEDURE `sp_bu_get_mapped_knowledge_executives`(
 )
 BEGIN
     SELECT DISTINCT child_user_id
-    AS emp_name FROM  tbl_user_mapping
+    FROM  tbl_user_mapping
     INNER JOIN tbl_users ON user_id = child_user_id AND is_active = 1
     AND is_disable = 0 AND country_id = countryid AND domain_id = domainid
     WHERE parent_user_id = manager_id ;

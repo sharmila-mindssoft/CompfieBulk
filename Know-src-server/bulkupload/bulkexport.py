@@ -196,7 +196,7 @@ class ConvertJsonToCSV(object):
                     self.write_csv(csv_header_line3, None)
                     csv_header_line4 = [
                         "", "", "", "User ", user_name_list, "",
-                        "Exported Time", exported_time, "", "", ""
+                        "Exported Date and Time", exported_time, "", "", ""
                     ]
                     self.write_csv(csv_header_line4, None)
                     csv_header_line5 = ["S.No", "Country", "Domain",
@@ -239,7 +239,7 @@ class ConvertJsonToCSV(object):
         export_bu_client_unit_report = db.call_proc(
             'sp_export_client_unit_bulk_reportdata',
             [clientGroupId, from_date, to_date, str(user_ids)]
-            )
+        )
         sno = 0
         exported_time = datetime.datetime.now().strftime('%d-%b-%Y %H:%M')
         if len(export_bu_client_unit_report) > 0:
@@ -300,7 +300,7 @@ class ConvertJsonToCSV(object):
                     ]
                     self.write_csv(csv_header_line3, None)
                     csv_header_line4 = [
-                        "", "", "", "Exported Time ", exported_time, "", "",
+                        "", "", "", "Exported Date and Time ", exported_time, "", "",
                         "", "", "", ""
                     ]
                     self.write_csv(csv_header_line4, None)
@@ -330,7 +330,7 @@ class ConvertJsonToCSV(object):
     ):
         is_header = False
         cnx_pool = connectKnowledgeDB()
-        domainIds = ",".join(str(e) for e in request.domain_ids)
+        domainIds = request.d_id
         from_date = datetime.datetime.strptime(request.from_date, '%d-%b-%Y')
         to_date = datetime.datetime.strptime(request.to_date, '%d-%b-%Y')
         child_ids = request.child_ids
@@ -411,8 +411,8 @@ class ConvertJsonToCSV(object):
                     ]
                     self.write_csv(csv_header_line4, None)
                     csv_header_line5 = [
-                        "", "", "", "Exported Time ", exported_time, "",
-                        "User", user_name_list, "", "", ""
+                        "", "", "", "Exported Date and Time", exported_time,
+                        "", "User", user_name_list, "", "", ""
                     ]
                     self.write_csv(csv_header_line5, None)
                     csv_header_line6 = ["S.No", "Domain", "Uploaded By",

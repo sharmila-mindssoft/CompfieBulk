@@ -142,6 +142,17 @@ class Database(object):
         )
 
     def update_format_file_status(self, csv_id, status):
-        return self.call_update_proc(
+        print "In update format file status"
+        print "status ", status
+        print "csv_id", csv_id
+        res_update_stats = self.call_update_proc(
             "sp_sm_file_download_status_update", [csv_id, status]
+        )
+
+        print "res_update_stats->>>>> ", res_update_stats
+        return res_update_stats
+
+    def update_file_status_client(self, csv_id, file_name):
+        return self.call_update_proc(
+            "sp_ct_format_file_status_update", [csv_id, file_name]
         )

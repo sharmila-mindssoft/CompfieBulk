@@ -27,7 +27,8 @@ __all__ = [
     "fetch_rejected_sm_download_csv_report",
     "get_sm_csv_file_name_by_id",
     "save_action_from_view",
-    "get_pending_action"
+    "get_pending_action",
+    "delete_action_after_approval"
 ]
 
 # transaction method begin
@@ -200,8 +201,10 @@ def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
         "sp_bu_get_mapped_knowledge_executives",
         [session_user.user_id(), cid, did]
     )
+    print "result >>"
+    print result
     print len(result)
-
+    _source_db_con.close()
     mapped_executives = ''
     if len(result) != 0:
         mapped_executives = ",".join(str(r["child_user_id"]) for r in result)
@@ -222,7 +225,7 @@ def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
             d["csv_id"], d["csv_name"], d["uploaded_by"],
             upload_on, d["total_records"], d["approve_count"],
             d["rej_count"],
-            d["csv_name"]
+            d["csv_name"], d["declined_count"]
         ))
 
     return csv_data
@@ -324,11 +327,12 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     f_range = request_frame.r_range
     task_id = request_frame.tsk_id
     task_type = request_frame.tsk_type
+    view_data = request_frame.filter_view_data
 
     if organization is None or organization == "":
         organization = '%'
     else:
-        organization = organization + '%'
+        organization = '%' + organization + '%'
 
     if s_nature is None or s_nature == "":
         s_nature = '%'
@@ -371,7 +375,7 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
         [
             csv_id, organization, s_nature, frequency,
             statutory, geo_location, c_task, c_desc, c_doc,
-            f_count, f_range, task_id, task_type
+            f_count, f_range, task_id, task_type, view_data
         ], 2
     )
     country_name = None
@@ -460,11 +464,18 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     )
 
 
-def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
+def update_approve_action_from_list(db, csv_id, action, remarks, session_user, type):
     try:
-        args = [csv_id, action, remarks, session_user.user_id()]
-        data = db.call_proc("sp_statutory_mapping_update_action", args)
-        print data
+        print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
+        print "type-> ", type
+        if type == "all":
+            args = [csv_id, action, remarks, session_user.user_id()]
+            data = db.call_proc("sp_statutory_mapping_update_all_action", args)
+            print data
+        else:
+            args = [csv_id, session_user.user_id()]
+            db.call_proc("sp_statutory_update_action", args)
+
         return True
 
     except Exception, e:
@@ -473,6 +484,20 @@ def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
         )
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
+
+def delete_action_after_approval(db, csv_id):
+    try:
+        args = [csv_id]
+        db.call_proc("sp_statutory_mapping_delete", args)
+        return True
+
+    except Exception, e:
+        logger.logKnowledge(
+            "error", "update action from list", str(traceback.format_exc())
+        )
+        logger.logKnowledge("error", "update action from list", str(e))
+        raise fetch_error()
+
 
 
 def save_action_from_view(db, csv_id, sm_id, action, remarks, session_user):

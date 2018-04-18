@@ -24,6 +24,7 @@ from ..budatabase.bustatutorymappingdb import (
     get_sm_csv_file_name_by_id,
     save_action_from_view,
     get_pending_action,
+    delete_action_after_approval
 )
 
 from ..bulkuploadcommon import (
@@ -315,6 +316,7 @@ def get_filter_for_approve_page(db, request_frame, session_user):
     response = get_filters_for_approve(db, csv_id)
     return response
 
+
 def get_statutory_mapping_data_by_filter(db, request_frame, session_user):
     response = get_statutory_mapping_by_filter(db, request_frame, session_user)
     return response
@@ -335,13 +337,19 @@ def update_statutory_mapping_action(db, request_frame, session_user):
         cObj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
+        print "cObj-> ", cObj
+        print "action -> ", action
         if action == 1:
             is_declined = cObj.perform_validation_before_submit()
+            print "is Declined --->> ", is_declined
             if len(is_declined.keys()) > 0:
+                update_approve_action_from_list(
+                    db, csv_id, action, remarks, session_user, "all"
+                )
                 return bu_sm.ValidationSuccess(len(is_declined.keys()))
             else:
                 if (update_approve_action_from_list(
-                        db, csv_id, action, remarks, session_user
+                        db, csv_id, action, remarks, session_user, "all"
                 )):
                     if cObj._doc_count > 0:
                         cObj.format_download_process_initiate(csv_id)
@@ -351,10 +359,12 @@ def update_statutory_mapping_action(db, request_frame, session_user):
                         cObj._domain_name, session_user.user_id()
                     )
                     cObj.source_commit()
+                    delete_action_after_approval(db, csv_id)
+
                     return bu_sm.UpdateApproveActionFromListSuccess()
         else:
             if (update_approve_action_from_list(
-                db, csv_id, action, remarks, session_user
+                db, csv_id, action, remarks, session_user, "all"
             )):
                 cObj.save_manager_message(
                     action, cObj._csv_name, cObj._country_name,
@@ -393,7 +403,11 @@ def submit_statutory_mapping(db, request_frame, session_user):
             )
             cObj.frame_data_for_main_db_insert()
             cObj.source_commit()
-            update_approve_action_from_list(db, csv_id, 1, None, session_user)
+            delete_action_after_approval(db, csv_id)
+
+            update_approve_action_from_list(
+                db, csv_id, 1, None, session_user, "single"
+            )
             return bu_sm.SubmitStatutoryMappingSuccess()
     except Exception, e:
         print e
@@ -403,24 +417,31 @@ def submit_statutory_mapping(db, request_frame, session_user):
 
 def confirm_submit_statutory_mapping(db, request_frame, session_user):
     try:
+        print "Confirm Submit "
+        print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         csv_id = request_frame.csv_id
         country_id = request_frame.c_id
         domain_id = request_frame.d_id
+        user_id = session_user.user_id()
         # csv data validation
         cObj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
+        print "cObj- > > ", cObj
         is_declined = cObj.perform_validation_before_submit()
+        print "is declined -> ", is_declined
         if len(is_declined.keys()) > 0:
             if cObj._doc_count > 0:
                 cObj.format_download_process_initiate(csv_id)
-            cObj.frame_data_for_main_db_insert()
-            cObj.make_rejection(is_declined)
+            cObj.make_rejection(is_declined, user_id)
             cObj.save_manager_message(
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
                 session_user.user_id()
             )
+            cObj.frame_data_for_main_db_insert()
             cObj.source_commit()
+            delete_action_after_approval(db, csv_id)
+
             return bu_sm.SubmitStatutoryMappingSuccess()
     except Exception, e:
         raise e

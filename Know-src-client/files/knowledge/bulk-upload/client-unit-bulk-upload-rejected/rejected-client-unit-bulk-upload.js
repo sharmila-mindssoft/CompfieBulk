@@ -99,6 +99,7 @@ function loadCountwiseResult(data) {
     var fileDownloadCount;
     var isFullyRejected;
     var deleteStatus;
+    var approvedOn;
     $('.tbody-compliance').empty();
     for (var entity in data) {
         deleteStatus = '';
@@ -107,6 +108,7 @@ function loadCountwiseResult(data) {
         csvName = data[entity].csv_name;
         totalNoOfTasks = data[entity].total_records;
         rejectedOn = data[entity].rejected_on;
+        approvedOn = data[entity].approved_on;
         rejectedBy = data[entity].rejected_by;
         isFullyRejected = data[entity].is_fully_rejected;
         statutoryAction = data[entity].statutory_action;
@@ -122,11 +124,12 @@ function loadCountwiseResult(data) {
                 if (parseInt(rejectedBy) == value["user_id"]) {
                     EmpCode = value["employee_code"];
                     EmpName = value["employee_name"];
-                    rejectedBy = EmpCode + " - " + EmpName.toUpperCase();
+                    rejectedBy = EmpCode + " - " + EmpName;
                 }
             });
         } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {
             rejectedBy = SYSTEM_REJECTED_BY;
+            rejectedOn = approvedOn;
             reasonForRejection = '';
         }
         var tblRow1 = $('#act-templates .table-act-list .table-row-act-list');
@@ -183,7 +186,7 @@ RejectedClientUnitBulk.prototype.validateMandatory = function() {
     isValid = true;
 
     if (GROUP_NAME.val().trim().length == 0) {
-        displayMessage(message.group_required);
+        displayMessage(message.client_group_required);
         isValid = false;
     }
     return isValid;
@@ -193,6 +196,8 @@ RejectedClientUnitBulk.prototype.validateMandatory = function() {
 function initialize() {
     function onSuccess(data) {
         CLIENT_LIST = data.client_group_list;
+        allUserInfo();
+        
         hideLoader();
     }
     
@@ -201,6 +206,24 @@ function initialize() {
         hideLoader();
     }
     mirror.getClientGroupsList(function(error, response) {
+        if (error == null) {
+            onSuccess(response);
+        } else {
+            onFailure(error);
+        }
+    });
+}
+function allUserInfo() {
+    function onSuccess(data) {
+        ALL_USER_INFO = data.user_details;
+        hideLoader();
+    }
+
+    function onFailure(error) {
+        displayMessage(error);
+        hideLoader();
+    }
+    mirror.getAdminUserList(function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
@@ -387,7 +410,12 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                     $(location).attr('href', response.xlsx_link);
                     hideLoader();
                 } else if (downloadFileFormat == "text") {
-                    $(location).attr('href', response.txt_link);
+                    $.get(response.txt_link, function(data){
+                        txt_file_name = response.txt_link
+                        txt_file_name = txt_file_name.split('\\');
+                        download(txt_file_name[1], "text/plain", data);
+                    },
+                    'text');
                     hideLoader();
                 } else if (downloadFileFormat == "ods") {
                     $(location).attr('href', response.ods_link);
@@ -397,6 +425,20 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                 hideLoader();
             }
         });
+}
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 }
 
 /* DownloadFileOptionList - Excel,CSV,ODS,Text  */

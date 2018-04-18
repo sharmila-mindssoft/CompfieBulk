@@ -89,7 +89,8 @@ function pageControls() {
     /*DOMAIN.multiselect('selectAll');*/
 
     DOMAIN.on('change', function(e) {
-        resetFilter('domains');
+        DOMAIN.selectpicker('refresh');
+        /*resetFilter('domains');
         if($("#select-deselect").attr("value") == "select-all"
             && this.value == "select-all")
         {
@@ -106,7 +107,7 @@ function pageControls() {
                     DOMAIN.val('');
                     DOMAIN.multiselect('rebuild');
                 });
-        }
+        }*/
         resetFilter('domains');
     });
 
@@ -173,14 +174,15 @@ function pageControls() {
 }
 
 
-function integerArrayValue(arr) {
+/*function integerArrayValue(arr) {
   return arr.filter(Boolean);
-}
+}*/
 
 //load domains into multi select box
 function fetchDomainMultiselect() {
-    var str = '<option id="select-deselect" value="select-all">Select all'+
-               '</option>';
+    /*var str = '<option id="select-deselect" value="select-all">Select all'+
+               '</option>';*/
+    var str = '';
     if (LEGAL_ENTITY_LIST.length > 0) {
         for (var i in LEGAL_ENTITY_LIST) {
             if(LEGAL_ENTITY_LIST[i].le_id == LEGAL_ENTITY.val()){
@@ -192,7 +194,7 @@ function fetchDomainMultiselect() {
             }                
         }
         DOMAIN.append(str);
-        DOMAIN.multiselect('rebuild');
+        /*DOMAIN.multiselect('rebuild');*/
     }
 }
 
@@ -239,14 +241,14 @@ function resetFilter(evt) {
         LEGAL_ENTITY.val('');
         DOMAIN.empty();
         DOMAIN.html();
-        DOMAIN.multiselect('rebuild');
+        /*DOMAIN.multiselect('rebuild');*/
         UNIT_VAL.val('');
         UNIT.val('');
     }
     if (evt == 'le') {
         DOMAIN.empty();
         DOMAIN.html();
-        DOMAIN.multiselect('rebuild');
+        /*DOMAIN.multiselect('rebuild');*/
 
         UNIT_VAL.val('');
         UNIT.val('');
@@ -278,25 +280,20 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
 }
 // get statutory mapping report data from api
 function processSubmit() {
-
     var clientId = parseInt(GROUP_ID.val());
     var legalEntityId = parseInt(LEGAL_ENTITY.val());
-    var domainIds = DOMAIN.val();
+    var domainId = DOMAIN.val();
     var unitId = '';
     var selectedDomain = [];
 
     if (UNIT.val()) {
         unitId = UNIT.val();
     }
-    $.each(domainIds, function(key, value) {
-            selectedDomain.push(parseInt(value));        
-    });
-    selectedDomain = integerArrayValue(selectedDomain);    
     displayLoader();
     requestData = {
         "client_id": clientId,
         "le_id": legalEntityId,
-        "domain_ids": selectedDomain,
+        "d_id": parseInt(domainId),
         "asm_unit_code": unitId
     };
 
@@ -352,7 +349,7 @@ function loadCountwiseResult(filterList) {
     var csvId;
     var CSVName;
     var totalNoOfTasks;
-    var rejectedOn;
+    var rejectedOn, approvedOn;
     var reasonRejection;
     var statutoryAction;
     var rejectedBy;
@@ -368,6 +365,7 @@ function loadCountwiseResult(filterList) {
         CSVName = filterList[entity].csv_name;
         totalNoOfTasks = filterList[entity].total_records;
         rejectedOn = filterList[entity].rejected_on;
+        approvedOn = filterList[entity].approved_on;
         isFullyRejected = filterList[entity].is_fully_rejected;
         statutoryAction = filterList[entity].statutory_action;
         fileDownloadCount = filterList[entity].file_download_count;
@@ -386,6 +384,8 @@ function loadCountwiseResult(filterList) {
         } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {
 
             rejectedBy = SYSTEM_REJECTED_BY;
+            rejectedOn = approvedOn;
+
             declinedCount = filterList[entity].declined_count;
             reasonRejectionComment = '';
         }
@@ -543,20 +543,13 @@ function confirm_alert(event) {
 function RemoveStatutoryCsvData(REMOVE_UNIT_CSV_ID, groupId) {
     var clientId = parseInt(GROUP_ID.val());
     var legalEntityId = parseInt(LEGAL_ENTITY.val());
-    var domainIds = DOMAIN.val();
+    var domainId = DOMAIN.val();
     var unitId = UNIT.val();
-    var selectedDomain = [];
 
-    $.each(domainIds, function(key, value) {
-        if(value != "select-all" && value != "deselect-all")
-        {
-            selectedDomain.push(parseInt(value));
-        }
-    });
     requestData = {
         "client_id": clientId,
         "le_id": legalEntityId,
-        "domain_ids": selectedDomain,
+        "d_id": parseInt(domainId),
         "asm_unit_code": unitId,
         "csv_id": parseInt(REMOVE_UNIT_CSV_ID)
     };
@@ -610,18 +603,12 @@ function downloadClick(csv_id, event) {
     var downloadFileFormat = $(event).attr("data-format");
     var clientId = parseInt(GROUP_ID.val());
     var legalEntityId = parseInt(LEGAL_ENTITY.val());
-    var domainIds = DOMAIN.val();
+    var domainId = DOMAIN.val();
     var unitId = '';
     var selectedDomain = [];
     if (UNIT.val()) {
         unitId = UNIT.val();
     }
-    $.each(domainIds, function(key, value) {
-        if(value != "select-all" && value != "deselect-all")
-        {
-            selectedDomain.push(parseInt(value));
-        }
-    });
     displayLoader();
 
     function onSuccess(data) {
@@ -662,7 +649,7 @@ function downloadClick(csv_id, event) {
     requestDownloadData = {
         "client_id": clientId,
         "le_id": legalEntityId,
-        "domain_ids": selectedDomain,
+        "d_id": parseInt(domainId),
         "asm_unit_code": unitId,
         "csv_id": csv_id,
         "download_format": downloadFileFormat
@@ -692,12 +679,12 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                     $(location).attr('href', downladResponse.xlsx_link);
                     hideLoader();
                 } else if (downloadFileFormat == "text") {
-                    
-                    /*if($("#temp_download_element").attr('download', downladResponse.txt_link)){
-                    $("#temp_download_element").trigger('click');
-                    }                    */
-
-                    $(location).attr('href', downladResponse.txt_link);
+                    $.get(downladResponse.txt_link, function(data){
+                        txt_file_name = downladResponse.txt_link
+                        txt_file_name = txt_file_name.split('\\');
+                        download(txt_file_name[1], "text/plain", data);
+                    },
+                    'text');
                     hideLoader();
                 } else if (downloadFileFormat == "ods") {
                     $(location).attr('href', downladResponse.ods_link);
@@ -709,6 +696,20 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
             }
 
         });
+}
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 }
 
 

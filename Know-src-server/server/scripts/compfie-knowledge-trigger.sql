@@ -1948,4 +1948,3 @@ CREATE TRIGGER `tbl_categories_AFTER_UPDATE` AFTER UPDATE ON `tbl_categories`
 END //
 
 DELIMITER ;
-

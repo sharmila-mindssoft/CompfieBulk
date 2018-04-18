@@ -57,11 +57,11 @@ GROUPNAME.keyup(function(e) {
         }, conditionFields, conditionValues);
 });
 
-function onAutoCompleteSuccess(value_element, id_element, val) {
-	console.log(value_element, id_element, val)
-	value_element.val(val[1]);
-    id_element.val(val[0]);
-    value_element.focus();
+function onAutoCompleteSuccess(valueElement, idElement, val) {
+	valueElement.val(val[1]);
+    idElement.val(val[0]);
+    valueElement.focus();
+    CSVFILENAME.val('');
 }
 
 //Uploading of csv file
@@ -95,7 +95,6 @@ CSVUPLOADBUTTON.click(function () {
     $('.invaliddata').hide();
 	$('.view-summary').hide();
 	var clientId = GROUPID.val().trim();
-	console.log("client:"+GROUPID.val().trim())
 	var groupName = GROUPNAME.val().trim();
 	if (clientId != '' && CSVUPLOADEDFILE != '') {
 		var f_size = CSVUPLOADEDFILE.file_size;
@@ -107,7 +106,7 @@ CSVUPLOADBUTTON.click(function () {
 				GROUPNAME.val('');
 				GROUPID.val('');
 				CSVFILENAME.val('');
-				displaySuccessMessage(message.client_unit_upload_success);
+				displaySuccessMessage(message.upload_success);
 			}
 			function onFailure(error, response)
 			{
@@ -117,20 +116,20 @@ CSVUPLOADBUTTON.click(function () {
 				else if(error == "InvalidCSVUploaded") {
 					displayMessage(message.invalid_csv_file);
 				}
-				else if(error == "Csv Column Mismatched") {
+				else if(error == "CSVColumnMisMatched") {
 					displayMessage(message.invalid_csv_file);
 				}
 				else if(error == "ClientUnitUploadMaxReached"){
 					displayMessage(message.client_unit_file_max);
 				}
 				else if(error == "CSVFileLinesMaxREached") {
-					displayMessage(message.csv_file_lines_max)
+					displayMessage(message.csv_file_lines_max + "-" + response.csv_max_lines)
 				}
 				else if (response.invalid_file != "" && response.invalid_file != null) {
 				    $('.invaliddata').show();
 					$('.view-summary').show();
 					$('.download-file').hide();
-					displayMessage(message.client_unit_upload_failed);
+					displayMessage(message.upload_failed);
 					INVALIDFILENAME = response.invalid_file;
 				    TOTALRECORDSCOUNT.text(response.total);
 					var getValidCount = parseInt(response.total) - parseInt(response.invalid);
@@ -153,7 +152,6 @@ CSVUPLOADBUTTON.click(function () {
 			bu.uploadClientUnitsBulkCSV(
 				parseInt(clientId), groupName, f_name, f_data, f_size, function(error, response)
 			{
-				console.log("file err:"+error)
 			    if (error == null) {
 			        onSuccess(response);
 			    } else {
@@ -180,7 +178,9 @@ document.getElementById("dwn_format").addEventListener("click", function(){
     download(
     	fileName,
     	'text/csv',
-    	'Legal_Entity*,Division,Category,Geography_Level*,Unit_Location*,Unit_Code*,Unit_Name*,Unit_Address*,City*,State*,Postal_Code*,Domain*,Organization*'
+    	'Legal_Entity*,Division,Category,Geography_Level*,Unit_Location*,' +
+    	'Unit_Code*,Unit_Name*,Unit_Address*,City*,State*,Postal_Code*,' +
+    	'Domain*,Organization*'
     );
 }, false);
 
@@ -203,9 +203,9 @@ function download(filename, mime_type, text) {
 function download_file() {
 	if(INVALIDFILENAME != null) {
 		var splitFileName = INVALIDFILENAME.split(".")[0];
-		console.log(splitFileName+".csv")
-		var downloadTag = $('.dropdown-content').find("a")
-		for(var i=0;i<downloadTag.length;i++) {
+		var downloadTag = $('.dropdown-content').find("a");
+		var i;
+		for(i = 0; i < downloadTag.length; i ++) {
 			if(downloadTag[i].innerText == "Download Excel") {
 				$("#excel").attr("href", "/invalid_file/xlsx/" + splitFileName+".xlsx");
 			}
