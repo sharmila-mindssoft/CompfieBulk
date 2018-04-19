@@ -340,16 +340,17 @@ BEGIN
   WHERE organisation_id = t2.organisation_id) AS organization_name,
   (SELECT is_active from tbl_organisation
   WHERE organisation_id = t2.organisation_id) AS organization_is_active,
-  t2.count AS total_unit_count, (SELECT COUNT(*) FROM tbl_units_organizations
-  WHERE domain_id = t2.domain_id AND organisation_id = t2.organisation_id)
-  -- and unit_id = t3.unit_id)
-  AS created_units
+  t2.count AS total_unit_count,count(t4.unit_id) AS created_units
   FROM tbl_legal_entities as t1 INNER join
   tbl_legal_entity_domains as t2 ON
   t2.legal_entity_id = t1.legal_entity_id left join
   tbl_units as t3 on t3.client_id = t1.client_id and
-  t3.legal_entity_id = t1.legal_entity_id
-  WHERE t1.client_id = _client_id;
+  t3.legal_entity_id = t1.legal_entity_id left join
+  tbl_units_organizations as t4 on t4.domain_id = t2.domain_id
+  and t4.organisation_id = t2.organisation_id and
+  t4.unit_id = t3.unit_id
+  WHERE t1.client_id = _client_id
+  group by t1.legal_entity_id, t2.domain_id, t2.organisation_id;
 END //
 
 DELIMITER ;
@@ -741,7 +742,7 @@ CREATE PROCEDURE `sp_bu_organization_all`(
 IN country_id_ INT(11)
 )
 BEGIN
-   select t1.domain_id, t1.organisation_id, t1.organisation_name, t1.is_active, 
+   select t1.domain_id, t1.organisation_id, t1.organisation_name, t1.is_active,
    (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name
    from tbl_organisation t1
    WHERE t1.country_id = country_id_;
