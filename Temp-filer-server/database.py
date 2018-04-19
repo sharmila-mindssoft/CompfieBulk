@@ -136,9 +136,10 @@ class Database(object):
             raise RuntimeError(str(e))
         return True
 
-    def update_file_status(self, csv_id, file_name):
+    def update_file_status(self, csv_id, file_name, file_size):
+        print "file_size in dbase", file_size
         return self.call_update_proc(
-            "sp_sm_format_file_status_update", [csv_id, file_name]
+            "sp_sm_format_file_status_update", [csv_id, file_name, file_size]
         )
 
     def update_format_file_status(self, csv_id, status):

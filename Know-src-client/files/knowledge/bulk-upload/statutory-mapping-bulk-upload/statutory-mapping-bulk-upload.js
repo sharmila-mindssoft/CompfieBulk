@@ -219,6 +219,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
         $('#myModal').modal('hide');
         TemplateDiv.hide();
         if (error == null) {
+            console.log(JSON.stringify(response));
             if (response.invalid == 0) {
                 displaySuccessMessage(message.upload_success);
                 if (response.doc_count > 0) {
@@ -246,10 +247,11 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     ErrorSummary.hide();
                     t_this.showList();
                 }
-
             }
             else {
                 displayMessage(message.upload_failed);
+                DataSummary.removeClass("col-sm-12");
+                DataSummary.addClass("col-sm-6");
                 DataSummary.show();
                 ErrorSummary.show();
                 // show error summary
@@ -279,15 +281,18 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
         }
         else {
-                if (error == "CsvFileExeededMaxLines") {
-                    displayMessage(message.csv_max_lines_exceeded.replace(
-                        'MAX_LINES', response.csv_max_lines));
-                }else if(error == "CsvFileCannotBeBlank") {
-                    displayMessage(message.csv_file_blank);
-                }
-                else{
-                    buSmPage.possibleFailures(error);
-                }
+            if(error == "RejectionMaxCountReached"){
+                displayMessage(message.upload_limit);
+            }
+            else if (error == "CsvFileExeededMaxLines") {
+                displayMessage(message.csv_max_lines_exceeded.replace(
+                    'MAX_LINES', response.csv_max_lines));
+            }else if(error == "CsvFileCannotBeBlank") {
+                displayMessage(message.csv_file_blank);
+            }
+            else{
+                buSmPage.possibleFailures(error);
+            }
         }
     })
 };
@@ -399,6 +404,7 @@ function PageControls() {
         var condition_fields = ["is_active"];
         var condition_values = [true];
         var text_val = $(this).val();
+        domainVal.val('');
         commonAutoComplete(
             e, AcCountry, countryVal, text_val,
             buSmPage._CountryList, "country_name", "country_id",
@@ -417,7 +423,7 @@ function PageControls() {
     var c_ids = null;
     var check_val = false;
     if(countryVal.val() != ''){
-      for(var i=0;i<domainList.length;i++){
+      for(var i = 0;i < domainList.length; i++){
         c_ids = domainList[i].country_ids;
 
         for(var j=0;j<c_ids.length;j++){

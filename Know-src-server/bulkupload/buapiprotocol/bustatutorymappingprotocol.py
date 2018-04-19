@@ -1526,6 +1526,19 @@ class CsvFileCannotBeBlank(Response):
     def to_inner_structure(self):
         return {}
 
+class RejectionMaxCountReached(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return RejectionMaxCountReached()
+
+    def to_inner_structure(self):
+        return {}
+
+
 
 def _init_Response_class_map():
     classes = [
@@ -1548,7 +1561,8 @@ def _init_Response_class_map():
         SaveActionSuccess,
         CsvFileExeededMaxLines,
         InvalidCsvFile,
-        CsvFileCannotBeBlank
+        CsvFileCannotBeBlank,
+        RejectionMaxCountReached
     ]
     class_map = {}
     for c in classes:

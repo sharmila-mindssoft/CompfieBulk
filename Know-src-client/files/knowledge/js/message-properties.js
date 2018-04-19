@@ -489,8 +489,8 @@ var message = {
   'un_saved_compliance': 'All compliance should be selected before submit',
   'clientgroup_required': 'Client Group Name Required',
   "no_compliance_assign_statutory": "No Compliance Available for Assign Statutory",
-  "upload_limit": "CSV Upload limit exceeded",
-  "csv_max_lines_exceeded": "CSV Max lines exceeded \"MAX_LINES\" ",
+  "upload_limit": "CSV Rejected files limit exceeded",
+  "csv_max_lines_exceeded": "CSV file exceeded max \"MAX_LINES\" lines",
   "document_upload_success": "Document uploaded successfully",
 
   "client_unit_upload_success": "Client Units uploaded successfully",
