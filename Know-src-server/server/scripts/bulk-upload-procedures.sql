@@ -1228,7 +1228,11 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_rejected_sm_csv_report`;
 DELIMITER //
-CREATE PROCEDURE `sp_rejected_sm_csv_report`(IN `country_id` tinyint, IN `domain_id` tinyint, IN `user_id` tinyint, IN `csv_id` tinyint)
+CREATE PROCEDURE `sp_rejected_sm_csv_report`(
+  IN `country_id` int(11),
+  IN `domain_id` int(11),
+  IN `user_id` int(11),
+  IN `csv_id` int(11))
 BEGIN
 
 SELECT
@@ -1695,27 +1699,31 @@ BEGIN
     on t2.csv_unit_id = t1.csv_unit_id WHERE t1.csv_unit_id = _csv_unit_id
     AND legal_entity like legal_entity AND division like _div_name AND
     category like _cg_name AND unit_location like _u_location AND
-    unit_code like _u_code AND domain like _domain AND
-    organization like _orgn AND
+    unit_code like _u_code AND domain like concat('%',_domain,'%') AND
+    organization like concat('%',_orgn,'%') AND
     CASE WHEN _action = 1 THEN
       action = 0
-    ELSE
+    WHEN _action = 2 THEN
       action != 0
+    ELSE
+      action >= 0
     END
-      limit  _f_count, _f_limit;
+    limit  _f_count, _f_limit;
 
-    select count(distinct t2.bulk_unit_id) as total_records
-      from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
-      on t2.csv_unit_id = t1.csv_unit_id where t1.csv_unit_id = _csv_unit_id
-      and legal_entity like legal_entity and division like _div_name and
-      category like _cg_name and unit_location like _u_location and
-      unit_code like _u_code and domain like _domain and
-      organization like _orgn AND
-      CASE WHEN _action = 1 THEN
-        action = 0
-      ELSE
-        action != 0
-      END;
+  select count(distinct t2.bulk_unit_id) as total_records
+    from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
+    on t2.csv_unit_id = t1.csv_unit_id where t1.csv_unit_id = _csv_unit_id
+    and legal_entity like legal_entity and division like _div_name and
+    category like _cg_name and unit_location like _u_location and
+    unit_code like _u_code and domain like concat('%',_domain,'%') and
+    organization like concat('%',_orgn,'%') AND
+    CASE WHEN _action = 1 THEN
+      action = 0
+    WHEN _action = 2 THEN
+      action != 0
+    ELSE
+      action >= 0
+    END;
 END //
 
 DELIMITER ;
@@ -2077,4 +2085,20 @@ BEGIN
   AND approve_status < 4 AND uploaded_by = user_;
 END //
 
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS sp_ct_format_file_status_update;
+DELIMITER //
+CREATE PROCEDURE `sp_ct_format_file_status_update`(
+    IN csvid INT, filename VARCHAR(150)
+)
+BEGIN
+
+    update tbl_bulk_past_data_csv
+      set uploaded_documents = uploaded_documents + 1
+      where csv_past_id = csvid and uploaded_documents < total_documents;
+
+    update  tbl_bulk_past_data_csv set upload_status = 1 where
+      uploaded_documents = total_documents and csv_past_id = csvid;
+END //
 DELIMITER ;

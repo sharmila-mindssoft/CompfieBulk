@@ -679,12 +679,12 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                     $(location).attr('href', downladResponse.xlsx_link);
                     hideLoader();
                 } else if (downloadFileFormat == "text") {
-                    
-                    /*if($("#temp_download_element").attr('download', downladResponse.txt_link)){
-                    $("#temp_download_element").trigger('click');
-                    }                    */
-
-                    $(location).attr('href', downladResponse.txt_link);
+                    $.get(downladResponse.txt_link, function(data){
+                        txt_file_name = downladResponse.txt_link
+                        txt_file_name = txt_file_name.split('\\');
+                        download(txt_file_name[1], "text/plain", data);
+                    },
+                    'text');
                     hideLoader();
                 } else if (downloadFileFormat == "ods") {
                     $(location).attr('href', downladResponse.ods_link);
@@ -696,6 +696,20 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
             }
 
         });
+}
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 }
 
 

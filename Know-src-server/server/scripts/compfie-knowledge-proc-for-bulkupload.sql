@@ -450,53 +450,66 @@ CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
 
 BEGIN
     SET SESSION group_concat_max_len = 1000000;
-    SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
 
-            (SELECT domain_name FROM tbl_domains WHERE domain_id = t1.domain_id) AS domain_name,
-            GROUP_CONCAT(t7.organisation_name) AS organizations,
-            t4.unit_code,
-            t4.unit_name,
-            (SELECT geography_name FROM tbl_geographies WHERE geography_id = t4.geography_id) AS location,
-            SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping))),'>>',1),'>>',- 1) AS primary_legislation,
-            SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1) AS secondary_legislation,
-            t1.statutory_provision,
-            -- CONCAT(t1.document_name,' - ',t1.compliance_task) AS compliance_task_name,
-            t1.compliance_task AS compliance_task_name,
-            t1.compliance_description,
-            t6.unit_id,
-            t6.domain_id,
-            -- t6.compliance_id AS assigned_compid,
-            t4.unit_id AS c_unit_id,
-            t1.domain_id
+    -- mapped statu names
+    SELECT t2.statutory_name, t1.statutory_id, IFNULL(t2.parent_ids, 0) AS parent_ids, 
+    t2.parent_names, t1.statutory_mapping_id
+    FROM tbl_mapped_statutories AS t1 
+    INNER JOIN tbl_statutories as t2 ON t1.statutory_id = t2.statutory_id
+    INNER JOIN tbl_statutory_mappings as t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
+    INNER JOIN tbl_mapped_locations as t4 ON t1.statutory_mapping_id = t4.statutory_mapping_id
+    INNER JOIN (SELECT a.geography_id,b.parent_ids,a.unit_id from tbl_units a
+      INNER JOIN tbl_geographies b ON a.geography_id = b.geography_id
+      WHERE find_in_set(a.unit_id, unitid)) t7 ON 
+      (t4.geography_id = t7.geography_id OR find_in_set(t4.geography_id,t7.parent_ids))
+    ORDER BY TRIM(LEADING '[' FROM t3.statutory_mapping);
+
+    -- get compliances
+    SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
+      (SELECT domain_name FROM tbl_domains WHERE domain_id = t1.domain_id) AS domain_name,
+      GROUP_CONCAT(t7.organisation_name) AS organizations,
+      t4.unit_code,
+      t4.unit_name,
+      (SELECT geography_name FROM tbl_geographies WHERE geography_id = t4.geography_id) AS location,
+      SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping))),'>>',1),'>>',- 1) AS primary_legislation,
+      SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1) AS secondary_legislation,
+      t1.statutory_provision,
+      t1.compliance_task AS compliance_task_name,
+      t1.compliance_description,
+      t6.unit_id,
+      t6.domain_id,
+      -- t6.compliance_id AS assigned_compid,
+      t4.unit_id AS c_unit_id,
+      t1.domain_id
     FROM    tbl_compliances AS t1
-            INNER JOIN
-                tbl_statutory_mappings AS t ON t1.statutory_mapping_id = t.statutory_mapping_id
-            INNER JOIN
-                tbl_mapped_industries AS t2 ON t1.statutory_mapping_id = t2.statutory_mapping_id
-            INNER JOIN
-                tbl_mapped_locations AS t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
-            INNER JOIN
-                tbl_organisation AS t7 ON t2.organisation_id = t7.organisation_id
-            INNER JOIN
-                tbl_units AS t4 ON t4.country_id = t1.country_id
-            INNER JOIN
-                tbl_units_organizations AS t5 ON t4.unit_id = t5.unit_id AND t5.domain_id = t1.domain_id AND t5.organisation_id = t2.organisation_id
-            LEFT JOIN
-                tbl_client_compliances t6 ON t1.compliance_id = t6.compliance_id AND
-                t4.unit_id = t6.unit_id AND t.domain_id = t6.domain_id
-            INNER JOIN
-                (SELECT a.geography_id, b.parent_ids, a.unit_id FROM tbl_units a
-                INNER JOIN tbl_geographies b ON a.geography_id = b.geography_id
-                WHERE
-                FIND_IN_SET(a.unit_id, unitid)) t7 ON t7.unit_id = t4.unit_id
-                AND t7.geography_id = t3.geography_id
-                AND (t4.geography_id = t7.geography_id
-                OR FIND_IN_SET(t4.geography_id, t7.parent_ids))
-    WHERE       t1.is_active = 1
-                AND t1.is_approved IN (2 , 3)
-                AND FIND_IN_SET(t4.unit_id, unitid)
-                AND FIND_IN_SET(t1.domain_id, domainid)
-                AND t6.unit_id IS NULL
+      INNER JOIN
+          tbl_statutory_mappings AS t ON t1.statutory_mapping_id = t.statutory_mapping_id
+      INNER JOIN
+          tbl_mapped_industries AS t2 ON t1.statutory_mapping_id = t2.statutory_mapping_id
+      INNER JOIN
+          tbl_mapped_locations AS t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
+      INNER JOIN
+          tbl_organisation AS t7 ON t2.organisation_id = t7.organisation_id
+      INNER JOIN
+          tbl_units AS t4 ON t4.country_id = t1.country_id
+      INNER JOIN
+          tbl_units_organizations AS t5 ON t4.unit_id = t5.unit_id AND t5.domain_id = t1.domain_id AND t5.organisation_id = t2.organisation_id
+      LEFT JOIN
+          tbl_client_compliances t6 ON t1.compliance_id = t6.compliance_id AND
+          t4.unit_id = t6.unit_id AND t.domain_id = t6.domain_id
+      INNER JOIN
+          (SELECT a.geography_id, b.parent_ids, a.unit_id FROM tbl_units a
+          INNER JOIN tbl_geographies b ON a.geography_id = b.geography_id
+          WHERE
+          FIND_IN_SET(a.unit_id, unitid)) t7 ON t7.unit_id = t4.unit_id
+          AND t7.geography_id = t3.geography_id
+          AND (t4.geography_id = t7.geography_id
+          OR FIND_IN_SET(t4.geography_id, t7.parent_ids))
+    WHERE t1.is_active = 1 
+      AND t1.is_approved IN (2 , 3)
+      AND FIND_IN_SET(t4.unit_id, unitid)
+      AND FIND_IN_SET(t1.domain_id, domainid)
+      AND t6.unit_id IS NULL
     GROUP BY    t1.statutory_mapping_id , t1.compliance_id , t4.unit_id
     ORDER BY TRIM(LEADING '[' FROM t.statutory_mapping) , t1.compliance_id , t4.unit_id;
 

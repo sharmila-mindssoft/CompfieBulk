@@ -664,11 +664,7 @@ def submit_bulk_client_unit_list_action(db, request_frame, session_user):
             system_declined_count, system_declined_error, \
                 manual_rejection_count = \
                 clientUnitObj.check_for_system_declination_errors()
-            if len(system_declined_count) == 0 and manual_rejection_count > 0:
-                return bu_cu.ReturnDeclinedCount(
-                    len(system_declined_count), int(manual_rejection_count)
-                )
-            elif (
+            if (
                     len(system_declined_count) > 0 and
                     manual_rejection_count == 0
             ):

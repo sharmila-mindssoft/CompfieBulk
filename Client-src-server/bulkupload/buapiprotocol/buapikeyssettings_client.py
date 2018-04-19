@@ -69,4 +69,5 @@ bu_api_params = {
     'valid': make_int_field(),
     'invalid': make_int_field(),
     'new_csv_id': make_int_field(),
+    'doc_count': make_int_field(),
 }

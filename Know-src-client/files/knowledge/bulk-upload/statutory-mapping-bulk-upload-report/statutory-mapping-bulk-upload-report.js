@@ -165,8 +165,8 @@ function loadCountwiseResult(data) {
         {
             approvedRejectedBy = SYSTEM_REJECTED_BY;
             approvedRejectedOn = '';
-            if(rejectedOn != null){
-                approvedRejectedOn = String(rejectedOn);
+            if(approvedOn != null){
+                approvedRejectedOn = String(approvedOn);
             }
         }
         else if (rejectedOn != null && rejectedOn != '' &&

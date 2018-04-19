@@ -497,7 +497,7 @@ var message = {
   "client_unit_upload_failed": "Client Units not uploaded successfully",
   "upload_failed": "CSV file upload failed",
   "confirm_success": "Action taken successfully",
-  "client_unit_file_max": "Client Unit Upload File Reached the Max Limit",
+  "client_unit_file_max": "Rejected CSV File Reached the Max Limit for uploading CSV File",
   "cg_required": "Client Group Required",
   "csv_file_blank": "CSV File Cannot be Blank",
   "csv_file_lines_max": "CSV File Lines Reached the Max Limit",

@@ -152,3 +152,8 @@ class Database(object):
 
         print "res_update_stats->>>>> ", res_update_stats
         return res_update_stats
+
+    def update_file_status_client(self, csv_id, file_name):
+        return self.call_update_proc(
+            "sp_ct_format_file_status_update", [csv_id, file_name]
+        )

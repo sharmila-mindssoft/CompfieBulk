@@ -481,7 +481,7 @@ class SourceDB(object):
 
     def check_organization_under_domain(self, domain_name, orgn_name):
         msg = []
-        print "domain_name"
+        print "to check under domain_name"
         print domain_name, orgn_name
         if domain_name.strip().find(CSV_DELIMITER) >= 0:
             splitDomain = domain_name.split(CSV_DELIMITER)
@@ -492,11 +492,19 @@ class SourceDB(object):
                         " organization is blank"
                     )
         else:
-            if orgn_name.find(domain_name.strip()) < 0:
-                msg.append(
-                    "Organization - " + domain_name.strip() +
-                    " organization is blank"
-                )
+            if orgn_name.find(CSV_DELIMITER) >= 0:
+                for o in orgn_name.split(CSV_DELIMITER):
+                    if o.find(domain_name.strip()) < 0:
+                        msg.append(
+                            "Organization - " + o.strip() +
+                            " invalid data"
+                        )
+            else:
+                if orgn_name.find(domain_name.strip()) < 0:
+                    msg.append(
+                        "Organization - " + domain_name.strip() +
+                        " organization is blank"
+                    )
         print "msg"
         print msg
         if len(msg) > 0:
@@ -553,7 +561,8 @@ class SourceDB(object):
                     int(data.get("total_unit_count"))
                 ):
                     errDesc.append(
-                        d + " Unit count exceeds the limit in Main DB"
+                        newOrgnName.strip() +
+                        " Unit count exceeds the limit in Main DB"
                     )
                 else:
                     return self.check_base(
@@ -1054,7 +1063,7 @@ class SourceDB(object):
                 sysDeclText = "Client Unit File %s - %s %s has "\
                     "been declined by COMPFIE" % \
                     (csv_name, groupname, sys_decl_cnt)
-            print sysDeclText
+            # print sysDeclText
         else:
             text = "Client Unit File %s of %s has been %s with %s" % (
                     csv_name, groupname, action_type, reject_reason
@@ -1336,6 +1345,9 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                 mainData = mainStrore.get(
                     str(self.Legal_Entity_Id) + "-" + d.strip()
                 )
+                print "AAAA"
+                print mainData
+                print tempData
                 if mainData is not None and tempData is not None:
                     main_temp_units = int(
                         mainData.get("total_unit_count")
@@ -1361,6 +1373,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                             self._valid_unit_count += 1
         else:
             print "AA"
+            saved_units = 0
             mainData = mainStrore.get(
                 str(self.Legal_Entity_Id) + "-" + neworgn
             )
@@ -1369,12 +1382,21 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
             tempData = tempStore.get(
                 self._legal_entity_name + "-" + neworgn.strip()
             )
+            print tempData
+
             if tempData is None:
                 for temp_d in tempStore:
-                    tempData = tempStore.get(temp_d)
-                    orgn_name = tempData.get("organization")
-                    if neworgn in orgn_name:
-                        saved_units = tempData.get("saved_units")
+                    print "temp_d"
+                    print temp_d
+                    if (
+                        temp_d.split('-')[0].strip() ==
+                        self._legal_entity_name.strip()
+                    ):
+                        tempData = tempStore.get(temp_d)
+                        orgn_name = tempData.get("organization")
+                        if neworgn in orgn_name.strip():
+                            saved_units = saved_units +\
+                                int(tempData.get("saved_units"))
             else:
                 saved_units = tempData.get("saved_units")
             print saved_units
@@ -1466,28 +1488,29 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                 self._error_summary["duplicate_error"] += 1
                         elif key == "Postal_Code":
                             if v == "0":
+                                print "inside 0 v"
                                 msg = "%s - %s" % (key, "invalid Postal Code")
                                 if res is not True:
                                     res.append(msg)
                                 else:
                                     res = [msg]
                                 self._error_summary["invalid_data_error"] += 1
-                            elif v != '':
-                                try:
-                                    typeVal = long(v)
-                                    print typeVal
-                                except Exception, e:
-                                    print e
-                                    msg = "%s - %s" % (
-                                        key, "invalid Postal Code"
-                                    )
-                                    if res is not True:
-                                        res.append(msg)
-                                    else:
-                                        res = [msg]
-                                    self._error_summary[
-                                        "invalid_data_error"
-                                    ] += 1
+                            # elif v != '':
+                            #     try:
+                            #         typeVal = long(v)
+                            #         print typeVal
+                            #     except Exception, e:
+                            #         print e
+                            #         msg = "%s - %s" % (
+                            #             key, "invalid Postal Code"
+                            #         )
+                            #         if res is not True:
+                            #             res.append(msg)
+                            #         else:
+                            #             res = [msg]
+                            #         self._error_summary[
+                            #             "invalid_data_error"
+                            #         ] += 1
                         elif key == "Domain":
                             csv_domain_name = value
                             if csv_domain_duplicate is not None:
@@ -1526,7 +1549,6 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                             if orgn_row_last != row_idx:
                                 unitCountErr = \
                                     self.check_organization_unit_count_in_tempDB(value)
-                                orgn_row_last = row_idx
                                 if (
                                     unitCountErr is not None and
                                     unitCountErr != ""
@@ -1539,20 +1561,24 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                         "max_unit_count_error"
                                     ] += 1
 
-                            # check organization under domain
-                            checkOrgn = \
-                                self.check_organization_under_domain(
-                                    csv_domain_name, value
-                                )
-                            print "checkOrgn"
-                            print checkOrgn
-                            if checkOrgn is not None and checkOrgn != "":
-                                if res is not True:
-                                    res.append(checkOrgn)
-                                else:
-                                    res = [checkOrgn]
-                                self._error_summary["invalid_data_error"] += 1
+                                # check organization under domain
+                                checkOrgn = \
+                                    self.check_organization_under_domain(
+                                        csv_domain_name, value
+                                    )
+                                print "checkOrgn"
+                                print checkOrgn
+                                if checkOrgn is not None and checkOrgn != "":
+                                    if res is not True:
+                                        res.append(checkOrgn)
+                                    else:
+                                        res = [checkOrgn]
+                                    self._error_summary[
+                                        "invalid_data_error"] += 1
+                                orgn_row_last = row_idx
 
+                        print "res after orgn"
+                        print res
                         valid_failed, error_cnt = parse_csv_dictionary_values(
                             key, v
                         )
@@ -1731,6 +1757,13 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                 x = idx - 26
 
             c = "%s%s" % (cells[x], 1)
+            if (
+                h != 'Division' and
+                h != 'Category' and
+                h != "Error Description"
+            ):
+                h = "%s%s" % (h, '*')
+
             worksheet.write(c, h, bold)
 
         row = 1
@@ -1759,9 +1792,6 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                     # d.decode('utf8')
                     try:
                         d.decode("utf8")
-                        print "excel data"
-                        print d
-                        print h
                         if idx in error_col:
                             worksheet.write_string(row, col+i, d, error_format)
                         else:

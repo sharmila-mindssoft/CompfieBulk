@@ -112,19 +112,20 @@ class Response(object):
         raise NotImplementedError
 
 class UploadCompletedTaskCurrentYearCSVSuccess(Response):
-    def __init__(self, total, valid, invalid, new_csv_id, csv_name):
+    def __init__(self, total, valid, invalid, new_csv_id, csv_name, doc_count):
         self.total = total
         self.valid = valid
         self.invalid = invalid
         self.new_csv_id = new_csv_id
         self.csv_name = csv_name
+        self.doc_count = doc_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["total", "valid", "invalid", "new_csv_id", "csv_name"])
+        data = parse_dictionary(data, ["total", "valid", "invalid", "new_csv_id", "csv_name", "doc_count"])
         return UploadCompletedTaskCurrentYearCSVSuccess(
             data.get("total"), data.get("valid"), data.get("invalid"),
-            data.get("new_csv_id"), data.get("csv_name")
+            data.get("new_csv_id"), data.get("csv_name"), data.get("doc_count")
         )
 
     def to_inner_structure(self):
@@ -133,7 +134,8 @@ class UploadCompletedTaskCurrentYearCSVSuccess(Response):
             "valid": self.valid,
             "invalid": self.invalid,
             "new_csv_id": self.new_csv_id,
-            "csv_name": self.csv_name
+            "csv_name": self.csv_name,
+            "doc_count": self.doc_count
         }
 
 

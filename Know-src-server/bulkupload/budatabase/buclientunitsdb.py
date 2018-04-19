@@ -152,13 +152,13 @@ def fetch_rejected_client_unit_report(db, session_user, user_id,
                                       client_group_id):
 
     rejected_list = []
-    uploaded_on = ''
-    approved_on = ''
-    rejected_on = ''
-
     args = [client_group_id, user_id]
     data = db.call_proc('sp_rejected_client_unit_data', args)
     for d in data:
+        uploaded_on = ''
+        approved_on = ''
+        rejected_on = ''
+
         if(d["uploaded_on"] is not None):
             uploaded_on = datetime.datetime.strptime(
                 str(d["uploaded_on"]),
@@ -244,12 +244,11 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
 
     client_data = data[0]
     total_record = data[1][0]["total"]
-    approved_on = ""
-    rejected_on = ""
-    uploaded_on = ""
     if(client_data):
         for d in client_data:
-
+            approved_on = ""
+            rejected_on = ""
+            uploaded_on = ""
             if(d["uploaded_on"] is not None):
                 uploaded_on = d["uploaded_on"].strptime(
                     str(d["uploaded_on"]),
@@ -375,7 +374,8 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
     unit_list = db.call_proc("sp_bulk_client_unit_view_by_csvid", [
         csv_id, f_count, f_range
     ])
-
+    print "unit list"
+    print unit_list
     group_name = None
     csv_name = None
     upload_by = session_user.user_full_name()
@@ -399,81 +399,76 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
                 d["action"], d["remarks"]
             ))
 
-    # fetch data for filter
-    filter_data = db.call_proc_with_multiresult_set(
-        "sp_bulk_client_unit_filter_data", [csv_id], 7
-    )
-    print "filtered data"
-    print filter_data
-    le_names = []
-    div_names = []
-    cg_names = []
-    u_locations = []
-    u_codes = []
-    domain_names = []
-    orga_names = []
+        # fetch data for filter
+        filter_data = db.call_proc_with_multiresult_set(
+            "sp_bulk_client_unit_filter_data", [csv_id], 7
+        )
+        print "filtered data"
+        print filter_data
+        le_names = []
+        div_names = []
+        cg_names = []
+        u_locations = []
+        u_codes = []
+        domain_names = []
+        orga_names = []
 
-    if len(filter_data) > 0:
-        if len(filter_data[0]) > 0:
-            for d in filter_data[0]:
-                le_names.append(d["legal_entity"])
+        if len(filter_data) > 0:
+            if len(filter_data[0]) > 0:
+                for d in filter_data[0]:
+                    le_names.append(d["legal_entity"])
 
-        if len(filter_data[1]) > 0:
-            for d in filter_data[1]:
-                div_names.append(d["division"])
+            if len(filter_data[1]) > 0:
+                for d in filter_data[1]:
+                    div_names.append(d["division"])
 
-        if len(filter_data[2]) > 0:
-            for d in filter_data[2]:
-                cg_names.append(d["category"])
+            if len(filter_data[2]) > 0:
+                for d in filter_data[2]:
+                    cg_names.append(d["category"])
 
-        if len(filter_data[3]) > 0:
-            for d in filter_data[3]:
-                u_locations.append(d["unit_location"])
+            if len(filter_data[3]) > 0:
+                for d in filter_data[3]:
+                    u_locations.append(d["unit_location"])
 
-        if len(filter_data[4]) > 0:
-            for d in filter_data[4]:
-                u_codes.append(d["unit_code"])
+            if len(filter_data[4]) > 0:
+                for d in filter_data[4]:
+                    u_codes.append(d["unit_code"])
 
-        last = object()
-        if len(filter_data[5]) > 0:
-            for d in filter_data[5]:
-                if d["domain"].find('|;|') > 0:
-                    dom = d["domain"].split('|;|')
-                    for domain in dom:
-                        if last != domain:
-                            last = domain
-                            domain_names.append(domain)
-                else:
-                    if last != d["domain"]:
-                        last = d["domain"]
-                        domain_names.append(d["domain"])
-
-        last = object()
-        if len(filter_data[6]) > 0:
-            for d in filter_data[6]:
-                if d["organization"].find('|;|') > 0:
-                    org = d["organization"].split('|;|')
-                    for d_o in org:
-                        o = d_o.split(">>")
-                        if last != o[1].strip():
-                            last = o[1].strip()
-                            orga_names.append(o[1].strip())
-                else:
-                    if d["organization"].find(">>") > 0:
-                        o = d["organization"].split(">>")
-                        if last != o[1].strip():
-                            last = o[1].strip()
-                            orga_names.append(o[1].strip())
+            if len(filter_data[5]) > 0:
+                for d in filter_data[5]:
+                    if d["domain"].find('|;|') >= 0:
+                        dom = d["domain"].split('|;|')
+                        for domain in dom:
+                            if domain not in domain_names:
+                                domain_names.append(domain)
                     else:
-                        if last != d["organization"].strip():
-                            last = d["organization"].strip()
-                            orga_names.append(d["organization"].strip())
+                        if d["domain"] not in domain_names:
+                            domain_names.append(d["domain"])
 
-    return bu_cu.GetBulkClientUnitViewAndFilterDataSuccess(
-        group_name, csv_name, upload_by, upload_on, csv_id, total_records,
-        le_names, div_names, cg_names, u_locations, u_codes,
-        domain_names, orga_names, client_unit_data
-    )
+            if len(filter_data[6]) > 0:
+                for d in filter_data[6]:
+                    if d["organization"].find('|;|') >= 0:
+                        org = d["organization"].split('|;|')
+                        for d_o in org:
+                            o = d_o.split(">>")
+                            if o[1].strip() not in orga_names:
+                                orga_names.append(o[1].strip())
+                    else:
+                        if d["organization"].find(">>") >= 0:
+                            o = d["organization"].split(">>")
+                            if o[1].strip() not in orga_names:
+                                orga_names.append(o[1].strip())
+                        else:
+                            if d["organization"].strip() not in orga_names:
+                                orga_names.append(d["organization"].strip())
+
+        return bu_cu.GetBulkClientUnitViewAndFilterDataSuccess(
+            group_name, csv_name, upload_by, upload_on, csv_id, total_records,
+            le_names, div_names, cg_names, u_locations, u_codes,
+            domain_names, orga_names, client_unit_data
+        )
+    else:
+        return bu_cu.EmptyFilteredData()
 
 ########################################################
 '''
