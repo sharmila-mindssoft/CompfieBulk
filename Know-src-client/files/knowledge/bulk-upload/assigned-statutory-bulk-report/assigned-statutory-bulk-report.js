@@ -670,7 +670,7 @@ function fetchDomainMultiselect() {
             }                
         }
         DOMAIN.append(str);
-        
+        DOMAIN.multiselect('rebuild');
     }
 }
 

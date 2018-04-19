@@ -390,7 +390,8 @@ BEGIN
         rejected_on = current_ist_datetime(),
         approve_status = 2,
         total_rejected_records = (SELECT count(0) FROM
-        tbl_bulk_statutory_mapping AS t WHERE t.csv_id = csvid)
+        tbl_bulk_statutory_mapping AS t WHERE t.csv_id = csvid
+        and ifnull(action, 0) = 2)
         WHERE csv_id = csvid;
 
     else

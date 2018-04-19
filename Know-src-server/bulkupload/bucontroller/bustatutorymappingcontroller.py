@@ -360,7 +360,6 @@ def update_statutory_mapping_action(db, request_frame, session_user):
                     )
                     cObj.source_commit()
                     delete_action_after_approval(db, csv_id)
-
                     return bu_sm.UpdateApproveActionFromListSuccess()
         else:
             if (update_approve_action_from_list(

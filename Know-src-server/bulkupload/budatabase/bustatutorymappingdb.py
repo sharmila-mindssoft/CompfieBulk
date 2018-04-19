@@ -470,10 +470,10 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     )
 
 
-def update_approve_action_from_list(db, csv_id, action, remarks, session_user, type):
+def update_approve_action_from_list(
+    db, csv_id, action, remarks, session_user, type
+):
     try:
-        print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
-        print "type-> ", type
         if type == "all":
             args = [csv_id, action, remarks, session_user.user_id()]
             data = db.call_proc("sp_statutory_mapping_update_all_action", args)
@@ -481,7 +481,6 @@ def update_approve_action_from_list(db, csv_id, action, remarks, session_user, t
         else:
             args = [csv_id, session_user.user_id()]
             db.call_proc("sp_statutory_update_action", args)
-
         return True
 
     except Exception, e:

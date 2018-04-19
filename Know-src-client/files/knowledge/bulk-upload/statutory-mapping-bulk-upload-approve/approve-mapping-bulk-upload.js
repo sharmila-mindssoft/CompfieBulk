@@ -365,7 +365,8 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             $('.approve-checkbox', cloneRow).on('change', function(e){
 
                 if (e.target.checked){
-                    if(data.approve_count > 0 && data.rej_count > 0){
+
+                    if(data.rej_count > 0){
                         approve_reject_count['approve_count'] = data.approve_count
                         approve_reject_count['rej_count'] = data.rej_count
                         approve_reject_count['csv_id'] = data.csv_id
@@ -500,11 +501,9 @@ ApproveBulkMapping.prototype.actionFromList = function(
     tThis.DomainId = parseInt(domainVal.val());
     var showPopup = false;
     console.log("csvId"+ JSON.stringify(csvId));
-
     if(typeof csvId != "number"){
         if(csvId["TYPE"].length > 0 && csvId["TYPE"] == "approve"){
-            if(csvId["rej_count"] > 0 && csvId["approve_count"] > 0){
-                console.log("IN IFFFFFFFFFFFFFFFFFFFFFFF")
+            if(csvId["rej_count"] > 0){
                 tThis.CSVID = csvId["csv_id"];
                 csvId = tThis.CSVID;
                 swal({
