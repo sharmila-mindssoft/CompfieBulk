@@ -2040,9 +2040,7 @@ DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_statutory_update_action`;
-
 DELIMITER //
-
 CREATE PROCEDURE `sp_statutory_update_action`(
 IN csvid INT, userid INT
 )
@@ -2055,7 +2053,6 @@ BEGIN
   and t.action = 2)
   WHERE csv_id = csvid;
 END //
-
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_delete`;
