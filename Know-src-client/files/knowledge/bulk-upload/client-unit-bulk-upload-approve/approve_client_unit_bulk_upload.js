@@ -612,8 +612,18 @@ function getCSVFileApprovalList(csv_id, start_count, _page_limit) {
             hideLoader();
         }
         else {
-            hideLoader();
-            displayMessage(error);
+            if(error != null) {
+                if (error == "EmptyFilteredData") {
+                    totalRecord = 0;
+                    hidePagePan();
+                    PaginationView.hide();
+                    hidePageView();
+                    bindClientUnitList([]);
+                } else {
+                    displayMessage(err);
+                }
+                hideLoader();
+            }
         }
     });
 }
@@ -916,6 +926,20 @@ PasswordSubmitButton.click(function(){
 CancelButton.click(function() {
 	bulkClientUnitUploadedFileListviewPage.show();
 	bulkClientUnitUploadedApprovalListPage.hide();
+    $('.clear-filtered').hide();
+    $('.filtered_items').text('');
+    filterHead = null;
+    showClicked = false;
+    filterClicked = false;
+    actionVal = 0;
+    $('.all-data').prop('checked', true);
+    filterLegalEntity.val('');
+    filterDivision.val('');
+    filterCategory.val('');
+    filterUnitCode.val('');
+    filterGeoLocation.val('');
+    filterDomain.val('');
+    filterOrganization.val('');
     btnUploadedFileList.trigger('click');
     //initialize('list');
 });
