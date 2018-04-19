@@ -825,7 +825,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_rejected_assign_sm_reportdata`;
 DELIMITER //
 CREATE PROCEDURE `sp_rejected_assign_sm_reportdata`(
-  IN `client_id` int(11), IN `le_id` int(11), IN `domain_id` int(11), 
+  IN `client_id` int(11), IN `le_id` int(11), IN `domain_id` int(11),
   IN `unit_id` varchar(100), IN `user_id` int(11))
 BEGIN
 
@@ -1575,47 +1575,47 @@ BEGIN
 
         UPDATE tbl_bulk_units_csv SET
         is_fully_rejected = 1,
-        approve_status = 2,
+    approve_status = 2,
         rejected_by = _user_id,
         rejected_on = current_ist_datetime(),
         rejected_reason = _remarks,
         total_rejected_records = (select COUNT(0) FROM
-        tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id)        
+        tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id)
         WHERE csv_unit_id = _csv_unit_id;
     ELSEIF _action = 1 THEN
-        IF _declinedCount = 0 THEN
-          DELETE FROM tbl_bulk_units
-          WHERE csv_unit_id = _csv_unit_id
-          AND (action = 1 or action = 0);
-        ELSE
-          UPDATE tbl_bulk_units SET
-          action = 1 WHERE csv_unit_id = _csv_unit_id;
-        END IF;
+    IF _declinedCount = 0 THEN
+      DELETE FROM tbl_bulk_units
+      WHERE csv_unit_id = _csv_unit_id
+      AND (action = 1 or action = 0);
+    ELSE
+      UPDATE tbl_bulk_units SET
+      action = 1 WHERE csv_unit_id = _csv_unit_id;
+    END IF;
 
         UPDATE tbl_bulk_units_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
         approved_by = _user_id, is_fully_rejected = 0,
-        declined_count = _declinedCount,
-        total_rejected_records = (select COUNT(0) FROM
-        tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id
-        and action = 2)
+    declined_count = _declinedCount,
+    total_rejected_records = (select COUNT(0) FROM
+    tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id
+    and action = 2)
         WHERE csv_unit_id = _csv_unit_id;
   ELSEIF _action = 4 THEN
-        IF _declinedCount = 0 THEN
-          DELETE FROM tbl_bulk_units
-          WHERE csv_unit_id = _csv_unit_id
-          AND (action = 1 or action = 0);
-        END IF;
-
         UPDATE tbl_bulk_units_csv SET
         approve_status = 1, approved_on = current_ist_datetime(),
         approved_by = _user_id, is_fully_rejected = 0,
-        declined_count = _declinedCount,
-        total_rejected_records = (select COUNT(0) FROM
-        tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id
-        and action = 2)
+    declined_count = _declinedCount,
+    total_rejected_records = (select COUNT(0) FROM
+    tbl_bulk_units AS t1 WHERE t1.csv_unit_id = _csv_unit_id
+    and action = 2)
         WHERE csv_unit_id = _csv_unit_id;
+
+    IF _declinedCount = 0 THEN
+      DELETE FROM tbl_bulk_units
+      WHERE csv_unit_id = _csv_unit_id;
     END IF;
+
+  END IF;
 END //
 
 DELIMITER ;
@@ -2031,7 +2031,7 @@ BEGIN
   approve_status = 1, approved_on = current_ist_datetime(),
   approved_by = userid, is_fully_rejected = 0,
   total_rejected_records = (select count(0) from
-  tbl_bulk_assign_statutory as t WHERE 
+  tbl_bulk_assign_statutory as t WHERE
   t.action = 2 and t.csv_assign_statutory_id = csvid)
   WHERE csv_assign_statutory_id = csvid;
 END//
@@ -2050,7 +2050,7 @@ BEGIN
   approve_status = 1, approved_on = current_ist_datetime(),
   approved_by = userid, is_fully_rejected = 0,
   total_rejected_records = (select count(0) from
-  tbl_bulk_statutory_mapping as t WHERE t.csv_id = csvid 
+  tbl_bulk_statutory_mapping as t WHERE t.csv_id = csvid
   and t.action = 2)
   WHERE csv_id = csvid;
 END //
