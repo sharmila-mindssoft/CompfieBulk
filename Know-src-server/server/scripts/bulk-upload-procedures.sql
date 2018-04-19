@@ -32,7 +32,8 @@ BEGIN
     domain_name, csv_name, total_records, uploaded_on,
     total_documents, uploaded_documents
     FROM tbl_bulk_statutory_mapping_csv
-    WHERE ifnull(upload_status, 0) = 0  AND uploaded_by = uploadedby;
+    WHERE ifnull(upload_status, 0) = 0  AND uploaded_by = uploadedby
+    ORDER BY uploaded_on DESC;
 
     select t1.csv_id, format_file from tbl_bulk_statutory_mapping as t1
     INNER JOIN tbl_bulk_statutory_mapping_csv as t2
@@ -390,7 +391,8 @@ BEGIN
         rejected_on = current_ist_datetime(),
         approve_status = 2,
         total_rejected_records = (SELECT count(0) FROM
-        tbl_bulk_statutory_mapping AS t WHERE t.csv_id = csvid)
+        tbl_bulk_statutory_mapping AS t WHERE ifnull(action, 0) = 2
+        AND t.csv_id = csvid)
         WHERE csv_id = csvid;
 
     else
