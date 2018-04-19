@@ -1,7 +1,11 @@
 .multiselect {
     width: 100%;
-    overflow: hidden; 
+    overflow: hidden;
 }
+.multiselect-native-select > .btn-group{
+    width: 100% !important;
+}
+
 /* using width css classes instead of html width attribute */
 
 .width-1 {
@@ -117,7 +121,6 @@
 }
 
 
-
 /* Dropdown download items*/
 
 .popover {
@@ -167,9 +170,6 @@
     margin-top: 0px;
 }
 
-
-
-
 /* pagination */
 
 .pagination-space {
@@ -182,27 +182,27 @@
 }
 
 .filter-by-text {
-  padding: 10px;
-  text-transform: none;
-  color: #fff !important;
-  margin-top: 0px;
+    padding: 10px;
+    text-transform: none;
+    color: #fff !important;
+    margin-top: 0px;
 }
 
 .filter-by-div {
-  height: 520px;
+    height: 520px;
 }
 
 .mar-50-px {
-  margin-bottom: 50px;
+    margin-bottom: 50px;
 }
 
 .width-600-px {
-  width: 600px;
+    width: 600px;
 }
 
 .pagination-td {
-  text-align: right;
-  padding-right: 10px;
+    text-align: right;
+    padding-right: 10px;
 }
 
 .width-percentage {
@@ -215,11 +215,11 @@
 }
 
 .width-250 {
-    width:250px;
+    width: 250px;
 }
 
 .right-align-class {
-    text-align:right;
+    text-align: right;
 }
 
 .overflow-class {
@@ -228,7 +228,7 @@
 }
 
 .col-sm-12-1 {
-    border:1px solid #F5F5F5;
+    border: 1px solid #F5F5F5;
 }
 
 .left-align-class {
@@ -239,24 +239,37 @@
     color: #E64C3D !important;
 }
 
-/**** Added For ApproveRejectStatu Mapping TaskID Alignment Fix ***/
-td.task-id {
-    word-wrap: break-word;
-}
-/**** Added For ApproveRejectStatu Mapping Alignment Fix ***/
-#no-record-templates .no_records{
-    padding:40px; font-size:1.2em;
-    }
 
-.filter-multiselect .btn-group{
-    width: 100% !important;
-}
 
-.download-options {
+.download-options{
     display: inline-block;
 }
 
-.break-word {
-    word-wrap: break-word;
-
+.auto-text-box ul{
+    width: 91% !important;
 }
+/**** Added For ApproveRejectStatu Mapping TaskID Alignment Fix ***/
+
+td.task-id {
+    word-wrap: break-word;
+}
+
+
+/**** Added For ApproveRejectStatu Mapping Alignment Fix ***/
+
+#no-record-templates .no_records {
+    padding: 40px;
+    font-size: 1.2em;
+}
+
+.filter-multiselect .btn-group {
+    width: 100% !important;
+}
+
+.break-word {
+    word-wrap: break-word !important;
+}
+.filter-data{
+    height:455px !important;
+}
+

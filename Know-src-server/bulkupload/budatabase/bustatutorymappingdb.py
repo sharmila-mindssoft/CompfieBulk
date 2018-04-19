@@ -27,7 +27,8 @@ __all__ = [
     "fetch_rejected_sm_download_csv_report",
     "get_sm_csv_file_name_by_id",
     "save_action_from_view",
-    "get_pending_action"
+    "get_pending_action",
+    "delete_action_after_approval"
 ]
 
 # transaction method begin
@@ -362,12 +363,18 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
 
     if c_task is None or c_task == "":
         c_task = '%'
+    else:
+        c_task = c_task + '%'
 
     if c_desc is None or c_desc == "":
         c_desc = '%'
+    else:
+        c_desc = c_desc + '%'
 
     if c_doc is None or c_doc == "":
         c_doc = '%'
+    else:
+        c_doc = c_doc + '%'
 
     data = db.call_proc_with_multiresult_set(
         "sp_statutory_mapping_view_by_filter",
@@ -463,11 +470,18 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     )
 
 
-def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
+def update_approve_action_from_list(db, csv_id, action, remarks, session_user, type):
     try:
-        args = [csv_id, action, remarks, session_user.user_id()]
-        data = db.call_proc("sp_statutory_mapping_update_action", args)
-        print data
+        print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
+        print "type-> ", type
+        if type == "all":
+            args = [csv_id, action, remarks, session_user.user_id()]
+            data = db.call_proc("sp_statutory_mapping_update_all_action", args)
+            print data
+        else:
+            args = [csv_id, session_user.user_id()]
+            db.call_proc("sp_statutory_update_action", args)
+
         return True
 
     except Exception, e:
@@ -476,6 +490,20 @@ def update_approve_action_from_list(db, csv_id, action, remarks, session_user):
         )
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
+
+def delete_action_after_approval(db, csv_id):
+    try:
+        args = [csv_id]
+        db.call_proc("sp_statutory_mapping_delete", args)
+        return True
+
+    except Exception, e:
+        logger.logKnowledge(
+            "error", "update action from list", str(traceback.format_exc())
+        )
+        logger.logKnowledge("error", "update action from list", str(e))
+        raise fetch_error()
+
 
 
 def save_action_from_view(db, csv_id, sm_id, action, remarks, session_user):
@@ -530,11 +558,11 @@ def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
     if(data):
         response_report_data = data[0]
         total_record = data[1][0]["total"]
-
-        uploaded_on = None
-        approved_on = None
-        rejected_on = None
         for d in response_report_data:
+            uploaded_on = None
+            approved_on = None
+            rejected_on = None
+
             if(d["uploaded_on"] is not None):
                 uploaded_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
 
@@ -543,6 +571,7 @@ def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
 
             if(d["rejected_on"] is not None):
                 rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
+
             report_data.append(bu_sm.ReportData(
                 d["country_name"], d["domain_name"],
                 d["uploaded_by"], uploaded_on, d["csv_name"],
@@ -567,14 +596,15 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
     rejected_list = []
     args = [country_id, domain_id, user_id]
     data = db.call_proc('sp_rejected_statutory_mapping_reportdata', args)
-    approved_on = ''
-    uploaded_on = ''
-    rejected_on = ''
+
     responseFormat = '%Y-%m-%d %H:%M:%S'
     # requestFormat = '%Y-%m-%d %H:%M:%S'
     requestFormat = '%d-%b-%Y %H:%M'
     date_time = datetime.datetime
     for d in data:
+        approved_on = ''
+        uploaded_on = ''
+        rejected_on = ''
         if(d["uploaded_on"] is not None):
             uploaded_on = date_time.strptime(str(
                 d["uploaded_on"]), responseFormat).strftime(requestFormat)

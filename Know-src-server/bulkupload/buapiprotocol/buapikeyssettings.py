@@ -497,7 +497,7 @@ bu_api_params = {
         'validation_method': is_alpha_numeric, 'is_optional': False
     },
     'task_type': {
-        'type': 'STRING', 'length': 25,
+        'type': 'STRING', 'length': 150,
         'validation_method': is_alphabet, 'is_optional': False
     },
     'approved_count': {

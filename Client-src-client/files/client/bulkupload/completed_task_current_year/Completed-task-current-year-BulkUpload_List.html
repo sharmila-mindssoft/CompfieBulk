@@ -1,5 +1,5 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
-
+<link href="/css/dropzone.css" rel="stylesheet" type="text/css" />
 <!-- Multiselect -->
 <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 <!-- Notification css (Toastr) -->
@@ -117,9 +117,9 @@
                                                         </label>
                                                         <p class="form-control-static legal-entity-name default-display-none"></p>
                                                         <div class="col-sm-6 has-feedback default-display-none legal-entity-name-ac">
-                                                            <input type="text" class="form-control input-sm legal-entity-name-ac" placeholder="Legal Entity name" id="legal_entity_name" placeholder="Enter Legal Entity">
+                                                            <input type="text" class="form-control input-sm" placeholder="Legal Entity name" id="txt_legal_entity_name" placeholder="Enter Legal Entity">
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                                                            <input type="hidden" id="legal_entity_id" value="">
+                                                            <input type="hidden" id="hdn_legal_entity_id" value="">
                                                             <div id="ac-entity" class="ac-textbox default-display-none">
                                                                 <ul class="width85Percent"></ul>
                                                             </div>
@@ -166,7 +166,45 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="form-group has-feedback field_label m-b-0" style="display: none;" id="divSuccessFile">
+
+
+
+
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">Legal Entity:
+                                                                <span class="mandatory">*</span>
+                                                            </label>
+                                                            <p class="form-control-static legal-entity-name-upload default-display-none"></p>
+                                                            <div class="col-sm-6 has-feedback legal-entity-name-ac-upload default-display-none">
+                                                                <input type="text" class="form-control input-sm " placeholder="Legal Entity name" id="txt_legal_entity_name_upload" placeholder="Enter Legal Entity">
+                                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                                <input type="hidden" id="hdn_legal_entity_id_upload" value="">
+                                                                <div id="ac-entity-upload" class="ac-textbox default-display-none">
+                                                                    <ul class="width85Percent"></ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div id="divFileUpload">
+                                                            <div class="form-group has-feedback">
+                                                                <label class="col-sm-4 control-label">Select File:
+                                                            <span class="mandatory">*</span>
+                                                        </label>
+                                                                <div class="col-sm-6">
+                                                                    <input class="form-control input-sm" type="file" accept=".csv" id="fileInput">
+                                                                    <small class="" style="text-align: left;">[ Accepted file format
+                                                                <span style="color: #E64C3D !important;">.csv</span> ]</small>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-sm-12 text-center">
+                                                                <div class="col-sm-12 col-sm-offset-1">
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="form-group has-feedback field_label" style="display: none;" id="divSuccessFile">
                                                             <label class="col-sm-4 control-label">Uploaded File: </label>
                                                             <div class="col-sm-6">
                                                                 <table class="tablenopadd" width="100%">
@@ -183,57 +221,51 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group has-feedback select_docs m-t-20" style="display: none;" id="divSuccessDocument">
-                                                            <label class="col-sm-4 control-label">Select Documents:<span class="mandatory">*</span> </label>
-                                                            <div class="col-sm-6">
-                                                                <input class="form-control input-sm" type="file" webkitdirectory="" multiple="">
-                                                                <ul class="p-l-20 p-t-5">
 
-                                                                    <li>Required Documents: <b>0</b> </li>
-                                                                    <li>Uploaded Documents: <b>0</b> </li>
-                                                                    <li class="text-danger">Remaining Documents: <b>0</b> </li>
-                                                                    <li class="view-summary" style="display: none;">Uploaded Documents: <b> 90 </b> </li>
-                                                                    <li class="text-danger view-summary" style="display: none;">Remaining Documents: <b> 10</b></li>
+                                                        <div class="form-group has-feedback divSuccessDocument" id="bu-upload-docs" style="display: none;">
+                                                            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">
+                                                            Select Documents:
+                                                            <span class="mandatory">*</span></label>
+                                                            <div class="dropzone dz-clickable" id="myDrop">
+                                                                <div class="dz-default dz-message" data-dz-message="">
+                                                                    <span>Upload or drag your files here</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 controls">
+                                                                <ul class="p-l-20 p-t-5 bu-doc-summary" style="display: none;">
+                                                                    <li>Required Documents:
+                                                                        <b><span id="bu-doc-total"></span></b>
+                                                                    </li>
+                                                                    <li class="view-summary" style="display: none;">Uploaded Documents:
+                                                                        <b><span id="bu-upload-total"></span></b>
+                                                                    </li>
+                                                                    <li class="text-danger view-summary" style="display: none;">Remaining Documents:
+                                                                        <b><span id="bu-remain-total"></span></b>
+                                                                    </li>
                                                                 </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group text-center m-b-0">
+
+                                                            <button class="btn btn-primary waves-effect waves-light m-b-5 upload-btn" type="button" id="btnUpload" data-toggle="modal"> Upload </button>
+
+                                                            <div class="download-options">
+                                                                <a class="btn btn-primary m-b-5 btn-trans dropbtn invaliddata default-display-none data-btn" onclick="showDownloadList()">
+                                                                    <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
+                                                                <div id="myDropdown" class="dropdown-content">
+                                                                    <a id="excel">Download Excel</a>
+                                                                    <a id="csv">Download CSV</a>
+                                                                    <a id="ods">Download ODS</a>
+                                                                    <a id="txt">Download Text</a>
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <div class="col-sm-12 text-center m-b-20" id="divSuccessbutton" style="display: none;">
-                                                            <button class="btn btn-primary waves-effect waves-light btn_upload animateprogress1 m-r-5" type="button" data-toggle="modal" data-target="#myModal1" style="display: none;"> Upload</button>
-
-                                                            <a class="btn btn-primary btn-trans uploaded_data" style="display: inline-block;"><i class="fa fa-download text-primary"></i> Uploaded Data (.zip)</a>
+                                                            <a class="btn btn-primary btn-trans uploaded_data" style="display: inline-block;"><i class="fa fa-download text-primary"></i> Uploaded Data</a>
                                                             <button class="btn btn-primary waves-effect waves-light btn_submit" type="button" style="display: inline-block;"> Submit</button>
                                                             <input type="hidden" id="hdnCsvId" value="">
 
-                                                        </div>
-
-
-
-                                                        <div id="divFileUpload">
-                                                            <div class="form-group has-feedback">
-                                                                <label class="col-sm-4 control-label">Select File:
-                                                            <span class="mandatory">*</span>
-                                                        </label>
-                                                                <div class="col-sm-6">
-                                                                    <input class="form-control input-sm" type="file" accept=".csv" id="fileInput">
-                                                                    <small class="" style="text-align: left;">[ Accepted file format
-                                                                <span style="color: #E64C3D !important;">.csv</span> ]</small>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group col-sm-12 text-center">
-                                                                <div class="col-sm-12 col-sm-offset-1">
-                                                                    <button class="btn btn-primary waves-effect waves-light animateprogress upload-btn" type="button" data-toggle="modal" data-target="#myModal" id="btnUpload">
-                                                                Upload </button>
-                                                                    <a class="btn btn-primary btn-trans invaliddata dropbtn default-display-none" onclick="showDownloadList()">
-                                                                        <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
-                                                                    <div id="myDropdown" class="dropdown-content">
-                                                                        <a id="excel">Download Excel</a>
-                                                                        <a id="csv">Download CSV</a>
-                                                                        <a id="ods">Download ODS</a>
-                                                                        <a id="txt">Download Text</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
                                                         </div>
 
 
@@ -263,18 +295,6 @@
                                                                     <h5 class="col-sm-12 text-danger header-title">Invalid Data - Summary</h5>
                                                                 </div>
                                                                 <ul class="p-l-20">
-                                                                    <!-- <li>Invalid Date:
-                                                                        <b>60</b>
-                                                                    </li>
-                                                                    <li>Invalid File Format:
-                                                                        <b>0</b>
-                                                                    </li>
-                                                                    <li>Mandatory Field Blank:
-                                                                        <b>0</b>
-                                                                    </li>
-                                                                    <li>Master Data Inactive:
-                                                                        <b>0</b>
-                                                                    </li> -->
                                                                     <li>Mandatory field validation:
                                                                         <b><span class="mandatoryErrors"></span></b>
                                                                     </li>
@@ -307,26 +327,7 @@
 
                     <!-- Modal -->
                     <!-- Modal -->
-                    <div class="modal fade default-display-none" id="myModal" role="dialog">
-                        <div class="modal-dialog">
-                            <!-- Modal content-->
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
-                                    <h4 class="modal-title">Upload</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="progress skill-bar ">
-                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                            <span class="skill">Uploading
-                                                <i class="val"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -359,6 +360,31 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Upload</h4>
+            </div>
+            <div class="modal-body">
+                <img src="/images/progress_loading.gif">
+                <!-- <div class="progress skill-bar ">
+                    <img src="/images/progress_loading.gif"> -->
+                <!-- <div class="progress-bar progress-bar-success" role="progressbar"
+                    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                        <span class="skill">Uploading <i class="val">100%</i></span>
+                    </div> -->
+                <!-- </div> -->
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %} {% block contentscript %}
+<script src="/js/dropzone.js"></script>
+<script src="/js/jszip.js"></script>
+<script src="/js/FileSaver.js"></script>
 <script src="/script/bulkupload/completed_task_current_year/Completed-task-current-year-BulkUpload.js"></script>
 {% endblock %}

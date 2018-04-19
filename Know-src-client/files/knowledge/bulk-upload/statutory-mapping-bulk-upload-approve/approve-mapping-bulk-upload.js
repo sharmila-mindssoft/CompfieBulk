@@ -139,6 +139,7 @@ function RejectSelectAllFilter(evt) {
 }
 
 function displayPopUp(TYPE, csvId, smid, callback){
+    console.log("TYPE ->>>>>> "+ TYPE);
     if (TYPE == "reject") {
         targetid = "#custom-modal";
         CurrentPassword = $('#current-password-reject');
@@ -179,7 +180,7 @@ function displayPopUp(TYPE, csvId, smid, callback){
                             displayMessage(message.reason_required)
                         }
                         else {
-                            
+
                             buApprovePage.actionFromList(
                                 csvId, 2, $('.reject-reason-txt').val(),
                                 CurrentPassword.val()
@@ -337,7 +338,7 @@ ApproveBulkMapping.prototype.fetchListData = function() {
 ApproveBulkMapping.prototype.renderList = function(listData) {
     tThis = this;
     var j = 1;
-    
+
     ListContainer.find('tr').remove();
     if(listData.length == 0) {
         ListContainer.empty();
@@ -364,10 +365,15 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             $('.approve-checkbox', cloneRow).on('change', function(e){
 
                 if (e.target.checked){
-                    approve_reject_count['approve_count'] = data.approve_count
-                    approve_reject_count['rej_count'] = data.rej_count
-                    approve_reject_count['csv_id'] = data.csv_id
-                    displayPopUp('approve', approve_reject_count, null);
+                    if(data.approve_count > 0 && data.rej_count > 0){
+                        approve_reject_count['approve_count'] = data.approve_count
+                        approve_reject_count['rej_count'] = data.rej_count
+                        approve_reject_count['csv_id'] = data.csv_id
+                        displayPopUp('approve', approve_reject_count, null);
+                    }
+                    else{
+                        displayPopUp('approve', data.csv_id, null);
+                    }
                 }
             });
             $('.reject-checkbox', cloneRow).on('change', function(e){
@@ -393,7 +399,7 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
                 else{
                     $(".dropdown-content", cloneRow).hide();
                     $(".dropdown-content", cloneRow).removeClass("show");
-                }                
+                }
             });
 
             $(".dl-xls-file, .dl-csv-file, .dl-ods-file,"+
@@ -493,69 +499,72 @@ ApproveBulkMapping.prototype.actionFromList = function(
     tThis.CountryId = parseInt(countryVal.val());
     tThis.DomainId = parseInt(domainVal.val());
     var showPopup = false;
+    console.log("csvId"+ JSON.stringify(csvId));
 
-    if(csvId["TYPE"].length > 0 && csvId["TYPE"] == "approve"){
-        if(csvId["rej_count"] > 0 && csvId["approve_count"] > 0)
-        {
-            tThis.CSVID = csvId["csv_id"];
-            csvId = tThis.CSVID;
-            swal({
-                title: "Are you sure",
-                text: "Some manual rejections are inside, Do you want to continue?",
-                type: "success",
-                showCancelButton: true,
-                confirmButtonClass: 'btn-success waves-effect waves-light',
-                confirmButtonText: 'Yes'
-            }, function(isConfirm) {
-                if (isConfirm) {
-                        bu.updateActionFromList(
-                            csvId, action, remarks, pwd, countryVal.val(),
-                            domainVal.val(),
-                            function(error, response){
-                                if (error == null) { 
-                                    if (response.rej_count > 0) {
-                                        msg = response.rej_count
-                                        + " compliance declined, Do you want to continue ?";
-                                        confirm_alert(msg, function(isConfirm) {
-                                            if (isConfirm) {
-                                                tThis.confirmAction();
+    if(typeof csvId != "number"){
+        if(csvId["TYPE"].length > 0 && csvId["TYPE"] == "approve"){
+            if(csvId["rej_count"] > 0 && csvId["approve_count"] > 0){
+                console.log("IN IFFFFFFFFFFFFFFFFFFFFFFF")
+                tThis.CSVID = csvId["csv_id"];
+                csvId = tThis.CSVID;
+                swal({
+                    title: "Are you sure",
+                    text: "Some manual rejections are inside, Do you want to continue?",
+                    type: "success",
+                    showCancelButton: true,
+                    confirmButtonClass: 'btn-success waves-effect waves-light',
+                    confirmButtonText: 'Yes'
+                }, function(isConfirm) {
+                    if (isConfirm) {
+                            bu.updateActionFromList(
+                                csvId, action, remarks, pwd, countryVal.val(),
+                                domainVal.val(),
+                                function(error, response){
+                                    if (error == null) {
+                                        if (response.rej_count > 0) {
+                                            msg = response.rej_count
+                                            + " compliance declined, Do you want to continue ?";
+                                            confirm_alert(msg, function(isConfirm) {
+                                                if (isConfirm) {
+                                                    tThis.confirmAction();
+                                                }
+                                                else {
+                                                    hideLoader();
+                                                }
+                                            });
+                                        }else {
+                                            if (action == 1) {
+                                                displaySuccessMessage(message.approve_success);
                                             }
                                             else {
-                                                hideLoader();
+                                                displaySuccessMessage(message.reject_success);
                                             }
-                                        });
-                                    }else {
-                                        if (action == 1) {
-                                            displaySuccessMessage(message.approve_success);
+                                            tThis.fetchListData()
                                         }
-                                        else {
-                                            displaySuccessMessage(message.reject_success);
-                                        }
-                                        tThis.fetchListData()
+                                    }
+                                    else {
+                                        hideLoader();
+                                        tThis.possibleFailures(error);
                                     }
                                 }
-                                else {
-                                    hideLoader();
-                                    tThis.possibleFailures(error);
-                                }
-                            }
-                            );
-                    }
-                    else{
-                        hideLoader();
-                        return false;
-                    }
-                })
+                                );
+                        }
+                        else{
+                            hideLoader();
+                            return false;
+                        }
+                    })
+            }
         }
     }
-    else
-    {
+    else{
+        console.log("else---> " + csvId);
         tThis.CSVID = csvId;
         bu.updateActionFromList(
         csvId, action, remarks, pwd, countryVal.val(),
         domainVal.val(),
         function(error, response){
-            if (error == null) { 
+            if (error == null) {
                 if (response.rej_count > 0) {
                     msg = response.rej_count
                     + " compliance declined, Do you want to continue ?";
@@ -582,7 +591,7 @@ ApproveBulkMapping.prototype.actionFromList = function(
                 tThis.possibleFailures(error);
             }
         }
-        );   
+        );
     }
 };
 ApproveBulkMapping.prototype.showViewScreen = function(
@@ -605,7 +614,7 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     searchFreq.val('');
     searchFormat.val('');
     searchGeography.val('');
-    
+
     acOrgName.val('');
     acNature.val('');
     acStatutory.val('');
@@ -619,7 +628,7 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     $('input[id="verified-data"]').removeAttr("checked");
     $('input[id="pending-data"]').removeAttr("checked");
     $('input[id="all-data"]').prop("checked", true);
-    
+
     onCurrentPage = 1;
     j = 1;
     $('.filtered-data').text('');
@@ -700,7 +709,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
     tThis = this;
     showFrom = tThis.showMapCount;
     showFrom += 1;
-    
+
     ViewListContainer.find('tr').remove();
     if(viewData.length == 0) {
         ViewListContainer.empty();
@@ -771,7 +780,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                 $('.view-approve-check',cloneRow).attr("checked", false);
                 $('.view-reject-check',cloneRow).attr("checked", false);
                 $('.reject-reason .fa-info-circle',cloneRow).each(function() {
-                    
+
                     $(this).addClass("default-display-none");
                 });
             }
@@ -807,7 +816,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                     csvid = $('#view-csv-id').val();
                     $('.view-approve-check',cloneRow).attr("checked", false);
                     $('.approve-all').attr("checked", false);
-                    displayPopUp('view-reject', parseInt(csvid), data.sm_id, 
+                    displayPopUp('view-reject', parseInt(csvid), data.sm_id,
                         function(viewReason){
                             $('.reject-reason .fa-info-circle', cloneRow).
                             removeClass("default-display-none");
@@ -832,6 +841,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                         }
                     });
                 }
+
             });
             ViewListContainer.append(cloneRow);
             j += 1;
@@ -861,7 +871,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                 clone1 = tBodyClone.clone();
                 $(freezerHtml).append(clone1);
                 $(freezerHtml).show();
-        }, 2000);            
+        }, 2000);
 
 }*/
 ApproveBulkMapping.prototype.fetchFilterDropDown = function(csvid) {
@@ -1081,7 +1091,7 @@ function key_search(mainList) {
     var total = searchTotRecords.val();
     var uploadOnKey = searchUploadOn.val().toLowerCase();
     var csvName, uploadby, totalrecords, uploadon;
-    
+
     var fList = [];
     for (var entity in mainList) {
         csvName = mainList[entity].csv_name;
@@ -1122,7 +1132,7 @@ function key_view_search(mainList) {
         d = mainList[entity];
         if (
             (~d.statutory.toLowerCase().indexOf(keyStatutory)) &&
-            (~d.task_id.toLowerCase().indexOf(keyTaskId)) && 
+            (~d.task_id.toLowerCase().indexOf(keyTaskId)) &&
             (~d.orga_name.toLowerCase().indexOf(keyOrganization)) &&
             (~d.s_nature.toLowerCase().indexOf(keyNature)) &&
             (~d.s_provision.toLowerCase().indexOf(keyProvision)) &&
@@ -1570,7 +1580,7 @@ function PageControls() {
     RejectSelectAll.on("change", function(e) {
         CurrentPageSmId = [];
         if (buApprovePage.ViewDataList.length > 0
-            && RejectSelectAll.prop('checked') == true) {           
+            && RejectSelectAll.prop('checked') == true) {
 
             displayViewRejectAllPopUp(function(reason) {
                 console.log(reason);
@@ -1581,7 +1591,7 @@ function PageControls() {
 
                 $('.tbody-sm-approve-view .view-reject-check').each(function(index, el) {
                     var data = buApprovePage.ViewDataList[index];
-                    
+
                     if (e.target.checked) {
                         $(this).prop("checked", true);
                         $(".tbody-sm-approve-view th.reject-reason").find("*").removeClass("default-display-none");
@@ -1632,3 +1642,5 @@ $(document).ready(function() {
     // $(".nicescroll").niceScroll();
     buApprovePage.showList()
 });
+
+$(".nicescroll").niceScroll();

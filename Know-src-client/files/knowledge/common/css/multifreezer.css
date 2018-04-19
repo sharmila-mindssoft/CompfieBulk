@@ -1,6 +1,6 @@
 #freezer-example { /*width: 600px; max-height: 300px;*/ overflow: hidden;}
 #freezer-example .table th,#freezer-example .table td { /*white-space: nowrap;*/ }
-#freezer-example .table th { padding-top: 1px; padding-bottom: 1px; vertical-align: middle; /*outline: 1px solid crimson; background: #E74C3C;*/ }
+#freezer-example .table th { padding-top: 1px; padding-bottom: 1px; vertical-align: middle; font-weight: normal; /*outline: 1px solid crimson; background: #E74C3C;*/ }
 .columnfixed { background: #FFF !important; }
 #freezer-example .table thead th { /*outline: 1px solid gold;*/ }
 #freezer-example .table col { /*width: 120px;*/ }

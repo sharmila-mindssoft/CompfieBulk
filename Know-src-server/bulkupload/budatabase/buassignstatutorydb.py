@@ -490,18 +490,16 @@ def update_approve_action_from_list(
 
 
 def fetch_rejected_assign_sm_data(db, session_user, user_id, client_id,
-                                  le_id, domain_ids, unit_id):
+                                  le_id, d_id, unit_id):
 
     reject_list = []
-    domain_id_list = ",".join(map(str, domain_ids))
 
-    args = [client_id, le_id, domain_id_list, unit_id, user_id]
+    args = [client_id, le_id, d_id, unit_id, user_id]
     data = db.call_proc('sp_rejected_assign_sm_reportdata', args)
-    uploaded_on = ''
-    approved_on = ''
-    rejected_on = ''
-
     for d in data:
+        uploaded_on = ''
+        approved_on = ''
+        rejected_on = ''
         if(d["uploaded_on"] is not None):
             uploaded_on = datetime.datetime.strptime(
                 str(d["uploaded_on"]),
@@ -559,12 +557,12 @@ def update_asm_download_count_by_csvid(db, session_user, csv_id):
 
 
 def get_list_and_delete_rejected_asm(db, session_user, user_id, client_id,
-                                     le_id, domain_ids, unit_code, csv_id):
+                                     le_id, d_id, unit_code, csv_id):
 
     args = [csv_id]
     db.call_proc('sp_delete_reject_asm_by_csvid', args)
     reject_list = fetch_rejected_assign_sm_data(
-        db, session_user, user_id, client_id, le_id, domain_ids, unit_code)
+        db, session_user, user_id, client_id, le_id, d_id, unit_code)
     return reject_list
 
 
@@ -604,15 +602,11 @@ def convertArrayToString(array_ids):
 
 def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
                                          clientGroupId, legalEntityId, unitId,
-                                         domainIds, from_date, to_date,
+                                         d_id, from_date, to_date,
                                          record_count, page_count, dependent_users,
                                          user_category_id):
     report_list = []
     expected_result = 2
-    domain_ids = ''
-
-    if(domainIds is not None):
-        domain_ids = ",".join(map(str, domainIds))
     if(unitId is None):
         unitId = ''
 
@@ -626,7 +620,7 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
             user_ids = user_id
 
     args = [clientGroupId, legalEntityId, unitId, from_date, to_date,
-            record_count, page_count, str(user_ids), domain_ids]
+            record_count, page_count, str(user_ids), d_id]
 
     procedure = 'sp_assgined_statutory_bulk_reportdata'
     data = db.call_proc_with_multiresult_set(procedure, args, expected_result)
@@ -634,10 +628,10 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
     if(data):
         report_data = data[0]
         total_record = data[1][0]["total"]
-        approved_on = ''
-        uploaded_on = ''
-        rejected_on = ''
         for d in report_data:
+            approved_on = ''
+            uploaded_on = ''
+            rejected_on = ''
 
             if(d["uploaded_on"] != ''):
                 uploaded_on = datetime.datetime.strptime(
@@ -680,12 +674,10 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
 
 
 def fetch_rejected_asm_download_csv_report(db, session_user, user_id,
-                                           client_id, le_id, domain_ids,
+                                           client_id, le_id, d_id,
                                            asm_unit_code, csv_id):
-    domainIds = ''
-    if(domain_ids is not None):
-        domainIds = ",".join(map(str, domain_ids))
-    args = [client_id, le_id, domainIds, asm_unit_code, csv_id, user_id]
+
+    args = [client_id, le_id, d_id, asm_unit_code, csv_id, user_id]
     data = db.call_proc('sp_rejected_asm_csv_report', args)
     return data
 

@@ -68,24 +68,23 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
 
     # csv data validation
     cObj = ValidateCompletedTaskCurrentYearCsvData(
-        db, completed_task_data, session_user, request_frame.csv_name, header)
-    res_data = cObj.perform_validation()
+        db, completed_task_data, session_user, request_frame.csv_name, header, request_frame.legal_entity_id)
+    res_data = cObj.perform_validation(request_frame.legal_entity_id)
 
     if res_data["return_status"] is True :
         current_date_time = get_date_time_in_date()
         str_current_date_time = datetime_to_string(current_date_time)
         csv_args = [
             "1", request_frame.legal_entity_id, "1","1","1",
-            csv_name, session_user,current_date_time, res_data["total"],"0","0", "0"
+            csv_name, session_user,current_date_time, res_data["total"],res_data["doc_count"],"0", "0"
         ]
 
         new_csv_id = save_completed_task_current_year_csv(db, csv_args, session_user)
         if new_csv_id:
             if save_completed_task_data(db, new_csv_id, res_data["data"]) is True:
-                print "csv_name>>>", csv_name
                 result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
                     res_data["total"], res_data["valid"], res_data["invalid"],
-                    new_csv_id, csv_name)
+                    new_csv_id, csv_name, res_data["doc_count"])
 
         # csv data save to temp db
     else:

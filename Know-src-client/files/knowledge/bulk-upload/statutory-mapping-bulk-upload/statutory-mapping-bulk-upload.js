@@ -238,7 +238,8 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     DocumentRemaining.text("0");
 
                     DocumentSummary.hide();
-                    t_this.changeTxttoLabel(countryAc.val(), domainAc.val(), response.csv_name)
+                    t_this.changeTxttoLabel(countryAc.val(), domainAc.val(),
+                                            response.csv_name)
                 }
                 else {
                     DataSummary.hide();
@@ -343,21 +344,21 @@ BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
     lblDomainName.text(d_name);
     inputFileControl.hide();
     displayFileControl.show();
-    var cname_split = csv_name.split("_");
-    cname_split.pop();
-    var cname = cname_split.join("_") + ".csv";
-    $('.csv-file-name').text(cname);
+    $('.csv-file-name').text(csv_name);
     $('.csv-file-view').attr("href", "/uploaded_file/csv/"+csv_name);
     $('.csv-file-download').attr("href", "/uploaded_file/csv/"+csv_name);
     this._ActionMode = "upload"
 };
 BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     this.showAddScreen();
+
+    var uploadedCsvName = data.csv_name
+    var csv_split_name = uploadedCsvName.substring(0, uploadedCsvName.lastIndexOf("_") )
     countryAc.val(data.c_name);
     countryVal.val(data.c_id);
     domainAc.val(data.d_name);
     domainVal.val(data.d_id);
-    this.changeTxttoLabel(data.c_name, data.d_name, data.csv_name)
+    this.changeTxttoLabel(data.c_name, data.d_name, csv_split_name + ".csv")
     UploadDocument.show();
     DocumentSummary.show();
 

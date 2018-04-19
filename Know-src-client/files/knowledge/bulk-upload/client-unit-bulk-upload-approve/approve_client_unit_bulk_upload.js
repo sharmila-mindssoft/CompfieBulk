@@ -1411,4 +1411,5 @@ $('#filter_orgn').keyup(function() {
 // Document initialization process
 $(document).ready(function() {
     initialize('list');
+    $(".nicescroll").niceScroll();
 });

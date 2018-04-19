@@ -270,6 +270,8 @@ class SourceDB(object):
         ]
 
         values = []
+        is_rejected = False
+        rej_reason = ''
         for idx, d in enumerate(data):
             approval_status = 0
             submitted_status = 0
@@ -280,6 +282,8 @@ class SourceDB(object):
                 submitted_status = 1
             else:
                 approval_status = 4
+                is_rejected = True
+                rej_reason = d["remarks"]
 
             statu_id = self.Statutories.get(d["Primary_Legislation"]).get(
                 "statutory_id"
@@ -306,6 +310,13 @@ class SourceDB(object):
             self._source_db.bulk_insert(
                 "tbl_client_compliances", columns, values
             )
+
+            if is_rejected is True:
+                q = "update tbl_client_statutories set reason = %s," + \
+                    "status = 4 where client_statutory_id = %s"
+                params = [rej_reason, int(cs_id)]
+                self._source_db.execute(q, params)
+
             return True
         else:
             return False
@@ -1049,11 +1060,25 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
             q1 = "update tbl_bulk_assign_statutory_csv set " + \
                 " declined_count = %s, approve_status = 1, " + \
-                " approved_by = %s, approved_on = %s where " + \
+                " approved_by = %s, approved_on = %s, " + \
+                " total_rejected_records = (select count(0) from " + \
+                " tbl_bulk_assign_statutory as t WHERE t.action = 2 and " + \
+                " t.csv_assign_statutory_id = %s) WHERE " + \
                 " csv_assign_statutory_id = %s"
+
             self._db.execute(q1, [
-                count, user_id, created_on, self._csv_id
+                count, user_id, created_on, self._csv_id, self._csv_id
             ])
+
+        except Exception, e:
+            raise (e)
+
+    def update_child(self, csv_id):
+        try:
+            q = "update tbl_bulk_assign_statutory set " + \
+                " action = 1 where " + \
+                " csv_assign_statutory_id = %s "
+            self._db.execute(q, [csv_id])
 
         except Exception, e:
             raise (e)
