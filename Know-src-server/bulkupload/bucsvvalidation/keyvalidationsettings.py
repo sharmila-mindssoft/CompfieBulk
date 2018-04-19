@@ -42,7 +42,7 @@ def is_applicable_location(value):
 
 def is_statutory(value):
 
-    r = re.compile("^[0-9a-zA-Z&@,-.>>| ]*$")
+    r = re.compile("^[0-9a-zA-Z&@,-.>>|()_ ]*$")
     if r.match(value):
         return True
     else:

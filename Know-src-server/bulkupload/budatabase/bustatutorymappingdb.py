@@ -28,7 +28,9 @@ __all__ = [
     "get_sm_csv_file_name_by_id",
     "save_action_from_view",
     "get_pending_action",
-    "delete_action_after_approval"
+    "delete_action_after_approval",
+    "get_rejected_sm_file_count"
+
 ]
 
 # transaction method begin
@@ -688,3 +690,16 @@ def get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id):
     args = [csv_id]
     data = db.call_proc('sp_get_sm_csv_file_name_by_id', args)
     return data[0]["csv_name"]
+
+
+################################################################
+# To Get the Rejected File Count to prevent from uploading
+################################################################
+
+
+def get_rejected_sm_file_count(db, session_user):
+    result = db.call_proc(
+        "sp_sm_rejected_file_count", [session_user.user_id()]
+    )
+    rej_count = result[0]["rejected"]
+    return rej_count
