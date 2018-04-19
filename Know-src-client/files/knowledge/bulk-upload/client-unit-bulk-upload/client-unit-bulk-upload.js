@@ -122,7 +122,7 @@ CSVUPLOADBUTTON.click(function () {
 				displayMessage(message.client_unit_file_max);
 			}
 			else if(error == "CSVFileLinesMaxREached") {
-				displayMessage(message.csv_file_lines_max + "-" + response.csv_max_lines)
+				displayMessage("CSV File exceeded max " + response.csv_max_lines + " lines");
 			}
 			else if (response.invalid_file != "" && response.invalid_file != null) {
 			    $('.invaliddata').show();

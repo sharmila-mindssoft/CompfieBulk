@@ -225,6 +225,16 @@ def is_domain_orgn(value):
         return False
 
 
+def is_postal_code(value):
+
+    # a-z0-9 with special char and space with delimiter
+    r = re.compile("^[a-zA-Z0-9 ]*$")
+    if r.match(value):
+        return True
+    else:
+        return False
+
+
 def parse_csv_dictionary_values(key, val):
 
     error_count = {
@@ -540,7 +550,7 @@ csv_params = {
     ),
     'Postal_Code': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=6,
-        isValidCharCheck=True, validation_method=is_alpha_numeric
+        isValidCharCheck=True, validation_method=is_postal_code
     ),
     'Domain': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=30,
