@@ -197,19 +197,6 @@ class API(BulkAPI):
 
     def client_connection_pool(self, data):
         try:
-            print "data.db_username>>", data.db_username
-            print "data.db_password>>", data.db_password
-            print "data.db_ip.ip_address>>", data.db_ip.ip_address
-            print "data.db_name>>", data.db_name
-            print "data.db_ip.port>>", data.db_ip.port
-
-            BULK_LE_DB_CONNECT["db_username"] = data.db_username
-            BULK_LE_DB_CONNECT["db_password"] = data.db_password
-            BULK_LE_DB_CONNECT["ip_address"] = data.db_ip.ip_address
-            BULK_LE_DB_CONNECT["db_name"] = data.db_name
-            BULK_LE_DB_CONNECT["db_ip.port"] = data.db_ip.port
-            print "BULK_LE_DB_CONNECT>>", BULK_LE_DB_CONNECT
-
             return mysql.connector.connect(
                 autocommit=False,
                 user=data.db_username,

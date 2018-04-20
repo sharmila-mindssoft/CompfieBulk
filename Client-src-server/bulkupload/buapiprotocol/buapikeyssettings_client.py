@@ -7,10 +7,9 @@
 __all__ = [
     'bu_api_params'
 ]
+completed_task = "bulkupload.buapiprotocol.bucompletedtaskcurrentyearprotocol"
 
 from clientprotocol.api_key_validation_client import *
-
-completed_task = "bulkupload.buapiprotocol.bucompletedtaskcurrentyearprotocol"
 
 def make_int_field(length=None, is_optional=False):
     return {'type': 'INT', 'length': length, 'is_optional': is_optional}
@@ -70,4 +69,12 @@ bu_api_params = {
     'invalid': make_int_field(),
     'new_csv_id': make_int_field(),
     'doc_count': make_int_field(),
+    'csv_list': make_vector_type_field(module=completed_task, klass_name="CsvList"),
+    'csv_past_id': make_int_field(),
+    'uploaded_by': make_int_field(),
+    'uploaded_on': make_text_field(is_optional=True),
+    'total_records': make_int_field(),
+    'total_documents': make_int_field(),
+    'uploaded_documents': make_int_field(),
+    'remaining_documents': make_int_field(),
 }
