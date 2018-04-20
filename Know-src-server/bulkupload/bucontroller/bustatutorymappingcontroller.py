@@ -24,7 +24,7 @@ from ..budatabase.bustatutorymappingdb import (
     get_sm_csv_file_name_by_id,
     save_action_from_view,
     get_pending_action,
-    delete_action_after_approval
+    delete_action_after_approval, get_rejected_sm_file_count
 )
 
 from ..bulkuploadcommon import (
@@ -35,7 +35,9 @@ from ..bulkuploadcommon import (
 )
 from ..bulkexport import ConvertJsonToCSV
 import datetime
-from server.constants import (BULKUPLOAD_CSV_PATH, CSV_MAX_LINES)
+from server.constants import (
+    BULKUPLOAD_CSV_PATH, CSV_MAX_LINES, MAX_REJECTED_COUNT
+)
 # from server.exceptionmessage import fetch_run_error
 
 from protocol import generalprotocol, technoreports
@@ -183,10 +185,15 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
     try:
         if request_frame.csv_size > 0:
             pass
+
+        if get_rejected_sm_file_count(db, session_user) > MAX_REJECTED_COUNT:
+            return bu_sm.RejectionMaxCountReached()
+
         # save csv file
         csv_name = convert_base64_to_file(
             BULKUPLOAD_CSV_PATH, request_frame.csv_name, request_frame.csv_data
         )
+        print "CSV NAME--->>> ", csv_name
         # read data from csv file
         header, statutory_mapping_data = read_data_from_csv(csv_name)
 
@@ -242,7 +249,8 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                         new_csv_id, res_data["csv_name"],
                         res_data["total"], res_data["valid"],
                         res_data["invalid"],
-                        res_data["doc_count"], res_data["doc_names"]
+                        res_data["doc_count"], res_data["doc_names"],
+                        csv_name
                     )
 
             # csv data save to temp db
@@ -343,9 +351,9 @@ def update_statutory_mapping_action(db, request_frame, session_user):
             is_declined = cObj.perform_validation_before_submit()
             print "is Declined --->> ", is_declined
             if len(is_declined.keys()) > 0:
-                update_approve_action_from_list(
-                    db, csv_id, action, remarks, session_user, "all"
-                )
+                # update_approve_action_from_list(
+                #     db, csv_id, action, remarks, session_user, "all"
+                # )
                 return bu_sm.ValidationSuccess(len(is_declined.keys()))
             else:
                 if (update_approve_action_from_list(
@@ -356,11 +364,11 @@ def update_statutory_mapping_action(db, request_frame, session_user):
                     cObj.frame_data_for_main_db_insert()
                     cObj.save_manager_message(
                         action, cObj._csv_name, cObj._country_name,
-                        cObj._domain_name, session_user.user_id()
+                        cObj._domain_name, session_user.user_id(),
+                        None, 0
                     )
                     cObj.source_commit()
                     delete_action_after_approval(db, csv_id)
-
                     return bu_sm.UpdateApproveActionFromListSuccess()
         else:
             if (update_approve_action_from_list(
@@ -368,7 +376,7 @@ def update_statutory_mapping_action(db, request_frame, session_user):
             )):
                 cObj.save_manager_message(
                     action, cObj._csv_name, cObj._country_name,
-                    cObj._domain_name, session_user.user_id()
+                    cObj._domain_name, session_user.user_id(), remarks, 0
                 )
                 cObj.source_commit()
                 return bu_sm.UpdateApproveActionFromListSuccess()
@@ -395,19 +403,20 @@ def submit_statutory_mapping(db, request_frame, session_user):
         if len(is_declined.keys()) > 0:
             return bu_sm.ValidationSuccess(len(is_declined.keys()))
         else:
+            update_approve_action_from_list(
+                db, csv_id, 1, None, session_user, "single"
+            )
             if cObj._doc_count > 0:
                 cObj.format_download_process_initiate(csv_id)
             cObj.save_manager_message(
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
-                session_user.user_id()
+                session_user.user_id(), None, 0
             )
             cObj.frame_data_for_main_db_insert()
             cObj.source_commit()
+
             delete_action_after_approval(db, csv_id)
 
-            update_approve_action_from_list(
-                db, csv_id, 1, None, session_user, "single"
-            )
             return bu_sm.SubmitStatutoryMappingSuccess()
     except Exception, e:
         print e
@@ -436,7 +445,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
             cObj.make_rejection(is_declined, user_id)
             cObj.save_manager_message(
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
-                session_user.user_id()
+                session_user.user_id(), None, len(is_declined.keys())
             )
             cObj.frame_data_for_main_db_insert()
             cObj.source_commit()

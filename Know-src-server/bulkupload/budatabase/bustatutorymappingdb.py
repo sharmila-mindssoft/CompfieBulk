@@ -28,7 +28,9 @@ __all__ = [
     "get_sm_csv_file_name_by_id",
     "save_action_from_view",
     "get_pending_action",
-    "delete_action_after_approval"
+    "delete_action_after_approval",
+    "get_rejected_sm_file_count"
+
 ]
 
 # transaction method begin
@@ -363,18 +365,21 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
 
     if c_task is None or c_task == "":
         c_task = '%'
-    else:
-        c_task = c_task + '%'
 
     if c_desc is None or c_desc == "":
         c_desc = '%'
-    else:
-        c_desc = c_desc + '%'
 
     if c_doc is None or c_doc == "":
         c_doc = '%'
-    else:
-        c_doc = c_doc + '%'
+
+    print "csv_id, organization, s_nature, frequency"
+    print csv_id, organization, s_nature, frequency
+
+    print "statutory, geo_location, c_task, c_desc, c_doc"
+    print statutory, geo_location, c_task, c_desc, c_doc
+
+    print "f_count, f_range, task_id, task_type, view_data"
+    print f_count, f_range, task_id, task_type, view_data
 
     data = db.call_proc_with_multiresult_set(
         "sp_statutory_mapping_view_by_filter",
@@ -470,7 +475,8 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     )
 
 
-def update_approve_action_from_list(db, csv_id, action, remarks, session_user, type):
+def update_approve_action_from_list(db, csv_id, action, remarks, session_user,
+                                    type):
     try:
         print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
         print "type-> ", type
@@ -478,11 +484,11 @@ def update_approve_action_from_list(db, csv_id, action, remarks, session_user, t
             args = [csv_id, action, remarks, session_user.user_id()]
             data = db.call_proc("sp_statutory_mapping_update_all_action", args)
             print data
+            return True
         else:
             args = [csv_id, session_user.user_id()]
             db.call_proc("sp_statutory_update_action", args)
-
-        return True
+            return True
 
     except Exception, e:
         logger.logKnowledge(
@@ -687,3 +693,16 @@ def get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id):
     args = [csv_id]
     data = db.call_proc('sp_get_sm_csv_file_name_by_id', args)
     return data[0]["csv_name"]
+
+
+################################################################
+# To Get the Rejected File Count to prevent from uploading
+################################################################
+
+
+def get_rejected_sm_file_count(db, session_user):
+    result = db.call_proc(
+        "sp_sm_rejected_file_count", [session_user.user_id()]
+    )
+    rej_count = result[0]["rejected"]
+    return rej_count

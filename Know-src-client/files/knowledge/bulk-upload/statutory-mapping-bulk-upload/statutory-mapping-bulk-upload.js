@@ -219,6 +219,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
         $('#myModal').modal('hide');
         TemplateDiv.hide();
         if (error == null) {
+            console.log(JSON.stringify(response));
             if (response.invalid == 0) {
                 displaySuccessMessage(message.upload_success);
                 if (response.doc_count > 0) {
@@ -239,17 +240,19 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
                     DocumentSummary.hide();
                     t_this.changeTxttoLabel(countryAc.val(), domainAc.val(),
-                                            response.csv_name)
+                                            response.csv_name,
+                                            response.new_csv_name)
                 }
                 else {
                     DataSummary.hide();
                     ErrorSummary.hide();
                     t_this.showList();
                 }
-
             }
             else {
                 displayMessage(message.upload_failed);
+                DataSummary.removeClass("col-sm-12");
+                DataSummary.addClass("col-sm-6");
                 DataSummary.show();
                 ErrorSummary.show();
                 // show error summary
@@ -279,15 +282,18 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
         }
         else {
-                if (error == "CsvFileExeededMaxLines") {
-                    displayMessage(message.csv_max_lines_exceeded.replace(
-                        'MAX_LINES', response.csv_max_lines));
-                }else if(error == "CsvFileCannotBeBlank") {
-                    displayMessage(message.csv_file_blank);
-                }
-                else{
-                    buSmPage.possibleFailures(error);
-                }
+            if(error == "RejectionMaxCountReached"){
+                displayMessage(message.upload_limit);
+            }
+            else if (error == "CsvFileExeededMaxLines") {
+                displayMessage(message.csv_max_lines_exceeded.replace(
+                    'MAX_LINES', response.csv_max_lines));
+            }else if(error == "CsvFileCannotBeBlank") {
+                displayMessage(message.csv_file_blank);
+            }
+            else{
+                buSmPage.possibleFailures(error);
+            }
         }
     })
 };
@@ -334,7 +340,7 @@ BulkUploadStatutoryMapping.prototype.validateControls = function() {
     return true;
 };
 BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
-    c_name, d_name, csv_name
+    c_name, d_name, csv_name, uploadedCsvName
 ) {
     txtCountryName.hide();
     txtDomainName.hide();
@@ -345,8 +351,8 @@ BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
     inputFileControl.hide();
     displayFileControl.show();
     $('.csv-file-name').text(csv_name);
-    $('.csv-file-view').attr("href", "/uploaded_file/csv/"+csv_name);
-    $('.csv-file-download').attr("href", "/uploaded_file/csv/"+csv_name);
+    $('#uploaded_csv_view').attr('href', "/uploaded_file/csv/"+uploadedCsvName);
+    $('#uploaded_csv_dwnl').attr('href', "/uploaded_file/csv/"+uploadedCsvName);
     this._ActionMode = "upload"
 };
 BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
@@ -358,7 +364,7 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     countryVal.val(data.c_id);
     domainAc.val(data.d_name);
     domainVal.val(data.d_id);
-    this.changeTxttoLabel(data.c_name, data.d_name, csv_split_name + ".csv")
+    this.changeTxttoLabel(data.c_name, data.d_name, csv_split_name + ".csv", uploadedCsvName)
     UploadDocument.show();
     DocumentSummary.show();
 
@@ -399,6 +405,7 @@ function PageControls() {
         var condition_fields = ["is_active"];
         var condition_values = [true];
         var text_val = $(this).val();
+        domainVal.val('');
         commonAutoComplete(
             e, AcCountry, countryVal, text_val,
             buSmPage._CountryList, "country_name", "country_id",
@@ -417,7 +424,7 @@ function PageControls() {
     var c_ids = null;
     var check_val = false;
     if(countryVal.val() != ''){
-      for(var i=0;i<domainList.length;i++){
+      for(var i = 0;i < domainList.length; i++){
         c_ids = domainList[i].country_ids;
 
         for(var j=0;j<c_ids.length;j++){

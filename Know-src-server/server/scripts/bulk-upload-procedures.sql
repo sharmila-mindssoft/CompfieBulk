@@ -32,7 +32,8 @@ BEGIN
     domain_name, csv_name, total_records, uploaded_on,
     total_documents, uploaded_documents
     FROM tbl_bulk_statutory_mapping_csv
-    WHERE ifnull(upload_status, 0) = 0  AND uploaded_by = uploadedby;
+    WHERE ifnull(upload_status, 0) = 0  AND uploaded_by = uploadedby
+    ORDER BY uploaded_on DESC;
 
     select t1.csv_id, format_file from tbl_bulk_statutory_mapping as t1
     INNER JOIN tbl_bulk_statutory_mapping_csv as t2
@@ -276,7 +277,6 @@ END //
 
 DELIMITER ;
 
-
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_filter`;
 
 DELIMITER //
@@ -307,35 +307,35 @@ BEGIN
     t1.csv_id  = t2.csv_id WHERE t1.csv_id = csvid
     AND t2.organization like orga_name AND t2.geography_location like geo_location
     AND t2.statutory_nature like s_nature AND t2.statutory like statu
-    -- AND t2.compliance_frequency like frequency
-    AND FIND_IN_SET(compliance_frequency, frequency) AND t2.compliance_task like c_task
+    AND t2.compliance_task like c_task
     AND t2.compliance_description like c_desc AND t2.compliance_document like c_doc
     AND t2.task_id like tsk_id AND t2.task_type like tsk_type
     AND (CASE WHEN view_data =1 THEN IFNULL(t2.action, 0) > 0
       WHEN view_data =2 THEN IFNULL(t2.action, 0) = 0
-          ELSE IFNULL(t2.action, 0) like "%"
-  END)
+          ELSE IFNULL(t2.action, 0) like "%" END)
+  AND (CASE WHEN frequency = '%' THEN t2.compliance_frequency like "%"
+          ELSE FIND_IN_SET(t2.compliance_frequency, frequency)
+          END)
     limit  f_count, f_range;
 
     SELECT count(distinct t2.bulk_statutory_mapping_id) AS total
-
     FROM tbl_bulk_statutory_mapping_csv AS t1
     inner join tbl_bulk_statutory_mapping AS t2 on
     t1.csv_id  = t2.csv_id WHERE t1.csv_id = csvid
     AND t2.organization like orga_name AND t2.geography_location like geo_location
     AND t2.statutory_nature like s_nature AND t2.statutory like statu
-    -- AND t2.compliance_frequency like frequency
-    AND FIND_IN_SET(compliance_frequency, frequency) AND t2.compliance_task like c_task
+    AND t2.compliance_task like c_task
     AND t2.compliance_description like c_desc AND t2.compliance_document like c_doc
     AND t2.task_id like tsk_id AND t2.task_type like tsk_type
     AND (CASE WHEN view_data =1 THEN IFNULL(t2.action, 0) > 0
       WHEN view_data =2 THEN IFNULL(t2.action, 0) = 0
           ELSE IFNULL(t2.action, 0) like "%"
-  END)
-    ;
+          END)
+  AND (CASE WHEN frequency = '%' THEN t2.compliance_frequency like "%"
+          ELSE FIND_IN_SET(t2.compliance_frequency, frequency)
+          END);
 END //
 DELIMITER ;
-
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_csvid`;
 
@@ -390,7 +390,8 @@ BEGIN
         rejected_on = current_ist_datetime(),
         approve_status = 2,
         total_rejected_records = (SELECT count(0) FROM
-        tbl_bulk_statutory_mapping AS t WHERE t.csv_id = csvid)
+        tbl_bulk_statutory_mapping AS t WHERE ifnull(action, 0) = 2
+        AND t.csv_id = csvid)
         WHERE csv_id = csvid;
 
     else
@@ -458,7 +459,7 @@ BEGIN
     t2.repeats_every as Repeats_Every, t2.repeats_type as Repeats_Type, t2.repeat_by as `Repeats_By (DOM/EOM)`, t2.duration as Duration,
     t2.duration_type as Duration_Type, t2.multiple_input as Multiple_Input_Section, t2.format_file as Format,
     t2.task_id as Task_ID, t2.task_type as Task_Type,
-    t2.action, t2.remarks,
+    t2.action, t2.remarks, t2.format_file_size,
     t1.uploaded_by, t1.country_name, t1.domain_name, t1.csv_name,
     t1.approved_by, t1.approved_on
     from tbl_bulk_statutory_mapping as t2
@@ -659,7 +660,7 @@ INNER JOIN tbl_bulk_statutory_mapping_csv AS sm_csv ON sm_csv.csv_id=sm.csv_id
   sm_csv.uploaded_by=user_id AND
   (sm.action=3 OR sm_csv.is_fully_rejected=1) -- Declined Action
   GROUP BY sm.csv_id
-  ORDER BY sm_csv.rejected_on, sm_csv.approved_on DESC;
+  ORDER BY IFNULL(sm_csv.approved_on, sm_csv.rejected_on) DESC;
 END //
 DELIMITER ;
 
@@ -1787,11 +1788,12 @@ DROP PROCEDURE IF EXISTS `sp_sm_format_file_status_update`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_sm_format_file_status_update`(
-    IN csvid INT, filename VARCHAR(150)
+    IN csvid INT, filename VARCHAR(150), IN file_size FLOAT
 )
 BEGIN
 
-    update tbl_bulk_statutory_mapping set format_upload_status = 1
+    update tbl_bulk_statutory_mapping set format_upload_status = 1,
+           format_file_size = file_size
       where csv_id = csvid and format_file = filename;
 
     update tbl_bulk_statutory_mapping_csv
@@ -2039,9 +2041,7 @@ DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_statutory_update_action`;
-
 DELIMITER //
-
 CREATE PROCEDURE `sp_statutory_update_action`(
 IN csvid INT, userid INT
 )
@@ -2054,7 +2054,6 @@ BEGIN
   and t.action = 2)
   WHERE csv_id = csvid;
 END //
-
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_delete`;
@@ -2066,12 +2065,27 @@ IN csvid INT
 )
 BEGIN
     DELETE FROM tbl_bulk_statutory_mapping
-    WHERE (action = 1 or action = 2) AND csv_id = csvid;
+    WHERE ifnull(action, 0) != 3  AND csv_id = csvid;
 END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS sp_ct_format_file_status_update;
+DROP PROCEDURE IF EXISTS `sp_sm_rejected_file_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_sm_rejected_file_count`(
+    IN user_ INT(11)
+)
+BEGIN
+  SELECT count(1) as rejected FROM tbl_bulk_statutory_mapping_csv
+  WHERE (IFNULL(declined_count, 0) > 0 or IFNULL(is_fully_rejected, 0) = 1)
+  AND approve_status < 4 AND uploaded_by = user_;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_ct_format_file_status_update`;
 DELIMITER //
 CREATE PROCEDURE `sp_ct_format_file_status_update`(
     IN csvid INT, filename VARCHAR(150)
