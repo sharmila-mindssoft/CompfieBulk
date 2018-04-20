@@ -37,8 +37,12 @@ var LEGAL_ENTITY_VAL = $('#legalentityval');
 var LEGAL_ENTITY = $('#legalentityid');
 var UNIT_VAL = $('#unitval');
 var UNIT = $('#unitid');
-var DOMAIN = $('#domain');
-var DOMAINS;
+/*var DOMAIN = $('#domain');
+var DOMAINS;*/
+
+var DOMAIN_VAL = $('#domainval');
+var DOMAIN = $('#domainid');
+var AC_DOMAIN = $('#ac-domain');
 
 /**** User Level Category ***********/
 
@@ -91,6 +95,7 @@ function resetAllFilter() {
     GROUP_VAL.val('');
     LEGAL_ENTITY_VAL.val('');
     UNIT_VAL.val('');
+    DOMAIN_VAL.val('');
     $('.tbody-usermappingdetails-list').empty();
     REPORT_VIEW.hide();
     $('.details').hide();
@@ -101,8 +106,8 @@ function resetFilter(evt) {
         LEGAL_ENTITY_VAL.val('');
         LEGAL_ENTITY.val('');
 
-        DOMAIN.empty();
-        DOMAIN.html();
+        DOMAIN_VAL.val('');
+        DOMAIN.val('');
         
 
         UNIT_VAL.val('');
@@ -115,9 +120,8 @@ function resetFilter(evt) {
         DE_NAME.multiselect('refresh');
     }
     if (evt == 'le') {
-        DOMAIN.empty();
-        DOMAIN.html();
-        
+        DOMAIN_VAL.val('');
+        DOMAIN.val('');    
 
         UNIT_VAL.val('');
         UNIT_VAL.val('');
@@ -233,6 +237,7 @@ function resetFields() {
     GROUP.val('');
     LEGAL_ENTITY.val('');
     UNIT.val('');
+    DOMAIN.val('');
 }
 
 function loadUserMappingDetailsList() {
@@ -509,7 +514,6 @@ LEGAL_ENTITY_VAL.keyup(function(e) {
     var textVal = $(this).val();
     var leList = [];
     var clientId = GROUP.val();
-    var bgrpID = $('#businessgroupid').val();
     if (GROUP.val() > 0) {
         var conditionFields = [];
         var conditionValues = [];
@@ -536,15 +540,43 @@ LEGAL_ENTITY_VAL.keyup(function(e) {
             function(val) {
                 onAutoCompleteSuccess(LEGAL_ENTITY_VAL, LEGAL_ENTITY, val);
                 /*loadDomains();*/
-                fetchDomainMultiselect();
+                /*fetchDomainMultiselect();*/
             }, conditionFields, conditionValues);
     }
 
 });
 
-DOMAIN.on('change', function(e) {
+/*DOMAIN.on('change', function(e) {
     resetFilter('domains');
+});*/
+
+//load legalentity form list in autocomplete text box
+DOMAIN_VAL.keyup(function(e) {
+    resetFilter('domains');
+    var str = '';
+    var textVal = $(this).val();
+    var domainList = [];
+        if (LEGAL_ENTITY_LIST.length > 0) {
+            for (var i in LEGAL_ENTITY_LIST) {
+                    if(LEGAL_ENTITY_LIST[i].le_id == LEGAL_ENTITY.val()){
+                        DOMAINS = LEGAL_ENTITY_LIST[i].bu_domains;
+                        for (var j in DOMAINS) {
+                            domainList.push({
+                                "domain_id": DOMAINS[j].d_id,
+                                "domain_name": DOMAINS[j].d_name,
+                            });
+                        }
+                    }                
+                }
+        }
+        commonAutoComplete(
+                e, AC_DOMAIN, DOMAIN, textVal,
+                domainList, "domain_name", "domain_id",
+                function(val) {
+                    onAutoCompleteSuccess(DOMAIN_VAL, DOMAIN, val);
+                });
 });
+
 
 //load legalentity form list in autocomplete text box
 UNIT_VAL.keyup(function(e) {
@@ -557,7 +589,7 @@ UNIT_VAL.keyup(function(e) {
             if (UNITS.length > 0 && checkDomain.length > 0) {
                 for (var i in UNITS) {
                     if(UNITS[i].le_id == LEGAL_ENTITY.val() &&
-                        containsAll(checkDomain, UNITS[i].d_ids)
+                         $.inArray(checkDomain, UNITS[i].d_ids) == -1
                         ){
                             var ISVALID = true;
                             for(var j in ASSIGNED_UNIT_LIST){
@@ -565,7 +597,7 @@ UNIT_VAL.keyup(function(e) {
                                     ASSIGNED_UNIT_LIST[j].u_id == UNITS[i].u_id &&
                                     $.inArray(
                                         ASSIGNED_UNIT_LIST[j].d_id, UNITS[i].d_ids
-                                    ) == 0
+                                    ) == -1
                                 ){
                                     ISVALID = false;
                                 }
@@ -602,7 +634,7 @@ AssignStatutoryBulkReport.prototype.validateMandatory = function() {
     } else if (LEGAL_ENTITY.val().trim().length == 0) {
         displayMessage(message.legalentity_required);
         is_valid = false;
-    } else if ($('#domain option:selected').text() == "") {
+    } else if (DOMAIN.val().trim().length == 0) {
         displayMessage(message.domain_required);
         is_valid = false;
     } else if (FROM_DATE.val().trim() == "") {
@@ -657,7 +689,7 @@ function integerArrayValue(arr) {
 }
 
 //load domains into multi select box
-function fetchDomainMultiselect() {
+/*function fetchDomainMultiselect() {
     var str = '';
     if (LEGAL_ENTITY_LIST.length > 0) {
         for (var i in LEGAL_ENTITY_LIST) {
@@ -670,9 +702,9 @@ function fetchDomainMultiselect() {
             }                
         }
         DOMAIN.append(str);
-        
+        DOMAIN.multiselect('rebuild');
     }
-}
+}*/
 
 
 // get statutory mapping report data from api

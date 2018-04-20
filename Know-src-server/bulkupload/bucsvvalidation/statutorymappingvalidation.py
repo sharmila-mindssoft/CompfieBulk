@@ -1533,9 +1533,10 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
                     statu_maps = statu_maps.lstrip()
                     statu_maps = statu_maps.rstrip()
-
+                    if statu_maps.find(">>") > 0:
+                        statu_maps = ">>".join(
+                            e.strip() for e in statu_maps.split(">>"))
                     legis_data = statu_maps.split(">>")
-
                     print "self.Statutories.get(statu_maps)"
                     print statu_maps
 
@@ -1561,9 +1562,17 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                             parent_names = ''
                             parent_id = ''
                             for statu_level, data in enumerate(legis_data, 1):
-                                data = data.lstrip()
-                                data = data.rstrip()
-                                strip_data = data.strip()
+                                # data = data.lstrip()
+                                # data = data.rstrip()
+                                # strip_data = data.strip()
+                                strip_data = data.lstrip()
+                                strip_data = strip_data.rstrip()
+                                if strip_data.find(">>") > 0:
+                                    strip_data = ">>".join(
+                                        e.strip() for e in strip_data.split(
+                                            ">>"))
+                                print "3 strip_datastrip_datastrip_data >>>"
+                                print strip_data
                                 statu_position = self.StatuLevelPosition
                                 level_id = statu_position.get(statu_level)
 
@@ -1625,6 +1634,20 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                             self.Statu_dic[statu_maps] = statu_id
                                             parent_id = statu_id
                                             parent_names = str(strip_data)
+                                        if(
+                                           self.Statu_dic.get(statu_maps) is not None
+                                           and statu_maps not in statu_exists_id
+                                           ):
+                                            print "8 IF >>>"
+                                            print statu_maps
+                                            print statu_id
+                                            statu_id = self.Statu_dic.get(statu_maps)
+                                            statu_ids.append(statu_id)
+                                            statu_exists_id.append(statu_maps)
+                                            self.Statu_dic[statu_maps] = statu_id
+                                            print "statu_ids >>>>>"
+                                            print statu_ids
+
                 print "statu_ids >>>"
                 print statu_ids
                 print "statu_ids >>>"

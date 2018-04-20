@@ -185,7 +185,7 @@ function loadCountwiseResult(data) {
     var reasonForRejection;
     var statutoryAction;
     var rejectedBy;
-    var declinedCount = '-';
+    var declinedCount;
     var fileDownloadCount;
     var downloadRejectedFiles;
     var isFullyRejected;
@@ -202,6 +202,8 @@ function loadCountwiseResult(data) {
         rejectedReason = data[entity].rejected_reason;
         statutoryAction = data[entity].statutory_action;
         fileDownloadCount = data[entity].file_download_count;
+        declinedCount = '-';
+        reasonForRejection = '';
 
         if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
             removeAction = '';

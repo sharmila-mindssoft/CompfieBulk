@@ -36,7 +36,7 @@ CAPTCHA_LENGTH = 6
 NO_OF_FAILURE_ATTEMPTS = 3
 FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js", "zip"]
 FILE_MAX_LIMIT = 1024 * 1024 * 50  # 50 MB
-SESSION_CUTOFF = 15   # minutes
+SESSION_CUTOFF = 200   # minutes
 REGISTRATION_EXPIRY = 48  # Hours
 FORGOTPASSWORD_EXPIRY = 48  # Hours
 DOWNLOAD_EXPIRY = 48  # Hours
@@ -50,7 +50,7 @@ KNOWLEDGE_DB_USERNAME = "root"
 
 
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new_round_2"
 URL = "http://localhost:8080/"
 
 CLIENT_URL = URL
@@ -61,7 +61,7 @@ BULK_UPLOAD_DB_HOST = "localhost"
 BULK_UPLOAD_DB_PORT = 3306
 BULK_UPLOAD_DB_USERNAME = "root"
 BULK_UPLOAD_DB_PASSWORD = "123456"
-BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_april04"
+BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_round_2"
 
 CSV_DELIMITER = '|;|'
 CSV_MAX_LINES = 1000
