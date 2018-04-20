@@ -595,7 +595,7 @@ class SourceDB(object):
                 print "main_db_units"
                 print main_db_units
                 if (
-                    int(main_db_units) >=
+                    int(main_db_units) >
                     int(data.get("total_unit_count"))
                 ):
                     errDesc.append(
@@ -1483,6 +1483,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                     print "main_temp_units"
                     print main_temp_units
                     if main_temp_units > mainData.get("total_unit_count"):
+                        print "inside error"
                         errDesc.append(
                             "Organization - " + d +
                             " Unit count reached the limit " +
@@ -1605,6 +1606,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         mapped_error_dict = {}
         mapped_header_dict = {}
         invalid = 0
+        i = 0
         csv_domain_name = None
         csv_column_compare = None
         csv_column_compare = self.compare_csv_columns()
@@ -1622,6 +1624,9 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         if len(self._source_data) > 0 and \
                 len(self._source_data) <= CSV_MAX_LINES:
             for row_idx, data in enumerate(self._source_data):
+                print "row idx"
+                print row_idx
+                i = row_idx
                 res = True
                 error_count = {
                     "mandatory": 0, "max_length": 0, "invalid_char": 0
@@ -1690,9 +1695,9 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                 for d in csv_domain_duplicate:
                                     if (
                                         d == value and
-                                        domain_row_last != row_idx
+                                        domain_row_last != i
                                     ):
-                                        domain_row_last = row_idx
+                                        domain_row_last = i
                                         msg = "%s - %s" % (
                                             key, value + " Duplicated in CSV"
                                         )
@@ -1704,11 +1709,13 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                             "duplicate_error"
                                         ] += 1
 
-                        elif key == "Organization":
+                        elif key == "Organization" and\
+                                orgn_row_last != i:
+                            orgn_row_last = i
                             if csv_orgn_duplicate is not None:
                                 for o in csv_orgn_duplicate:
-                                    if o == value and orgn_row_last != row_idx:
-                                        orgn_row_last = row_idx
+                                    if o == value:
+                                        # and orgn_row_last != row_idx:
                                         msg = "%s - %s" % (
                                             key, value + " Duplicated in CSV"
                                         )
@@ -1719,34 +1726,34 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                         self._error_summary[
                                             "duplicate_error"
                                         ] += 1
-                            if orgn_row_last != row_idx:
-                                orgn_row_last = row_idx
-                                unitCountErr = \
-                                    self.check_organization_unit_count_in_tempDB(value)
-                                if (
-                                    unitCountErr is not None and
-                                    unitCountErr != ""
-                                ):
-                                    if res is not True:
-                                        res.append(unitCountErr)
-                                    else:
-                                        res = [unitCountErr]
-                                    self._error_summary[
-                                        "max_unit_count_error"
-                                    ] += 1
+                            unitCountErr = \
+                                self.check_organization_unit_count_in_tempDB(value)
+                            if (
+                                unitCountErr is not None and
+                                unitCountErr != ""
+                            ):
+                                print "error line"
+                                print row_idx
+                                if res is not True:
+                                    res.append(unitCountErr)
+                                else:
+                                    res = [unitCountErr]
+                                self._error_summary[
+                                    "max_unit_count_error"
+                                ] += 1
 
-                                # check organization under domain
-                                checkOrgn = \
-                                    self.check_organization_under_domain(
-                                        csv_domain_name, value
-                                    )
-                                if checkOrgn is not None and checkOrgn != "":
-                                    if res is not True:
-                                        res.append(checkOrgn)
-                                    else:
-                                        res = [checkOrgn]
-                                    self._error_summary[
-                                        "invalid_data_error"] += 1
+                            # check organization under domain
+                            checkOrgn = \
+                                self.check_organization_under_domain(
+                                    csv_domain_name, value
+                                )
+                            if checkOrgn is not None and checkOrgn != "":
+                                if res is not True:
+                                    res.append(checkOrgn)
+                                else:
+                                    res = [checkOrgn]
+                                self._error_summary[
+                                    "invalid_data_error"] += 1
 
                         valid_failed, error_cnt = parse_csv_dictionary_values(
                             key, v
@@ -1792,7 +1799,9 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                 head_idx = [row_idx]
                             else:
                                 head_idx.append(row_idx)
-
+                            print "head_idx"
+                            print head_idx
+                            print err_str
                             mapped_header_dict[key] = head_idx
 
                 if res is not True:
