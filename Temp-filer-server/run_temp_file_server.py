@@ -58,7 +58,7 @@ def validate_session(session_id):
     res_ponse_data = None
     _db_con = knowledge_db_connect()
     _db = Database(_db_con)
-    try :
+    try:
         _db.begin()
         if _db.validate_session_token(session_id) is None:
             res_ponse_data = False
@@ -73,14 +73,15 @@ def validate_session(session_id):
     return res_ponse_data
 
 
-def update_file_status(file_name, csv_id):
+def update_file_status(file_name, file_size, csv_id):
+    print "File size in update fn-> ", file_size
     res_ponse_data = None
     _db_con = bulkupload_db_connect()
     _db = Database(_db_con)
-    try :
+    try:
         _db.begin()
         print "update file status"
-        if _db.update_file_status(csv_id, file_name) is None:
+        if _db.update_file_status(csv_id, file_name, file_size) is None:
             res_ponse_data = False
             print "update failed"
         _db.commit()
@@ -147,9 +148,9 @@ def upload():
 
         session_id = request.args.get('session_id')
         session_output = validate_session(session_id)
-        if session_output is False :
+        if session_output is False:
             return "invalid session token"
-        else :
+        else:
             csvid = request.args.get("csvid")
             load_path = os.path.join(app.config['UPLOAD_PATH'], csvid)
             if not os.path.exists(load_path):
@@ -157,13 +158,17 @@ def upload():
                 os.chmod(load_path, 0777)
 
             actual_file = os.path.join(load_path, f.filename)
+            print "Actual file -> ", actual_file
             zip_f_name = actual_file + ".zip"
             f.save(zip_f_name)
             zip_ref = zipfile.ZipFile(zip_f_name, 'r')
             zip_ref.extractall(load_path)
             zip_ref.close()
             os.remove(zip_f_name)
-            if update_file_status(f.filename, csvid) is False :
+            print "@" * 10
+            actual_file_size = os.path.getsize(actual_file)
+            print os.path.getsize(actual_file)
+            if update_file_status(f.filename, actual_file_size, csvid) is False:
                 return "update failed"
 
         return "success"
@@ -295,24 +300,24 @@ args_parser.add_argument(
 )
 
 def parse_port(port):
-    try :
+    try:
         port = int(port)
         assert (port > 0) and (port <= 65535)
         return port
-    except Exception :
+    except Exception:
         return None
 
 def parse_ip_address(ip_address):
-    try :
+    try:
         ip_address = ip_address.split(":")
         ip = ip_address[0].strip()
         socket.inet_aton(ip)
         port = ip_address[1].strip()
         port = parse_port(port)
-        if port is None :
+        if port is None:
             return None
 
-    except Exception :
+    except Exception:
         return None
 
     assert ip is not None
@@ -323,7 +328,7 @@ def main():
     args = args_parser.parse_args()
 
     port = parse_port(args.port)
-    if port is None :
+    if port is None:
         msg = "error: port is not in PORT format: %s"
         print msg % (args.port,)
         return

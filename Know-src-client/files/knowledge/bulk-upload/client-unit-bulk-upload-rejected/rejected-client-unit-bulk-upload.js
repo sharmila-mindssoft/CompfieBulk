@@ -116,6 +116,7 @@ function loadCountwiseResult(data) {
         rejectedReason = data[entity].rejected_reason;
         declinedCount = data[entity].declined_count;
         rejectedFileName = data[entity].rejected_file;
+        reasonForRejection = '';
 
         if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
             removeHrefTag = '';
@@ -410,7 +411,12 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                     $(location).attr('href', response.xlsx_link);
                     hideLoader();
                 } else if (downloadFileFormat == "text") {
-                    $(location).attr('href', response.txt_link);
+                    $.get(response.txt_link, function(data){
+                        txt_file_name = response.txt_link
+                        txt_file_name = txt_file_name.split('\\');
+                        download(txt_file_name[1], "text/plain", data);
+                    },
+                    'text');
                     hideLoader();
                 } else if (downloadFileFormat == "ods") {
                     $(location).attr('href', response.ods_link);
@@ -420,6 +426,20 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                 hideLoader();
             }
         });
+}
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 }
 
 /* DownloadFileOptionList - Excel,CSV,ODS,Text  */

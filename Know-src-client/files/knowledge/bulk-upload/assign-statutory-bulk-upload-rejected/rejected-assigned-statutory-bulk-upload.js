@@ -89,7 +89,7 @@ function pageControls() {
     /*DOMAIN.multiselect('selectAll');*/
 
     DOMAIN.on('change', function(e) {
-        DOMAIN.selectpicker('refresh');
+        /*DOMAIN.selectpicker('refresh');*/
         /*resetFilter('domains');
         if($("#select-deselect").attr("value") == "select-all"
             && this.value == "select-all")
@@ -182,7 +182,7 @@ function pageControls() {
 function fetchDomainMultiselect() {
     /*var str = '<option id="select-deselect" value="select-all">Select all'+
                '</option>';*/
-    var str = '';
+    var str = '<option value="">Select</option>';
     if (LEGAL_ENTITY_LIST.length > 0) {
         for (var i in LEGAL_ENTITY_LIST) {
             if(LEGAL_ENTITY_LIST[i].le_id == LEGAL_ENTITY.val()){
@@ -370,6 +370,8 @@ function loadCountwiseResult(filterList) {
         statutoryAction = filterList[entity].statutory_action;
         fileDownloadCount = filterList[entity].file_download_count;
         reasonRejection = filterList[entity].rejected_reason;
+        declinedCount = '';
+        reasonForRejection = '';
 
         if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
 
@@ -679,12 +681,12 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                     $(location).attr('href', downladResponse.xlsx_link);
                     hideLoader();
                 } else if (downloadFileFormat == "text") {
-                    
-                    /*if($("#temp_download_element").attr('download', downladResponse.txt_link)){
-                    $("#temp_download_element").trigger('click');
-                    }                    */
-
-                    $(location).attr('href', downladResponse.txt_link);
+                    $.get(downladResponse.txt_link, function(data){
+                        txt_file_name = downladResponse.txt_link
+                        txt_file_name = txt_file_name.split('\\');
+                        download(txt_file_name[1], "text/plain", data);
+                    },
+                    'text');
                     hideLoader();
                 } else if (downloadFileFormat == "ods") {
                     $(location).attr('href', downladResponse.ods_link);
@@ -696,6 +698,20 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
             }
 
         });
+}
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 }
 
 

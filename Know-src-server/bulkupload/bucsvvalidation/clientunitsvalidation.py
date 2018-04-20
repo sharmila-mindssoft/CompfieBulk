@@ -53,6 +53,7 @@ class SourceDB(object):
         self.Country_Id = None
         self.Level_Id = None
         self._csv_column_name = []
+        self._main_domain_org = []
         self.csv_column_fields()
         self._auto_unit_code = None
         self._validation_method_maps = {}
@@ -245,8 +246,6 @@ class SourceDB(object):
     ###############################################################
 
     def check_base(self, check_status, store, key_name, status_name):
-        print "check base"
-        print key_name
         data = store.get(key_name)
         if (data is not None and check_status is True):
             if status_name is None:
@@ -481,8 +480,6 @@ class SourceDB(object):
 
     def check_organization_under_domain(self, domain_name, orgn_name):
         msg = []
-        print "domain_name"
-        print domain_name, orgn_name
         if domain_name.strip().find(CSV_DELIMITER) >= 0:
             splitDomain = domain_name.split(CSV_DELIMITER)
             for d in splitDomain:
@@ -492,13 +489,19 @@ class SourceDB(object):
                         " organization is blank"
                     )
         else:
-            if orgn_name.find(domain_name.strip()) < 0:
-                msg.append(
-                    "Organization - " + domain_name.strip() +
-                    " organization is blank"
-                )
-        print "msg"
-        print msg
+            if orgn_name.find(CSV_DELIMITER) >= 0:
+                for o in orgn_name.split(CSV_DELIMITER):
+                    if o.find(domain_name.strip()) < 0:
+                        msg.append(
+                            "Organization - " + o.strip() +
+                            " invalid data"
+                        )
+            else:
+                if orgn_name.find(domain_name.strip()) < 0:
+                    msg.append(
+                        "Organization - " + domain_name.strip() +
+                        " organization is blank"
+                    )
         if len(msg) > 0:
             return ','.join(msg)
 
@@ -511,6 +514,7 @@ class SourceDB(object):
     #######################################################################
 
     def check_organization(self, organization_name):
+        print "inside main db checking"
         store = self.Organization
         errDesc = []
         status = None
@@ -518,11 +522,13 @@ class SourceDB(object):
         for org in organization_name.split('>>'):
             newOrgnName = newOrgnName + org.strip() + '>>'
         newOrgnName = newOrgnName[:-2]
-
+        print newOrgnName
         if newOrgnName.find(CSV_DELIMITER) > 0:
             splittedOrg = newOrgnName.split(CSV_DELIMITER)
             for d in splittedOrg:
                 data = store.get(str(self.Legal_Entity_Id) + "-" + d.strip())
+                print data
+                print len(data)
                 if data is not None:
                     status = self.check_base(
                         True, self.Organization,
@@ -532,8 +538,27 @@ class SourceDB(object):
                     if status is "Status Inactive":
                         errDesc.append(d.strip() + status)
                     else:
+                        self.save_main_domain_orgn_units(
+                            self.Legal_Entity_Id, d.strip()
+                        )
+                        for dat in self._main_domain_org:
+                            split_val = dat.split("-")
+                            if(
+                                split_val[0] ==
+                                str(self.Legal_Entity_Id) and
+                                split_val[1] == d.strip()
+                            ):
+                                csv_units = int(split_val[2])
+                                break
+                        print "csv_units"
+                        print csv_units
+
+                        main_db_units = int(data.get("created_units")) +\
+                            int(csv_units)
+                        print "main_db_units"
+                        print main_db_units
                         if (
-                            int(data.get("created_units")) >=
+                            int(main_db_units) >
                             int(data.get("total_unit_count"))
                         ):
                             errDesc.append(
@@ -544,16 +569,38 @@ class SourceDB(object):
                     errDesc.append(d.strip() + " Not Found")
 
         else:
+            print "no csv delimiter"
             data = store.get(
                 str(self.Legal_Entity_Id) + "-" + newOrgnName.strip()
             )
+            print data
             if data is not None:
+                self.save_main_domain_orgn_units(
+                    self.Legal_Entity_Id, newOrgnName.strip()
+                )
+                for dat in self._main_domain_org:
+                    split_val = dat.split("-")
+                    if(
+                        split_val[0] ==
+                        str(self.Legal_Entity_Id) and
+                        split_val[1] == newOrgnName.strip()
+                    ):
+                        csv_units = int(split_val[2])
+                        break
+                print "csv_units"
+                print csv_units
+
+                main_db_units = int(data.get("created_units")) +\
+                    int(csv_units)
+                print "main_db_units"
+                print main_db_units
                 if (
-                    int(data.get("created_units")) >=
+                    int(main_db_units) >=
                     int(data.get("total_unit_count"))
                 ):
                     errDesc.append(
-                        d + " Unit count exceeds the limit in Main DB"
+                        newOrgnName.strip() +
+                        " Unit count exceeds the limit in Main DB"
                     )
                 else:
                     return self.check_base(
@@ -566,6 +613,45 @@ class SourceDB(object):
 
         if len(errDesc) > 0:
             return ','.join(errDesc)
+
+    def save_main_domain_orgn_units(self, le_id, domain_org):
+        print "save main"
+        print domain_org
+        if len(self._main_domain_org) == 0:
+            self._main_domain_org.append(
+                str(le_id).strip() + "-" +
+                domain_org.strip() + "-1"
+            )
+        else:
+            # join_csv = ','.join(self._csv_domain_orgn)
+            # self._csv_domain_orgn = []
+            occur = 0
+            for i, data in enumerate(self._main_domain_org):
+                split_val = data.split("-")
+                if(
+                    split_val[0] == str(le_id).strip() and
+                    split_val[1] == domain_org.strip()
+                ):
+                    occur += 1
+                    save_unit = int(
+                        split_val[2].strip()) + 1
+                    print "main save unit"
+                    print save_unit
+                    self._main_domain_org.pop(i)
+                    self._main_domain_org.append(
+                        str(le_id).strip() +
+                        "-" +
+                        domain_org.strip() + "-" + str(save_unit)
+                    )
+                    break
+            if occur == 0:
+                self._main_domain_org.append(
+                    str(le_id).strip() +
+                    "-" +
+                    domain_org.strip() + "-" + "1")
+
+        print "after main function"
+        print self._main_domain_org
 
     def statusCheckMethods(self):
         self._validation_method_maps = {
@@ -716,7 +802,8 @@ class SourceDB(object):
                     len(system_declined_units) == 0 or
                     (len(system_declined_units) > 0 and
                         d["bulk_unit_id"] not in system_declined_units)) and
-                    (int(d["action"]) == 1 or int(d["action"]) == 0)
+                    (int(d["action"]) == 0 or int(d["action"]) == 1 or
+                        int(d["action"]) == 2)
             ):
                 if d["Unit_Code"] == "auto_gen":
                     auto_gen_ids.append(d["bulk_unit_id"])
@@ -791,13 +878,16 @@ class SourceDB(object):
                                         str(le_id)+"-"+neworgn
                                     ).get("organisation_id"))
                                 )
-
+                    if int(d["action"]) == 0:
+                        action_val = 1
+                    else:
+                        action_val = int(d["action"])
                     self._auto_unit_code = unit_code
                     values.append((
                         int(cl_id), bg_id, int(le_id), int(division_id),
                         int(category_id), int(country_id), int(main_geo_id),
                         str(unit_code), str(unit_name),
-                        str(unit_address), str(post_code), 1,
+                        str(unit_address), str(post_code), action_val,
                         int(createdby), str(created_on),
                         int(createdby), str(created_on)
                     ))
@@ -906,12 +996,15 @@ class SourceDB(object):
                                         str(le_id)+"-"+neworgn
                                     ).get("organisation_id"))
                                 )
-
+                    if int(unit_data.get("action")) == 0:
+                        action_val = 1
+                    else:
+                        action_val = int(unit_data.get("action"))
                     values.append((
                         int(cl_id), bg_id, int(le_id), int(division_id),
                         int(category_id), int(country_id), int(main_geo_id),
                         str(unit_code), str(unit_name),
-                        str(unit_address), str(post_code), 1,
+                        str(unit_address), str(post_code), action_val,
                         int(createdby), str(created_on),
                         int(createdby), str(created_on)
                     ))
@@ -1034,7 +1127,6 @@ class SourceDB(object):
         self, a_type, full_csv_name, groupname, createdby,
         uploaded_by, reject_reason, sys_decl_cnt
     ):
-        print "inside manager msg"
         if a_type == 1:
             action_type = "approved"
         else:
@@ -1049,12 +1141,11 @@ class SourceDB(object):
             text = "Client Unit File %s of %s has been %s" % \
                 (csv_name, groupname, action_type)
 
-            print text
             if sys_decl_cnt > 0:
                 sysDeclText = "Client Unit File %s - %s %s has "\
                     "been declined by COMPFIE" % \
                     (csv_name, groupname, sys_decl_cnt)
-            print sysDeclText
+            # print sysDeclText
         else:
             text = "Client Unit File %s of %s has been %s with %s" % (
                     csv_name, groupname, action_type, reject_reason
@@ -1130,6 +1221,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         self._uploaded_by = None
         self._temp_client_units = {}
         self._temp_units_count = {}
+        self._csv_domain_orgn = []
         self._legal_entity_name = None
         self._valid_unit_count = 1
         self._doc_names = []
@@ -1292,8 +1384,12 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
             "sp_get_domain_organization_count", [self._client_id]
         )
         for d in res:
+            neworgn = ''
+            for o in d["organization"].split('>>'):
+                neworgn = neworgn + o.strip() + '>>'
+            neworgn = neworgn[:-2]
             self._temp_units_count[
-                d["legal_entity"] + "-" + d["organization"]
+                d["legal_entity"] + "-" + neworgn
             ] = d
 
     #################################################################
@@ -1319,8 +1415,11 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
 
     def check_organization_unit_count_in_tempDB(self, organization_name):
         print "inside temp db checking"
+        print self._csv_domain_orgn
         mainStrore = self.Organization
         tempStore = self._temp_units_count
+        saved_units = 0
+        csv_units = 0
         neworgn = ''
         for o in organization_name.split('>>'):
             neworgn = neworgn + o.strip() + '>>'
@@ -1333,71 +1432,168 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         if neworgn.find(CSV_DELIMITER) > 0:
             splittedOrg = neworgn.split(CSV_DELIMITER)
             for d in splittedOrg:
+                saved_units = 0
                 mainData = mainStrore.get(
                     str(self.Legal_Entity_Id) + "-" + d.strip()
                 )
-                if mainData is not None and tempData is not None:
-                    main_temp_units = int(
-                        mainData.get("total_unit_count")
-                    ) - (
-                            int(mainData.get("created_units")) +
-                            int(tempData.get("saved_units"))
-                        )
-                    if main_temp_units == 0:
+                print "AAAA"
+                if mainData is not None:
+                    for temp_d in tempStore:
+                        if (
+                            temp_d.split('-')[0].strip() ==
+                            self._legal_entity_name.strip()
+                        ):
+                            tempData = tempStore.get(temp_d)
+                            print "inside temp data"
+                            orgn_name = tempData.get("organization")
+                            temporgn = ''
+                            for o in orgn_name.split('>>'):
+                                temporgn = temporgn + o.strip() + '>>'
+                            temporgn = temporgn[:-2]
+                            print temporgn
+                            if d.strip() in temporgn.strip():
+                                print "save more"
+                                print saved_units
+                                saved_units = saved_units +\
+                                    int(tempData.get("saved_units"))
+                    print "saved_units"
+                    print saved_units
+                    self.save_csv_domain_orgn_units(
+                            self._legal_entity_name, d)
+
+                    for data in self._csv_domain_orgn:
+                        split_val = data.split("-")
+                        if(
+                            split_val[0] ==
+                            self._legal_entity_name.strip() and
+                            split_val[1] == d.strip()
+                        ):
+                            csv_units = int(split_val[2])
+                            break
+                    print "csv_units"
+                    print csv_units
+                    # main_temp_units = int(
+                    #     mainData.get("total_unit_count")
+                    # ) - (
+                    #         int(mainData.get("created_units")) +
+                    #         int(saved_units) + int(csv_units)
+                    #     )
+                    main_temp_units = int(mainData.get("created_units")) +\
+                        int(saved_units) + int(csv_units)
+                    print "main_temp_units"
+                    print main_temp_units
+                    if main_temp_units > mainData.get("total_unit_count"):
                         errDesc.append(
                             "Organization - " + d +
                             " Unit count reached the limit " +
                             "comparing TempDB and MainDB"
                         )
-                    else:
-                        if self._valid_unit_count > \
-                                (main_temp_units * len(splittedOrg)):
-                            errDesc.append(
-                                "Organization - " + d +
-                                " Unit count reached the limit " +
-                                "comparing TempDB and MainDB"
-                            )
-                        else:
-                            self._valid_unit_count += 1
         else:
             print "AA"
             mainData = mainStrore.get(
                 str(self.Legal_Entity_Id) + "-" + neworgn
             )
-            print mainData
-            print tempStore
             tempData = tempStore.get(
                 self._legal_entity_name + "-" + neworgn.strip()
             )
+
             if tempData is None:
                 for temp_d in tempStore:
-                    tempData = tempStore.get(temp_d)
-                    orgn_name = tempData.get("organization")
-                    if neworgn in orgn_name:
-                        saved_units = tempData.get("saved_units")
+                    print "temp_d"
+                    print temp_d
+                    if (
+                        temp_d.split('-')[0].strip() ==
+                        self._legal_entity_name.strip()
+                    ):
+                        tempData = tempStore.get(temp_d)
+                        print "inside temp data"
+                        orgn_name = tempData.get("organization")
+                        temporgn = ''
+                        for o in orgn_name.split('>>'):
+                            temporgn = temporgn + o.strip() + '>>'
+                        temporgn = temporgn[:-2]
+                        print temporgn
+                        if neworgn in temporgn.strip():
+                            saved_units = saved_units +\
+                                int(tempData.get("saved_units"))
             else:
                 saved_units = tempData.get("saved_units")
+
+            print "saved_units"
             print saved_units
-            if mainData is not None and tempData is not None:
-                main_temp_units = int(
-                    mainData.get("total_unit_count")
-                ) - (int(mainData.get("created_units")) + int(saved_units))
-                if main_temp_units == 0:
+
+            self.save_csv_domain_orgn_units(
+                        self._legal_entity_name, neworgn)
+
+            for data in self._csv_domain_orgn:
+                split_val = data.split("-")
+                if(
+                    split_val[0] ==
+                    self._legal_entity_name.strip() and
+                    split_val[1] == neworgn.strip()
+                ):
+                    csv_units = int(split_val[2])
+                    break
+
+            print "csv_units"
+            print csv_units
+            if mainData is not None:
+                # main_temp_units = int(
+                #     mainData.get("total_unit_count")
+                # ) - (
+                #     int(mainData.get("created_units")) +
+                #     int(saved_units) + int(csv_units)
+                #     )
+                main_temp_units = int(mainData.get("created_units")) +\
+                     int(saved_units) + int(csv_units)
+                if main_temp_units > mainData.get("total_unit_count"):
                     errDesc.append(
                         "Organization - " + neworgn +
                         " Unit count reached the limit " +
                         "comparing TempDB and MainDB"
                     )
-                else:
-                    if self._valid_unit_count > main_temp_units:
-                        errDesc.append(
-                            "Organization - " + neworgn +
-                            " Unit count reached the limit " +
-                            "comparing TempDB and MainDB"
-                        )
-                    else:
-                        self._valid_unit_count += 1
+
         return '|;|'.join(errDesc)
+
+    def save_csv_domain_orgn_units(self, le_name, domain_org):
+        print "save csv"
+        print domain_org
+        if len(self._csv_domain_orgn) == 0:
+            self._csv_domain_orgn.append(
+                le_name.strip() + "-" +
+                domain_org.strip() + "-1"
+            )
+        else:
+            # join_csv = ','.join(self._csv_domain_orgn)
+            # self._csv_domain_orgn = []
+            occur = 0
+            for i, data in enumerate(self._csv_domain_orgn):
+                split_val = data.split("-")
+                if(
+                    split_val[0] ==
+                    le_name.strip() and
+                    split_val[1] == domain_org.strip()
+                ):
+                    occur += 1
+                    save_unit = int(
+                        split_val[2].strip()) + 1
+                    print "csv save unit"
+                    print save_unit
+                    self._csv_domain_orgn.pop(i)
+                    self._csv_domain_orgn.append(
+                        le_name.strip() +
+                        "-" +
+                        domain_org.strip() + "-" + str(save_unit)
+                    )
+                    break
+            if occur == 0:
+                self._csv_domain_orgn.append(
+                    le_name.strip() +
+                    "-" +
+                    domain_org.strip() + "-" + "1")
+
+        print "after function"
+        print self._csv_domain_orgn
 
     '''
         looped csv data to perform corresponding validation
@@ -1472,22 +1668,22 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                 else:
                                     res = [msg]
                                 self._error_summary["invalid_data_error"] += 1
-                            elif v != '':
-                                try:
-                                    typeVal = long(v)
-                                    print typeVal
-                                except Exception, e:
-                                    print e
-                                    msg = "%s - %s" % (
-                                        key, "invalid Postal Code"
-                                    )
-                                    if res is not True:
-                                        res.append(msg)
-                                    else:
-                                        res = [msg]
-                                    self._error_summary[
-                                        "invalid_data_error"
-                                    ] += 1
+                            # elif v != '':
+                            #     try:
+                            #         typeVal = long(v)
+                            #         print typeVal
+                            #     except Exception, e:
+                            #         print e
+                            #         msg = "%s - %s" % (
+                            #             key, "invalid Postal Code"
+                            #         )
+                            #         if res is not True:
+                            #             res.append(msg)
+                            #         else:
+                            #             res = [msg]
+                            #         self._error_summary[
+                            #             "invalid_data_error"
+                            #         ] += 1
                         elif key == "Domain":
                             csv_domain_name = value
                             if csv_domain_duplicate is not None:
@@ -1524,9 +1720,9 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                             "duplicate_error"
                                         ] += 1
                             if orgn_row_last != row_idx:
+                                orgn_row_last = row_idx
                                 unitCountErr = \
                                     self.check_organization_unit_count_in_tempDB(value)
-                                orgn_row_last = row_idx
                                 if (
                                     unitCountErr is not None and
                                     unitCountErr != ""
@@ -1539,19 +1735,18 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                         "max_unit_count_error"
                                     ] += 1
 
-                            # check organization under domain
-                            checkOrgn = \
-                                self.check_organization_under_domain(
-                                    csv_domain_name, value
-                                )
-                            print "checkOrgn"
-                            print checkOrgn
-                            if checkOrgn is not None and checkOrgn != "":
-                                if res is not True:
-                                    res.append(checkOrgn)
-                                else:
-                                    res = [checkOrgn]
-                                self._error_summary["invalid_data_error"] += 1
+                                # check organization under domain
+                                checkOrgn = \
+                                    self.check_organization_under_domain(
+                                        csv_domain_name, value
+                                    )
+                                if checkOrgn is not None and checkOrgn != "":
+                                    if res is not True:
+                                        res.append(checkOrgn)
+                                    else:
+                                        res = [checkOrgn]
+                                    self._error_summary[
+                                        "invalid_data_error"] += 1
 
                         valid_failed, error_cnt = parse_csv_dictionary_values(
                             key, v
@@ -1589,8 +1784,6 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                 else:
                                     self._error_summary[
                                         "invalid_data_error"] += 1
-                    print "res"
-                    print res
                     if res is not True:
                         err_str = (',').join(res)
                         if err_str.find(key) != -1:
@@ -1731,6 +1924,13 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                 x = idx - 26
 
             c = "%s%s" % (cells[x], 1)
+            if (
+                h != 'Division' and
+                h != 'Category' and
+                h != "Error Description"
+            ):
+                h = "%s%s" % (h, '*')
+
             worksheet.write(c, h, bold)
 
         row = 1
@@ -1759,9 +1959,6 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                     # d.decode('utf8')
                     try:
                         d.decode("utf8")
-                        print "excel data"
-                        print d
-                        print h
                         if idx in error_col:
                             worksheet.write_string(row, col+i, d, error_format)
                         else:
@@ -1985,7 +2182,9 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
     '''
     ######################################################################
 
-    def make_rejection(self, csv_id, declined_ids, declined_ids_error):
+    def make_rejection(
+        self, csv_id, action_type, declined_ids, declined_ids_error
+    ):
         try:
             for unit_id, unit_error in zip(declined_ids, declined_ids_error):
                 q = "update tbl_bulk_units set action = %s, remarks = %s " + \
@@ -1996,10 +2195,18 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
                         int(unit_id)
                         ]
                     )
+            if action_type == 1:
+                q = "delete from tbl_bulk_units where action = %s and "\
+                    "csv_unit_id = %s"
+                self._db.execute_insert(q, [1, int(csv_id)])
+            else:
+                q = "delete from tbl_bulk_units where action = %s and "\
+                    "csv_unit_id = %s"
+                self._db.execute_insert(q, [1, int(csv_id)])
 
-            q = "delete from tbl_bulk_units where action = %s and "\
-                "csv_unit_id = %s"
-            self._db.execute_insert(q, [1, int(csv_id)])
+                q = "delete from tbl_bulk_units where action = %s and "\
+                    "csv_unit_id = %s"
+                self._db.execute_insert(q, [2, int(csv_id)])
         except Exception, e:
             print e
             raise ValueError("Transaction failed during system rejection")
