@@ -193,6 +193,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         csv_name = convert_base64_to_file(
             BULKUPLOAD_CSV_PATH, request_frame.csv_name, request_frame.csv_data
         )
+        print "CSV NAME--->>> ", csv_name
         # read data from csv file
         header, statutory_mapping_data = read_data_from_csv(csv_name)
 
@@ -248,7 +249,8 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                         new_csv_id, res_data["csv_name"],
                         res_data["total"], res_data["valid"],
                         res_data["invalid"],
-                        res_data["doc_count"], res_data["doc_names"]
+                        res_data["doc_count"], res_data["doc_names"],
+                        csv_name
                     )
 
             # csv data save to temp db
@@ -414,6 +416,7 @@ def submit_statutory_mapping(db, request_frame, session_user):
             cObj.source_commit()
 
             delete_action_after_approval(db, csv_id)
+
             return bu_sm.SubmitStatutoryMappingSuccess()
     except Exception, e:
         print e

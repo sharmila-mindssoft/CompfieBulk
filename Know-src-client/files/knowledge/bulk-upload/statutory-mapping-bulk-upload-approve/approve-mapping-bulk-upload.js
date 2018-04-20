@@ -625,10 +625,15 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     acCompDoc.val('');
     acCompDesc.val('');
     acTaskType.val('');
-    MultiSelectFrequency.val('');
+    MultiSelectFrequency.find("option").remove();
+    MultiSelectFrequency.multiselect('destroy');
+
     $('input[id="verified-data"]').removeAttr("checked");
     $('input[id="pending-data"]').removeAttr("checked");
     $('input[id="all-data"]').prop("checked", true);
+
+    CLEAR_FILTERED.hide();
+    FILTERED_DATA.empty();
 
     onCurrentPage = 1;
     j = 1;
@@ -1470,7 +1475,8 @@ function PageControls() {
     });
 
     GoButton.click(function(){
-
+        FILTERED_DATA.empty();
+        CLEAR_FILTERED.hide();
         var filtered = '';
         appendFilter = function(val) {
             if (filtered == '') {
@@ -1538,7 +1544,7 @@ function PageControls() {
             appendFilter(tt);
         }
 
-        
+
         FILTERED_DATA.text(filtered);
         if(filtered.split("|").length >= 1)
         {
@@ -1579,7 +1585,9 @@ function PageControls() {
         acCompDoc.val('');
         acCompDesc.val('');
         acTaskType.val('');
-        MultiSelectFrequency.val('');
+        MultiSelectFrequency.find("option").remove();
+        MultiSelectFrequency.multiselect('destroy');
+        
         $('input[id="verified-data"]').removeAttr("checked");
         $('input[id="pending-data"]').removeAttr("checked");
         $('input[id="all-data"]').prop("checked", true);

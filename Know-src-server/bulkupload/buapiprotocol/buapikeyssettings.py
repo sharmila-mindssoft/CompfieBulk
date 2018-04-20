@@ -823,4 +823,8 @@ bu_api_params = {
         'type': 'INT', 'length': None,
         'validation_method': None, 'is_optional': True
     },
+    'new_csv_name': {
+        'type': 'STRING', 'length': 100,
+        'validation_method': is_file_name, 'is_optional': True
+    },
 }

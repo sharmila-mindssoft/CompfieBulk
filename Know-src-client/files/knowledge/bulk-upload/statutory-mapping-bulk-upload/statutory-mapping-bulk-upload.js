@@ -240,7 +240,8 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
                     DocumentSummary.hide();
                     t_this.changeTxttoLabel(countryAc.val(), domainAc.val(),
-                                            response.csv_name)
+                                            response.csv_name,
+                                            response.new_csv_name)
                 }
                 else {
                     DataSummary.hide();
@@ -339,7 +340,7 @@ BulkUploadStatutoryMapping.prototype.validateControls = function() {
     return true;
 };
 BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
-    c_name, d_name, csv_name
+    c_name, d_name, csv_name, uploadedCsvName
 ) {
     txtCountryName.hide();
     txtDomainName.hide();
@@ -350,8 +351,8 @@ BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
     inputFileControl.hide();
     displayFileControl.show();
     $('.csv-file-name').text(csv_name);
-    $('.csv-file-view').attr("href", "/uploaded_file/csv/"+csv_name);
-    $('.csv-file-download').attr("href", "/uploaded_file/csv/"+csv_name);
+    $('#uploaded_csv_view').attr('href', "/uploaded_file/csv/"+uploadedCsvName);
+    $('#uploaded_csv_dwnl').attr('href', "/uploaded_file/csv/"+uploadedCsvName);
     this._ActionMode = "upload"
 };
 BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
@@ -363,7 +364,7 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     countryVal.val(data.c_id);
     domainAc.val(data.d_name);
     domainVal.val(data.d_id);
-    this.changeTxttoLabel(data.c_name, data.d_name, csv_split_name + ".csv")
+    this.changeTxttoLabel(data.c_name, data.d_name, csv_split_name + ".csv", uploadedCsvName)
     UploadDocument.show();
     DocumentSummary.show();
 
