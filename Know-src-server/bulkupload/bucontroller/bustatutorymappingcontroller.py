@@ -186,7 +186,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         if request_frame.csv_size > 0:
             pass
 
-        if get_rejected_sm_file_count(db, session_user) > MAX_REJECTED_COUNT:
+        if get_rejected_sm_file_count(db, session_user) >= MAX_REJECTED_COUNT:
             return bu_sm.RejectionMaxCountReached()
 
         # save csv file

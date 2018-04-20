@@ -89,7 +89,7 @@ function pageControls() {
     /*DOMAIN.multiselect('selectAll');*/
 
     DOMAIN.on('change', function(e) {
-        DOMAIN.selectpicker('refresh');
+        /*DOMAIN.selectpicker('refresh');*/
         /*resetFilter('domains');
         if($("#select-deselect").attr("value") == "select-all"
             && this.value == "select-all")

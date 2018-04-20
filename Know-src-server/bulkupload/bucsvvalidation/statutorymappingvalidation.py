@@ -646,7 +646,7 @@ class StatutorySource(object):
             else:
                 t_days = None
 
-            if(r_by is not None and r_by == 2):
+            if(r_by is not None and r_by == 2 and s_month is not None):
                 end_of_month = calendar.mdays[s_month]
                 s_date = int(end_of_month)
 
@@ -1555,6 +1555,13 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                             )
                         statu_exists_id.append(statu_maps)
                     else:
+                        if self.Statu_dic.get(statu_maps) is not None:
+                            if(len(legis_data) <= statu_level_limit):
+                                statu_ids.append(
+                                    self.Statu_dic.get(statu_maps)
+                                )
+                            statu_exists_id.append(statu_maps)
+
                         print "legis_data >>>"
                         print legis_data
                         if(len(legis_data) <= statu_level_limit):

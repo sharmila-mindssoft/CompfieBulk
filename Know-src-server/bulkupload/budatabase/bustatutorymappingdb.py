@@ -55,7 +55,7 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
 
     print "Len DATA in DB file", len(data)
     if len(data) == 3:
-        if data[0][0]["max_count"] > MAX_REJECTED_COUNT:
+        if data[0][0]["max_count"] >= MAX_REJECTED_COUNT:
             upload_more = False
         else:
             upload_more = True
