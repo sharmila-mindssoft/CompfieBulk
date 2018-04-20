@@ -92,12 +92,12 @@ CSVFILENAME.change(function(e){
 
 // CSV file upload button click event
 CSVUPLOADBUTTON.click(function () {
-	$('#myModal').modal('show');
     $('.invaliddata').hide();
 	$('.view-summary').hide();
 	var clientId = GROUPID.val().trim();
 	var groupName = GROUPNAME.val().trim();
-	if (clientId != '' && CSVUPLOADEDFILE != '') {
+	if (clientId != '' && CSVFILENAME.val() != '') {
+		$('#myModal').modal('show');
 		var f_size = CSVUPLOADEDFILE.file_size;
 		var f_name = CSVUPLOADEDFILE.file_name;
 		var f_data = CSVUPLOADEDFILE.file_content;
