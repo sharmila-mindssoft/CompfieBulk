@@ -276,7 +276,6 @@ END //
 
 DELIMITER ;
 
-
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_filter`;
 
 DELIMITER //
@@ -307,35 +306,35 @@ BEGIN
     t1.csv_id  = t2.csv_id WHERE t1.csv_id = csvid
     AND t2.organization like orga_name AND t2.geography_location like geo_location
     AND t2.statutory_nature like s_nature AND t2.statutory like statu
-    -- AND t2.compliance_frequency like frequency
-    AND FIND_IN_SET(compliance_frequency, frequency) AND t2.compliance_task like c_task
+    AND t2.compliance_task like c_task
     AND t2.compliance_description like c_desc AND t2.compliance_document like c_doc
     AND t2.task_id like tsk_id AND t2.task_type like tsk_type
     AND (CASE WHEN view_data =1 THEN IFNULL(t2.action, 0) > 0
       WHEN view_data =2 THEN IFNULL(t2.action, 0) = 0
-          ELSE IFNULL(t2.action, 0) like "%"
-  END)
+          ELSE IFNULL(t2.action, 0) like "%" END)
+  AND (CASE WHEN frequency = '%' THEN t2.compliance_frequency like "%"
+          ELSE FIND_IN_SET(t2.compliance_frequency, frequency)
+          END)
     limit  f_count, f_range;
 
     SELECT count(distinct t2.bulk_statutory_mapping_id) AS total
-
     FROM tbl_bulk_statutory_mapping_csv AS t1
     inner join tbl_bulk_statutory_mapping AS t2 on
     t1.csv_id  = t2.csv_id WHERE t1.csv_id = csvid
     AND t2.organization like orga_name AND t2.geography_location like geo_location
     AND t2.statutory_nature like s_nature AND t2.statutory like statu
-    -- AND t2.compliance_frequency like frequency
-    AND FIND_IN_SET(compliance_frequency, frequency) AND t2.compliance_task like c_task
+    AND t2.compliance_task like c_task
     AND t2.compliance_description like c_desc AND t2.compliance_document like c_doc
     AND t2.task_id like tsk_id AND t2.task_type like tsk_type
     AND (CASE WHEN view_data =1 THEN IFNULL(t2.action, 0) > 0
       WHEN view_data =2 THEN IFNULL(t2.action, 0) = 0
           ELSE IFNULL(t2.action, 0) like "%"
-  END)
-    ;
+          END)
+  AND (CASE WHEN frequency = '%' THEN t2.compliance_frequency like "%"
+          ELSE FIND_IN_SET(t2.compliance_frequency, frequency)
+          END);
 END //
 DELIMITER ;
-
 
 DROP PROCEDURE IF EXISTS `sp_statutory_mapping_view_by_csvid`;
 
@@ -660,7 +659,7 @@ INNER JOIN tbl_bulk_statutory_mapping_csv AS sm_csv ON sm_csv.csv_id=sm.csv_id
   sm_csv.uploaded_by=user_id AND
   (sm.action=3 OR sm_csv.is_fully_rejected=1) -- Declined Action
   GROUP BY sm.csv_id
-  ORDER BY sm_csv.rejected_on, sm_csv.approved_on DESC;
+  ORDER BY IFNULL(sm_csv.approved_on, sm_csv.rejected_on) DESC
 END //
 DELIMITER ;
 

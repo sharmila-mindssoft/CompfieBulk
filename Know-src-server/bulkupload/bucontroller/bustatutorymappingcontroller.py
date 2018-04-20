@@ -401,6 +401,9 @@ def submit_statutory_mapping(db, request_frame, session_user):
         if len(is_declined.keys()) > 0:
             return bu_sm.ValidationSuccess(len(is_declined.keys()))
         else:
+            update_approve_action_from_list(
+                db, csv_id, 1, None, session_user, "single"
+            )
             if cObj._doc_count > 0:
                 cObj.format_download_process_initiate(csv_id)
             cObj.save_manager_message(
@@ -409,10 +412,8 @@ def submit_statutory_mapping(db, request_frame, session_user):
             )
             cObj.frame_data_for_main_db_insert()
             cObj.source_commit()
-            update_approve_action_from_list(
-                db, csv_id, 1, None, session_user, "single"
-            )
-            # delete_action_after_approval(db, csv_id)
+
+            delete_action_after_approval(db, csv_id)
             return bu_sm.SubmitStatutoryMappingSuccess()
     except Exception, e:
         print e

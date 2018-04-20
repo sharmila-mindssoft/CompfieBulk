@@ -9,7 +9,9 @@ var PasswordSubmitButton = $('.password-submit');
 var CancelButton = $("#btn-sm-view-cancel");
 var ViewListContainer = $('.tbody-sm-approve-view');
 var ViewListRowTemplate = $('#templates .table-sm-approve-info tr');
-var FinalSubmit = $('#btn-final-submit')
+var FinalSubmit = $('#btn-final-submit');
+var FILTERED_DATA = $('.filtered-data');
+var CLEAR_FILTERED = $(".clear-filtered");
 
 var ItemsPerPage = $('#items_per_page');
 var PaginationView = $('.pagination-view');
@@ -1536,10 +1538,54 @@ function PageControls() {
             appendFilter(tt);
         }
 
-        $('.filtered-data').text(filtered);
+        
+        FILTERED_DATA.text(filtered);
+        if(filtered.split("|").length >= 1)
+        {
+            CLEAR_FILTERED.show();
+        }
+        else
+        {
+            FILTERED_DATA.empty();
+            CLEAR_FILTERED.hide()
+        }
+
         onCurrentPage = 1;
         buApprovePage.renderViewFromFilter();
 
+    });
+    CLEAR_FILTERED.click(function() {
+        searchStatutory.val('');
+        searchOrganization.val('');
+        searchNature.val('');
+        searchProvision.val('');
+        searchCTask.val('');
+        searchCDoc.val('');
+        searchTaskId.val('');
+        searchCDesc.val('');
+        searchPCons.val('');
+        searchTaskType.val('');
+        searchReferLink.val('');
+        searchFreq.val('');
+        searchFormat.val('');
+        searchGeography.val('');
+
+        acOrgName.val('');
+        acNature.val('');
+        acStatutory.val('');
+        acGeoLocation.val('');
+        acCompTask.val('');
+        acTaskId.val('');
+        acCompDoc.val('');
+        acCompDesc.val('');
+        acTaskType.val('');
+        MultiSelectFrequency.val('');
+        $('input[id="verified-data"]').removeAttr("checked");
+        $('input[id="pending-data"]').removeAttr("checked");
+        $('input[id="all-data"]').prop("checked", true);
+        CLEAR_FILTERED.hide();
+        FILTERED_DATA.empty();
+        buApprovePage.renderViewFromFilter();
     });
 
     FinalSubmit.click(function(){

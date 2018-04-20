@@ -182,7 +182,7 @@ function pageControls() {
 function fetchDomainMultiselect() {
     /*var str = '<option id="select-deselect" value="select-all">Select all'+
                '</option>';*/
-    var str = '';
+    var str = '<option value="">Select</option>';
     if (LEGAL_ENTITY_LIST.length > 0) {
         for (var i in LEGAL_ENTITY_LIST) {
             if(LEGAL_ENTITY_LIST[i].le_id == LEGAL_ENTITY.val()){
@@ -370,6 +370,8 @@ function loadCountwiseResult(filterList) {
         statutoryAction = filterList[entity].statutory_action;
         fileDownloadCount = filterList[entity].file_download_count;
         reasonRejection = filterList[entity].rejected_reason;
+        declinedCount = '';
+        reasonForRejection = '';
 
         if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
 
