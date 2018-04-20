@@ -660,7 +660,7 @@ INNER JOIN tbl_bulk_statutory_mapping_csv AS sm_csv ON sm_csv.csv_id=sm.csv_id
   sm_csv.uploaded_by=user_id AND
   (sm.action=3 OR sm_csv.is_fully_rejected=1) -- Declined Action
   GROUP BY sm.csv_id
-  ORDER BY IFNULL(sm_csv.approved_on, sm_csv.rejected_on) DESC
+  ORDER BY IFNULL(sm_csv.approved_on, sm_csv.rejected_on) DESC;
 END //
 DELIMITER ;
 
@@ -2085,7 +2085,7 @@ END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS sp_ct_format_file_status_update;
+DROP PROCEDURE IF EXISTS `sp_ct_format_file_status_update`;
 DELIMITER //
 CREATE PROCEDURE `sp_ct_format_file_status_update`(
     IN csvid INT, filename VARCHAR(150)
