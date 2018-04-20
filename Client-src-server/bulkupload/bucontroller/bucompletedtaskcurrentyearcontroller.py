@@ -43,12 +43,25 @@ __all__ = [
 def process_bu_completed_task_current_year_request(request, db, session_user):
     request_frame = request.request
 
+    if type(request_frame) is bu_ct.GetCompletedTaskCsvUploadedList:
+        result = get_completed_task_csv_list(db, request_frame, session_user)
+
     if type(request_frame) is bu_ct.UploadCompletedTaskCurrentYearCSV:
         result = upload_completed_task_current_year_csv(db, request_frame, session_user)
 
     if type(request_frame) is bu_ct.saveBulkRecords:
         result = process_saveBulkRecords(db, request_frame, session_user)
 
+    return result
+
+########################################################
+
+def get_completed_task_csv_list(db, request_frame, session_user):
+
+    csv_data = getCompletedTaskCSVList(db, session_user)
+    # print "csv_data>>", csv_data
+    result = bu_ct.GetCompletedTaskCsvUploadedListSuccess(csv_data)
+    print "get_completed_task_csv_list>result>>", result
     return result
 
 ########################################################
@@ -68,15 +81,17 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
 
     # csv data validation
     cObj = ValidateCompletedTaskCurrentYearCsvData(
-        db, completed_task_data, session_user, request_frame.csv_name, header, request_frame.legal_entity_id)
+        db, completed_task_data, session_user, request_frame.csv_name, header)
+    print "request_frame.legal_entity_id>>", request_frame.legal_entity_id
     res_data = cObj.perform_validation(request_frame.legal_entity_id)
+
 
     if res_data["return_status"] is True :
         current_date_time = get_date_time_in_date()
         str_current_date_time = datetime_to_string(current_date_time)
         csv_args = [
             "1", request_frame.legal_entity_id, "1","1","1",
-            csv_name, session_user,current_date_time, res_data["total"],res_data["doc_count"],"0", "0"
+            csv_name, session_user,str_current_date_time, res_data["total"],res_data["doc_count"],"0", "0"
         ]
 
         new_csv_id = save_completed_task_current_year_csv(db, csv_args, session_user)
@@ -105,7 +120,8 @@ def process_saveBulkRecords(db, request_frame, session_user):
     cObj = ValidateCompletedTaskForSubmit(
         db, csv_id, dataResult,  session_user)
 
-    if cObj.frame_data_for_main_db_insert(db, dataResult) is True:
+    print "bucompletedtaskcurrentyearcontroller>request_frame.legal_entity_id>>", request_frame.legal_entity_id
+    if cObj.frame_data_for_main_db_insert(db, dataResult, request_frame.legal_entity_id, session_user) is True:
         result = bu_ct.saveBulkRecordSuccess()
     else:
         result = []
