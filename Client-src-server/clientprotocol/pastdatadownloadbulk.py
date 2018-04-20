@@ -103,7 +103,6 @@ class PastDataJsonToCSV(object):
 
                     for comp in compliances:
                         description = comp.description
-                        print "pastdatadownloadbulk>due_date>>", comp.due_date
                         due_date = comp.due_date
                         compliance_name = comp.compliance_name
                         compliance_task_frequency = comp.frequency.to_structure()
@@ -159,6 +158,8 @@ def get_download_bulk_compliance_data(
         query += condition
         param.extend(condition_val)
 
+    print "pastdatadownloadbulk>query>>", query
+    print "pastdatadownloadbulk>param>>", param
     rows = db.select_all(query, param)
 
     level_1_statutory_wise_compliances = {}
@@ -238,9 +239,6 @@ def get_download_bulk_compliance_data(
                 due_date = datetime.date(int(year), int(month), int(day))
 
                 statutories_strip = statutories[0].strip()
-
-                print "get_download_bulk_compliance_data>due_date>>", due_date
-                print "datetime_to_string(due_date)>>", datetime_to_string(due_date)
 
                 level_1_statutory_wise_compliances[level_1].append(
                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(

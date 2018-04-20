@@ -426,8 +426,6 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     // DocumentRemaining.text(
     //     parseInt(data.no_of_documents) - parseInt(data.uploaded_documents)
     // );
-
-
 };
 
 
