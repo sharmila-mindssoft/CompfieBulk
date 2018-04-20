@@ -22,6 +22,9 @@ var LEGALENTITYNAMELABELUPLOAD = $(".legal-entity-name-upload");
 var ACLEGALENTITYUPLOAD = $("#ac-entity-upload");
 var LEGALENTITYNAMEACUPLOAD = $(".legal-entity-name-ac-upload");
 
+var ListContainer = $('.tbody-ct-csv-list');
+var ListRowTemplate = $('#templates .table-ct-csv-info .table-row');
+
 var txtdomain = $("#txtdomain");
 var hdnDomain = $("#hdnDomain");
 var divDomain = $("#divDomain");
@@ -110,6 +113,8 @@ LEGALENTITYNAMEUPLOAD.keyup(function(e) {
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
+    // alert(id_element[0].id);
+    // hdn_legal_entity_id_upload
     if (id_element[0].id == 'hdn_legal_entity_id') {
         getPastRecords(parseInt(LegalEntityId.val()));
         loadUnits(parseInt(LegalEntityId.val()));
@@ -134,10 +139,9 @@ function loadEntityDetails() {
         LegalEntityNameLabel.text(LE_NAME);
         LEGALENTITYNAMELABELUPLOAD.text(LE_NAME);
         LegalEntityId.val(LE_ID);
-        // LEGALENTITYIDUPLOAD
+        LEGALENTITYIDUPLOAD.val(LE_ID);
 
         loadUnits(parseInt(LegalEntityId.val()));
-        // ShowButton.trigger("click");
         getPastRecords(parseInt(LegalEntityId.val()));
     }
 }
@@ -172,23 +176,17 @@ function validateUpload() {
         $('#myModal').modal('show');
         return false;
     } else {
-        // setTimeout(function() {
-        //     // $('.invaliddata').show();
-        //     // $('.view-summary').show();
-        //     // $('#divSuccessFile').show();
-        //     // $('#divSuccessDocument').show();
-        //     // $('#divSuccessbutton').show();
-        // }, 1000);
 
         $('#myModal').modal('show');
         console.log("_ActionMode>>", buCtPage._ActionMode);
         if (buCtPage._ActionMode == "add") {
+            // alert(LEGALENTITYIDUPLOAD.val());
 
             var args = {
                 "csv_name": csvInfo["file_name"],
                 "csv_data": csvInfo["file_content"],
                 "csv_size": csvInfo["file_size"],
-                "legal_entity_id": parseInt(LegalEntityId.val())
+                "legal_entity_id": parseInt(LEGALENTITYIDUPLOAD.val())
             };
 
             buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
@@ -351,6 +349,88 @@ function pageControls() {
     });
 }
 
+BulkCompletedTaskCurrentYear.prototype.showList = function() {
+    var t_this = this;
+    var args = {
+        "legal_entity_id": parseInt(LegalEntityId.val())
+    };
+
+    buClient.GetCompletedTaskCsvUploadedList(args,
+        function(error, data) {
+            if (error == null) {
+                // alert(data);
+                t_this._ListDataForView = data.csv_list;
+                t_this.renderList(t_this._ListDataForView);
+
+
+            } else {
+
+            }
+        }
+    );
+}
+
+BulkCompletedTaskCurrentYear.prototype.renderList = function(list_data) {
+    var t_this = this;
+    var j = 1;
+    ListContainer.find('tr').remove();
+    if (list_data.length == 0) {
+        ListContainer.empty();
+        var tableRow4 = $(
+            '#no-record-templates .table-no-content .table-row-no-content'
+        );
+        var clone4 = tableRow4.clone();
+        $('.no_records', clone4).text('No Records Found');
+        ListContainer.append(clone4);
+    } else {
+        $.each(list_data, function(idx, data) {
+            var balance = data.no_of_documents - data.uploaded_documents;
+            var cloneRow = ListRowTemplate.clone();
+            var cname_split = data.csv_name.split("_");
+            cname_split.pop();
+            var cname = cname_split.join("_");
+            $('.sno', cloneRow).text(j);
+            $('.csv-name', cloneRow).text(cname);
+            $('.uploaded-on', cloneRow).text(data.uploaded_on);
+            $('.tot-records', cloneRow).text(data.total_records);
+            $('.req-docs', cloneRow).text(data.total_documents);
+            $('.uploaded-docs', cloneRow).text(data.uploaded_documents);
+            $('.remaining-docs', cloneRow).text(data.remaining_documents);
+            csvId = data.csv_id;
+            docNames = data.doc_names;
+            $('.upload i', cloneRow).on('click', function() {
+                t_this.showEdit(data);
+            });
+            ListContainer.append(cloneRow);
+            j += 1;
+        });
+    }
+    $('[data-toggle="tooltip"]').tooltip();
+};
+
+BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
+    // this.showAddScreen();
+
+    // var uploadedCsvName = data.csv_name
+    // var csv_split_name = uploadedCsvName.substring(0, uploadedCsvName.lastIndexOf("_"))
+    // countryAc.val(data.c_name);
+    // countryVal.val(data.c_id);
+    // domainAc.val(data.d_name);
+    // domainVal.val(data.d_id);
+    // this.changeTxttoLabel(data.c_name, data.d_name, csv_split_name + ".csv")
+    // UploadDocument.show();
+    // DocumentSummary.show();
+
+    // DocumentTotal.text(data.no_of_documents);
+    // DocumentUploaded.text(data.uploaded_documents);
+    // DocumentRemaining.text(
+    //     parseInt(data.no_of_documents) - parseInt(data.uploaded_documents)
+    // );
+
+
+};
+
+
 BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
     displayMessage(error);
 };
@@ -413,7 +493,7 @@ function submitUpload() {
 
     var args = {
         "new_csv_id": parseInt($('#hdnCsvId').val()),
-        "legal_entity_id": parseInt(LegalEntityId.val())
+        "legal_entity_id": parseInt(LEGALENTITYIDUPLOAD.val())
     };
 
     buClient.saveBulkRecords(args, function(error, data) {
@@ -448,6 +528,7 @@ function file_upload_rul() {
 }
 
 function resetAdd() {
+
 
 }
 
@@ -534,6 +615,7 @@ var myDropzone = new Dropzone("div#myDrop", {
 
 function BulkCompletedTaskCurrentYear() {
     this._ActionMode = null;
+    this._ListDataForView = [];
 }
 
 buCtPage = new BulkCompletedTaskCurrentYear();
@@ -541,4 +623,5 @@ buCtPage = new BulkCompletedTaskCurrentYear();
 //initialization & master list filter
 $(document).ready(function() {
     pageControls();
+    buCtPage.showList();
 });
