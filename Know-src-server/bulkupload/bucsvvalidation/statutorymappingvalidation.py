@@ -1684,6 +1684,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             print str(traceback.format_exc())
             raise (e)
 
+    def remove_declined_docs(self, declined_info, user_id, csv_id):
+        print "declined_info-> ", declined_info
+
     def format_download_process_initiate(self, csvid):
         self.file_server_approve_call(csvid)
         self._stop = False
