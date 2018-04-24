@@ -514,11 +514,10 @@ def fetch_rejected_assign_sm_data(db, session_user, user_id, client_id,
 
     args = [client_id, le_id, d_id, unit_id, user_id]
     data = db.call_proc('sp_rejected_assign_sm_reportdata', args)
-    uploaded_on = ''
-    approved_on = ''
-    rejected_on = ''
-
     for d in data:
+        uploaded_on = ''
+        approved_on = ''
+        rejected_on = ''
         if(d["uploaded_on"] is not None):
             uploaded_on = datetime.datetime.strptime(
                 str(d["uploaded_on"]),
@@ -647,10 +646,10 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
     if(data):
         report_data = data[0]
         total_record = data[1][0]["total"]
-        approved_on = ''
-        uploaded_on = ''
-        rejected_on = ''
         for d in report_data:
+            approved_on = ''
+            uploaded_on = ''
+            rejected_on = ''
 
             if(d["uploaded_on"] != ''):
                 uploaded_on = datetime.datetime.strptime(

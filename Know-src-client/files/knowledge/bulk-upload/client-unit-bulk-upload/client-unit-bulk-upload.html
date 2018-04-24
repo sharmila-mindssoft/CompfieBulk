@@ -14,7 +14,7 @@
 						<div class="portlet">
 							<div class="portlet-heading bg-info">
 								<h3 class="portlet-title">
-									Client Unit Bulk Upload
+									Client Unit - Bulk Upload
 								</h3>
 								<div class="clearfix"></div>
 							</div>
@@ -44,7 +44,8 @@
 											</div>
 											<div class="form-group col-sm-12 text-center">
 												<div class="col-sm-12 col-sm-offset-1">
-													<button class="btn btn-primary waves-effect waves-light animateprogress uploadbtn" type="button" data-toggle="modal" data-target="#myModal" id="showtoast"> Upload </button>
+													<button class="btn btn-primary waves-effect waves-light animateprogress uploadbtn" type="button" id="showtoast"> Upload </button>
+													<!-- data-target="#myModal"  data-toggle="modal"-->
 													<div class="download-options">
 													<a class="btn btn-primary btn-trans invaliddata dropbtn" id="invalid_dwnload" onclick="showDownloadList()">  <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
 													<div id="myDropdown" class="dropdown-content">
@@ -70,25 +71,25 @@
 												</div>
 												<div class="col-sm-6 text-danger no-padding">
 													<div class="form-group bg-muted">
-														<h5 class="col-sm-12 text-danger header-title">Invalid Data Summary</h5>
+														<h5 class="col-sm-12 text-danger header-title">Invalid Data - Summary</h5>
 													</div>
 													<ul class="p-l-20">
-														<li>Mandatory field validation:
+														<li>Mandatory Field Blank:
 															<b><span class="mandatoryErrors">0</span></b>
 														</li>
-														<li>Duplicate Data validation:
+														<li>Duplicate Unit Code:
 															<b><span class="duplicateErrors">0</span></b>
 														</li>
-														<li>Status validation:
+														<li>Master Data Inactive:
 															<b><span class="statusErrors">0</span></b>
 														</li>
-														<li>Max. length validation:
+														<li>Max. Length Exceeded:
 															<b><span class="lengthErrors">0</span></b>
 														</li>
-														<li>Invalid Data validation:
+														<li>Invalid Data:
 															<b><span class="invalidErrors">0</span></b>
 														</li>
-														<li>Max. Unit Count Validation:
+														<li>Max. Unit Count Exceeded:
 															<b><span class="UnitCountErrors">0</span></b>
 														</li>
 													</ul>
@@ -111,7 +112,7 @@
 		</div>
 	</div>
 	<!-- Modal -->
-	<div class="modal fade" id="myModal" role="dialog">
+	<div class="modal fade" id="myModal" role="dialog" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog">
 		  <!-- Modal content-->
 			<div class="modal-content">

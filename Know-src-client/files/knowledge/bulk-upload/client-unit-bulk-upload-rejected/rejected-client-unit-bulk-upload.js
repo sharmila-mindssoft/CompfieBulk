@@ -116,6 +116,7 @@ function loadCountwiseResult(data) {
         rejectedReason = data[entity].rejected_reason;
         declinedCount = data[entity].declined_count;
         rejectedFileName = data[entity].rejected_file;
+        reasonForRejection = '';
 
         if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
             removeHrefTag = '';

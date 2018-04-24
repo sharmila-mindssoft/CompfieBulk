@@ -497,7 +497,7 @@ bu_api_params = {
         'validation_method': is_alpha_numeric, 'is_optional': False
     },
     'task_type': {
-        'type': 'STRING', 'length': 25,
+        'type': 'STRING', 'length': 150,
         'validation_method': is_alphabet, 'is_optional': False
     },
     'approved_count': {
@@ -831,5 +831,9 @@ bu_api_params = {
         'is_optional': False,
         'module_name': assign_statutory,
         'class_name': 'DomainExecutiveInfo'
+    },
+    'new_csv_name': {
+        'type': 'STRING', 'length': 100,
+        'validation_method': is_file_name, 'is_optional': True
     },
 }

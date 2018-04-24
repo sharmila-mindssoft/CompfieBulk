@@ -1103,7 +1103,7 @@ class GetStatutoryMappingCsvUploadedListSuccess(Response):
 class UploadStatutoryMappingCSVValidSuccess(Response):
     def __init__(
         self, csv_id, csv_name, total, valid, invalid,
-        doc_count, doc_names
+        doc_count, doc_names, new_csv_name
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
@@ -1112,18 +1112,21 @@ class UploadStatutoryMappingCSVValidSuccess(Response):
         self.invalid = invalid
         self.doc_count = doc_count
         self.doc_names = doc_names
+        self.new_csv_name = new_csv_name
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "csv_id", "csv_name",
-            "total", "valid", "invalid", "doc_count", "doc_names"
+            "total", "valid", "invalid", "doc_count", "doc_names",
+            "new_csv_name"
         ])
 
         return UploadStatutoryMappingCSVValidSuccess(
             data.get("csv_id"), data.get("csv_name"),
             data.get("total"), data.get("valid"), data.get("invalid"),
-            data.get("doc_count"), data.get("doc_names")
+            data.get("doc_count"), data.get("doc_names"),
+            data.get("new_csv_name")
         )
 
     def to_inner_structure(self):
@@ -1134,7 +1137,8 @@ class UploadStatutoryMappingCSVValidSuccess(Response):
             "valid": self.valid,
             "invalid": self.invalid,
             "doc_count": self.doc_count,
-            "doc_names": self.doc_names
+            "doc_names": self.doc_names,
+            "new_csv_name": self.new_csv_name
         }
 
 
@@ -1526,6 +1530,19 @@ class CsvFileCannotBeBlank(Response):
     def to_inner_structure(self):
         return {}
 
+class RejectionMaxCountReached(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return RejectionMaxCountReached()
+
+    def to_inner_structure(self):
+        return {}
+
+
 
 def _init_Response_class_map():
     classes = [
@@ -1548,7 +1565,8 @@ def _init_Response_class_map():
         SaveActionSuccess,
         CsvFileExeededMaxLines,
         InvalidCsvFile,
-        CsvFileCannotBeBlank
+        CsvFileCannotBeBlank,
+        RejectionMaxCountReached
     ]
     class_map = {}
     for c in classes:

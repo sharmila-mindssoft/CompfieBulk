@@ -9,7 +9,9 @@ var PasswordSubmitButton = $('.password-submit');
 var CancelButton = $("#btn-sm-view-cancel");
 var ViewListContainer = $('.tbody-sm-approve-view');
 var ViewListRowTemplate = $('#templates .table-sm-approve-info tr');
-var FinalSubmit = $('#btn-final-submit')
+var FinalSubmit = $('#btn-final-submit');
+var FILTERED_DATA = $('.filtered-data');
+var CLEAR_FILTERED = $(".clear-filtered");
 
 var ItemsPerPage = $('#items_per_page');
 var PaginationView = $('.pagination-view');
@@ -365,7 +367,8 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             $('.approve-checkbox', cloneRow).on('change', function(e){
 
                 if (e.target.checked){
-                    if(data.approve_count > 0 && data.rej_count > 0){
+
+                    if(data.rej_count > 0){
                         approve_reject_count['approve_count'] = data.approve_count
                         approve_reject_count['rej_count'] = data.rej_count
                         approve_reject_count['csv_id'] = data.csv_id
@@ -500,11 +503,9 @@ ApproveBulkMapping.prototype.actionFromList = function(
     tThis.DomainId = parseInt(domainVal.val());
     var showPopup = false;
     console.log("csvId"+ JSON.stringify(csvId));
-
     if(typeof csvId != "number"){
         if(csvId["TYPE"].length > 0 && csvId["TYPE"] == "approve"){
-            if(csvId["rej_count"] > 0 && csvId["approve_count"] > 0){
-                console.log("IN IFFFFFFFFFFFFFFFFFFFFFFF")
+            if(csvId["rej_count"] > 0){
                 tThis.CSVID = csvId["csv_id"];
                 csvId = tThis.CSVID;
                 swal({
@@ -624,10 +625,15 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     acCompDoc.val('');
     acCompDesc.val('');
     acTaskType.val('');
-    MultiSelectFrequency.val('');
+    MultiSelectFrequency.find("option").remove();
+    MultiSelectFrequency.multiselect('destroy');
+
     $('input[id="verified-data"]').removeAttr("checked");
     $('input[id="pending-data"]').removeAttr("checked");
     $('input[id="all-data"]').prop("checked", true);
+
+    CLEAR_FILTERED.hide();
+    FILTERED_DATA.empty();
 
     onCurrentPage = 1;
     j = 1;
@@ -1469,7 +1475,8 @@ function PageControls() {
     });
 
     GoButton.click(function(){
-
+        FILTERED_DATA.empty();
+        CLEAR_FILTERED.hide();
         var filtered = '';
         appendFilter = function(val) {
             if (filtered == '') {
@@ -1537,10 +1544,56 @@ function PageControls() {
             appendFilter(tt);
         }
 
-        $('.filtered-data').text(filtered);
+
+        FILTERED_DATA.text(filtered);
+        if(filtered.split("|").length >= 1)
+        {
+            CLEAR_FILTERED.show();
+        }
+        else
+        {
+            FILTERED_DATA.empty();
+            CLEAR_FILTERED.hide()
+        }
+
         onCurrentPage = 1;
         buApprovePage.renderViewFromFilter();
 
+    });
+    CLEAR_FILTERED.click(function() {
+        searchStatutory.val('');
+        searchOrganization.val('');
+        searchNature.val('');
+        searchProvision.val('');
+        searchCTask.val('');
+        searchCDoc.val('');
+        searchTaskId.val('');
+        searchCDesc.val('');
+        searchPCons.val('');
+        searchTaskType.val('');
+        searchReferLink.val('');
+        searchFreq.val('');
+        searchFormat.val('');
+        searchGeography.val('');
+
+        acOrgName.val('');
+        acNature.val('');
+        acStatutory.val('');
+        acGeoLocation.val('');
+        acCompTask.val('');
+        acTaskId.val('');
+        acCompDoc.val('');
+        acCompDesc.val('');
+        acTaskType.val('');
+        MultiSelectFrequency.find("option").remove();
+        MultiSelectFrequency.multiselect('destroy');
+        
+        $('input[id="verified-data"]').removeAttr("checked");
+        $('input[id="pending-data"]').removeAttr("checked");
+        $('input[id="all-data"]').prop("checked", true);
+        CLEAR_FILTERED.hide();
+        FILTERED_DATA.empty();
+        buApprovePage.renderViewFromFilter();
     });
 
     FinalSubmit.click(function(){

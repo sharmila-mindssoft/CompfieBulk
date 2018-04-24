@@ -544,7 +544,7 @@ def perform_bulk_client_unit_declination(db, request_frame, session_user):
                     system_declined_count
                 )
                 clientUnitObj.make_rejection(
-                    csv_id, system_declined_count, system_declined_error
+                    csv_id, 1, system_declined_count, system_declined_error
                 )
                 clientUnitObj.save_manager_message(
                     1, clientUnitObj._csv_name, clientUnitObj._group_name,
@@ -664,11 +664,7 @@ def submit_bulk_client_unit_list_action(db, request_frame, session_user):
             system_declined_count, system_declined_error, \
                 manual_rejection_count = \
                 clientUnitObj.check_for_system_declination_errors()
-            if len(system_declined_count) == 0 and manual_rejection_count > 0:
-                return bu_cu.ReturnDeclinedCount(
-                    len(system_declined_count), int(manual_rejection_count)
-                )
-            elif (
+            if (
                     len(system_declined_count) > 0 and
                     manual_rejection_count == 0
             ):
@@ -736,7 +732,7 @@ def confirm_submit_bulk_client_unit_list_action(
         if len(system_declined_count) > 0:
             clientUnitObj.process_data_to_main_db_insert(system_declined_count)
             clientUnitObj.make_rejection(
-                csv_id, system_declined_count, system_declined_error
+                csv_id, 4, system_declined_count, system_declined_error
             )
             clientUnitObj.save_manager_message(
                 1, clientUnitObj._csv_name, clientUnitObj._group_name,
