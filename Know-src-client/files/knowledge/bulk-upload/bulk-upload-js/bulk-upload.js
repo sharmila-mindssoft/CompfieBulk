@@ -602,3 +602,11 @@ function submitAssignStatutoryAction(csvid, cl_id, le_id, pwd, callback) {
     ];
     apiRequest("bu/assign_statutory", request, callback);
 }
+
+function getDomainUserInfo(callback) {
+  var request = [
+      'GetDomainExecutiveDetails',
+      {}
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
