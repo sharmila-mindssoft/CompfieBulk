@@ -620,7 +620,7 @@ def convertArrayToString(array_ids):
 
 def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
                                          clientGroupId, legalEntityId, unitId,
-                                         d_id, from_date, to_date,
+                                         domainIds, from_date, to_date,
                                          record_count, page_count,
                                          dependent_users, user_category_id):
     report_list = []
@@ -628,13 +628,16 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
     if(unitId is None):
         unitId = ''
 
+    if(domainIds is not None):
+        domain_ids = ",".join(map(str, domainIds))
+
     if(len(dependent_users) >= 1):
         user_ids = ",".join(map(str, dependent_users))
     else:
         user_ids = user_id
 
     args = [clientGroupId, legalEntityId, unitId, from_date, to_date,
-            record_count, page_count, str(user_ids), d_id]
+            record_count, page_count, str(user_ids), domain_ids]
 
     procedure = 'sp_assgined_statutory_bulk_reportdata'
     data = db.call_proc_with_multiresult_set(procedure, args, expected_result)

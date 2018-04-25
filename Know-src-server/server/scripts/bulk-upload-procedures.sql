@@ -1,7 +1,5 @@
 DROP FUNCTION IF EXISTS `current_ist_datetime`;
-
 DELIMITER //
-
 CREATE FUNCTION `current_ist_datetime`() RETURNS datetime
 BEGIN
     DECLARE current_ist_date datetime;
@@ -9,9 +7,17 @@ BEGIN
 
 RETURN current_ist_date;
 END //
-
 DELIMITER ;
 
+DROP FUNCTION IF EXISTS `SPLIT_STR`;
+CREATE FUNCTION `SPLIT_STR`(
+  x VARCHAR(1000),
+  delim VARCHAR(12),
+  pos INT
+) RETURNS varchar(1000) CHARSET latin1
+RETURN REPLACE(SUBSTRING(SUBSTRING_INDEX(x, delim, pos),
+       LENGTH(SUBSTRING_INDEX(x, delim, pos -1)) + 1),
+       delim, '');
 -- --------------------------------------------------------------------------------
 -- Returns uploaded csv infor
 -- --------------------------------------------------------------------------------
@@ -509,7 +515,7 @@ BEGIN
     ORDER BY t1.uploaded_on DESC;
 END //
 
-DELIMITER ;
+/*DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_assgined_statutory_bulk_reportdata`;
 DELIMITER //
 CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(
@@ -521,9 +527,13 @@ CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(
   IN `from_limit` int,
   IN `to_limit` int,
   IN `user_ids` varchar(100),
-  IN `domain_id` int(11))
+  IN `domain_id` varchar(50))
 BEGIN
-IF (unit_id='') THEN
+
+  DROP TEMPORARY TABLE IF EXISTS my_temp_table;
+
+  Call split_comma (domain_id);    
+
   SELECT t1.csv_assign_statutory_id, t1.domain_names,
     t1.uploaded_by,
     t1.uploaded_on,
@@ -540,28 +550,57 @@ IF (unit_id='') THEN
     t1.rejected_reason,
     t1.declined_count
   FROM tbl_bulk_assign_statutory_csv AS t1
+  LEFT JOIN tbl_bulk_assign_statutory AS t2 ON t1.csv_assign_statutory_id = t2.csv_assign_statutory_id
+  inner join my_temp_table t3 on t1.domain_ids = t3.comma_stuff
   WHERE
   t1.approve_status>0 AND
   t1.client_id = client_group_id AND
   t1.legal_entity_id = legal_entity_id AND
+  IF(unit_id <> '', t2.unit_code=unit_id, 1) AND
    FIND_IN_SET(t1.uploaded_by, user_ids) AND
-   FIND_IN_SET(domain_id, t1.domain_ids) AND
+   -- FIND_IN_SET(domain_id, t1.domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC
   LIMIT from_limit, to_limit;
 
   SELECT count(t1.csv_assign_statutory_id) as total
   FROM tbl_bulk_assign_statutory_csv AS t1
+  LEFT JOIN tbl_bulk_assign_statutory AS t2 ON t1.csv_assign_statutory_id = t2.csv_assign_statutory_id
+  inner join my_temp_table t3 on t1.domain_ids = t3.comma_stuff
   WHERE
   t1.approve_status>0 AND
   t1.client_id = client_group_id AND
   t1.legal_entity_id = legal_entity_id AND
+  IF(unit_id <> '', t2.unit_code=unit_id, 1) AND
   FIND_IN_SET(t1.uploaded_by, user_ids) AND
-  FIND_IN_SET(domain_id, t1.domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
   ORDER BY t1.uploaded_on DESC;
-ELSE
-  SELECT t2.csv_assign_statutory_id, t1.domain_names,
+  
+  delete from my_temp_table;
+
+END //
+DELIMITER ;
+*/
+DELIMITER ;
+DROP PROCEDURE IF EXISTS `sp_assgined_statutory_bulk_reportdata`;
+DELIMITER //
+CREATE PROCEDURE `sp_assgined_statutory_bulk_reportdata`(
+  IN `client_group_id` int(11),
+  IN `legal_entity_id` int(11),
+  IN `unit_id` varchar(100),
+  IN `from_date` date,
+  IN `to_date` date,
+  IN `from_limit` int,
+  IN `to_limit` int,
+  IN `user_ids` varchar(100),
+  IN `domain_id` varchar(50))
+BEGIN
+
+DROP TEMPORARY TABLE IF EXISTS my_temp_table;
+
+  Call split_comma (domain_id);    
+
+  SELECT t1.csv_assign_statutory_id, t1.domain_names,
     t1.uploaded_by,
     t1.uploaded_on,
     LEFT(t1.csv_name, LENGTH(t1.csv_name) - LOCATE('_', REVERSE(t1.csv_name))) AS csv_name,
@@ -577,34 +616,36 @@ ELSE
     t1.rejected_reason,
     t1.declined_count
   FROM tbl_bulk_assign_statutory_csv AS t1
-  INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
+  -- LEFT JOIN tbl_bulk_assign_statutory AS t2 ON t1.csv_assign_statutory_id = t2.csv_assign_statutory_id
+  inner join my_temp_table t3 on t1.domain_ids = t3.comma_stuff
   WHERE
-   t1.approve_status>0 AND
-   t2.unit_code=unit_id AND
-   t1.client_id = client_group_id AND
-   t1.legal_entity_id = legal_entity_id AND
-   FIND_IN_SET(t1.uploaded_by, user_ids) AND
-   FIND_IN_SET(domain_id, t1.domain_ids) AND
+  t1.approve_status>0 AND
+  t1.client_id = client_group_id AND
+  t1.legal_entity_id = legal_entity_id AND
+  -- IF(unit_id <> '', t2.unit_code=unit_id, 1) AND
+  FIND_IN_SET(t1.uploaded_by, user_ids) AND
+   -- FIND_IN_SET(domain_id, t1.domain_ids) AND
   (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
-  GROUP BY t2.csv_assign_statutory_id
   ORDER BY t1.uploaded_on DESC
   LIMIT from_limit, to_limit;
 
-  SELECT count(DISTINCT t2.csv_assign_statutory_id) as total
+  SELECT count(t1.csv_assign_statutory_id) as total
   FROM tbl_bulk_assign_statutory_csv AS t1
-  INNER JOIN tbl_bulk_assign_statutory AS t2 ON t2.csv_assign_statutory_id=t1.csv_assign_statutory_id
+  -- LEFT JOIN tbl_bulk_assign_statutory AS t2 ON t1.csv_assign_statutory_id = t2.csv_assign_statutory_id
+  inner join my_temp_table t3 on t1.domain_ids = t3.comma_stuff
   WHERE
   t1.approve_status>0 AND
-  t2.unit_code=unit_id AND
   t1.client_id = client_group_id AND
   t1.legal_entity_id = legal_entity_id AND
-  FIND_IN_SET(domain_id, t1.domain_ids) AND
+  -- IF(unit_id <> '', t2.unit_code=unit_id, 1) AND
   FIND_IN_SET(t1.uploaded_by, user_ids) AND
-  (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date));
-END IF;
+  (DATE_FORMAT(date(t1.uploaded_on),"%Y-%m-%d") BETWEEN date(from_date) and date(to_date))
+  ORDER BY t1.uploaded_on DESC;
+  
+  delete from my_temp_table;
+
 END //
 DELIMITER ;
-
 
 -- --------------------------------------------------------------------------------
 -- To delete the rejected statutory mapping record by csv id
@@ -2098,5 +2139,25 @@ BEGIN
 
     update  tbl_bulk_past_data_csv set upload_status = 1 where
       uploaded_documents = total_documents and csv_past_id = csvid;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `split_comma`;
+DELIMITER //
+CREATE PROCEDURE `split_comma`(IN fullstr varchar(5000))
+BEGIN
+      DECLARE a INT Default 0 ;
+      DECLARE str VARCHAR(2550);
+      DROP TEMPORARY TABLE IF EXISTS my_temp_table;
+    CREATE TEMPORARY TABLE my_temp_table (comma_stuff VARCHAR(5000));
+      simple_loop: LOOP
+         SET a=a+1;
+         SET str=SPLIT_STR(fullstr,",",a);
+         IF str='' THEN
+            LEAVE simple_loop;
+         END IF;
+
+         insert into my_temp_table values (str);
+   END LOOP simple_loop;
 END //
 DELIMITER ;
