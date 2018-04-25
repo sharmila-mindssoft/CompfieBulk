@@ -1271,7 +1271,7 @@ def _init_Response_class_map():
         ExportToCSVSuccess, UpdateMessageStatusSuccess, GetClientAuditTrailSuccess,
         GetClientLoginTraceFilterSuccess, GetClientLoginTraceSuccess,
         DatabaseConnectionFailure,
-        GetKExecutiveDetailsSuccess, GetTechnoDetailsSuccess
+        GetKExecutiveDetailsSuccess
     ]
     class_map = {}
     for c in classes:
