@@ -130,10 +130,10 @@ def process_bu_client_units_request(request, db, session_user):
             db, request_frame, session_user
         )
 
-    if type(request_frame) is generalprotocol.GetTechnoUserDetails:
+    if type(request_frame) is bu_cu.GetTechnoUserDetails:
         result = process_get_techno_users(db, request_frame, session_user)
 
-    if type(request_frame) is technomasters.GetClientGroupsList:
+    if type(request_frame) is bu_cu.GetClientGroupsList:
         result = get_client_groups_for_client_unit_bulk_upload(
             db, request_frame, session_user
         )
@@ -842,7 +842,7 @@ def process_get_techno_users(db, request, session_user):
 
 
 def get_client_groups_for_client_unit_bulk_upload(db, request, session_user):
-    groups = get_cliens_for_client_unit_bulk_upload(db, session_user)
+    groups = get_cliens_for_client_unit_bulk_upload(db, session_user.user_id())
     return bu_cu.GetClientGroupsListSuccess(
         client_group_list=groups
     )
