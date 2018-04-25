@@ -44,7 +44,7 @@ __all__ = [
 ##########################################################################
 
 
-def connect_knowledge_db(db):
+def connect_knowledge_db():
 
     try:
         _source_db_con = mysql.connector.connect(
@@ -768,6 +768,8 @@ def get_cliens_for_client_unit_bulk_upload(db, session_user):
     groups = _source_db.call_proc_with_multiresult_set(
         "sp_client_groups_for_client_unit_bulk_upload", (session_user,), 2
     )
+    print "groups"
+    print groups
     return return_client_group(groups[1])
 
 ########################################################
