@@ -10,7 +10,7 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
 from ..bulkconstants import (
-    MAX_REJECTED_COUNT, KM_USER_CATEGORY, KE_USER_CATEGORY
+    MAX_REJECTED_COUNT
 )
 
 __all__ = [
@@ -559,13 +559,11 @@ def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
     domain_id_list = ",".join(map(str, domain_ids))
     country_id_list = ",".join(map(str, country_ids))
 
-    if(user_category_id == KM_USER_CATEGORY):
-        user_ids = ",".join(map(str, dependent_users))
-    elif(user_category_id == KE_USER_CATEGORY and
-         user_category_id != KM_USER_CATEGORY):
+    if(len(dependent_users) >= 1):
         user_ids = ",".join(map(str, dependent_users))
     else:
         user_ids = user_id
+
     args = [user_ids, country_id_list, domain_id_list, from_date, to_date,
             record_count, page_count]
     data = db.call_proc_with_multiresult_set(

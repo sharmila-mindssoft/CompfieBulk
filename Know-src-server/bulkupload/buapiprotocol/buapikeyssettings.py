@@ -856,24 +856,6 @@ bu_api_params = {
         'validation_method': None,
         'is_optional': False
     },
-    'bu_show_remove_icon': {
-        'type': 'INT',
-        'length': None,
-        'validation_method': None,
-        'is_optional': False
-    },
-    'bu_system_reject_status': {
-        'type': 'INT',
-        'length': None,
-        'validation_method': None,
-        'is_optional': False
-    },
-    'bu_fully_reject_status': {
-        'type': 'INT',
-        'length': None,
-        'validation_method': None,
-        'is_optional': False
-        },
     'KnowledgeManager': {
         'type': 'INT',
         'length': None,

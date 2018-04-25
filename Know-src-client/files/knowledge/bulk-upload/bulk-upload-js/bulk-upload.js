@@ -7,9 +7,7 @@ var DM_USER_CATEGORY;
 var DE_USER_CATEGORY;
 var SYSTEM_REJECTED_BY;
 var REJECTED_FILE_DOWNLOADCOUNT;
-var SHOW_REMOVE_ICON;
-var SYSTEM_REJECT_ACTION_STATUS;
-var IS_FULLY_REJECT_ACTION_STATUS;
+
 /********* Delcare Constants Variables For Report and Rejected lists ****/
 
 function getStatutoryMappingCsvList(callback) {
@@ -651,9 +649,6 @@ function getLoadConstants()
 
       SYSTEM_REJECTED_BY = data.bu_system_rejected_by;
       REJECTED_FILE_DOWNLOADCOUNT = data.bu_rejected_download_count;
-      SHOW_REMOVE_ICON = data.bu_show_remove_icon;
-      SYSTEM_REJECT_ACTION_STATUS = data.bu_system_reject_status;
-      IS_FULLY_REJECT_ACTION_STATUS = data.bu_fully_reject_status;
     }
 
   });
