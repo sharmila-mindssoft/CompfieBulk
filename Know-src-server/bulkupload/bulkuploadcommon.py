@@ -1,4 +1,3 @@
-import sys
 import os
 import io
 import uuid
@@ -6,7 +5,7 @@ import csv
 import xlsxwriter
 import pyexcel
 
-from server.constants import(
+from bulkconstants import (
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
     REJECTED_DOWNLOAD_PATH, REJECTED_DOWNLOAD_BASE_PATH
 )
@@ -29,7 +28,7 @@ def remove_uploaded_file(file_path):
 
 def frame_file_name(file_name):
     return "%s_%s.csv" % (
-            file_name, new_uuid()
+        file_name, new_uuid()
     )
 
 ########################################################
@@ -49,6 +48,7 @@ def frame_file_name(file_name):
         result: string
 '''
 ########################################################
+
 
 def convert_base64_to_file(src_path, file_name, file_content):
     fileSplitString = file_name.split('.')
@@ -79,25 +79,26 @@ def convert_base64_to_file(src_path, file_name, file_content):
 '''
 ########################################################
 
+
 def read_data_from_csv(file_name):
     mapped_data = []
     headerrow = []
     csv_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
     file_path = os.path.join(csv_path, file_name)
     if os.path.exists(file_path):
-        with open(file_path, "rb") as fn :
+        with open(file_path, "rb") as fn:
             rows = csv.reader(
                 fn, quotechar='"', delimiter=',',
                 quoting=csv.QUOTE_ALL, skipinitialspace=True
             )
-            for idx, r in enumerate(rows) :
-                if idx == 0 :
-                    for c in r :
+            for idx, r in enumerate(rows):
+                if idx == 0:
+                    for c in r:
                         c = c.replace('*', '')
                         headerrow.append(c.strip())
-                else :
+                else:
                     data = {}
-                    for cdx, c in enumerate(r) :
+                    for cdx, c in enumerate(r):
                         val = c.strip()
                         data[headerrow[cdx]] = val
                     mapped_data.append(data)
@@ -209,7 +210,7 @@ def generate_valid_file(src_file_name):
 
         if f == "txt":
             general_txt_file(src_file, new_dst_file_name)
-        else :
+        else:
             pyexcel.save_as(
                 file_name=src_file, dest_file_name=new_dst_file_name
             )
@@ -241,7 +242,7 @@ def general_txt_file(src_file, dst_txt_file_name):
     with open(dst_txt_file_name, "w") as my_output_file:
         with open(src_file, "r") as my_input_file:
             for row in csv.reader(my_input_file):
-                my_output_file.write(" ".join(row)+'\n')
+                my_output_file.write(" ".join(row) + '\n')
 
 
 def write_download_data_to_excel(

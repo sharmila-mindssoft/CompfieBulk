@@ -8,8 +8,9 @@ from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+)
+from bulkupload.bulkconstants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
-
 )
 from server.database.forms import (
     frmAssignStatutoryBulkUpload,
@@ -17,7 +18,7 @@ from server.database.forms import (
 )
 from keyvalidationsettings import (
     csv_params_as, parse_csv_dictionary_values_as
-    )
+)
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type
 )

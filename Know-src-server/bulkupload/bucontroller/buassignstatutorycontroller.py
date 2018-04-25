@@ -1,10 +1,10 @@
 import traceback
 from ..bucsvvalidation.assignstatutoryvalidation import (
     ValidateAssignStatutoryCsvData, ValidateAssignStatutoryForApprove
-    )
+)
 from ..bucsvvalidation.rejectedstatutorymapping import (
     ValidateRejectedDownloadBulkData
-    )
+)
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 from ..budatabase.buassignstatutorydb import *
@@ -15,7 +15,7 @@ from ..bulkuploadcommon import (
     remove_uploaded_file
 )
 from ..bulkexport import ConvertJsonToCSV
-from server.constants import (
+from bulkupload.bulkconstants import (
     BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT, CSV_MAX_LINES
 )
 import datetime

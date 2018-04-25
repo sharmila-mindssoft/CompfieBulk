@@ -7,10 +7,11 @@ import mysql.connector
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+)
+from ..bulkconstants import (
     MAX_REJECTED_COUNT, KM_USER_CATEGORY, KE_USER_CATEGORY
 )
-
 
 __all__ = [
     "get_uploaded_statutory_mapping_csv_list",
@@ -50,12 +51,15 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
     csv_data = []
     upload_more = True
     doc_names = {}
-    data = db.call_proc_with_multiresult_set("sp_statutory_mapping_csv_list", [session_user], 3)
+    data = db.call_proc_with_multiresult_set(
+        "sp_statutory_mapping_csv_list", [session_user], 3
+    )
     print "DATA in DB file", data
 
     print "Len DATA in DB file", len(data)
+    print "MAX_REJECTED_COUNT->> ", MAX_REJECTED_COUNT
     if len(data) == 3:
-        if data[0][0]["max_count"] > MAX_REJECTED_COUNT:
+        if data[0][0]["max_count"] >= MAX_REJECTED_COUNT:
             upload_more = False
         else:
             upload_more = True
@@ -104,6 +108,7 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
 '''
 ########################################################
 
+
 def save_mapping_csv(db, args):
     newid = db.call_insert_proc("sp_statutory_mapping_csv_save", args)
     return newid
@@ -126,6 +131,7 @@ def save_mapping_csv(db, args):
         result: Boolean
 '''
 ########################################################
+
 
 def save_mapping_data(db, csv_id, csv_data):
     try:
@@ -187,6 +193,7 @@ def save_mapping_data(db, csv_id, csv_data):
 '''
 ########################################################
 
+
 def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
     csv_data = []
     _source_db_con = mysql.connector.connect(
@@ -247,6 +254,7 @@ def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
         result: Object
 '''
 ########################################################
+
 
 def get_filters_for_approve(db, csv_id):
     data = db.call_proc_with_multiresult_set(
@@ -432,6 +440,7 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
         upload_on, csv_id, mapping_data, total
     )
 
+
 def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     f_count = request_frame.f_count
@@ -497,6 +506,7 @@ def update_approve_action_from_list(db, csv_id, action, remarks, session_user,
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
 
+
 def delete_action_after_approval(db, csv_id):
     try:
         args = [csv_id]
@@ -509,7 +519,6 @@ def delete_action_after_approval(db, csv_id):
         )
         logger.logKnowledge("error", "update action from list", str(e))
         raise fetch_error()
-
 
 
 def save_action_from_view(db, csv_id, sm_id, action, remarks, session_user):
@@ -525,6 +534,7 @@ def save_action_from_view(db, csv_id, sm_id, action, remarks, session_user):
         )
         logger.logKnowledge("error", "update action from view", str(e))
         raise fetch_error()
+
 
 def get_pending_action(db, csv_id):
     data = db.call_proc("sp_statutory_action_pending_count", [csv_id])

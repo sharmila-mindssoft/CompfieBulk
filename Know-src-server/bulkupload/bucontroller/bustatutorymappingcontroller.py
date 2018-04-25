@@ -35,7 +35,7 @@ from ..bulkuploadcommon import (
 )
 from ..bulkexport import ConvertJsonToCSV
 import datetime
-from server.constants import (
+from ..bulkconstants import (
     BULKUPLOAD_CSV_PATH, CSV_MAX_LINES, MAX_REJECTED_COUNT
 )
 # from server.exceptionmessage import fetch_run_error
@@ -186,7 +186,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         if request_frame.csv_size > 0:
             pass
 
-        if get_rejected_sm_file_count(db, session_user) > MAX_REJECTED_COUNT:
+        if get_rejected_sm_file_count(db, session_user) >= MAX_REJECTED_COUNT:
             return bu_sm.RejectionMaxCountReached()
 
         # save csv file
@@ -441,7 +441,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         print "is declined -> ", is_declined
         if len(is_declined.keys()) > 0:
             cObj.make_rejection(is_declined, user_id)
-            cObj.remove_declined_docs(is_declined, user_id, csv_id)
+            # cObj.remove_declined_docs(is_declined, user_id, csv_id)
             if cObj._doc_count > 0:
                 cObj.format_download_process_initiate(csv_id)
             cObj.save_manager_message(

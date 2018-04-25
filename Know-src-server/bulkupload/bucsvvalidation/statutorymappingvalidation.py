@@ -13,8 +13,11 @@ from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    KNOWLEDGE_FORMAT_PATH
+)
+
+from ..bulkconstants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, TEMP_FILE_SERVER,
-    KNOWLEDGE_FORMAT_PATH,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
     BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME
 )
@@ -25,7 +28,6 @@ from server.database.forms import (
     frmStatutoryMappingBulkUpload,
     frmApproveStatutoryMappingBulkUpload
 )
-from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 
 from server.exceptionmessage import process_error
 from server.database.knowledgetransaction import save_messages
@@ -646,7 +648,7 @@ class StatutorySource(object):
             else:
                 t_days = None
 
-            if(r_by is not None and r_by == 2):
+            if(r_by is not None and r_by == 2 and s_month is not None):
                 end_of_month = calendar.mdays[s_month]
                 s_date = int(end_of_month)
 

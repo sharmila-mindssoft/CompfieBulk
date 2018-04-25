@@ -3,9 +3,9 @@ import datetime
 
 from server.exceptionmessage import fetch_error
 from server import logger
-from server.constants import MAX_REJECTED_COUNT
-from server.constants import (
-    TM_USER_CATEGORY, TE_USER_CATEGORY
+
+from bulkupload.bulkconstants import (
+    TM_USER_CATEGORY, TE_USER_CATEGORY, MAX_REJECTED_COUNT
 )
 
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
