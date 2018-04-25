@@ -645,7 +645,7 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     buApprovePage.fetchViewData(csvId, fCount, rRange);
 
 
-// setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js");
+// setTimeout(function(){  $.getScript("/script/bulk-upload/bulk-upload-js/multifreezer.js");
 
 // $.getScript("/knowledge/css/multifreezer.css");
  // hideLoader();}, 3000);
@@ -653,11 +653,11 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     if($("body").hasClass("freezer-active-bu")==false) {
         displayLoader();
 /*        setTimeout(function(){  $.getScript(
-            "/knowledge/js/multifreezer.js");  hideLoader();}, 3000
+            "/script/bulk-upload/bulk-upload-js/multifreezer.js");  hideLoader();}, 3000
         );*/
     }
 
-// $.getScript("/knowledge/js/multifreezer.js");
+// $.getScript("/script/bulk-upload/bulk-upload-js/multifreezer.js");
 };
 ApproveBulkMapping.prototype.fetchViewData = function(
     csvId, fCount, rRange
