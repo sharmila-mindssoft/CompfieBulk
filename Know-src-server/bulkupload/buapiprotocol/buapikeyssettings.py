@@ -1,4 +1,4 @@
-from protocol.api_key_validation import (
+from buapikeyvalidation import (
     is_alphabet_withdot, is_file_name, is_alphabet, is_alpha_numeric,
     is_alphabet_wtih_bracket, is_numeric, is_url, is_address,
     is_alphabet_csv_delimeter
