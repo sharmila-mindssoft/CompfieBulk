@@ -671,11 +671,6 @@ api_params = {
     "division_units_count": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "DivisionsUnitCount"},
     "statutory_mapping": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
 
-    # client unit - bulk upload - variables - starts
-    "client_group_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "ClientGroupsList"},
-    'techno_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "TechnoInfo"},
-    # client unit - bulk upload - variables - ends
-
     'k_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "KExecutiveInfo"},
     'domain_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "DomainExecutiveInfo"},
     "statutory_unit": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgereport', "class_name": "UnitStatutoryFilter"},
