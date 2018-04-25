@@ -206,7 +206,7 @@ function initialize() {
         displayMessage(error);
         hideLoader();
     }
-    mirror.getClientGroupsList(function(error, response) {
+    bu.getClientGroupsList(function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
