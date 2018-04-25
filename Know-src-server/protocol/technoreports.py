@@ -611,18 +611,6 @@ class GetClientDetailsReportData(Request):
             "u_m_none": self.u_m_none,
         }
 
-class GetUserMappingStatutoryFilters(Request):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetUserMappingStatutoryFilters()
-
-    def to_inner_structure(self):
-        return {
-        }
 def _init_Request_class_map():
     classes = [
         GetClientDetailsReportFilters,
@@ -646,8 +634,7 @@ def _init_Request_class_map():
         GetComplianceStatutoriesList,
         ExportClientDetailsReportData,
         ExportReassignUserReportData,
-        ExportGroupAdminReportData,
-        GetUserMappingStatutoryFilters
+        ExportGroupAdminReportData
     ]
 
     class_map = {}
@@ -1086,35 +1073,6 @@ class ExportToCSVEmpty(Response):
         return {
         }
 
-# user mapping report - filter success
-
-class GetUserMappingStatutoryFiltersSuccess(Response):
-    def __init__(self, countries, usermapping_groupdetails, usermapping_business_groups, usermapping_legal_entities, statutory_unit):
-        self.countries = countries
-        self.usermapping_groupdetails = usermapping_groupdetails
-        self.usermapping_business_groups = usermapping_business_groups
-        self.usermapping_legal_entities = usermapping_legal_entities
-        self.statutory_unit = statutory_unit
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "usermapping_groupdetails", "usermapping_business_groups", "usermapping_legal_entities", "usermapping_unit"])
-        countries = data.get("countries")
-        usermapping_groupdetails = data.get("usermapping_groupdetails")
-        usermapping_business_groups = data.get("usermapping_business_groups")
-        usermapping_legal_entities = data.get("usermapping_legal_entities")
-        statutory_unit = data.get("statutory_unit")
-        return GetUserMappingStatutoryFiltersSuccess(countries, usermapping_groupdetails, usermapping_business_groups, usermapping_legal_entities, statutory_unit)
-
-    def to_inner_structure(self):
-        data = {
-            "countries": self.countries,
-            "usermapping_groupdetails": self.usermapping_groupdetails,
-            "usermapping_business_groups": self.usermapping_business_groups,
-            "usermapping_legal_entities": self.usermapping_legal_entities,
-            "statutory_unit": self.statutory_unit,
-        }
-        return data
 def _init_Response_class_map():
     classes = [
                 GetClientDetailsReportFiltersSuccess, GetClientDetailsReportDataSuccess, GetStatutoryNotificationsFiltersSuccess,
@@ -1122,8 +1080,7 @@ def _init_Response_class_map():
                 GetClientAgreementReportFiltersSuccess, GetClientAgreementReportDataSuccess, GetDomainwiseAgreementReportDataSuccess,
                 GetOrganizationWiseUnitCountSuccess, ExportToCSVSuccess, GetUserMappingReportFiltersSuccess, GetUserMappingReportDataSuccess,
                 GetGroupAdminReportDataSuccess, GetAssignedUserClientGroupsSuccess, ReassignUserReportDataSuccess,
-                ReassignUserDomainReportDataSuccess, ApproveAssignedStatutoriesListSuccess, ExportToCSVEmpty,
-                GetUserMappingStatutoryFiltersSuccess
+                ReassignUserDomainReportDataSuccess, ApproveAssignedStatutoriesListSuccess, ExportToCSVEmpty
             ]
 
     class_map = {}

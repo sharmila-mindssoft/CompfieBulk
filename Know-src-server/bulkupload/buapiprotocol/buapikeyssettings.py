@@ -813,7 +813,8 @@ bu_api_params = {
         'length': None,
         'validation_method': None,
         'is_optional': False,
-        'module_name': assign_statutory, "class_name": "AssignedUnits"
+        'module_name': assign_statutory,
+        'class_name': 'AssignedUnits'
     },
     'csv_max_lines': {
         'type': 'INT', 'length': None,
@@ -823,8 +824,90 @@ bu_api_params = {
         'type': 'INT', 'length': None,
         'validation_method': None, 'is_optional': True
     },
+    'domain_executive_info': {
+        'type': 'VECTOR_TYPE',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False,
+        'module_name': assign_statutory,
+        'class_name': 'DomainExecutiveInfo'
+    },
     'new_csv_name': {
         'type': 'STRING', 'length': 100,
         'validation_method': is_file_name, 'is_optional': True
+    },
+    "bu_constants": {
+        'type': 'VECTOR_TYPE',
+        'length': None,
+        'validation_method': None,
+        'is_optional': True,
+        'module_name': assign_statutory,
+        "class_name": "BulkUploadConstant"
+        },
+    "bu_system_rejected_by": {
+        'type': 'STRING',
+        'length': 10,
+        'validation_method': is_alphabet,
+        'is_optional': False
+    },
+    'bu_rejected_download_count': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'bu_show_remove_icon': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'bu_system_reject_status': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'bu_fully_reject_status': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+        },
+    'KnowledgeManager': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'KnowledgeExecutive': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'DomainExecutive': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'DomainManager': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'TechnoManager': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'TechnoExecutive': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
     },
 }

@@ -576,7 +576,7 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
 
 //initialization
 $(function() {
-    mirror.getLoadConstants();
+    bu.getLoadConstants();
     displayLoader();
     $('.grid-table-rpt').hide();
     pageControls();

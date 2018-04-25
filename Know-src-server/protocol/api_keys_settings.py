@@ -671,28 +671,42 @@ api_params = {
     "division_units_count": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "DivisionsUnitCount"},
     "statutory_mapping": {'type': 'TEXT', 'length': 500, 'validation_method': None, 'is_optional': True},
 
+    # ForBulkUpload
     # client unit - bulk upload - variables - starts
-    "client_group_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "ClientGroupsList"},
-    'techno_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "TechnoInfo"},
+    "client_group_list": {
+        'type': 'VECTOR_TYPE',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False,
+        'module_name': 'technomasters',
+        "class_name": "ClientGroupsList"
+    },
+    'techno_info': {
+        'type': 'VECTOR_TYPE',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False,
+        'module_name': 'generalprotocol',
+        "class_name": "TechnoInfo"
+    },
     # client unit - bulk upload - variables - ends
-
-    'k_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "KExecutiveInfo"},
-    'domain_executive_info': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'generalprotocol', "class_name": "DomainExecutiveInfo"},
-    "statutory_unit": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'knowledgereport', "class_name": "UnitStatutoryFilter"},
-
-    "bu_constants": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'generalprotocol', "class_name": "BulkUploadConstant"},
-    "bu_system_rejected_by": {'type': 'STRING', 'length': 10, 'validation_method': is_alphabet, 'is_optional': False},
-    'bu_rejected_download_count': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'bu_show_remove_icon': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'bu_system_reject_status': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'bu_fully_reject_status': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-
-    'KnowledgeManager': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'KnowledgeExecutive': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'DomainExecutive': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'DomainManager': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'TechnoManager': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
-    'TechnoExecutive': {'type': 'INT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'k_executive_info': {
+        'type': 'VECTOR_TYPE',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False,
+        'module_name': 'generalprotocol',
+        "class_name": "KExecutiveInfo"
+    },
+    'domain_executive_info': {
+        'type': 'VECTOR_TYPE',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False,
+        'module_name': 'generalprotocol',
+        "class_name": "DomainExecutiveInfo"
+    },
+    # ForBulkUpload
 }
 
 api_params['domain_id'] = api_params.get('d_id')

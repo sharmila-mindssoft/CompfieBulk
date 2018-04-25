@@ -917,7 +917,7 @@ function loadCountwiseResult(data) {
 }
 
 $(function() {
-    mirror.getLoadConstants();
+    bu.getLoadConstants();
     REPORT_VIEW.hide();
     asBulkReport.pageControls();
     initialize();

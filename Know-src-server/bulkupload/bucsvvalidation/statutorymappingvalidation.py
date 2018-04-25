@@ -1537,15 +1537,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                         statu_maps = ">>".join(
                             e.strip() for e in statu_maps.split(">>"))
                     legis_data = statu_maps.split(">>")
-                    print "self.Statutories.get(statu_maps)"
-                    print statu_maps
-
-                    print "self.Statutories >>>>"
-                    print self.Statutories
-
-                    print "self.Statutories.get(statu_maps) >>>>"
-                    print self.Statutories.get(statu_maps)
-
                     if self.Statutories.get(statu_maps) is not None:
                         if(len(legis_data) <= statu_level_limit):
                             statu_ids.append(
@@ -1560,26 +1551,18 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                 statu_ids.append(
                                     self.Statu_dic.get(statu_maps)
                                 )
-                            statu_exists_id.append(statu_maps)
+                                statu_exists_id.append(statu_maps)
 
-                        print "legis_data >>>"
-                        print legis_data
                         if(len(legis_data) <= statu_level_limit):
-                            print "IF Legis >>>"
                             parent_names = ''
                             parent_id = ''
                             for statu_level, data in enumerate(legis_data, 1):
-                                # data = data.lstrip()
-                                # data = data.rstrip()
-                                # strip_data = data.strip()
                                 strip_data = data.lstrip()
                                 strip_data = strip_data.rstrip()
                                 if strip_data.find(">>") > 0:
                                     strip_data = ">>".join(
                                         e.strip() for e in strip_data.split(
                                             ">>"))
-                                print "3 strip_datastrip_datastrip_data >>>"
-                                print strip_data
                                 statu_position = self.StatuLevelPosition
                                 level_id = statu_position.get(statu_level)
 
@@ -1594,17 +1577,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                         strip_data).get("statutory_id")
                                     parent_names = str(strip_data)
 
-                                print "parent_id >>>"
-                                print parent_id
-                                print "parent_names >>>"
-                                print parent_names
-
                                 if (int(statu_level) == 1 and
                                    self.Statutories.get(strip_data) is None):
-                                    print "3 IF >>>"
-                                    print strip_data
                                     if(strip_data not in statu_exists_id):
-                                        # print "4 IF >>>"
                                         statu_id = self.save_statutories_data(
                                             str(strip_data), level_id,
                                             parent_id, parent_names,
@@ -1616,22 +1591,12 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                         parent_id = statu_id
                                         parent_names = str(strip_data)
                                 else:
-                                    print "5 IF >>>"
-                                    print statu_maps
-                                    print "self.Statutories"
-                                    print self.Statutories
-                                    print "self.Statu_dic"
-                                    print self.Statu_dic
                                     if(int(statu_level) > 1 and
                                        self.Statutories.get(statu_maps) is None
                                        ):
-                                        print "6 IF >>>"
-                                        print statu_maps
                                         if(
                                            self.Statu_dic.get(statu_maps) is None
                                            ):
-                                            print "7 IF >>>"
-                                            print statu_maps
                                             statu_id = self.save_statutories_data(
                                                 str(strip_data), level_id,
                                                 parent_id, parent_names,
@@ -1645,23 +1610,10 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                            self.Statu_dic.get(statu_maps) is not None
                                            and statu_maps not in statu_exists_id
                                            ):
-                                            print "8 IF >>>"
-                                            print statu_maps
-                                            print statu_id
                                             statu_id = self.Statu_dic.get(statu_maps)
                                             statu_ids.append(statu_id)
                                             statu_exists_id.append(statu_maps)
                                             self.Statu_dic[statu_maps] = statu_id
-                                            print "statu_ids >>>>>"
-                                            print statu_ids
-
-                print "statu_ids >>>"
-                print statu_ids
-                print "statu_ids >>>"
-                # if len(grouped_list) > 1:
-                #     msg.append(grouped_list[0].get("Compliance_Task"))
-                # uploaded_by = grouped_list[0].get("uploaded_by")
-
                 mapping_id = self.save_mapping_data(
                     self._country_id, self._domain_id, nature_id,
                     uploaded_by, str(statu_mapping)
