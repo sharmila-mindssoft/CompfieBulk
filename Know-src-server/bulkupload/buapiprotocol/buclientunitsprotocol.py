@@ -457,6 +457,36 @@ class GetBulkClientUnitListForFilterView(Request):
         }
 
 
+class GetTechnoUserDetails(Request):
+    def __init__(self, user_type):
+        self.user_type = user_type
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_type"])
+        user_type = data.get("user_type")
+        return GetTechnoUserDetails(user_type)
+
+    def to_inner_structure(self):
+        return {
+            "user_type": self.user_type
+        }
+
+
+class GetClientGroupsList(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetClientGroupsList()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 def _init_Request_class_map():
     classes = [
         UploadClientUnitsBulkCSV,
@@ -473,7 +503,9 @@ def _init_Request_class_map():
         SaveBulkClientUnitListFromView,
         SubmitBulkClientUnitListFromView,
         ConfirmSubmitClientUnitFromView,
-        GetBulkClientUnitListForFilterView
+        GetBulkClientUnitListForFilterView,
+        GetTechnoUserDetails,
+        GetClientGroupsList
     ]
     class_map = {}
     for c in classes:
@@ -885,6 +917,63 @@ class BulkClientUnitList(object):
         }
 
 
+class TechnoInfo(object):
+    def __init__(self, group_id, user_id, emp_code_name):
+        self.group_id = group_id
+        self.user_id = user_id
+        self.emp_code_name = emp_code_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "group_id", "user_id", "emp_code_name"
+        ])
+        return TechnoInfo(
+            data.get("group_id"), data.get("user_id"),
+            data.get("emp_code_name")
+        )
+
+    def to_structure(self):
+        return {
+            "group_id": self.group_id,
+            "user_id": self.user_id,
+            "emp_code_name": self.emp_code_name
+        }
+
+
+class ClientGroupsList(object):
+    def __init__(
+        self, client_id, group_name, is_active, is_approved
+    ):
+        self.client_id = client_id
+        self.group_name = group_name
+        self.is_active = is_active
+        self.is_approved = is_approved
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_id", "group_name", "is_active", "is_approved"
+            ]
+        )
+        client_id = data.get("client_id")
+        group_name = data.get("group_name")
+        is_active = data.get("is_active")
+        is_approved = data.get("is_approved")
+        return ClientGroupsList(
+            client_id, group_name, is_active, is_approved
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "group_name": self.group_name,
+            "is_active": self.is_active,
+            "is_approved": self.is_approved
+        }
+
+
 class UpdateUnitDownloadCountSuccess(Response):
     def __init__(self, updated_unit_count):
         self.updated_unit_count = updated_unit_count
@@ -1243,6 +1332,39 @@ class CSVFileLinesMaxREached(Response):
         }
 
 
+class GetTechnoDetailsSuccess(Response):
+    def __init__(self, techno_info):
+        self.techno_info = techno_info
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["techno_info"])
+        return GetTechnoDetailsSuccess(
+            data.get("techno_info")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "techno_info": self.techno_info
+        }
+
+
+class GetClientGroupsListSuccess(Response):
+    def __init__(self, client_group_list):
+        self.client_group_list = client_group_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_group_list"])
+        client_group_list = data.get("client_group_list")
+        return GetClientGroupsListSuccess(client_group_list)
+
+    def to_inner_structure(self):
+        return {
+            "client_group_list": self.client_group_list
+        }
+
+
 def _init_Response_class_map():
 
     classes = [
@@ -1261,7 +1383,8 @@ def _init_Response_class_map():
         SubmitClientUnitActionFromListFailure,
         EmptyCSVUploaded, ClientUnitUploadMaxReached,
         InvalidCSVUploaded, EmptyFilteredData,
-        CSVFileLinesMaxREached, CSVColumnMisMatched
+        CSVFileLinesMaxREached, CSVColumnMisMatched,
+        GetTechnoDetailsSuccess, GetClientGroupsListSuccess
     ]
     class_map = {}
     for c in classes:

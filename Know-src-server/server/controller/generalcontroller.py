@@ -23,8 +23,7 @@ from server.database.general import (
     get_client_audit_trails,
     get_client_login_trace_filters,
     get_client_login_trace,
-    get_knowledge_executive,
-    get_techno_users_list
+    get_knowledge_executive
 )
 
 __all__ = [
@@ -129,9 +128,6 @@ def process_general_request(request, db, user_id):
 
     elif type(request_frame) is generalprotocol.GetKExecutiveDetails:
         result = process_get_know_users(db, user_id)
-
-    elif type(request_frame) is generalprotocol.GetTechnoUserDetails:
-        result = process_get_techno_users(db, request_frame, user_id)
 
     return result
 
@@ -545,13 +541,3 @@ def process_get_know_users(db, session_user):
     res = get_knowledge_executive(db, session_user)
     success = generalprotocol.GetKExecutiveDetailsSuccess(res)
     return success
-
-
-########################################################
-# To get list of techno managers / executives details
-########################################################
-def process_get_techno_users(db, request, session_user):
-    userType = request.user_type
-    res = get_techno_users_list(db, userType, session_user)
-    result_set = generalprotocol.GetTechnoDetailsSuccess(res)
-    return result_set

@@ -615,6 +615,24 @@ function submitAssignStatutoryAction(csvid, cl_id, le_id, pwd, callback) {
     apiRequest("bu/assign_statutory", request, callback);
 }
 
+function getClientGroupsList(callback) {
+  var request = [
+      'GetClientGroupsList',
+      {}
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
+
+function getTechnoUserDetails(uType, callback) {
+  var request = [
+      'GetTechnoUserDetails',
+      {
+        "user_type": uType
+      }
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
+
 function getDomainUserInfo(callback) {
   var request = [
       'GetDomainExecutiveDetails',

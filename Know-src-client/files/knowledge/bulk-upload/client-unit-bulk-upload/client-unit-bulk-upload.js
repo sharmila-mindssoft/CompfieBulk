@@ -34,7 +34,7 @@ function initialize(type_of_initialization) {
 	    displayMessage(error);
 	    hideLoader();
 	}
-	mirror.getClientGroupsList(function(error, response) {
+	bu.getClientGroupsList(function(error, response) {
 	    if (error == null) {
 	        onSuccess(response);
 	    } else {
@@ -74,15 +74,10 @@ CSVFILENAME.change(function(e){
         displayMessage("CSV file name should not exceed 100 characters");
         return false;
     }
-	if(CSVFILENAME.val() != '' && $.inArray(ext, ["csv"]) == -1) {
-		displayMessage(message.invalid_file_format);
-		return false;
-	}
-	if(e.target.files != undefined && e.target.files.length > 0){
-		mirror.uploadCSVFile(e, function result_data(data) {
-            if (data == "File max limit exceeded"){
-                displayMessage(message.file_maxlimit_exceed);
-                return false;
+	if(CSVFILENAME.val() != '' && e.target.files != undefined && e.target.files.length > 0){
+		bu.uploadCSVFile(e, function result_data(status, data) {
+            if (status == false){
+                displayMessage(data);
             }else{
             	CSVUPLOADEDFILE = data;
             }
