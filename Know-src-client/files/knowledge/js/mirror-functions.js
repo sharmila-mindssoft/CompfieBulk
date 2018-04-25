@@ -242,9 +242,6 @@ function initMirror() {
         uploadCSVFile: uploadCSVFile,
         /* client bulk upload - api function ends */
         getKnowledgeUserInfo: getKnowledgeUserInfo,
-        getUserMappingStatutoryFilters:getUserMappingStatutoryFilters,
-        getBulkUploadConstants: getBulkUploadConstants,
-        getLoadConstants: getLoadConstants,
     };
 }
 

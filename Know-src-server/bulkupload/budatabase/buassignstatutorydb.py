@@ -34,7 +34,9 @@ __all__ = [
     "get_validation_info",
     "get_rejected_file_count",
     "delete_action_after_approval",
-    "verify_user_units"
+    "verify_user_units",
+    "get_domain_executive",
+    "get_form_categories"
     ]
 
 ########################################################
@@ -51,14 +53,7 @@ __all__ = [
 
 
 def get_client_list(db, session_user):
-    _source_db_con = mysql.connector.connect(
-        user=KNOWLEDGE_DB_USERNAME,
-        password=KNOWLEDGE_DB_PASSWORD,
-        host=KNOWLEDGE_DB_HOST,
-        database=KNOWLEDGE_DATABASE_NAME,
-        port=KNOWLEDGE_DB_PORT,
-        autocommit=False,
-    )
+    _source_db_con = connectKnowledgeDB()
     _source_db = Database(_source_db_con)
     _source_db.begin()
 
@@ -69,6 +64,8 @@ def get_client_list(db, session_user):
     result = _source_db.call_proc_with_multiresult_set("sp_client_info", [
         session_user.user_id()
         ], 5)
+    _source_db.close()
+
     clients = result[0]
     entitys = result[1]
     domains = result[2]
@@ -125,14 +122,7 @@ def get_download_assing_statutory_list(
     le_name, d_names, u_names, session_user
 ):
 
-    _source_db_con = mysql.connector.connect(
-        user=KNOWLEDGE_DB_USERNAME,
-        password=KNOWLEDGE_DB_PASSWORD,
-        host=KNOWLEDGE_DB_HOST,
-        database=KNOWLEDGE_DATABASE_NAME,
-        port=KNOWLEDGE_DB_PORT,
-        autocommit=False,
-    )
+    _source_db_con = connectKnowledgeDB()
     _source_db = Database(_source_db_con)
     _source_db.begin()
 
@@ -151,6 +141,8 @@ def get_download_assing_statutory_list(
     result = _source_db.call_proc_with_multiresult_set(
         "sp_get_assign_statutory_compliance", [u, d], 2
     )
+
+    _source_db.close()
 
     def status_list(map_id):
         s_legislation = None
@@ -766,19 +758,59 @@ def delete_action_after_approval(db, csv_id):
 
 
 def verify_user_units(db, session_user, u_ids):
-    _source_db_con = mysql.connector.connect(
-        user=KNOWLEDGE_DB_USERNAME,
-        password=KNOWLEDGE_DB_PASSWORD,
-        host=KNOWLEDGE_DB_HOST,
-        database=KNOWLEDGE_DATABASE_NAME,
-        port=KNOWLEDGE_DB_PORT,
-        autocommit=False,
-    )
+    _source_db_con = connectKnowledgeDB()
     _source_db = Database(_source_db_con)
     _source_db.begin()
-
     result = _source_db.call_proc(
         "sp_bu_domain_executive_units", [session_user.user_id(), u_ids]
     )
+    _source_db.close()
+
     unit_count = len(result)
     return unit_count
+
+
+def get_form_categories(db, session_user):
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc("sp_usercategory_list")
+    _source_db.close()
+    return result
+
+def get_domain_executive(db, session_user):
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc(
+        "sp_domain_executive_info", [session_user.user_id()]
+    )
+    _source_db.close()
+
+    domain_users = []
+    for r in result:
+        userid = r.get("user_id")
+        emp_name = "%s - %s" % (r.get("employee_code"), r.get("employee_name"))
+
+        domain_users.append(
+            bu_as.DomainExecutiveInfo(
+                emp_name, userid
+            )
+        )
+    return domain_users
+
+
+def connectKnowledgeDB():
+    try:
+        _source_db_con = mysql.connector.connect(
+            user=KNOWLEDGE_DB_USERNAME,
+            password=KNOWLEDGE_DB_PASSWORD,
+            host=KNOWLEDGE_DB_HOST,
+            database=KNOWLEDGE_DATABASE_NAME,
+            port=KNOWLEDGE_DB_PORT,
+            autocommit=False,
+        )
+        return _source_db_con
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e

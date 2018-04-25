@@ -1,5 +1,6 @@
 
 import re
+import datetime
 
 from server.constants import CSV_DELIMITER
 
@@ -117,6 +118,16 @@ def is_alpha_numeric(value):
     else:
         return False
 
+def is_date(string):
+    string_in_date = string
+    try:
+        if string is not None:
+            if string_in_date != datetime.datetime.strptime(string_in_date, "%d-%b-%Y").strftime('%d-%b-%Y'):
+                raise ValueError
+            return True
+    except ValueError:
+        return False
+
 def is_url(value):
     r = re.compile("^[a-zA-Z0-9=/:.-]*$")  # a-z with special char
     if r.match(value):
@@ -181,8 +192,11 @@ def parse_csv_dictionary_values(key, val):
         error_count["max_length"] = 1
 
     if _validation_method is not None :
-        if _validation_method(val) is False :
-            msg.append(key + " - Invalid character")
+        if _validation_method(val) is False:
+            if key == "Due_Date" or key == "Completion_Date" :
+                msg.append(key + " - Invalid Date Format")
+            else :
+                msg.append(key + " - Invalid character")
             error_count["invalid_char"] = 1
     if len(msg) == 0 :
         return True, error_count
@@ -293,15 +307,17 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False
     ),
     'Due_Date': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_date
     ),
     'Assignee': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False, isFoundCheck=True
     ),
     'Completion_Date': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True, validation_method=is_date
     ),
     'Document_Name': make_required_validation(
         keyType='STRING', isValidCharCheck=False
     ),
+    #  isMandatoryCheck=False, maxLengthCheck=None, isValidCharCheck=False, validation_method=None,
+    # isFoundCheck=False, isActiveCheck=False
 }

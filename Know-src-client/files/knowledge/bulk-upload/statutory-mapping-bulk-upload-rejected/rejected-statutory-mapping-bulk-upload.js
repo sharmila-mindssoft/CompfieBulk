@@ -572,7 +572,7 @@ window.onclick = function(event) {
     }
 }
 $(function() {
-    mirror.getLoadConstants();
+    bu.getLoadConstants();
     $('.grid-table-rpt').hide();
     initialize();
     pageControls();
