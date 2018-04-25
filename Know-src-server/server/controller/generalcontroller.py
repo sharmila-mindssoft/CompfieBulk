@@ -6,13 +6,6 @@ from server.constants import (
     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
     CLIENT_DOCS_BASE_PATH
 )
-
-from bulkupload.bulkconstants import (
-    SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT,
-    SHOW_REMOVE_ICON, SYSTEM_REJECT_ACTION_STATUS,
-    IS_FULLY_REJECT_ACTION_STATUS
-)
-
 from server.common import (save_file_in_path, encrypt)
 from server.database.admin import *
 from server.database.general import (
@@ -31,8 +24,7 @@ from server.database.general import (
     get_client_login_trace_filters,
     get_client_login_trace,
     get_knowledge_executive,
-    get_techno_users_list,
-    get_domain_executive
+    get_techno_users_list
 )
 
 __all__ = [
@@ -563,13 +555,3 @@ def process_get_techno_users(db, request, session_user):
     result_set = generalprotocol.GetTechnoDetailsSuccess(res)
     return result_set
 
-
-########################################################
-# To get list of domain executive details
-########################################################
-
-def process_get_domain_users(db, session_user):
-
-    res = get_domain_executive(db, session_user)
-    success = generalprotocol.GetDomainExecutiveDetailsSuccess(res)
-    return success
