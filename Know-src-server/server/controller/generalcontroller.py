@@ -24,8 +24,7 @@ from server.database.general import (
     get_client_login_trace_filters,
     get_client_login_trace,
     get_knowledge_executive,
-    get_techno_users_list,
-    get_domain_executive
+    get_techno_users_list
 )
 
 __all__ = [
@@ -133,7 +132,7 @@ def process_general_request(request, db, user_id):
 
     elif type(request_frame) is generalprotocol.GetTechnoUserDetails:
         result = process_get_techno_users(db, request_frame, user_id)
-        
+
     return result
 
 
@@ -556,13 +555,3 @@ def process_get_techno_users(db, request, session_user):
     result_set = generalprotocol.GetTechnoDetailsSuccess(res)
     return result_set
 
-
-########################################################
-# To get list of domain executive details
-########################################################
-
-def process_get_domain_users(db, session_user):
-
-    res = get_domain_executive(db, session_user)
-    success = generalprotocol.GetDomainExecutiveDetailsSuccess(res)
-    return success

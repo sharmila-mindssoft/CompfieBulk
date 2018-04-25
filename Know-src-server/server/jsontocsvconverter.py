@@ -110,20 +110,10 @@ class ConvertJsonToCSV(object):
                 elif report_type == "ClientLoginTraceReport":
                     self.generate_client_login_trace_report(
                         db, request, session_user)
-                elif report_type == "DownloadAssignStatutory":
-                    self.generate_download_assign_statutory(
-                        db, request, session_user)
-                elif report_type == "ExportSMBulkReport":
-                    self.generate_export_statutory_mapping(
-                        db, request, session_user)
-                elif report_type == "ExportCUBulkReport":
-                    self.generate_export_client_unit_bulk(
-                        db, request, session_user)
-                elif report_type == "ExportASBulkReport":
-                    self.generate_export_assigned_statutory_bulk(
-                        db, request, session_user)
 
-    def generate_assignee_wise_report_and_zip(self, db, request, session_user):
+    def generate_assignee_wise_report_and_zip(
+        self, db, request, session_user
+    ):
         s = str(uuid.uuid4())
         docs_path = "%s/%s" % (CSV_PATH, s)
         self.temp_path = "%s/%s" % (CSV_PATH, s)

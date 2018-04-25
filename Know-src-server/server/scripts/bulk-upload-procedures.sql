@@ -1788,7 +1788,7 @@ DROP PROCEDURE IF EXISTS `sp_sm_format_file_status_update`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_sm_format_file_status_update`(
-    IN csvid INT, filename VARCHAR(150), IN file_size FLOAT
+    IN csvid INT, IN filename VARCHAR(150), IN file_size FLOAT
 )
 BEGIN
 

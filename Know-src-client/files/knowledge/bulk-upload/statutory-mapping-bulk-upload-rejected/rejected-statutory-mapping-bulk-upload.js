@@ -19,13 +19,6 @@ var PASSWORD_SUBMIT_BTN = $('#password-submit');
 var CURRENT_PASSWORD = $('#current-password');
 var REMOVE_STATUTORY_CSV_ID;
 
-/**** User Level Category ***********/
-/*var REJECTED_FILE_DOWNLOADCOUNT = 2;
-var SHOW_REMOVE_ICON = 1;
-var SYSTEM_REJECT_ACTION_STATUS = 3;
-var IS_FULLY_REJECT_ACTION_STATUS = 1;*/
-
-
 // Creating New Class
 var rejStatuMapping = new RejectedStatutoryMappingBulk();
 
@@ -262,7 +255,7 @@ function loadCountwiseResult(data) {
             $('.tbl_rejected_file .rejected_i_cls', clone1)
             .addClass("default-display-none");
         }
-        if (parseInt(fileDownloadCount) < SHOW_REMOVE_ICON){
+        if (parseInt(fileDownloadCount) < 1){
             $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
         }
         $('#datatable-responsive .tbody-compliance').append(clone1);
@@ -452,7 +445,7 @@ function downloadClick(CSV_ID, event) {
 
         dataCsvId = updatedCount[0].csv_id;
         downloadCount = updatedCount[0].download_count;
-        if (parseInt(downloadCount) == SHOW_REMOVE_ICON) {
+        if (parseInt(downloadCount) == 1) {
             eventId = eventId + dataCsvId;
             document.getElementById(eventId).classList.toggle("show");
             $("#delete_action_" + dataCsvId).attr("style", "display:block");
