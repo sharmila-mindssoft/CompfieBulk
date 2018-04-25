@@ -36,7 +36,6 @@ __all__ = [
     "view_assign_legal_entity",
     "save_division_category"
     "check_assigned_units_under_domain",
-    "get_client_groups_for_client_unit_bulk_upload"
 ]
 
 #
