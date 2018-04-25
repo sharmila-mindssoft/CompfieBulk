@@ -138,6 +138,8 @@ class Database(object):
 
     def update_file_status(self, csv_id, file_name, file_size):
         print "file_size in dbase", file_size
+        print "FileName-> ", file_name
+        print "csv id", csv_id
         return self.call_update_proc(
             "sp_sm_format_file_status_update", [csv_id, file_name, file_size]
         )

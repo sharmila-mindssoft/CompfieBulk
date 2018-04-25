@@ -35,7 +35,7 @@ from ..bulkuploadcommon import (
 )
 from ..bulkexport import ConvertJsonToCSV
 import datetime
-from server.constants import (
+from ..bulkconstants import (
     BULKUPLOAD_CSV_PATH, CSV_MAX_LINES, MAX_REJECTED_COUNT
 )
 # from server.exceptionmessage import fetch_run_error
@@ -440,9 +440,10 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         is_declined = cObj.perform_validation_before_submit()
         print "is declined -> ", is_declined
         if len(is_declined.keys()) > 0:
+            cObj.make_rejection(is_declined, user_id)
+            # cObj.remove_declined_docs(is_declined, user_id, csv_id)
             if cObj._doc_count > 0:
                 cObj.format_download_process_initiate(csv_id)
-            cObj.make_rejection(is_declined, user_id)
             cObj.save_manager_message(
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
                 session_user.user_id(), None, len(is_declined.keys())

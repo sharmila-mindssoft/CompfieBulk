@@ -7,7 +7,12 @@ import mysql.connector
 from server.constants import (
     CSV_DOWNLOAD_URL, KNOWLEDGE_DB_HOST,
     KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
-    KNOWLEDGE_DATABASE_NAME, CSV_DELIMITER, SYSTEM_REJECTED_BY)
+    KNOWLEDGE_DATABASE_NAME
+)
+
+from bulkconstants import (
+    CSV_DELIMITER, SYSTEM_REJECTED_BY
+)
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")

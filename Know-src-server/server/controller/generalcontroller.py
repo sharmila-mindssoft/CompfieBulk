@@ -6,6 +6,13 @@ from server.constants import (
     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
     CLIENT_DOCS_BASE_PATH
 )
+
+from bulkupload.bulkconstants import (
+    SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT,
+    SHOW_REMOVE_ICON, SYSTEM_REJECT_ACTION_STATUS,
+    IS_FULLY_REJECT_ACTION_STATUS
+)
+
 from server.common import (save_file_in_path, encrypt)
 from server.database.admin import *
 from server.database.general import (
