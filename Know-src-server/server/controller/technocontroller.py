@@ -100,13 +100,4 @@ def process_techno_request(request, db, session_user):
             db, request_frame, session_user
         )
 
-    # client unit - bulk upload - request functions - starts
-
-    elif type(request_frame) is technomasters.GetClientGroupsList:
-        result = get_client_groups_for_client_unit_bulk_upload(
-            db, request_frame, session_user
-        )
-
-    # client unit - bulk upload - request functions - ends
-
     return result
