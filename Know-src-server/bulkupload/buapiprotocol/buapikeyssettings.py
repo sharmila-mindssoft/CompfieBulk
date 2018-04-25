@@ -827,4 +827,16 @@ bu_api_params = {
         'type': 'STRING', 'length': 100,
         'validation_method': is_file_name, 'is_optional': True
     },
+    # client unit - bulk upload - variables - starts
+    "client_group_list": {
+        'type': 'VECTOR_TYPE', 'length': None,
+        'validation_method': None, 'is_optional': False,
+        'module_name': 'technomasters', "class_name": "ClientGroupsList"
+    },
+    'techno_info': {
+        'type': 'VECTOR_TYPE', 'length': None,
+        'validation_method': None, 'is_optional': False,
+        'module_name': 'generalprotocol', "class_name": "TechnoInfo"
+    },
+    # client unit - bulk upload - variables - ends
 }
