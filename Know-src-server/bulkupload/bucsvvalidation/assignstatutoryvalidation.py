@@ -554,7 +554,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             s["Domain"], s["Unit_Code"]
         )):
             grouped_list = list(v)
-            if len(grouped_list) > 1:
+            if len(grouped_list) >= 1:
                 unit_code = grouped_list[0].get("Unit_Code")
                 domain = grouped_list[0].get("Domain")
                 data = self._db.call_proc(
@@ -582,7 +582,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             s["Domain"]
         )):
             grouped_list = list(v)
-            if len(grouped_list) > 1:
+            if len(grouped_list) >= 1:
                 self._domain_names.append(grouped_list[0].get("Domain"))
 
                 if(
@@ -615,7 +615,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             s["Unit_Code"]
         )):
             grouped_list = list(v)
-            if len(grouped_list) > 1:
+            if len(grouped_list) >= 1:
                 if(
                     self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
                 ) != None:
@@ -941,7 +941,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             s["Unit_Code"]
         )):
             grouped_list = list(v)
-            if len(grouped_list) > 1:
+            if len(grouped_list) >= 1:
                 if(
                     self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
                 ) != None:

@@ -208,12 +208,12 @@ class DeleteRejectedASMByCsvID(Request):
 
 class GetAssignedStatutoryBulkReportData(Request):
     def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id,
-                 d_id, from_date, to_date, r_count, p_count, child_ids,
+                 domain_ids, from_date, to_date, r_count, p_count, child_ids,
                  user_category_id):
         self.bu_client_id = bu_client_id
         self.bu_legal_entity_id = bu_legal_entity_id
         self.bu_unit_id = bu_unit_id
-        self.d_id = d_id
+        self.domain_ids = domain_ids
         self.from_date = from_date
         self.to_date = to_date
         self.r_count = r_count
@@ -225,13 +225,13 @@ class GetAssignedStatutoryBulkReportData(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "bu_client_id", "bu_legal_entity_id",
-            "bu_unit_id", "d_id", "from_date", "to_date", "r_count",
+            "bu_unit_id", "domain_ids", "from_date", "to_date", "r_count",
             "p_count", "child_ids", "user_category_id"])
         return GetAssignedStatutoryBulkReportData(
             data.get("bu_client_id"),
             data.get("bu_legal_entity_id"),
             data.get("bu_unit_id"),
-            data.get("d_id"),
+            data.get("domain_ids"),
             data.get("from_date"),
             data.get("to_date"),
             data.get("r_count"),
@@ -245,7 +245,7 @@ class GetAssignedStatutoryBulkReportData(Request):
             "bu_client_id": self.bu_client_id,
             "bu_legal_entity_id": self.bu_legal_entity_id,
             "bu_unit_id": self.bu_unit_id,
-            "d_id": self.d_id,
+            "domain_ids": self.domain_ids,
             "from_date": self.from_date,
             "to_date": self.to_date,
             "r_count": self.r_count,
@@ -1410,42 +1410,29 @@ class GetDomainExecutiveDetailsSuccess(Response):
 
 class GetBulkUploadConstantSuccess(Response):
     def __init__(self, bu_constants, bu_system_rejected_by,
-                 bu_rejected_download_count, bu_show_remove_icon,
-                 bu_system_reject_status,
-                 bu_fully_reject_status):
+                 bu_rejected_download_count):
 
         self.bu_constants = bu_constants
         self.bu_system_rejected_by = bu_system_rejected_by
         self.bu_rejected_download_count = bu_rejected_download_count
-        self.bu_show_remove_icon = bu_show_remove_icon
-        self.bu_system_reject_status = bu_system_reject_status
-        self.bu_fully_reject_status = bu_fully_reject_status
 
     @staticmethod
     def parse_inner_strucure(data):
         data = parse_dictionary(data,
                                 ["bu_constants", "bu_system_rejected_by",
-                                 "bu_rejected_download_count",
-                                 "bu_show_remove_icon",
-                                 "bu_system_reject_status",
-                                 "bu_fully_reject_status"])
+                                 "bu_rejected_download_count"
+                                 ])
         return GetBulkUploadConstantSuccess(
             data.get("bu_constants"),
             data.get("bu_system_rejected_by"),
-            data.get("bu_rejected_download_count"),
-            data.get("bu_show_remove_icon"),
-            data.get("bu_system_reject_status"),
-            data.get("bu_fully_reject_status")
+            data.get("bu_rejected_download_count")
         )
 
     def to_inner_structure(self):
         return {
             "bu_constants": self.bu_constants,
             "bu_system_rejected_by": self.bu_system_rejected_by,
-            "bu_rejected_download_count": self.bu_rejected_download_count,
-            "bu_show_remove_icon": self.bu_show_remove_icon,
-            "bu_system_reject_status": self.bu_system_reject_status,
-            "bu_fully_reject_status": self.bu_fully_reject_status
+            "bu_rejected_download_count": self.bu_rejected_download_count
         }
 
 def _init_Response_class_map():

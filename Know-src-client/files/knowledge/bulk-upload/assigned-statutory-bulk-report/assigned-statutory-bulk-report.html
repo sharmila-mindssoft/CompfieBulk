@@ -27,17 +27,17 @@
                                     </div>
                                 </div>
                                 <!---   Domain -->
-<!--                                 <div class="form-group">
+                                <div class="form-group">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">
                                     Domain: <span class="mandatory">*</span>
                                     </label>
                                     <div class="col-sm-6 has-feedback">
-                                        <select class="form-control input-sm" id="domain">
+                                        <select multiple="multiple" class="form-control input-sm" id="domain">
                                         </select>
                                     </div>
-                                </div> -->
+                                </div>
                                  <!---   Domain -->
-                                <div class="form-group has-feedback">
+<!--                                 <div class="form-group has-feedback">
                                     <label class="col-sm-4 control-label">Domain:</label>
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="7"
@@ -50,6 +50,15 @@
                                     </div>
                                 </div>
 
+                                  <div class="form-group has-feedback">
+                                        <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                            To Date: <span class="mandatory">*</span>
+                                        </label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to_date" tabindex="10">
+                                            <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                        </div>
+                                 </div> -->
 
 
                                 <!---   From -->
@@ -63,6 +72,68 @@
                                     </div>
                                 </div>
                                  <!---DE Name -->
+                                 <!-- <div class="form-group active-domain-executive default-display-none">
+                                     <label class=" col-sm-offset-1 col-sm-3 control-label">DE Name: </label>
+                                    <div  class="col-sm-6 has-feedback filter-multiselect">
+                                        <p id="domain-name" class="form-control-static"></p>
+                                    </div>
+                                </div>
+                                <div class="form-group form-group-dename-dmanager default-display-none">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                        DE Name:
+                                    </label>
+                                    <div class="col-sm-6 has-feedback filter-multiselect">
+                                        <select class="form-control input-sm" id="de_name" multiple="multiple">
+                                        </select>
+                                    </div>
+                                </div> -->
+                                 <!---   DE Name -->
+
+                                <!--  <div class="form-group has-feedback">
+                                        <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                            To Date: <span class="mandatory">*</span>
+                                        </label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to_date" tabindex="10">
+                                            <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                        </div>
+                                 </div> -->
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="legalentityval" value="" tabindex="4" placeholder="Enter Legal Entity">
+                                        <input type="hidden" id="legalentityid">
+                                        <div id="ac-legalentity" class="ac-textbox default-display-none">
+                                          <ul class="width-85"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                  <!---   Unit 
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Unit:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="7"
+                                        placeholder="Enter Unit">
+                                        <input type="hidden" id="unitid">
+                                        <div id="ac-unit" class="ac-textbox default-display-none">
+                                          <ul class="width-85"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>-->
+<!--                            <div class="form-group has-feedback">
+                                        <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                            To Date: <span class="mandatory">*</span>
+                                        </label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to_date" tabindex="10">
+                                            <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                        </div>
+                                 </div> -->
+
                                  <div class="form-group active-domain-executive default-display-none">
                                      <label class=" col-sm-offset-1 col-sm-3 control-label">DE Name: </label>
                                     <div  class="col-sm-6 has-feedback filter-multiselect">
@@ -78,34 +149,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                 <!---   DE Name -->
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group has-feedback">
-                                    <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="legalentityval" value="" tabindex="4" placeholder="Enter Legal Entity">
-                                        <input type="hidden" id="legalentityid">
-                                        <div id="ac-legalentity" class="ac-textbox default-display-none">
-                                          <ul class="width-85"></ul>
-                                        </div>
-                                        <i class="form-control-feedback fa fa-search"></i>
-                                    </div>
-                                </div>
-                                  <!---   Unit -->
-                                <div class="form-group has-feedback">
-                                    <label class="col-sm-4 control-label">Unit:</label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="7"
-                                        placeholder="Enter Unit">
-                                        <input type="hidden" id="unitid">
-                                        <div id="ac-unit" class="ac-textbox default-display-none">
-                                          <ul class="width-85"></ul>
-                                        </div>
-                                        <i class="form-control-feedback fa fa-search"></i>
-                                    </div>
-                                </div>
-                                <div class="form-group has-feedback">
+
+
+                                 <div class="form-group has-feedback">
                                         <label class=" col-sm-offset-1 col-sm-3 control-label">
                                             To Date: <span class="mandatory">*</span>
                                         </label>

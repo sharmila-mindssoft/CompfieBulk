@@ -3011,56 +3011,6 @@ function getExportClientLoginTrace(
     apiRequest(callerName, request, callback);
 }
 
-/* client bulk upload - api function starts */
-
-function getClientGroupsList(callback) {
-  callerName = 'techno';
-  var request = [
-      'GetClientGroupsList',
-      {}
-  ];
-  apiRequest(callerName, request, callback);
-}
-
-function uploadCSVFile(fileListener, callback) {
-    var evt = fileListener;
-    max_limit = 1024 * 1024 * 50;
-    // file max limit 50MB
-    var files = evt.target.files;
-    var file = files[0];
-    file_name = file.name;
-    file_size = file.size;
-    if (file_size > max_limit) {
-        callback('File max limit exceeded');
-    } else {
-        file_content = null;
-        if (files && file) {
-            convert_to_base64(file, function(file_content) {
-                if (file_content == null) {
-                    callback('File content is empty');
-                }
-                result = uploadFileFormat(file_size, file_name, file_content);
-                callback(result);
-            });
-        }
-    }
-}
-
-function getTechnoUserDetails(uType, callback) {
-  callerName = 'general';
-  var request = [
-      'GetTechnoUserDetails',
-      {
-        "user_type": uType
-      }
-  ];
-  apiRequest(callerName, request, callback);
-}
-
-/* client bulk upload - api function ends */
-
-
-
 function getKnowledgeUserInfo(callback) {
   callerName = 'general';
   var request = [

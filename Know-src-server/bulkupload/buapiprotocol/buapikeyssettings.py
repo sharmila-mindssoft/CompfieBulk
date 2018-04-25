@@ -836,6 +836,16 @@ bu_api_params = {
         'type': 'STRING', 'length': 100,
         'validation_method': is_file_name, 'is_optional': True
     },
+    "client_group_list": {
+        'type': 'VECTOR_TYPE', 'length': None,
+        'validation_method': None, 'is_optional': False,
+        'module_name': client_units, "class_name": "ClientGroupsList"
+    },
+    'techno_info': {
+        'type': 'VECTOR_TYPE', 'length': None,
+        'validation_method': None, 'is_optional': False,
+        'module_name': client_units, "class_name": "TechnoInfo"
+    },
     "bu_constants": {
         'type': 'VECTOR_TYPE',
         'length': None,
@@ -856,24 +866,6 @@ bu_api_params = {
         'validation_method': None,
         'is_optional': False
     },
-    'bu_show_remove_icon': {
-        'type': 'INT',
-        'length': None,
-        'validation_method': None,
-        'is_optional': False
-    },
-    'bu_system_reject_status': {
-        'type': 'INT',
-        'length': None,
-        'validation_method': None,
-        'is_optional': False
-    },
-    'bu_fully_reject_status': {
-        'type': 'INT',
-        'length': None,
-        'validation_method': None,
-        'is_optional': False
-        },
     'KnowledgeManager': {
         'type': 'INT',
         'length': None,

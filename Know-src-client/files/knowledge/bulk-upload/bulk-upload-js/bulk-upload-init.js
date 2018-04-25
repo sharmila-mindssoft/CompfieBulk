@@ -57,8 +57,11 @@ function initMethods() {
         getDomainUserInfo: getDomainUserInfo,
         getBulkUploadConstants: getBulkUploadConstants,
         getLoadConstants: getLoadConstants,
+        getClientGroupsList: getClientGroupsList,
+        getTechnoUserDetails: getTechnoUserDetails,
         getDomainList: getDomainList,
         getKnowledgeUserInfo: getKnowledgeUserInfo,
+
     };
 }
 
