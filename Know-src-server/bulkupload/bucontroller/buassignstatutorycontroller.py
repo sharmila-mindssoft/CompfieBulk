@@ -700,11 +700,10 @@ def process_get_bulk_upload_constants(db, session_user):
         userCategoryList, SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT)
     return success
 
+
 ########################################################
 # To get list of domain executive details
 ########################################################
-
-
 def process_get_domain_users(db, session_user):
     res = get_domain_executive(db, session_user)
     success = bu_as.GetDomainExecutiveDetailsSuccess(res)

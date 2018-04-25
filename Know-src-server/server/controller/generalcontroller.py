@@ -546,6 +546,7 @@ def process_get_know_users(db, session_user):
     success = generalprotocol.GetKExecutiveDetailsSuccess(res)
     return success
 
+
 ########################################################
 # To get list of techno managers / executives details
 ########################################################
@@ -554,4 +555,3 @@ def process_get_techno_users(db, request, session_user):
     res = get_techno_users_list(db, userType, session_user)
     result_set = generalprotocol.GetTechnoDetailsSuccess(res)
     return result_set
-
