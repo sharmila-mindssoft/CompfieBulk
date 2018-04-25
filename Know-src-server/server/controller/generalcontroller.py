@@ -23,9 +23,7 @@ from server.database.general import (
     get_client_audit_trails,
     get_client_login_trace_filters,
     get_client_login_trace,
-    get_knowledge_executive,
-    get_techno_users_list,
-    get_domain_executive
+    get_knowledge_executive
 )
 
 __all__ = [
