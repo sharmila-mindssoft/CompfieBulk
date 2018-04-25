@@ -775,6 +775,7 @@ def get_form_categories(db, session_user):
     _source_db.close()
     return result
 
+
 def get_domain_executive(db, session_user):
     _source_db_con = connectKnowledgeDB()
     _source_db = Database(_source_db_con)

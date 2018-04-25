@@ -113,7 +113,7 @@ def process_bu_assign_statutory_request(request, db, session_user):
 
     if type(request_frame) is bu_as.GetDomainExecutiveDetails:
         result = process_get_domain_users(db, session_user)
-        
+
     return result
 
 ########################################################
@@ -688,6 +688,7 @@ def validate_assign_statutory(db, request_frame, session_user):
     )
     return result
 
+
 ########################################################
 # To get list of user_category_id and constants
 ########################################################
@@ -709,11 +710,10 @@ def process_get_bulk_upload_constants(db, session_user):
         SHOW_REMOVE_ICON, SYSTEM_REJECT_ACTION_STATUS,
         IS_FULLY_REJECT_ACTION_STATUS)
 
+
 ########################################################
 # To get list of domain executive details
 ########################################################
-
-
 def process_get_domain_users(db, session_user):
     res = get_domain_executive(db, session_user)
     success = bu_as.GetDomainExecutiveDetailsSuccess(res)
