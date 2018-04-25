@@ -173,7 +173,7 @@ function getPastRecords(legalEntity) {
 function validateUpload() {
     if ($('#fileInput').val() == "") {
         displayMessage("Select file to upload");
-        $('#myModal').modal('show');
+        $('#myModal').modal('hide');
         return false;
     } else {
 
@@ -191,6 +191,7 @@ function validateUpload() {
 
             buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
                 if (error == null) {
+                    // console.log("data>>" + JSON.stringify(data));
                     var csv_split_name = data.csv_name.substring(0, data.csv_name.lastIndexOf("_"));
                     $('#myModal').modal('hide');
                     TOTALRECORD.text(data.total);
@@ -216,6 +217,9 @@ function validateUpload() {
                         $('#divSuccessbutton').hide();
                         buCtPage._ActionMode = "upload";
                         BTNUPLOAD.show();
+                        docNames = data.doc_names;
+                        console.log("data.doc_names" + data.doc_names);
+                        console.log("docNames>>" + docNames);
                     } else {
                         $('.divSuccessDocument').hide();
                         $('#divSuccessbutton').show();
@@ -306,6 +310,7 @@ UploadFile.change(function(e) {
     if ($(this).val() != '') {
         buClient.uploadCSVFile(e, function(status, response) {
             if (status == false) {
+                UploadFile.val("");
                 displayMessage(response);
             } else {
                 csvInfo = response;
@@ -493,14 +498,15 @@ function submitUpload() {
         "new_csv_id": parseInt($('#hdnCsvId').val()),
         "legal_entity_id": parseInt(LEGALENTITYIDUPLOAD.val())
     };
-
+    $('#myModal').modal('show');
     buClient.saveBulkRecords(args, function(error, data) {
         if (error == null) {
             VIEWSCREEN.show();
             ADDSCREEN.hide();
             displaySuccessMessage("Record Submitted successfully");
+            $('#myModal').modal('hide');
         } else {
-
+            $('#myModal').modal('hide');
         }
     });
 }
@@ -526,8 +532,15 @@ function file_upload_rul() {
 }
 
 function resetAdd() {
+    $('.divSuccessDocument').hide();
+    $('#divSuccessbutton').hide();
+    $('.invaliddata').hide();
+    $('.view-summary').hide();
+    $('#divFileUpload').show();
+    $('#divSuccessFile').hide();
 
-
+    buCtPage._ActionMode = "add";
+    UploadFile.val("");
 }
 
 Dropzone.autoDiscover = false;
@@ -554,24 +567,18 @@ var myDropzone = new Dropzone("div#myDrop", {
     },
     init: function() {
         this.on("addedfile", function(file) {
-            console.log("1>> " + file.name);
-            console.log(">> " + jQuery.inArray(file.name, addedfiles));
-            console.log("docNames>> " + jQuery.inArray(file.name, docNames));
             if (jQuery.inArray(file.name, addedfiles) > -1) {
                 console.log("addedfiles part");
                 myDropzone.removeFile(file);
             }
-            if (jQuery.inArray(file.name, docNames) > -1) {
-                console.log("docNames part");
+            if (jQuery.inArray(file.name, docNames) == -1) {
                 myDropzone.removeFile(file);
             } else {
-                console.log("else part");
                 addedfiles.push(file.name);
                 queueCount += 1;
             }
         });
         this.on("removedfile", function(file) {
-            console.log(file.name);
             if (jQuery.inArray(file.name, addedfiles) > -1) {
                 addedfiles.pop(file.name);
                 queueCount -= 1;
@@ -598,8 +605,10 @@ var myDropzone = new Dropzone("div#myDrop", {
                 hideLoader();
                 displaySuccessMessage(message.document_upload_success);
                 // buSmPage.showList();
-                VIEWSCREEN.show();
-                ADDSCREEN.hide();
+
+                $('.divSuccessDocument').hide();
+                $('#divSuccessbutton').show();
+                BTNUPLOAD.hide();
             }
         });
 

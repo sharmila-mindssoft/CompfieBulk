@@ -488,7 +488,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
 
-                if (key == "Document_Name" and value != ''):
+                if (key == "Document_Name" and value != '') :
                     self._doc_names.append(value)
 
                 for v in [v.strip() for v in values] :
@@ -524,6 +524,17 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                     self._error_summary["inactive_error"] += 1
                                 else :
                                     self._error_summary["invalid_data_error"] += 1
+
+                if key is "Document_Name":
+                    msg = []
+                    if data["Document_Name"] != "":
+                        file_extension = os.path.splitext(data["Document_Name"])
+                        allowed_file_formats = [".pdf", ".doc", ".docx",
+                                                    ".xls", ".xlsx"]
+                        if file_extension[1] not in allowed_file_formats:
+                            msg.append("Document Name - Invalid File Format")
+                            self._error_summary["invalid_data_error"] += 1
+                            res = make_error_desc(res, msg)
 
             if res is not True :
                 error_list = mapped_error_dict.get(row_idx)
@@ -589,6 +600,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
     def make_valid_return(self, mapped_error_dict, mapped_header_dict):
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
+        print "make_valid_return>list(set(self._doc_names))>>", list(set(self._doc_names))
         return {
             "return_status": True,
             "data": self._source_data,
