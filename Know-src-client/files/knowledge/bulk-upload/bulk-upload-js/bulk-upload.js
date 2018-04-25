@@ -602,3 +602,27 @@ function submitAssignStatutoryAction(csvid, cl_id, le_id, pwd, callback) {
     ];
     apiRequest("bu/assign_statutory", request, callback);
 }
+
+/* client bulk upload - api function starts */
+
+function getClientGroupsList(callback) {
+  callerName = 'techno';
+  var request = [
+      'GetClientGroupsList',
+      {}
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
+
+function getTechnoUserDetails(uType, callback) {
+  callerName = 'general';
+  var request = [
+      'GetTechnoUserDetails',
+      {
+        "user_type": uType
+      }
+  ];
+  apiRequest("bu/client_units", request, callback);
+}
+
+/* client bulk upload - api function ends */
