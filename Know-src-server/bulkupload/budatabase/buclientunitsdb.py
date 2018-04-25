@@ -1,12 +1,15 @@
 import traceback
 import datetime
+import mysql.connector
 
 from server.exceptionmessage import fetch_error
 from server import logger
-from server.constants import MAX_REJECTED_COUNT
 from server.constants import (
-    TM_USER_CATEGORY, TE_USER_CATEGORY
+    TM_USER_CATEGORY, TE_USER_CATEGORY, MAX_REJECTED_COUNT,
+    KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
 )
+from server.dbase import Database
 
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
 
@@ -25,8 +28,31 @@ __all__ = [
     "get_bulk_client_unit_list_by_filter",
     "save_client_unit_action_from_view",
     "get_bulk_client_unit_null_action_count",
-    "get_bulk_client_unit_file_count"
+    "get_bulk_client_unit_file_count",
+    "get_techno_users_list",
+    "get_cliens_for_client_unit_bulk_upload"
 ]
+
+###########################################################################
+'''
+    connect_source_db: This class methods connects to the main compfie
+    knowledge database.
+'''
+##########################################################################
+
+
+def connect_knowledge_db(db):
+
+    _source_db_con = mysql.connector.connect(
+        user=KNOWLEDGE_DB_USERNAME,
+        password=KNOWLEDGE_DB_PASSWORD,
+        host=KNOWLEDGE_DB_HOST,
+        database=KNOWLEDGE_DATABASE_NAME,
+        port=KNOWLEDGE_DB_PORT,
+        autocommit=False,
+    )
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
 
 ########################################################
 '''
@@ -673,3 +699,36 @@ def get_bulk_client_unit_file_count(db, user_id):
             return True
         else:
             return False
+
+########################################################
+'''
+    returns dataset
+   :param
+        db: database object
+        user_type: User type
+        user_id: logged user
+   :type
+        db: Object
+        user_type: Integer
+        user_id: Integer
+   :returns
+        result: return a dataset
+    rtype:
+        result: dataset
+'''
+########################################################
+
+
+def get_techno_users_list(db, utype, user_id):
+    connect_knowledge_db()
+    techno_users = []
+    data = db.call_proc("sp_techno_users_info", [utype, user_id])
+    for d in data:
+        emp_code_name = "%s - %s" %\
+            (d.get("employee_code"), d.get("employee_name"))
+        techno_users.append(
+            bu_cu.TechnoInfo(
+                int(d.get("group_id")), d.get("user_id"), emp_code_name
+            )
+        )
+    return techno_users
