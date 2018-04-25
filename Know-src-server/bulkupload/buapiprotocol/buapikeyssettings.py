@@ -1,4 +1,4 @@
-from protocol.api_key_validation import (
+from buapikeyvalidation import (
     is_alphabet_withdot, is_file_name, is_alphabet, is_alpha_numeric,
     is_alphabet_wtih_bracket, is_numeric, is_url, is_address,
     is_alphabet_csv_delimeter
@@ -866,24 +866,6 @@ bu_api_params = {
         'validation_method': None,
         'is_optional': False
     },
-    'bu_show_remove_icon': {
-        'type': 'INT',
-        'length': None,
-        'validation_method': None,
-        'is_optional': False
-    },
-    'bu_system_reject_status': {
-        'type': 'INT',
-        'length': None,
-        'validation_method': None,
-        'is_optional': False
-    },
-    'bu_fully_reject_status': {
-        'type': 'INT',
-        'length': None,
-        'validation_method': None,
-        'is_optional': False
-        },
     'KnowledgeManager': {
         'type': 'INT',
         'length': None,

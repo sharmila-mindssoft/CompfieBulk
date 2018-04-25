@@ -10,7 +10,7 @@ from server.constants import (
 )
 
 from bulkupload.bulkconstants import (
-    TM_USER_CATEGORY, TE_USER_CATEGORY, MAX_REJECTED_COUNT
+    MAX_REJECTED_COUNT
 )
 from server.dbase import Database
 
@@ -262,14 +262,10 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
 
     client_list = []
     expected_result = 2
-    if(len(dependent_users) > 0):
-        if(user_category_id == TM_USER_CATEGORY):
-            user_ids = ",".join(map(str, dependent_users))
-        elif(user_category_id == TE_USER_CATEGORY and
-             user_category_id != TM_USER_CATEGORY):
-            user_ids = ",".join(map(str, dependent_users))
-        else:
-            user_ids = user_id
+    if(len(dependent_users) >= 1):
+        user_ids = ",".join(map(str, dependent_users))
+    else:
+        user_ids = user_id
     args = [clientGroupId, from_date, to_date, record_count, page_count,
             str(user_ids)]
     data = db.call_proc_with_multiresult_set('sp_client_unit_bulk_reportdata',

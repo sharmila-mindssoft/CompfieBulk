@@ -8,10 +8,6 @@ from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
-from bulkupload.bulkconstants import (
-    DM_USER_CATEGORY, DE_USER_CATEGORY
-)
-
 from server.exceptionmessage import fetch_error
 
 __all__ = [
@@ -625,21 +621,17 @@ def convertArrayToString(array_ids):
 def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
                                          clientGroupId, legalEntityId, unitId,
                                          d_id, from_date, to_date,
-                                         record_count, page_count, dependent_users,
-                                         user_category_id):
+                                         record_count, page_count,
+                                         dependent_users, user_category_id):
     report_list = []
     expected_result = 2
     if(unitId is None):
         unitId = ''
 
-    if(len(dependent_users) > 0):
-        if(user_category_id == DM_USER_CATEGORY):
-            user_ids = ",".join(map(str, dependent_users))
-        elif(user_category_id == DE_USER_CATEGORY and
-             user_category_id != DM_USER_CATEGORY):
-            user_ids = ",".join(map(str, dependent_users))
-        else:
-            user_ids = user_id
+    if(len(dependent_users) >= 1):
+        user_ids = ",".join(map(str, dependent_users))
+    else:
+        user_ids = user_id
 
     args = [clientGroupId, legalEntityId, unitId, from_date, to_date,
             record_count, page_count, str(user_ids), d_id]
@@ -776,7 +768,18 @@ def get_form_categories(db, session_user):
     _source_db.begin()
     result = _source_db.call_proc("sp_usercategory_list")
     _source_db.close()
-    return result
+    userCategoryList = []
+    for row in result:
+        user_category_name = row["user_category_name"]
+        user_category_name = user_category_name.replace(" ", "")
+        userCategoryList.append(bu_as.BulkUploadConstant(
+            row["user_category_id"],
+            user_category_name
+        )
+        )
+
+    return userCategoryList
+
 
 def get_domain_executive(db, session_user):
     _source_db_con = connectKnowledgeDB()

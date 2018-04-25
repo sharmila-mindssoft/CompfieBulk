@@ -1410,42 +1410,29 @@ class GetDomainExecutiveDetailsSuccess(Response):
 
 class GetBulkUploadConstantSuccess(Response):
     def __init__(self, bu_constants, bu_system_rejected_by,
-                 bu_rejected_download_count, bu_show_remove_icon,
-                 bu_system_reject_status,
-                 bu_fully_reject_status):
+                 bu_rejected_download_count):
 
         self.bu_constants = bu_constants
         self.bu_system_rejected_by = bu_system_rejected_by
         self.bu_rejected_download_count = bu_rejected_download_count
-        self.bu_show_remove_icon = bu_show_remove_icon
-        self.bu_system_reject_status = bu_system_reject_status
-        self.bu_fully_reject_status = bu_fully_reject_status
 
     @staticmethod
     def parse_inner_strucure(data):
         data = parse_dictionary(data,
                                 ["bu_constants", "bu_system_rejected_by",
-                                 "bu_rejected_download_count",
-                                 "bu_show_remove_icon",
-                                 "bu_system_reject_status",
-                                 "bu_fully_reject_status"])
+                                 "bu_rejected_download_count"
+                                 ])
         return GetBulkUploadConstantSuccess(
             data.get("bu_constants"),
             data.get("bu_system_rejected_by"),
-            data.get("bu_rejected_download_count"),
-            data.get("bu_show_remove_icon"),
-            data.get("bu_system_reject_status"),
-            data.get("bu_fully_reject_status")
+            data.get("bu_rejected_download_count")
         )
 
     def to_inner_structure(self):
         return {
             "bu_constants": self.bu_constants,
             "bu_system_rejected_by": self.bu_system_rejected_by,
-            "bu_rejected_download_count": self.bu_rejected_download_count,
-            "bu_show_remove_icon": self.bu_show_remove_icon,
-            "bu_system_reject_status": self.bu_system_reject_status,
-            "bu_fully_reject_status": self.bu_fully_reject_status
+            "bu_rejected_download_count": self.bu_rejected_download_count
         }
 
 def _init_Response_class_map():
