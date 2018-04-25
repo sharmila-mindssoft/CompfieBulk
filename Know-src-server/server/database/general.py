@@ -43,7 +43,6 @@ __all__ = [
     "update_message_status",
     "validate_user_rights",
     "get_knowledge_executive",
-    "get_techno_users_list"
 ]
 
 
