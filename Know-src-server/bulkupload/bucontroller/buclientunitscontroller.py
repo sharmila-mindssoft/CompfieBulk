@@ -26,7 +26,9 @@ from ..budatabase.buclientunitsdb import (
     get_bulk_client_unit_list_by_filter,
     save_client_unit_action_from_view,
     get_bulk_client_unit_null_action_count,
-    get_bulk_client_unit_file_count
+    get_bulk_client_unit_file_count,
+    get_techno_users_list,
+    get_cliens_for_client_unit_bulk_upload
 )
 from ..bulkuploadcommon import (
     convert_base64_to_file,
@@ -125,6 +127,14 @@ def process_bu_client_units_request(request, db, session_user):
 
     if type(request_frame) is bu_cu.ConfirmSubmitClientUnitFromView:
         result = confirm_submit_bulk_client_unit_list_action(
+            db, request_frame, session_user
+        )
+
+    if type(request_frame) is bu_cu.GetTechnoUserDetails:
+        result = process_get_techno_users(db, request_frame, session_user)
+
+    if type(request_frame) is bu_cu.GetClientGroupsList:
+        result = get_client_groups_for_client_unit_bulk_upload(
             db, request_frame, session_user
         )
 
@@ -781,3 +791,58 @@ def save_bulk_client_unit_list_action(db, request_frame, session_user):
 
     except Exception, e:
         raise e
+
+
+##################################################################
+'''   returns list of techno managers / executives details
+   :param
+        db: database object
+        request_frame: api request GetClientGroupsList
+            class object
+        session_user: logged in user details
+   :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+   :returns
+        result: returns processed api response
+            GetClientGroupsList class Object
+    rtype:
+        result: Dataset
+'''
+###################################################################
+
+
+def process_get_techno_users(db, request, session_user):
+    userType = request.user_type
+    res = get_techno_users_list(db, userType, session_user.user_id())
+    result_set = bu_cu.GetTechnoDetailsSuccess(res)
+    return result_set
+
+
+##################################################################
+'''   returns list of of all clients with details for client unit
+    bulk upload
+   :param
+        db: database object
+        request_frame: api request GetClientGroupsList
+            class object
+        session_user: logged in user details
+   :type
+        db: Object
+        request_frame: Object
+        session_user: Object
+   :returns
+        result: returns processed api response
+            GetClientGroupsList class Object
+    rtype:
+        result: Dataset
+'''
+###################################################################
+
+
+def get_client_groups_for_client_unit_bulk_upload(db, request, session_user):
+    groups = get_cliens_for_client_unit_bulk_upload(db, session_user.user_id())
+    return bu_cu.GetClientGroupsListSuccess(
+        client_group_list=groups
+    )

@@ -90,10 +90,10 @@ function initialize(type_of_initialization) {
 	displayPage(type_of_initialization);
 	if (type_of_initialization == "list") {
 		displayLoader();
-		mirror.getClientGroupsList(function(error, response) {
+		bu.getClientGroupsList(function(error, response) {
 		    if (error == null) {
 		    	clientGroupsList = response.client_group_list;
-		    	mirror.getTechnoUserDetails(
+		    	bu.getTechnoUserDetails(
                     parseInt(userCategoryId), function(error, response)
                 {
 		    		if(error == null) {

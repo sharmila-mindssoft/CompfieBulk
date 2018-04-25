@@ -198,7 +198,7 @@ function loadCountwiseResult(data) {
         declinedCount = '-';
         reasonForRejection = '';
 
-        if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
+        if (parseInt(isFullyRejected) == 1) {
             removeAction = '';
             reasonForRejection = rejectedReason;
             $(ALL_USER_INFO).each(function(key, value) {
@@ -208,7 +208,7 @@ function loadCountwiseResult(data) {
                     rejectedBy = EMP_CODE + " - " + EMP_NAME;
                 }
             });
-        } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {
+        } else if (parseInt(statutoryAction) == 3) {
             rejectedBy = SYSTEM_REJECTED_BY;
             declinedCount = data[entity].declined_count;
             reasonForRejection = '';
