@@ -58,7 +58,10 @@ function initMethods() {
         getBulkUploadConstants: getBulkUploadConstants,
         getLoadConstants: getLoadConstants,
         getClientGroupsList: getClientGroupsList,
-        getTechnoUserDetails: getTechnoUserDetails
+        getTechnoUserDetails: getTechnoUserDetails,
+        getDomainList: getDomainList,
+        getKnowledgeUserInfo: getKnowledgeUserInfo,
+
     };
 }
 

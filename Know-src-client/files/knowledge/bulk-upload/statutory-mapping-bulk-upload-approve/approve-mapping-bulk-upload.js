@@ -455,11 +455,14 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
 ApproveBulkMapping.prototype.fetchDropDownData = function() {
     tThis = this;
     displayLoader();
-    mirror.getDomainList(function (error, response) {
+    bu.getDomainList(function (error, response) {
+        console.log("error " + error);
+        console.log('response'+ response)
         if (error == null) {
-            tThis.DomainList = response.domains;
-            tThis.CountryList = response.countries
-            mirror.getKnowledgeUserInfo(function (err, resp){
+            tThis.DomainList = response.bsm_domains;
+            tThis.CountryList = response.bsm_countries
+            bu.getKnowledgeUserInfo(function (err, resp){
+                console.log(JSON.stringify(resp));
                 if (err == null){
                     tThis.UserList = resp.k_executive_info;
                     hideLoader();
@@ -1587,7 +1590,7 @@ function PageControls() {
         acTaskType.val('');
         MultiSelectFrequency.find("option").remove();
         MultiSelectFrequency.multiselect('destroy');
-        
+
         $('input[id="verified-data"]').removeAttr("checked");
         $('input[id="pending-data"]').removeAttr("checked");
         $('input[id="all-data"]').prop("checked", true);

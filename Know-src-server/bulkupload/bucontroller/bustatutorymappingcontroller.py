@@ -24,7 +24,9 @@ from ..budatabase.bustatutorymappingdb import (
     get_sm_csv_file_name_by_id,
     save_action_from_view,
     get_pending_action,
-    delete_action_after_approval, get_rejected_sm_file_count
+    delete_action_after_approval, get_rejected_sm_file_count,
+    get_domains_for_user_bu,
+    get_countries_for_user_bu, get_knowledge_executive_bu
 )
 
 from ..bulkuploadcommon import (
@@ -67,6 +69,13 @@ __all__ = [
 
 def process_bu_statutory_mapping_request(request, db, session_user):
     request_frame = request.request
+
+    if type(request_frame) is bu_sm.GetDomains:
+        result = process_get_domains_bu(db, session_user)
+
+    if type(request_frame) is bu_sm.GetKExecutiveDetails:
+        result = process_get_know_users_bu(db, session_user)
+
 
     if type(request_frame) is bu_sm.GetStatutoryMappingCsvUploadedList:
         result = get_statutory_mapping_csv_list(db, request_frame,
@@ -128,6 +137,28 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     return result
 
 # transaction methods begin
+
+########################################################
+# To get list of all domains
+########################################################
+
+
+def process_get_domains_bu(db, session_user):
+    domains = get_domains_for_user_bu(db, 0)
+    countries = get_countries_for_user_bu(db, session_user.user_id())
+    success = bu_sm.GetDomainsSuccess(domains, countries)
+    return success
+
+
+########################################################
+# To get list of knowledge executive details
+########################################################
+def process_get_know_users_bu(db, session_user):
+
+    res = get_knowledge_executive_bu(db, session_user.user_id())
+    success = bu_sm.GetKExecutiveDetailsSuccess(res)
+    return success
+
 
 ########################################################
 '''
