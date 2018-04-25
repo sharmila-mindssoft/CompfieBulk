@@ -54,6 +54,8 @@ function initMethods() {
         confirmSubmitClientUnitFromView: confirmSubmitClientUnitFromView,
         validateAssignStatutory: validateAssignStatutory,
         submitAssignStatutoryAction: submitAssignStatutoryAction,
+        getBulkUploadConstants: getBulkUploadConstants,
+        getLoadConstants: getLoadConstants,
     };
 }
 

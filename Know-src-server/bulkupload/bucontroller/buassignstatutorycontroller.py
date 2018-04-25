@@ -16,7 +16,9 @@ from ..bulkuploadcommon import (
 )
 from ..bulkexport import ConvertJsonToCSV
 from server.constants import (
-    BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT, CSV_MAX_LINES
+    BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT, CSV_MAX_LINES,
+    SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT, SHOW_REMOVE_ICON,
+    SYSTEM_REJECT_ACTION_STATUS, IS_FULLY_REJECT_ACTION_STATUS
 )
 import datetime
 from protocol import generalprotocol, technoreports
@@ -105,6 +107,9 @@ def process_bu_assign_statutory_request(request, db, session_user):
         )
     if type(request_frame) is bu_as.AssignStatutoryValidate:
         result = validate_assign_statutory(db, request_frame, session_user)
+
+    if type(request_frame) is bu_as.GetBulkUploadConstants:
+        result = process_get_bulk_upload_constants(db, session_user)
 
     return result
 
@@ -679,3 +684,26 @@ def validate_assign_statutory(db, request_frame, session_user):
         approved_count, un_saved_count
     )
     return result
+
+
+########################################################
+# To get list of user_category_id and constants
+########################################################
+def process_get_bulk_upload_constants(db, session_user):
+    userCategoryList = []
+    rows = get_form_categories(db, session_user)
+    for row in rows:
+        user_category_name = row["user_category_name"]
+        user_category_name = user_category_name.replace(" ", "")
+
+        userCategoryList.append(bu_as.BulkUploadConstant(
+            row["user_category_id"],
+            user_category_name
+        )
+        )
+
+    success = bu_as.GetBulkUploadConstantSuccess(
+        userCategoryList, SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT,
+        SHOW_REMOVE_ICON, SYSTEM_REJECT_ACTION_STATUS,
+        IS_FULLY_REJECT_ACTION_STATUS)
+    return success

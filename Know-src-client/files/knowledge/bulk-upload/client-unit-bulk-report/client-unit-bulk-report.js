@@ -603,7 +603,7 @@ ClientUnitBulkReport.prototype.exportData = function() {
 
 // Form Initalize
 $(function() {
-    mirror.getLoadConstants();
+    bu.getLoadConstants();
     loadItemsPerPage();
     getClientUnits();
     PageControls();

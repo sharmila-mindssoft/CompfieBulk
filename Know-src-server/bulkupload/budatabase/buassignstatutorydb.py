@@ -31,7 +31,8 @@ __all__ = [
     "get_validation_info",
     "get_rejected_file_count",
     "delete_action_after_approval",
-    "verify_user_units"
+    "verify_user_units",
+    "get_form_categories"
     ]
 
 ########################################################
@@ -779,3 +780,21 @@ def verify_user_units(db, session_user, u_ids):
     )
     unit_count = len(result)
     return unit_count
+
+
+# def get_form_categories(db):
+#     return db.call_proc("sp_usercategory_list", None)
+
+def get_form_categories(db, session_user):
+    _source_db_con = mysql.connector.connect(
+        user=KNOWLEDGE_DB_USERNAME,
+        password=KNOWLEDGE_DB_PASSWORD,
+        host=KNOWLEDGE_DB_HOST,
+        database=KNOWLEDGE_DATABASE_NAME,
+        port=KNOWLEDGE_DB_PORT,
+        autocommit=False,
+    )
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc("sp_usercategory_list")
+    return result
