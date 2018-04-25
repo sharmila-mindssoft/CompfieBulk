@@ -32,7 +32,8 @@ __all__ = [
     "get_rejected_file_count",
     "delete_action_after_approval",
     "verify_user_units",
-    "get_domain_executive"
+    "get_domain_executive",
+    "get_form_categories"
     ]
 
 ########################################################
@@ -765,6 +766,14 @@ def verify_user_units(db, session_user, u_ids):
     unit_count = len(result)
     return unit_count
 
+
+def get_form_categories(db, session_user):
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc("sp_usercategory_list")
+    _source_db.close()
+    return result
 
 def get_domain_executive(db, session_user):
     _source_db_con = connectKnowledgeDB()

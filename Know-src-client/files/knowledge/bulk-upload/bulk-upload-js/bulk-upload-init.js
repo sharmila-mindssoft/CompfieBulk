@@ -55,6 +55,8 @@ function initMethods() {
         validateAssignStatutory: validateAssignStatutory,
         submitAssignStatutoryAction: submitAssignStatutoryAction,
         getDomainUserInfo: getDomainUserInfo,
+        getBulkUploadConstants: getBulkUploadConstants,
+        getLoadConstants: getLoadConstants,
     };
 }
 

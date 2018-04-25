@@ -112,7 +112,54 @@ function pageControls() {
     });
 
 
+    //load legalentity form list in autocomplete text box
     UNIT_VAL.keyup(function(e) {
+        resetFilter('units');
+            var str = '';
+            var unitList = [];
+            var textVal = $(this).val();
+            if(DOMAIN.val() != null){
+                checkDomain = DOMAIN.val();
+                if (UNITS.length > 0 && checkDomain.length > 0) {
+                    for (var i in UNITS) {
+                        if(UNITS[i].le_id == LEGAL_ENTITY.val() &&
+                             $.inArray(checkDomain, UNITS[i].d_ids) == -1
+                            ){
+                                var ISVALID = true;
+                                for(var j in ASSIGNED_UNIT_LIST){
+                                    if(
+                                        ASSIGNED_UNIT_LIST[j].u_id == UNITS[i].u_id &&
+                                        $.inArray(
+                                            ASSIGNED_UNIT_LIST[j].d_id, UNITS[i].d_ids
+                                        ) == -1
+                                    ){
+                                        ISVALID = false;
+                                    }
+                                }
+                                if(ISVALID){
+                                    unitCodeName = UNITS[i].u_name;
+                                    unitCode = unitCodeName.split("-");
+                                    unitCode = unitCode[0];
+                                    unitList.push({
+                                        "unit_id": unitCode,
+                                        "unit_name": unitCodeName
+                                    });
+                                }   
+                        }
+                    }
+                commonAutoComplete(
+                    e, AC_UNIT, UNIT, textVal,
+                    unitList, "unit_name", "unit_id",
+                    function(val) {
+                        onAutoCompleteSuccess(UNIT_VAL, UNIT, val);
+                    });
+                }
+            }
+
+    });
+
+
+/*    UNIT_VAL.keyup(function(e) {
         resetFilter('units');
         var str = '';
         var unitList = [];
@@ -156,7 +203,7 @@ function pageControls() {
                 });
             }
         }
-    });
+    });*/
 
     SHOW_BTN.click(function() {
         isValid = ASM_BULK_REPORT_CLASS.validateMandatory();
@@ -748,7 +795,7 @@ window.onclick = function(event) {
 }
 
 $(function() {
-    mirror.getLoadConstants();
+    bu.getLoadConstants();
     REPORT_VIEW.hide();
     initialize();
     fetchData();

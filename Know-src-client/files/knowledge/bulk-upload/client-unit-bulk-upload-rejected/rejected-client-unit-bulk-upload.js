@@ -470,7 +470,7 @@ window.onclick = function(event) {
 }
 
 $(function() {
-    mirror.getLoadConstants();
+    bu.getLoadConstants();
     REPORT_VIEW.hide();
     initialize();
     pageControls();

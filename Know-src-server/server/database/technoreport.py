@@ -1118,27 +1118,3 @@ def get_ComplianceStatutoriesList(db, unit_id, domain_id, user_id):
     compliance_statutories = []
     args = [unit_id, domain_id]
     result = db.call_proc_with_multiresult_set("sp_approve_assigned_statutories_compliance_list", args, 3)
-
-
-##############################################################################
-# To get units list for user mapping report
-# Parameter(s) : Object of datanase, user category id, user id
-# Return Type : Return list of units
-##############################################################################
-
-def get_unit_details_for_statutory(db, user_category_id, user_id):
-    result = db.call_proc(
-        "sp_usermapping_statutory_unit_details", (user_category_id, user_id))
-    results = []
-    domain_id = 0
-    for d in result:
-        if(d["domain_id"] is not None):
-            domain_id = d["domain_id"]
-
-        results.append(knowledgereport.UnitStatutoryFilter(
-            d["unit_id"], d["unit_name"], d["client_id"],
-            d["business_group_id"], d["legal_entity_id"], d["country_id"],
-            d["division_id"], d["division_name"], d["category_id"],
-            d["category_name"], domain_id
-        ))
-    return results

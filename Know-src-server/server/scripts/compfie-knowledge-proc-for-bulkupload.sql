@@ -635,47 +635,8 @@ END //
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;
-DELIMITER //
-CREATE PROCEDURE `sp_usermapping_statutory_unit_details`(IN `userCatgId` int(11), IN `userId` int)
-BEGIN
-     if(userCatgId = 8)then
-        select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
-        tu.business_group_id, tu.legal_entity_id,
-        tu.country_id, td.division_id, td.division_name, tc.category_id,
-        tc.category_name, tuu.domain_id
-        from
-        tbl_user_units as tuu inner join tbl_units as tu
-        on tu.unit_id = tuu.unit_id
-        left join tbl_divisions as td on
-        td.division_id = tu.division_id
-        left join tbl_categories as tc on tc.category_id = tu.category_id
-        where
-        tuu.user_id = userId and tuu.user_category_id = userCatgId
-        group by tu.unit_id;
-    end if;
-
-    if(userCatgId = 7)then
-        select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
-        tu.business_group_id, tu.legal_entity_id,
-        tu.country_id, td.division_id, td.division_name, tc.category_id,
-        tc.category_name, tuu.domain_id
-        from
-        tbl_user_units as tuu inner join tbl_units as tu
-        on tu.unit_id = tuu.unit_id
-        left join tbl_divisions as td on
-        td.division_id = tu.division_id
-        left join tbl_categories as tc on tc.category_id = tu.category_id
-        left join tbl_user_mapping as tum on tum.parent_user_id = userId
-        where
-        tum.parent_user_id = userId and tuu.user_category_id = userCatgId
-        group by tu.unit_id;
-    end if;
-END//
-DELIMITER ;
-
 
 DROP PROCEDURE IF EXISTS `sp_domain_executive_info`;
-
 DELIMITER //
 
 CREATE PROCEDURE `sp_domain_executive_info`(
