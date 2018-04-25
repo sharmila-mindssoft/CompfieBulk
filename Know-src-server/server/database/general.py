@@ -43,7 +43,6 @@ __all__ = [
     "update_message_status",
     "validate_user_rights",
     "get_knowledge_executive",
-    "get_techno_users_list"
 ]
 
 
@@ -1124,15 +1123,3 @@ def get_knowledge_executive(db, manager_id):
             user_info[userid].d_ids = d_ids
 
     return user_info.values()
-
-def get_techno_users_list(db, utype, user_id):
-    techno_users = []
-    data = db.call_proc("sp_techno_users_info", [utype, user_id])
-    for d in data:
-        emp_code_name = "%s - %s" % (d.get("employee_code"), d.get("employee_name"))
-        techno_users.append(
-            generalprotocol.TechnoInfo(
-                int(d.get("group_id")), d.get("user_id"), emp_code_name
-            )
-        )
-    return techno_users

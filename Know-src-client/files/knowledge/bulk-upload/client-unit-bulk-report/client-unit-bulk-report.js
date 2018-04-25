@@ -280,7 +280,7 @@ function PageControls() {
 //
 function fetchFiltersData() {
     displayLoader();
-    mirror.getClientGroupsList(
+    bu.getClientGroupsList(
         function(error, data) {
             if (error != null) {
                 hideLoader();

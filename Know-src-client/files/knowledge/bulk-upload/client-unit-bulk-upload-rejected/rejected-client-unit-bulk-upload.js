@@ -118,7 +118,7 @@ function loadCountwiseResult(data) {
         rejectedFileName = data[entity].rejected_file;
         reasonForRejection = '';
 
-        if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
+        if (parseInt(isFullyRejected) == 1) {
             removeHrefTag = '';
             reasonForRejection = rejectedReason;
             $(ALL_USER_INFO).each(function(key, value) {
@@ -128,7 +128,7 @@ function loadCountwiseResult(data) {
                     rejectedBy = EmpCode + " - " + EmpName;
                 }
             });
-        } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {
+        } else if (parseInt(statutoryAction) == 3) {
             rejectedBy = SYSTEM_REJECTED_BY;
             rejectedOn = approvedOn;
             reasonForRejection = '';
@@ -206,7 +206,7 @@ function initialize() {
         displayMessage(error);
         hideLoader();
     }
-    mirror.getClientGroupsList(function(error, response) {
+    bu.getClientGroupsList(function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {

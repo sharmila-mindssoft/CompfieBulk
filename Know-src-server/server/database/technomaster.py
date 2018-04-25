@@ -2297,35 +2297,3 @@ def get_organisation_by_id(db, org_id, domain_id):
     if result:
         organisation_name = result[0]["organisation_name"]
     return organisation_name
-
-#
-# Client Unit - Bulk Upload - database functions - starts
-#
-
-####################################################################################
-#  To get list of groups
-#  Parameters : Object of database, session user
-#  Return Type : Returns List of object of ClientGroup under the session user
-####################################################################################
-def get_cliens_for_client_unit_bulk_upload(db, session_user):
-    groups = db.call_proc_with_multiresult_set("sp_client_groups_for_client_unit_bulk_upload", (session_user,), 2)
-    return return_client_group(groups[1])
-
-#######################################################################################
-#  To store the list of groups in a class
-#  Parameters : Object of database, session user
-#  Return Type : Returns List of object of ClientGroup under the session user
-#######################################################################################
-def return_client_group(groups):
-    fn = technomasters.ClientGroupsList
-    client_list = []
-    for group in groups:
-        client_list.append(
-            fn(group["client_id"], group["group_name"],
-                bool(group["is_active"]), int(group["is_approved"]))
-        )
-    return client_list
-
-#
-# Client Unit - Bulk Upload - database functions - ends
-#

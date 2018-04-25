@@ -18,8 +18,7 @@ from ..bulkexport import ConvertJsonToCSV
 
 from bulkupload.bulkconstants import (
     BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT, CSV_MAX_LINES,
-    SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT, SHOW_REMOVE_ICON,
-    SYSTEM_REJECT_ACTION_STATUS, IS_FULLY_REJECT_ACTION_STATUS
+    SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT
 )
 
 import datetime
@@ -515,7 +514,7 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     clientGroupId = request_frame.bu_client_id
     legalEntityId = request_frame.bu_legal_entity_id
     unitId = request_frame.bu_unit_id
-    domainId = request_frame.d_id
+    domainIds = request_frame.domain_ids
     from_date = request_frame.from_date
     to_date = request_frame.to_date
     record_count = request_frame.r_count
@@ -527,7 +526,7 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
     asm_reportdata, total_record = fetch_assigned_statutory_bulk_report(
         db, session_user, session_user.user_id(), clientGroupId, legalEntityId,
-        unitId, domainId, from_date, to_date, record_count, page_count,
+        unitId, domainIds, from_date, to_date, record_count, page_count,
         child_ids, user_category_id)
 
     result = bu_as.GetAssignedStatutoryReportDataSuccess(asm_reportdata,
@@ -690,32 +689,21 @@ def validate_assign_statutory(db, request_frame, session_user):
     )
     return result
 
+
 ########################################################
 # To get list of user_category_id and constants
 ########################################################
 def process_get_bulk_upload_constants(db, session_user):
     userCategoryList = []
-    rows = get_form_categories(db, session_user)
-    for row in rows:
-        user_category_name = row["user_category_name"]
-        user_category_name = user_category_name.replace(" ", "")
-
-        userCategoryList.append(bu_as.BulkUploadConstant(
-            row["user_category_id"],
-            user_category_name
-        )
-        )
-
+    userCategoryList = get_form_categories(db, session_user)
     success = bu_as.GetBulkUploadConstantSuccess(
-        userCategoryList, SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT,
-        SHOW_REMOVE_ICON, SYSTEM_REJECT_ACTION_STATUS,
-        IS_FULLY_REJECT_ACTION_STATUS)
+        userCategoryList, SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT)
+    return success
+
 
 ########################################################
 # To get list of domain executive details
 ########################################################
-
-
 def process_get_domain_users(db, session_user):
     res = get_domain_executive(db, session_user)
     success = bu_as.GetDomainExecutiveDetailsSuccess(res)
