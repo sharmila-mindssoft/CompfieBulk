@@ -21,7 +21,12 @@ function saveBulkRecords(args, callback) {
     clientApiRequest("bu/completed_task", request, callback);
 }
 
-
+function GetCompletedTaskCsvUploadedList(args, callback) {
+    var request = [
+        'GetCompletedTaskCsvUploadedList', args
+    ];
+    clientApiRequest("bu/completed_task", request, callback);
+}
 
 function convert_to_base64(file, callback) {
     var reader = new FileReader();

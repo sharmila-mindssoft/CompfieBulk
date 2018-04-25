@@ -647,7 +647,7 @@ ApproveAssignStatutoryBU.prototype.fetchValues = function() {
             if (error == null) {
                 statute.dataList = response.pending_csv_list_as;
                 var data = statute.dataList;
-                mirror.getDomainUserInfo(function(err, resp) {
+                bu.getDomainUserInfo(function(err, resp) {
                     if (err == null) {
                         statute.userList = resp.domain_executive_info;
                         var i;

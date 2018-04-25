@@ -43,8 +43,7 @@ __all__ = [
     "update_message_status",
     "validate_user_rights",
     "get_knowledge_executive",
-    "get_techno_users_list",
-    "get_domain_executive"
+    "get_techno_users_list"
 ]
 
 
@@ -1125,18 +1124,3 @@ def get_knowledge_executive(db, manager_id):
             user_info[userid].d_ids = d_ids
 
     return user_info.values()
-
-
-def get_domain_executive(db, user_id):
-    result = db.call_proc("sp_domain_executive_info", [user_id])
-    domain_users = []
-    for r in result :
-        userid = r.get("user_id")
-        emp_name = "%s - %s" % (r.get("employee_code"), r.get("employee_name"))
-
-        domain_users.append(
-            generalprotocol.DomainExecutiveInfo(
-                emp_name, userid
-            )
-        )
-    return domain_users

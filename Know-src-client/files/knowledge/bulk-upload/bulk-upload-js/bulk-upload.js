@@ -1,3 +1,17 @@
+/********* Delcare Constants Variables For Report and Rejected lists ****/
+var KM_USER_CATEGORY;
+var KE_USER_CATEGORY;
+var TM_USER_CATEGORY;
+var TE_USER_CATEGORY;
+var DM_USER_CATEGORY;
+var DE_USER_CATEGORY;
+var SYSTEM_REJECTED_BY;
+var REJECTED_FILE_DOWNLOADCOUNT;
+var SHOW_REMOVE_ICON;
+var SYSTEM_REJECT_ACTION_STATUS;
+var IS_FULLY_REJECT_ACTION_STATUS;
+/********* Delcare Constants Variables For Report and Rejected lists ****/
+
 function getStatutoryMappingCsvList(callback) {
     var request = [
         'GetStatutoryMappingCsvUploadedList',
@@ -603,8 +617,6 @@ function submitAssignStatutoryAction(csvid, cl_id, le_id, pwd, callback) {
     apiRequest("bu/assign_statutory", request, callback);
 }
 
-/* client bulk upload - api function starts */
-
 function getClientGroupsList(callback) {
   callerName = 'techno';
   var request = [
@@ -625,4 +637,45 @@ function getTechnoUserDetails(uType, callback) {
   apiRequest("bu/client_units", request, callback);
 }
 
-/* client bulk upload - api function ends */
+function getDomainUserInfo(callback) {
+  var request = [
+      'GetDomainExecutiveDetails',
+      {}
+  ];
+  apiRequest("bu/assign_statutory", request, callback);
+}
+
+/********* Load Js Constants For Report and Rejected lists ****/
+function getBulkUploadConstants(callback){
+  callerName = 'bu/assign_statutory';
+  var request = [
+      'GetBulkUploadConstants',
+      {}
+  ];
+  apiRequest(callerName, request, callback);
+}
+function getLoadConstants()
+{
+  bu.getBulkUploadConstants(function(error, data) {
+    if (error == null) {
+
+      KM_USER_CATEGORY=data.bu_constants[0].KnowledgeManager;
+      KE_USER_CATEGORY=data.bu_constants[1].KnowledgeExecutive;
+
+      TM_USER_CATEGORY=data.bu_constants[2].TechnoManager;
+      TE_USER_CATEGORY=data.bu_constants[3].TechnoExecutive;
+
+      DM_USER_CATEGORY=data.bu_constants[4].DomainManager;
+      DE_USER_CATEGORY=data.bu_constants[5].DomainExecutive;
+
+
+      SYSTEM_REJECTED_BY = data.bu_system_rejected_by;
+      REJECTED_FILE_DOWNLOADCOUNT = data.bu_rejected_download_count;
+      SHOW_REMOVE_ICON = data.bu_show_remove_icon;
+      SYSTEM_REJECT_ACTION_STATUS = data.bu_system_reject_status;
+      IS_FULLY_REJECT_ACTION_STATUS = data.bu_fully_reject_status;
+    }
+
+  });
+}
+/********* Load Js Constants For Report and Rejected lists  ****/

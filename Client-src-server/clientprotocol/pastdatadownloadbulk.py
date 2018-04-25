@@ -122,59 +122,6 @@ class PastDataJsonToCSV(object):
                 os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
 
-
-def download_past_data1(statutory_wise_compliances, total_count, users, session_user, FILE_DOWNLOAD_PATH, writer):
-    is_header = False
-    print " In DOWNLOAD PASt DATA "
-    sno = 0
-    print len(statutory_wise_compliances[0])
-    if len(statutory_wise_compliances) > 0:
-        for swc in statutory_wise_compliances[0]:
-            sno = sno + 1
-            print "swc ->> ", swc
-            # print "level 1 -->>>", swc.level_1_statutory_name
-            print "pr_compliances-->>>", swc.compliances[0]
-
-            print "SNO-> ", sno
-            compliances = swc.compliances
-            for comp in compliances:
-                print "^^^^^^^^^^", comp.description
-                print "Compl Frequencyyyy-> ", comp.frequency.to_structure()
-                description = comp.description
-                due_date = comp.due_date
-                compliance_name = comp.compliance_name
-                compliance_task_frequency = comp.frequency.to_structure()
-                statutory_date = comp.statutory_date
-                assignee_name = comp.assignee_name
-                if not is_header:
-                    csv_headers = [
-                        "Legal_Entity", "Domain", "Unit_Code", "Unit_Name",
-                        "Primary_Legislation", "Secondary_Legislation",
-                        "Compliance_Task", "Compliance_Description",
-                        "Compliance_Frequency", "Statutory_Date", "Due_Date",
-                        "Assignee", "Completion_Date*", "Document_Name"
-                    ]
-                    write_csv(writer, csv_headers, None)
-                    is_header = True
-                    csv_values = [
-                        "", "", "", "",
-                        "", "",
-                        compliance_name, description,
-                        compliance_task_frequency, statutory_date, due_date,
-                        assignee_name, "", ""
-                    ]
-                    write_csv(writer, None, csv_values)
-
-    else:
-        if os.path.exists(self.FILE_PATH):
-            os.remove(self.FILE_PATH)
-            self.FILE_DOWNLOAD_PATH = None
-
-
-    return None
-    # return FILE_DOWNLOAD_PATH
-
-
 def get_download_bulk_compliance_data(
     db, unit_id, domain_id, level_1_statutory_name, frequency_name,
     session_user, start_count, to_count
@@ -211,6 +158,8 @@ def get_download_bulk_compliance_data(
         query += condition
         param.extend(condition_val)
 
+    print "pastdatadownloadbulk>query>>", query
+    print "pastdatadownloadbulk>param>>", param
     rows = db.select_all(query, param)
 
     level_1_statutory_wise_compliances = {}
