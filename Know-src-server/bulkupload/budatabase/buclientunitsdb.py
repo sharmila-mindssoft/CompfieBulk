@@ -43,16 +43,20 @@ __all__ = [
 
 def connect_knowledge_db(db):
 
-    _source_db_con = mysql.connector.connect(
-        user=KNOWLEDGE_DB_USERNAME,
-        password=KNOWLEDGE_DB_PASSWORD,
-        host=KNOWLEDGE_DB_HOST,
-        database=KNOWLEDGE_DATABASE_NAME,
-        port=KNOWLEDGE_DB_PORT,
-        autocommit=False,
-    )
-    _source_db = Database(_source_db_con)
-    _source_db.begin()
+    try:
+        _source_db_con = mysql.connector.connect(
+            user=KNOWLEDGE_DB_USERNAME,
+            password=KNOWLEDGE_DB_PASSWORD,
+            host=KNOWLEDGE_DB_HOST,
+            database=KNOWLEDGE_DATABASE_NAME,
+            port=KNOWLEDGE_DB_PORT,
+            autocommit=False,
+        )
+        _source_db = Database(_source_db_con)
+        _source_db.begin()
+        return _source_db_con
+    except Exception, e:
+        print e
 
 ########################################################
 '''
@@ -720,9 +724,11 @@ def get_bulk_client_unit_file_count(db, user_id):
 
 
 def get_techno_users_list(db, utype, user_id):
-    connect_knowledge_db()
+    _source_db_con = connect_knowledge_db()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
     techno_users = []
-    data = db.call_proc("sp_techno_users_info", [utype, user_id])
+    data = _source_db.call_proc("sp_techno_users_info", [utype, user_id])
     for d in data:
         emp_code_name = "%s - %s" %\
             (d.get("employee_code"), d.get("employee_name"))
@@ -732,3 +738,57 @@ def get_techno_users_list(db, utype, user_id):
             )
         )
     return techno_users
+
+
+########################################################
+'''
+    returns List of client group object under the
+    session user
+   :param
+        db: database object
+        user_id: logged user
+   :type
+        db: Object
+        user_id: Integer
+   :returns
+        result: return a dataset
+    rtype:
+        result: dataset
+'''
+########################################################
+
+
+def get_cliens_for_client_unit_bulk_upload(db, session_user):
+    _source_db_con = connect_knowledge_db()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    groups = _source_db.call_proc_with_multiresult_set(
+        "sp_client_groups_for_client_unit_bulk_upload", (session_user,), 2
+    )
+    return return_client_group(groups[1])
+
+########################################################
+'''
+    returns List of client group object under the
+    session user
+   :param
+        Groups: Array object
+   :type
+        Groups: Array object
+   :returns
+        result: return a dataset
+    rtype:
+        result: dataset
+'''
+########################################################
+
+
+def return_client_group(groups):
+    fn = bu_cu.ClientGroupsList
+    client_list = []
+    for group in groups:
+        client_list.append(
+            fn(group["client_id"], group["group_name"],
+                bool(group["is_active"]), int(group["is_approved"]))
+        )
+    return client_list
