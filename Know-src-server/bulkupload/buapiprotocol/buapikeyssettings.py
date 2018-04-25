@@ -813,7 +813,8 @@ bu_api_params = {
         'length': None,
         'validation_method': None,
         'is_optional': False,
-        'module_name': assign_statutory, "class_name": "AssignedUnits"
+        'module_name': assign_statutory,
+        'class_name': 'AssignedUnits'
     },
     'csv_max_lines': {
         'type': 'INT', 'length': None,
@@ -822,6 +823,14 @@ bu_api_params = {
     'rejected_count': {
         'type': 'INT', 'length': None,
         'validation_method': None, 'is_optional': True
+    },
+    'domain_executive_info': {
+        'type': 'VECTOR_TYPE',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False,
+        'module_name': assign_statutory,
+        'class_name': 'DomainExecutiveInfo'
     },
     'new_csv_name': {
         'type': 'STRING', 'length': 100,
