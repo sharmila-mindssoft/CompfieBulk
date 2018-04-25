@@ -36,7 +36,9 @@ from ..bulkuploadcommon import (
 )
 import datetime
 from ..bulkexport import ConvertJsonToCSV
-from server.constants import BULKUPLOAD_CSV_PATH, CSV_MAX_LINES
+from bulkupload.bulkconstants import (
+    BULKUPLOAD_CSV_PATH, CSV_MAX_LINES
+)
 from protocol import generalprotocol, technoreports
 __all__ = [
     "process_bu_client_units_request"

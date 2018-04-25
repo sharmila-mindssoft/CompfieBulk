@@ -1,6 +1,7 @@
 import os
 import pytz
 import time
+
 ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 #
 # File upload path
@@ -9,8 +10,6 @@ KNOWLEDGE_FORMAT_PATH = os.path.join(ROOT_PATH, "knowledgeformat")
 CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
 CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
 
-BULKUPLOAD_CSV_PATH = os.path.join(ROOT_PATH, "..", "..", "bulkuploadcsv")
-BULKUPLOAD_INVALID_PATH = os.path.join(ROOT_PATH, "..", "..", "bulkuploadinvalid")
 #
 # File download url
 #
@@ -36,7 +35,7 @@ CAPTCHA_LENGTH = 6
 NO_OF_FAILURE_ATTEMPTS = 3
 FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js", "zip"]
 FILE_MAX_LIMIT = 1024 * 1024 * 50  # 50 MB
-SESSION_CUTOFF = 200   # minutes
+SESSION_CUTOFF = 150   # minutes
 REGISTRATION_EXPIRY = 48  # Hours
 FORGOTPASSWORD_EXPIRY = 48  # Hours
 DOWNLOAD_EXPIRY = 48  # Hours
@@ -47,49 +46,12 @@ KNOWLEDGE_DB_POOL_SIZE = 200
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
-
-
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new_round_2"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_apr_13"
 URL = "http://localhost:8080/"
 
 CLIENT_URL = URL
 KNOWLEDGE_URL = URL + "knowledge"
 
-
-BULK_UPLOAD_DB_HOST = "localhost"
-BULK_UPLOAD_DB_PORT = 3306
-BULK_UPLOAD_DB_USERNAME = "root"
-BULK_UPLOAD_DB_PASSWORD = "123456"
-BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_round_3"
-
-CSV_DELIMITER = '|;|'
-CSV_MAX_LINES = 1000
-MAX_REJECTED_COUNT = 10
-
 if IS_DEVELOPMENT is True:
     VERSION = time.time()
-
-TEMP_FILE_SERVER = "http://localhost:8083/temp/"
-
-#
-# Constants For Bulk Upload Reports & Rejected
-#
-REJECTED_DOWNLOAD_PATH = os.path.join(ROOT_PATH, "..", "..", "rejected-downloads")
-REJECTED_DOWNLOAD_BASE_PATH = "/knowledge/rejected/downloads/"
-
-KM_USER_CATEGORY = 3
-KE_USER_CATEGORY = 4
-TM_USER_CATEGORY = 5
-TE_USER_CATEGORY = 6
-DM_USER_CATEGORY = 7
-DE_USER_CATEGORY = 8
-
-SYSTEM_REJECTED_BY = "COMPFIE"
-REJECTED_FILE_DOWNLOADCOUNT = 2
-SHOW_REMOVE_ICON = 1
-SYSTEM_REJECT_ACTION_STATUS = 3
-IS_FULLY_REJECT_ACTION_STATUS = 1
-#
-# Constants For Bulk Upload Reports & Rejected;
-#

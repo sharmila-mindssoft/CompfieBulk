@@ -1,5 +1,6 @@
 import os
 import glob
+from os import rename
 from flask import (
     Flask, request,
     send_from_directory
@@ -11,6 +12,9 @@ import zipfile
 import argparse
 import socket
 import mysql.connector
+import random
+import string
+
 
 from constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
@@ -54,6 +58,7 @@ def bulkupload_db_connect():
     )
     return cnx_pool
 
+
 def validate_session(session_id):
     res_ponse_data = None
     _db_con = knowledge_db_connect()
@@ -71,6 +76,13 @@ def validate_session(session_id):
         _db_con.close()
 
     return res_ponse_data
+
+
+def generate_random(length=7):
+    characters = string.ascii_lowercase + string.digits
+    return ''.join(
+        random.SystemRandom().choice(characters) for _ in range(length)
+    )
 
 
 def update_file_status(file_name, file_size, csv_id):
@@ -94,11 +106,12 @@ def update_file_status(file_name, file_size, csv_id):
 
     return res_ponse_data
 
+
 def update_file_status_client(file_name, csv_id):
     res_ponse_data = None
     _db_con = bulkupload_db_connect()
     _db = Database(_db_con)
-    try :
+    try:
         _db.begin()
         print "update file status"
         if _db.update_file_status_client(csv_id, file_name) is None:
@@ -113,6 +126,7 @@ def update_file_status_client(file_name, csv_id):
         _db_con.close()
 
     return res_ponse_data
+
 
 def update_file_ddwnload_status(csv_id, status):
     res_ponse_data = None
@@ -140,6 +154,7 @@ def update_file_ddwnload_status(csv_id, status):
     print "res_ponse_data-> ", res_ponse_data
     return res_ponse_data
 
+
 @app.route('/temp/upload', methods=['POST'])
 def upload():
     print request
@@ -153,22 +168,36 @@ def upload():
         else:
             csvid = request.args.get("csvid")
             load_path = os.path.join(app.config['UPLOAD_PATH'], csvid)
+            print "load_path-> ", load_path
             if not os.path.exists(load_path):
                 os.makedirs(load_path)
                 os.chmod(load_path, 0777)
 
-            actual_file = os.path.join(load_path, f.filename)
+            random_string = generate_random(5)
+            print "Random string=> ", random_string
+            print "f.filename->>> ", f.filename
+            fn = f.filename
+            fname = (fn).split(".")
+            # ext[1] = f.fname.split("-")
+            random_file_name = fname[0] + '-' + random_string + "." + fname[1]
+            f.filename = random_file_name
+            print "name->> ", f.name
+            print "random_file_name>> ", random_file_name
+            actual_file = os.path.join(load_path, random_file_name)
             print "Actual file -> ", actual_file
+            # f.save(actual_file)
             zip_f_name = actual_file + ".zip"
+            print "zip_f_name--> ", zip_f_name
+            print "F... ", f
             f.save(zip_f_name)
             zip_ref = zipfile.ZipFile(zip_f_name, 'r')
             zip_ref.extractall(load_path)
             zip_ref.close()
-            os.remove(zip_f_name)
+            # os.remove(zip_f_name)
             print "@" * 10
-            actual_file_size = os.path.getsize(actual_file)
-            print os.path.getsize(actual_file)
-            if update_file_status(f.filename, actual_file_size, csvid) is False:
+            # actual_file_size = os.path.getsize(random_file_name)
+            # print actual_file_size
+            if update_file_status(random_file_name, 0, csvid) is False:
                 return "update failed"
 
         return "success"

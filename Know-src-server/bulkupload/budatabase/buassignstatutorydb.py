@@ -6,9 +6,12 @@ import mysql.connector
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+)
+from bulkupload.bulkconstants import (
     DM_USER_CATEGORY, DE_USER_CATEGORY
 )
+
 from server.exceptionmessage import fetch_error
 
 __all__ = [

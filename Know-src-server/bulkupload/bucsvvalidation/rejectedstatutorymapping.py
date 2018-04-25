@@ -1,5 +1,5 @@
 import os
-from server.constants import (
+from bulkupload.bulkconstants import (
     CSV_DELIMITER, REJECTED_DOWNLOAD_PATH, REJECTED_DOWNLOAD_BASE_PATH
 )
 from ..bulkuploadcommon import (

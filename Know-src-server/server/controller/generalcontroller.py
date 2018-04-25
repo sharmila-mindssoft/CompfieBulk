@@ -132,7 +132,7 @@ def process_general_request(request, db, user_id):
 
     elif type(request_frame) is generalprotocol.GetTechnoUserDetails:
         result = process_get_techno_users(db, request_frame, user_id)
-        
+
     return result
 
 
@@ -545,6 +545,7 @@ def process_get_know_users(db, session_user):
     res = get_knowledge_executive(db, session_user)
     success = generalprotocol.GetKExecutiveDetailsSuccess(res)
     return success
+
 
 ########################################################
 # To get list of techno managers / executives details
