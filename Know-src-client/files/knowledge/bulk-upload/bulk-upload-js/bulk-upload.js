@@ -618,7 +618,6 @@ function submitAssignStatutoryAction(csvid, cl_id, le_id, pwd, callback) {
 }
 
 function getClientGroupsList(callback) {
-  callerName = 'techno';
   var request = [
       'GetClientGroupsList',
       {}
@@ -627,7 +626,6 @@ function getClientGroupsList(callback) {
 }
 
 function getTechnoUserDetails(uType, callback) {
-  callerName = 'general';
   var request = [
       'GetTechnoUserDetails',
       {
