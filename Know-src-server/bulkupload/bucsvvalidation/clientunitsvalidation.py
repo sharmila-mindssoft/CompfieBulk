@@ -7,9 +7,13 @@ from itertools import groupby
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+)
+
+from bulkupload.bulkconstants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, CSV_MAX_LINES
 )
+
 from server.common import (
     get_date_time
 )

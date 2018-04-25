@@ -1,10 +1,10 @@
 import traceback
 from ..bucsvvalidation.assignstatutoryvalidation import (
     ValidateAssignStatutoryCsvData, ValidateAssignStatutoryForApprove
-    )
+)
 from ..bucsvvalidation.rejectedstatutorymapping import (
     ValidateRejectedDownloadBulkData
-    )
+)
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
 from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 from ..budatabase.buassignstatutorydb import *
@@ -15,11 +15,13 @@ from ..bulkuploadcommon import (
     remove_uploaded_file
 )
 from ..bulkexport import ConvertJsonToCSV
-from server.constants import (
+
+from bulkupload.bulkconstants import (
     BULKUPLOAD_CSV_PATH, MAX_REJECTED_COUNT, CSV_MAX_LINES,
     SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT, SHOW_REMOVE_ICON,
     SYSTEM_REJECT_ACTION_STATUS, IS_FULLY_REJECT_ACTION_STATUS
 )
+
 import datetime
 from protocol import generalprotocol, technoreports
 __all__ = [
@@ -113,7 +115,7 @@ def process_bu_assign_statutory_request(request, db, session_user):
 
     if type(request_frame) is bu_as.GetDomainExecutiveDetails:
         result = process_get_domain_users(db, session_user)
-        
+
     return result
 
 ########################################################

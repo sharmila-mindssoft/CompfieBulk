@@ -5,9 +5,12 @@ import mysql.connector
 from server.exceptionmessage import fetch_error
 from server import logger
 from server.constants import (
-    TM_USER_CATEGORY, TE_USER_CATEGORY, MAX_REJECTED_COUNT,
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+)
+
+from bulkupload.bulkconstants import (
+    TM_USER_CATEGORY, TE_USER_CATEGORY, MAX_REJECTED_COUNT
 )
 from server.dbase import Database
 

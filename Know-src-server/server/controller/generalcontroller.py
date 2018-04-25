@@ -541,13 +541,3 @@ def process_get_know_users(db, session_user):
     res = get_knowledge_executive(db, session_user)
     success = generalprotocol.GetKExecutiveDetailsSuccess(res)
     return success
-
-########################################################
-# To get list of domain executive details
-########################################################
-
-def process_get_domain_users(db, session_user):
-
-    res = get_domain_executive(db, session_user)
-    success = generalprotocol.GetDomainExecutiveDetailsSuccess(res)
-    return success

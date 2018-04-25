@@ -479,7 +479,7 @@ function loadCountwiseResult(filterList) {
             $('.tbl_rejected_file .rejected_i_cls', trRow)
                 .addClass("default-display-none");
         }
-        if (parseInt(fileDownloadCount) < SHOW_REMOVE_ICON) {
+        if (parseInt(fileDownloadCount) < 1) {
             $('.tbl_remove .remove_a', trRow).addClass("default-display-none");
         }
 
@@ -670,7 +670,7 @@ function downloadClick(csv_id, event) {
 
         dataCSVid = updatedCount[0].csv_id;
         downloadCount = updatedCount[0].download_count;
-        if (parseInt(downloadCount) == SHOW_REMOVE_ICON) {
+        if (parseInt(downloadCount) == 1) {
             eventID = eventID + dataCSVid;
             document.getElementById(eventID).classList.toggle("show");
             $("#delete_action_" + dataCSVid).attr("style", "display:block");
