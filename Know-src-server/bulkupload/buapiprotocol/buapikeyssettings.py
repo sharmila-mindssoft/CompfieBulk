@@ -910,4 +910,23 @@ bu_api_params = {
         'validation_method': None,
         'is_optional': False
     },
+    "bsm_domains": {
+        'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None,
+        'is_optional': False, 'module_name': statutory_mapping,
+        "class_name": "Domain"
+    },
+    "bsm_countries": {
+        'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None,
+        'is_optional': False, 'module_name': statutory_mapping,
+        "class_name": "Country"
+    },
+    'k_executive_info': {
+        'type': 'VECTOR_TYPE',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False,
+        'module_name': statutory_mapping,
+        "class_name": "KExecutiveInfo"
+    },
+
 }

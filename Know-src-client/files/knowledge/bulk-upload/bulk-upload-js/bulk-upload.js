@@ -634,8 +634,8 @@ function getBulkUploadConstants(callback){
   ];
   apiRequest(callerName, request, callback);
 }
-function getLoadConstants()
-{
+
+function getLoadConstants(){
   bu.getBulkUploadConstants(function(error, data) {
     if (error == null) {
 
@@ -658,4 +658,22 @@ function getLoadConstants()
 
   });
 }
+
 /********* Load Js Constants For Report and Rejected lists  ****/
+
+function getDomainList(callback) {
+    var request = [
+        'GetDomains',
+        {}
+    ];
+    apiRequest('bu/statutory_mapping', request, callback);
+}
+
+function getKnowledgeUserInfo(callback) {
+    console.log("Im in bulkupload")
+  var request = [
+      'GetKExecutiveDetails',
+      {}
+  ];
+  apiRequest('bu/statutory_mapping', request, callback);
+}

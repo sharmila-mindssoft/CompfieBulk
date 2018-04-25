@@ -57,6 +57,8 @@ function initMethods() {
         getDomainUserInfo: getDomainUserInfo,
         getBulkUploadConstants: getBulkUploadConstants,
         getLoadConstants: getLoadConstants,
+        getDomainList: getDomainList,
+        getKnowledgeUserInfo: getKnowledgeUserInfo,
     };
 }
 
