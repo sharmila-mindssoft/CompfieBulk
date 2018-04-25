@@ -674,20 +674,6 @@ class GetKExecutiveDetails(Request):
         return {
         }
 
-class GetTechnoUserDetails(Request):
-    def __init__(self, user_type):
-        self.user_type = user_type
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_type"])
-        user_type = data.get("user_type")
-        return GetTechnoUserDetails(user_type)
-
-    def to_inner_structure(self):
-        return {
-            "user_type": self.user_type
-        }
 
 class GetDomainExecutiveDetails(Request):
     def __init__(self):
@@ -742,7 +728,7 @@ def _init_Request_class_map():
         GetAuditTrails, VerifyPassword, GetMessages, GetStatutoryNotifications, UpdateStatutoryNotificationStatus,
         GetAuditTrailsFilter, ExportAuditTrails, UpdateMessageStatus, GetClientAuditTrailsFilter,
         GetClientAuditTrails, GetClientLoginTraceFilter, GetClientLoginTrace, ExportClientLoginTrace,
-        ExportClientAuditTrails, GetKExecutiveDetails, GetTechnoUserDetails, GetDomainExecutiveDetails,
+        ExportClientAuditTrails, GetKExecutiveDetails, GetDomainExecutiveDetails,
         GetBulkUploadConstants
     ]
     class_map = {}
@@ -1317,21 +1303,6 @@ class GetKExecutiveDetailsSuccess(Response):
             "k_executive_info": self.k_executive_info
         }
 
-class GetTechnoDetailsSuccess(Response):
-    def __init__(self, techno_info):
-        self.techno_info = techno_info
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["techno_info"])
-        return GetTechnoDetailsSuccess(
-            data.get("techno_info")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "techno_info": self.techno_info
-        }
 
 class GetDomainExecutiveDetailsSuccess(Response):
     def __init__(self, domain_executive_info):
@@ -1964,29 +1935,6 @@ class KExecutiveInfo(object):
             "d_ids": self.d_ids,
             "emp_code_name": self.emp_code_name,
             "user_id": self.user_id
-        }
-
-class TechnoInfo(object):
-    def __init__(self, group_id, user_id, emp_code_name):
-        self.group_id = group_id
-        self.user_id = user_id
-        self.emp_code_name = emp_code_name
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data , [
-            "group_id", "user_id", "emp_code_name"
-        ])
-        return TechnoInfo(
-            data.get("group_id"), data.get("user_id"),
-            data.get("emp_code_name")
-        )
-
-    def to_structure(self):
-        return {
-            "group_id": self.group_id,
-            "user_id": self.user_id,
-            "emp_code_name": self.emp_code_name
         }
 
 
