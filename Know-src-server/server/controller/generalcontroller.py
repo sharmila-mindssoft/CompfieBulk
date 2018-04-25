@@ -133,7 +133,7 @@ def process_general_request(request, db, user_id):
 
     elif type(request_frame) is generalprotocol.GetTechnoUserDetails:
         result = process_get_techno_users(db, request_frame, user_id)
-        
+
     return result
 
 

@@ -634,8 +634,6 @@ END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;
-
 DROP PROCEDURE IF EXISTS `sp_domain_executive_info`;
 DELIMITER //
 
@@ -819,3 +817,6 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- Remove procedure
+DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;
