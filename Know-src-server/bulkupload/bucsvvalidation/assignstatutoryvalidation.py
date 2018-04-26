@@ -258,7 +258,7 @@ class SourceDB(object):
         return client_statutory_id
 
     def save_client_compliances_data(
-        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id
+        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, client_id_
     ):
         created_on = get_date_time()
         columns = [
@@ -293,8 +293,11 @@ class SourceDB(object):
             c_ids = self._source_db.call_proc(
                 "sp_bu_get_compliance_id_by_name",
                 [
-                    d["Compliance_Task"], d["Compliance_Description"]
+                    d["Compliance_Task"], d["Compliance_Description"],
+                    d["Statutory_Provision"], client_id_, d_id,
+                    d["Primary_Legislation"], d["Secondary_Legislation"]
                 ])
+
             for c_id in c_ids:
                 comp_id = c_id["compliance_id"]
 
@@ -366,13 +369,18 @@ class SourceDB(object):
 
     def check_compliance_task_name_duplicate_in_knowledge(
         self, domain_name, unit_code, statutory_provision,
-        task_name, compliance_description
+        task_name, compliance_description, country_id,
+        p_legislation, s_legislation
     ):
+
         unit_id = self.Unit_Code.get(unit_code).get("unit_id")
         domain_id = self.Domain.get(domain_name).get("domain_id")
         c_ids = self._source_db.call_proc(
             "sp_bu_get_compliance_id_by_name",
-            [task_name, compliance_description]
+            [
+                task_name, compliance_description, statutory_provision,
+                country_id, domain_id, p_legislation, s_legislation
+            ]
         )
         comp_id = c_ids[0]["compliance_id"]
         data = self._source_db.call_proc(
@@ -815,6 +823,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     data.get("Statutory_Provision"),
                     data.get("Compliance_Task"),
                     data.get("Compliance_Description"),
+                    country_id,
+                    data.get("Primary_Legislation"),
+                    data.get("Secondary_Legislation")
                 ):
                     self._error_summary["duplicate_error"] += 1
                     dup_error = "Duplicate Compliance"
@@ -1010,6 +1021,9 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 data.get("Domain"), data.get("Unit_Code"),
                 data.get("Statutory_Provision"), data.get("Compliance_Task"),
                 data.get("Compliance_Description"),
+                country_id,
+                data.get("Primary_Legislation"),
+                data.get("Secondary_Legislation")
             ):
                 declined_count += 1
                 dup_error = "Compliance_Task - Duplicate data"
@@ -1044,12 +1058,14 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             unit_id = self.Unit_Code.get(value.get("Unit_Code")).get("unit_id")
             domain_id = self.Domain.get(value.get("Domain")).get("domain_id")
 
+            country_id, legal_entity_id = self.get_country_id()
+
             cs_id = self.save_client_statutories_data(
                 self._client_id, unit_id, domain_id, user_id
                 )
             self.save_client_compliances_data(
                 self._client_id, self._legal_entity_id, unit_id, domain_id,
-                cs_id, grouped_list, user_id
+                cs_id, grouped_list, user_id, country_id
                 )
 
     def make_rejection(self, declined_info, user_id):
