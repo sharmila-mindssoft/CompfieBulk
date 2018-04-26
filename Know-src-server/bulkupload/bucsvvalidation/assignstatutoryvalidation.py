@@ -258,7 +258,7 @@ class SourceDB(object):
         return client_statutory_id
 
     def save_client_compliances_data(
-        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id
+        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, c_id
     ):
         created_on = get_date_time()
         columns = [
@@ -293,8 +293,11 @@ class SourceDB(object):
             c_ids = self._source_db.call_proc(
                 "sp_bu_get_compliance_id_by_name",
                 [
-                    d["Compliance_Task"], d["Compliance_Description"]
+                    d["Compliance_Task"], d["Compliance_Description"],
+                    d["Statutory_Provision"], c_id, d_id,
+                    d["Primary_Legislation"], d["Secondary_Legislation"]
                 ])
+
             for c_id in c_ids:
                 comp_id = c_id["compliance_id"]
 
@@ -1055,12 +1058,14 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             unit_id = self.Unit_Code.get(value.get("Unit_Code")).get("unit_id")
             domain_id = self.Domain.get(value.get("Domain")).get("domain_id")
 
+            country_id, legal_entity_id = self.get_country_id()
+
             cs_id = self.save_client_statutories_data(
                 self._client_id, unit_id, domain_id, user_id
                 )
             self.save_client_compliances_data(
                 self._client_id, self._legal_entity_id, unit_id, domain_id,
-                cs_id, grouped_list, user_id
+                cs_id, grouped_list, user_id, country_id
                 )
 
     def make_rejection(self, declined_info, user_id):
