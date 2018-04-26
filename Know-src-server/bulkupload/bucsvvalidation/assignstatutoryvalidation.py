@@ -542,7 +542,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         duplicate_compliance_row = []
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Domain"], s["Unit_Code"], s["Statutory_Provision"],
-            s["Compliance_Task"], s["Compliance_Description"]
+            s["Compliance_Task"], s["Compliance_Description"],
+            s["Primary_Legislation"], s["Secondary_Legislation"],
+            s["Legal_Entity"]
         )):
             grouped_list = list(v)
             if len(grouped_list) > 1:
