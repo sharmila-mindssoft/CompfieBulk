@@ -366,13 +366,18 @@ class SourceDB(object):
 
     def check_compliance_task_name_duplicate_in_knowledge(
         self, domain_name, unit_code, statutory_provision,
-        task_name, compliance_description
+        task_name, compliance_description, country_id,
+        p_legislation, s_legislation
     ):
+
         unit_id = self.Unit_Code.get(unit_code).get("unit_id")
         domain_id = self.Domain.get(domain_name).get("domain_id")
         c_ids = self._source_db.call_proc(
             "sp_bu_get_compliance_id_by_name",
-            [task_name, compliance_description]
+            [
+                task_name, compliance_description, statutory_provision,
+                country_id, domain_id, p_legislation, s_legislation
+            ]
         )
         comp_id = c_ids[0]["compliance_id"]
         data = self._source_db.call_proc(
@@ -815,6 +820,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     data.get("Statutory_Provision"),
                     data.get("Compliance_Task"),
                     data.get("Compliance_Description"),
+                    country_id,
+                    data.get("Primary_Legislation"),
+                    data.get("Secondary_Legislation")
                 ):
                     self._error_summary["duplicate_error"] += 1
                     dup_error = "Duplicate Compliance"
@@ -1010,6 +1018,9 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 data.get("Domain"), data.get("Unit_Code"),
                 data.get("Statutory_Provision"), data.get("Compliance_Task"),
                 data.get("Compliance_Description"),
+                country_id,
+                data.get("Primary_Legislation"),
+                data.get("Secondary_Legislation")
             ):
                 declined_count += 1
                 dup_error = "Compliance_Task - Duplicate data"
