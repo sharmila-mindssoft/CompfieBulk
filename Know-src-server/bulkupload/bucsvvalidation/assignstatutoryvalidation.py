@@ -356,11 +356,11 @@ class SourceDB(object):
 
     def check_compliance_task_name_duplicate(
         self, domain_name, unit_code, statutory_provision, task_name,
-        compliance_description
+        compliance_description, p_legislation, s_legislation, l_entity
     ):
         data = self._db.call_proc("sp_check_duplicate_compliance_for_unit", [
             domain_name, unit_code, statutory_provision, task_name,
-            compliance_description
+            compliance_description, p_legislation, s_legislation, l_entity
         ])
         if len(data) > 0:
             return False
@@ -809,10 +809,12 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             if res is True:
                 if not self.check_compliance_task_name_duplicate(
                     data.get("Domain"), data.get("Unit_Code"),
-                    data.get("Statutory_Provision"), data.get(
-                        "Compliance_Task"
-                    ),
+                    data.get("Statutory_Provision"),
+                    data.get("Compliance_Task"),
                     data.get("Compliance_Description"),
+                    data.get("Primary_Legislation"),
+                    data.get("Secondary_Legislation"),
+                    data.get("Legal_Entity")
                 ):
                     self._error_summary["duplicate_error"] += 1
                     dup_error = "Duplicate Compliance"
