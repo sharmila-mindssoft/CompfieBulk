@@ -578,10 +578,12 @@ DROP PROCEDURE IF EXISTS `sp_bu_unit_code_and_name`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_bu_unit_code_and_name`()
+CREATE PROCEDURE `sp_bu_unit_code_and_name`(
+  IN legal_entity_id_ INT(11)
+)
 BEGIN
   SELECT legal_entity_id, unit_code, unit_name, unit_id, is_closed from
-  tbl_units;
+  tbl_units where legal_entity_id = legal_entity_id_;
 END //
 
 DELIMITER ;
@@ -812,7 +814,7 @@ CREATE PROCEDURE `sp_bu_get_country_by_legal_entity_name`(
     IN legal_entity_name_ text
 )
 BEGIN
-    SELECT country_id FROM tbl_legal_entities
+    SELECT country_id, legal_entity_id FROM tbl_legal_entities
     WHERE legal_entity_name = legal_entity_name_;
 END //
 
