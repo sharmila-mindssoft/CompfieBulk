@@ -643,8 +643,8 @@ var myDropzone = new Dropzone("div#myDrop", {
 
                 $('.divSuccessDocument').hide();
                 $('#divSuccessbutton').show();
-                VIEWSCREEN.show();
-                ADDSCREEN.hide();
+                /*VIEWSCREEN.show();
+                ADDSCREEN.hide();*/
                 BTNUPLOAD.hide();
 
                 buCtPage.showList();

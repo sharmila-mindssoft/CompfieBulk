@@ -236,33 +236,33 @@ def get_download_bulk_compliance_data(
         total_count += len(final_due_dates)
 
         for due_date in final_due_dates:
-            if (
-                int(start_count) <= compliance_count and
-                compliance_count < (int(start_count)+to_count)
-            ):
-                due_date_parts = due_date.replace("'", "").split("-")
-                year = due_date_parts[0]
-                month = due_date_parts[1]
-                day = due_date_parts[2]
-                due_date = datetime.date(int(year), int(month), int(day))
+            # if (
+            #     int(start_count) <= compliance_count and
+            #     compliance_count < (int(start_count)+to_count)
+            # ):
+            due_date_parts = due_date.replace("'", "").split("-")
+            year = due_date_parts[0]
+            month = due_date_parts[1]
+            day = due_date_parts[2]
+            due_date = datetime.date(int(year), int(month), int(day))
 
-                statutories_strip = statutories[0].strip()
+            statutories_strip = statutories[0].strip()
 
-                level_1_statutory_wise_compliances[level_1].append(
-                    clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
-                        compliance["compliance_id"], compliance_name,
-                        compliance["compliance_description"],
-                        clientcore.COMPLIANCE_FREQUENCY(compliance["frequency"]),
-                        summary, datetime_to_string(due_date),
-                        assingee_name, compliance["assignee"]
-                    )
+            level_1_statutory_wise_compliances[level_1].append(
+                clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
+                    compliance["compliance_id"], compliance_name,
+                    compliance["compliance_description"],
+                    clientcore.COMPLIANCE_FREQUENCY(compliance["frequency"]),
+                    summary, datetime_to_string(due_date),
+                    assingee_name, compliance["assignee"]
                 )
-                compliance_count += 1
-            elif compliance_count > (int(start_count)+to_count):
-                break
-            else:
-                compliance_count += 1
-                continue
+            )
+            #     compliance_count += 1
+            # elif compliance_count > (int(start_count)+to_count):
+            #     break
+            # else:
+            #     compliance_count += 1
+            #     continue
 
     statutory_wise_compliances = []
     for (level_1_statutory_name, compliances) in level_1_statutory_wise_compliances.iteritems():
