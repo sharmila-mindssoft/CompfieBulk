@@ -738,19 +738,21 @@ class SourceDB(object):
     '''
     ###################################################################
 
-    def generate_unit_code(self, cl_id, grp_name):
+    def generate_unit_code(self, cl_id, grp_name, le_id):
 
         unit_code_start_letters = grp_name[:2].upper()
         select_param = [
             str(unit_code_start_letters),
             str(unit_code_start_letters),
-            int(cl_id)
+            int(cl_id),
+            int(le_id)
         ]
         unit_code = None
         q = "SELECT (max(TRIM(LEADING %s FROM unit_code))+1) as code " + \
             "FROM tbl_units WHERE unit_code like binary " + \
             "concat( %s,'%') and " + \
-            "CHAR_LENGTH(unit_code) = 7 and client_id=%s; "
+            "CHAR_LENGTH(unit_code) = 7 and client_id=%s and " + \
+            "legal_entity_id = %s; "
         uc = self._source_db.select_one(
             q, select_param
         )
@@ -925,7 +927,8 @@ class SourceDB(object):
 
                     post_code = unit_data.get("Postal_Code")
                     if self._auto_unit_code is None:
-                        unit_code = self.generate_unit_code(cl_id, groupName)
+                        unit_code = self.generate_unit_code(
+                            cl_id, groupName, le_id)
                     else:
                         u_code = int(self._auto_unit_code[2:]) + incre
                         unit_code_start_letters = groupName[:2].upper()
@@ -1021,7 +1024,7 @@ class SourceDB(object):
             self._source_db.bulk_insert("tbl_units", columns, values)
             last_id = str(self._auto_unit_code) + ";" + str(inserted_records)
             self.save_units_domain_organizations(
-                last_id, cl_id, domain_orgn_ids
+                last_id, cl_id, domain_orgn_ids, le_id
             )
 
     ###################################################################
@@ -1033,11 +1036,14 @@ class SourceDB(object):
     ###################################################################
 
     def save_units_domain_organizations(
-        self, last_id, client_id, domain_orgn_ids
+        self, last_id, client_id, domain_orgn_ids, le_id
     ):
         splitLastID = last_id.split(";")
-        q = "SELECT unit_id as max_id from tbl_units where unit_code = %s; "
-        u_id = self._source_db.select_one(q, [splitLastID[0].strip(), ])
+        q = "SELECT unit_id as max_id from tbl_units where unit_code = %s " + \
+            "and legal_entity_id = %s; "
+        u_id = self._source_db.select_one(
+                q, [splitLastID[0].strip(), int(le_id)]
+            )
         if int(splitLastID[1].strip()) < int(u_id["max_id"]):
             unit_start_id = int(u_id["max_id"]) - int(splitLastID[1].strip())
         else:

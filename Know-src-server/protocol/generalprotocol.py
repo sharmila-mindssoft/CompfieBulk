@@ -661,21 +661,6 @@ class ExportClientLoginTrace(Request):
             "csv": self.csv
         }
 
-class GetKExecutiveDetails(Request):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetKExecutiveDetails()
-
-    def to_inner_structure(self):
-        return {
-        }
-
-
-
 def _init_Request_class_map():
     classes = [
         UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain,
@@ -684,7 +669,7 @@ def _init_Request_class_map():
         GetAuditTrails, VerifyPassword, GetMessages, GetStatutoryNotifications, UpdateStatutoryNotificationStatus,
         GetAuditTrailsFilter, ExportAuditTrails, UpdateMessageStatus, GetClientAuditTrailsFilter,
         GetClientAuditTrails, GetClientLoginTraceFilter, GetClientLoginTrace, ExportClientLoginTrace,
-        ExportClientAuditTrails, GetKExecutiveDetails
+        ExportClientAuditTrails
     ]
     class_map = {}
     for c in classes:
@@ -1241,25 +1226,6 @@ class DatabaseConnectionFailure(Response):
         return {
         }
 
-
-class GetKExecutiveDetailsSuccess(Response):
-    def __init__(self, k_executive_info):
-        self.k_executive_info = k_executive_info
-
-    @staticmethod
-    def parse_inner_strucure(data):
-        data = parse_dictionary(data, ["k_executive_info"])
-        return GetKExecutiveDetailsSuccess(
-            data.get("k_executive_info")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "k_executive_info": self.k_executive_info
-        }
-
-
-
 def _init_Response_class_map():
     classes = [
         UpdateUserProfileSuccess,
@@ -1270,8 +1236,7 @@ def _init_Response_class_map():
         GetStatutoryNotificationsSuccess, UpdateStatutoryNotificationStatusSuccess,
         ExportToCSVSuccess, UpdateMessageStatusSuccess, GetClientAuditTrailSuccess,
         GetClientLoginTraceFilterSuccess, GetClientLoginTraceSuccess,
-        DatabaseConnectionFailure,
-        GetKExecutiveDetailsSuccess
+        DatabaseConnectionFailure
     ]
     class_map = {}
     for c in classes:
@@ -1525,6 +1490,7 @@ class ComplianceDurationType(object):
             "duration_type_id": self.duration_type_id,
             "duration_type": to_structure_EnumType_core_DURATION_TYPE(self.duration_type),
         }
+
 
 
 #
@@ -1805,31 +1771,4 @@ class ClientAuditTrail(object):
             "created_on": self.created_on,
             "user_category_name": self.user_category_name,
             "user_name": self.user_name,
-        }
-
-class KExecutiveInfo(object):
-    def __init__(self, c_ids, d_ids, emp_code_name, user_id):
-        self.c_ids = c_ids
-        self.d_ids = d_ids
-        self.emp_code_name = emp_code_name
-        self.user_id = user_id
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, [
-            "c_ids", "d_ids", "emp_code_name",
-            "user_id"
-        ])
-        return KExecutiveInfo(
-            data.get("c_ids"), data.get("d_ids"),
-            data.get("emp_code_name"),
-            data.get("user_id")
-        )
-
-    def to_structure(self):
-        return {
-            "c_ids": self.c_ids,
-            "d_ids": self.d_ids,
-            "emp_code_name": self.emp_code_name,
-            "user_id": self.user_id
         }

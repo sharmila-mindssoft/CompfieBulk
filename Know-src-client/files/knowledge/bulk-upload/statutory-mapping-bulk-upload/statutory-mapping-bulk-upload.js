@@ -188,10 +188,10 @@ BulkUploadStatutoryMapping.prototype.fetchListData = function(first_argument) {
 BulkUploadStatutoryMapping.prototype.fetchDropDownData = function() {
     var t_this = this;
     displayLoader();
-    mirror.getDomainList(function (error, response) {
+    bu.getDomainList(function (error, response) {
         if (error == null) {
-            t_this._DomainList = response.domains;
-            t_this._CountryList = response.countries
+            t_this._DomainList = response.bsm_domains;
+            t_this._CountryList = response.bsm_countries
             hideLoader();
         }
         else{
@@ -459,6 +459,7 @@ function PageControls() {
         bu.uploadCSVFile(e, function(status, response) {
             if (status == false) {
                 buSmPage.possibleFailures(response)
+                FileUploadCsv.val("")
             }
             else {
                 csvInfo = response;

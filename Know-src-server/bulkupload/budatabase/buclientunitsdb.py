@@ -728,6 +728,7 @@ def get_techno_users_list(db, utype, user_id):
     _source_db.begin()
     techno_users = []
     data = _source_db.call_proc("sp_techno_users_info", [utype, user_id])
+    _source_db.close()
     for d in data:
         emp_code_name = "%s - %s" %\
             (d.get("employee_code"), d.get("employee_name"))
@@ -764,6 +765,7 @@ def get_cliens_for_client_unit_bulk_upload(db, session_user):
     groups = _source_db.call_proc_with_multiresult_set(
         "sp_client_groups_for_client_unit_bulk_upload", (session_user,), 2
     )
+    _source_db.close()
     print "groups"
     print groups
     return return_client_group(groups[1])
