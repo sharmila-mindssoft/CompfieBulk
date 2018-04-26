@@ -232,3 +232,12 @@
     padding: 8px 10px 5px 10px !important;
     vertical-align: top;
 }
+
+.bu-doc-summary {
+    margin: 0 auto;
+    width: 600px;
+}
+
+.bu-doc-summary li {
+    list-style: inside;
+}
