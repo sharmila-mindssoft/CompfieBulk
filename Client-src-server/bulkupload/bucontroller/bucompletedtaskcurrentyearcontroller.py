@@ -20,6 +20,9 @@ from server.common import (
     get_date_time_in_date, datetime_to_string_time, get_current_date, datetime_to_string
 )
 
+from ..buapiprotocol.pastdatadownloadbulk import PastDataJsonToCSV
+
+
 __all__ = [
     "process_bu_completed_task_current_year_request"
 ]
@@ -51,6 +54,11 @@ def process_bu_completed_task_current_year_request(request, db, session_user):
 
     if type(request_frame) is bu_ct.saveBulkRecords:
         result = process_saveBulkRecords(db, request_frame, session_user)
+
+    if type(request_frame) is bu_ct.GetDownloadData:
+        result = process_get_bulk_download_data(
+            db, request_frame, session_user
+        )
 
     return result
 
@@ -126,4 +134,27 @@ def process_saveBulkRecords(db, request_frame, session_user):
     else:
         result = []
 
+    return result
+
+
+########################################################
+# To get the compliances under the selected filters
+# Completed Task - Current Year BULK (Past Data)
+########################################################
+
+
+def process_get_bulk_download_data(
+        db, request_frame, session_user
+):
+    print "Process get Bulk download"
+    print "request_frame>> ", request_frame
+    print "leid->>>> ", request_frame.legal_entity_id
+    converter = PastDataJsonToCSV(
+                db, request_frame, session_user, "DownloadPastData"
+            )
+    if converter.FILE_DOWNLOAD_PATH is None:
+            return bu_ct.ExportToCSVEmpty()
+    else:
+        result = bu_ct.DownloadBulkPastDataSuccess(
+                 converter.FILE_DOWNLOAD_PATH)
     return result

@@ -578,10 +578,12 @@ DROP PROCEDURE IF EXISTS `sp_bu_unit_code_and_name`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_bu_unit_code_and_name`()
+CREATE PROCEDURE `sp_bu_unit_code_and_name`(
+  IN legal_entity_id_ INT(11)
+)
 BEGIN
   SELECT legal_entity_id, unit_code, unit_name, unit_id, is_closed from
-  tbl_units;
+  tbl_units where legal_entity_id = legal_entity_id_;
 END //
 
 DELIMITER ;
@@ -667,10 +669,20 @@ DROP PROCEDURE IF EXISTS `sp_bu_get_compliance_id_by_name`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_bu_get_compliance_id_by_name`(
-IN c_task text, c_desc text)
+  IN c_task text, c_desc text, s_provision text, country_id_ INT(11),
+  domain_id_ INT(11), p_legislation text, s_legislation text
+)
 BEGIN
-   select compliance_id from tbl_compliances
-   where compliance_task = c_task and compliance_description = c_desc;
+  select compliance_id from tbl_compliances as t1
+  inner join tbl_mapped_statutories as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+  inner join tbl_statutories t3 on t2.statutory_id = t3.statutory_id
+  where 
+  t1.domain_id = domain_id_ and t1.country_id = country_id_ 
+  and IF(parent_ids = '', statutory_name = p_legislation, 1) 
+  and IF(parent_ids <> '', statutory_name = s_legislation, 1) 
+  and statutory_provision = s_provision 
+  and compliance_task = c_task 
+  and compliance_description = c_desc;
 END //
 
 DELIMITER ;
@@ -812,7 +824,7 @@ CREATE PROCEDURE `sp_bu_get_country_by_legal_entity_name`(
     IN legal_entity_name_ text
 )
 BEGIN
-    SELECT country_id FROM tbl_legal_entities
+    SELECT country_id, legal_entity_id FROM tbl_legal_entities
     WHERE legal_entity_name = legal_entity_name_;
 END //
 

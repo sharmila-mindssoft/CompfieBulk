@@ -472,12 +472,14 @@ function downloadData() {
     var frequency = "Periodical";
     var startCount = 0;
 
+    console.log("leId->>>>>>> "+ leId);
     buClient.getDownloadData(
         parseInt(leId), parseInt(domainId), parseInt(unitId), frequency, startCount,
         legalEntityName, domainName, unitName, unitCode,
         function(error, data) {
             if (error == null) {
                 var download_url = data.link;
+                console.log("download_url>>>>> " + download_url);
                 if (download_url != null) {
                     window.open(download_url, '_blank');
                     hideLoader();
@@ -641,8 +643,8 @@ var myDropzone = new Dropzone("div#myDrop", {
 
                 $('.divSuccessDocument').hide();
                 $('#divSuccessbutton').show();
-                VIEWSCREEN.show();
-                ADDSCREEN.hide();
+                /*VIEWSCREEN.show();
+                ADDSCREEN.hide();*/
                 BTNUPLOAD.hide();
 
                 buCtPage.showList();

@@ -125,6 +125,54 @@ class CsvList(object):
         }
 
 
+####################################################
+# Get Completed Task Current Year - Bulk (Past Data)
+####################################################
+class GetDownloadData(Request):
+    def __init__(
+        self, legal_entity_id, unit_id, domain_id,
+        compliance_frequency, start_count, le_name, d_name,
+        u_name, u_code
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.unit_id = unit_id
+        self.domain_id = domain_id
+        self.compliance_frequency = compliance_frequency
+        self.start_count = start_count
+        self.le_name = le_name
+        self.d_name = d_name
+        self.u_name = u_name
+        self.u_code = u_code
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "legal_entity_id", "unit_id", "domain_id", "compliance_task_frequency",
+            "start_count", "le_name", "d_name", "u_name", "u_code"
+        ])
+        return GetDownloadData(
+            data.get("legal_entity_id"), data.get("unit_id"),
+            data.get("domain_id"),
+            data.get("compliance_task_frequency"),
+            data.get("start_count"),
+            data.get("le_name"),
+            data.get("d_name"),
+            data.get("u_name"),
+            data.get("u_code")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id, "unit_id": self.unit_id, 
+            "domain_id": self.domain_id,
+            "compliance_task_frequency": self.compliance_frequency,
+            "start_count": self.start_count, "le_name": self.le_name,
+            "d_name": self.d_name,  "u_name": self.u_name,
+            "d_name": self.u_code,
+        }
+
+
+
 # class GetCompletedTaskCsvUploadedList(object):
 #     def __init__(
 #         self, csv_past_id, csv_name, uploaded_by, uploaded_on,
@@ -172,7 +220,8 @@ def _init_Request_class_map():
     classes = [
         UploadCompletedTaskCurrentYearCSV,
         saveBulkRecords,
-        GetCompletedTaskCsvUploadedList
+        GetCompletedTaskCsvUploadedList,
+        GetDownloadData
     ]
     class_map = {}
     for c in classes:
@@ -344,13 +393,45 @@ class CsvListSuccess(object):
             "uploaded_documents": self.uploaded_documents
         }
 
+class ExportToCSVEmpty(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ExportToCSVEmpty()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class DownloadBulkPastDataSuccess(Response):
+    def __init__(self, link):
+        self.link = link
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["link"])
+        link = data.get("link")
+
+        return DownloadBulkPastDataSuccess(
+            link
+        )
+
+    def to_inner_structure(self):
+        return {
+            "link": self.link
+        }
+
 
 def _init_Response_class_map():
     classes = [
         UploadCompletedTaskCurrentYearCSVSuccess,
         UploadCompletedTaskCurrentYearCSVFailed,
         saveBulkRecordSuccess,
-        GetCompletedTaskCsvUploadedListSuccess
+        GetCompletedTaskCsvUploadedListSuccess, ExportToCSVEmpty, DownloadBulkPastDataSuccess
     ]
     class_map = {}
     for c in classes:

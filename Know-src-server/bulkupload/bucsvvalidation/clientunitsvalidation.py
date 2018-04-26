@@ -952,7 +952,8 @@ class SourceDB(object):
 
                     # ul = d["Unit_Location"]
                     newul = ''
-                    for ul in d["Unit_Location"].split('>>'):
+                    # for ul in d["Unit_Location"].split('>>'):
+                    for ul in unit_data.get("Unit_Location").split('>>'):
                         newul = newul + ul.strip() + '>>'
                     newul = newul[:-2]
                     if geo_level_id == self.Unit_Location.\
