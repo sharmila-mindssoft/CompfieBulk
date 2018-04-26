@@ -258,7 +258,7 @@ class SourceDB(object):
         return client_statutory_id
 
     def save_client_compliances_data(
-        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, c_id
+        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, client_id_
     ):
         created_on = get_date_time()
         columns = [
@@ -294,7 +294,7 @@ class SourceDB(object):
                 "sp_bu_get_compliance_id_by_name",
                 [
                     d["Compliance_Task"], d["Compliance_Description"],
-                    d["Statutory_Provision"], c_id, d_id,
+                    d["Statutory_Provision"], client_id_, d_id,
                     d["Primary_Legislation"], d["Secondary_Legislation"]
                 ])
 
