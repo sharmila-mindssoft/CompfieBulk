@@ -1859,8 +1859,8 @@ BEGIN
     from tbl_bulk_assign_statutory where
     domain = domain_ and unit_code = unitcode_ and statutory_provision = provision_
     and compliance_task_name = taskname_ and compliance_description = description_
-    and legal_entity = legal_entity_ and primary_legislation_ = p_legislation
-    and secondary_legislation_ = s_legislation;
+    and legal_entity = legal_entity_ and perimary_legislation = p_legislation
+    and secondary_legislation = s_legislation;
 END //
 
 DELIMITER ;
