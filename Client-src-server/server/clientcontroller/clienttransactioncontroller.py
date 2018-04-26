@@ -23,8 +23,6 @@ from server.clientdatabase.general import (
 from server.common import (
     get_date_time_in_date, datetime_to_string_time, get_current_date, datetime_to_string
 )
-# from ..bulkupload.client_bulkexport import ConvertJsonToCSV
-from clientprotocol.pastdatadownloadbulk import PastDataJsonToCSV
 
 __all__ = [
     "process_client_transaction_requests",
@@ -150,12 +148,6 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_have_compliances(
             db, request, session_user
         )
-
-    elif type(request) is clienttransactions.GetDownloadData:
-        result = process_get_bulk_download_data(
-            db, request, session_user
-        )
-
     return result
 
 def process_get_statutory_settings(db, request, session_user):
@@ -710,55 +702,3 @@ def process_change_theme(db, request, session_user):
         theme_value = update_themes_for_user(db, session_user, theme_id, theme_name)
 
     return clienttransactions.ChangeThemeSuccess(theme_value)
-
-
-########################################################
-# To generate the completed task - past records
-########################################################
-def process_get_past_records_form_data_bulk(db, request, session_user, session_category):
-    countries = get_countries_for_user(db, session_user)
-    row = get_user_company_details(db, session_user)
-    business_groups = get_business_groups_for_user(db, row[3])
-    legal_entities = get_legal_entities_for_user(db, row[2])
-    divisions = get_divisions_for_user(db, row[1])
-    category = get_categories_for_user(db, row[4])
-    units = get_user_based_units(db, session_user, session_category)
-    domains = get_domains_for_user(db, session_user, session_category)
-    level1_statutories = get_level_1_statutories_for_user_with_domain(
-        db, session_user
-    )
-    compliance_frequency = get_compliance_frequency(
-        db, "frequency_id in (1,2,3)"
-    )
-
-    return clienttransactions.GetPastRecordsFormDataSuccess(
-        countries=countries,
-        business_groups=business_groups,
-        legal_entities=legal_entities,
-        divisions=divisions,
-        category=category,
-        units=units,
-        domains=domains,
-        level_1_statutories=level1_statutories,
-        compliance_frequency=compliance_frequency
-    )
-
-########################################################
-# To get the compliances under the selected filters
-# Completed Task - Current Year BULK (Past Data)
-########################################################
-
-
-def process_get_bulk_download_data(
-        db, request, session_user
-):
-    print "Process get Bulk download"
-    converter = PastDataJsonToCSV(
-                db, request, session_user, "DownloadPastData"
-            )
-    if converter.FILE_DOWNLOAD_PATH is None:
-            return clientreport.ExportToCSVEmpty()
-    else:
-        result = clienttransactions.DownloadBulkPastDataSuccess(
-                 converter.FILE_DOWNLOAD_PATH)
-    return result

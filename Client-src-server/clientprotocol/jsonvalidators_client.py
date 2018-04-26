@@ -532,7 +532,7 @@ def to_structure_dictionary_values(x):
 
 
 def return_import(module, class_name):
-    if class_name == "CsvList":
+    if (module.find('.') > -1) :
         mod = __import__(module, fromlist=[class_name])
     else:
         mod = __import__('clientprotocol.'+module, fromlist=[class_name])

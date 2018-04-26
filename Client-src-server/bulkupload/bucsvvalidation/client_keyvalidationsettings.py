@@ -2,8 +2,6 @@
 import re
 import datetime
 
-from server.constants import CSV_DELIMITER
-
 __all__ = [
     "csv_params", "parse_csv_dictionary_values"
 ]

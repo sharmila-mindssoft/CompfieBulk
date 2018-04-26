@@ -171,9 +171,9 @@ function getPastRecords(legalEntity) {
 }
 
 function validateUpload() {
-    if ($('#fileInput').val() == "") {
+    if ($('#fileInput').val() == "" && buCtPage._ActionMode != 'upload') {
         displayMessage("Select file to upload");
-        $('#myModal').modal('show');
+        $('#myModal').modal('hide');
         return false;
     } else {
 
@@ -191,6 +191,7 @@ function validateUpload() {
 
             buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
                 if (error == null) {
+                    // console.log("data>>" + JSON.stringify(data));
                     var csv_split_name = data.csv_name.substring(0, data.csv_name.lastIndexOf("_"));
                     $('#myModal').modal('hide');
                     TOTALRECORD.text(data.total);
@@ -216,6 +217,7 @@ function validateUpload() {
                         $('#divSuccessbutton').hide();
                         buCtPage._ActionMode = "upload";
                         BTNUPLOAD.show();
+                        docNames = data.doc_names;
                     } else {
                         $('.divSuccessDocument').hide();
                         $('#divSuccessbutton').show();
@@ -306,6 +308,7 @@ UploadFile.change(function(e) {
     if ($(this).val() != '') {
         buClient.uploadCSVFile(e, function(status, response) {
             if (status == false) {
+                UploadFile.val("");
                 displayMessage(response);
             } else {
                 csvInfo = response;
@@ -355,20 +358,20 @@ BulkCompletedTaskCurrentYear.prototype.showList = function() {
         "legal_entity_id": parseInt(LegalEntityId.val())
     };
 
+    displayLoader();
     buClient.GetCompletedTaskCsvUploadedList(args,
         function(error, data) {
             if (error == null) {
                 // alert(data);
                 t_this._ListDataForView = data.csv_list;
                 t_this.renderList(t_this._ListDataForView);
-
-
+                hideLoader();
             } else {
-
+                hideLoader();
             }
         }
     );
-}
+};
 
 BulkCompletedTaskCurrentYear.prototype.renderList = function(list_data) {
     var t_this = this;
@@ -400,6 +403,7 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(list_data) {
             docNames = data.doc_names;
             $('.upload i', cloneRow).on('click', function() {
                 t_this.showEdit(data);
+                console.log("upload fired");
             });
             ListContainer.append(cloneRow);
             j += 1;
@@ -410,22 +414,24 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(list_data) {
 
 BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     // this.showAddScreen();
+    resetEdit();
+    // data
+    console.log("data>>" + JSON.stringify(data));
+    var uploadedCsvName = data.csv_name;
 
-    // var uploadedCsvName = data.csv_name
-    // var csv_split_name = uploadedCsvName.substring(0, uploadedCsvName.lastIndexOf("_"))
-    // countryAc.val(data.c_name);
-    // countryVal.val(data.c_id);
-    // domainAc.val(data.d_name);
-    // domainVal.val(data.d_id);
-    // this.changeTxttoLabel(data.c_name, data.d_name, csv_split_name + ".csv")
-    // UploadDocument.show();
-    // DocumentSummary.show();
+    $('#hdnCsvId').val(data.csv_past_id);
+    csvId = data.csv_past_id;
 
-    // DocumentTotal.text(data.no_of_documents);
-    // DocumentUploaded.text(data.uploaded_documents);
-    // DocumentRemaining.text(
-    //     parseInt(data.no_of_documents) - parseInt(data.uploaded_documents)
-    // );
+    var csv_split_name = uploadedCsvName.substring(0, uploadedCsvName.lastIndexOf("_"));
+    $('.successFileName').text(csv_split_name);
+    csv_path = "../../../../../uploaded_file/csv/" + csv_split_name + '.csv';
+    $('.uploaded_data').attr("href", csv_path);
+    $('.uploaded_data').attr("download", csv_path);
+
+    $('#bu-doc-total').text(data.total_documents);
+    $('#bu-upload-total').text(data.uploaded_documents);
+    $('#bu-remain-total').text(data.remaining_documents);
+
 };
 
 
@@ -466,12 +472,14 @@ function downloadData() {
     var frequency = "Periodical";
     var startCount = 0;
 
+    console.log("leId->>>>>>> "+ leId);
     buClient.getDownloadData(
         parseInt(leId), parseInt(domainId), parseInt(unitId), frequency, startCount,
         legalEntityName, domainName, unitName, unitCode,
         function(error, data) {
             if (error == null) {
                 var download_url = data.link;
+                console.log("download_url>>>>> " + download_url);
                 if (download_url != null) {
                     window.open(download_url, '_blank');
                     hideLoader();
@@ -493,14 +501,15 @@ function submitUpload() {
         "new_csv_id": parseInt($('#hdnCsvId').val()),
         "legal_entity_id": parseInt(LEGALENTITYIDUPLOAD.val())
     };
-
+    $('#myModal').modal('show');
     buClient.saveBulkRecords(args, function(error, data) {
         if (error == null) {
             VIEWSCREEN.show();
             ADDSCREEN.hide();
             displaySuccessMessage("Record Submitted successfully");
+            $('#myModal').modal('hide');
         } else {
-
+            $('#myModal').modal('hide');
         }
     });
 }
@@ -526,8 +535,48 @@ function file_upload_rul() {
 }
 
 function resetAdd() {
+    $('#divDownloadSection').show();
+    $('#divUploadSection').show();
+
+    $('.divSuccessDocument').hide();
+    $('#divSuccessbutton').hide();
+    $('.invaliddata').hide();
+    $('.view-summary').hide();
+    $('#divFileUpload').show();
+    $('#divSuccessFile').hide();
+    $('.bu-doc-summary').hide();
+
+    buCtPage._ActionMode = "add";
+    UploadFile.val("");
+}
+
+function resetEdit() {
+    VIEWSCREEN.hide();
+    ADDSCREEN.show();
+
+    $('#divDownloadSection').hide();
+    $('#divUploadSection').show();
+
+    $('.divSuccessDocument').show();
+    $('.bu-doc-summary').show();
+    // $('.successFileName').show();
+    $('#divSuccessFile').show();
+
+    $('.view-summary').hide();
+    $('#divSuccessbutton').hide();
+    $('.invaliddata').hide();
+    $('#divFileUpload').hide();
 
 
+    // $('#hdnCsvId').val(data.new_csv_id);
+    // csvId = data.new_csv_id;
+    // $('.successFileName').text(csv_split_name);
+    // csv_path = "../../../../../uploaded_file/csv/" + csv_split_name + '.csv';
+    // $('.uploaded_data').attr("href", csv_path);
+    // $('.uploaded_data').attr("download", csv_path);
+
+    buCtPage._ActionMode = "upload";
+    UploadFile.val("");
 }
 
 Dropzone.autoDiscover = false;
@@ -554,24 +603,18 @@ var myDropzone = new Dropzone("div#myDrop", {
     },
     init: function() {
         this.on("addedfile", function(file) {
-            console.log("1>> " + file.name);
-            console.log(">> " + jQuery.inArray(file.name, addedfiles));
-            console.log("docNames>> " + jQuery.inArray(file.name, docNames));
             if (jQuery.inArray(file.name, addedfiles) > -1) {
                 console.log("addedfiles part");
                 myDropzone.removeFile(file);
             }
-            if (jQuery.inArray(file.name, docNames) > -1) {
-                console.log("docNames part");
+            if (jQuery.inArray(file.name, docNames) == -1) {
                 myDropzone.removeFile(file);
             } else {
-                console.log("else part");
                 addedfiles.push(file.name);
                 queueCount += 1;
             }
         });
         this.on("removedfile", function(file) {
-            console.log(file.name);
             if (jQuery.inArray(file.name, addedfiles) > -1) {
                 addedfiles.pop(file.name);
                 queueCount -= 1;
@@ -597,9 +640,14 @@ var myDropzone = new Dropzone("div#myDrop", {
                 myDropzone.removeAllFiles(true);
                 hideLoader();
                 displaySuccessMessage(message.document_upload_success);
-                // buSmPage.showList();
+
+                $('.divSuccessDocument').hide();
+                $('#divSuccessbutton').show();
                 VIEWSCREEN.show();
                 ADDSCREEN.hide();
+                BTNUPLOAD.hide();
+
+                buCtPage.showList();
             }
         });
 

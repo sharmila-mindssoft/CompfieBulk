@@ -5,10 +5,10 @@ import csv
 import xlsxwriter
 import pyexcel
 
-from server.constants import(
-    BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
-    BULKUPLOAD_REJECTED_DOWNLOAD_PATH, BULKUPLOAD_REJECTED_DOWNLOAD_BASE_PATH
+from bulkupload.client_bulkconstants import(
+    BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH
 )
+
 #   returns: unique random string
 def new_uuid():
         s = str(uuid.uuid4())
