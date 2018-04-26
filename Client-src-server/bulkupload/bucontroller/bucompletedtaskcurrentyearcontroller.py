@@ -13,7 +13,7 @@ from ..client_bulkuploadcommon import (
 )
 from ..client_bulkexport import ConvertJsonToCSV
 import datetime
-from server.constants import BULKUPLOAD_CSV_PATH
+from bulkupload.client_bulkconstants import BULKUPLOAD_CSV_PATH
 from server.exceptionmessage import fetch_error
 
 from server.common import (
@@ -77,12 +77,12 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
         )
     # read data from csv file
     header, completed_task_data = read_data_from_csv(csv_name)
-    print "completed_task_data>>", completed_task_data
+    # print "completed_task_data>>", completed_task_data
 
     # csv data validation
     cObj = ValidateCompletedTaskCurrentYearCsvData(
         db, completed_task_data, session_user, request_frame.csv_name, header)
-    print "request_frame.legal_entity_id>>", request_frame.legal_entity_id
+    # print "request_frame.legal_entity_id>>", request_frame.legal_entity_id
     res_data = cObj.perform_validation(request_frame.legal_entity_id)
 
 
@@ -99,7 +99,7 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
             if save_completed_task_data(db, new_csv_id, res_data["data"]) is True:
                 result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
                     res_data["total"], res_data["valid"], res_data["invalid"],
-                    new_csv_id, csv_name, res_data["doc_count"])
+                    new_csv_id, csv_name, res_data["doc_count"], res_data["doc_names"])
 
         # csv data save to temp db
     else:

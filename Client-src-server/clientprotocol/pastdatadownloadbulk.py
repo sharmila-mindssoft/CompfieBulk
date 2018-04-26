@@ -5,9 +5,11 @@ import uuid
 import datetime
 import mysql.connector
 from server.constants import (
-    CSV_DOWNLOAD_URL, KNOWLEDGE_DB_HOST,
+    KNOWLEDGE_DB_HOST,
     KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
     KNOWLEDGE_DATABASE_NAME)
+from bulkupload.client_bulkconstants import(CSV_DOWNLOAD_URL)
+
 from server.clientdatabase.general import (
     calculate_due_date, filter_out_due_dates)
 from clientprotocol import (

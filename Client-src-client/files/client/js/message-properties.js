@@ -488,13 +488,6 @@ var message = {
     'duedatelessthantoday': 'Due date must be greater than or equal to current date',
     'reminder_expire': 'Legal entity contract is about to expire',
     'sp_contract_to': 'Contract To Date must be Greater than Current Date',
-
-    "upload_csv": "File Required",
-    "upload_success": "CSV file uploaded successfully",
-    "approve_success": "CSV file approved successfully",
-    "reject_success": "CSV file rejected successfully",
-    "upload_failed": "CSV file upload failed",
-    "document_upload_success": "Document uploaded successfully",
 };
 
 function clearMessage() {
