@@ -28,11 +28,13 @@ from server.clientdatabase.savelegalentitydata import(
     LEntityReplicationServiceProvider, LEntityUnitClosure,
     LEntitySettingsData, LEntityReplicationUserPrivileges
 )
-from server.constants import (
-    SESSION_CUTOFF,
+from server.constants import(SESSION_CUTOFF)
+
+from bulkupload.client_bulkconstants import(
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
     BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME
 )
+
 import logger
 import random, string
 from bulkupload.client_bulkuploadmain import BulkAPI

@@ -87,7 +87,7 @@ class GetCompletedTaskCsvUploadedList(Request):
         }
 
 class CsvList(object):
-    def __init__(self, csv_past_id, csv_name, uploaded_on, uploaded_by, total_records, total_documents, uploaded_documents, remaining_documents):
+    def __init__(self, csv_past_id, csv_name, uploaded_on, uploaded_by, total_records, total_documents, uploaded_documents, remaining_documents, doc_names):
         self.csv_past_id = csv_past_id
         self.csv_name = csv_name
         self.uploaded_on = uploaded_on
@@ -96,17 +96,19 @@ class CsvList(object):
         self.total_documents = total_documents
         self.uploaded_documents = uploaded_documents
         self.remaining_documents = remaining_documents
+        self.doc_names = doc_names
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["csv_past_id", "csv_name", "uploaded_on", "uploaded_by",
                                         "total_records", "total_documents", "uploaded_documents", "uploaded_documents"
-                                        "remaining_documents"
+                                        "remaining_documents", "doc_names"
         ])
         return CsvList(
             data.get("csv_past_id"), data.get("csv_name"), data.get("uploaded_on"),
             data.get("uploaded_by"), data.get("total_records"), data.get("total_documents"),
-            data.get("uploaded_documents"), data.get("uploaded_documents"), data.get("remaining_documents")
+            data.get("uploaded_documents"), data.get("uploaded_documents"), data.get("remaining_documents"),
+            data.get("doc_names")
         )
 
     def to_structure(self):
@@ -118,7 +120,8 @@ class CsvList(object):
             "total_records": self.total_records,
             "total_documents": self.total_documents,
             "uploaded_documents": self.uploaded_documents,
-            "remaining_documents": self.remaining_documents
+            "remaining_documents": self.remaining_documents,
+            "doc_names": self.doc_names
         }
 
 

@@ -13,7 +13,7 @@ from ..client_bulkuploadcommon import (
 )
 from ..client_bulkexport import ConvertJsonToCSV
 import datetime
-from server.constants import BULKUPLOAD_CSV_PATH
+from bulkupload.client_bulkconstants import BULKUPLOAD_CSV_PATH
 from server.exceptionmessage import fetch_error
 
 from server.common import (
@@ -61,7 +61,7 @@ def get_completed_task_csv_list(db, request_frame, session_user):
     csv_data = getCompletedTaskCSVList(db, session_user)
     # print "csv_data>>", csv_data
     result = bu_ct.GetCompletedTaskCsvUploadedListSuccess(csv_data)
-    # print "get_completed_task_csv_list>result>>", result
+    print "get_completed_task_csv_list>result>>", result
     return result
 
 ########################################################
