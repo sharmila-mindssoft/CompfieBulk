@@ -77,13 +77,13 @@ class SourceDB(object):
         self._source_db.close()
         self.__source_db_con.close()
 
-    def init_values(self, user_id, country_id):
+    def init_values(self, user_id, country_id, legal_entity_id):
         self.get_client_groups(user_id)
         self.get_legal_entities(user_id)
         self.get_domains(user_id)
         self.get_unit_location()
-        self.get_unit_code()
-        self.get_unit_name()
+        self.get_unit_code(legal_entity_id)
+        self.get_unit_name(legal_entity_id)
         self.get_statutories()
         self.get_child_statutories()
         self.get_statutory_provision()
@@ -116,16 +116,16 @@ class SourceDB(object):
         for d in data:
             self.Unit_Location[d["geography_name"]] = d
 
-    def get_unit_code(self):
+    def get_unit_code(self, legal_entity_id):
         data = self._source_db.call_proc(
-            "sp_bu_unit_code_and_name"
+            "sp_bu_unit_code_and_name", [legal_entity_id]
         )
         for d in data:
             self.Unit_Code[d["unit_code"]] = d
 
-    def get_unit_name(self):
+    def get_unit_name(self, legal_entity_id):
         data = self._source_db.call_proc(
-            "sp_bu_unit_code_and_name"
+            "sp_bu_unit_code_and_name", [legal_entity_id]
         )
         for d in data:
             self.Unit_Name[d["unit_name"]] = d
@@ -454,6 +454,7 @@ class SourceDB(object):
 
     def get_country_id(self):
         country_id = 0
+        legal_entity_id = 0
 
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Legal_Entity"]
@@ -465,7 +466,8 @@ class SourceDB(object):
             )
             for le in res:
                 country_id = le["country_id"]
-        return country_id
+                legal_entity_id = le["legal_entity_id"]
+        return country_id, legal_entity_id
 
     def source_commit(self):
         self._source_db.commit()
@@ -661,8 +663,10 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         duplicate_compliance_row = duplicate[1]
         self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
 
-        country_id = self.get_country_id()
-        self.init_values(self._session_user_obj.user_id(), country_id)
+        country_id, legal_entity_id = self.get_country_id()
+        self.init_values(
+            self._session_user_obj.user_id(), country_id, legal_entity_id
+        )
 
         def make_error_desc(res, msg):
             if res is True:
@@ -933,8 +937,10 @@ class ValidateAssignStatutoryForApprove(SourceDB):
     def perform_validation_before_submit(self):
         declined_count = 0
         self._declined_row_idx = {}
-        country_id = self.get_country_id()
-        self.init_values(self._session_user_obj.user_id(), country_id)
+        country_id, legal_entity_id = self.get_country_id()
+        self.init_values(
+            self._session_user_obj.user_id(), country_id, legal_entity_id
+        )
 
         self._unit_ids = []
         for k, v in groupby(self._source_data, key=lambda s: (
