@@ -50,8 +50,8 @@ def save_completed_task_current_year_csv(db, completed_task, session_user):
         "csv_name", "uploaded_by", "uploaded_on",
         "total_records", "total_documents", "uploaded_documents", "upload_status"
     ]
-    print "completed_task[7]>>", completed_task[7]
-    print "string_to_datetime(completed_task[7])>>", string_to_datetime(completed_task[7])
+    # print "completed_task[7]>>", completed_task[7]
+    # print "string_to_datetime(completed_task[7])>>", string_to_datetime(completed_task[7])
 
     values = [
         completed_task[0],completed_task[1],
@@ -149,7 +149,6 @@ def getCompletedTaskCSVList(db, session_user):
         else:
             doc_list.append(docname)
         doc_names[csv_id] = doc_list
-        print "bucompletedtaskcurrentyeardb>doc_names>>", doc_names
 
     csv_list = []
     for row in rows:
