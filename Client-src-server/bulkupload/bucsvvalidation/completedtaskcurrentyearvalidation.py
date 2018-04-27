@@ -427,7 +427,9 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "duplicate_error" : 0,
             "invalid_char_error": 0,
             "invalid_data_error": 0,
-            "inactive_error": 0
+            "inactive_error": 0,
+            "invalid_date": 0,
+            "invalid_file_format": 0
         }
 
     def compare_csv_columns(self):
@@ -535,7 +537,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                                     ".xls", ".xlsx"]
                         if file_extension[1] not in allowed_file_formats:
                             msg.append("Document Name - Invalid File Format")
-                            self._error_summary["invalid_data_error"] += 1
+                            self._error_summary["invalid_file_format"] += 1
                             res = make_error_desc(res, msg)
 
             if res is not True :
@@ -595,7 +597,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "inactive_error": self._error_summary["inactive_error"],
             "total": total,
             "invalid": invalid,
-            "doc_count": len(set(self._doc_names))
+            "doc_count": len(set(self._doc_names)),
+            "invalid_file_format": self._error_summary["invalid_file_format"]
         }
 
 

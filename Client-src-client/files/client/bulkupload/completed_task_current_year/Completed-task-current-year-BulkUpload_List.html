@@ -15,8 +15,7 @@
             <div class="container">
                 <div id="list-screen1">
                     <div class="row">
-                        <div class="col-sm-1"></div>
-                        <div class="col-sm-10">
+                        <div class="col-sm-12">
                             <div class="btn-group pull-right m-t-5 m-b-20">
                                 <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false" id="btn-add">
                                     <i class="fa fa-plus-circle"></i> Add </button>
@@ -26,15 +25,14 @@
                         <div class="col-sm-2"></div>
                     </div>
                     <div class="row" id="animationSandbox">
-                        <div class="col-sm-1"> </div>
-                        <div class="col-sm-10">
+                        <div class="col-sm-12">
                             <div class="card-box table-responsive">
-
                                 <div class="col-sm-12 no-padding">
                                     <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
                                                 <th class="width-2">#</th>
+                                                <th class="width-8">Legal Entity Name</th>
                                                 <th class="width-15">Uploaded File Name</th>
                                                 <th class="width-8">Uploaded On</th>
                                                 <th class="text-center width-8">No. of Records</th>
@@ -314,6 +312,9 @@
                                                                         <li>Invalid Data validation:
                                                                             <b><span class="invalidErrors"></span></b>
                                                                         </li>
+                                                                        <li>Invalid File Format:
+                                                                            <b><span class="invalidFileFormat"></span></b>
+                                                                        </li>
                                                                     </ul>
                                                                 </div>
                                                             </div>
@@ -371,6 +372,7 @@
     <table class="table-ct-csv-info">
         <tr class="table-row">
             <td class="sno" align="center"></td>
+            <td class="legal-entity"></td>
             <td class="csv-name"></td>
             <td class="uploaded-on"></td>
             <td class="text-center tot-records"></td>

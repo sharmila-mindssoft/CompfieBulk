@@ -52,9 +52,11 @@ var DUPLICATEERROR = $('.duplicateErrors');
 var STATUSERROR = $('.statusErrors');
 var LENGTHERROR = $('.lengthErrors');
 var INVALIDERROR = $('.invalidErrors');
+var INVALIDFILEFORMATERROR = $('.invalidFileFormat');
 var INVALIDFILENAME = null;
 
 var unit_list_map = {};
+var LEGAL_ENTITY_USR = [];
 
 
 txtdomain.keyup(function(e) {
@@ -122,14 +124,24 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 }
 
 function loadEntityDetails() {
+    LEGAL_ENTITY_USR = [];
     if (LEGAL_ENTITIES.length > 1) {
         LegalEntityNameLabel.hide();
         LEGALENTITYNAMELABELUPLOAD.hide();
         LegalEntityNameAC.show();
         LEGALENTITYNAMEACUPLOAD.show();
+
+        for (var i = 0; i < LEGAL_ENTITIES.length; i++) {
+            console.log(LEGAL_ENTITIES[i]["le_id"]);
+            LEGAL_ENTITY_USR.push(LEGAL_ENTITIES[i]["le_id"]);
+        }
+        console.log("loadEntityDetails>1>>" + LEGAL_ENTITY_USR);
+
     } else {
         var LE_NAME = LEGAL_ENTITIES[0]["le_name"];
         var LE_ID = LEGAL_ENTITIES[0]["le_id"];
+        LEGAL_ENTITY_USR.push(LE_ID);
+        console.log("loadEntityDetails=1>" + LEGAL_ENTITY_USR);
 
         LegalEntityNameLabel.show();
         LEGALENTITYNAMELABELUPLOAD.show();
@@ -203,6 +215,7 @@ function validateUpload() {
                     STATUSERROR.text("0");
                     LENGTHERROR.text("0");
                     INVALIDERROR.text("0");
+                    INVALIDFILEFORMATERROR.text(0);
                     $('.view-summary').hide();
                     $('.dropbtn').hide();
                     $('#hdnCsvId').val(data.new_csv_id);
@@ -233,6 +246,7 @@ function validateUpload() {
                     displaySuccessMessage("Records uploaded successfully");
                     hideLoader();
                 } else {
+                    console.log(JSON.stringify(data));
                     $('#myModal').modal('hide');
                     displayMessage(message.upload_failed);
                     INVALIDFILENAME = data.invalid_file.split('.');
@@ -247,6 +261,7 @@ function validateUpload() {
                     getInvaliddataCount = parseInt(data.invalid_char_error) +
                         parseInt(data.invalid_data_error);
                     INVALIDERROR.text(getInvaliddataCount);
+                    INVALIDFILEFORMATERROR.text(data.invalid_file_format);
                     $('.dropbtn').show();
                     $('.view-summary').show();
 
@@ -355,7 +370,8 @@ function pageControls() {
 BulkCompletedTaskCurrentYear.prototype.showList = function() {
     var t_this = this;
     var args = {
-        "legal_entity_id": parseInt(LegalEntityId.val())
+        "legal_entity_id": parseInt(LegalEntityId.val()),
+        "legal_entity_list": LEGAL_ENTITY_USR
     };
 
     displayLoader();
@@ -374,6 +390,7 @@ BulkCompletedTaskCurrentYear.prototype.showList = function() {
 };
 
 BulkCompletedTaskCurrentYear.prototype.renderList = function(list_data) {
+    // console.log("LEGAL_ENTITIES> " + LEGAL_ENTITIES);
     var t_this = this;
     var j = 1;
     ListContainer.find('tr').remove();
@@ -393,6 +410,7 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(list_data) {
             cname_split.pop();
             var cname = cname_split.join("_");
             $('.sno', cloneRow).text(j);
+            $('.legal-entity', cloneRow).text(data.legal_entity_name);
             $('.csv-name', cloneRow).text(cname);
             $('.uploaded-on', cloneRow).text(data.uploaded_on);
             $('.tot-records', cloneRow).text(data.total_records);
