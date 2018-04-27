@@ -118,27 +118,39 @@ def getComplianceID(db, compliance_task_name):
 
     return complianceID
 
-def getCompletedTaskCSVList(db, session_user):
+def getCompletedTaskCSVList(db, session_user, legal_entity_list):
 
     doc_names = {}
 
-    query = " Select csv_past_id, csv_name, uploaded_on, uploaded_by, total_records, total_documents, " + \
-            " uploaded_documents, (total_documents - uploaded_documents) AS remaining_documents " + \
-            " From tbl_bulk_past_data_csv where (total_documents - uploaded_documents) >= 1 " + \
-            " and uploaded_by = %s and legal_entity_id like '%' "
-    param = [session_user]
+    # query = " Select legal_entity_id, csv_past_id, csv_name, uploaded_on, uploaded_by, total_records, total_documents, " + \
+    #         " uploaded_documents, (total_documents - uploaded_documents) AS remaining_documents " + \
+    #         " From tbl_bulk_past_data_csv where (total_documents - uploaded_documents) >= 1 " + \
+    #         " and uploaded_by = %s and legal_entity_id like '%' "
+    print "legal_entity_list>>", legal_entity_list
+    legal_entity_list = ",".join([str(x) for x in legal_entity_list])
+    print "legal_entity_list>>", legal_entity_list
 
-    # query = " Select csv_past_id, csv_name, uploaded_on, 2 AS uploaded_by, 3 AS total_records, 4 AS total_documents, uploaded_documents, 5 AS               remaining_documents From tbl_bulk_past_data_csv where (total_documents - uploaded_documents) >= 1;"
+    query = " SELECT DISTINCT T01.legal_entity_id, T02.legal_entity, " + \
+            " T01.csv_past_id, T01.csv_name, T01.uploaded_on, T01.uploaded_by, " + \
+            " total_records, total_documents, T01.uploaded_documents, " + \
+            " (T01.total_documents - t01.uploaded_documents) AS remaining_documents " + \
+            " From tbl_bulk_past_data_csv  AS T01 " + \
+            " INNER JOIN tbl_bulk_past_data AS T02 " + \
+            " ON T01.csv_past_id = T02.csv_past_id " + \
+            " where (T01.total_documents - T01.uploaded_documents) >= 1 " + \
+            " and uploaded_by = %s AND FIND_IN_SET(T01.legal_entity_id, %s)"
+    param = [session_user, legal_entity_list]
 
     rows = db.select_all(query, param)
     # print "getCompletedTaskCSVList>rows>>", rows
 
+    param1 = [session_user]
     docQuery = "select t1.csv_past_id, document_name from tbl_bulk_past_data as t1 " + \
                " INNER JOIN tbl_bulk_past_data_csv as t2 " + \
                " ON t2.csv_past_id = t1.csv_past_id " + \
                " where ifnull(t2.upload_status, 0) = 0 and document_name != '' " + \
                " and t2.uploaded_by = %s "
-    docRows = db.select_all(docQuery, param)
+    docRows = db.select_all(docQuery, param1)
 
     for d in docRows:
         csv_id = d.get("csv_past_id")
@@ -157,7 +169,7 @@ def getCompletedTaskCSVList(db, session_user):
         csv_list.append(bu_ct.CsvList(row["csv_past_id"], row["csv_name"],
         uploaded_on, row["uploaded_by"], row["total_records"],
         row["total_documents"], row["uploaded_documents"], row["remaining_documents"],
-        doc_names.get(d.get("csv_past_id"))
+        doc_names.get(d.get("csv_past_id")), row["legal_entity"]
         )
         )
 

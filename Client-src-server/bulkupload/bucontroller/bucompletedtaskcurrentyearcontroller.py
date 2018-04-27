@@ -66,7 +66,7 @@ def process_bu_completed_task_current_year_request(request, db, session_user):
 
 def get_completed_task_csv_list(db, request_frame, session_user):
 
-    csv_data = getCompletedTaskCSVList(db, session_user)
+    csv_data = getCompletedTaskCSVList(db, session_user, request_frame.legal_entity_list)
     # print "csv_data>>", csv_data
     result = bu_ct.GetCompletedTaskCsvUploadedListSuccess(csv_data)
     print "get_completed_task_csv_list>result>>", result
@@ -115,7 +115,8 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
             res_data["invalid_file"], res_data["mandatory_error"],
             res_data["max_length_error"], res_data["duplicate_error"],
             res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"], res_data["total"], res_data["invalid"]
+            res_data["inactive_error"], res_data["total"], res_data["invalid"],
+            res_data["invalid_file_format"]
         )
 
     return result
@@ -146,9 +147,9 @@ def process_saveBulkRecords(db, request_frame, session_user):
 def process_get_bulk_download_data(
         db, request_frame, session_user
 ):
-    print "Process get Bulk download"
-    print "request_frame>> ", request_frame
-    print "leid->>>> ", request_frame.legal_entity_id
+    # print "Process get Bulk download"
+    # print "request_frame>> ", request_frame
+    # print "leid->>>> ", request_frame.legal_entity_id
     converter = PastDataJsonToCSV(
                 db, request_frame, session_user, "DownloadPastData"
             )
