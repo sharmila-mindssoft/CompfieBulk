@@ -1,5 +1,6 @@
 import os
 import glob
+from os import rename
 from flask import (
     Flask, request,
     send_from_directory
@@ -11,6 +12,9 @@ import zipfile
 import argparse
 import socket
 import mysql.connector
+import random
+import string
+
 
 from constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
@@ -54,6 +58,7 @@ def bulkupload_db_connect():
     )
     return cnx_pool
 
+
 def validate_session(session_id):
     res_ponse_data = None
     _db_con = knowledge_db_connect()
@@ -71,6 +76,13 @@ def validate_session(session_id):
         _db_con.close()
 
     return res_ponse_data
+
+
+def generate_random(length=7):
+    characters = string.ascii_lowercase + string.digits
+    return ''.join(
+        random.SystemRandom().choice(characters) for _ in range(length)
+    )
 
 
 def update_file_status(file_name, file_size, csv_id):
@@ -94,11 +106,12 @@ def update_file_status(file_name, file_size, csv_id):
 
     return res_ponse_data
 
+
 def update_file_status_client(file_name, csv_id):
     res_ponse_data = None
     _db_con = bulkupload_db_connect()
     _db = Database(_db_con)
-    try :
+    try:
         _db.begin()
         print "update file status"
         if _db.update_file_status_client(csv_id, file_name) is None:
@@ -113,6 +126,7 @@ def update_file_status_client(file_name, csv_id):
         _db_con.close()
 
     return res_ponse_data
+
 
 def update_file_ddwnload_status(csv_id, status):
     res_ponse_data = None
@@ -140,6 +154,33 @@ def update_file_ddwnload_status(csv_id, status):
     print "res_ponse_data-> ", res_ponse_data
     return res_ponse_data
 
+
+def delete_declined_docs(csv_id):
+    res_ponse_data = None
+    _db_con = bulkupload_db_connect()
+    _db = Database(_db_con)
+    try:
+        _db.begin()
+
+        db_stat = _db.get_declined_docs(csv_id)
+        print "db_stat-> ", db_stat
+        if db_stat is None:
+            res_ponse_data = False
+            print "delete failed"
+        # _db.commit()
+    except Exception:
+        print "In Exception"
+        # _db.rollback()
+
+    finally:
+        _db.close()
+        _db_con.close()
+
+    print "res_ponse_data-> ", res_ponse_data
+    return res_ponse_data
+
+
+
 @app.route('/temp/upload', methods=['POST'])
 def upload():
     print request
@@ -153,25 +194,42 @@ def upload():
         else:
             csvid = request.args.get("csvid")
             load_path = os.path.join(app.config['UPLOAD_PATH'], csvid)
+            print "load_path-> ", load_path
             if not os.path.exists(load_path):
                 os.makedirs(load_path)
                 os.chmod(load_path, 0777)
 
+            random_string = generate_random(5)
+            print "Random string=> ", random_string
+            print "f.filename->>> ", f.filename
+            fn = f.filename
+            fname = (fn).split(".")
+            random_file_name = fname[0] + '-' + random_string + "." + fname[1]
+            print "name->> ", f.name
+            print "random_file_name>> ", random_file_name
             actual_file = os.path.join(load_path, f.filename)
             print "Actual file -> ", actual_file
             zip_f_name = actual_file + ".zip"
+            print "zip_f_name--> ", zip_f_name
+            print "F... ", f
             f.save(zip_f_name)
             zip_ref = zipfile.ZipFile(zip_f_name, 'r')
+            print "zip ref", zip_ref
+            print "load Path -> ", load_path
             zip_ref.extractall(load_path)
             zip_ref.close()
+            print "load_path + f.filename> ", load_path + f.filename
+            print "loadrandom_file_name", load_path + '/' + random_file_name
+            os.rename(actual_file, load_path + '/' + random_file_name)
+            renamed_file = os.path.join(load_path, random_file_name)
             os.remove(zip_f_name)
-            print "@" * 10
-            actual_file_size = os.path.getsize(actual_file)
-            print os.path.getsize(actual_file)
-            if update_file_status(f.filename, actual_file_size, csvid) is False:
+            renamed_file_size = os.path.getsize(renamed_file)
+            print "actual_file_size-> ", renamed_file_size
+            if update_file_status(random_file_name, renamed_file_size, csvid) is False:
                 return "update failed"
 
         return "success"
+
 
 @app.route('/client/temp/upload', methods=['POST'])
 def upload_client():
@@ -232,6 +290,8 @@ def zip_folder(folder_name, folder_path):
 @app.route('/temp/approve', methods=['POST'])
 def approve():
     print "CAME IN APPROVE"
+    csv_id = request.args.get('csvid')
+    delete_declined_docs(csv_id)
     folder_name = request.args.get('csvid')
     print "folder_name-> ", folder_name
     assert folder_name is not None

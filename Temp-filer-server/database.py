@@ -159,3 +159,11 @@ class Database(object):
         return self.call_update_proc(
             "sp_ct_format_file_status_update", [csv_id, file_name]
         )
+
+    def get_declined_docs(self, csv_id):
+        query = "SELECT format_file FROM tbl_bulk_statutory_mapping " + \
+            " WHERE action=3 and csv_id=%s"
+        param = [csv_id]
+        row = self.select_one(query, param)
+        print "declined_docs--->>>> ", row
+        # declined_docs = self.execute()
