@@ -272,4 +272,11 @@ td.task-id {
 .filter-data{
     height:455px !important;
 }
+.vertical-scroll {
+    overflow-y: scroll;
+    height: 400px;
+}
 
+.filter-by-div {
+    height: 520px;
+}

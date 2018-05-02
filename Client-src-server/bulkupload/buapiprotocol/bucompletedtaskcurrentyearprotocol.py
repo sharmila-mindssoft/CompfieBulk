@@ -73,21 +73,23 @@ class saveBulkRecords(Request):
         }
 
 class GetCompletedTaskCsvUploadedList(Request):
-    def __init__(self, legal_entity_id):
+    def __init__(self, legal_entity_id, legal_entity_list):
         self.legal_entity_id = legal_entity_id
+        self.legal_entity_list = legal_entity_list
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["legal_entity_id"])
-        return GetCompletedTaskCsvUploadedList(data.get("legal_entity_id"))
+        data = parse_dictionary(data, ["legal_entity_id","legal_entity_list"])
+        return GetCompletedTaskCsvUploadedList(data.get("legal_entity_id"), data.get("legal_entity_list"))
 
     def to_inner_structure(self):
         return{
-            "legal_entity_id": self.legal_entity_id
+            "legal_entity_id": self.legal_entity_id,
+            "legal_entity_list": self.legal_entity_list
         }
 
 class CsvList(object):
-    def __init__(self, csv_past_id, csv_name, uploaded_on, uploaded_by, total_records, total_documents, uploaded_documents, remaining_documents, doc_names):
+    def __init__(self, csv_past_id, csv_name, uploaded_on, uploaded_by, total_records, total_documents, uploaded_documents, remaining_documents, doc_names, legal_entity):
         self.csv_past_id = csv_past_id
         self.csv_name = csv_name
         self.uploaded_on = uploaded_on
@@ -97,18 +99,21 @@ class CsvList(object):
         self.uploaded_documents = uploaded_documents
         self.remaining_documents = remaining_documents
         self.doc_names = doc_names
+        self.legal_entity = legal_entity
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["csv_past_id", "csv_name", "uploaded_on", "uploaded_by",
                                         "total_records", "total_documents", "uploaded_documents", "uploaded_documents"
-                                        "remaining_documents", "doc_names"
+                                        "remaining_documents", "doc_names", "legal_entity"
         ])
         return CsvList(
-            data.get("csv_past_id"), data.get("csv_name"), data.get("uploaded_on"),
-            data.get("uploaded_by"), data.get("total_records"), data.get("total_documents"),
-            data.get("uploaded_documents"), data.get("uploaded_documents"), data.get("remaining_documents"),
-            data.get("doc_names")
+            data.get("csv_past_id"), data.get("csv_name"),
+            data.get("uploaded_on"), data.get("uploaded_by"),
+            data.get("total_records"), data.get("total_documents"),
+            data.get("uploaded_documents"), data.get("uploaded_documents"),
+            data.get("remaining_documents"), data.get("doc_names"),
+            data.get("legal_entity")
         )
 
     def to_structure(self):
@@ -121,7 +126,8 @@ class CsvList(object):
             "total_documents": self.total_documents,
             "uploaded_documents": self.uploaded_documents,
             "remaining_documents": self.remaining_documents,
-            "doc_names": self.doc_names
+            "doc_names": self.doc_names,
+            "legal_entity_name": self.legal_entity
         }
 
 
@@ -163,7 +169,7 @@ class GetDownloadData(Request):
 
     def to_inner_structure(self):
         return {
-            "legal_entity_id": self.legal_entity_id, "unit_id": self.unit_id, 
+            "legal_entity_id": self.legal_entity_id, "unit_id": self.unit_id,
             "domain_id": self.domain_id,
             "compliance_task_frequency": self.compliance_frequency,
             "start_count": self.start_count, "le_name": self.le_name,
@@ -306,7 +312,8 @@ class UploadCompletedTaskCurrentYearCSVSuccess(Response):
 class UploadCompletedTaskCurrentYearCSVFailed(Response):
     def __init__(
         self, invalid_file, mandatory_error, max_length_error, duplicate_error,
-        invalid_char_error, invalid_data_error, inactive_error, total, invalid
+        invalid_char_error, invalid_data_error, inactive_error, total, invalid,
+        invalid_file_format
     ):
         # total, invalid
         self.invalid_file = invalid_file
@@ -318,20 +325,22 @@ class UploadCompletedTaskCurrentYearCSVFailed(Response):
         self.inactive_error = inactive_error
         self.total = total
         self.invalid = invalid
+        self.invalid_file_format = invalid_file_format
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "invalid_file", "mandatory_error", "max_length_error",
             "duplicate_error", "invalid_char_error", "invalid_data_error",
-            "inactive_error", "total", "invalid"
+            "inactive_error", "total", "invalid", "invalid_file_format"
         ])
 
         return UploadCompletedTaskCurrentYearCSVFailed(
             data.get("invalid_file"), data.get("mandatory_error"),
             data.get("max_length_error"), data.get("duplicate_error"),
             data.get("invalid_char_error"), data.get("invalid_data_error"),
-            data.get("inactive_error"), data.get("total"), data.get("invalid")
+            data.get("inactive_error"), data.get("total"), data.get("invalid"),
+            data.get("invalid_file_format")
         )
 
     def to_inner_structure(self):
@@ -345,7 +354,8 @@ class UploadCompletedTaskCurrentYearCSVFailed(Response):
             "invalid_data_error": self.invalid_data_error,
             "inactive_error": self.inactive_error,
             "total": self.total,
-            "invalid": self.invalid
+            "invalid": self.invalid,
+            "invalid_file_format": self.invalid_file_format
         }
 
 class saveBulkRecordSuccess(Response):
