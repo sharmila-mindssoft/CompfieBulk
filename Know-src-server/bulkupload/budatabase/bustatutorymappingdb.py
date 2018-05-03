@@ -387,9 +387,10 @@ def get_filters_for_approve(db, csv_id):
                 statutories.extend(d["statutory"].strip().split('|;|'))
                 statutories = list(set(statutories))
 
-        if len(data[3]) > 0:
-            for d in data[3]:
-                frequencies.append(d["compliance_frequency"])
+        compliance_frequency = get_all_compliance_frequency()
+        if len(compliance_frequency) > 0:
+            for d in compliance_frequency:
+                frequencies.append(d["frequency"])
 
         if len(data[4]) > 0:
             for d in data[4]:
@@ -816,6 +817,15 @@ def get_rejected_sm_file_count(db, session_user):
     )
     rej_count = result[0]["rejected"]
     return rej_count
+
+
+def get_all_compliance_frequency():
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc('sp_bu_compliance_frequency')
+    result.pop(0)
+    return result
 
 
 def connectKnowledgeDB():
