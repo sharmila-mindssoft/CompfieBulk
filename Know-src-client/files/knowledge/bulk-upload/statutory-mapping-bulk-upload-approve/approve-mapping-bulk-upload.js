@@ -628,8 +628,8 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     acCompDoc.val('');
     acCompDesc.val('');
     acTaskType.val('');
-    MultiSelectFrequency.find("option").remove();
-    MultiSelectFrequency.multiselect('destroy');
+    MultiSelectFrequency.val('');
+    MultiSelectFrequency.multiselect('rebuild');
 
     $('input[id="verified-data"]').removeAttr("checked");
     $('input[id="pending-data"]').removeAttr("checked");
@@ -1588,8 +1588,8 @@ function PageControls() {
         acCompDoc.val('');
         acCompDesc.val('');
         acTaskType.val('');
-        MultiSelectFrequency.find("option").remove();
-        MultiSelectFrequency.multiselect('destroy');
+        MultiSelectFrequency.val('');
+        MultiSelectFrequency.multiselect('rebuild');
 
         $('input[id="verified-data"]').removeAttr("checked");
         $('input[id="pending-data"]').removeAttr("checked");
