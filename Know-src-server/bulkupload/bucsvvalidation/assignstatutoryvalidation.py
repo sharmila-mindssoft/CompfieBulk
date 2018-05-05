@@ -239,6 +239,7 @@ class SourceDB(object):
             False, self.Child_Statutories, child_statutories, None
         )
 
+    # write update query
     def save_client_statutories_data(self, cl_id, u_id, d_id, user_id):
         created_on = get_date_time()
         client_statutory_value = [
@@ -257,6 +258,7 @@ class SourceDB(object):
             raise process_error("E018")
         return client_statutory_id
 
+    # write update query
     def save_client_compliances_data(
         self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, client_id_
     ):
@@ -268,6 +270,7 @@ class SourceDB(object):
             "remarks", "compliance_id", "compliance_applicable_status",
             "is_submitted", "is_approved", "approved_by", "approved_on",
             "updated_by", "updated_on"
+            # add the executive name"submitted_by, submitted_on, is_saved, savedon, saved  by"
         ]
 
         values = []
@@ -308,6 +311,7 @@ class SourceDB(object):
                 d["Compliance_Applicable_Status"], submitted_status,
                 approval_status, int(user_id), created_on,
                 int(user_id), created_on
+                #,  add executive name
             ))
 
         if values:

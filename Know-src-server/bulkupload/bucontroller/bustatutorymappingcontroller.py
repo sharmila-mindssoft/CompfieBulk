@@ -471,10 +471,8 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         is_declined = cObj.perform_validation_before_submit()
         print "is declined -> ", is_declined
         if len(is_declined.keys()) > 0:
-            cObj.make_rejection(is_declined, user_id)
-            # cObj.remove_declined_docs(is_declined, user_id, csv_id)
-            if cObj._doc_count > 0:
-                cObj.format_download_process_initiate(csv_id)
+            rej_done = cObj.make_rejection(is_declined, user_id)
+            print "Rej Done->> ", rej_done
             cObj.save_manager_message(
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
                 session_user.user_id(), None, len(is_declined.keys())
@@ -482,7 +480,10 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
             cObj.frame_data_for_main_db_insert()
             cObj.source_commit()
             delete_action_after_approval(db, csv_id)
+            if cObj._doc_count > 0 and rej_done:
+                cObj.format_download_process_initiate(csv_id)
 
+            cObj.source_bulkdb_commit()
             return bu_sm.SubmitStatutoryMappingSuccess()
     except Exception, e:
         raise e

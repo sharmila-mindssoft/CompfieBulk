@@ -234,7 +234,7 @@ def save_login_failure(db, user_id, session_user_ip):
     result = db.call_proc_with_multiresult_set(
         "sp_save_login_failure",
         [user_id, session_user_ip, get_date_time()], 2
-    )    
+    )
     print "line@234"
     print "result: ", result
     saved_info = result[1][0]

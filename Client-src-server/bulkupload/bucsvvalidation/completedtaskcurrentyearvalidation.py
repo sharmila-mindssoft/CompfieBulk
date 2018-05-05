@@ -372,7 +372,12 @@ class SourceDB(object):
                 print "values>3>>", values
                 print "self._source_db>>", self._source_db
                 self._source_db.insert("tbl_compliance_history", columns, values)
+                # added for aparajtha
+                clienttransaction.update_user_wise_task_status(self._source_db, users)
+
                 self._source_db.commit()
+
+
 
         return True
 
