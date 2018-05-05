@@ -342,6 +342,8 @@ function pageControls() {
     CANCELBUTTON.click(function() {
         VIEWSCREEN.show();
         ADDSCREEN.hide();
+
+        buCtPage.showList();
     });
 
     //Add Button Click Event
