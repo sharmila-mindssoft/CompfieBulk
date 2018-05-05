@@ -85,7 +85,7 @@ def generate_random(length=7):
     )
 
 
-def update_file_status(file_name, file_size, csv_id):
+def update_file_status(old_file_name, new_file_name, file_size, csv_id):
     print "File size in update fn-> ", file_size
     res_ponse_data = None
     _db_con = bulkupload_db_connect()
@@ -93,7 +93,7 @@ def update_file_status(file_name, file_size, csv_id):
     try:
         _db.begin()
         print "update file status"
-        if _db.update_file_status(csv_id, file_name, file_size) is None:
+        if _db.update_file_status(old_file_name, csv_id, new_file_name, file_size) is None:
             res_ponse_data = False
             print "update failed"
         _db.commit()
@@ -156,20 +156,22 @@ def update_file_ddwnload_status(csv_id, status):
 
 
 def delete_declined_docs(csv_id):
+    print "csv_id-> ", csv_id
     res_ponse_data = None
     _db_con = bulkupload_db_connect()
+    print "_db_con>> ", _db_con
     _db = Database(_db_con)
     try:
         _db.begin()
 
         db_stat = _db.get_declined_docs(csv_id)
         print "db_stat-> ", db_stat
-        if db_stat is None:
-            res_ponse_data = False
-            print "delete failed"
+        if db_stat is not None:
+            res_ponse_data = db_stat
         # _db.commit()
-    except Exception:
+    except Exception, e:
         print "In Exception"
+        raise RuntimeError(str(e))
         # _db.rollback()
 
     finally:
@@ -225,7 +227,9 @@ def upload():
             os.remove(zip_f_name)
             renamed_file_size = os.path.getsize(renamed_file)
             print "actual_file_size-> ", renamed_file_size
-            if update_file_status(random_file_name, renamed_file_size, csvid) is False:
+            if update_file_status(
+                f.filename, random_file_name, renamed_file_size, csvid
+            ) is False:
                 return "update failed"
 
         return "success"
@@ -291,11 +295,19 @@ def zip_folder(folder_name, folder_path):
 def approve():
     print "CAME IN APPROVE"
     csv_id = request.args.get('csvid')
-    delete_declined_docs(csv_id)
+    dec_docs = delete_declined_docs(csv_id)
     folder_name = request.args.get('csvid')
     print "folder_name-> ", folder_name
     assert folder_name is not None
     folder_path = os.path.join(app.config['UPLOAD_PATH'], folder_name)
+    print "Folder path->> ", folder_path
+    for dd in dec_docs:
+        print "dd>> ", dd
+        if not os.path.isfile(folder_path + '/' + dd):
+            return "File not exists"
+        else:
+            os.remove(folder_path + '/' + dd)
+
     if not os.path.exists(folder_path):
         return "Error"
     if folder_name in zipping_in_process:

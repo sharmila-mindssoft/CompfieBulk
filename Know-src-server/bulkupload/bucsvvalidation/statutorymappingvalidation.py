@@ -690,6 +690,7 @@ class StatutorySource(object):
                 })
         return json.dumps(sdate)
 
+    # write update query
     def save_compliance_data(self, c_id, d_id, mapping_id, data):
         created_on = get_date_time()
         approved_on = get_date_time()
@@ -1363,8 +1364,17 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self.get_source_data()
         self.get_file_count()
 
+    def connect_bulk_database(self):
+        c_db_con = bulkupload_db_connect()
+        self._db = Database(c_db_con)
+        self._db.begin()
+
+    def source_bulkdb_commit(self):
+        self._db.commit()
+
     def get_source_data(self):
         print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        self.connect_bulk_database()
         self._source_data = self._db.call_proc(
             "sp_statutory_mapping_by_csvid", [self._csv_id]
         )
@@ -1664,9 +1674,13 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             self._db.execute(q1, [count, user_id, created_on, self._csv_id,
                              self._csv_id])
 
+            print "Rejection done"
+            self._db.commit()
+            return True
         except Exception, e:
             print str(traceback.format_exc())
             raise (e)
+
 
     def remove_declined_docs(self, declined_info, user_id, csv_id):
         print "declined_info-> ", declined_info
@@ -1713,6 +1727,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         check_status()
 
     def file_server_approve_call(self, csvid):
+        print "Approve call done"
         caller_name = "%sapprove?csvid=%s" % (TEMP_FILE_SERVER, csvid)
         print "caller_name", caller_name
         response = requests.post(caller_name)
