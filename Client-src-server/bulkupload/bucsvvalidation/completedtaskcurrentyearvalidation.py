@@ -271,7 +271,7 @@ class SourceDB(object):
             cName = [d["compliance_task_name"], d["compliance_task_name"], d["compliance_description"]]
             # q = " SELECT compliance_id FROM tbl_compliances where compliance_task = TRIM(%s) AND compliance_description = TRIM(%s) LIMIT 1"
             q = "SELECT compliance_id FROM tbl_compliances where " + \
-                " case when document_name = '' then compliance_task = TRIM(%s) " + \
+                " case when ifnull(document_name,'') = '' then compliance_task = TRIM(%s) " + \
                 " else concat(document_name,' - ',compliance_task) = " + \
                 " TRIM(%s) end AND compliance_description = TRIM(%s) LIMIT 1 "
 
@@ -372,7 +372,12 @@ class SourceDB(object):
                 print "values>3>>", values
                 print "self._source_db>>", self._source_db
                 self._source_db.insert("tbl_compliance_history", columns, values)
+                # added for aparajtha
+                clienttransaction.update_user_wise_task_status(self._source_db, users)
+
                 self._source_db.commit()
+
+
 
         return True
 
