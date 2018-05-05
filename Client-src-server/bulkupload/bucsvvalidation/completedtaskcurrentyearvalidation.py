@@ -271,7 +271,7 @@ class SourceDB(object):
             cName = [d["compliance_task_name"], d["compliance_task_name"], d["compliance_description"]]
             # q = " SELECT compliance_id FROM tbl_compliances where compliance_task = TRIM(%s) AND compliance_description = TRIM(%s) LIMIT 1"
             q = "SELECT compliance_id FROM tbl_compliances where " + \
-                " case when document_name = '' then compliance_task = TRIM(%s) " + \
+                " case when ifnull(document_name,'') = '' then compliance_task = TRIM(%s) " + \
                 " else concat(document_name,' - ',compliance_task) = " + \
                 " TRIM(%s) end AND compliance_description = TRIM(%s) LIMIT 1 "
 
