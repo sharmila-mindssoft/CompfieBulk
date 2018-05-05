@@ -867,8 +867,8 @@ function loadCountwiseResult(data) {
         if(declinedCount != null && declinedCount >= 1) {
             approvedRejectedBy = SYSTEM_REJECTED_BY;
             approvedRejectedOn = '';
-            if(rejectedOn != null){
-                approvedRejectedOn = String(rejectedOn);
+            if(approvedOn != null){
+                approvedRejectedOn = String(approvedOn);
             }
         }
         else if (rejectedOn != null && rejectedOn != '' &&
