@@ -133,7 +133,7 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
     query = " SELECT DISTINCT T01.legal_entity_id, T02.legal_entity, " + \
             " T01.csv_past_id, T01.csv_name, T01.uploaded_on, T01.uploaded_by, " + \
             " total_records, total_documents, T01.uploaded_documents, " + \
-            " (T01.total_documents - t01.uploaded_documents) AS remaining_documents " + \
+            " (T01.total_documents - T01.uploaded_documents) AS remaining_documents " + \
             " From tbl_bulk_past_data_csv  AS T01 " + \
             " INNER JOIN tbl_bulk_past_data AS T02 " + \
             " ON T01.csv_past_id = T02.csv_past_id " + \
