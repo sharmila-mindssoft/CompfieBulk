@@ -6,8 +6,7 @@ import mysql.connector
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    DM_USER_CATEGORY, DE_USER_CATEGORY
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
 from server.exceptionmessage import fetch_error
 
@@ -31,7 +30,9 @@ __all__ = [
     "get_validation_info",
     "get_rejected_file_count",
     "delete_action_after_approval",
-    "verify_user_units"
+    "verify_user_units",
+    "get_domain_executive",
+    "get_form_categories"
     ]
 
 ########################################################
@@ -48,14 +49,7 @@ __all__ = [
 
 
 def get_client_list(db, session_user):
-    _source_db_con = mysql.connector.connect(
-        user=KNOWLEDGE_DB_USERNAME,
-        password=KNOWLEDGE_DB_PASSWORD,
-        host=KNOWLEDGE_DB_HOST,
-        database=KNOWLEDGE_DATABASE_NAME,
-        port=KNOWLEDGE_DB_PORT,
-        autocommit=False,
-    )
+    _source_db_con = connectKnowledgeDB()
     _source_db = Database(_source_db_con)
     _source_db.begin()
 
@@ -66,6 +60,8 @@ def get_client_list(db, session_user):
     result = _source_db.call_proc_with_multiresult_set("sp_client_info", [
         session_user.user_id()
         ], 5)
+    _source_db.close()
+
     clients = result[0]
     entitys = result[1]
     domains = result[2]
@@ -122,14 +118,7 @@ def get_download_assing_statutory_list(
     le_name, d_names, u_names, session_user
 ):
 
-    _source_db_con = mysql.connector.connect(
-        user=KNOWLEDGE_DB_USERNAME,
-        password=KNOWLEDGE_DB_PASSWORD,
-        host=KNOWLEDGE_DB_HOST,
-        database=KNOWLEDGE_DATABASE_NAME,
-        port=KNOWLEDGE_DB_PORT,
-        autocommit=False,
-    )
+    _source_db_con = connectKnowledgeDB()
     _source_db = Database(_source_db_con)
     _source_db.begin()
 
@@ -145,18 +134,47 @@ def get_download_assing_statutory_list(
         "secondary_legislation", "statutory_provision", "compliance_task_name",
         "compliance_description"
     ]
-    result = _source_db.call_proc("sp_get_assign_statutory_compliance", [u, d])
+    result = _source_db.call_proc_with_multiresult_set(
+        "sp_get_assign_statutory_compliance", [u, d], 2
+    )
+
+    _source_db.close()
+
+    def status_list(map_id):
+        s_legislation = None
+        p_legislation = None
+        for s in result[0]:
+            if s["statutory_mapping_id"] == map_id:
+                if(
+                    s["parent_ids"] == '' or s["parent_ids"] == 0 or
+                    s["parent_ids"] == '0,'
+                ):
+                    s_legislation = s["statutory_name"]
+                    p_legislation = s_legislation
+                else:
+                    names = [
+                        x.strip() for x in s["parent_names"].split('>>')
+                        if x != ''
+                    ]
+                    p_legislation = names[0]
+                    if len(names) > 1:
+                        s_legislation = names[1]
+                    else:
+                        s_legislation = s["statutory_name"]
+        return p_legislation, s_legislation
 
     ac_list = []
-    for r in result:
+    for r in result[1]:
+        p_legislation, s_legislation = status_list(r["statutory_mapping_id"])
+        if s_legislation == p_legislation:
+            s_legislation = ""
         ac_tuple = (
             cl_name, le_name, r["domain_name"], r["organizations"],
             r["unit_code"], r["unit_name"], r["location"],
-            r["primary_legislation"].strip(),
-            r["secondary_legislation"].strip(),
+            p_legislation.strip(), s_legislation.strip(),
             r["statutory_provision"], r["compliance_task_name"],
             r["compliance_description"]
-            )
+        )
         ac_list.append(ac_tuple)
 
     db.call_proc("sp_delete_assign_statutory_template", (
@@ -496,11 +514,10 @@ def fetch_rejected_assign_sm_data(db, session_user, user_id, client_id,
 
     args = [client_id, le_id, d_id, unit_id, user_id]
     data = db.call_proc('sp_rejected_assign_sm_reportdata', args)
-    uploaded_on = ''
-    approved_on = ''
-    rejected_on = ''
-
     for d in data:
+        uploaded_on = ''
+        approved_on = ''
+        rejected_on = ''
         if(d["uploaded_on"] is not None):
             uploaded_on = datetime.datetime.strptime(
                 str(d["uploaded_on"]),
@@ -603,25 +620,24 @@ def convertArrayToString(array_ids):
 
 def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
                                          clientGroupId, legalEntityId, unitId,
-                                         d_id, from_date, to_date,
-                                         record_count, page_count, dependent_users,
-                                         user_category_id):
+                                         domainIds, from_date, to_date,
+                                         record_count, page_count,
+                                         dependent_users, user_category_id):
     report_list = []
     expected_result = 2
     if(unitId is None):
         unitId = ''
 
-    if(len(dependent_users) > 0):
-        if(user_category_id == DM_USER_CATEGORY):
-            user_ids = ",".join(map(str, dependent_users))
-        elif(user_category_id == DE_USER_CATEGORY and
-             user_category_id != DM_USER_CATEGORY):
-            user_ids = ",".join(map(str, dependent_users))
-        else:
-            user_ids = user_id
+    if(domainIds is not None):
+        domain_ids = ",".join(map(str, domainIds))
+
+    if(len(dependent_users) >= 1):
+        user_ids = ",".join(map(str, dependent_users))
+    else:
+        user_ids = user_id
 
     args = [clientGroupId, legalEntityId, unitId, from_date, to_date,
-            record_count, page_count, str(user_ids), d_id]
+            record_count, page_count, str(user_ids), domain_ids]
 
     procedure = 'sp_assgined_statutory_bulk_reportdata'
     data = db.call_proc_with_multiresult_set(procedure, args, expected_result)
@@ -629,10 +645,10 @@ def fetch_assigned_statutory_bulk_report(db, session_user, user_id,
     if(data):
         report_data = data[0]
         total_record = data[1][0]["total"]
-        approved_on = ''
-        uploaded_on = ''
-        rejected_on = ''
         for d in report_data:
+            approved_on = ''
+            uploaded_on = ''
+            rejected_on = ''
 
             if(d["uploaded_on"] != ''):
                 uploaded_on = datetime.datetime.strptime(
@@ -737,19 +753,70 @@ def delete_action_after_approval(db, csv_id):
 
 
 def verify_user_units(db, session_user, u_ids):
-    _source_db_con = mysql.connector.connect(
-        user=KNOWLEDGE_DB_USERNAME,
-        password=KNOWLEDGE_DB_PASSWORD,
-        host=KNOWLEDGE_DB_HOST,
-        database=KNOWLEDGE_DATABASE_NAME,
-        port=KNOWLEDGE_DB_PORT,
-        autocommit=False,
-    )
+    _source_db_con = connectKnowledgeDB()
     _source_db = Database(_source_db_con)
     _source_db.begin()
-
     result = _source_db.call_proc(
         "sp_bu_domain_executive_units", [session_user.user_id(), u_ids]
     )
+    _source_db.close()
+
     unit_count = len(result)
     return unit_count
+
+
+def get_form_categories(db, session_user):
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc("sp_usercategory_list")
+    _source_db.close()
+    userCategoryList = []
+    for row in result:
+        user_category_name = row["user_category_name"]
+        user_category_name = user_category_name.replace(" ", "")
+        userCategoryList.append(bu_as.BulkUploadConstant(
+            row["user_category_id"],
+            user_category_name
+        )
+        )
+
+    return userCategoryList
+
+
+def get_domain_executive(db, session_user):
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc(
+        "sp_domain_executive_info", [session_user.user_id()]
+    )
+    _source_db.close()
+
+    domain_users = []
+    for r in result:
+        userid = r.get("user_id")
+        emp_name = "%s - %s" % (r.get("employee_code"), r.get("employee_name"))
+
+        domain_users.append(
+            bu_as.DomainExecutiveInfo(
+                emp_name, userid
+            )
+        )
+    return domain_users
+
+
+def connectKnowledgeDB():
+    try:
+        _source_db_con = mysql.connector.connect(
+            user=KNOWLEDGE_DB_USERNAME,
+            password=KNOWLEDGE_DB_PASSWORD,
+            host=KNOWLEDGE_DB_HOST,
+            database=KNOWLEDGE_DATABASE_NAME,
+            port=KNOWLEDGE_DB_PORT,
+            autocommit=False,
+        )
+        return _source_db_con
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e

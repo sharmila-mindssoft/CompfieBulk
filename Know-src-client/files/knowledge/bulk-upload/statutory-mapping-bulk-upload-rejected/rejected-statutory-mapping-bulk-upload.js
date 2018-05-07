@@ -19,13 +19,6 @@ var PASSWORD_SUBMIT_BTN = $('#password-submit');
 var CURRENT_PASSWORD = $('#current-password');
 var REMOVE_STATUTORY_CSV_ID;
 
-/**** User Level Category ***********/
-/*var REJECTED_FILE_DOWNLOADCOUNT = 2;
-var SHOW_REMOVE_ICON = 1;
-var SYSTEM_REJECT_ACTION_STATUS = 3;
-var IS_FULLY_REJECT_ACTION_STATUS = 1;*/
-
-
 // Creating New Class
 var rejStatuMapping = new RejectedStatutoryMappingBulk();
 
@@ -117,6 +110,7 @@ function pageControls() {
 function resetfilter(evt) {
     if (evt == "domain") {
         DOMAIN_VAL.val('');
+        DOMAIN.val('');
     }
     $('.tbody-usermappingdetails-list').empty();
     $('.grid-table-rpt').hide();
@@ -184,7 +178,7 @@ function loadCountwiseResult(data) {
     var reasonForRejection;
     var statutoryAction;
     var rejectedBy;
-    var declinedCount = '-';
+    var declinedCount;
     var fileDownloadCount;
     var downloadRejectedFiles;
     var isFullyRejected;
@@ -201,8 +195,10 @@ function loadCountwiseResult(data) {
         rejectedReason = data[entity].rejected_reason;
         statutoryAction = data[entity].statutory_action;
         fileDownloadCount = data[entity].file_download_count;
+        declinedCount = '-';
+        reasonForRejection = '';
 
-        if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
+        if (parseInt(isFullyRejected) == 1) {
             removeAction = '';
             reasonForRejection = rejectedReason;
             $(ALL_USER_INFO).each(function(key, value) {
@@ -212,7 +208,7 @@ function loadCountwiseResult(data) {
                     rejectedBy = EMP_CODE + " - " + EMP_NAME;
                 }
             });
-        } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {
+        } else if (parseInt(statutoryAction) == 3) {
             rejectedBy = SYSTEM_REJECTED_BY;
             declinedCount = data[entity].declined_count;
             reasonForRejection = '';
@@ -259,7 +255,7 @@ function loadCountwiseResult(data) {
             $('.tbl_rejected_file .rejected_i_cls', clone1)
             .addClass("default-display-none");
         }
-        if (parseInt(fileDownloadCount) < SHOW_REMOVE_ICON){
+        if (parseInt(fileDownloadCount) < 1){
             $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
         }
         $('#datatable-responsive .tbody-compliance').append(clone1);
@@ -449,7 +445,7 @@ function downloadClick(CSV_ID, event) {
 
         dataCsvId = updatedCount[0].csv_id;
         downloadCount = updatedCount[0].download_count;
-        if (parseInt(downloadCount) == SHOW_REMOVE_ICON) {
+        if (parseInt(downloadCount) == 1) {
             eventId = eventId + dataCsvId;
             document.getElementById(eventId).classList.toggle("show");
             $("#delete_action_" + dataCsvId).attr("style", "display:block");
@@ -508,9 +504,13 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                 hideLoader();
                 return false;
             } else if (downloadFileFormat == "text") {
-                $(location).attr('href', response.txt_link);
-                hideLoader();
-                return false;
+                    $.get(response.txt_link, function(data){
+                        url = response.txt_link
+                        txt_file_name = url.substring(url.lastIndexOf('/')+1)
+                        download(txt_file_name, "text/plain", data);
+                    },
+                    'text');
+                    hideLoader();
             } else if (downloadFileFormat == "ods") {
                 $(location).attr('href', response.ods_link);
                 hideLoader();
@@ -523,7 +523,19 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
 
     });
 }
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
 
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
 // File Download
 function downloadFile(filePath) {
     var link = document.createElement('a');
@@ -553,7 +565,7 @@ window.onclick = function(event) {
     }
 }
 $(function() {
-    mirror.getLoadConstants();
+    bu.getLoadConstants();
     $('.grid-table-rpt').hide();
     initialize();
     pageControls();

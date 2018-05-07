@@ -30,15 +30,20 @@ var PAGE_LIMIT = 25;
 var REPORT_VIEW = $('.grid-table-rpt');
 var AC_GROUP = $('#ac-group');
 var AC_LEGAL_ENTITY = $('#ac-legalentity');
-var AC_UNIT = $('#ac-unit');
+/*var AC_UNIT = $('#ac-unit');*/
 var GROUP_VAL = $('#groupsval');
 var GROUP = $('#group_id');
 var LEGAL_ENTITY_VAL = $('#legalentityval');
 var LEGAL_ENTITY = $('#legalentityid');
-var UNIT_VAL = $('#unitval');
-var UNIT = $('#unitid');
+/*var UNIT_VAL = $('#unitval');*/
+/*var UNIT = $('#unitid');*/
+/*var DOMAIN = $('#domain');
+var DOMAINS;*/
+
+// var DOMAIN_VAL = $('#domainval');
 var DOMAIN = $('#domain');
 var DOMAINS;
+/*var AC_DOMAIN = $('#ac-domain');*/
 
 /**** User Level Category ***********/
 
@@ -90,7 +95,8 @@ function UserGroupDetails() {
 function resetAllFilter() {
     GROUP_VAL.val('');
     LEGAL_ENTITY_VAL.val('');
-    UNIT_VAL.val('');
+    /*UNIT_VAL.val('');*/
+    /*DOMAIN_VAL.val('');*/
     $('.tbody-usermappingdetails-list').empty();
     REPORT_VIEW.hide();
     $('.details').hide();
@@ -101,37 +107,42 @@ function resetFilter(evt) {
         LEGAL_ENTITY_VAL.val('');
         LEGAL_ENTITY.val('');
 
-        DOMAIN.empty();
-        DOMAIN.html();
-        
+        /*DOMAIN_VAL.val('');*/        
 
-        UNIT_VAL.val('');
-        UNIT.val('');
+        /*UNIT_VAL.val('');
+        UNIT.val('');*/
 
         FROM_DATE.val('');
         TO_DATE.val('');
 
         DE_NAME.multiselect("deselectAll", false);
         DE_NAME.multiselect('refresh');
+
+        DOMAIN.empty();
+        DOMAIN.html();
+        DOMAIN.multiselect('rebuild');
     }
     if (evt == 'le') {
-        DOMAIN.empty();
-        DOMAIN.html();
-        
+        /*DOMAIN_VAL.val('');
+        DOMAIN.val('');    */
 
-        UNIT_VAL.val('');
-        UNIT_VAL.val('');
+        /*UNIT_VAL.val('');
+        UNIT_VAL.val('');*/
 
         FROM_DATE.val('');
         TO_DATE.val('');
 
         DE_NAME.multiselect("deselectAll", false);
         DE_NAME.multiselect('refresh');
+
+        DOMAIN.empty();
+        DOMAIN.html();
+        DOMAIN.multiselect('rebuild');
 
    }
     if (evt == 'domains') {
-        UNIT_VAL.val('');
-        UNIT_VAL.val('');
+        /*UNIT_VAL.val('');
+        UNIT_VAL.val('');*/
 
         FROM_DATE.val('');
         TO_DATE.val('');
@@ -232,7 +243,8 @@ function pageData(onCurrentPage) {
 function resetFields() {
     GROUP.val('');
     LEGAL_ENTITY.val('');
-    UNIT.val('');
+    /*UNIT.val('');*/
+    DOMAIN.val('');
 }
 
 function loadUserMappingDetailsList() {
@@ -509,7 +521,6 @@ LEGAL_ENTITY_VAL.keyup(function(e) {
     var textVal = $(this).val();
     var leList = [];
     var clientId = GROUP.val();
-    var bgrpID = $('#businessgroupid').val();
     if (GROUP.val() > 0) {
         var conditionFields = [];
         var conditionValues = [];
@@ -542,22 +553,30 @@ LEGAL_ENTITY_VAL.keyup(function(e) {
 
 });
 
-DOMAIN.on('change', function(e) {
+/*DOMAIN.on('change', function(e) {
     resetFilter('domains');
-});
+});*/
 
 //load legalentity form list in autocomplete text box
-UNIT_VAL.keyup(function(e) {
+DOMAIN.on('change', function(e) {
+        resetFilter('domains');
+});
+
+
+
+//load legalentity form list in autocomplete text box
+/*UNIT_VAL.keyup(function(e) {
     resetFilter('unit');
         var str = '';
         var unitList = [];
         var textVal = $(this).val();
         if(DOMAIN.val() != null){
-            checkDomain = DOMAIN.val();
+            checkDomain = DOMAIN.val().map(Number);
+            checkDomain = integerArrayValue(checkDomain);
             if (UNITS.length > 0 && checkDomain.length > 0) {
                 for (var i in UNITS) {
                     if(UNITS[i].le_id == LEGAL_ENTITY.val() &&
-                        containsAll(checkDomain, UNITS[i].d_ids)
+                         $.inArray(checkDomain, UNITS[i].d_ids) == -1
                         ){
                             var ISVALID = true;
                             for(var j in ASSIGNED_UNIT_LIST){
@@ -565,7 +584,7 @@ UNIT_VAL.keyup(function(e) {
                                     ASSIGNED_UNIT_LIST[j].u_id == UNITS[i].u_id &&
                                     $.inArray(
                                         ASSIGNED_UNIT_LIST[j].d_id, UNITS[i].d_ids
-                                    ) == 0
+                                    ) == -1
                                 ){
                                     ISVALID = false;
                                 }
@@ -590,7 +609,7 @@ UNIT_VAL.keyup(function(e) {
             }
         }
 
-});
+});*/
 
 // Fields Manadory validation
 AssignStatutoryBulkReport.prototype.validateMandatory = function() {
@@ -670,7 +689,7 @@ function fetchDomainMultiselect() {
             }                
         }
         DOMAIN.append(str);
-        
+        DOMAIN.multiselect('rebuild');
     }
 }
 
@@ -680,7 +699,7 @@ function processSubmit() {
     var clientGroup = parseInt(GROUP.val());
     var legalEntityID = parseInt(LEGAL_ENTITY.val());
     var deIds = DE_NAME.val();
-    var domainId = DOMAIN.val();
+    var domain_ids = DOMAIN.val();
     var unitID = "";
 
     var fromDate = FROM_DATE.val();
@@ -688,11 +707,16 @@ function processSubmit() {
 
     var selectedDEName = [];
     var splitValues;
+    var selectedDomain = [];
+    
+    $.each(domain_ids, function(key, value) {
+        selectedDomain.push(parseInt(value));
+    });
 
-    if (UNIT.val()) {
+/*    if (UNIT.val()) {
         unitID = UNIT.val();
     }
-
+*/
     /* multiple COUNTRY selection in to generate array */
     if ($('#de_name option:selected').text() == "") {
         selectedDEName = DOMAIN_EXECUTIVES; 
@@ -716,7 +740,7 @@ function processSubmit() {
         "bu_client_id": clientGroup,
         "bu_legal_entity_id": legalEntityID,
         "bu_unit_id": unitID,
-        "d_id": parseInt(domainId),
+        "domain_ids": selectedDomain,
         "from_date": fromDate,
         "to_date": toDate,
         "r_count": SNO,
@@ -843,8 +867,8 @@ function loadCountwiseResult(data) {
         if(declinedCount != null && declinedCount >= 1) {
             approvedRejectedBy = SYSTEM_REJECTED_BY;
             approvedRejectedOn = '';
-            if(rejectedOn != null){
-                approvedRejectedOn = String(rejectedOn);
+            if(approvedOn != null){
+                approvedRejectedOn = String(approvedOn);
             }
         }
         else if (rejectedOn != null && rejectedOn != '' &&
@@ -885,7 +909,7 @@ function loadCountwiseResult(data) {
 }
 
 $(function() {
-    mirror.getLoadConstants();
+    bu.getLoadConstants();
     REPORT_VIEW.hide();
     asBulkReport.pageControls();
     initialize();
@@ -908,18 +932,24 @@ AssignStatutoryBulkReport.prototype.exportData = function() {
     var legalEntityID = parseInt(LEGAL_ENTITY.val());
     var legalEntityName = LEGAL_ENTITY_VAL.val();
     var deIds = DE_NAME.val();
-    var domainId = DOMAIN.val();
+    var domainIds = DOMAIN.val();
     var unitID = "";
-    var unitName = UNIT_VAL.val();
+    /*var unitName = UNIT_VAL.val();*/
+    var unitName = '';
     var fromDate = FROM_DATE.val();
     var toDate = TO_DATE.val();
 
     var selectedDEName = [];
     var splitValues;
 
-    if (UNIT.val()) {
+    /*if (UNIT.val()) {
         unitID = UNIT.val();
-    }
+    }*/
+    var selectedDomain = [];
+    $.each(domainIds, function(key, value) {
+        selectedDomain.push(parseInt(value));
+    });
+
     /* multiple COUNTRY selection in to generate array */
     if ($('#de_name option:selected').text() == "") {
         selectedDEName = DOMAIN_EXECUTIVES; // When execute unselected the Field.
@@ -942,7 +972,7 @@ AssignStatutoryBulkReport.prototype.exportData = function() {
         "legal_entity_name": legalEntityName,
         "bu_unit_id": unitID,
         "unit_name": unitName,
-        "d_id": parseInt(domainId),
+        "domain_ids": selectedDomain,
         "d_names": domainNames,
         "from_date": fromDate,
         "to_date": toDate,

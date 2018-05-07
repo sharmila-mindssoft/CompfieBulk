@@ -1,4 +1,4 @@
-from protocol.api_key_validation import (
+from buapikeyvalidation import (
     is_alphabet_withdot, is_file_name, is_alphabet, is_alpha_numeric,
     is_alphabet_wtih_bracket, is_numeric, is_url, is_address,
     is_alphabet_csv_delimeter
@@ -497,7 +497,7 @@ bu_api_params = {
         'validation_method': is_alpha_numeric, 'is_optional': False
     },
     'task_type': {
-        'type': 'STRING', 'length': 25,
+        'type': 'STRING', 'length': 150,
         'validation_method': is_alphabet, 'is_optional': False
     },
     'approved_count': {
@@ -813,7 +813,8 @@ bu_api_params = {
         'length': None,
         'validation_method': None,
         'is_optional': False,
-        'module_name': assign_statutory, "class_name": "AssignedUnits"
+        'module_name': assign_statutory,
+        'class_name': 'AssignedUnits'
     },
     'csv_max_lines': {
         'type': 'INT', 'length': None,
@@ -823,4 +824,101 @@ bu_api_params = {
         'type': 'INT', 'length': None,
         'validation_method': None, 'is_optional': True
     },
+    'domain_executive_info': {
+        'type': 'VECTOR_TYPE',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False,
+        'module_name': assign_statutory,
+        'class_name': 'DomainExecutiveInfo'
+    },
+    'new_csv_name': {
+        'type': 'STRING', 'length': 100,
+        'validation_method': is_file_name, 'is_optional': True
+    },
+    "client_group_list": {
+        'type': 'VECTOR_TYPE', 'length': None,
+        'validation_method': None, 'is_optional': False,
+        'module_name': client_units, "class_name": "ClientGroupsList"
+    },
+    'techno_info': {
+        'type': 'VECTOR_TYPE', 'length': None,
+        'validation_method': None, 'is_optional': False,
+        'module_name': client_units, "class_name": "TechnoInfo"
+    },
+    "bu_constants": {
+        'type': 'VECTOR_TYPE',
+        'length': None,
+        'validation_method': None,
+        'is_optional': True,
+        'module_name': assign_statutory,
+        "class_name": "BulkUploadConstant"
+        },
+    "bu_system_rejected_by": {
+        'type': 'STRING',
+        'length': 10,
+        'validation_method': is_alphabet,
+        'is_optional': False
+    },
+    'bu_rejected_download_count': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'KnowledgeManager': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'KnowledgeExecutive': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'DomainExecutive': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'DomainManager': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'TechnoManager': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    'TechnoExecutive': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
+    "bsm_domains": {
+        'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None,
+        'is_optional': False, 'module_name': statutory_mapping,
+        "class_name": "Domain"
+    },
+    "bsm_countries": {
+        'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None,
+        'is_optional': False, 'module_name': statutory_mapping,
+        "class_name": "Country"
+    },
+    'k_executive_info': {
+        'type': 'VECTOR_TYPE',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False,
+        'module_name': statutory_mapping,
+        "class_name": "KExecutiveInfo"
+    },
+
 }

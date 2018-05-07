@@ -340,16 +340,17 @@ BEGIN
   WHERE organisation_id = t2.organisation_id) AS organization_name,
   (SELECT is_active from tbl_organisation
   WHERE organisation_id = t2.organisation_id) AS organization_is_active,
-  t2.count AS total_unit_count, (SELECT COUNT(*) FROM tbl_units_organizations
-  WHERE domain_id = t2.domain_id AND organisation_id = t2.organisation_id)
-  -- and unit_id = t3.unit_id)
-  AS created_units
+  t2.count AS total_unit_count,count(t4.unit_id) AS created_units
   FROM tbl_legal_entities as t1 INNER join
   tbl_legal_entity_domains as t2 ON
   t2.legal_entity_id = t1.legal_entity_id left join
   tbl_units as t3 on t3.client_id = t1.client_id and
-  t3.legal_entity_id = t1.legal_entity_id
-  WHERE t1.client_id = _client_id;
+  t3.legal_entity_id = t1.legal_entity_id left join
+  tbl_units_organizations as t4 on t4.domain_id = t2.domain_id
+  and t4.organisation_id = t2.organisation_id and
+  t4.unit_id = t3.unit_id
+  WHERE t1.client_id = _client_id
+  group by t1.legal_entity_id, t2.domain_id, t2.organisation_id;
 END //
 
 DELIMITER ;
@@ -450,53 +451,66 @@ CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
 
 BEGIN
     SET SESSION group_concat_max_len = 1000000;
-    SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
 
-            (SELECT domain_name FROM tbl_domains WHERE domain_id = t1.domain_id) AS domain_name,
-            GROUP_CONCAT(t7.organisation_name) AS organizations,
-            t4.unit_code,
-            t4.unit_name,
-            (SELECT geography_name FROM tbl_geographies WHERE geography_id = t4.geography_id) AS location,
-            SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping))),'>>',1),'>>',- 1) AS primary_legislation,
-            SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1) AS secondary_legislation,
-            t1.statutory_provision,
-            -- CONCAT(t1.document_name,' - ',t1.compliance_task) AS compliance_task_name,
-            t1.compliance_task AS compliance_task_name,
-            t1.compliance_description,
-            t6.unit_id,
-            t6.domain_id,
-            -- t6.compliance_id AS assigned_compid,
-            t4.unit_id AS c_unit_id,
-            t1.domain_id
+    -- mapped statu names
+    SELECT t2.statutory_name, t1.statutory_id, IFNULL(t2.parent_ids, 0) AS parent_ids, 
+    t2.parent_names, t1.statutory_mapping_id
+    FROM tbl_mapped_statutories AS t1 
+    INNER JOIN tbl_statutories as t2 ON t1.statutory_id = t2.statutory_id
+    INNER JOIN tbl_statutory_mappings as t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
+    INNER JOIN tbl_mapped_locations as t4 ON t1.statutory_mapping_id = t4.statutory_mapping_id
+    INNER JOIN (SELECT a.geography_id,b.parent_ids,a.unit_id from tbl_units a
+      INNER JOIN tbl_geographies b ON a.geography_id = b.geography_id
+      WHERE find_in_set(a.unit_id, unitid)) t7 ON 
+      (t4.geography_id = t7.geography_id OR find_in_set(t4.geography_id,t7.parent_ids))
+    ORDER BY TRIM(LEADING '[' FROM t3.statutory_mapping);
+
+    -- get compliances
+    SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
+      (SELECT domain_name FROM tbl_domains WHERE domain_id = t1.domain_id) AS domain_name,
+      GROUP_CONCAT(t7.organisation_name) AS organizations,
+      t4.unit_code,
+      t4.unit_name,
+      (SELECT geography_name FROM tbl_geographies WHERE geography_id = t4.geography_id) AS location,
+      SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping))),'>>',1),'>>',- 1) AS primary_legislation,
+      SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1) AS secondary_legislation,
+      t1.statutory_provision,
+      t1.compliance_task AS compliance_task_name,
+      t1.compliance_description,
+      t6.unit_id,
+      t6.domain_id,
+      -- t6.compliance_id AS assigned_compid,
+      t4.unit_id AS c_unit_id,
+      t1.domain_id
     FROM    tbl_compliances AS t1
-            INNER JOIN
-                tbl_statutory_mappings AS t ON t1.statutory_mapping_id = t.statutory_mapping_id
-            INNER JOIN
-                tbl_mapped_industries AS t2 ON t1.statutory_mapping_id = t2.statutory_mapping_id
-            INNER JOIN
-                tbl_mapped_locations AS t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
-            INNER JOIN
-                tbl_organisation AS t7 ON t2.organisation_id = t7.organisation_id
-            INNER JOIN
-                tbl_units AS t4 ON t4.country_id = t1.country_id
-            INNER JOIN
-                tbl_units_organizations AS t5 ON t4.unit_id = t5.unit_id AND t5.domain_id = t1.domain_id AND t5.organisation_id = t2.organisation_id
-            LEFT JOIN
-                tbl_client_compliances t6 ON t1.compliance_id = t6.compliance_id AND
-                t4.unit_id = t6.unit_id AND t.domain_id = t6.domain_id
-            INNER JOIN
-                (SELECT a.geography_id, b.parent_ids, a.unit_id FROM tbl_units a
-                INNER JOIN tbl_geographies b ON a.geography_id = b.geography_id
-                WHERE
-                FIND_IN_SET(a.unit_id, unitid)) t7 ON t7.unit_id = t4.unit_id
-                AND t7.geography_id = t3.geography_id
-                AND (t4.geography_id = t7.geography_id
-                OR FIND_IN_SET(t4.geography_id, t7.parent_ids))
-    WHERE       t1.is_active = 1
-                AND t1.is_approved IN (2 , 3)
-                AND FIND_IN_SET(t4.unit_id, unitid)
-                AND FIND_IN_SET(t1.domain_id, domainid)
-                AND t6.unit_id IS NULL
+      INNER JOIN
+          tbl_statutory_mappings AS t ON t1.statutory_mapping_id = t.statutory_mapping_id
+      INNER JOIN
+          tbl_mapped_industries AS t2 ON t1.statutory_mapping_id = t2.statutory_mapping_id
+      INNER JOIN
+          tbl_mapped_locations AS t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
+      INNER JOIN
+          tbl_organisation AS t7 ON t2.organisation_id = t7.organisation_id
+      INNER JOIN
+          tbl_units AS t4 ON t4.country_id = t1.country_id
+      INNER JOIN
+          tbl_units_organizations AS t5 ON t4.unit_id = t5.unit_id AND t5.domain_id = t1.domain_id AND t5.organisation_id = t2.organisation_id
+      LEFT JOIN
+          tbl_client_compliances t6 ON t1.compliance_id = t6.compliance_id AND
+          t4.unit_id = t6.unit_id AND t.domain_id = t6.domain_id
+      INNER JOIN
+          (SELECT a.geography_id, b.parent_ids, a.unit_id FROM tbl_units a
+          INNER JOIN tbl_geographies b ON a.geography_id = b.geography_id
+          WHERE
+          FIND_IN_SET(a.unit_id, unitid)) t7 ON t7.unit_id = t4.unit_id
+          AND t7.geography_id = t3.geography_id
+          AND (t4.geography_id = t7.geography_id
+          OR FIND_IN_SET(t4.geography_id, t7.parent_ids))
+    WHERE t1.is_active = 1 
+      AND t1.is_approved IN (2 , 3)
+      AND FIND_IN_SET(t4.unit_id, unitid)
+      AND FIND_IN_SET(t1.domain_id, domainid)
+      AND t6.unit_id IS NULL
     GROUP BY    t1.statutory_mapping_id , t1.compliance_id , t4.unit_id
     ORDER BY TRIM(LEADING '[' FROM t.statutory_mapping) , t1.compliance_id , t4.unit_id;
 
@@ -564,10 +578,12 @@ DROP PROCEDURE IF EXISTS `sp_bu_unit_code_and_name`;
 
 DELIMITER //
 
-CREATE PROCEDURE `sp_bu_unit_code_and_name`()
+CREATE PROCEDURE `sp_bu_unit_code_and_name`(
+  IN legal_entity_id_ INT(11)
+)
 BEGIN
   SELECT legal_entity_id, unit_code, unit_name, unit_id, is_closed from
-  tbl_units;
+  tbl_units where legal_entity_id = legal_entity_id_;
 END //
 
 DELIMITER ;
@@ -620,48 +636,7 @@ END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;
-DELIMITER //
-CREATE PROCEDURE `sp_usermapping_statutory_unit_details`(IN `userCatgId` int(11), IN `userId` int)
-BEGIN
-     if(userCatgId = 8)then
-        select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
-        tu.business_group_id, tu.legal_entity_id,
-        tu.country_id, td.division_id, td.division_name, tc.category_id,
-        tc.category_name, tuu.domain_id
-        from
-        tbl_user_units as tuu inner join tbl_units as tu
-        on tu.unit_id = tuu.unit_id
-        left join tbl_divisions as td on
-        td.division_id = tu.division_id
-        left join tbl_categories as tc on tc.category_id = tu.category_id
-        where
-        tuu.user_id = userId and tuu.user_category_id = userCatgId
-        group by tu.unit_id;
-    end if;
-
-    if(userCatgId = 7)then
-        select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
-        tu.business_group_id, tu.legal_entity_id,
-        tu.country_id, td.division_id, td.division_name, tc.category_id,
-        tc.category_name, tuu.domain_id
-        from
-        tbl_user_units as tuu inner join tbl_units as tu
-        on tu.unit_id = tuu.unit_id
-        left join tbl_divisions as td on
-        td.division_id = tu.division_id
-        left join tbl_categories as tc on tc.category_id = tu.category_id
-        left join tbl_user_mapping as tum on tum.parent_user_id = userId
-        where
-        tum.parent_user_id = userId and tuu.user_category_id = userCatgId
-        group by tu.unit_id;
-    end if;
-END//
-DELIMITER ;
-
-
 DROP PROCEDURE IF EXISTS `sp_domain_executive_info`;
-
 DELIMITER //
 
 CREATE PROCEDURE `sp_domain_executive_info`(
@@ -694,10 +669,20 @@ DROP PROCEDURE IF EXISTS `sp_bu_get_compliance_id_by_name`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_bu_get_compliance_id_by_name`(
-IN c_task text, c_desc text)
+  IN c_task text, c_desc text, s_provision text, country_id_ INT(11),
+  domain_id_ INT(11), p_legislation text, s_legislation text
+)
 BEGIN
-   select compliance_id from tbl_compliances
-   where compliance_task = c_task and compliance_description = c_desc;
+  select compliance_id from tbl_compliances as t1
+  inner join tbl_mapped_statutories as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+  inner join tbl_statutories t3 on t2.statutory_id = t3.statutory_id
+  where 
+  t1.domain_id = domain_id_ and t1.country_id = country_id_ 
+  and IF(parent_ids = '', statutory_name = p_legislation, 1) 
+  and IF(parent_ids <> '', statutory_name = s_legislation, 1) 
+  and statutory_provision = s_provision 
+  and compliance_task = c_task 
+  and compliance_description = c_desc;
 END //
 
 DELIMITER ;
@@ -741,7 +726,7 @@ CREATE PROCEDURE `sp_bu_organization_all`(
 IN country_id_ INT(11)
 )
 BEGIN
-   select t1.domain_id, t1.organisation_id, t1.organisation_name, t1.is_active, 
+   select t1.domain_id, t1.organisation_id, t1.organisation_name, t1.is_active,
    (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name
    from tbl_organisation t1
    WHERE t1.country_id = country_id_;
@@ -839,8 +824,11 @@ CREATE PROCEDURE `sp_bu_get_country_by_legal_entity_name`(
     IN legal_entity_name_ text
 )
 BEGIN
-    SELECT country_id FROM tbl_legal_entities
+    SELECT country_id, legal_entity_id FROM tbl_legal_entities
     WHERE legal_entity_name = legal_entity_name_;
 END //
 
 DELIMITER ;
+
+-- Remove procedure
+DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;

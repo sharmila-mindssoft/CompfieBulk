@@ -788,51 +788,6 @@ class ChangeThemes(Request):
     def to_inner_structure(self):
         return {"theme": self.theme}
 
-####################################################
-# Get Completed Task Current Year - Bulk (Past Data)
-####################################################
-class GetDownloadData(Request):
-    def __init__(
-        self, legal_entity_id, unit_id, domain_id,
-        compliance_frequency, start_count, le_name, d_name,
-        u_name, u_code
-    ):
-        self.legal_entity_id = legal_entity_id
-        self.unit_id = unit_id
-        self.domain_id = domain_id
-        self.compliance_frequency = compliance_frequency
-        self.start_count = start_count
-        self.le_name = le_name
-        self.d_name = d_name
-        self.u_name = u_name
-        self.u_code = u_code
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "le_id", "unit_id", "domain_id", "compliance_task_frequency",
-            "start_count", "le_name", "d_name", "u_name", "u_code"
-        ])
-        return GetDownloadData(
-            data.get("le_id"), data.get("unit_id"),
-            data.get("domain_id"),
-            data.get("compliance_task_frequency"),
-            data.get("start_count"),
-            data.get("le_name"),
-            data.get("d_name"),
-            data.get("u_name"),
-            data.get("u_code")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "le_id": self.legal_entity_id, "unit_id": self.unit_id, "domain_id": self.domain_id,
-            "compliance_task_frequency": self.compliance_frequency,
-            "start_count": self.start_count, "le_name": self.le_name,
-            "d_name": self.d_name,  "u_name": self.u_name,
-            "d_name": self.u_code,
-        }
-
 
 
 def _init_Request_class_map():
@@ -845,8 +800,7 @@ def _init_Request_class_map():
         GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters, SaveReviewSettingsCompliance,
         GetAssignComplianceUnits, GetComplianceTotalToAssign, GetReAssignComplianceUnits, GetReAssignComplianceForUnits,
         GetAssigneewiseComplianesFilters, GetUserToAssignCompliance, GetChartFilters,
-        GetReassignComplianceFilters, GetUserWidgetData, SaveWidgetData, ChangeThemes, HaveCompliances, SaveStatutorySettings,
-        GetDownloadData
+        GetReassignComplianceFilters, GetUserWidgetData, SaveWidgetData, ChangeThemes, HaveCompliances, SaveStatutorySettings
 
     ]
 
@@ -1511,25 +1465,6 @@ class SaveReviewSettingsComplianceSuccess(Response):
     def to_inner_structure(self):
         return {}
 
-class DownloadBulkPastDataSuccess(Response):
-    def __init__(self, link):
-        self.link = link
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, ["link"])
-        link = data.get("link")
-
-        return DownloadBulkPastDataSuccess(
-            link
-        )
-
-    def to_inner_structure(self):
-        return {
-            "link": self.link
-        }
-
 
 def _init_Response_class_map():
     classes = [
@@ -1546,7 +1481,7 @@ def _init_Response_class_map():
         GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess, GetReAssignComplianceUnitsSuccess,
         GetReAssignComplianceUnitsSuccess, GetAssigneewiseComplianesFilters,
         GetUserWidgetDataSuccess, SaveWidgetDataSuccess, SaveReviewSettingsComplianceSuccess, HaveComplianceSuccess,
-        HaveComplianceFailed, DownloadBulkPastDataSuccess
+        HaveComplianceFailed
     ]
     class_map = {}
     for c in classes:

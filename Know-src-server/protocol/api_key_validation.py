@@ -20,14 +20,6 @@ def is_alphabet(value):
     else:
         raise expectation_error('a alphabets', value)
 
-
-def is_alphabet_csv_delimeter(value):
-    r = re.compile("^[a-zA-Z |;]*$")  # a-z with space
-    if r.match(value):
-        return value
-    else:
-        raise expectation_error('a alphabets', value)
-
 def is_alphabet_withdot(value):
     r = re.compile("^[a-zA-Z-. ]*$")  # a-z with space
     if r.match(value):
@@ -62,7 +54,7 @@ def is_address(value):
 
 
 def is_url(value):
-    r = re.compile("^[a-z:/.-]*$")  # a-z with space
+    r = re.compile("^[a-z/-]*$")  # a-z with space
     if r.match(value):
         return value
     else:
@@ -86,22 +78,6 @@ def is_mapping(value):
 
 def is_industry(value):
     r = re.compile("^[a-zA-Z-. &]*$")  # a-z with space
-    if r.match(value):
-        return value
-    else:
-        raise expectation_error('a alphabets', value)
-
-
-def is_file_name(value):
-    r = re.compile("^[a-zA-Z0-9_.-//@#() ]*$")
-    if r.match(value):
-        return value
-    else:
-        raise expectation_error('valid file name', value)
-
-
-def is_alphabet_wtih_bracket(value):
-    r = re.compile("^[a-zA-Z() ]*$")  # a-z with space
     if r.match(value):
         return value
     else:

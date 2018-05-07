@@ -90,10 +90,10 @@ function initialize(type_of_initialization) {
 	displayPage(type_of_initialization);
 	if (type_of_initialization == "list") {
 		displayLoader();
-		mirror.getClientGroupsList(function(error, response) {
+		bu.getClientGroupsList(function(error, response) {
 		    if (error == null) {
 		    	clientGroupsList = response.client_group_list;
-		    	mirror.getTechnoUserDetails(
+		    	bu.getTechnoUserDetails(
                     parseInt(userCategoryId), function(error, response)
                 {
 		    		if(error == null) {
@@ -145,7 +145,7 @@ btnUploadedFileList.click(function() {
 
 
 // To display the uploaded CSV files list
-function loadClientUnitCSVFilesList(){
+function loadClientUnitCSVFilesList() {
 	var data = clientUnitCSVFilesList;
 	var sno = 0;
 	if(data.length > 0) {
@@ -382,8 +382,7 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText){
     displayLoader();
     bu.performClientUnitApproveReject(
         csv_id, actionType, remarksText, pwd, parseInt(groupSelect_id.val().trim()),
-    function(error, response)
-    {
+    function(error, response) {
         console.log(error, response);
         if (error == null) {
             if (actionType == 1) {
@@ -422,8 +421,9 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText){
         }
     });
 }
-function performApproveRejectDeclination(csv_id, actionType, pwd, remarksText, declined_count)
-{
+function performApproveRejectDeclination(
+    csv_id, actionType, pwd, remarksText, declined_count
+) {
     if (declined_count > 0) {
         setTimeout(function() {
             msg_decl= declined_count + " units declined, Do you want to continue ?";
@@ -464,8 +464,7 @@ btnSubmit.click(function(){
     csvid = $('#view_csv_unit_id').val();
     displayPopUp('submit', parseInt(csvid), 0);
 });
-function submitAction(csv_id, actionType, pwd, remarksText)
-{
+function submitAction(csv_id, actionType, pwd, remarksText) {
     displayLoader();
     bu.submitClientUnitActionFromView(
         csv_id, actionType, remarksText, pwd, parseInt(groupSelect_id.val().trim()),
@@ -491,7 +490,7 @@ function submitAction(csv_id, actionType, pwd, remarksText)
                     confirm_alert(msg, function(isConfirm) {
                         if (isConfirm) {
                             console.log("inside confirm")
-                            bu.confirmClientUnitDeclination(
+                            bu.confirmSubmitClientUnitFromView(
                                 csv_id, parseInt(groupSelect_id.val().trim()),
                                 function(error, response)
                                 {
@@ -575,7 +574,7 @@ function displayViewScreen(csv_id, start_count, _page_limit) {
 //To display the approval units list
 function getCSVFileApprovalList(csv_id, start_count, _page_limit) {
 	displayLoader();
-
+    var cname_split = "", cname = "";
 	bu.getBulkClientUnitApproveRejectList(
         csv_id, start_count, _page_limit, function(error, response){
         if (error == null) {
@@ -613,8 +612,18 @@ function getCSVFileApprovalList(csv_id, start_count, _page_limit) {
             hideLoader();
         }
         else {
-            hideLoader();
-            displayMessage(error);
+            if(error != null) {
+                if (error == "EmptyFilteredData") {
+                    totalRecord = 0;
+                    hidePagePan();
+                    PaginationView.hide();
+                    hidePageView();
+                    bindClientUnitList([]);
+                } else {
+                    displayMessage(err);
+                }
+                hideLoader();
+            }
         }
     });
 }
@@ -917,6 +926,20 @@ PasswordSubmitButton.click(function(){
 CancelButton.click(function() {
 	bulkClientUnitUploadedFileListviewPage.show();
 	bulkClientUnitUploadedApprovalListPage.hide();
+    $('.clear-filtered').hide();
+    $('.filtered_items').text('');
+    filterHead = null;
+    showClicked = false;
+    filterClicked = false;
+    actionVal = 0;
+    $('.all-data').prop('checked', true);
+    filterLegalEntity.val('');
+    filterDivision.val('');
+    filterCategory.val('');
+    filterUnitCode.val('');
+    filterGeoLocation.val('');
+    filterDomain.val('');
+    filterOrganization.val('');
     btnUploadedFileList.trigger('click');
     //initialize('list');
 });
@@ -1115,6 +1138,7 @@ btnFilterGo.click(function(){
         if(err == null) {
             viewClientUnitList = response.client_unit_data;
             lblGroupName.text(response.bu_group_name);
+            var cname_split = "", cname = "";
             cname_split = response.csv_name.split("_");
             cname_split.pop();
             cname = cname_split.join("_");

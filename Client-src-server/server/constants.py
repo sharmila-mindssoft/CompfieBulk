@@ -47,34 +47,12 @@ DOWNLOAD_EXPIRY = 48  # Hours
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
-KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_uat"
+KNOWLEDGE_DB_PASSWORD = "Msft!@#$%^"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_bulk_dev"
 
 URL = "http://localhost:8080/"
 CLIENT_URL = URL
 KNOWLEDGE_URL = URL + "knowledge"
 
-BULKUPLOAD_CSV_PATH = os.path.join(ROOT_PATH, "..", "..", "bulkuploadcsv")
-BULKUPLOAD_INVALID_PATH = os.path.join(ROOT_PATH, "..", "..", "bulkuploadinvalid")
-
-BULKUPLOAD_REJECTED_DOWNLOAD_PATH = os.path.join(ROOT_PATH, "..", "..", "rejected-downloads")
-BULKUPLOAD_REJECTED_DOWNLOAD_BASE_PATH = "/knowledge/rejected/downloads/"
-
-REJECTED_DOWNLOAD_PATH = os.path.join(ROOT_PATH, "..", "..", "rejected-downloads")
-REJECTED_DOWNLOAD_BASE_PATH = "/knowledge/rejected/downloads/"
-
-CSV_DOWNLOAD_URL = "/knowledge/downloadcsv"
-
-BULK_UPLOAD_DB_HOST = "localhost"
-BULK_UPLOAD_DB_PORT = 3306
-BULK_UPLOAD_DB_USERNAME = "root"
-BULK_UPLOAD_DB_PASSWORD = "123456"
-BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload_uat"
-
-CSV_DELIMITER = '|;|'
-CSV_MAX_LINE_ITEM = 100
-
 if IS_DEVELOPMENT is True :
     VERSION = time.time()
-
-SYSTEM_REJECTED_BY = "COMPFIE"

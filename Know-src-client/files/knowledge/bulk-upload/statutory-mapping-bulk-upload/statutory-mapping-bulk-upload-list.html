@@ -1,5 +1,3 @@
-
-
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
 <link href="/css/dropzone.css" rel="stylesheet" type="text/css" />
@@ -114,7 +112,7 @@
 
                                 <div class="col-sm-6">
                                     <div class="inp-file">
-                                        <input class="form-control input-sm" type="file" tabindex="3" id="bu-upload-csv">
+                                        <input class="form-control input-sm" accept=".csv" type="file" tabindex="3" id="bu-upload-csv">
                                         <small class="" style="text-align: left;">[ Accepted file format <span style="color: #E64C3D !important;">.csv</span> ]
                                         </small>
                                     </div>
@@ -123,12 +121,12 @@
                                           <tr class="bg-lightdark border-1">
                                               <td width="80%" class="p-5-px csv-file-name">Ind-LL-Maternity Act1990.csv </td>
                                               <td width="10%" class="p-5-px">
-                                                <a class="csv-file-view">
+                                                <a class="csv-file-view" id="uploaded_csv_view">
                                                   <i class="fa fa-search fa-1-2x c-pointer" data-toggle="tooltip" title="View Document"></i>
                                                 </a>
                                               </td>
                                               <td width="10%" class="p-5-px">
-                                                <a class="csv-file-download">
+                                                <a class="csv-file-download" id="uploaded_csv_dwnl">
                                                   <i class="fa fa-download fa-1-2x c-pointer" data-toggle="tooltip" title="Download Document"></i>
                                                 </a>
                                               </td>
@@ -307,8 +305,8 @@
 {% endblock %}
 
 {% block contentscript %}
-    <script src="/js/dropzone.js"></script>
-    <script src="/js/jszip.js"></script>
-    <script src="/js/FileSaver.js"></script>
-    <script type="text/javascript" src="/script/bulk-upload/statutory-mapping-bulk-upload/statutory-mapping-bulk-upload.js"></script>
+    <script src="/script/bulk-upload/bulk-upload-js/dropzone.js"></script>
+    <script src="/script/bulk-upload/bulk-upload-js/jszip.js"></script>
+    <script src="/script/bulk-upload/bulk-upload-js/FileSaver.js"></script>
+    <script src="/script/bulk-upload/statutory-mapping-bulk-upload/statutory-mapping-bulk-upload.js"></script>
 {% endblock %}

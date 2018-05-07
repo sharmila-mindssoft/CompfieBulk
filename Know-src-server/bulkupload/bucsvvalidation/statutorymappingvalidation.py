@@ -6,14 +6,18 @@ import mysql.connector
 import urllib
 import threading
 import requests
+import calendar
 from zipfile import ZipFile
 from itertools import groupby
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    KNOWLEDGE_FORMAT_PATH
+)
+
+from ..bulkconstants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, TEMP_FILE_SERVER,
-    KNOWLEDGE_FORMAT_PATH,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
     BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME
 )
@@ -24,7 +28,6 @@ from server.database.forms import (
     frmStatutoryMappingBulkUpload,
     frmApproveStatutoryMappingBulkUpload
 )
-from ..buapiprotocol import bustatutorymappingprotocol as bu_sm
 
 from server.exceptionmessage import process_error
 from server.database.knowledgetransaction import save_messages
@@ -360,7 +363,8 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)":
-                msg.append("Multiple_Input_Section - Invalid data")
+                if d["Multiple_Input_Section"] != "":
+                    msg.append("Multiple_Input_Section - Invalid data")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999:
                     msg.append(
                         "Repeats_Every - Cannot exceed maximum 3 digits")
@@ -445,9 +449,12 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)":
-                msg.append("Multiple_Input_Section - Invalid data")
+                if d["Multiple_Input_Section"] != "":
+                    msg.append("Multiple_Input_Section - Invalid data")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999:
-                    msg.append("Repeats_Every - Cannot exceed maximum 2 digits")
+                    msg.append(
+                        "Repeats_Every - Cannot exceed maximum 2 digits"
+                    )
                 if d["Repeats_By (DOM/EOM)"] != "":
                     msg.append("Repeats_By (DOM/EOM)- Invalid data")
                 if d["Statutory_Month"] != "":
@@ -513,6 +520,23 @@ class StatutorySource(object):
         if (d["Compliance_Document"] == "" and d["Format"] != ""):
             msg.append(
                 "Compliance_Document - Field is blank when Format available"
+            )
+        return msg
+
+    def check_primary_legislation_value(self, value):
+        msg = []
+        values = value.strip().split(CSV_DELIMITER)
+        pri_leg_list = []
+        for v in [v.strip() for v in values]:
+            if v.find(">>") > 0:
+                e = [e.strip() for e in v.split(">>")]
+                pri_leg_list.append(e[0])
+        print "pri_leg_list--->> ", pri_leg_list
+        print all(pri_leg_list[0] == item for item in pri_leg_list)
+        is_pl_equal = all(pri_leg_list[0] == item for item in pri_leg_list)
+        if is_pl_equal is False:
+            msg.append(
+                "Statutory - Invalid Level One Data"
             )
         return msg
 
@@ -588,20 +612,46 @@ class StatutorySource(object):
 
     def map_statutory_date(self, s_date, s_month, t_days, r_by):
         if r_by == "EOM":
+            r_by = 2
+        elif r_by == "DOM":
             r_by = 1
         else:
             r_by = None
+
+        multi_len = 0
         if len(s_date.split(CSV_DELIMITER)) > 1:
             multi_len = len(s_date.split(CSV_DELIMITER))
-        else:
-            multi_len = 0
+
+        if (len(s_date.split(CSV_DELIMITER)) <= 1 and
+                len(s_month.split(CSV_DELIMITER)) > 1):
+            multi_len = len(s_month.split(CSV_DELIMITER))
+
+        if(len(s_date.split(CSV_DELIMITER)) <= 1 and
+            len(s_month.split(CSV_DELIMITER)) <= 1 and
+                len(t_days.split(CSV_DELIMITER)) > 1):
+            multi_len = len(t_days.split(CSV_DELIMITER))
 
         sdate = []
         if multi_len == 0:
-            s_date = s_date is not None if s_date else None
-            s_month = s_month is not None if s_month else None
-            t_days = t_days is not None if t_days else None
-            r_by = r_by is not None if r_by else None
+            if(s_date is not None and s_date != ''):
+                s_date = int(s_date)
+            else:
+                s_date = None
+
+            if(s_month is not None and s_month != ''):
+                s_month = int(s_month)
+            else:
+                s_month = None
+
+            if(t_days is not None and t_days != ''):
+                t_days = int(t_days)
+            else:
+                t_days = None
+
+            if(r_by is not None and r_by == 2 and s_month is not None):
+                end_of_month = calendar.mdays[s_month]
+                s_date = int(end_of_month)
+
             sdate.append({
                 "statutory_date": s_date,
                 "statutory_month": s_month,
@@ -613,19 +663,34 @@ class StatutorySource(object):
             s_month = s_month.split(CSV_DELIMITER)
             t_days = t_days.split(CSV_DELIMITER)
             for i in range(multi_len):
-                s_date_i = s_date[i] is not None if s_date[i] else None
-                s_month_i = s_month[i] is not None if s_month[i] else None
-                t_days_i = t_days[i] is not None if t_days[i] else None
-                r_by_i = r_by is not None if r_by else None
+                s_date_i = None
+                s_month_i = None
+                t_days_i = None
+
+                if(type(s_date) != int or type(s_date) != float):
+                    if(len(s_date) > 1):
+                        s_date_i = int(s_date[i])
+
+                if(type(s_month) != int or type(s_month) != float):
+                    if(len(s_month) > 1):
+                        s_month_i = int(s_month[i])
+
+                if(type(t_days) != int or type(t_days) != float):
+                    if(len(t_days) > 1):
+                        t_days_i = int(t_days[i])
+                if(r_by is not None and r_by == 2):
+                    end_of_month = calendar.mdays[s_month_i]
+                    s_date_i = int(end_of_month)
+
                 sdate.append({
                     "statutory_date": s_date_i,
                     "statutory_month": s_month_i,
                     "trigger_before_days": t_days_i,
-                    "repeat_by": r_by_i
+                    "repeat_by": r_by
                 })
-
         return json.dumps(sdate)
 
+    # write update query
     def save_compliance_data(self, c_id, d_id, mapping_id, data):
         created_on = get_date_time()
         approved_on = get_date_time()
@@ -654,15 +719,20 @@ class StatutorySource(object):
             if d["Repeats_Type"] != '':
                 repeat_type_id = self.Repeats_Type.get(d["Repeats_Type"])
 
-            mapped_date = self.map_statutory_date(
-                d["Statutory_Date"], d["Statutory_Month"], d["Trigger_Days"],
-                d["Repeats_By (DOM/EOM)"]
-            )
+            Statutory_Date = d["Statutory_Date"] if d["Statutory_Date"] is not None else None
+            Statutory_Month = d["Statutory_Month"] if d["Statutory_Month"] is not None else None
+            Trigger_Days = d["Trigger_Days"] if d["Trigger_Days"] is not None else None
+            Repeats_By = d["Repeats_By (DOM/EOM)"] if d["Repeats_By (DOM/EOM)"] is not None else None
+
+            mapped_date = self.map_statutory_date(Statutory_Date,
+                                                  Statutory_Month,
+                                                  Trigger_Days,
+                                                  Repeats_By)
 
             values.append((
                 d["Statutory_Provision"], d["Compliance_Task"],
                 d["Compliance_Description"], d["Compliance_Document"],
-                d["Format"], 0,
+                d["Format"], d["format_file_size"],
                 d["Penal_Consequences"], d["Reference_Link"], freq_id,
                 mapped_date, int(mapping_id), 1, d["uploaded_by"],
                 created_on, d_id, c_id, 2,
@@ -754,8 +824,12 @@ class StatutorySource(object):
             )
 
     def save_manager_message(
-        self, a_type, actual_csv_name, countryname, domainname, createdby
+        self, a_type, actual_csv_name, countryname, domainname,
+        createdby, rejected_reason, sys_declined_count
     ):
+        print "QQQQQQQQQQQQQQQQQQQQQQQQQQQ"
+        print "sys_declined_count-->> ", sys_declined_count
+        print "rejected_reason-> ", rejected_reason
         csv_name = actual_csv_name.split('_')
         csv_name = "_".join(csv_name[:-1])
         if a_type == 1:
@@ -763,9 +837,22 @@ class StatutorySource(object):
 
         else:
             action_type = "rejected"
-        text = "Statutory mapping file %s of %s - %s has been %s" % (
+
+        if a_type == 1:
+            text = "Statutory mapping file %s of %s - %s has been %s" % (
                 csv_name, countryname, domainname, action_type
             )
+            if sys_declined_count > 0:
+                text = "Statutory mapping file %s of %s - %s %s "\
+                    "records has been declined by COMPFIE" % \
+                    (csv_name, countryname, domainname, sys_declined_count)
+                print "In system reject ", text
+        else:
+            text = "Statutory mapping file %s of %s - %s "\
+                "has been %s with Reason '%s'" % \
+                (csv_name, countryname, domainname, action_type,
+                 rejected_reason)
+
         link = "/knowledge/statutory-mapping-bu"
         save_messages(
             self._source_db, 4, "Approve Statutory Mapping Bulk Upload",
@@ -964,11 +1051,16 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
 
                 if (key == "Format" and value != ''):
                     self._doc_names.append(value)
-                # if key is "Statutory_Nature":
-                #     self.check_single_value_input()
+                if key in ["Statutory_Nature", "Compliance_Frequency"]:
+                    if CSV_DELIMITER in value:
+                        msg = "%s - Invalid Data" % (key)
+                        if res is not True:
+                            res.append(msg)
+                        else:
+                            res = [msg]
+                        error_count["invalid_char"] += 1
 
                 for v in [v.strip() for v in values]:
-
                     valid_failed, error_cnt = parse_csv_dictionary_values(
                         key, v
                     )
@@ -1030,6 +1122,12 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                                  key == "Duration_Type")
                             ):
                                 self._error_summary["invalid_frequency_error"] += 1
+
+                if key == "Statutory":
+                    msg = self.check_primary_legislation_value(value)
+                    self._error_summary["invalid_data_error"] += len(msg)
+                    if len(msg) > 0:
+                        res = make_error_desc(res, msg)
 
                 if key == "Task_ID":
                     if v in duplicate_task_ids:
@@ -1266,8 +1364,17 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self.get_source_data()
         self.get_file_count()
 
+    def connect_bulk_database(self):
+        c_db_con = bulkupload_db_connect()
+        self._db = Database(c_db_con)
+        self._db.begin()
+
+    def source_bulkdb_commit(self):
+        self._db.commit()
+
     def get_source_data(self):
         print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        self.connect_bulk_database()
         self._source_data = self._db.call_proc(
             "sp_statutory_mapping_by_csvid", [self._csv_id]
         )
@@ -1321,6 +1428,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                     unboundMethod = self._check_method_maps.get(
                                         key
                                     )
+
+                                    if key in ["Applicable_Location", "Statutory"]:
+                                        if v.find(">>") > 0:
+                                            v = " >> ".join(e.strip() for e in v.split(">>"))
+
                                     if unboundMethod is not None:
                                         isFound = unboundMethod(v)
 
@@ -1408,15 +1520,21 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     nature
                 ).get("statutory_nature_id")
 
-                for geo_maps in value.get(
-                    "Applicable_Location"
-                ).split(CSV_DELIMITER):
+                for geo_maps in value.get("Applicable_Location").split(
+                        CSV_DELIMITER):
+                    geo_maps = geo_maps.lstrip()
+                    geo_maps = geo_maps.rstrip()
+                    if geo_maps.find(">>") > 0:
+                        geo_maps = " >> ".join(
+                            e.strip() for e in geo_maps.split(">>"))
+
                     if self.Geographies.get(geo_maps) is not None:
                         geo_ids.append(
                             self.Geographies.get(geo_maps).get(
                                 "geography_id"
                             )
                         )
+
                 if len(grouped_list) > 1:
                     msg.append(grouped_list[0].get("Compliance_Task"))
                 uploaded_by = grouped_list[0].get("uploaded_by")
@@ -1425,14 +1543,14 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     statu_limit = [i for i in self.Statu_level]
                     statu_level_limit = statu_limit[0]
 
-                    statu_maps = statu_maps.replace(" >> ", ">>")
+                    statu_maps = statu_maps.lstrip()
+                    statu_maps = statu_maps.rstrip()
+                    if statu_maps.find(">>") > 0:
+                        statu_maps = ">>".join(
+                            e.strip() for e in statu_maps.split(">>"))
                     legis_data = statu_maps.split(">>")
-
-                    # print "self.Statutories.get(statu_maps)"
-                    # print statu_maps
-                    # print self.Statutories.get(statu_maps)
                     if self.Statutories.get(statu_maps) is not None:
-                        if(len(legis_data) == 1):
+                        if(len(legis_data) <= statu_level_limit):
                             statu_ids.append(
                                 self.Statutories.get(statu_maps).get(
                                     "statutory_id"
@@ -1440,14 +1558,23 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                             )
                         statu_exists_id.append(statu_maps)
                     else:
-                        # print "legis_data >>>"
-                        # print legis_data
+                        if self.Statu_dic.get(statu_maps) is not None:
+                            if(len(legis_data) <= statu_level_limit):
+                                statu_ids.append(
+                                    self.Statu_dic.get(statu_maps)
+                                )
+                                statu_exists_id.append(statu_maps)
+
                         if(len(legis_data) <= statu_level_limit):
-                            # print "IF Legis >>>"
                             parent_names = ''
                             parent_id = ''
                             for statu_level, data in enumerate(legis_data, 1):
-                                strip_data = data.strip()
+                                strip_data = data.lstrip()
+                                strip_data = strip_data.rstrip()
+                                if strip_data.find(">>") > 0:
+                                    strip_data = ">>".join(
+                                        e.strip() for e in strip_data.split(
+                                            ">>"))
                                 statu_position = self.StatuLevelPosition
                                 level_id = statu_position.get(statu_level)
 
@@ -1462,17 +1589,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                         strip_data).get("statutory_id")
                                     parent_names = str(strip_data)
 
-                                # print "parent_id >>>"
-                                # print parent_id
-                                # print "parent_names >>>"
-                                # print parent_names
-
                                 if (int(statu_level) == 1 and
                                    self.Statutories.get(strip_data) is None):
-                                    # print "3 IF >>>"
-                                    # print strip_data
                                     if(strip_data not in statu_exists_id):
-                                        # print "4 IF >>>"
                                         statu_id = self.save_statutories_data(
                                             str(strip_data), level_id,
                                             parent_id, parent_names,
@@ -1484,22 +1603,12 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                         parent_id = statu_id
                                         parent_names = str(strip_data)
                                 else:
-                                    # print "5 IF >>>"
-                                    # print statu_maps
-                                    # print "self.Statutories"
-                                    # print self.Statutories
-                                    # print "self.Statu_dic"
-                                    # print self.Statu_dic
                                     if(int(statu_level) > 1 and
                                        self.Statutories.get(statu_maps) is None
                                        ):
-                                        # print "6 IF >>>"
-                                        # print statu_maps
                                         if(
                                            self.Statu_dic.get(statu_maps) is None
                                            ):
-                                            # print "7 IF >>>"
-                                            # print statu_maps
                                             statu_id = self.save_statutories_data(
                                                 str(strip_data), level_id,
                                                 parent_id, parent_names,
@@ -1509,13 +1618,14 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                             self.Statu_dic[statu_maps] = statu_id
                                             parent_id = statu_id
                                             parent_names = str(strip_data)
-                # print "statu_ids >>>"
-                # print statu_ids
-                # print "statu_ids >>>"
-                if len(grouped_list) > 1:
-                    msg.append(grouped_list[0].get("Compliance_Task"))
-                uploaded_by = grouped_list[0].get("uploaded_by")
-
+                                        if(
+                                           self.Statu_dic.get(statu_maps) is not None
+                                           and statu_maps not in statu_exists_id
+                                           ):
+                                            statu_id = self.Statu_dic.get(statu_maps)
+                                            statu_ids.append(statu_id)
+                                            statu_exists_id.append(statu_maps)
+                                            self.Statu_dic[statu_maps] = statu_id
                 mapping_id = self.save_mapping_data(
                     self._country_id, self._domain_id, nature_id,
                     uploaded_by, str(statu_mapping)
@@ -1564,9 +1674,16 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             self._db.execute(q1, [count, user_id, created_on, self._csv_id,
                              self._csv_id])
 
+            print "Rejection done"
+            self._db.commit()
+            return True
         except Exception, e:
             print str(traceback.format_exc())
             raise (e)
+
+
+    def remove_declined_docs(self, declined_info, user_id, csv_id):
+        print "declined_info-> ", declined_info
 
     def format_download_process_initiate(self, csvid):
         self.file_server_approve_call(csvid)
@@ -1610,6 +1727,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         check_status()
 
     def file_server_approve_call(self, csvid):
+        print "Approve call done"
         caller_name = "%sapprove?csvid=%s" % (TEMP_FILE_SERVER, csvid)
         print "caller_name", caller_name
         response = requests.post(caller_name)

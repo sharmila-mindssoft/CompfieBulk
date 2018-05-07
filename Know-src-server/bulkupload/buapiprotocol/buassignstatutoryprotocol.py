@@ -208,12 +208,12 @@ class DeleteRejectedASMByCsvID(Request):
 
 class GetAssignedStatutoryBulkReportData(Request):
     def __init__(self, bu_client_id, bu_legal_entity_id, bu_unit_id,
-                 d_id, from_date, to_date, r_count, p_count, child_ids,
+                 domain_ids, from_date, to_date, r_count, p_count, child_ids,
                  user_category_id):
         self.bu_client_id = bu_client_id
         self.bu_legal_entity_id = bu_legal_entity_id
         self.bu_unit_id = bu_unit_id
-        self.d_id = d_id
+        self.domain_ids = domain_ids
         self.from_date = from_date
         self.to_date = to_date
         self.r_count = r_count
@@ -225,13 +225,13 @@ class GetAssignedStatutoryBulkReportData(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "bu_client_id", "bu_legal_entity_id",
-            "bu_unit_id", "d_id", "from_date", "to_date", "r_count",
+            "bu_unit_id", "domain_ids", "from_date", "to_date", "r_count",
             "p_count", "child_ids", "user_category_id"])
         return GetAssignedStatutoryBulkReportData(
             data.get("bu_client_id"),
             data.get("bu_legal_entity_id"),
             data.get("bu_unit_id"),
-            data.get("d_id"),
+            data.get("domain_ids"),
             data.get("from_date"),
             data.get("to_date"),
             data.get("r_count"),
@@ -245,7 +245,7 @@ class GetAssignedStatutoryBulkReportData(Request):
             "bu_client_id": self.bu_client_id,
             "bu_legal_entity_id": self.bu_legal_entity_id,
             "bu_unit_id": self.bu_unit_id,
-            "d_id": self.d_id,
+            "domain_ids": self.domain_ids,
             "from_date": self.from_date,
             "to_date": self.to_date,
             "r_count": self.r_count,
@@ -258,7 +258,7 @@ class GetAssignedStatutoryBulkReportData(Request):
 class ExportASBulkReportData(Request):
     def __init__(self, bu_client_id, bu_group_name, bu_legal_entity_id,
                  legal_entity_name, bu_unit_id, unit_name,
-                 d_id, d_names, from_date, to_date, child_ids,
+                 domain_ids, d_names, from_date, to_date, child_ids,
                  user_category_id, csv):
         self.bu_client_id = bu_client_id
         self.bu_group_name = bu_group_name
@@ -266,7 +266,7 @@ class ExportASBulkReportData(Request):
         self.legal_entity_name = legal_entity_name
         self.bu_unit_id = bu_unit_id
         self.unit_name = unit_name
-        self.d_id = d_id
+        self.domain_ids = domain_ids
         self.d_names = d_names
         self.from_date = from_date
         self.to_date = to_date
@@ -279,7 +279,7 @@ class ExportASBulkReportData(Request):
         data = parse_dictionary(data, ["bu_client_id", "bu_group_name",
                                        "bu_legal_entity_id",
                                        "legal_entity_name",
-                                       "bu_unit_id", "unit_name", "d_id",
+                                       "bu_unit_id", "unit_name", "domain_ids",
                                        "d_names", "from_date", "to_date",
                                        "child_ids", "user_category_id", "csv"])
         return ExportASBulkReportData(
@@ -289,7 +289,7 @@ class ExportASBulkReportData(Request):
             data.get("legal_entity_name"),
             data.get("bu_unit_id"),
             data.get("unit_name"),
-            data.get("d_id"),
+            data.get("domain_ids"),
             data.get("d_names"),
             data.get("from_date"),
             data.get("to_date"),
@@ -306,7 +306,7 @@ class ExportASBulkReportData(Request):
             "legal_entity_name": self.legal_entity_name,
             "bu_unit_id": self.bu_unit_id,
             "unit_name": self.unit_name,
-            "d_id": self.d_id,
+            "domain_ids": self.domain_ids,
             "d_names": self.d_names,
             "from_date": self.from_date,
             "to_date": self.to_date,
@@ -570,6 +570,51 @@ class SubmitAssignStatutory(Request):
         }
 
 
+class GetDomainExecutiveDetails(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetDomainExecutiveDetails()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class GetBulkUploadConstants(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetBulkUploadConstants()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class BulkUploadConstant(object):
+    def __init__(self, user_category_id, user_category_name):
+        self.user_category_id = user_category_id
+        self.user_category_name = user_category_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_category_id"])
+        return BulkUploadConstant(
+            data.get("user_category_id")
+        )
+
+    def to_structure(self):
+        return {
+            self.user_category_name: self.user_category_id,
+        }
+
+
 def _init_Request_class_map():
     classes = [
 
@@ -581,7 +626,9 @@ def _init_Request_class_map():
         UpdateASMClickCount, DeleteRejectedASMByCsvID,
         GetAssignedStatutoryBulkReportData, DownloadRejectedASMReport,
         ExportASBulkReportData, SaveAction, ConfirmAssignStatutorySubmit,
-        AssignStatutoryValidate, SubmitAssignStatutory
+        AssignStatutoryValidate, SubmitAssignStatutory,
+        GetDomainExecutiveDetails,
+        GetBulkUploadConstants, BulkUploadConstant,
     ]
 
     class_map = {}
@@ -1344,6 +1391,50 @@ class CsvFileExeededMaxLines(Response):
         }
 
 
+class GetDomainExecutiveDetailsSuccess(Response):
+    def __init__(self, domain_executive_info):
+        self.domain_executive_info = domain_executive_info
+
+    @staticmethod
+    def parse_inner_strucure(data):
+        data = parse_dictionary(data, ["domain_executive_info"])
+        return GetDomainExecutiveDetailsSuccess(
+            data.get("domain_executive_info")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "domain_executive_info": self.domain_executive_info
+        }
+
+
+class GetBulkUploadConstantSuccess(Response):
+    def __init__(self, bu_constants, bu_system_rejected_by,
+                 bu_rejected_download_count):
+
+        self.bu_constants = bu_constants
+        self.bu_system_rejected_by = bu_system_rejected_by
+        self.bu_rejected_download_count = bu_rejected_download_count
+
+    @staticmethod
+    def parse_inner_strucure(data):
+        data = parse_dictionary(data,
+                                ["bu_constants", "bu_system_rejected_by",
+                                 "bu_rejected_download_count"
+                                 ])
+        return GetBulkUploadConstantSuccess(
+            data.get("bu_constants"),
+            data.get("bu_system_rejected_by"),
+            data.get("bu_rejected_download_count")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "bu_constants": self.bu_constants,
+            "bu_system_rejected_by": self.bu_system_rejected_by,
+            "bu_rejected_download_count": self.bu_rejected_download_count
+        }
+
 def _init_Response_class_map():
     classes = [
         GetClientInfoSuccess,
@@ -1367,7 +1458,9 @@ def _init_Response_class_map():
         RejectionMaxCountReached,
         CompleteActionBeforeSubmit,
         UnitsNotAssignedToUser,
-        CsvFileExeededMaxLines
+        CsvFileExeededMaxLines,
+        GetDomainExecutiveDetailsSuccess,
+        GetBulkUploadConstantSuccess
     ]
 
     class_map = {}
@@ -1550,4 +1643,26 @@ class AssignStatutoryReportData(object):
             "rejected_reason": self.rejected_reason,
             "domain_name": self.domain_name,
             "declined_count": self.declined_count
+        }
+
+
+class DomainExecutiveInfo(object):
+    def __init__(self, emp_code_name, user_id):
+        self.emp_code_name = emp_code_name
+        self.user_id = user_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+           "emp_code_name", "user_id"
+        ])
+        return DomainExecutiveInfo(
+            data.get("emp_code_name"),
+            data.get("user_id")
+        )
+
+    def to_structure(self):
+        return {
+            "emp_code_name": self.emp_code_name,
+            "user_id": self.user_id
         }

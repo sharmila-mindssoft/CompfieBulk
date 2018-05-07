@@ -28,11 +28,13 @@ from server.clientdatabase.savelegalentitydata import(
     LEntityReplicationServiceProvider, LEntityUnitClosure,
     LEntitySettingsData, LEntityReplicationUserPrivileges
 )
-from server.constants import (
-    SESSION_CUTOFF,
+from server.constants import(SESSION_CUTOFF)
+
+from bulkupload.client_bulkconstants import(
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
     BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME
 )
+
 import logger
 import random, string
 from bulkupload.client_bulkuploadmain import BulkAPI
@@ -40,10 +42,9 @@ from bulkupload.client_bulkuploadmain import BulkAPI
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 app = Flask(__name__)
 
-
 __all__ = [
     "bulk_upload_api_request",
-    "API"
+    "API", "bulk_db_connect"
 ]
 
 #
@@ -582,6 +583,9 @@ class API(BulkAPI):
         else :
             print "LE Db"
             db_cons_info = self._le_databases.get(company_id)
+            print "company_id>>", company_id
+            print "_le_databases>>", self._le_databases
+            print "db_cons_info>>", db_cons_info
 
         if db_cons_info is None:
             print 'connection pool is none'

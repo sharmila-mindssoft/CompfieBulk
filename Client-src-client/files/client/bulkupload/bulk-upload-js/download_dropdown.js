@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $("body").tooltip({ selector: "[data-toggle=tooltip]" })
+    $("body").tooltip({ selector: "[data-toggle=tooltip]" });
 });
 
 /* When the user clicks on the button,

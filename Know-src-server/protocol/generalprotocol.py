@@ -661,79 +661,6 @@ class ExportClientLoginTrace(Request):
             "csv": self.csv
         }
 
-class GetKExecutiveDetails(Request):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetKExecutiveDetails()
-
-    def to_inner_structure(self):
-        return {
-        }
-
-class GetTechnoUserDetails(Request):
-    def __init__(self, user_type):
-        self.user_type = user_type
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_type"])
-        user_type = data.get("user_type")
-        return GetTechnoUserDetails(user_type)
-
-    def to_inner_structure(self):
-        return {
-            "user_type": self.user_type
-        }
-
-class GetDomainExecutiveDetails(Request):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetDomainExecutiveDetails()
-
-    def to_inner_structure(self):
-        return {
-        }
-
-
-class GetBulkUploadConstants(Request):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetBulkUploadConstants()
-
-    def to_inner_structure(self):
-        return {
-        }
-
-
-class BulkUploadConstant(object):
-    def __init__(self, user_category_id, user_category_name):
-        self.user_category_id = user_category_id
-        self.user_category_name = user_category_name
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["user_category_id"])
-        return BulkUploadConstant(
-            data.get("user_category_id")
-        )
-
-    def to_structure(self):
-        return {
-            self.user_category_name: self.user_category_id,
-        }
-
 def _init_Request_class_map():
     classes = [
         UpdateUserProfile, GetDomains, SaveDomain, UpdateDomain,
@@ -742,8 +669,7 @@ def _init_Request_class_map():
         GetAuditTrails, VerifyPassword, GetMessages, GetStatutoryNotifications, UpdateStatutoryNotificationStatus,
         GetAuditTrailsFilter, ExportAuditTrails, UpdateMessageStatus, GetClientAuditTrailsFilter,
         GetClientAuditTrails, GetClientLoginTraceFilter, GetClientLoginTrace, ExportClientLoginTrace,
-        ExportClientAuditTrails, GetKExecutiveDetails, GetTechnoUserDetails, GetDomainExecutiveDetails,
-        GetBulkUploadConstants
+        ExportClientAuditTrails
     ]
     class_map = {}
     for c in classes:
@@ -1300,97 +1226,6 @@ class DatabaseConnectionFailure(Response):
         return {
         }
 
-
-class GetKExecutiveDetailsSuccess(Response):
-    def __init__(self, k_executive_info):
-        self.k_executive_info = k_executive_info
-
-    @staticmethod
-    def parse_inner_strucure(data):
-        data = parse_dictionary(data, ["k_executive_info"])
-        return GetKExecutiveDetailsSuccess(
-            data.get("k_executive_info")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "k_executive_info": self.k_executive_info
-        }
-
-class GetTechnoDetailsSuccess(Response):
-    def __init__(self, techno_info):
-        self.techno_info = techno_info
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["techno_info"])
-        return GetTechnoDetailsSuccess(
-            data.get("techno_info")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "techno_info": self.techno_info
-        }
-
-class GetDomainExecutiveDetailsSuccess(Response):
-    def __init__(self, domain_executive_info):
-        self.domain_executive_info = domain_executive_info
-
-    @staticmethod
-    def parse_inner_strucure(data):
-        data = parse_dictionary(data, ["domain_executive_info"])
-        return GetDomainExecutiveDetailsSuccess(
-            data.get("domain_executive_info")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "domain_executive_info": self.domain_executive_info
-        }
-
-
-class GetBulkUploadConstantSuccess(Response):
-    def __init__(self, bu_constants, bu_system_rejected_by,
-                 bu_rejected_download_count, bu_show_remove_icon,
-                 bu_system_reject_status,
-                 bu_fully_reject_status):
-
-        self.bu_constants = bu_constants
-        self.bu_system_rejected_by = bu_system_rejected_by
-        self.bu_rejected_download_count = bu_rejected_download_count
-        self.bu_show_remove_icon = bu_show_remove_icon
-        self.bu_system_reject_status = bu_system_reject_status
-        self.bu_fully_reject_status = bu_fully_reject_status
-
-    @staticmethod
-    def parse_inner_strucure(data):
-        data = parse_dictionary(data,
-                                ["bu_constants", "bu_system_rejected_by",
-                                 "bu_rejected_download_count",
-                                 "bu_show_remove_icon",
-                                 "bu_system_reject_status",
-                                 "bu_fully_reject_status"])
-        return GetBulkUploadConstantSuccess(
-            data.get("bu_constants"),
-            data.get("bu_system_rejected_by"),
-            data.get("bu_rejected_download_count"),
-            data.get("bu_show_remove_icon"),
-            data.get("bu_system_reject_status"),
-            data.get("bu_fully_reject_status")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "bu_constants": self.bu_constants,
-            "bu_system_rejected_by": self.bu_system_rejected_by,
-            "bu_rejected_download_count": self.bu_rejected_download_count,
-            "bu_show_remove_icon": self.bu_show_remove_icon,
-            "bu_system_reject_status": self.bu_system_reject_status,
-            "bu_fully_reject_status": self.bu_fully_reject_status
-        }
-
-
 def _init_Response_class_map():
     classes = [
         UpdateUserProfileSuccess,
@@ -1401,9 +1236,7 @@ def _init_Response_class_map():
         GetStatutoryNotificationsSuccess, UpdateStatutoryNotificationStatusSuccess,
         ExportToCSVSuccess, UpdateMessageStatusSuccess, GetClientAuditTrailSuccess,
         GetClientLoginTraceFilterSuccess, GetClientLoginTraceSuccess,
-        DatabaseConnectionFailure,
-        GetKExecutiveDetailsSuccess, GetTechnoDetailsSuccess,
-        GetDomainExecutiveDetailsSuccess, GetBulkUploadConstantSuccess
+        DatabaseConnectionFailure
     ]
     class_map = {}
     for c in classes:
@@ -1657,6 +1490,7 @@ class ComplianceDurationType(object):
             "duration_type_id": self.duration_type_id,
             "duration_type": to_structure_EnumType_core_DURATION_TYPE(self.duration_type),
         }
+
 
 
 #
@@ -1937,76 +1771,4 @@ class ClientAuditTrail(object):
             "created_on": self.created_on,
             "user_category_name": self.user_category_name,
             "user_name": self.user_name,
-        }
-
-class KExecutiveInfo(object):
-    def __init__(self, c_ids, d_ids, emp_code_name, user_id):
-        self.c_ids = c_ids
-        self.d_ids = d_ids
-        self.emp_code_name = emp_code_name
-        self.user_id = user_id
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, [
-            "c_ids", "d_ids", "emp_code_name",
-            "user_id"
-        ])
-        return KExecutiveInfo(
-            data.get("c_ids"), data.get("d_ids"),
-            data.get("emp_code_name"),
-            data.get("user_id")
-        )
-
-    def to_structure(self):
-        return {
-            "c_ids": self.c_ids,
-            "d_ids": self.d_ids,
-            "emp_code_name": self.emp_code_name,
-            "user_id": self.user_id
-        }
-
-class TechnoInfo(object):
-    def __init__(self, group_id, user_id, emp_code_name):
-        self.group_id = group_id
-        self.user_id = user_id
-        self.emp_code_name = emp_code_name
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data , [
-            "group_id", "user_id", "emp_code_name"
-        ])
-        return TechnoInfo(
-            data.get("group_id"), data.get("user_id"),
-            data.get("emp_code_name")
-        )
-
-    def to_structure(self):
-        return {
-            "group_id": self.group_id,
-            "user_id": self.user_id,
-            "emp_code_name": self.emp_code_name
-        }
-
-
-class DomainExecutiveInfo(object):
-    def __init__(self, emp_code_name, user_id):
-        self.emp_code_name = emp_code_name
-        self.user_id = user_id
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, [
-           "emp_code_name", "user_id"
-        ])
-        return DomainExecutiveInfo(
-            data.get("emp_code_name"),
-            data.get("user_id")
-        )
-
-    def to_structure(self):
-        return {
-            "emp_code_name": self.emp_code_name,
-            "user_id": self.user_id
         }

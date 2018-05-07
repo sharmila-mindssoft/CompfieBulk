@@ -5,10 +5,10 @@ import csv
 import xlsxwriter
 import pyexcel
 
-from server.constants import(
-    BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
-    BULKUPLOAD_REJECTED_DOWNLOAD_PATH, BULKUPLOAD_REJECTED_DOWNLOAD_BASE_PATH
+from bulkupload.client_bulkconstants import(
+    BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH
 )
+
 #   returns: unique random string
 def new_uuid():
         s = str(uuid.uuid4())
@@ -170,14 +170,21 @@ def rename_file_type(src_file_name, des_file_type):
 
     dst_dir = os.path.join(BULKUPLOAD_INVALID_PATH, des_file_type)
     src_file = os.path.join(src_path, src_file_name)
-    # shutil.copy(src_file, dst_dir)
-
-    # dst_file = os.path.join(dst_dir, src_file_name)
 
     new_dst_file_name = os.path.join(dst_dir, new_file)
-    print new_dst_file_name
-    # os.rename(dst_file, new_dst_file_name)
-    pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+    if des_file_type == "txt":
+        general_txt_file(src_file, new_dst_file_name)
+    else:
+        pyexcel.save_as(
+            file_name=src_file, dest_file_name=new_dst_file_name
+        )
+
+def general_txt_file(src_file, dst_txt_file_name):
+    src_file = src_file.replace('xlsx', 'csv')
+    with open(dst_txt_file_name, "w") as my_output_file:
+        with open(src_file, "r") as my_input_file:
+            for row in csv.reader(my_input_file):
+                my_output_file.write(" ".join(row) + '\n')
 
 def generate_valid_file(src_file_name):
     f_types = ["xlsx", "ods"]

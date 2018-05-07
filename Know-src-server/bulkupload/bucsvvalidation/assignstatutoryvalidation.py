@@ -8,8 +8,9 @@ from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+)
+from bulkupload.bulkconstants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
-
 )
 from server.database.forms import (
     frmAssignStatutoryBulkUpload,
@@ -17,7 +18,7 @@ from server.database.forms import (
 )
 from keyvalidationsettings import (
     csv_params_as, parse_csv_dictionary_values_as
-    )
+)
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type
 )
@@ -76,19 +77,19 @@ class SourceDB(object):
         self._source_db.close()
         self.__source_db_con.close()
 
-    def init_values(self, user_id):
+    def init_values(self, user_id, country_id, legal_entity_id):
         self.get_client_groups(user_id)
         self.get_legal_entities(user_id)
         self.get_domains(user_id)
         self.get_unit_location()
-        self.get_unit_code()
-        self.get_unit_name()
+        self.get_unit_code(legal_entity_id)
+        self.get_unit_name(legal_entity_id)
         self.get_statutories()
         self.get_child_statutories()
         self.get_statutory_provision()
         self.get_compliance_task()
         self.get_compliance_description()
-        self.get_organisation()
+        self.get_organisation(country_id)
         self.get_applicable_status()
 
     def get_client_groups(self, user_id):
@@ -115,16 +116,16 @@ class SourceDB(object):
         for d in data:
             self.Unit_Location[d["geography_name"]] = d
 
-    def get_unit_code(self):
+    def get_unit_code(self, legal_entity_id):
         data = self._source_db.call_proc(
-            "sp_bu_unit_code_and_name"
+            "sp_bu_unit_code_and_name", [legal_entity_id]
         )
         for d in data:
             self.Unit_Code[d["unit_code"]] = d
 
-    def get_unit_name(self):
+    def get_unit_name(self, legal_entity_id):
         data = self._source_db.call_proc(
-            "sp_bu_unit_code_and_name"
+            "sp_bu_unit_code_and_name", [legal_entity_id]
         )
         for d in data:
             self.Unit_Name[d["unit_name"]] = d
@@ -154,10 +155,12 @@ class SourceDB(object):
         for d in data:
             self.Compliance_Description[d["compliance_description"]] = d
 
-    def get_organisation(self):
-        data = self._source_db.call_proc("sp_bu_organization_all")
+    def get_organisation(self, country_id):
+        data = self._source_db.call_proc(
+            "sp_bu_organization_all", [country_id]
+        )
         for d in data:
-            self.Organisation[d["organisation_name"]] = d
+            self.Organisation[d["organisation_name"]+'-'+d["domain_name"]] = d
 
     def get_applicable_status(self):
         data = [
@@ -236,6 +239,7 @@ class SourceDB(object):
             False, self.Child_Statutories, child_statutories, None
         )
 
+    # write update query
     def save_client_statutories_data(self, cl_id, u_id, d_id, user_id):
         created_on = get_date_time()
         client_statutory_value = [
@@ -254,8 +258,9 @@ class SourceDB(object):
             raise process_error("E018")
         return client_statutory_id
 
+    # write update query
     def save_client_compliances_data(
-        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id
+        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, client_id_
     ):
         created_on = get_date_time()
         columns = [
@@ -265,9 +270,12 @@ class SourceDB(object):
             "remarks", "compliance_id", "compliance_applicable_status",
             "is_submitted", "is_approved", "approved_by", "approved_on",
             "updated_by", "updated_on"
+            # add the executive name"submitted_by, submitted_on, is_saved, savedon, saved  by"
         ]
 
         values = []
+        is_rejected = False
+        rej_reason = ''
         for idx, d in enumerate(data):
             approval_status = 0
             submitted_status = 0
@@ -278,6 +286,8 @@ class SourceDB(object):
                 submitted_status = 1
             else:
                 approval_status = 4
+                is_rejected = True
+                rej_reason = d["remarks"]
 
             statu_id = self.Statutories.get(d["Primary_Legislation"]).get(
                 "statutory_id"
@@ -286,8 +296,11 @@ class SourceDB(object):
             c_ids = self._source_db.call_proc(
                 "sp_bu_get_compliance_id_by_name",
                 [
-                    d["Compliance_Task"], d["Compliance_Description"]
+                    d["Compliance_Task"], d["Compliance_Description"],
+                    d["Statutory_Provision"], client_id_, d_id,
+                    d["Primary_Legislation"], d["Secondary_Legislation"]
                 ])
+
             for c_id in c_ids:
                 comp_id = c_id["compliance_id"]
 
@@ -298,12 +311,20 @@ class SourceDB(object):
                 d["Compliance_Applicable_Status"], submitted_status,
                 approval_status, int(user_id), created_on,
                 int(user_id), created_on
+                #,  add executive name
             ))
 
         if values:
             self._source_db.bulk_insert(
                 "tbl_client_compliances", columns, values
             )
+
+            if is_rejected is True:
+                q = "update tbl_client_statutories set reason = %s," + \
+                    "status = 4 where client_statutory_id = %s"
+                params = [rej_reason, int(cs_id)]
+                self._source_db.execute(q, params)
+
             return True
         else:
             return False
@@ -339,11 +360,11 @@ class SourceDB(object):
 
     def check_compliance_task_name_duplicate(
         self, domain_name, unit_code, statutory_provision, task_name,
-        compliance_description
+        compliance_description, p_legislation, s_legislation, l_entity
     ):
         data = self._db.call_proc("sp_check_duplicate_compliance_for_unit", [
             domain_name, unit_code, statutory_provision, task_name,
-            compliance_description
+            compliance_description, p_legislation, s_legislation, l_entity
         ])
         if len(data) > 0:
             return False
@@ -352,13 +373,18 @@ class SourceDB(object):
 
     def check_compliance_task_name_duplicate_in_knowledge(
         self, domain_name, unit_code, statutory_provision,
-        task_name, compliance_description
+        task_name, compliance_description, country_id,
+        p_legislation, s_legislation
     ):
+
         unit_id = self.Unit_Code.get(unit_code).get("unit_id")
         domain_id = self.Domain.get(domain_name).get("domain_id")
         c_ids = self._source_db.call_proc(
             "sp_bu_get_compliance_id_by_name",
-            [task_name, compliance_description]
+            [
+                task_name, compliance_description, statutory_provision,
+                country_id, domain_id, p_legislation, s_legislation
+            ]
         )
         comp_id = c_ids[0]["compliance_id"]
         data = self._source_db.call_proc(
@@ -371,7 +397,8 @@ class SourceDB(object):
             return True
 
     def save_executive_message(
-        self, a_type, csv_name, clientgroup, legalentity, createdby, unitids
+        self, a_type, csv_name, clientgroup, legalentity, createdby, unitids,
+        reason
     ):
         admin_users_id = []
         res = self._source_db.call_proc("sp_users_under_user_category", (1,))
@@ -386,7 +413,7 @@ class SourceDB(object):
         if a_type == 1:
             action_type = "approved"
         else:
-            action_type = "rejected"
+            action_type = "rejected with following reason %s" % (reason)
 
         msg = "Assign statutory file %s of %s - %s has been %s" % (
                 csv_name, clientgroup, legalentity, action_type
@@ -436,6 +463,23 @@ class SourceDB(object):
         self._source_db.save_activity(
             createdby, frmAssignStatutoryBulkUpload, msg
             )
+
+    def get_country_id(self):
+        country_id = 0
+        legal_entity_id = 0
+
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Legal_Entity"]
+        )):
+            grouped_list = list(v)
+            legal_entity_name = grouped_list[0].get("Legal_Entity")
+            res = self._source_db.call_proc(
+                "sp_bu_get_country_by_legal_entity_name", [legal_entity_name]
+            )
+            for le in res:
+                country_id = le["country_id"]
+                legal_entity_id = le["legal_entity_id"]
+        return country_id, legal_entity_id
 
     def source_commit(self):
         self._source_db.commit()
@@ -502,7 +546,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         duplicate_compliance_row = []
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Domain"], s["Unit_Code"], s["Statutory_Provision"],
-            s["Compliance_Task"], s["Compliance_Description"]
+            s["Compliance_Task"], s["Compliance_Description"],
+            s["Primary_Legislation"], s["Secondary_Legislation"],
+            s["Legal_Entity"]
         )):
             grouped_list = list(v)
             if len(grouped_list) > 1:
@@ -524,7 +570,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             s["Domain"], s["Unit_Code"]
         )):
             grouped_list = list(v)
-            if len(grouped_list) > 1:
+            if len(grouped_list) >= 1:
                 unit_code = grouped_list[0].get("Unit_Code")
                 domain = grouped_list[0].get("Domain")
                 data = self._db.call_proc(
@@ -552,7 +598,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             s["Domain"]
         )):
             grouped_list = list(v)
-            if len(grouped_list) > 1:
+            if len(grouped_list) >= 1:
                 self._domain_names.append(grouped_list[0].get("Domain"))
 
                 if(
@@ -585,7 +631,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             s["Unit_Code"]
         )):
             grouped_list = list(v)
-            if len(grouped_list) > 1:
+            if len(grouped_list) >= 1:
                 if(
                     self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
                 ) != None:
@@ -631,7 +677,10 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         duplicate_compliance_row = duplicate[1]
         self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
 
-        self.init_values(self._session_user_obj.user_id())
+        country_id, legal_entity_id = self.get_country_id()
+        self.init_values(
+            self._session_user_obj.user_id(), country_id, legal_entity_id
+        )
 
         def make_error_desc(res, msg):
             if res is True:
@@ -717,10 +766,18 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                                 key
                             )
                             if unboundMethod is not None:
-                                isFound = unboundMethod(v)
+                                if key == "Organization":
+                                    org_val = v+'-'+data.get('Domain')
+                                    isFound = unboundMethod(org_val)
+                                else:
+                                    isFound = unboundMethod(v)
 
                             if isFound is not True and isFound != "":
-                                msg = "%s - %s" % (key, isFound)
+                                if key == "Organization":
+                                    msg = "%s - %s %s" % (key, v, isFound)
+                                else:
+                                    msg = "%s - %s" % (key, isFound)
+
                                 if res is not True:
                                     res.append(msg)
                                 else:
@@ -758,10 +815,12 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             if res is True:
                 if not self.check_compliance_task_name_duplicate(
                     data.get("Domain"), data.get("Unit_Code"),
-                    data.get("Statutory_Provision"), data.get(
-                        "Compliance_Task"
-                    ),
+                    data.get("Statutory_Provision"),
+                    data.get("Compliance_Task"),
                     data.get("Compliance_Description"),
+                    data.get("Primary_Legislation"),
+                    data.get("Secondary_Legislation"),
+                    data.get("Legal_Entity")
                 ):
                     self._error_summary["duplicate_error"] += 1
                     dup_error = "Duplicate Compliance"
@@ -772,6 +831,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     data.get("Statutory_Provision"),
                     data.get("Compliance_Task"),
                     data.get("Compliance_Description"),
+                    country_id,
+                    data.get("Primary_Legislation"),
+                    data.get("Secondary_Legislation")
                 ):
                     self._error_summary["duplicate_error"] += 1
                     dup_error = "Duplicate Compliance"
@@ -894,14 +956,17 @@ class ValidateAssignStatutoryForApprove(SourceDB):
     def perform_validation_before_submit(self):
         declined_count = 0
         self._declined_row_idx = {}
-        self.init_values(self._session_user_obj.user_id())
+        country_id, legal_entity_id = self.get_country_id()
+        self.init_values(
+            self._session_user_obj.user_id(), country_id, legal_entity_id
+        )
 
         self._unit_ids = []
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Unit_Code"]
         )):
             grouped_list = list(v)
-            if len(grouped_list) > 1:
+            if len(grouped_list) >= 1:
                 if(
                     self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
                 ) != None:
@@ -942,12 +1007,19 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                                 unboundMethod = self._validation_method_maps.get(
                                     key
                                 )
-                                if unboundMethod is not None:
+                                if key == "Organization":
+                                    org_val = v+'-'+data.get('Domain')
+                                    isFound = unboundMethod(org_val)
+                                else:
                                     isFound = unboundMethod(v)
 
                             if isFound is not True and isFound != "":
                                 declined_count += 1
-                                msg = "%s - %s" % (key, isFound)
+                                if key == "Organization":
+                                    msg = "%s - %s %s" % (key, v, isFound)
+                                else:
+                                    msg = "%s - %s" % (key, isFound)
+
                                 if res is not True:
                                     res.append(msg)
                                 else:
@@ -957,6 +1029,9 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 data.get("Domain"), data.get("Unit_Code"),
                 data.get("Statutory_Provision"), data.get("Compliance_Task"),
                 data.get("Compliance_Description"),
+                country_id,
+                data.get("Primary_Legislation"),
+                data.get("Secondary_Legislation")
             ):
                 declined_count += 1
                 dup_error = "Compliance_Task - Duplicate data"
@@ -991,12 +1066,14 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             unit_id = self.Unit_Code.get(value.get("Unit_Code")).get("unit_id")
             domain_id = self.Domain.get(value.get("Domain")).get("domain_id")
 
+            country_id, legal_entity_id = self.get_country_id()
+
             cs_id = self.save_client_statutories_data(
                 self._client_id, unit_id, domain_id, user_id
                 )
             self.save_client_compliances_data(
                 self._client_id, self._legal_entity_id, unit_id, domain_id,
-                cs_id, grouped_list, user_id
+                cs_id, grouped_list, user_id, country_id
                 )
 
     def make_rejection(self, declined_info, user_id):
@@ -1031,7 +1108,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         try:
             q = "update tbl_bulk_assign_statutory set " + \
                 " action = 1 where " + \
-                " csv_assign_statutory_id = %s"
+                " csv_assign_statutory_id = %s "
             self._db.execute(q, [csv_id])
 
         except Exception, e:

@@ -116,8 +116,9 @@ function loadCountwiseResult(data) {
         rejectedReason = data[entity].rejected_reason;
         declinedCount = data[entity].declined_count;
         rejectedFileName = data[entity].rejected_file;
+        reasonForRejection = '';
 
-        if (parseInt(isFullyRejected) == IS_FULLY_REJECT_ACTION_STATUS) {
+        if (parseInt(isFullyRejected) == 1) {
             removeHrefTag = '';
             reasonForRejection = rejectedReason;
             $(ALL_USER_INFO).each(function(key, value) {
@@ -127,7 +128,7 @@ function loadCountwiseResult(data) {
                     rejectedBy = EmpCode + " - " + EmpName;
                 }
             });
-        } else if (parseInt(statutoryAction) == SYSTEM_REJECT_ACTION_STATUS) {
+        } else if (parseInt(statutoryAction) == 3) {
             rejectedBy = SYSTEM_REJECTED_BY;
             rejectedOn = approvedOn;
             reasonForRejection = '';
@@ -173,7 +174,7 @@ function loadCountwiseResult(data) {
             $('.tbl_rejected_file .rejected_i_cls', clone1)
             .addClass("default-display-none");
         }
-        if (parseInt(fileDownloadCount) < SHOW_REMOVE_ICON){
+        if (parseInt(fileDownloadCount) < 1){
             $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
         }
         $('#datatable-responsive .tbody-compliance').append(clone1);
@@ -205,7 +206,7 @@ function initialize() {
         displayMessage(error);
         hideLoader();
     }
-    mirror.getClientGroupsList(function(error, response) {
+    bu.getClientGroupsList(function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
@@ -355,7 +356,7 @@ function downloadClick(csvId, event) {
 
         dataCSVid = updatedCount[0].csv_id;
         downloadCount = updatedCount[0].download_count;
-        if (parseInt(downloadCount) == SHOW_REMOVE_ICON) {
+        if (parseInt(downloadCount) == 1) {
             eventID = eventID + dataCSVid;
             document.getElementById(eventID).classList.toggle("show");
             $("#delete_action_" + dataCSVid).attr("style", "display:block");
@@ -410,7 +411,12 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                     $(location).attr('href', response.xlsx_link);
                     hideLoader();
                 } else if (downloadFileFormat == "text") {
-                    $(location).attr('href', response.txt_link);
+                    $.get(response.txt_link, function(data){
+                        url = response.txt_link
+                        txt_file_name = url.substring(url.lastIndexOf('/')+1)
+                        download(txt_file_name, "text/plain", data);
+                    },
+                    'text');
                     hideLoader();
                 } else if (downloadFileFormat == "ods") {
                     $(location).attr('href', response.ods_link);
@@ -420,6 +426,20 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                 hideLoader();
             }
         });
+}
+
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 }
 
 /* DownloadFileOptionList - Excel,CSV,ODS,Text  */
@@ -450,7 +470,7 @@ window.onclick = function(event) {
 }
 
 $(function() {
-    mirror.getLoadConstants();
+    bu.getLoadConstants();
     REPORT_VIEW.hide();
     initialize();
     pageControls();

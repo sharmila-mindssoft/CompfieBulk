@@ -4,9 +4,7 @@ from protocol import core, generalprotocol, possiblefailure, technoreports
 from server.constants import (
     FILE_TYPES,
     FILE_MAX_LIMIT, KNOWLEDGE_FORMAT_PATH,
-    CLIENT_DOCS_BASE_PATH, SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT,
-    SHOW_REMOVE_ICON, SYSTEM_REJECT_ACTION_STATUS,
-    IS_FULLY_REJECT_ACTION_STATUS
+    CLIENT_DOCS_BASE_PATH
 )
 from server.common import (save_file_in_path, encrypt)
 from server.database.admin import *
@@ -24,11 +22,7 @@ from server.database.general import (
     get_client_audit_trail_filters,
     get_client_audit_trails,
     get_client_login_trace_filters,
-    get_client_login_trace,
-    get_knowledge_executive,
-    get_techno_users_list,
-    get_domain_executive,
-    get_user_cetegories_db
+    get_client_login_trace
 )
 
 __all__ = [
@@ -130,18 +124,6 @@ def process_general_request(request, db, user_id):
 
     elif type(request_frame) is generalprotocol.ExportClientLoginTrace:
         result = process_export_client_login_trace(db, request_frame, user_id)
-
-    elif type(request_frame) is generalprotocol.GetKExecutiveDetails:
-        result = process_get_know_users(db, user_id)
-
-    elif type(request_frame) is generalprotocol.GetTechnoUserDetails:
-        result = process_get_techno_users(db, request_frame, user_id)
-
-    elif type(request_frame) is generalprotocol.GetDomainExecutiveDetails:
-        result = process_get_domain_users(db, user_id)
-
-    elif type(request_frame) is generalprotocol.GetBulkUploadConstants:
-        result = process_get_bulk_upload_constants(db, user_id)
 
     return result
 
@@ -545,57 +527,3 @@ def process_export_client_login_trace(db, request, session_user):
             return generalprotocol.ExportToCSVSuccess(
                 link=converter.FILE_DOWNLOAD_PATH
             )
-
-
-########################################################
-# To get list of knowledge executive details
-########################################################
-def process_get_know_users(db, session_user):
-
-    res = get_knowledge_executive(db, session_user)
-    success = generalprotocol.GetKExecutiveDetailsSuccess(res)
-    return success
-
-########################################################
-# To get list of techno managers / executives details
-########################################################
-def process_get_techno_users(db, request, session_user):
-    userType = request.user_type
-    res = get_techno_users_list(db, userType, session_user)
-    result_set = generalprotocol.GetTechnoDetailsSuccess(res)
-    return result_set
-
-
-########################################################
-# To get list of domain executive details
-########################################################
-
-def process_get_domain_users(db, session_user):
-
-    res = get_domain_executive(db, session_user)
-    success = generalprotocol.GetDomainExecutiveDetailsSuccess(res)
-    return success
-
-
-########################################################
-# To get list of user category id and constants
-########################################################
-
-def process_get_bulk_upload_constants(db, session_user):
-    userCategoryList = []
-    rows = get_form_categories(db)
-    for row in rows:
-        user_category_name = row["user_category_name"]
-        user_category_name = user_category_name.replace(" ", "")
-
-        userCategoryList.append(generalprotocol.BulkUploadConstant(
-            row["user_category_id"],
-            user_category_name
-        )
-        )
-
-    success = generalprotocol.GetBulkUploadConstantSuccess(
-        userCategoryList, SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT,
-        SHOW_REMOVE_ICON, SYSTEM_REJECT_ACTION_STATUS,
-        IS_FULLY_REJECT_ACTION_STATUS)
-    return success

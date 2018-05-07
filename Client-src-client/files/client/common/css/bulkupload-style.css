@@ -129,7 +129,7 @@
     background-color: #FFF;
     border: 1px solid #a0a0a0;
     display: none;
-    margin-left: -78px;
+    /* margin-left: -78px; */
     min-width: 120px;
     overflow: auto;
     position: absolute;
@@ -217,4 +217,27 @@
     to {
         opacity: 1;
     }
+}
+
+.download-options {
+    display: inline-block;
+}
+
+#no-record-templates .no_records {
+    padding: 40px;
+    font-size: 1.2em;
+}
+
+.data-btn {
+    padding: 8px 10px 5px 10px !important;
+    vertical-align: top;
+}
+
+.bu-doc-summary {
+    margin: 0 auto;
+    width: 600px;
+}
+
+.bu-doc-summary li {
+    list-style: inside;
 }

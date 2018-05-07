@@ -148,7 +148,7 @@ function pageControls() {
         legalentityName = LEGALENTITYNAME.val();
         
         if (clientId.trim().length <= 0) {
-            displayMessage('Client Group Required');
+            displayMessage(message.client_group_required);
             return false;
         } else if (legalentityId.trim().length <= 0) {
             displayMessage(message.legalentity_required);

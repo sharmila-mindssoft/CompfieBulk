@@ -8,8 +8,7 @@ from technomastercontroller import (
     get_unassigned_units, get_assigned_units, get_assigned_unit_details,
     get_assign_unit_form_data, process_save_assigned_units_request,
     get_edit_assign_legal_entity, process_save_assign_legal_entity,
-    view_assign_legal_entity, save_division_category, check_assigned_units_under_domain,
-    get_client_groups_for_client_unit_bulk_upload
+    view_assign_legal_entity, save_division_category, check_assigned_units_under_domain
 )
 
 __all__ = [
@@ -99,14 +98,5 @@ def process_techno_request(request, db, session_user):
         result = check_assigned_units_under_domain(
             db, request_frame, session_user
         )
-
-    # client unit - bulk upload - request functions - starts
-
-    elif type(request_frame) is technomasters.GetClientGroupsList:
-        result = get_client_groups_for_client_unit_bulk_upload(
-            db, request_frame, session_user
-        )
-
-    # client unit - bulk upload - request functions - ends
 
     return result
