@@ -131,7 +131,6 @@ btnUploadedFileList.click(function() {
 		bu.getClientGroupsClientUnitFilesList(
             clientId, groupName, function(error, response)
         {
-            console.log(response)
 		    if (error == null) {
 		        onSuccess(response);
 		    } else {
@@ -168,24 +167,44 @@ function loadClientUnitCSVFilesList() {
             totalRecord = value.no_of_records;
 			var app_rej = value.approved_count + " / " + value.rej_count;
 			$('.approved-rejected', clone).text(app_rej);
-			$('.download-invalidfile', clone).html(
-                '<i class="fa fa-download text-primary c-pointer dropbtn" ' +
-                'onClick="showFormats('+value.csv_id+')" title="Click here to download" />'
-            );
-			$('.download-invalidfile', clone).append
-			(
-            	$('<div/>')
-				.addClass("dropdown-content default-display-none")
-				.attr("id","myDropdown-"+value.csv_id)
-			);
-			var splitFileName = value.csv_name.split(".")[0];
+
+            $('.dropbtn',clone).on('click', function(){
+                if($(".dropdown-content", clone).hasClass("show")==false){
+                    $(".dropdown-content", clone).show();
+                    $(".dropdown-content", clone).addClass("show");
+                }
+                else{
+                    $(".dropdown-content", clone).hide();
+                    $(".dropdown-content", clone).removeClass("show");
+                }
+            });
+
+            $(".dl-xls-file, .dl-csv-file, .dl-ods-file,"+
+                " .dl-txt-file", clone).on("click", function(){
+                $(".dropdown-content", clone).hide();
+                $(".dropdown-content", clone).removeClass("show");
+            });
+
+            var splitFileName = value.csv_name.split(".")[0];
             DownloadFile = value.csv_name.split(".")[0];
-			var aTags = '<a href="/uploaded_file/xlsx/'+ splitFileName+'.xlsx">' +
-                'Download Excel</a><a href="/uploaded_file/csv/'+ splitFileName+'.csv">' +
-                'Download CSV</a><a href="/uploaded_file/ods/'+ splitFileName+'.ods">' +
-                'Download ODS</a><a href="/uploaded_file/txt/'+ splitFileName+'.txt">' +
-                'Download Text</a>';
-			$('.download-invalidfile #myDropdown-'+value.csv_id, clone).html(aTags);
+
+            $('.dl-xls-file',clone).attr(
+                "href", "/uploaded_file/xlsx/"+splitFileName+'.xlsx'
+            );
+            $('.dl-csv-file',clone).attr(
+                "href", "/uploaded_file/csv/"+splitFileName+'.csv'
+            );
+            $('.dl-ods-file',clone).attr(
+                "href", "/uploaded_file/ods/"+splitFileName+ '.ods'
+            );
+            $('.dl-txt-file',clone).on("click", function(){
+                $.get(
+                    "/uploaded_file/txt/" + splitFileName+".txt", function(data)
+                    {
+                       download(splitFileName+".txt", "text/plain", data);
+                    },
+                'text');
+            });
 
 			//approve all
 			$('.approve-checkbox', clone).on('change', function(e){
@@ -236,6 +255,20 @@ function loadClientUnitCSVFilesList() {
 	hideLoader();
 }
 
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
 // Fetch the employee code and name from the datalist for the uploaded user
 function fetchTechnoManager(executiveId) {
 	data = technoUserList;
@@ -271,22 +304,17 @@ function displayPopUp(TYPE, csv_id, b_u_id){
         CurrentPassword.val('');
         RejectReason = null;
         CurrentPassword.keyup(function(e){
-            console.log(e.keyCode)
             if (e.keyCode == 13)
                 validateAuthentication();
         });
     }
     else if (TYPE == "view-reject") {
-        console.log("view remarks")
         targetid = "#custom-modal-remarks";
         CurrentPassword = null;
-        console.log(CurrentPassword)
         RejectReason = $('.view-reason');
-        console.log(RejectReason)
         RejectReason.focus();
         RejectReason.val('');
         RejectReason.keyup(function(e){
-            console.log(e.keyCode)
             if (e.keyCode == 13)
                 validateAuthentication();
         });
@@ -362,7 +390,6 @@ function displayViewRejectAllPopUp(callback){
             if (isAuthenticate) {
                 displayLoader();
                 setTimeout(function() {
-                    console.log("aaaa:"+$('.view-reason').val())
                     if ($('.view-reason').val() == '') {
                         displayMessage(message.reason_required)
                     }
@@ -383,7 +410,6 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText){
     bu.performClientUnitApproveReject(
         csv_id, actionType, remarksText, pwd, parseInt(groupSelect_id.val().trim()),
     function(error, response) {
-        console.log(error, response);
         if (error == null) {
             if (actionType == 1) {
                 displaySuccessMessage(message.approve_success);
@@ -417,6 +443,8 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText){
                         csv_id, actionType, pwd, remarksText, declinedCount
                     );
                 }
+            } else {
+                displayMessage(error);
             }
         }
     });
@@ -429,7 +457,6 @@ function performApproveRejectDeclination(
             msg_decl= declined_count + " units declined, Do you want to continue ?";
             confirm_alert(msg_decl, function(isConfirm) {
                 if (isConfirm) {
-                    console.log("inside confirm");
                     bu.confirmClientUnitDeclination(
                         csv_id, parseInt(groupSelect_id.val().trim()),
                     function(error, response)
@@ -470,8 +497,6 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
         csv_id, actionType, remarksText, pwd, parseInt(groupSelect_id.val().trim()),
     function(error, response)
     {
-        console.log("submit action")
-        console.log(actionType, error, response)
         if (error == null) {
             if (actionType == 4) {
                 displaySuccessMessage(message.action_selection_success);
@@ -489,12 +514,10 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
                     msg = response.declined_count + " units declined, Do you want to continue ?";
                     confirm_alert(msg, function(isConfirm) {
                         if (isConfirm) {
-                            console.log("inside confirm")
                             bu.confirmSubmitClientUnitFromView(
                                 csv_id, parseInt(groupSelect_id.val().trim()),
                                 function(error, response)
                                 {
-                                    console.log("declined", error, response)
                                     if (error == null) {
                                         displaySuccessMessage(message.action_selection_success);
                                         bulkClientUnitUploadedFileListviewPage.show();
@@ -518,14 +541,11 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
 
 // To validate the password inputted in custom box
 function validateAuthentication() {
-    console.log(CurrentPassword);
-    console.log(RejectReason);
     if (CurrentPassword != null) {
         var password = CurrentPassword.val().trim();
     }
     if (RejectReason != null){
         var rej_reason = RejectReason.val().trim();
-        console.log(rej_reason.length);
     }
     if (CurrentPassword != null && password.length == 0) {
         displayMessage(message.password_required);
@@ -567,7 +587,6 @@ function displayViewScreen(csv_id, start_count, _page_limit) {
     } else {
         showFrom = (_on_current_page - 1) * _page_limit;
     }
-    console.log(showFrom)
 	getCSVFileApprovalList(csv_id, showFrom, _page_limit);
 }
 
@@ -578,7 +597,6 @@ function getCSVFileApprovalList(csv_id, start_count, _page_limit) {
 	bu.getBulkClientUnitApproveRejectList(
         csv_id, start_count, _page_limit, function(error, response){
         if (error == null) {
-            console.log(response)
             viewClientUnitList = response.client_unit_data;
             LegalEntityList = response.le_names;
             DivisionList = response.div_names;
@@ -729,15 +747,17 @@ function bindClientUnitList(data){
                 }
             } else {
                 dn = value.bu_domain;
-                org = value.bu_orgn;
+                org = value.bu_orgn.split('|;|');
                 d_names = dn;
                 o_names = "<strong>"+dn+"</strong><br />";
-                if (dn == org.split(">>")[0].trim()) {
-                    o_names = o_names + org.split(">>")[1].trim();
+                for(var i=0;i<org.length;i++) {
+                    if (dn == org[i].split('>>')[0].trim()) {
+                        o_names = o_names + org[i].split(">>")[1].trim()+","
+                    }
                 }
             }
             $('.domain', cloneRow).html(d_names);
-            $('.organization', cloneRow).html(o_names);
+            $('.organization', cloneRow).html(o_names.substring(0,o_names.length -1));
 
             if (parseInt(value.bu_action) == 1) {
                 $('.view-approve-check',cloneRow).attr("checked", true);
@@ -827,6 +847,7 @@ function bindClientUnitList(data){
 
 
 function keySearchUnitsDetailsList(data) {
+    console.log("1:"+data.length);
     keyLE = $('#filter_legal_entity').val().toLowerCase();
     keyDivision = $('#filter_division').val().toLowerCase();
     keyCategory = $('#filter_category').val().toLowerCase();
@@ -843,6 +864,7 @@ function keySearchUnitsDetailsList(data) {
     var fList = [];
     var d;
     for (d in data) {
+        console.log("2:"+data[d].bu_geography_level.toLowerCase());
         var valueLE = data[d].bu_le_name.toLowerCase();
         var valueDivision = data[d].bu_division_name.toLowerCase();
         var valueCategory = data[d].bu_category_name.toLowerCase();
@@ -869,8 +891,10 @@ function keySearchUnitsDetailsList(data) {
             && (~valueOrgn.indexOf(keyOrgn))
         ) {
             fList.push(data[d]);
+            console.log("3");
         }
     }
+    console.log("4:"+fList.length);
     return fList;
 }
 
@@ -914,6 +938,9 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 
 PasswordSubmitButton.click(function(){
     if (CurrentPassword != null) {
+        validateAuthentication();
+    }
+    else if (RejectReason != null) {
         validateAuthentication();
     }
     else {
@@ -1121,7 +1148,6 @@ btnFilterGo.click(function(){
         filterOrganization.val().trim(), actionVal,
         function(err, response)
         {
-        console.log(err, response)
         displayLoader();
         if(err != null) {
             if (err == "EmptyFilteredData") {
@@ -1208,7 +1234,6 @@ function createPageView(page_type) {
                     } else {
                         showFrom = (_on_current_page - 1) * _page_limit;
                     }
-                    console.log(CSVID, showFrom, _page_limit)
                     getCSVFileApprovalList(CSVID, showFrom, _page_limit);
                 }
                 else if(showClicked == false && filterClicked == true){
@@ -1225,7 +1250,6 @@ function hidePagePan() {
 };
 
 function showPagePan(showFrom, showTo, total) {
-    console.log("page pan")
     var showText = 'Showing ' + showFrom + ' to ' + showTo +
         ' of ' + total + ' units ';
     $('.compliance-count').text(showText);
@@ -1297,7 +1321,6 @@ rejectAllUnits.on("change", function(e) {
     if (unitsList > 0 && e.target.checked) {
         displayLoader();
         displayViewRejectAllPopUp(function(reason) {
-            console.log(reason);
             if(reason != '' && reason != null) {
                 tblClientUnitBulkUploadedApprovalList.find('.view-approve-check').
                     prop('checked', false);
@@ -1309,7 +1332,6 @@ rejectAllUnits.on("change", function(e) {
                         tblClientUnitBulkUploadedApprovalList.find('.view-reject-check').
                             prop('checked', true);
                         csvid = $('#view_csv_unit_id').val();
-                        console.log("1:"+value.bulk_unit_id);
                         bu.updateClientUnitActionFromView(
                             parseInt(csvid), value.bulk_unit_id, 2, $('.view-reason').val(),
                             function(err, res)
