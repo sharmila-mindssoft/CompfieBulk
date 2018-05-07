@@ -411,8 +411,7 @@ class SourceDB(object):
     ##################################################################
 
     def check_unit_code(self, unit_code):
-
-        if unit_code != "auto_gen":
+        if unit_code != "auto_gen" and unit_code.isalnum():
             store = self.Unit_Code
             data = store.get(unit_code)
             if data is not None:
@@ -796,7 +795,7 @@ class SourceDB(object):
             "division_id", "category_id", "country_id",
             "geography_id", "unit_code", "unit_name", "address",
             "postal_code", "is_approved", "approved_by", "approved_on",
-            "created_by", "created_on"
+            "remarks", "created_by", "created_on"
         ]
         values = []
         domain_orgn_ids = []
@@ -884,10 +883,12 @@ class SourceDB(object):
                                         str(le_id)+"-"+neworgn
                                     ).get("organisation_id"))
                                 )
-                    if int(d["action"]) == 0:
+                    if int(d["action"]) == 0 or int(d["action"]) == 1:
                         action_val = 1
+                        remarks_text = None
                     else:
                         action_val = int(d["action"])
+                        remarks_text = d["remarks"]
                     self._auto_unit_code = unit_code
                     values.append((
                         int(cl_id), bg_id, int(le_id), int(division_id),
@@ -895,6 +896,7 @@ class SourceDB(object):
                         str(unit_code), str(unit_name),
                         str(unit_address), str(post_code), action_val,
                         int(createdby), str(created_on),
+                        remarks_text,
                         int(createdby), str(created_on)
                     ))
                     inserted_records += 1
@@ -903,7 +905,7 @@ class SourceDB(object):
             self._source_db.bulk_insert("tbl_units", columns, values)
             last_id = str(self._auto_unit_code) + ";" + str(inserted_records)
             self.save_units_domain_organizations(
-                last_id, cl_id, domain_orgn_ids
+                last_id, cl_id, domain_orgn_ids, le_id
             )
 
         # To generate unit codes for all the auto_gen values from csv
@@ -949,17 +951,17 @@ class SourceDB(object):
                     geo_level_id = self.Geography_Level.get(
                         str(country_id)+"-"+unit_data.get("Geography_Level")
                     ).get("level_id")
-
                     # ul = d["Unit_Location"]
                     newul = ''
-                    for ul in d["Unit_Location"].split('>>'):
+                    for ul in unit_data.get("Unit_Location").split('>>'):
                         newul = newul + ul.strip() + '>>'
                     newul = newul[:-2]
+
                     if geo_level_id == self.Unit_Location.\
                             get(newul).get("level_id"):
                         main_geo_id = self.Unit_Location.\
                             get(newul).get("geography_id")
-
+                    print main_geo_id
                     if unit_data.get("Organization").find(CSV_DELIMITER) > 0:
                         for orgn in unit_data.get("Organization").\
                                 strip().split(CSV_DELIMITER):
@@ -1003,16 +1005,22 @@ class SourceDB(object):
                                         str(le_id)+"-"+neworgn
                                     ).get("organisation_id"))
                                 )
-                    if int(unit_data.get("action")) == 0:
-                        action_val = 1
+                    if (
+                        int(unit_data.get("action")) == 0 or
+                        int(unit_data.get("action")) == 1
+                    ):
+                        action_val = 99
+                        remarks_text = None
                     else:
                         action_val = int(unit_data.get("action"))
+                        remarks_text = unit_data.get("remarks")
                     values.append((
                         int(cl_id), bg_id, int(le_id), int(division_id),
                         int(category_id), int(country_id), int(main_geo_id),
                         str(unit_code), str(unit_name),
                         str(unit_address), str(post_code), action_val,
                         int(createdby), str(created_on),
+                        remarks_text,
                         int(createdby), str(created_on)
                     ))
 
@@ -1026,6 +1034,8 @@ class SourceDB(object):
             self.save_units_domain_organizations(
                 last_id, cl_id, domain_orgn_ids, le_id
             )
+        q = "update tbl_units set is_approved = %s where is_approved = %s"
+        self._source_db.execute(q, [1, 99])
 
     ###################################################################
     '''
@@ -1152,7 +1162,7 @@ class SourceDB(object):
                 (csv_name, groupname, action_type)
 
             if sys_decl_cnt > 0:
-                sysDeclText = "Client Unit File %s - %s %s has "\
+                sysDeclText = "Client Unit File %s - %s - %s Unit(s) has "\
                     "been declined by COMPFIE" % \
                     (csv_name, groupname, sys_decl_cnt)
             # print sysDeclText
@@ -1292,6 +1302,60 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         to check the duplication of unit code in csv data
     '''
     ####################################################################
+
+    def check_valid_unit_code_in_csv(self):
+        self._source_data.sort(key=lambda x: (
+            x["Legal_Entity"], x["Unit_Code"]
+        ))
+        unit_codes = []
+        unit_code_invalid = 0
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Legal_Entity"], s["Unit_Code"]
+        )):
+            grouped_list = list(v)
+            print "len of unit code groups"
+            print len(grouped_list)
+            print grouped_list[0].get("Unit_Code")
+            if grouped_list[0].get("Unit_Code").find("_") < 0:
+                if not grouped_list[0].get("Unit_Code").isalnum():
+                    if len(grouped_list) >= 1:
+                        unit_code_invalid += len(grouped_list)
+                        unit_codes.append(grouped_list[0].get("Unit_Code"))
+                else:
+                    letter_cnt = 0
+                    num_cnt = 0
+                    for i in grouped_list[0].get("Unit_Code"):
+                        if i.isalpha():
+                            letter_cnt += 1
+                        if i.isdigit():
+                            num_cnt += 1
+                    if letter_cnt == 0 or num_cnt == 0:
+                        unit_code_invalid += len(grouped_list)
+                        unit_codes.append(grouped_list[0].get("Unit_Code"))
+            else:
+                up_cnt = 0
+                if not grouped_list[0].get("Unit_Code").isalnum():
+                    for i in grouped_list[0].get("Unit_Code"):
+                        if i.isupper():
+                            up_cnt += 1
+                        print "upper cnt"
+                        print up_cnt
+                    if up_cnt > 0:
+                        if len(grouped_list) >= 1:
+                            unit_code_invalid += len(grouped_list)
+                            unit_codes.append(grouped_list[0].get("Unit_Code"))
+                    else:
+                        if grouped_list[0].get("Unit_Code") != "auto_gen":
+                            if len(grouped_list) >= 1:
+                                unit_code_invalid += len(grouped_list)
+                                unit_codes.append(
+                                    grouped_list[0].get("Unit_Code"))
+                else:
+                    if len(grouped_list) >= 1:
+                        print "B"
+                        unit_code_invalid += len(grouped_list)
+                        unit_codes.append(grouped_list[0].get("Unit_Code"))
+        return unit_code_invalid, unit_codes
 
     def check_duplicate_unit_code_in_csv(self):
         self._source_data.sort(key=lambda x: (
@@ -1622,6 +1686,8 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         csv_column_compare = self.compare_csv_columns()
         if csv_column_compare == "Csv Column Mismatched":
             return "Csv Column Mismatched"
+        csv_unitcode_invalid = self.check_valid_unit_code_in_csv()
+        self._error_summary["invalid_data_error"] += csv_unitcode_invalid[0]
         csv_unitcode_duplicate = self.check_duplicate_unit_code_in_csv()
         self._error_summary["duplicate_error"] += csv_unitcode_duplicate[0]
         csv_domain_duplicate = self.check_duplicate_domain_in_csv_row()
@@ -1657,6 +1723,16 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                         if key == "Legal_Entity":
                             self._legal_entity_name = v
                         elif key == "Unit_Code" and v != "auto_gen":
+                            if csv_unitcode_invalid[0] > 0:
+                                for u in csv_unitcode_invalid[1]:
+                                    if u == v:
+                                        msg = "%s - %s %s" % (
+                                            key, v, " Invalid data"
+                                        )
+                                        if res is not True:
+                                            res.append(msg)
+                                        else:
+                                            res = [msg]
                             if csv_unitcode_duplicate[0] > 0:
                                 for u in csv_unitcode_duplicate[1]:
                                     if u == v:
@@ -1737,7 +1813,8 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                                             "duplicate_error"
                                         ] += 1
                             unitCountErr = \
-                                self.check_organization_unit_count_in_tempDB(value)
+                                self.check_organization_unit_count_in_tempDB(
+                                    value)
                             if (
                                 unitCountErr is not None and
                                 unitCountErr != ""
@@ -1798,6 +1875,10 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
 
                                 if "Status" in isFound:
                                     self._error_summary["inactive_error"] += 1
+                                elif "Unit count exceeds" in isFound:
+                                    self._error_summary[
+                                        "max_unit_count_error"
+                                    ] += 1
                                 else:
                                     self._error_summary[
                                         "invalid_data_error"] += 1
