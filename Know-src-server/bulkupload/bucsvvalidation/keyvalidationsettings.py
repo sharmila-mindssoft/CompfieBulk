@@ -235,6 +235,14 @@ def is_postal_code(value):
         return False
 
 
+def is_unit_code(value):
+    r = re.compile("^[a-zA-Z0-9_ ]*$")
+    if r.match(value):
+        return True
+    else:
+        return False
+
+
 def parse_csv_dictionary_values(key, val):
 
     error_count = {
@@ -529,7 +537,7 @@ csv_params = {
     ),
     'Unit_Code': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=20,
-        isValidCharCheck=True, validation_method=is_alpha_numeric,
+        isValidCharCheck=True, validation_method=is_unit_code,
         isFoundCheck=True
     ),
     'Unit_Name': make_required_validation(
