@@ -175,8 +175,9 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
         clientUnitObj = ValidateClientUnitsBulkCsvData(
             db, client_units_bulk_data, session_user,
             request_frame.bu_client_id,
-            request_frame.csv_name, header
+            csv_name, header
         )
+        # request_frame.csv_name
         validationResult = clientUnitObj.perform_validation()
         print "err--------------------------------------------"
         print validationResult
