@@ -183,7 +183,9 @@ PageControls = function() {
         validateAuthentication(APPROVE_ID.val(), APPROVE_PASSWORD, null);
     });
     PASSWORD_REJECT_SUBMIT.click(function() {
-        validateAuthentication(REJECT_ID.val(), REJECT_PASSWORD, REJECT_REASON);
+        validateAuthentication(
+            REJECT_ID.val(), REJECT_PASSWORD, REJECT_REASON
+        );
     });
     FILTER_UPLOADED_FILE_NAME.keyup(function() {
 
@@ -319,7 +321,9 @@ PageControls = function() {
             tempArr.push(ss + STATUTORY_STATUS.find('option:selected').text());
         var cs = "Compliance Status : ";
         if (COMPLIANCE_STATUS.val() != "")
-            tempArr.push(cs + COMPLIANCE_STATUS.find('option:selected').text());
+            tempArr.push(
+                cs + COMPLIANCE_STATUS.find('option:selected').text()
+            );
         var cDescription = "Compliance Description : ";
         if (COMPLIANCE_DESCRIPTION_NAME.val() != "")
             tempArr.push(cDescription + COMPLIANCE_DESCRIPTION_NAME.val());
@@ -519,21 +523,21 @@ onLegalEntityAutoCompleteSuccess = function(STATUTE, val) {
 
 // Show click after to validate filter value
 validate = function() {
-    var is_valid = true;
+    var isValid = true;
     if (CLIENT_GROUP_ID.val().trim().length == 0) {
         displayMessage(message.client_group_required);
-        is_valid = false;
+        isValid = false;
     } else if (CLIENT_GROUP.val().trim().length > 50) {
         displayMessage(message.client_group_50);
-        is_valid = false;
+        isValid = false;
     } else if (LEGAL_ENTITY_ID.val().trim().length == 0) {
         displayMessage(message.legalentity_required);
-        is_valid = false;
+        isValid = false;
     } else if (LEGAL_ENTITY.val().trim().length > 50) {
         displayMessage(message.le_50);
-        is_valid = false;
+        isValid = false;
     }
-    return is_valid;
+    return isValid;
 };
 
 // Grid view filter search to pass array list value
@@ -729,7 +733,9 @@ ApproveAssignStatutoryBU.prototype.displayListPage = function(data) {
         });
         $('.dropdown-content', clone).addClass("show-download" + v.csv_id);
         $('.approve span', clone)
-            .attr("onClick", "confirmationAction(" + v.csv_id + ", 'approve')");
+            .attr(
+                "onClick", "confirmationAction(" + v.csv_id + ", 'approve')"
+            );
         $('.reject span', clone)
             .attr("onClick", "confirmationAction(" + v.csv_id + ", 'reject')");
         DATA_TABLE_TBODY.append(clone);
@@ -822,11 +828,13 @@ approveOrRejectAction = function(id, clId, leId, action, reason, password) {
                 if (res2.hasOwnProperty("rej_count")) {
                     setTimeout(function() {
                         hideLoader();
-                        var statusmsg = res2.rej_count + ' ' + message.sys_rejected_confirm;
+                        var statusmsg = res2.rej_count + ' ' + 
+                            message.sys_rejected_confirm;
                         confirm_alert(statusmsg, function(isConfirm) {
                             if (isConfirm) {
                                 displayLoader();
-                                bu.confirmAssignStatutoryUpdateAction(parseInt(id),
+                                bu.confirmAssignStatutoryUpdateAction(
+                                    parseInt(id),
                                     parseInt(clId), parseInt(leId),
                                     function(error, res3) {
                                         if (error == null) {
@@ -952,11 +960,15 @@ ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
             }
             $('.domain-name', clone).html(v.d_name);
             $('.unit-name span', clone).html(v.u_name);
-            $('.unit-name i', clone).attr("title", "Location: " + v.u_location);
+            $('.unit-name i', clone).attr(
+                "title", "Location: " + v.u_location
+            );
             $('.primary-legislation', clone).html(v.p_leg);
             if (v.c_status == 1) {
                 $('.compliance-applicable i', clone).addClass("text-info");
-                $('.compliance-not-applicable i', clone).addClass("text-muted");
+                $('.compliance-not-applicable i', clone).addClass(
+                    "text-muted"
+                );
                 $('.compliance-do-not-show i', clone).addClass("text-muted");
             } else if (v.c_status == 2) {
                 $('.compliance-applicable i', clone).addClass("text-muted");
@@ -965,11 +977,15 @@ ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
                 $('.compliance-do-not-show i', clone).addClass("text-muted");
             } else if (v.c_status == 3) {
                 $('.compliance-applicable i', clone).addClass("text-muted");
-                $('.compliance-not-applicable i', clone).addClass("text-muted");
+                $('.compliance-not-applicable i', clone).addClass(
+                    "text-muted"
+                );
                 $('.compliance-do-not-show i', clone).addClass("text-danger");
             } else {
                 $('.compliance-applicable i', clone).addClass("text-muted");
-                $('.compliance-not-applicable i', clone).addClass("text-muted");
+                $('.compliance-not-applicable i', clone).addClass(
+                    "text-muted"
+                );
                 $('.compliance-do-not-show i', clone).addClass("text-muted");
             }
             if (v.s_status == 1) {
@@ -1003,7 +1019,6 @@ ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
         });
         checkAllEnableDisable();
         PAGINATION_VIEW.show();
-        // if (flag == false)
         if(showFrom == undefined) showFrom = 1;
         showPagePan(showFrom, SNO, TOTAL_RECORD);
     } else {
@@ -1038,20 +1053,24 @@ singleReject = function(id, flag) {
                 confirmationAction(0, 'single-reject');
             } else {
                 $('#approve' + id).removeAttr("checked");
-                $('#rejected_reason' + id).html('<i class="fa fa-info-circle ' +
+                $('#rejected_reason' + id).html(
+                    '<i class="fa fa-info-circle ' +
                     ' fa-1-2x l-h-51 text-primary c-pointer" ' +
                     'data-toggle="tooltip" data-original-title=' +
-                    '"' + SINGLE_REJECT_REASON.val() + '"></i>');
+                    '"' + SINGLE_REJECT_REASON.val() + '"></i>'
+                );
                 tempAction(id, 2);
                 checkAllEnableDisable();
             }
         } else {
             $('#approve' + id).removeAttr("checked");
             $('#rejected_reason' + id)
-            .html('<i data-toggle="tooltip" class="fa fa-info-circle fa-1-2x ' +
+            .html(
+                '<i data-toggle="tooltip" class="fa fa-info-circle fa-1-2x ' +
                 'l-h-51 text-primary c-pointer" ' + 
                 'data-original-title="' + SINGLE_REJECT_REASON.val() + '" ' +
-                '></i>');
+                '></i>'
+            );
             tempAction(id, 2);
             CHECK_ALL_APPROVE.removeAttr("checked");
         }
@@ -1285,21 +1304,27 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
                     if (error == null) {
                         hideLoader();
                         Custombox.close();
+                        var dispMsg = message.assign_statutory_submit_success;
                         if (response.hasOwnProperty("rej_count")) {
                             setTimeout(function() {
-                                var msg = response.rej_count + ' ' + message.sys_rejected_confirm;
+                                var msg = response.rej_count + ' ' + 
+                                    message.sys_rejected_confirm;
                                 confirm_alert(msg, function(isConfirm) {
                                     if (isConfirm) {
                                         displayLoader();
-                                        bu.confirmAssignStatutoryUpdateAction(parseInt(csvid),
+                                        bu.confirmAssignStatutoryUpdateAction(
+                                            parseInt(csvid),
                                             parseInt(clId), parseInt(leId),
                                             function(error, res3) {
                                                 if (error == null) {
-                                                    var dispMsg = message.assign_statutory_submit_success;
-                                                    displaySuccessMessage(dispMsg);
+                                                    displaySuccessMessage(
+                                                        dispMsg
+                                                    );
                                                     STATUTE.pageLoad();
                                                 } else {
-                                                    STATUTE.failuresMessage(error);
+                                                    STATUTE.failuresMessage(
+                                                        error
+                                                    );
                                                     hideLoader();
                                                 }
                                             });
@@ -1307,7 +1332,9 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
                                 });
                             }, 500);
                         } else {
-                            displaySuccessMessage(message.assign_statutory_submit_success);
+                            displaySuccessMessage(
+                                message.assign_statutory_submit_success
+                            );
                             STATUTE.pageLoad();
                         }
                     } else {
@@ -1327,8 +1354,5 @@ $(document).ready(function() {
     STATUTE.pageLoad();
     PageControls();
     loadItemsPerPage();
-    // goToDetailsPage(1);
-    // LIST_VIEW.show();
-    // STATUTE.fetchValues();
     $(".nicescroll").niceScroll();
 });

@@ -394,7 +394,7 @@ class SourceDB(object):
 
     def save_executive_message(
         self, a_type, csv_name, clientgroup, legalentity, createdby, unitids,
-        reason
+        reason, declined_count
     ):
         admin_users_id = []
         res = self._source_db.call_proc("sp_users_under_user_category", (1,))
@@ -411,7 +411,14 @@ class SourceDB(object):
         else:
             action_type = "rejected with following reason %s" % (reason)
 
-        msg = "Assign statutory file %s of %s - %s has been %s" % (
+        if declined_count > 0:
+            action_type = "declined"
+            declined_text = "%s records" % (declined_count)
+            msg = "Assign statutory file %s of %s - %s %s has been %s" % (
+                csv_name, clientgroup, legalentity, declined_text, action_type
+            )
+        else:
+            msg = "Assign statutory file %s of %s - %s has been %s" % (
                 csv_name, clientgroup, legalentity, action_type
             )
 

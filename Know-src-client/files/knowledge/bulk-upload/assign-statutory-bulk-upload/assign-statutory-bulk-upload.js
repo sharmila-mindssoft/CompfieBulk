@@ -5,10 +5,10 @@ var UPLOADFILEBUTTON = $(".btn-upload-file");
 //autocomplte variable declaration
 var GROUPNAME = $('#group_name');
 var GROUPID = $("#group_id");
-var ACGROUP = $("#ac-group");
+var ACGROUP = $("#ac_group");
 var LEGALENTITYNAME = $("#legal_entity_name");
 var LEGALENTITYID = $("#legal_entity_id");
-var ACLEGALENTITY = $("#ac-entity");
+var ACLEGALENTITY = $("#ac_entity");
 var MULTISELECTDOMAIN = $('#domains');
 var MULTISELECTUNIT = $('#units');
 var UPLOADFILE = $("#upload_file");
@@ -353,20 +353,23 @@ function pageControls() {
                         '.ods';
                         txt_path = "/invalid_file/txt/" + INVALIDFILENAME[0] + 
                         '.txt';
-                        $('#csv-type').attr("href", csv_path);
-                        $('#xls-type').attr("href", xls_path);
-                        $('#ods-type').attr("href", ods_path);
-                        // $('#txt-type').attr("href", txt_path);
+                        $('#csv_type').attr("href", csv_path);
+                        $('#xls_type').attr("href", xls_path);
+                        $('#ods_type').attr("href", ods_path);
                     }else{
                         if(error == "InvalidCsvFile"){
                             displayMessage(message.invalid_csv_file);
                         }else if(error == "CsvFileBlank"){
                             displayMessage(message.csv_file_blank);
                         }else if(error == "CsvFileExeededMaxLines") {
-                            displayMessage(message.csv_max_lines_exceeded.replace(
-                                'MAX_LINES', data.csv_max_lines));
+                            displayMessage(
+                                message.csv_max_lines_exceeded.replace(
+                                'MAX_LINES', data.csv_max_lines)
+                            );
                         }else if(error == "RejectionMaxCountReached"){
-                            displayMessage(message.rejection_max_count_reached);
+                            displayMessage(
+                                message.rejection_max_count_reached
+                            );
                         }else if(error == "UnitsNotAssignedToUser"){
                             displayMessage(message.units_not_assigned_to_user);
                         }else{
@@ -383,9 +386,8 @@ function pageControls() {
     });
 }
 
-document.getElementById("txt-type").addEventListener("click", function(){
+document.getElementById("txt_type").addEventListener("click", function(){
     if(INVALIDFILENAME != null) {
-        // var splitFileName = INVALID_FILE_NAME.split(".")[0];
         $.get(
             "/invalid_file/txt/" + INVALIDFILENAME[0] + ".txt", function(data)
             {
@@ -397,7 +399,8 @@ document.getElementById("txt-type").addEventListener("click", function(){
 
 function download(filename, mime_type, text) {
     var element = document.createElement('a');
-    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    var href = 'data:' + mime_type + ';charset=utf-8,' + 
+        encodeURIComponent(text);
     element.setAttribute('href', href);
     element.setAttribute('download', filename);
 
@@ -418,10 +421,10 @@ function initialize() {
 
 $(function() {
     $('.download-options').hide();
-    $('#units').multiselect({
+    MULTISELECTUNIT.multiselect({
         includeSelectAllOption: true
     });
-    $('#domains').multiselect({
+    MULTISELECTDOMAIN.multiselect({
         includeSelectAllOption: true
     });
     MULTISELECTDOMAIN.multiselect({
