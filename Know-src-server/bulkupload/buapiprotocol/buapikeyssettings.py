@@ -1,7 +1,7 @@
 from buapikeyvalidation import (
     is_alphabet_withdot, is_file_name, is_alphabet, is_alpha_numeric,
     is_alphabet_wtih_bracket, is_numeric, is_url, is_address,
-    is_alphabet_csv_delimeter
+    is_alphabet_csv_delimeter, is_unit_code
 )
 __all__ = [
     'bu_api_params'
@@ -739,7 +739,7 @@ bu_api_params = {
     },
     'bu_unit_code': {
         'type': 'STRING', 'length': 50,
-        'validation_method': is_alpha_numeric, 'is_optional': True
+        'validation_method': is_unit_code, 'is_optional': True
     },
     'bu_unit_name': {
         'type': 'TEXT', 'length': 50,
