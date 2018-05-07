@@ -1535,7 +1535,7 @@ BEGIN
     t2.unit_name as Unit_Name, t2.address as Unit_Address,
     t2.city as City, t2.state as State, t2.postalcode as Postal_Code,
     t2.domain as Domain, t2.organization as Organization,
-    t1.uploaded_by, t1.csv_name, t2.action
+    t1.uploaded_by, t1.csv_name, t2.action, t2.remarks
     from tbl_bulk_units_csv as t1 inner join tbl_bulk_units as t2
     on t2.csv_unit_id = t1.csv_unit_id
     WHERE t1.csv_unit_id = _csv_id;
@@ -1738,7 +1738,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_bulk_client_unit_id_save`(
     IN _csv_unit_id INT, _bu_unit_id INT, _action INT,
-    _remarks VARCHAR(200)
+    _remarks VARCHAR(500)
 )
 BEGIN
     UPDATE tbl_bulk_units SET action = _action,
