@@ -780,6 +780,8 @@ class SourceDB(object):
     '''
     ##################################################################
 
+    # write update query
+
     def save_units(
         self, cl_id, bg_id, le_id, division_id, category_id,
         country_id, groupName, data, system_declined_units,

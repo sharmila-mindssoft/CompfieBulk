@@ -24,7 +24,9 @@ from ..budatabase.bustatutorymappingdb import (
     get_sm_csv_file_name_by_id,
     save_action_from_view,
     get_pending_action,
-    delete_action_after_approval, get_rejected_sm_file_count
+    delete_action_after_approval, get_rejected_sm_file_count,
+    get_domains_for_user_bu,
+    get_countries_for_user_bu, get_knowledge_executive_bu
 )
 
 from ..bulkuploadcommon import (
@@ -67,6 +69,13 @@ __all__ = [
 
 def process_bu_statutory_mapping_request(request, db, session_user):
     request_frame = request.request
+
+    if type(request_frame) is bu_sm.GetDomains:
+        result = process_get_domains_bu(db, session_user)
+
+    if type(request_frame) is bu_sm.GetKExecutiveDetails:
+        result = process_get_know_users_bu(db, session_user)
+
 
     if type(request_frame) is bu_sm.GetStatutoryMappingCsvUploadedList:
         result = get_statutory_mapping_csv_list(db, request_frame,
@@ -128,6 +137,28 @@ def process_bu_statutory_mapping_request(request, db, session_user):
     return result
 
 # transaction methods begin
+
+########################################################
+# To get list of all domains
+########################################################
+
+
+def process_get_domains_bu(db, session_user):
+    domains = get_domains_for_user_bu(db, 0)
+    countries = get_countries_for_user_bu(db, session_user.user_id())
+    success = bu_sm.GetDomainsSuccess(domains, countries)
+    return success
+
+
+########################################################
+# To get list of knowledge executive details
+########################################################
+def process_get_know_users_bu(db, session_user):
+
+    res = get_knowledge_executive_bu(db, session_user.user_id())
+    success = bu_sm.GetKExecutiveDetailsSuccess(res)
+    return success
+
 
 ########################################################
 '''
@@ -440,10 +471,8 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         is_declined = cObj.perform_validation_before_submit()
         print "is declined -> ", is_declined
         if len(is_declined.keys()) > 0:
-            cObj.make_rejection(is_declined, user_id)
-            # cObj.remove_declined_docs(is_declined, user_id, csv_id)
-            if cObj._doc_count > 0:
-                cObj.format_download_process_initiate(csv_id)
+            rej_done = cObj.make_rejection(is_declined, user_id)
+            print "Rej Done->> ", rej_done
             cObj.save_manager_message(
                 1, cObj._csv_name, cObj._country_name, cObj._domain_name,
                 session_user.user_id(), None, len(is_declined.keys())
@@ -451,7 +480,10 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
             cObj.frame_data_for_main_db_insert()
             cObj.source_commit()
             delete_action_after_approval(db, csv_id)
+            if cObj._doc_count > 0 and rej_done:
+                cObj.format_download_process_initiate(csv_id)
 
+            cObj.source_bulkdb_commit()
             return bu_sm.SubmitStatutoryMappingSuccess()
     except Exception, e:
         raise e

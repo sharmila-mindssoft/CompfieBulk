@@ -22,8 +22,7 @@ from server.database.general import (
     get_client_audit_trail_filters,
     get_client_audit_trails,
     get_client_login_trace_filters,
-    get_client_login_trace,
-    get_knowledge_executive
+    get_client_login_trace
 )
 
 __all__ = [
@@ -125,9 +124,6 @@ def process_general_request(request, db, user_id):
 
     elif type(request_frame) is generalprotocol.ExportClientLoginTrace:
         result = process_export_client_login_trace(db, request_frame, user_id)
-
-    elif type(request_frame) is generalprotocol.GetKExecutiveDetails:
-        result = process_get_know_users(db, user_id)
 
     return result
 
@@ -531,13 +527,3 @@ def process_export_client_login_trace(db, request, session_user):
             return generalprotocol.ExportToCSVSuccess(
                 link=converter.FILE_DOWNLOAD_PATH
             )
-
-
-########################################################
-# To get list of knowledge executive details
-########################################################
-def process_get_know_users(db, session_user):
-
-    res = get_knowledge_executive(db, session_user)
-    success = generalprotocol.GetKExecutiveDetailsSuccess(res)
-    return success

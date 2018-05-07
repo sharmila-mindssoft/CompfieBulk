@@ -614,7 +614,7 @@ keySearchDetailsList = function(d) {
     return fList
 }
 
-// download click show hide download list 
+// download click show hide download list
 download = function(element) {
     if ($("." + element).is(':visible') == false) {
         $(".dropdown-content").hide();
@@ -736,7 +736,7 @@ ApproveAssignStatutoryBU.prototype.displayListPage = function(data) {
     });
 };
 
-// Approve & Reject confirmation to display pop-up 
+// Approve & Reject confirmation to display pop-up
 confirmationAction = function(id, action) {
     APPROVE_ID.val(id);
     REJECT_ID.val(id);
@@ -1016,7 +1016,7 @@ ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
     }
 };
 
-// Single approve to click check box 
+// Single approve to click check box
 singleApprove = function(id) {
     if ($('#approve' + id).prop("checked") == true) {
         $('#reject' + id).removeAttr("checked");
@@ -1029,7 +1029,7 @@ singleApprove = function(id) {
     }
 }
 
-// Single Reject to click check box 
+// Single Reject to click check box
 singleReject = function(id, flag) {
     if ($('#reject' + id).prop("checked") == true) {
         if (CHECK_ALL_REJECT.prop("checked") == false) {
@@ -1049,7 +1049,7 @@ singleReject = function(id, flag) {
             $('#approve' + id).removeAttr("checked");
             $('#rejected_reason' + id)
             .html('<i data-toggle="tooltip" class="fa fa-info-circle fa-1-2x ' +
-                'l-h-51 text-primary c-pointer" ' + 
+                'l-h-51 text-primary c-pointer" ' +
                 'data-original-title="' + SINGLE_REJECT_REASON.val() + '" ' +
                 '></i>');
             tempAction(id, 2);
@@ -1062,7 +1062,7 @@ singleReject = function(id, flag) {
     }
 }
 
-// To update approve & reject to sent server 
+// To update approve & reject to sent server
 tempAction = function(id, action) {
     console.log(id);
     var csvid = ASID.val();
@@ -1165,7 +1165,7 @@ ApproveAssignStatutoryBU.prototype.displayFilterList = function() {
     }
 }
 
-// To get filter values pass and get value to server 
+// To get filter values pass and get value to server
 ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
     id, vData, dNames, uNames, pLeg, sLeg,
     sPro, cTask, sStatus, cStatus, cDes) {
@@ -1226,7 +1226,7 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
         });
 };
 
-// Pagination Show values display 
+// Pagination Show values display
 showPagePan = function(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom + ' to ' +
         showTo + ' of ' + total + ' entries ';
@@ -1234,7 +1234,7 @@ showPagePan = function(showFrom, showTo, total) {
     PAGINATION_VIEW.show();
 };
 
-// Pagination hide values display 
+// Pagination hide values display
 hidePagePan = function() {
     SHOW_COUNT.text('');
     PAGINATION_VIEW.hide();

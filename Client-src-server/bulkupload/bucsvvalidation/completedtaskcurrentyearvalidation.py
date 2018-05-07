@@ -5,7 +5,9 @@ from itertools import groupby
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+)
+from bulkupload.client_bulkconstants import(
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
 )
 
@@ -269,7 +271,7 @@ class SourceDB(object):
             cName = [d["compliance_task_name"], d["compliance_task_name"], d["compliance_description"]]
             # q = " SELECT compliance_id FROM tbl_compliances where compliance_task = TRIM(%s) AND compliance_description = TRIM(%s) LIMIT 1"
             q = "SELECT compliance_id FROM tbl_compliances where " + \
-                " case when document_name = '' then compliance_task = TRIM(%s) " + \
+                " case when ifnull(document_name,'') = '' then compliance_task = TRIM(%s) " + \
                 " else concat(document_name,' - ',compliance_task) = " + \
                 " TRIM(%s) end AND compliance_description = TRIM(%s) LIMIT 1 "
 
@@ -370,7 +372,12 @@ class SourceDB(object):
                 print "values>3>>", values
                 print "self._source_db>>", self._source_db
                 self._source_db.insert("tbl_compliance_history", columns, values)
+                # added for aparajtha
+                clienttransaction.update_user_wise_task_status(self._source_db, users)
+
                 self._source_db.commit()
+
+
 
         return True
 
@@ -425,7 +432,9 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "duplicate_error" : 0,
             "invalid_char_error": 0,
             "invalid_data_error": 0,
-            "inactive_error": 0
+            "inactive_error": 0,
+            "invalid_date": 0,
+            "invalid_file_format": 0
         }
 
     def compare_csv_columns(self):
@@ -488,7 +497,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
 
-                if (key == "Document_Name" and value != ''):
+                if (key == "Document_Name" and value != '') :
                     self._doc_names.append(value)
 
                 for v in [v.strip() for v in values] :
@@ -524,6 +533,17 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                     self._error_summary["inactive_error"] += 1
                                 else :
                                     self._error_summary["invalid_data_error"] += 1
+
+                if key is "Document_Name":
+                    msg = []
+                    if data["Document_Name"] != "":
+                        file_extension = os.path.splitext(data["Document_Name"])
+                        allowed_file_formats = [".pdf", ".doc", ".docx",
+                                                    ".xls", ".xlsx"]
+                        if file_extension[1] not in allowed_file_formats:
+                            msg.append("Document Name - Invalid File Format")
+                            self._error_summary["invalid_file_format"] += 1
+                            res = make_error_desc(res, msg)
 
             if res is not True :
                 error_list = mapped_error_dict.get(row_idx)
@@ -582,13 +602,15 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "inactive_error": self._error_summary["inactive_error"],
             "total": total,
             "invalid": invalid,
-            "doc_count": len(set(self._doc_names))
+            "doc_count": len(set(self._doc_names)),
+            "invalid_file_format": self._error_summary["invalid_file_format"]
         }
 
 
     def make_valid_return(self, mapped_error_dict, mapped_header_dict):
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
+        print "make_valid_return>list(set(self._doc_names))>>", list(set(self._doc_names))
         return {
             "return_status": True,
             "data": self._source_data,

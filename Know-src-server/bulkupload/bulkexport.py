@@ -339,7 +339,7 @@ class ConvertJsonToCSV(object):
     ):
         is_header = False
         cnx_pool = connectKnowledgeDB()
-        domainIds = request.d_id
+        domainIds = request.domain_ids
         from_date = datetime.datetime.strptime(request.from_date, '%d-%b-%Y')
         to_date = datetime.datetime.strptime(request.to_date, '%d-%b-%Y')
         child_ids = request.child_ids
@@ -347,13 +347,16 @@ class ConvertJsonToCSV(object):
             user_ids = ",".join(str(e) for e in child_ids)
         else:
             user_ids = session_user.user_id()
+        if(domainIds is not None):
+            domain_ids = ",".join(map(str, domainIds))
+
         user_name_list = ",".join(
             getUserNameAndCode(cnx_pool, e) for e in child_ids)
         export_bu_assigned_statutory_report = db.call_proc(
             'sp_export_assigned_statutory_bulk_reportdata',
             [request.bu_client_id, request.bu_legal_entity_id,
              request.bu_unit_id, from_date, to_date,
-                str(user_ids), domainIds])
+                str(user_ids), domain_ids])
         sno = 0
         exported_time = datetime.datetime.now().strftime('%d-%b-%Y %H:%M')
         if len(export_bu_assigned_statutory_report) > 0:

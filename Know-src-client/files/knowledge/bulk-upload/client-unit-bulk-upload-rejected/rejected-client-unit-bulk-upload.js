@@ -412,9 +412,9 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                     hideLoader();
                 } else if (downloadFileFormat == "text") {
                     $.get(response.txt_link, function(data){
-                        txt_file_name = response.txt_link
-                        txt_file_name = txt_file_name.split('\\');
-                        download(txt_file_name[1], "text/plain", data);
+                        url = response.txt_link
+                        txt_file_name = url.substring(url.lastIndexOf('/')+1)
+                        download(txt_file_name, "text/plain", data);
                     },
                     'text');
                     hideLoader();

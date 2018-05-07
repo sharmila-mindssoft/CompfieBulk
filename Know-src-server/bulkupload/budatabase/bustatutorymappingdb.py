@@ -30,11 +30,120 @@ __all__ = [
     "save_action_from_view",
     "get_pending_action",
     "delete_action_after_approval",
-    "get_rejected_sm_file_count"
+    "get_rejected_sm_file_count",
+    "get_domains_for_user_bu",
+    "get_countries_for_user_bu",
+    "get_knowledge_executive_bu"
 
 ]
 
 # transaction method begin
+
+#############################################################################
+# To get domains configured under a user
+# Parameter(s) : Object of database, user id
+# Return Type : List of Object of Domain
+#############################################################################
+
+
+def get_domains_for_user_bu(db, user_id):
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc_with_multiresult_set(
+        'sp_tbl_domains_for_user', (user_id,), 3
+    )
+    result.pop(0)
+    return return_domains_bu(result)
+
+
+###############################################################################
+# To convert the data fetched from database into List of object of Domain
+# Parameter(s) : Data fetched from database
+# Return Type : List of Object of Domain
+###############################################################################
+def return_country_list_of_domain_bu(domain_id, countries):
+    c_ids = []
+    c_names = []
+    for c in countries:
+        if int(c["domain_id"]) == domain_id:
+            c_ids.append(int(c["country_id"]))
+            c_names.append(c["country_name"])
+
+    return c_ids, c_names
+
+
+def return_domains_bu(data):
+    results = []
+    for d in data[0]:
+        d_id = d["domain_id"]
+        c_ids, c_names = return_country_list_of_domain_bu(d_id, data[1])
+        results.append(bu_sm.Domain(
+            c_ids, c_names, d_id, d["domain_name"], bool(d["is_active"])
+        ))
+    return results
+
+
+#############################################################################
+# To get countries configured under a user
+# Parameter(s) : Object of database, user id
+# Return Type : List of Object of Countries
+#############################################################################
+def get_countries_for_user_bu(db, user_id):
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc_with_multiresult_set(
+        "sp_countries_for_user", [user_id], 2
+    )
+    print "Result->> ", result
+    if len(result) > 1:
+        result = result[1]
+    return return_countries_bu(result)
+
+
+###############################################################################
+# To convert the data fetched from database into List of object of Country
+# Parameter(s) : Data fetched from database
+# Return Type : List of Object of Country
+###############################################################################
+def return_countries_bu(data):
+    results = []
+    for d in data:
+        results.append(bu_sm.Country(
+            d["country_id"], d["country_name"], bool(d["is_active"])
+        ))
+    return results
+
+
+def get_knowledge_executive_bu(db, manager_id):
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc("sp_know_executive_info", [manager_id])
+    user_info = {}
+    for r in result:
+        userid = r.get("child_user_id")
+        u = user_info.get(userid)
+        emp_name = "%s - %s" % (r.get("employee_code"), r.get("employee_name"))
+        if u is None:
+            u = bu_sm.KExecutiveInfo(
+                [r.get("country_id")], [r.get("domain_id")],
+                emp_name, r.get("child_user_id")
+            )
+            user_info[userid] = u
+
+        else:
+            c_ids = user_info.get(userid).c_ids
+            c_ids.append(r.get("country_id"))
+            d_ids = user_info.get(userid).d_ids
+            d_ids.append(r.get("domain_id"))
+
+            user_info[userid].c_ids = c_ids
+            user_info[userid].d_ids = d_ids
+
+    return user_info.values()
+
 ########################################################
 # Return the uploaded statutory mapping csv list
 # param db: database class object
@@ -196,14 +305,7 @@ def save_mapping_data(db, csv_id, csv_data):
 
 def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
     csv_data = []
-    _source_db_con = mysql.connector.connect(
-        user=KNOWLEDGE_DB_USERNAME,
-        password=KNOWLEDGE_DB_PASSWORD,
-        host=KNOWLEDGE_DB_HOST,
-        database=KNOWLEDGE_DATABASE_NAME,
-        port=KNOWLEDGE_DB_PORT,
-        autocommit=False,
-    )
+    _source_db_con = connectKnowledgeDB()
     _source_db = Database(_source_db_con)
     _source_db.begin()
     result = _source_db.call_proc(
@@ -285,9 +387,10 @@ def get_filters_for_approve(db, csv_id):
                 statutories.extend(d["statutory"].strip().split('|;|'))
                 statutories = list(set(statutories))
 
-        if len(data[3]) > 0:
-            for d in data[3]:
-                frequencies.append(d["compliance_frequency"])
+        compliance_frequency = get_all_compliance_frequency()
+        if len(compliance_frequency) > 0:
+            for d in compliance_frequency:
+                frequencies.append(d["frequency"])
 
         if len(data[4]) > 0:
             for d in data[4]:
@@ -714,3 +817,28 @@ def get_rejected_sm_file_count(db, session_user):
     )
     rej_count = result[0]["rejected"]
     return rej_count
+
+
+def get_all_compliance_frequency():
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc('sp_bu_compliance_frequency')
+    result.pop(0)
+    return result
+
+
+def connectKnowledgeDB():
+    try:
+        _source_db_con = mysql.connector.connect(
+            user=KNOWLEDGE_DB_USERNAME,
+            password=KNOWLEDGE_DB_PASSWORD,
+            host=KNOWLEDGE_DB_HOST,
+            database=KNOWLEDGE_DATABASE_NAME,
+            port=KNOWLEDGE_DB_PORT,
+            autocommit=False,
+        )
+        return _source_db_con
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e

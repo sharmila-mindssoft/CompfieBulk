@@ -51,9 +51,7 @@ var max_length = {
   'referlink': 500,
   'no_of_units': 3,
   'logo': 50,
-  'statutory_nature_name': 50,
-  // Bulk upload 
-  'reason': 500,
+  'statutory_nature_name': 50
 }
 
 

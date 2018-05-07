@@ -455,11 +455,14 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
 ApproveBulkMapping.prototype.fetchDropDownData = function() {
     tThis = this;
     displayLoader();
-    mirror.getDomainList(function (error, response) {
+    bu.getDomainList(function (error, response) {
+        console.log("error " + error);
+        console.log('response'+ response)
         if (error == null) {
-            tThis.DomainList = response.domains;
-            tThis.CountryList = response.countries
-            mirror.getKnowledgeUserInfo(function (err, resp){
+            tThis.DomainList = response.bsm_domains;
+            tThis.CountryList = response.bsm_countries
+            bu.getKnowledgeUserInfo(function (err, resp){
+                console.log(JSON.stringify(resp));
                 if (err == null){
                     tThis.UserList = resp.k_executive_info;
                     hideLoader();
@@ -625,8 +628,8 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     acCompDoc.val('');
     acCompDesc.val('');
     acTaskType.val('');
-    MultiSelectFrequency.find("option").remove();
-    MultiSelectFrequency.multiselect('destroy');
+    MultiSelectFrequency.val('');
+    MultiSelectFrequency.multiselect('rebuild');
 
     $('input[id="verified-data"]').removeAttr("checked");
     $('input[id="pending-data"]').removeAttr("checked");
@@ -642,7 +645,7 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     buApprovePage.fetchViewData(csvId, fCount, rRange);
 
 
-// setTimeout(function(){  $.getScript("/knowledge/js/multifreezer.js");
+// setTimeout(function(){  $.getScript("/script/bulk-upload/bulk-upload-js/multifreezer.js");
 
 // $.getScript("/knowledge/css/multifreezer.css");
  // hideLoader();}, 3000);
@@ -650,11 +653,11 @@ ApproveBulkMapping.prototype.showViewScreen = function(
     if($("body").hasClass("freezer-active-bu")==false) {
         displayLoader();
 /*        setTimeout(function(){  $.getScript(
-            "/knowledge/js/multifreezer.js");  hideLoader();}, 3000
+            "/script/bulk-upload/bulk-upload-js/multifreezer.js");  hideLoader();}, 3000
         );*/
     }
 
-// $.getScript("/knowledge/js/multifreezer.js");
+// $.getScript("/script/bulk-upload/bulk-upload-js/multifreezer.js");
 };
 ApproveBulkMapping.prototype.fetchViewData = function(
     csvId, fCount, rRange
@@ -1585,9 +1588,9 @@ function PageControls() {
         acCompDoc.val('');
         acCompDesc.val('');
         acTaskType.val('');
-        MultiSelectFrequency.find("option").remove();
-        MultiSelectFrequency.multiselect('destroy');
-        
+        MultiSelectFrequency.val('');
+        MultiSelectFrequency.multiselect('rebuild');
+
         $('input[id="verified-data"]').removeAttr("checked");
         $('input[id="pending-data"]').removeAttr("checked");
         $('input[id="all-data"]').prop("checked", true);

@@ -6,9 +6,9 @@ import datetime
 
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    CSV_DELIMITER, CSV_MAX_LINE_ITEM
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
+from bulkupload.client_bulkconstants import(CSV_DELIMITER, CSV_MAX_LINE_ITEM)
 
 from server.common import (
    get_date_time, string_to_datetime, datetime_to_string,
@@ -16,24 +16,13 @@ from server.common import (
 )
 
 __all__ = [
-    # "get_uploaded_statutory_mapping_csv_list"
     "get_legal_entity_domains",
     "save_completed_task_current_year_csv",
     "save_completed_task_data",
     "getPastRecordData",
     "getCompletedTaskCSVList"
 ]
-# transaction method begin
-########################################################
-# Return the uploaded statutory mapping csv list
-# :param db : database class object
-# :type db  : Object
-# :param session_user : user id who currently logged in
-# :type session_user : String
-# :returns : upload_mmore : flag which defines user upload rights
-# :returns : csv_data: list of uploaded csv_data
-# rtypes: Boolean, lsit of Object
-########################################################
+
 def get_legal_entity_domains(
     db, user_id, session_user, le_id
 ):
@@ -61,8 +50,8 @@ def save_completed_task_current_year_csv(db, completed_task, session_user):
         "csv_name", "uploaded_by", "uploaded_on",
         "total_records", "total_documents", "uploaded_documents", "upload_status"
     ]
-    print "completed_task[7]>>", completed_task[7]
-    print "string_to_datetime(completed_task[7])>>", string_to_datetime(completed_task[7])
+    # print "completed_task[7]>>", completed_task[7]
+    # print "string_to_datetime(completed_task[7])>>", string_to_datetime(completed_task[7])
 
     values = [
         completed_task[0],completed_task[1],
@@ -115,7 +104,7 @@ def getPastRecordData(db, csvID):
 
     param = [csvID]
     rows = db.select_all(query, param)
-    print "getPastRecordData>rows>>", rows
+    # print "getPastRecordData>rows>>", rows
 
     return rows
 
@@ -129,26 +118,62 @@ def getComplianceID(db, compliance_task_name):
 
     return complianceID
 
-def getCompletedTaskCSVList(db,session_user):
+def getCompletedTaskCSVList(db, session_user, legal_entity_list):
 
-    query = " Select csv_past_id, csv_name, uploaded_on, uploaded_by, total_records, total_documents, " + \
-            " uploaded_documents, (total_documents - uploaded_documents) AS remaining_documents " + \
-            " From tbl_bulk_past_data_csv where (total_documents - uploaded_documents) >= 1 "
+    doc_names = {}
 
-    # query = " Select csv_past_id, csv_name, uploaded_on, 2 AS uploaded_by, 3 AS total_records, 4 AS total_documents, uploaded_documents, 5 AS               remaining_documents From tbl_bulk_past_data_csv where (total_documents - uploaded_documents) >= 1;"
+    # query = " Select legal_entity_id, csv_past_id, csv_name, uploaded_on, uploaded_by, total_records, total_documents, " + \
+    #         " uploaded_documents, (total_documents - uploaded_documents) AS remaining_documents " + \
+    #         " From tbl_bulk_past_data_csv where (total_documents - uploaded_documents) >= 1 " + \
+    #         " and uploaded_by = %s and legal_entity_id like '%' "
+    print "legal_entity_list>>", legal_entity_list
+    legal_entity_list = ",".join([str(x) for x in legal_entity_list])
+    print "legal_entity_list>>", legal_entity_list
 
-    rows = db.select_all(query)
-    print "getCompletedTaskCSVList>rows>>", rows
+    query = " SELECT DISTINCT T01.legal_entity_id, T02.legal_entity, " + \
+            " T01.csv_past_id, T01.csv_name, T01.uploaded_on, T01.uploaded_by, " + \
+            " total_records, total_documents, T01.uploaded_documents, " + \
+            " (T01.total_documents - t01.uploaded_documents) AS remaining_documents " + \
+            " From tbl_bulk_past_data_csv  AS T01 " + \
+            " INNER JOIN tbl_bulk_past_data AS T02 " + \
+            " ON T01.csv_past_id = T02.csv_past_id " + \
+            " where (T01.total_documents - T01.uploaded_documents) >= 1 " + \
+            " and uploaded_by = %s AND FIND_IN_SET(T01.legal_entity_id, %s)"
+    param = [session_user, legal_entity_list]
+
+    rows = db.select_all(query, param)
+    # print "getCompletedTaskCSVList>rows>>", rows
+
+    param1 = [session_user]
+    docQuery = "select t1.csv_past_id, document_name from tbl_bulk_past_data as t1 " + \
+               " INNER JOIN tbl_bulk_past_data_csv as t2 " + \
+               " ON t2.csv_past_id = t1.csv_past_id " + \
+               " where ifnull(t2.upload_status, 0) = 0 and document_name != '' " + \
+               " and t2.uploaded_by = %s "
+    docRows = db.select_all(docQuery, param1)
+
+    for d in docRows:
+        csv_id = d.get("csv_past_id")
+        docname = d.get("document_name")
+        doc_list = doc_names.get(csv_id)
+        if doc_list is None:
+            doc_list = [docname]
+        else:
+            doc_list.append(docname)
+        doc_names[csv_id] = doc_list
 
     csv_list = []
     for row in rows:
         uploaded_on = row["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+
         csv_list.append(bu_ct.CsvList(row["csv_past_id"], row["csv_name"],
         uploaded_on, row["uploaded_by"], row["total_records"],
-        row["total_documents"], row["uploaded_documents"],row["remaining_documents"] )
+        row["total_documents"], row["uploaded_documents"], row["remaining_documents"],
+        doc_names.get(d.get("csv_past_id")), row["legal_entity"]
+        )
         )
 
-    print "getCompletedTaskCSVList>csv_list>>", csv_list
+    # print "getCompletedTaskCSVList>csv_list>>", csv_list
     return csv_list
 ########################################################
 def convertArrayToString(array_ids):

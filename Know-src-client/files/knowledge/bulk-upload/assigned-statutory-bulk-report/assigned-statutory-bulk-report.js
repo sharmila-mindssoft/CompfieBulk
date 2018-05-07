@@ -30,19 +30,20 @@ var PAGE_LIMIT = 25;
 var REPORT_VIEW = $('.grid-table-rpt');
 var AC_GROUP = $('#ac-group');
 var AC_LEGAL_ENTITY = $('#ac-legalentity');
-var AC_UNIT = $('#ac-unit');
+/*var AC_UNIT = $('#ac-unit');*/
 var GROUP_VAL = $('#groupsval');
 var GROUP = $('#group_id');
 var LEGAL_ENTITY_VAL = $('#legalentityval');
 var LEGAL_ENTITY = $('#legalentityid');
-var UNIT_VAL = $('#unitval');
-var UNIT = $('#unitid');
+/*var UNIT_VAL = $('#unitval');*/
+/*var UNIT = $('#unitid');*/
 /*var DOMAIN = $('#domain');
 var DOMAINS;*/
 
-var DOMAIN_VAL = $('#domainval');
-var DOMAIN = $('#domainid');
-var AC_DOMAIN = $('#ac-domain');
+// var DOMAIN_VAL = $('#domainval');
+var DOMAIN = $('#domain');
+var DOMAINS;
+/*var AC_DOMAIN = $('#ac-domain');*/
 
 /**** User Level Category ***********/
 
@@ -94,8 +95,8 @@ function UserGroupDetails() {
 function resetAllFilter() {
     GROUP_VAL.val('');
     LEGAL_ENTITY_VAL.val('');
-    UNIT_VAL.val('');
-    DOMAIN_VAL.val('');
+    /*UNIT_VAL.val('');*/
+    /*DOMAIN_VAL.val('');*/
     $('.tbody-usermappingdetails-list').empty();
     REPORT_VIEW.hide();
     $('.details').hide();
@@ -106,36 +107,42 @@ function resetFilter(evt) {
         LEGAL_ENTITY_VAL.val('');
         LEGAL_ENTITY.val('');
 
-        DOMAIN_VAL.val('');
-        DOMAIN.val('');
-        
+        /*DOMAIN_VAL.val('');*/        
 
-        UNIT_VAL.val('');
-        UNIT.val('');
+        /*UNIT_VAL.val('');
+        UNIT.val('');*/
 
         FROM_DATE.val('');
         TO_DATE.val('');
 
         DE_NAME.multiselect("deselectAll", false);
         DE_NAME.multiselect('refresh');
+
+        DOMAIN.empty();
+        DOMAIN.html();
+        DOMAIN.multiselect('rebuild');
     }
     if (evt == 'le') {
-        DOMAIN_VAL.val('');
-        DOMAIN.val('');    
+        /*DOMAIN_VAL.val('');
+        DOMAIN.val('');    */
 
-        UNIT_VAL.val('');
-        UNIT_VAL.val('');
+        /*UNIT_VAL.val('');
+        UNIT_VAL.val('');*/
 
         FROM_DATE.val('');
         TO_DATE.val('');
 
         DE_NAME.multiselect("deselectAll", false);
         DE_NAME.multiselect('refresh');
+
+        DOMAIN.empty();
+        DOMAIN.html();
+        DOMAIN.multiselect('rebuild');
 
    }
     if (evt == 'domains') {
-        UNIT_VAL.val('');
-        UNIT_VAL.val('');
+        /*UNIT_VAL.val('');
+        UNIT_VAL.val('');*/
 
         FROM_DATE.val('');
         TO_DATE.val('');
@@ -236,7 +243,7 @@ function pageData(onCurrentPage) {
 function resetFields() {
     GROUP.val('');
     LEGAL_ENTITY.val('');
-    UNIT.val('');
+    /*UNIT.val('');*/
     DOMAIN.val('');
 }
 
@@ -540,7 +547,7 @@ LEGAL_ENTITY_VAL.keyup(function(e) {
             function(val) {
                 onAutoCompleteSuccess(LEGAL_ENTITY_VAL, LEGAL_ENTITY, val);
                 /*loadDomains();*/
-                /*fetchDomainMultiselect();*/
+                fetchDomainMultiselect();
             }, conditionFields, conditionValues);
     }
 
@@ -551,41 +558,21 @@ LEGAL_ENTITY_VAL.keyup(function(e) {
 });*/
 
 //load legalentity form list in autocomplete text box
-DOMAIN_VAL.keyup(function(e) {
-    resetFilter('domains');
-    var str = '';
-    var textVal = $(this).val();
-    var domainList = [];
-        if (LEGAL_ENTITY_LIST.length > 0) {
-            for (var i in LEGAL_ENTITY_LIST) {
-                    if(LEGAL_ENTITY_LIST[i].le_id == LEGAL_ENTITY.val()){
-                        DOMAINS = LEGAL_ENTITY_LIST[i].bu_domains;
-                        for (var j in DOMAINS) {
-                            domainList.push({
-                                "domain_id": DOMAINS[j].d_id,
-                                "domain_name": DOMAINS[j].d_name,
-                            });
-                        }
-                    }                
-                }
-        }
-        commonAutoComplete(
-                e, AC_DOMAIN, DOMAIN, textVal,
-                domainList, "domain_name", "domain_id",
-                function(val) {
-                    onAutoCompleteSuccess(DOMAIN_VAL, DOMAIN, val);
-                });
+DOMAIN.on('change', function(e) {
+        resetFilter('domains');
 });
 
 
+
 //load legalentity form list in autocomplete text box
-UNIT_VAL.keyup(function(e) {
+/*UNIT_VAL.keyup(function(e) {
     resetFilter('unit');
         var str = '';
         var unitList = [];
         var textVal = $(this).val();
         if(DOMAIN.val() != null){
-            checkDomain = DOMAIN.val();
+            checkDomain = DOMAIN.val().map(Number);
+            checkDomain = integerArrayValue(checkDomain);
             if (UNITS.length > 0 && checkDomain.length > 0) {
                 for (var i in UNITS) {
                     if(UNITS[i].le_id == LEGAL_ENTITY.val() &&
@@ -622,7 +609,7 @@ UNIT_VAL.keyup(function(e) {
             }
         }
 
-});
+});*/
 
 // Fields Manadory validation
 AssignStatutoryBulkReport.prototype.validateMandatory = function() {
@@ -634,7 +621,7 @@ AssignStatutoryBulkReport.prototype.validateMandatory = function() {
     } else if (LEGAL_ENTITY.val().trim().length == 0) {
         displayMessage(message.legalentity_required);
         is_valid = false;
-    } else if (DOMAIN.val().trim().length == 0) {
+    } else if ($('#domain option:selected').text() == "") {
         displayMessage(message.domain_required);
         is_valid = false;
     } else if (FROM_DATE.val().trim() == "") {
@@ -689,7 +676,7 @@ function integerArrayValue(arr) {
 }
 
 //load domains into multi select box
-/*function fetchDomainMultiselect() {
+function fetchDomainMultiselect() {
     var str = '';
     if (LEGAL_ENTITY_LIST.length > 0) {
         for (var i in LEGAL_ENTITY_LIST) {
@@ -704,7 +691,7 @@ function integerArrayValue(arr) {
         DOMAIN.append(str);
         DOMAIN.multiselect('rebuild');
     }
-}*/
+}
 
 
 // get statutory mapping report data from api
@@ -712,7 +699,7 @@ function processSubmit() {
     var clientGroup = parseInt(GROUP.val());
     var legalEntityID = parseInt(LEGAL_ENTITY.val());
     var deIds = DE_NAME.val();
-    var domainId = DOMAIN.val();
+    var domain_ids = DOMAIN.val();
     var unitID = "";
 
     var fromDate = FROM_DATE.val();
@@ -720,11 +707,16 @@ function processSubmit() {
 
     var selectedDEName = [];
     var splitValues;
+    var selectedDomain = [];
+    
+    $.each(domain_ids, function(key, value) {
+        selectedDomain.push(parseInt(value));
+    });
 
-    if (UNIT.val()) {
+/*    if (UNIT.val()) {
         unitID = UNIT.val();
     }
-
+*/
     /* multiple COUNTRY selection in to generate array */
     if ($('#de_name option:selected').text() == "") {
         selectedDEName = DOMAIN_EXECUTIVES; 
@@ -748,7 +740,7 @@ function processSubmit() {
         "bu_client_id": clientGroup,
         "bu_legal_entity_id": legalEntityID,
         "bu_unit_id": unitID,
-        "d_id": parseInt(domainId),
+        "domain_ids": selectedDomain,
         "from_date": fromDate,
         "to_date": toDate,
         "r_count": SNO,
@@ -875,8 +867,8 @@ function loadCountwiseResult(data) {
         if(declinedCount != null && declinedCount >= 1) {
             approvedRejectedBy = SYSTEM_REJECTED_BY;
             approvedRejectedOn = '';
-            if(rejectedOn != null){
-                approvedRejectedOn = String(rejectedOn);
+            if(approvedOn != null){
+                approvedRejectedOn = String(approvedOn);
             }
         }
         else if (rejectedOn != null && rejectedOn != '' &&
@@ -940,18 +932,24 @@ AssignStatutoryBulkReport.prototype.exportData = function() {
     var legalEntityID = parseInt(LEGAL_ENTITY.val());
     var legalEntityName = LEGAL_ENTITY_VAL.val();
     var deIds = DE_NAME.val();
-    var domainId = DOMAIN.val();
+    var domainIds = DOMAIN.val();
     var unitID = "";
-    var unitName = UNIT_VAL.val();
+    /*var unitName = UNIT_VAL.val();*/
+    var unitName = '';
     var fromDate = FROM_DATE.val();
     var toDate = TO_DATE.val();
 
     var selectedDEName = [];
     var splitValues;
 
-    if (UNIT.val()) {
+    /*if (UNIT.val()) {
         unitID = UNIT.val();
-    }
+    }*/
+    var selectedDomain = [];
+    $.each(domainIds, function(key, value) {
+        selectedDomain.push(parseInt(value));
+    });
+
     /* multiple COUNTRY selection in to generate array */
     if ($('#de_name option:selected').text() == "") {
         selectedDEName = DOMAIN_EXECUTIVES; // When execute unselected the Field.
@@ -974,7 +972,7 @@ AssignStatutoryBulkReport.prototype.exportData = function() {
         "legal_entity_name": legalEntityName,
         "bu_unit_id": unitID,
         "unit_name": unitName,
-        "d_id": parseInt(domainId),
+        "domain_ids": selectedDomain,
         "d_names": domainNames,
         "from_date": fromDate,
         "to_date": toDate,
