@@ -1,0 +1,192 @@
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Client Login Trace</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div class="form-horizontal group-border-dashed">
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback group-name">
+                                    <label class="col-sm-4 control-label">Group Name: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="1" placeholder="Type Group">
+                                        <input type="hidden" id="group-id">
+                                        <div id="ac-group" class="ac-textbox default-display-none">
+                                            <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" readonly="readonly" id="from-date" tabindex="3">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback user-list">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">User:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="user" autofocus tabindex="2" placeholder="Type User">
+                                        <input type="hidden" id="userid">
+                                        <div id="ac-user" class="ac-textbox default-display-none">
+                                            <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="20/12/2016" readonly="readonly" id="to-date" tabindex="4">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <center>
+                                    <div class="form-group  m-t-5 m-b-0">
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="5"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit" id="export" tabindex="6"> Export </button>
+                                    </div>
+                                </center>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                    <div class="grid-table default-display-none">
+                        <div class="table-responsive">
+                            <div class="col-sm-12">
+                                <div class="col-sm-12 text-center">
+                                    <div class="col-sm-12 text-center"><h4>Client Login Trace</h4></div>
+                                    <div class="col-sm-4 text-center"><h6>Group : <span class="grp-header"></span></h6></div>
+                                    <div class="col-sm-4 text-center"><h6>From Date : <span class="from-header"></span></h6></div>
+                                    <div class="col-sm-4 text-center"><h6>To Date : <span class="to-header"></span></h6></div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                                <thead>
+                                    <th width="01%">#</th>
+                                    <th width="10%">User Name</th>
+                                    <th width="10%">User Type</th>
+                                    <th width="10%">Form Name</th>
+                                    <th width="10%">Action</th>
+                                    <th width="10%">Date & Time</th>
+                                </thead>
+                                <tbody class="tbody-audittrail-list">
+                                </tbody>
+                            </table>
+
+                            <table class="pagination-view default-display-none" style="width: 100%;">
+                                <tr>
+                                    <td>
+                                        <span class="compliance_count"> </span>
+                                        <span class="divider-view"> | </span>
+                                        <span class="items-per-page"> Show
+                                  <select id="items_per_page">
+                                  </select>
+                                  entries
+                                </span>
+                                    </td>
+                                    <td style="width:250px"></td>
+                                    <td style="text-align:right;" class="pull-right">
+                                        <ul id="pagination-rpt"></ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+<div id="templates">
+    <table class="table-audittrail-list">
+        <tr class="client-tableRow">
+            <td class="snumber"></td>
+            <td class="username"></td>
+            <td class="usertype"></td>
+            <td class="formname"></td>
+            <td class="action"></td>
+            <td class="datetime"></td>
+        </tr>
+    </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript">
+    $(function() {
+        $("#from-date").datepicker({
+            showButtonPanel: true,
+            closeText: 'Clear',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            maxDate: new Date(),
+            onClose: function(selectedDate) {
+                $("#to-date").datepicker("option", "minDate", selectedDate);
+                var event = arguments.callee.caller.caller.arguments[0];
+                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                    $(this).val('');
+                }
+            }
+
+        });
+
+        $("#to-date").datepicker({
+            showButtonPanel: true,
+            closeText: 'Clear',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            maxDate: new Date(),
+            onClose: function(selectedDate) {
+                $("#from-date").datepicker("option", "maxDate", selectedDate);
+                var event = arguments.callee.caller.caller.arguments[0];
+                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                    $(this).val('');
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript" src="/script/client-login-trace/client-login-trace.js"></script>
+{% endblock %}

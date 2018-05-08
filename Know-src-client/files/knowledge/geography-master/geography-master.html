@@ -1,0 +1,217 @@
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
+<div class="container" id="geography-view">
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+            <div class="btn-group pull-right m-t-5 m-b-20">
+                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" id="btn-geography-add"><span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add</button>
+            </div>
+            <h4 class="page-title">Geography Master</h4>
+        </div>
+        <div class="col-sm-2"></div>
+    </div>
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+            <div class="card-box table-responsive">
+                <div class="col-sm-12 no-padding">
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0 js-sorting-table" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>#<span class="none-sort-sno"></span></th>
+                                <th>Country <span class="fa fa-sort pull-right sort"></span></th>
+                                <th>Level <span class="fa fa-sort pull-right sort"></span></th>
+                                <th>Name <span class="fa fa-sort pull-right sort"></span></th>
+                                <th class="text-center">Edit</th>
+                                <th class="text-center" width="15%">Status</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-0">
+                                        <input type="text" class="form-control input-sm filter-text-box listfilter" placeholder="Country Name" id="filter1" />
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-0">
+                                        <input type="text" class="form-control input-sm filter-text-box listfilter" placeholder="Level" id="filter2" />
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-0">
+                                        <input type="text" class="form-control input-sm filter-text-box listfilter" placeholder="Name" id="filter3" />
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td align="center">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                            <i id="search-status" class="fa">All</i>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu no-bdr search-status-list">
+                                            <li value="all" class="search-status-li active"><a href="#" onclick="return false;">All</a></li>
+                                            <li value="1" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-check text-success"></i> Active</a></li>
+                                            <li value="0" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-geography-list" id="tableToModify">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container default-display-none" id="geography-add">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-1"> </div>
+        <div class="col-sm-10">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">
+              Geography Master
+          </h3>
+                    <div class="portlet-widgets">
+                        <a id="btn-geography-back">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body p-b-10">
+                        <div class="form-horizontal" role="form">
+                            <div class="form-group has-feedback">
+                                <label class="col-sm-4 control-label">Country Name:<span class="mandatory">*</span></label>
+                                <div class="col-sm-4">
+                                    <input class="form-control input-sm" id="countryval" placeholder="Country Name" type="text">
+                                    <i class="form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="country">
+                                    <input type="hidden" id="geographyid">
+                                    <div id="ac-country" class="ac-textbox default-display-none">
+                                        <ul class="hidemenu"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive p-l-20 p-r-20">
+                    <div class="form-horizontal group-border-dashed">
+                        <div id="grid-panchayat" class="form-container-grid-table">
+                            <table id="datatable-responsive" class="table dt-responsive nowrap table-list no-border" cellspacing="0" width="100%">
+                                <!--<thead>
+              <tr>
+                <th class="col-sm-3">Region</th>
+                <th class="col-sm-3">Union Territory</th>
+                <th class="col-sm-3">State</th>
+                <th class="col-sm-3">District</th>
+              </tr>
+            </thead>-->
+                                <tbody class="tbody-geography-level">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="form-group text-center">
+      <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-submit" tabindex="4"> Submit </button>
+    </div>-->
+            </div>
+        </div>
+        <div id="templates">
+            <table class="table-geography-master">
+                <tr class="table-row">
+                    <td class="sno" align="center"></td>
+                    <td class="country"></td>
+                    <td class="level"></td>
+                    <td class="name"></td>
+                    <td class="icon-3x text-center edit">
+                        <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit"></i>
+                    </td>
+                    <td class="icon-3x text-center status">
+                        <i class="fa fa-check text-success c-pointer status" data-toggle="tooltip"></i>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="float:left;width:33.3%" id="geography-level-templates" class="default-display-none">
+            <table style="width:100%;" class="table table-striped dt-responsive nowrap table-list no-bgheader">
+                <tr>
+                    <td style="overflow: hidden;" class="levelvalue">
+                        <h6 class="m-t-0 m-b-0 tab-sub-heaer title">Region</h6>
+                        <ul class="geography-list list-unstyled h10"></ul>
+                        <div class="input-group bottomfield">
+                            <input type="text" class="form-control input-sm addleft" name="example-input-small" id="example-input-small" maxlength="50">
+                            <span class="input-group-btn popup-link">
+                              <button type="button" class="btn btn-info btn-sm add-geo">
+                                <i class="fa fa-plus"></i>
+                              </button>
+                            </span>
+                        </div>
+                        <input type="hidden" class="glmid-class" />
+                        <input type="hidden" class="level-class" />
+                        <input type="hidden" class="visible-class" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <!-- Modal -->
+        <!--div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text p-t-0">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-group">
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div-->
+        <!-- Modal -->
+    </div>
+</div>
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text p-t-0">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-group">
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/geography-master/geographymaster.js"></script>
+{% endblock %}

@@ -1,0 +1,608 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title"> Reassign User's Account </h3>
+                    <div class="portlet-widgets">
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div id="basicwizard">
+                            <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted reassign_tab">
+                                <li class="active" value="tm"><a href="#tab1" data-toggle="tab" aria-expanded="true">Techno Manager</a></li>
+                                <li value="te"><a href="#tab2" data-toggle="tab">Techno Executive</a></li>
+                                <li value="dm"><a href="#tab3" data-toggle="tab">Domain Manager</a></li>
+                                <li value="de"><a href="#tab4" data-toggle="tab">Domain Executive</a></li>
+                                <li value="replacement"><a href="#tab5" data-toggle="tab">Manager Replacement</a></li>
+                            </ul>
+                            <div class="tab-content m-b-0">
+                                <div class="tab-pane fade active in" id="tab1">
+                                    <div class="form-horizontal m-t-15">
+                                        <div class="row">
+                                            <div class="col-md-2">&nbsp;</div>
+                                            <div class="col-md-7">
+                                                <div class="form-group has-feedback techno-mgr">
+                                                    <label class="col-sm-5 control-label">Techno Manager: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-5">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Techno Manager" id="techno_manager_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="techno_manager_id">
+                                                        <div id="ac-techno-manager" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 middle m-b-15">
+                                        
+                                            </div>
+                                        </div>
+                                        <div class="view-1 default-display-none">
+                                        <div class="table-responsive">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th align="center" width="2%"></th>
+                                                        <th width="30%">Country</th>
+                                                        <th width="30%">Legal Entity Name</th>
+                                                        <th width="38%">Reassign To</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="tbody-tm-view">
+                                                    <tr>
+                                                        <td align="center" colspan="5"> No Records Found </td>
+                                                    </tr>
+                                                </tbody>
+
+                                            </table>
+                                            </div>
+                                            <div class="form-group text-center m-t-15 default-display-none remark-view1">
+                                                <div class="col-md-3">
+                                                    
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group m-b-0">
+                                                        <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
+                                                        <div class="col-sm-6">
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="tm_remarks" maxlength="500"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group text-center m-b-15 default-display-none submit-view1">
+                                                <button class="btn btn-primary text-center waves-effect waves-light btn-submit-1" type="button"> Submit </button>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="tab-pane m-t-0 m-b-0" id="tab2">
+                                    <div class="form-horizontal m-t-15">
+                                        <div class="row">
+                                            <div class="col-md-2">&nbsp;</div>
+                                            <div class="col-md-7">
+                                                <div class="form-group has-feedback techno-user">
+                                                    <label class="col-sm-5 control-label">Techno Executive: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-5">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Techno Executive" id="techno_executive_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="techno_executive_id">
+                                                        <div id="ac-techno-executive" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 middle m-b-15">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="view-2 default-display-none">
+                                        <div class="table-responsive">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="2%">
+                                                            <input type="checkbox" class="te-selectall"/>
+                                                        </th>
+                                                        <th width="30%">Group</th>
+                                                        <th width="20%">Business Group</th>
+                                                        <th width="20%">Country</th>
+                                                        <th width="28%">Legal Entity</th>
+                                                    </tr>
+                                            
+                                                </thead>
+                                                <tbody class="tbody-te-view">
+                                                    <tr>
+                                                        <td align="center" colspan="5"> No Records Found </td>
+                                                    </tr>
+                                                </tbody>
+                                                
+                                            </table>
+                                            </div>
+                                            <div class="form-group text-center m-t-15 default-display-none remark-view2">
+                                                <div class="col-md-6">
+                                                    <div class="form-group has-feedback reassign-tm">
+                                                        <label class="col-sm-6 control-label">Reassign To Techno Executive: <span class="mandatory">*</span></label>
+                                                        <div class="col-sm-6">
+                                                          <input type="text" class="form-control input-sm" value="" placeholder="Enter Techno Executive" id="te_techno_executive_name">
+                                                          <i class="form-control-feedback fa fa-search"></i>
+                                                          <input type="hidden" id="te_techno_executive_id">
+                                                          <div id="te-ac-techno-executive" class="ac-textbox default-display-none">
+                                                            <ul class="width85Percent"></ul>
+                                                          </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group m-b-0">
+                                                        <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
+                                                        <div class="col-sm-6">
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="te_remarks" maxlength="500"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center m-b-15 default-display-none submit-view2">
+                                            <button class="btn btn-primary text-center waves-effect waves-light btn-submit-2" type="button"> Submit </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane m-t-0 m-b-0" id="tab3">
+                                    <div class="form-horizontal m-t-15">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group has-feedback domain-mgr" style="">
+                                                    <label class="col-sm-4 control-label">Domain Manager: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain Manager" id="domain_manager_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="domain_manager_id">
+                                                        <div id="ac-domain-manager" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-group-mandatory" style="">
+                                                    <label class="col-sm-4 control-label">Group: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Group" id="dm_group_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="dm_group_id">
+                                                        <div id="ac-dm-group" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-business" style="">
+                                                    <label class="col-sm-4 control-label">Business Group:</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Business Group" id="dm_business_group_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="dm_business_group_id">
+                                                        <div id="ac-dm-business-group" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                            </div>
+                                            <div class="col-md-6">
+                                                
+                                                <div class="form-group has-feedback filter-legal" style="">
+                                                    <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Legal Entity" id="dm_legal_entity_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="dm_legal_entity_id">
+                                                        <div id="ac-dm-legal-entity" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-domain" style="">
+                                                    <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain" id="dm_domain_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="dm_domain_id">
+                                                        <div id="ac-dm-domain" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group text-center m-b-10">
+                                                <button class="btn btn-primary text-center waves-effect waves-light m-b-0 dm-show-btn" type="button"> Show </button>
+                                            </div>
+                                        </div>
+                                        <div class="view-3 default-display-none">
+                                        <div class="table-responsive">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="2%"></th>
+                                                        <th width="10%">Unit Code</th>
+                                                        <th width="30%">Unit Name</th>
+                                                        <th width="30%">Unit Location</th>
+                                                        <th width="28%">Reassign To</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="tbody-dm-view">
+                                                    <tr>
+                                                        <td align="center" colspan="5"> No Records Found </td>
+                                                    </tr>
+                                                </tbody>
+                                               
+                                            </table>
+                                            </div>
+                                            <div class="form-group text-center m-t-15 default-display-none remark-view3">
+                                                <div class="col-md-3">
+                                            
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group m-b-0">
+                                                        <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
+                                                        <div class="col-sm-6">
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="dm_remarks" maxlength="500"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center m-b-15 default-display-none submit-view3">
+                                            <button class="btn btn-primary text-center waves-effect waves-light btn-submit-3" type="button"> Submit </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane m-t-0 m-b-0" id="tab4">
+                                    <div class="form-horizontal m-t-15">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group has-feedback domain-mgr" style="">
+                                                    <label class="col-sm-4 control-label">Domain Executive: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain Executive" id="domain_executive_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="domain_executive_id">
+                                                        <div id="ac-domain-executive" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-group-mandatory" style="">
+                                                    <label class="col-sm-4 control-label">Group: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Group" id="de_group_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="de_group_id">
+                                                        <div id="ac-de-group" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-business" style="">
+                                                    <label class="col-sm-4 control-label">Business Group:</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Business Group" id="de_business_group_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="de_business_group_id">
+                                                        <div id="ac-de-business-group" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                            </div>
+                                            <div class="col-md-6">
+                                                
+                                                <div class="form-group has-feedback filter-legal" style="">
+                                                    <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Legal Entity" id="de_legal_entity_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="de_legal_entity_id">
+                                                        <div id="ac-de-legal-entity" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group has-feedback filter-domain" style="">
+                                                    <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain" id="de_domain_name">
+                                                        <i class="form-control-feedback fa fa-search"></i>
+                                                        <input type="hidden" id="de_domain_id">
+                                                        <div id="ac-de-domain" class="ac-textbox default-display-none">
+                                                          <ul class="width85Percent"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group text-center m-b-10">
+                                                <button class="btn btn-primary text-center waves-effect waves-light m-b-0 de-show-btn" type="button"> Show </button>
+                                            </div>
+                                        </div>
+                                        <div class="view-4 default-display-none">
+                                         <div class="table-responsive">
+                                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="2%">
+                                                            <!-- <input type="checkbox" class="form_checkbox"> -->
+                                                        </th>
+                                                        <th width="20%">Unit Code</th>
+                                                        <th width="40%">Unit Name</th>
+                                                        <th width="38%">Unit Location</th>
+                                                    </tr>
+                                                    
+                                                </thead>
+                                                
+                                                <tbody class="tbody-de-view">
+                                                    <tr>
+                                                        <td align="center" colspan="5"> No Records Found </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            </div>
+                                            <div class="form-group text-center m-t-15 default-display-none remark-view4">
+                                                <div class="col-md-7">
+                                                    <div class="form-group has-feedback reassign-tm">
+                                                        <label class="col-sm-4 control-label">Reassign To Domain Executive: <span class="mandatory">*</span></label>
+                                                        <div class="col-sm-6">
+                                                          <input type="text" class="form-control input-sm" value="" placeholder="Enter Domain Executive" id="de_domain_executive_name">
+                                                          <i class="form-control-feedback fa fa-search"></i>
+                                                          <input type="hidden" id="de_domain_executive_id">
+                                                          <div id="de-ac-domain-executive" class="ac-textbox default-display-none">
+                                                            <ul class="width85Percent"></ul>
+                                                          </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <div class="form-group m-b-0">
+                                                        <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
+                                                        <div class="col-sm-6">
+                                                            <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="de_remarks" maxlength="500"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center m-b-15 default-display-none submit-view4">
+                                            <button class="btn btn-primary text-center waves-effect waves-light btn-submit-4" type="button"> Submit </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane m-t-0 m-b-0" id="tab5">
+                                    <div class="form-horizontal m-t-15">
+                                        <div class="row">
+                                            <div class="col-md-2">&nbsp;</div>
+                                            <div class="col-md-7">
+                                                <div class="form-group techno-user">
+                                                    <label class="col-sm-5 control-label">Category: <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-4">
+                                                        <select id="category" class="form-control input-sm">
+                                                            <option value="">Select</option>
+                                                            <option value="1">Techno Manager</option>
+                                                            <option value="2">Domain Manager</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="col-md-4 middle m-b-10">
+                                                <button class="btn btn-primary text-center waves-effect waves-light m-b-0 replace-manager-show-btn" type="button"> Show </button>
+                                            </div> -->
+                                        </div>
+                                        <div class="replace-view default-display-none">  
+                                         <div class="table-responsive">
+                                            <table id="datatable-responsive" class="table dt-responsive nowrap table-list replace-tm" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="col-sm-6 user-title">Techno Manager</th>
+                                                    <th class="col-sm-6">Replaced By</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr>
+                                                  <td valign="top">
+                                                      <ul class="list-unstyled manager-list">
+                                                      </ul>
+                                                  </td>
+                                                  <td valign="top">
+                                                      <ul class="list-unstyled replace-manager-list">
+                                                      </ul>
+                                                  </td>
+                                              </tr>
+
+                                            
+                                            </tbody>
+                                        </table>
+                                        </div>
+                                        <!-- <p class="p-l-5 replace-tm">*  note text goes here</p> -->
+   
+                                        <div class="form-group text-center m-t-15">
+                                            <div class="col-md-3">
+                                               
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group m-b-0">
+                                                    <label class="col-sm-4 control-label">Remarks <span class="mandatory">*</span></label>
+                                                    <div class="col-sm-6">
+                                                        <textarea class="form-control" rows="1" placeholder="Enter Remarks here" id="replace_manager_remarks" maxlength="500"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group text-center m-b-15">
+                                            <button class="btn btn-primary text-center waves-effect waves-light btn-submit-5" type="button"> Submit</button>
+                                        </div>
+
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="templates" class="default-display-none">
+    <div class="tm-view-row">
+        <table>
+            <tr class="tm-view-group-row">
+                <th class="middle-align">
+                    <input type="checkbox" class="tm-group-checkbox form_checkbox" />
+                </th>
+                <th colspan="2" class="tm-group middle-align"></th>
+                <th>
+                  <div class="form-group has-feedback m-b-0 default-display-none tm-ac-view">
+                      <label class="col-sm-4 p-t-7">Techno Manager</label>
+                      <div class="col-sm-6">
+                          <input class="form-control input-sm tm-techno-manager-name" value="" type="text" placeholder="Enter Techno Manager">
+                          <i class="form-control-feedback fa fa-search"></i>
+                          <input type="hidden" class="techno_manager_id">
+                          <div class="ac-textbox default-display-none ac-techno-manager">
+                            <ul class="width85Percent"></ul>
+                          </div>
+                      </div>
+                  </div>
+                </th>
+            </tr>
+
+            <tr class="tm-view-le-row">
+                <td></td>
+                <td class="tm-country"></td>
+                <td class="tm-le"></td>
+                <td>
+                  <div class="form-group has-feedback m-b-0 default-display-none te-ac-view">
+                      <label class="col-sm-4 p-t-7">Techno Executive</label>
+                      <div class="col-md-6">
+                          <input class="form-control input-sm tm-techno-executive-name" value="" type="text" placeholder="Enter Techno Executive">
+                          <i class="form-control-feedback fa fa-search"></i>
+                          <input type="hidden" class="old_executive_id">
+                          <input type="hidden" class="techno_executive_id">
+                          <div class="ac-textbox default-display-none ac-techno-executive">
+                            <ul class="width85Percent"></ul>
+                          </div>
+                      </div>
+                  </div>
+                </td>
+            </tr>
+        </table>     
+    </div>
+
+    <div class="te-view-row">
+      <table>
+          <tr class="te-view-le-row">
+              <td><input type="checkbox" class="te-group-checkbox form_checkbox" /></td>
+              <td class="te-group"></td>
+              <td class="te-businessgroup"></td>
+              <td class="te-country"></td>
+              <td class="te-le"></td>
+          </tr>
+      </table>     
+    </div>
+
+
+    <div class="dm-view-row">
+      <table>
+          <tr class="dm-view-le-row">
+              <th class="middle-align">
+                  <input type="checkbox" class="dm-group-checkbox-main form_checkbox" />
+              </th>
+              <th colspan="3" style="vertical-align: middle;" class="dm-le middle-align"></th>
+              <th>
+                <div class="form-group has-feedback m-b-0 dm-ac-view">
+                    <label class="col-sm-4 p-t-7">Domain Manager</label>
+                    <div class="col-sm-6">
+                        <input class="form-control input-sm dm-domain-manager-name" value="" type="text" placeholder="Enter Domain Manager">
+                        <i class="form-control-feedback fa fa-search"></i>
+                        <input type="hidden" class="domain_manager_id">
+                        <div class="ac-textbox default-display-none ac-domain-manager">
+                          <ul class="width85Percent"></ul>
+                        </div>
+                    </div>
+                </div>
+              </th>
+          </tr>
+
+          <tr class="dm-view-unit-row">
+              <td>
+                <input type="checkbox" class="dm-group-checkbox form_checkbox" />
+              </td>
+              <td class="dm-unitcode"></td>
+              <td>
+                <i class="zmdi zmdi-info dm-unitaddress" data-toggle="tooltip"></i> <span class="dm-unitname"></span>
+              </td>
+              <td class="dm-unitlocation">
+                
+              </td>
+              <td>
+                <div class="form-group has-feedback m-b-0 default-display-none de-ac-view">
+                    <label class="col-sm-4 p-t-7">Domain Executive</label>
+                    <div class="col-sm-6">
+                        <input class="form-control input-sm dm-domain-executive-name" value="" type="text" placeholder="Enter Domain Executive">
+                        <i class="form-control-feedback fa fa-search"></i>
+                        <input type="hidden" class="d_old_executive_id">
+                        <input type="hidden" class="domain_executive_id">
+                        <div class="ac-textbox default-display-none ac-domain-executive">
+                          <ul class="width85Percent"></ul>
+                        </div>
+                    </div>
+                </div>
+              </td>
+          </tr>
+      </table>     
+    </div>
+                                                  
+    <div class="de-view-row">
+      <table>
+          <tr class="de-view-unit-row">
+              <td>
+                <input type="checkbox" class="de-group-checkbox form_checkbox" />
+              </td>
+              <td class="de-unitcode"></td>
+              <td>
+                <i class="zmdi zmdi-info de-unitaddress" data-toggle="tooltip"></i> <span class="de-unitname"></span>
+              </td>
+              <td class="de-unitlocation">
+          </tr>
+      </table>     
+    </div>
+
+    <div class="drop-down-option">
+        <ul>
+            <li></li>
+        </ul>
+    </div>
+
+</div>
+
+<div id="nocompliance-templates" style="display:none;">
+    <table width="100%" style="border:1px dotted #CCCCCC;" class="table-nocompliances-list">
+        <tr class="table-row" >
+            <td align="center" colspan="5" class="tbl_norecords"></td>
+        </tr>
+    </table>
+</div>
+
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/reassign-user-account/reassign-user-account.js"></script>
+{% endblock %}

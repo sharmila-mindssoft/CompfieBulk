@@ -1,0 +1,131 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+
+      <div class="portlet">
+        <!-- <h4 class="page-title m-t-0 m-b-10">User Mapping</h4>
+        <hr class="no-top-margin"> -->
+        <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                User Mapping
+            </h3>
+            <div class="portlet-widgets">
+                <!-- <a href="#" onclick="location.href='/domain/list'" >
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a> -->
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+          <div class="portlet-body">
+        <div class="row">
+          <div class="col-lg-12">
+            <ul class="nav nav-tabs nav-justified nav-mapping user-tab">
+              <li role="presentation" value="know-mgr-exec-tab" class="active"> <a href="#kmke" id="home-tab" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="true">Knowledge Manager - Knowledge Executive</a> </li>
+              <li role="presentation" value="tech-mgr-exec-tab" class="tech-mgr-exec-tab"> <a href="#kmke" role="tab" id="profile-tab" data-toggle="tab" aria-controls="profile">Techno Manager - Techno Executive</a> </li>
+              <li role="presentation" value="tech-mgr-mgr-tab"> <a href="#kmke" role="tab" id="profile-tab" data-toggle="tab" aria-controls="profile">Techno Manager - Domain Manager</a> </li>
+              <li role="presentation" value="domain-mgr-exec-tab"> <a href="#kmke" role="tab" id="profile-tab" data-toggle="tab" aria-controls="profile">Domain Manager - Domain Executive</a> </li>
+            </ul>
+            <div class="tab-content">
+              
+              <div role="tabpanel" class="tab-pane fade in active m-t-0 p-t-10" id="kmke"
+							 aria-labelledby="home-tab">
+               <div class="col-sm-12">
+                <div class="row">
+                  <div class="form-horizontal" role="form">
+                    <div class="col-sm-6">
+                      <div class="form-group has-feedback">
+                        <label class="col-md-4 control-label">Country:<span class="mandatory">*</span></label>
+                        <div class="col-md-7">
+                          <input type="text" class="form-control input-sm" id="countryval" value="" placeholder="Enter Country">
+                          <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                          <input type="hidden" id="country" value="">
+                          <div id="ac-country" class="ac-textbox default-display-none">
+                            <ul class="width85Percent"></ul>
+                          </div>
+                        </div>
+                      </div>
+                     </div>
+                     <!-- end col -->
+                     <div class="col-sm-6">
+                        <div class="form-group has-feedback">
+                          <label class="col-md-4 control-label">Domain:<span class="mandatory">*</span></label>
+                          <div class="col-md-7">
+                            <input type="text" class="form-control input-sm" id="domainval" value="" placeholder="Enter Domain">
+                            <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            <input type="hidden" id="domain" value="">
+                            <div id="ac-domain" class="ac-textbox default-display-none">
+                              <ul class="width85Percent"></ul>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                  <!-- end col -->
+                  <div class="clearfix"></div>
+                  <div class="col-sm-12">
+                    <div class="form-group text-center m-t-5 m-b-20">
+                      <button class="btn btn-primary text-center waves-effect waves-light" type="submit" id="show"> Show </button>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                </div>
+                <div class="col-sm-12">
+                <table id="datatable-responsive" class="table dt-responsive nowrap table-list" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th class="col-sm-6 parent-user">Knowledge Manager</th>
+                      <th class="col-sm-6 child-user">Knowledge Executive</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <ul class="list-unstyled parent-user-list">
+                          
+                        </ul>
+                    </td>
+                    <td>
+                        <ul class="list-unstyled child-user-list">
+                         
+                        </ul>
+                    </td>
+                    </tr>
+                    </tbody>
+                </table>
+</div>
+                <div class="clearfix"></div>
+                <div class="form-group text-center m-t-5 m-b-20">
+                  <button class="btn btn-primary text-center waves-effect waves-light m-t-5 default-display-none" type="submit" id="save"> Submit </button>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+          <!-- end col -->
+        </div>
+        <!-- end row -->
+        </div>
+      </div>
+      </div>
+    </div>
+    <!-- end col -->
+  </div>
+</div>
+
+<div id="templates" class="default-display-none">
+    <div class="drop-down-option">
+        <ul>
+            <li></li>
+        </ul>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/user-mapping/user-mapping.js"></script> 
+{% endblock %}

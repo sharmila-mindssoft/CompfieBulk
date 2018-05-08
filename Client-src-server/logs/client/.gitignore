@@ -1,0 +1,13 @@
+/client-log
+/login-log
+/query-log
+/trace-log
+*.2017-01-16
+*.2017-01-17
+*.2017-01-21
+*.2017-02-07
+/client-debug-log
+/client-debug-log.2017-06-15
+/client-error-log
+/client-info-log
+/client-query-log

@@ -1,0 +1,228 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Statutory Settings Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="countryval" value="" tabindex="1" placeholder="Enter Country">
+                                        <input type="hidden" id="country-id">
+                                        <div id="ac-country" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Group Name: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="2" placeholder="Enter Group">
+                                        <input type="hidden" id="group-id">
+                                        <div id="ac-group" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Business Group:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="businessgroupsval" value=""  tabindex="3" placeholder="Enter Business Group">
+                                        <input type="hidden" id="businessgroupid">
+                                        <div id="ac-businessgroup" class="ac-textbox default-display-none" >
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="legalentityval" value="" tabindex="4" placeholder="Enter Legal Entity">
+                                        <input type="hidden" id="legalentityid">
+                                        <div id="ac-legalentity" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Unit: </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="5"
+                                        placeholder="Enter Unit">
+                                        <input type="hidden" id="unitid">
+                                        <div id="ac-unit" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Domain: </label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="domainid">
+                                        <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="6" placeholder="Enter Domain">
+                                        <div id="ac-domain" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Act:</label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="statutoryid" value="">
+                                        <input type="text" class="form-control input-sm" id="statutoryval" value="" tabindex="7" placeholder="Enter Act">
+                                        <div id="ac-statutory" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Compliance Task:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="compliance-task" value="" tabindex="8" placeholder="Enter Compliance Task">
+                                        <!-- <input type="hidden" id="complianceid">
+                                        <div id="ac-compliancetask" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <center>
+                                    <div class="form-group  m-t-5 m-b-0">
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show-button" tabindex="9"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit" tabindex="9" id="export-button"> Export </button>
+                                    </div>
+                                </center>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                    <div class="grid-table-rpt default-display-none">
+                    <div class="table-responsive">
+                        <div class="col-sm-12">
+                            <div class="col-sm-12 text-center"><h4>Statutory Settings Report</h4></div>
+                            <div class="col-sm-4 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="countrynameval"></span></h6></div>
+                            <div class="col-sm-4 text-center"><h6>Group: <span style="margin-left:10px; font-weight:bold;" class="groupsval"> </span></h6></div>
+                            <div class="col-sm-4 text-center"><h6>Business Group: <span style="margin-left:10px; font-weight:bold;" class="bgroupsval"> </span></h6></div>
+                            <div class="col-sm-4 text-center"><h6>Legal Entity: <span style="margin-left:10px; font-weight:bold;" class="lentityval"></span></h6>
+                            </div>
+                            <div class="col-sm-4 text-center"><h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="domainval"></span></h6>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr align="left" class="tr-heading">
+                                  <th width="3%" align="center" class="header-bg">#</th>
+                                  <th width="30%" class="header-bg">Statutory Provision</th>
+                                  <th width="18%" class="header-bg">Compliance Task</th>
+                                  <th width="10%" class="header-bg">Statutory Nature</th>
+                                  <th width="5%" class="header-bg"><img src="/images/icon-client-comply.png" title="Applicability Status"></th>
+                                  <th width="5%" class="header-bg"><img src="/images/icon-client-tick.png" title="Opted"></th>
+                                  <th width="15%" class="header-bg">Modified By Compfie</th>
+                                  <th width="15%" class="header-bg">Modified By Client</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tbody-assigned-statutory-list">
+                            </tbody>
+                        </table>
+                        <table class="pagination-view default-display-none">
+                          <tr>
+                            <td>
+                              <span class="compliance_count"> </span>
+                              <span class="divider-view"> | </span>
+                              <span class="items-per-page">
+                              Show
+                              <select id="items_per_page">
+                              </select>
+                              entries
+                              </span>
+                            </td>
+                            <td style="width:650px;"></td>
+                            <td style="text-align:right;padding-right:10px;">
+                              <ul id="pagination-rpt"></ul>
+                            </td>
+                          </tr>
+                        </table>
+                    </div>
+            </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+<div id="act-heading" class="default-display-none">
+    <table> <!-- class="table-act-heading-list" -->
+      <tr class="tablerow">
+        <td colspan="100%">
+            <div>
+                <mark class="p-l-10 p-r-10"><span class="act-name"></span></mark>
+            </div>
+        </td>
+        <!--<td class="act-applicable"></td>
+        <td class="act-opted"></td>
+        <td class="act-remarks"></td>-->
+        </tr>
+    </table>
+</div>
+<div id="statutory-list" class="default-display-none">
+    <table class="table-statutory-list">
+        <tr class="tablerow">
+            <td align="center" class="sno"></td>
+            <td class="statutory-provision"></td>
+            <td class="compliance-task"> </td>
+            <td class="statutory-nature"></td>
+            <td class="applicability-status"></td>
+            <td class="opted-status"></td>
+            <td class="compfiedmin"></td>
+            <td class="clientadmin"></td>
+        </tr>
+    </table>
+</div>
+<div id="unit-details-list" class="default-display-none">
+    <table class="table-unit-details-list">
+        <tr class="tablerow">
+            <td colspan="100%" class="bg-lightdark"><div class="col-sm-12 no-padding unit-name-address"></div></td>
+        </tr>
+    </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+    <tr align="left" class="table-row-no-content">
+        <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em;"></td>
+    </tr>
+  </table>
+</div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript" src="/script/statutory-setting-report/assignedstatutoryreport.js"></script>
+{% endblock %}

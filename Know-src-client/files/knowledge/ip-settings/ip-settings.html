@@ -1,0 +1,181 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container" id="ip-settings-view">
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+      <div class="btn-group pull-right m-t-5 m-b-20">
+        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light btn-add" aria-expanded="false"> <i class="fa fa-plus-circle"> </i> Add</button>
+      </div>
+      <h4 class="page-title">Form  Authorization - IP Settings</h4>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+  
+
+  <div class="row">
+  <div id="animationSandbox">
+    <div class="col-sm-3"> </div>
+    <div class="col-sm-6">
+      <div class="card-box table-responsive">
+            <div class="col-sm-12 no-padding">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0 js-filtertable" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th width="02%">#</th>
+                    <th width="25%">Group</th>
+                    <th width="05%" class="text-center">Edit</th>
+                    <th width="05%" class="text-center">Remove</th>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Group" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                </thead>
+                <tbody class="tbody-ip-settings-list">
+                 
+                  
+                </tbody>
+              </table>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+       </div>
+    </div>
+    <!-- end col -->
+  </div>
+</div>
+
+<div class="container default-display-none" id="ip-settings-add">
+  <div class="row">
+  <div id="animationSandbox">
+    <div class="col-sm-3"> </div>
+    <div class="col-sm-6">
+      <div class="portlet">
+          <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                Form  Authorization - IP Settings
+            </h3>
+            <div class="portlet-widgets">
+                <a class="btn-cancel">
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body p-b-0">
+        
+        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+        <div class="col-lg-10">
+          <div class="form-group has-feedback">
+            <label class="col-sm-5 control-label" for="example-input-small">Group: <span class="mandatory">*</span></label>
+            <div class="col-sm-7 controls">
+              <input type="text" class="form-control input-sm" id="groupval" placeholder="Enter Group" tabindex="1">
+              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+              <input type="hidden" id="group">
+              <div id="ac-group" class="ac-textbox default-display-none">
+                  <ul style="width:85%;"></ul>
+              </div>
+            </div>
+          </div>
+          
+          </div>
+         
+        <div class="clear"></div>
+        </div>
+        </div>
+        </div>
+        
+      <div class="table-responsive p-l-15 p-r-15 form-view">
+        <div class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th width="25%">Forms</th>
+                    <th width="15%">IP Details</th>
+                  </tr>
+                </thead>
+                <tbody class="tbody-form-list">
+                 
+                </tbody>
+              </table>
+              </div>
+      </div>
+      <div class="form-group text-center">
+          <button class="btn btn-primary waves-effect waves-light btn-submit" type="button"> Submit </button>
+      </div>
+    
+    <!-- end col -->
+    </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div id="templates">
+    <table class="table-ip-settings-list">
+        <tr class="table-row">
+            <td class="sno" align="center"></td>
+            <td class="group-name"></td>
+  
+            <td class="icon-3x text-center">
+              <i class="fa fa-pencil c-pointer text-primary edit-icon"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top"></i>
+            </td>
+
+            <td class="icon-3x text-center">
+              <i class="fa fa-trash text-primary c-pointer delete-icon"  data-toggle="tooltip" data-placement="top" title="Click here to Delete" data-original-title="Tooltip on top"></i>
+            </td>
+
+        </tr>
+    </table>
+
+    <table class="table-form-list">
+        <tr class="table-row">
+            <td class="form-name">
+            
+            </td>
+            <td>
+              <input type="text" data-mask="999.999.999.9999" class="form-control input-sm ip-address" placeholder="___.___.___.____">
+            </td>
+        </tr>
+    </table>
+
+    <table class="table-no-record">
+        <tr>
+        <td colspan="4" align="center"> No Records Found</td>
+        </tr>
+    </table>
+
+</div>
+
+<!-- Modal -->
+<div class="clear"></div>
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/ip-settings/ip-settings.js"></script>
+{% endblock %}

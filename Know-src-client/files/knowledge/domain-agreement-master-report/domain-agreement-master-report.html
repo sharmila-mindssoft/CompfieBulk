@@ -1,0 +1,270 @@
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <!-- <h4 class="page-title">Domain wise Agreement Master Report</h4> -->
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Domain wise Agreement Master Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div class="form-horizontal group-border-dashed">
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="country" value="">
+                                        <input type="text" class="form-control input-sm" value="" id="countryval" placeholder="Enter Country" tabindex="1" autofocus="autofocus" />
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <div id="ac-country" class="ac-textbox default-display-none">
+                                            <ul style="width:93%;"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Group Name:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="groupval" placeholder="Enter Group" tabindex="2">
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="group">
+                                        <div id="ac-group" class="ac-textbox default-display-none">
+                                            <ul style="width:93%;"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Business Group:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="businessgroupval" placeholder="Enter Business Group" tabindex="3">
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="businessgroup">
+                                        <div id="ac-businessgroup" class="ac-textbox default-display-none">
+                                            <ul style="width:93%;"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Legal Entity:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="legalentityval" placeholder="Enter Legal Entity" tabindex="4">
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="legalentity">
+                                        <div id="ac-legalentity" class="ac-textbox default-display-none">
+                                            <ul style="width:93%;"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="domainval" placeholder="Enter Domain Name" tabindex="5">
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="domain" value="">
+                                        <div id="ac-domain" class="ac-textbox default-display-none">
+                                            <ul style="width:93%;" class="hidemenu"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Contract From:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="fromdate" tabindex="6" readonly="readonly">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Contract To:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" id="todate" tabindex="7" readonly="readonly">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <center>
+                                    <div class="form-group m-t-5 m-b-0">
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit" tabindex="8"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit" id="export" tabindex="9"> Export </button>
+                                    </div>
+                                </center>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                        <div class="grid-table-rpt default-display-none">
+                    <div class="table-responsive">
+                        <div class="col-sm-12">
+                            <div class="col-sm-12 text-center">
+                                <h4>Domain wise Agreement Master Report</h4></div>
+                            <div class="col-sm-6 text-center">
+                                <h6>Country: <span style="margin-left:10px; font-weight:bold;" class="disp_country"></span></h6></div>
+                            <div class="col-sm-6 text-center">
+                                <h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="disp_domain"></span></h6></div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                            <thead class="heading-list">
+                                <th class="header-bg" width="2%" align="center">#</th>
+                                <th class="header-bg" width="25%" align="left">Legal Entity</th>
+                                <th class="header-bg" width="18%" align="left">LE/ Group Admin Details</th>
+                                <th class="header-bg" width="15%" align="left">Contact Number</th>
+                                <th class="header-bg" width="10%" align="left">Units Per Domain
+                                    <br/>Used/Total</th>
+                                <th class="header-bg" width="10%" align="left">Date of Agreement Inception</th>
+                                <th class="header-bg" width="10%" align="left">Contract From</th>
+                                <th class="header-bg" width="10%" align="left">Contract To</th>
+                            </thead>
+
+                            <tbody class="table-client-agreement-list">
+                            </tbody>
+                        </table>
+                        <table class="pagination-view default-display-none">
+                            <tr>
+                                <td>
+                                    <span class="compliance_count"> </span>
+                                    <span class="divider-view"> | </span>
+                                    <span class="items-per-page">
+                                  Show
+                                  <select id="items_per_page">
+                                  </select>
+                                  entries
+                                  </span>
+                                </td>
+                                <td style="width:670px;"></td>
+                                <td style="text-align:right;padding-right:10px;">
+                                    <ul id="pagination-rpt"></ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+          </div>
+        <!-- end col -->
+    </div>
+</div>
+<div id="templates">
+    <table class="table-agreement-list">
+
+        <tr class="group-list">
+            <td colspan="2">
+                <div class="col-sm-4 no-padding">
+                    <mark class="p-l-10 p-r-10 group-name"></mark>
+                </div>
+                <div class="col-sm-7 no-padding">
+                    <mark class="p-l-10 p-r-10 business-group-name"></mark>
+                </div>
+            </td>
+            <td class="group-admin-email"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="tbody-agreement-list">
+            <td class="sno"></td>
+            <td class="le"></td>
+            <td class="le-email"></td>
+            <td class="le-contactno"></td>
+            <td>
+                <a class="domain-units c-pointer"></a>
+            </td>
+            <td class="activation-date"></td>
+            <td class="contract-from"></td>
+            <td class="contract-to"></td>
+        </tr>
+    </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
+<div id="templates">
+    <table class="table-popup-list" style="display: none;">
+        <tr class="table-row">
+            <td class="popup_organization_name"></td>
+            <td class="popup_unit_count" align="center"></td>
+        </tr>
+    </table>
+</div>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-450">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10 popup-heading">Labour Law</h4>
+    <div class="custom-modal-text custom-org-table">
+        <form role="form">
+            <div class="table-responsive">
+                <table id="datatable-responsive" class="table dt-responsive nowrap" width="auto">
+                    <tbody>
+                        <tr class="table_bg_01 header_tr_popup"></tr>
+                        <tr class="data_tr_popup"></tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/domain-agreement-master-report/domainwise-agreement-report.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        $("#fromdate").datepicker({
+            showButtonPanel: true,
+            closeText: 'Clear',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            onClose: function(selectedDate) {
+                $("#todate").datepicker("option", "minDate", selectedDate);
+                var event = arguments.callee.caller.caller.arguments[0];
+                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                    $(this).val('');
+                }
+            }
+        });
+        $("#todate").datepicker({
+            showButtonPanel: true,
+            closeText: 'Clear',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            dateFormat: "dd-M-yy",
+            monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            onClose: function(selectedDate) {
+                $("#fromdate").datepicker("option", "maxDate", selectedDate);
+                var event = arguments.callee.caller.caller.arguments[0];
+                if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                    $(this).val('');
+                }
+            }
+        });
+    });
+    </script>
+{% endblock %}

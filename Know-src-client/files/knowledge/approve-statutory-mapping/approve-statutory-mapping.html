@@ -1,0 +1,297 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<style type="text/css">
+.wrap-td-text {
+    table-layout: fixed;
+}
+
+.wrap-td-text td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -ms-word-break: break-word;
+}
+</style>
+<div class="container">
+  <div class="row">
+  <div id="animationSandbox">
+    <div class="col-sm-12">
+      <div class="portlet">
+
+          <div class="portlet-heading bg-info">
+              <h3 class="portlet-title">Approve Statutory Mapping</h3>
+              <div class="portlet-widgets">
+
+              </div>
+              <div class="clearfix"></div>
+          </div>
+          <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body">
+
+        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+        <div class="col-lg-6">
+          <div class="form-group has-feedback">
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <input type="hidden" id="country" value="">
+              <input type="text" class="form-control input-sm" value="" id="countryval" placeholder="Enter Country" tabindex="1"/>
+              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+              <div id="ac-country" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Organization</label>
+            <div class="col-sm-6 controls">
+              <input type="hidden" id="organization" value="">
+              <input type="text" class="form-control input-sm" value="" id="organizationval" placeholder="Enter Organization" tabindex="3"/>
+              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+              <div id="ac-organization" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">User</label>
+            <div class="col-sm-6 controls">
+              <input type="hidden" id="user" value="">
+              <input type="text" class="form-control input-sm" value="" id="userval" placeholder="Enter User" tabindex="5"/>
+              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+              <div id="ac-user" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
+              </div>
+            </div>
+          </div>
+          </div>
+          <div class="col-lg-6">
+          <div class="form-group has-feedback">
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Domain Name<span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <input type="text" class="form-control input-sm" id="domainval" placeholder="Enter Domain Name"
+              tabindex="2">
+              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+              <input type="hidden" id="domain" value="">
+              <div id="ac-domain" class="ac-textbox default-display-none">
+                  <ul style="width:85%;" class="hidemenu"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Statutory Nature</label>
+            <div class="col-sm-6 controls">
+              <input type="hidden" id="statutorynature" value="">
+              <input type="text" class="form-control input-sm" value="" id="statutorynatureval" placeholder="Enter Statutory Nature" tabindex="4"/>
+              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+              <div id="ac-statutorynature" class="ac-textbox default-display-none">
+                <ul style="width:85%;"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">&nbsp;</label>
+            <div class="col-sm-6 controls">
+              &nbsp;
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="clear"></div>
+        <center>
+          <div class="form-group m-b-0 m-t-5" id="add">
+            <button class="btn btn-primary waves-effect waves-light btn-show" type="submit" tabindex="6"> Show</button>
+          </div>
+        </center>
+      </div>
+      </div>
+      </div>
+      <div class="card-box sm-grid default-display-none">
+      <div class="table-responsive no-padding">
+        <div class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable table-fixed" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th width="1%">#</th>
+                    <th width="15%">Organization</th>
+                    <th width="10%">Statutory Nature</th>
+                    <th width="20%" colspan="2">Statutory</th>
+                    <th width="10%">Action <span class="mandatory">*</span></th>
+                    <th width="10%">Reason</th>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-b-0">
+                        <input type="text" class="form-control input-sm js-filter" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-b-0">
+                        <input type="text" class="form-control input-sm js-filter" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td colspan="2">
+                      <div class="form-group col-sm-12 no-padding m-b-0">
+                        <input type="text" class="form-control input-sm js-filter" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                </thead>
+                <tbody class="tbody-sm-list">
+
+                </tbody>
+              </table>
+              </div>
+      </div>
+        <center style="padding-top:10px;">
+          <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light default-display-none btn-showmore" >Show More</button>
+        </center>
+
+
+        <div class="total_count_view default-display-none">
+           <br> <span class="total_count"></span>
+        </div>
+
+                              
+      <div class="form-group text-center m-b-0 m-t-20">
+          <button class="btn btn-primary waves-effect waves-light btn-submit" type="submit"> Submit </button>
+      </div>
+
+    <!-- end col -->
+  </div>
+</div>
+
+</div>
+
+<div id="templates" class="default-display-none">
+  <table class="table-sm-list">
+      <tr>
+      <td class="sno"></td>
+      <td class="organization"></td>
+      <td class="statutorynature"></td>
+      <td colspan="2" class="provision"></td>
+      <td>
+          <select class="form-control chosen sm-approve-control input-sm" data-placeholder="Choose a Action" tabindex="1">
+            <option value="0" selected="selected"> Select</option>
+            <option value="2">Approve</option>
+            <option value="3">Approve & Notify</option>
+            <option value="4">Reject</option>
+          </select>
+      </td>r
+      <td class="sm-reason-box">
+          <textarea class="form-control input-sm sm-reason default-display-none" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
+      </td>
+      </tr>
+  </table>
+
+
+  <table class="table-compliance-head">
+    <thead>
+      <tr class="table-sub-head">
+        <th>&nbsp;</th>
+        <th>Compliance</th>
+        <th>Status</th>
+        <th>Created by</th>
+        <th>Last updated by</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+  </table>
+
+  <table class="table-compliance-list">
+      <tr>
+        <td>&nbsp;</td>
+        <td class="compliacne_name">
+          <a class="c-pointer"></a>
+        </td>
+        <td class="status"></td>
+        <td class="created_by"></td>
+        <td class="updated_by"></td>
+        <td>
+            <select class="form-control chosen compliance-approve-control input-sm" data-placeholder="Choose a Action" tabindex="1">
+              <option value="0"> Select</option>
+              <option value="2">Approve</option>
+              <option value="3">Approve & Notify</option>
+              <option value="4">Reject</option>
+            </select>
+        </td>
+        <td class="compliance-reason-box">
+        <textarea class="form-control input-sm compliance-reason default-display-none" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
+      </td>
+      </tr>
+  </table>
+
+  <table class="table-no-record">
+      <tr>
+      <td colspan="8" align="center"> No Records Found</td>
+      </tr>
+  </table>
+
+</div>
+
+
+<div id="custom-modal" class="modal-demo box-width-600">
+  <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+  </span>
+  <h4 class="custom-modal-title p-t-10 p-b-10">Compliance Details</h4>
+  <div class="custom-modal-text">
+  <div role="form">
+      <div class="table-responsive box-width-560">
+          <table id="datatable-responsive" class="table dt-responsive nowrap wrap-td-text" width="100%">
+              <tbody>
+                <tr class="text-left">
+                  <td width="40%">Statutory Provision</td>
+                  <td width="60%" class="popup-statutory"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Compliance Task</td>
+                  <td class="popup-compliancetask"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Compliance Description</td>
+                  <td class="popup-description"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Format</td>
+                  <td class="popup-url"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Penal Consequences</td>
+                  <td class="popup-penalconse"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Compliance Frequency</td>
+                  <td class="popup-frequency"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Compliance Occurrence</td>
+                  <td class="popup-occurance"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Applicable Location</td>
+                  <td class="popup-applicablelocation"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Reference Link</td>
+                  <td class="popup-referencelink">
+                    <a target="new"> <span> </span> </a>
+                  </td>
+                </tr>
+              </tbody>
+          </table>
+      </div>
+  </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block contentscript %}
+  <script type="text/javascript" src="/js/fixedheader.js"></script>
+  <script type="text/javascript" src="/script/approve-statutory-mapping/approve-statutory-mapping.js"></script>
+{% endblock %}

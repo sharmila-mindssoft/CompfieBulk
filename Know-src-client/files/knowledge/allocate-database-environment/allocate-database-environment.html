@@ -1,0 +1,213 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container" id="allocate-server-view">
+  <div class="row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10">
+      <h4 class="page-title">Allocate Database Environment</h4>
+    </div>
+    <div class="col-sm-1"></div>
+  </div>
+  <div class="row">
+    <div id="animationSandbox">
+      <div class="col-sm-1"> </div>
+      <div class="col-sm-10">
+        <div class="card-box table-responsive clearfix">
+          <div class="col-sm-12">
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th width="1%">#</th>
+                  <th width="10%">Group</th>
+                  <th width="10%">Legal Entity</th>
+                  <th width="12%">Application Server</th>
+                  <th width="12%">Database Server</th>
+                  <th width="10%">File Server</th>
+                  <th width="06%" class="text-center">Action</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm js-filter" placeholder="Group" />
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm js-filter" placeholder="Legal Entity" />
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm js-filter" placeholder="Application Server" />
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm js-filter" placeholder="Database Server" />
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm js-filter" placeholder="File Server" />
+                    </div>
+                  </td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody class="tbody-allocate-server-list">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- end col -->
+  </div>
+</div>
+
+<div class="container default-display-none" id="allocate-server-add">
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-3"> </div>
+      <div class="col-sm-6">
+        <div class="portlet">
+          <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+              Allocate Database Environment
+            </h3>
+            <div class="portlet-widgets">
+              <a class="btn-cancel">
+                <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+              </a>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body">
+              <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+                <div style="border:1px solid #F5F5F5" class="col-sm-12">
+                  <div class="form-group bg-muted">
+                      <div class="col-sm-12">
+                          <h4 class="header-title">Group : <span class="group-name"></span></h4>
+                      </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Application Server <span class="mandatory">*</span></label>
+                    <div class="col-sm-6 controls">
+                      <input type="text" id="group-application-server-name" class="form-control input-sm" placeholder="Enter Application Server" tabindex="1" autofocus="autofocus">
+                      <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                      <input id="application_id" type="hidden" >
+                      <div id="ac-appliaction-server" class="ac-textbox default-display-none">
+                          <ul style="width:94%;"></ul>
+                      </div>
+                      <small>
+                        <span class="help-block appl-grp-ip-port"><!--<small></small>--></span>
+                      </small>
+                    </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Database Server <span class="mandatory">*</span></label>
+                    <div class="col-sm-6 controls">
+                      <input type="text" id="group-database-server-name" class="form-control input-sm" placeholder="Enter Database Server" tabindex="2"><i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                      <input id="database_server_id" type="hidden" >
+                      <div id="ac-grp-database-server" class="ac-textbox default-display-none">
+                          <ul style="width:94%;"></ul>
+                      </div>
+                      <small>
+                        <span class="help-block db-grp-ip-port"><!--<small></small>--></span>
+                      </small>
+                    </div>
+                  </div>
+                  <div class="form-group bg-muted">
+                    <div class="col-sm-12">
+                        <h4 class="header-title">Legal Entity :
+                        <span class="le-name"></span></h4>
+                    </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Application Server <span class="mandatory">*</span></label>
+                    <div class="col-sm-6 controls">
+                      <p class="form-control-static le-appl-server-name"></p>
+                      <small>
+                        <span class="help-block le-appl-server-ip-port"></span>
+                      </small>
+                    </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Database Server <span class="mandatory">*</span></label>
+                    <div class="col-sm-6 controls">
+                      <input type="text" id="le-database-server-name" class="form-control input-sm" placeholder="Enter Database Server" tabindex="4"><i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                      <input id="le_database_server_id" type="hidden" >
+                      <div id="ac-le-database-server" class="ac-textbox default-display-none">
+                          <ul style="width:94%;"></ul>
+                      </div>
+                      <small>
+                        <span class="help-block db-le-ip-port"><!--<small></small>--></span>
+                      </small>
+                    </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <label class="col-sm-offset-1 col-sm-3 control-label" for="example-input-small">File Server <span class="mandatory">*</span></label>
+                    <div class="col-sm-6 controls">
+                      <input type="text" id="le-file-server-name" class="form-control input-sm" placeholder="Enter File Server" tabindex="5"><i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                      <input id="le_file_server_id" type="hidden" >
+                      <div id="ac-le-file-server" class="ac-textbox default-display-none">
+                          <ul style="width:94%;"></ul>
+                      </div>
+                      <small>
+                        <span class="help-block file-le-ip-port"><!--<small></small>--></span>
+                      </small>
+                    </div>
+                  </div>
+                <center>
+                  <div class="form-group m-b-0">
+                    <button class="btn btn-primary waves-effect waves-light btn-submit" id="submit" type="submit" tabindex="6"> Submit </button>
+                  </div>
+                </center>
+              </div>
+              <div class="clear"></div><br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- end col -->
+</div>
+
+<div id="templates">
+  <table>
+    <tr class="table-row">
+      <td class="sno" align="center"></td>
+      <td class="group"></td>
+      <td class="le"></td>
+      <td class="application-server"></td>
+      <td class="db-server"></td>
+      <td class="file-server"></td>
+      <td class="icon-3x text-center">
+        <i class="fa c-pointer edit"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top" ></i>
+        <button class="btn btn-primary waves-effect m-l-5 btn-create" type="submit"> Create </button>
+      </td>
+    </tr>
+  </table>
+</div>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript" src="/script/allocate-database-environment/allocate-database-environment.js"></script>
+{% endblock %}

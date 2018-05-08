@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <style type="text/css">
+            .default-display-none {
+                display: none;
+            }
+        </style>
+        <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+        <link href='/css/core.css' rel='stylesheet' type='text/css'>
+        <link href="/css/pages.css" rel="stylesheet" type="text/css" />
+        <link href="/css/components.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div class='container'>
+            <div class=''>
+                <div class="site-logo text-center m-t-30 m-b-20"> <img src="/images/logo.png"> </div>
+                <div style="clear:both;"></div>
+                <div class="wrapper-page">
+                    <div class="m-t-30 card-box">
+                        <div class="text-center">
+                            <h4 class="text-uppercase font-bold m-b-0 p-b-10">Login</h4>
+                            <div class="login-error-message"><span></span></div>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="form-horizontal m-t-10">
+                                <div class="form-group has-feedback">
+                                    <div class="col-xs-12">
+                                        <input class="form-control" type="text" id="username" maxlength="20" placeholder="Username" value="">
+                                        <i class="glyphicon glyphicon-user glyphicon-2x form-control-feedback l-h-34"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <div class="col-xs-12">
+                                        <input class="form-control" type="password" id="password" placeholder="Password" value="" maxlength="20">
+                                        <i class="glyphicon glyphicon-lock glyphicon-2x form-control-feedback l-h-34"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group default-display-none" id="captcha-view">
+                                    <div class="col-xs-12">
+                                        <canvas id='captchaCanvas' width="100" height="30" style="background:#ffffff; float: left;"></canvas>
+                                        <span class="glyphicon glyphicon-refresh pull-left refresh-captcha" style="padding-top:6px; padding-left:8px; cursor: pointer;"></span>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <input class="form-control" type="text" id="txt-captcha" placeholder="Captcha" >
+                                    </div>
+                                </div>
+                                <div class="form-group text-center m-t-20">
+                                    <div class="col-sm-8 pull-left">
+                                        <a href="/knowledge/forgot-password" class="text-muted pull-left m-t-5"><i class="fa fa-lock m-r-5"></i> Forgot password?</a>
+                                    </div>
+                                    <div class="col-xs-4 pull-right">
+                                        <button class="btn btn-primary btn-bordred btn-block waves-effect waves-light text-uppercase" id="btn-login" type="submit">Login</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/script/login/login.js"></script>
+
+</html>

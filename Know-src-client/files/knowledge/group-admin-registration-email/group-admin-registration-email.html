@@ -1,0 +1,166 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container" id="table-group-admin-group-list" style="display: block;">
+  <div class="row">
+    <div class="col-lg-2"> </div>
+    <div class="col-lg-8">
+      <h4 class="page-title">Group Admin Registration Email</h4>
+    </div>
+    <div class="col-lg-2"> </div>
+  </div>
+  <div class="row">
+    <div id="animationSandbox">
+      <div class="col-lg-2"> </div>
+      <div class="col-lg-8">
+        <div class="panel panel-default panel-info">
+          <!-- /.panel-heading -->
+          <div class="panel-body card-box table-responsive m-b-0">
+            <div class="dataTable_wrapper">
+              <table  class="table table-striped dt-responsive nowrap highlight m-b-0 js-filtertable"  cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th align="center" width="2%">#</th>
+                    <th width="15%">Country</th>
+                    <th width="15%">Group</th>
+                    <th width="12%" class="text-center">No. of Legal Entity</th>
+                    <th width="15%" class="text-center">Registration Email</th>
+                    <th width="10%" class="text-center">Legal Entity</th>
+                  </tr>
+                  <tr>
+                    <td align="center"></td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm filter-text-box  js-filter"
+                        placeholder="Country Name" id="search-country-name" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm filter-text-box  js-filter" id="search-Group-name" placeholder="Group Name" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm filter-text-box  js-filter" id="search-no-legal-entity" placeholder="Legal Entity" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td class="text-center">&nbsp;</td>
+                    <td class="text-center">&nbsp;</td>
+                  </tr>
+                </thead>
+                <tbody class="tbody-grp-admin-email-list">
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container default-display-none" id="table-grp-admin-unit-list">
+  <div class="row">
+    <div id="animationSandbox">
+      <div class="col-lg-2"> </div>
+      <div class="col-lg-8">
+        <div class="portlet">
+          <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                Group Admin Registration Email
+            </h3>
+            <div class="portlet-widgets">
+                <a id="btn-back">
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body">
+              <div class="table-responsive">
+                <table  class="table table-striped dt-responsive nowrap highlight js-filtertable-le" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th align="center" width="2%">#</th>
+                      <th width="15%">Country</th>
+                      <th width="20%">Legal Entity</th>
+                      <th width="10%" class="text-center">No. of Units</th>
+                      <th width="15%" class="text-center">Unit Created</th>
+                      <th width="15%" class="text-center">Assigned Statutory</th>
+                    </tr>
+                    <tr >
+                      <td class="text-center"></td>
+                      <td>
+                        <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                          <input type="text" class="form-control input-sm js-filter-le" id="search-unit-country-name" placeholder="Country" />
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                          <input type="text" class="form-control input-sm js-filter-le" id="search-legal_entity-name" placeholder="Legal Entity" />
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                        </div>
+                      </td>
+                      <td class="text-center">
+                        <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                          <input type="text" class="form-control input-sm js-filter-le" id="search-no-of-units" placeholder="Units Count" />
+                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                        </div>
+                      </td>
+                      <td class="text-center">&nbsp;</td>
+                      <td class="text-center">&nbsp;</td>
+                    </tr>
+                  </thead>
+                  <tbody class="tbody-grp-admin-unit-email-list">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="templates">
+  <table class="table-group-admin-regn-master">
+    <tr class="table-row">
+      <td class="sno" align="center">
+        <input type="hidden" class="client-id">
+      </td>
+      <td class="Country"></td>
+      <td class="Group"></td>
+      <td class="No-of-legalentity"></td>
+      <td class="registration-email" align="center">
+        <input type="button" class="btn btn-sm btn-primary btn-send" value="Send" id="btnResend" />
+        <input type="button" class="btn btn-sm btn-primary btn-resend" value="Resend" id="btnResend" />
+      </td>
+      <td class="view-le" align="center">
+        <input type="button" class="btn btn-sm btn-primary" id="btnView" value="View" />
+      </td>
+    </tr>
+  </table>
+  <table class="table-group-admin-unit-master">
+    <tr class="table-row">
+      <td align="center" class="sno" align="center"></td>
+      <td class="Country"></td>
+      <td class="Legal-Entity"></td>
+      <td class="No-of-units text-center"></td>
+      <td class="unit-email" align="center">
+        <input type="button" class="btn btn-sm btn-primary btn-submit"id="btnunit" value="Send Email"/>
+      </td>
+      <td class="statutory-email" align="center">
+        <input type="button" class="btn btn-sm btn-primary btn-submit" id="btnstatutory" value="Send Email"/>
+      </td>
+    </tr>
+  </table>
+</div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript" src="/script/group-admin-registration-email/group-admin-registration-email.js"></script>
+{% endblock %}

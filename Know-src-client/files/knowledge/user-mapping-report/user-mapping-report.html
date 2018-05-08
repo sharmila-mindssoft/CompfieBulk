@@ -1,0 +1,192 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">User Mapping Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="countryval" value="" tabindex="1" placeholder="Enter Country">
+                                        <input type="hidden" id="country-id">
+                                        <div id="ac-country" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Group Name: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="2" placeholder="Enter Group">
+                                        <input type="hidden" id="group-id">
+                                        <div id="ac-group" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Business Group:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="businessgroupsval" value="" tabindex="3" placeholder="Enter Business Group">
+                                        <input type="hidden" id="businessgroupid">
+                                        <div id="ac-businessgroup" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="legalentityval" value="" tabindex="4" placeholder="Enter Legal Entity">
+                                        <input type="hidden" id="legalentityid">
+                                        <div id="ac-legalentity" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Division:</label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="divisionid" value="">
+                                        <input type="text" class="form-control input-sm" id="divisionval" value="" tabindex="5" placeholder="Enter Division">
+                                        <div id="ac-division" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Category:</label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="categoryid" value="">
+                                        <input type="text" class="form-control input-sm" id="categoryval" value="" tabindex="6" placeholder="Enter Category">
+                                        <div id="ac-category" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Unit:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="7"
+                                        placeholder="Enter Unit">
+                                        <input type="hidden" id="unitid">
+                                        <div id="ac-unit" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                            <div class="col-sm-12">
+                                <center>
+                                    <div class="form-group m-b-0 m-t-5">
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show-button" tabindex="8"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit" id="export" tabindex="9"> Export </button>
+                                    </div>
+                                </center>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                <div class="grid-table-rpt">
+                    <div class="table-responsive">
+                        <div class="col-sm-12">
+                            <div class="col-sm-12 text-center"><h4>User Mapping Report</h4></div>
+                            <div class="col-sm-4 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="countryval"></span></h6></div>
+                            <div class="col-sm-4 text-center"><h6>Group: <span style="margin-left:10px; font-weight:bold;" class="groupsval"> </span></h6></div>
+                            <div class="col-sm-4 text-center"><h6>Business Group: <span style="margin-left:10px; font-weight:bold;" class="bgroupsval"> </span></h6></div>
+                            <div class="col-sm-4 text-center"><h6>Legal Entity: <span style="margin-left:10px; font-weight:bold;" class="lentityval"></span></h6></div>
+                            <div class="col-sm-4 text-center"><h6>Division: <span style="margin-left:10px; font-weight:bold;" class="divisionval"></span></h6></div>
+                            <div class="col-sm-4 text-center"><h6>Category: <span style="margin-left:10px; font-weight:bold;" class="categoryval"></span></h6></div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead class="usermapping-header">
+                            <!-- <tr align="left" class="tr-heading">
+                              <th width="3%" align="center" class="header-bg">#</th>
+                              <th class="header-bg">Unit</th>
+                              <th class="header-bg">Techno Manager</th>
+                              <th class="header-bg">Techno User</th>
+                            </tr> -->
+                        </thead>
+                        <tbody class="tbody-usermappingdetails-list">
+                        </tbody>
+                    </table>
+                    <table class="pagination-view default-display-none">
+                      <tr>
+                        <td>
+                          <span class="compliance_count"> </span>
+                          <span class="divider-view"> | </span>
+                          <span class="items-per-page">
+                          Show
+                          <select id="items_per_page">
+                          </select>
+                          entries
+                          </span>
+                        </td>
+                        <td style="width:650px;"></td>
+                        <td style="text-align:right;padding-right:10px;">
+                          <ul id="pagination-rpt"></ul>
+                        </td>
+                      </tr>
+                    </table>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="templates">
+    <table>
+        <tr align="left" class="tr-heading">
+          <th width="3%" align="center" class="header-bg">#</th>
+          <th class="header-bg">Unit</th>
+          <th class="header-bg">Techno Manager</th>
+          <th class="header-bg">Techno User</th>
+        </tr>
+        <tr class="table-row" >
+          <td align="center" class="sno"></td>
+          <td class="unit-name"></td>
+          <td class="techno-manager"></td>
+          <td class="techno-user"></td>
+        </tr>
+    </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+    <tr align="left" class="table-row-no-content">
+      <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em;"></td>
+    </tr>
+  </table>
+</div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript" src="/script/user-mapping-report/usermappingreport.js"></script>
+{% endblock %}

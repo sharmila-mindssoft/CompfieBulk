@@ -1,0 +1,148 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div id="animationSandbox">
+      <div class="col-sm-2"> </div>
+      <div class="col-sm-8">
+        <div class="portlet">
+          <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                Statutory Level Master
+            </h3>
+            <div class="portlet-widgets">
+                <!--<a href="#" onclick="location.href='/statutory-level-master/list'" >
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>-->
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body p-b-0">
+              <div class="form-horizontal group-border-dashed">
+                <div class="col-lg-6">
+                  <div class="form-group has-feedback m-b-20">
+                    <label class="col-sm-4 control-label" for="example-input-small">Country Name <span class="mandatory">*</span></label>
+                    <div class="col-sm-8 controls">
+                      <input type="text" id="countryval" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="" tabindex="1">
+                      <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                      <input id="country" type="hidden" >
+                      <div id="ac-country" class="ac-textbox default-display-none">
+                        <ul style="width:94%;"></ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group has-feedback m-b-20">
+                    <label class="col-sm-4 control-label" for="example-input-small">Domain Name <span class="mandatory">*</span></label>
+                    <!--div class="col-sm-6 controls">
+                      <input type="text" class="form-control input-sm" placeholder="Enter Domain Name" id="domainval" tabindex="2">
+                      <input type="hidden" id="domain">
+                      <div id="ac-domain" class="ac-textbox default-display-none">
+                        <ul style="width: 85%"></ul>
+                      </div>
+                    </div-->
+                    <div class="col-sm-8 controls">
+                      <input type="text" id="domainval" name="example-input-small" class="form-control input-sm" placeholder="Enter Domain Name" value="" tabindex="2">
+                      <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                      <input id="domain" type="hidden" >
+                      <div id="ac-domain" class="ac-textbox default-display-none">
+                        <ul style="width:94%;"></ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+          <div class="table-responsive p-l-20 p-r-20">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th class="col-sm-1">Level</th>
+                    <th class="col-sm-5">Title Name</th>
+                    <th class="col-sm-1">Level</th>
+                    <th class="col-sm-5">Title Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>
+                      <input type="text" id="level1" class="form-control input-sm" placeholder="Title Name" maxlength="30" tabindex="3" />
+                      <input type="hidden" id="levelid1" class="input-box hiddenvalue"/>
+                    </td>
+                    <td>6</td>
+                    <td>
+                      <input type="text" id="level6" class="form-control input-sm" placeholder="Title Name" maxlength="30" tabindex="8"/>
+                      <input type="hidden" id="levelid6" class="input-box hiddenvalue"/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>
+                      <input type="text" id="level2" name="example-input-small" class="form-control input-sm" placeholder="Title Name"  tabindex="4" maxlength="30">
+                      <input type="hidden" id="levelid2" class="input-box hiddenvalue"/>
+                    </td>
+                    <td>7</td>
+                    <td>
+                      <input type="text" id="level7" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="9" maxlength="30">
+                      <input type="hidden" id="levelid7" class="input-box hiddenvalue"/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>
+                      <input type="text" id="level3" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="5" maxlength="30">
+                      <input type="hidden" id="levelid3" class="input-box hiddenvalue"/>
+                    </td>
+                    <td>8</td>
+                    <td>
+                      <input type="text" id="level8" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="10" maxlength="30">
+                      <input type="hidden" id="levelid8" class="input-box hiddenvalue"/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>
+                      <input type="text" id="level4" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="6" maxlength="30">
+                      <input type="hidden" id="levelid4" class="input-box hiddenvalue"/>
+                    </td>
+                    <td>9</td>
+                    <td>
+                      <input type="text" id="level9" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="11" maxlength="30">
+                      <input type="hidden" id="levelid9" class="input-box hiddenvalue"/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>
+                    <input type="text" id="level5" name="example-input-small" class="form-control input-sm" placeholder="Title Name" tabindex="7" maxlength="30">
+                      <input type="hidden" id="levelid5" class="input-box hiddenvalue"/>
+                    </td>
+                    <td>10</td>
+                    <td>
+                      <input type="text" id="level10" name="example-input-small" class="form-control input-sm" placeholder="Title Name"  tabindex="12" maxlength="30">
+                      <input type="hidden" id="levelid10" class="input-box hiddenvalue"/>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+          </div>
+          <div class="form-group text-center m-b-15 m-t-15">
+            <button class="btn btn-primary waves-effect waves-light m-t-5 m-b-5" type="submit"id="submit" tabindex="13"> Submit </button>
+            <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/geography-level-master/list'"> Cancel </button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block contentscript %}
+  <script type="text/javascript" src="/script/statutory-level-master/statutorylevelmaster.js">
+  </script>
+{% endblock %}

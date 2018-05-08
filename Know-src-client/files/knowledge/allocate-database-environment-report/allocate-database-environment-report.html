@@ -1,0 +1,151 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-2"> </div>
+        <div class="col-sm-8">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Allocate Server Report</h3>
+                    <div class="portlet-widgets">
+
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div class="form-horizontal group-border-dashed">
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback" >
+                                    <label class="col-sm-4 control-label">Group:</label>
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control input-sm" placeholder="Enter Group Name" id="groupsval" tabindex="1">
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="group-id">
+                                        <div id="ac-group" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                    <label class="col-sm-4 control-label">Legal Entity:</label>
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control input-sm" id="legalentityval" value="" tabindex="2" placeholder="Enter Legal Entity">
+                                        <input type="hidden" id="legalentityid">
+                                        <div id="ac-legalentity" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <center>
+                                <div class="form-group m-b-0">
+                                    <button class="btn btn-primary waves-effect waves-light btn-show" type="button" tabindex="3"> Show </button>
+                                    <button class="btn btn-info waves-effect waves-light btn-export" type="button" tabindex="4"> Export </button>
+                                </div>
+                            </center>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                    <div class="grid-table-rpt">
+                        <div class="table-responsive">
+                            <div class="col-sm-12">
+                                <div class="col-sm-12 text-center">
+                                    <h4 class="m-t-0">Allocate Server Report</h4>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="01%">#</th>
+                                        <th width="08%">Group</th>
+                                        <th width="10%">Legal Entity</th>
+                                        <th width="10%">Application Server</th>
+                                        <th width="10%">Database Server</th>
+                                        <th width="10%">File Server</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tbody-allocate-db-env-list">
+                                </tbody>
+                            </table>
+                            <table class="pagination-view default-display-none" width="100%">
+                              <tr>
+                                <td>
+                                  <span class="compliance_count"> </span>
+                                  <span class="divider-view"> | </span>
+                                  <span class="items-per-page">
+                                  Show
+                                  <select id="items_per_page">
+                                  </select>
+                                  entries
+                                  </span>
+                                </td>
+                                <td></td>
+                                <td style="text-align:right;padding-right:10px;">
+                                  <ul id="pagination-rpt"></ul>
+                                </td>
+                              </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!-- end col -->
+    </div>
+</div>
+
+<div id="templates">
+    <table class="table-allocate-db-env-list">
+        <tr class="allocate-grp-list">
+            <td class="sno"></td>
+            <td>
+                <a class="appl-group-name c-pointer"></a>
+            </td>
+            <td></td>
+            <td class="grp-appl-name"></td>
+            <td class="grp-db-name"></td>
+            <td></td>
+        </tr>
+        <tr class="allocate-grp-inner-list" style="display: none;">
+            <td colspan="1">&nbsp;</td>
+            <td colspan="100%">
+                <ul class="tree">
+                    <li>
+                        <table width="100%" class="inner-table">
+                            <tbody>
+                                <tr class="smallfont">
+                                   <td width="14%">&nbsp;</td>
+                                   <td width="18%" class="le-name"></td>
+                                   <td width="19%">&nbsp;</td>
+                                   <td width="19%" class="inner-db-name p-l-10"></td>
+                                   <td width="17%" class="inner-file-name p-l-8"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+  <tr align="left" class="table-row-no-content">
+  <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+  </tr>
+  </table>
+</div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript" src="/script/allocate-database-environment-report/allocate-database-environment-report.js"></script>
+{% endblock %}

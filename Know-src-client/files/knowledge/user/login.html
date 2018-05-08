@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<head>
+  <link href='/files/knowledge/common/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+  <link href='/files/knowledge/common/css/core.css' rel='stylesheet' type='text/css'>
+</head>
+<body>
+  <div class='container'>
+
+    <div class='panel dialog-panel'>
+	    <div class="site-logo text-center m-t-20 m-b-20"> 
+      <img src="/files/knowledge/common/images/logo.png"> 
+    </div>
+
+      
+      <div style="clear:both;"></div>
+      <div class='card-box col-lg-6  m-t-20 col-md-offset-3'>
+	  <div class="text-center">
+        <h3 style="color:#fc9b01;">Create Login Credentials</h3>
+        <p>Use the form below to create login credentials that can be used for compfie.</p>
+      </div>
+        <form class='form-horizontal' role='form'>
+          <div class="form-group">
+            <label for="id_email" class="control-label col-md-3">User ID</label>
+            <div class="col-md-8">
+              <div class="form-group">
+                <div class="col-md-10">
+                  <input type="text" placeholder="Enter User ID" class="form-control">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="id_email" class="control-label col-md-3 ">Password</label>
+            <div class="col-md-8">
+              <div class="form-group">
+                <div class="col-md-10">
+                  <input type="password" placeholder="Enter Password" class="form-control">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="id_email" class="control-label col-md-3">Confirm Password</label>
+            <div class="col-md-8">
+              <div class="form-group">
+                <div class="col-md-10">
+                  <input type="password" placeholder="Enter Confirm Password" class="form-control">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="form-group">
+            <label for="id_email" class="control-label col-md-3 col-md-offset-2"></label>
+            <div class="col-md-4">
+              <div class="form-group">
+                <div class="col-md-10" >
+                  <canvas id='captchaCanvas' width="200" height="30" style="background:#ffffff"></canvas>
+                  <input type="text" placeholder="Enter Captcha Code" class="form-control">
+                </div>
+              </div>
+            </div>
+          </div> -->
+
+          <div class="form-group">
+            <label for="id_email" class="control-label col-md-3"></label>
+            <div class="col-md-9">
+              <div class="form-group">
+                <div class="col-md-12" >
+                <table>
+                  <tr>
+                  <td width="40%" >
+                    <canvas id='captchaCanvas' width="100" height="30" style="background:#ffffff"></canvas>
+                  </td>
+                  <td width="60%">
+                    <input type="text" placeholder="Enter Captcha Code" class="form-control">
+                  </td>
+                  </tr>
+                </table>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class='form-group'>
+            <div class='col-md-offset-5 col-md-3'>
+              <button class='btn btn-primary' type='submit'>Register</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    
+  </div>
+  <br><br><br><br><br><br>
+  <div style="background: #000000; padding:20px; position: absolute; bottom:0px; width:100%;">
+    <div style="font-size:12px; color:#ffffff;" class='col-md-offset-4 col-md-4'>
+      <center>© Aparajitha Corporate Services Private Limited &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</center>
+    </div>
+    <br>
+  </div>
+
+</body>
+
+  <script type="text/javascript" src="/files/knowledge/common/js/jquery.min.js"></script>
+<script>
+$(function(){
+  var tCtx = document.getElementById('captchaCanvas').getContext('2d');
+  tCtx.font = '22px Arial';
+  tCtx.strokeText("VG92M", 10, 20);
+});
+</script>

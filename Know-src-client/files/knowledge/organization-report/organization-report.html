@@ -1,0 +1,120 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-2"> </div>
+    <div class="col-sm-8">
+      <div class="portlet">
+        <div class="portlet-heading bg-info">
+          <h3 class="portlet-title">Organization Master Report</h3>
+          <div class="portlet-widgets">
+            <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+            </a> -->
+          </div>
+          <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+          <div class="portlet-body">
+            <div class="table-responsive">
+            <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable"
+            cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th width="1%">#</th>
+                  <th width="20%">Country</th>
+                  <th width="20%">Domain</th>
+                  <th width="20%">Organization</th>
+                  <th width="12%">Status</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                      <input type="text" class="form-control input-sm js-filter" id="search-country-name" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                      <input type="text" class="form-control input-sm js-filter" id="search-domain-name" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                      <input type="text" class="form-control input-sm js-filter" id="search-organization-name" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                     <div class="btn-group m-t-10 m-b-10">
+                        <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                            <i id="search-status" class="fa">All</i>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu no-bdr search-status-list">
+                            <li value="all" class="search-status-li active"><a href="#" onclick="return false;">All</a></li>
+                            <li value="1" class="search-status-li text-success"><a href="#" onclick="return false;">Active</a></li>
+                            <li value="0" class="search-status-li text-danger"><a href="#" onclick="return false;">Inactive</a></li>
+                        </ul>
+                    </div>
+                  </td>
+                </tr>
+              </thead>
+              <tbody class="tbody-organization-list">
+              </tbody>
+            </table>
+            <table class="pagination-view default-display-none">
+              <tr>
+                <td>
+                  <span class="compliance_count"> </span>
+                  <span class="divider-view"> | </span>
+                  <span class="items-per-page">
+                  Show
+                  <select id="items_per_page">
+                  </select>
+                  entries
+                  </span>
+                </td>
+                <td style="width:250px;"></td>
+                <td style="text-align:right;padding-right:10px;">
+                  <ul id="pagination-rpt"></ul>
+                </td>
+              </tr>
+            </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+
+<div id="templates">
+<table class="table-organization-report">
+  <tr class="table-row">
+    <td class="sno"></td>
+    <td class="country-name"></td>
+    <td class="domain-name"></td>
+    <td class="organization-name"></td>
+    <td>
+    <span class="status" align="center"></span>
+    </td>
+  </tr>
+</table>
+</div>
+
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+  <tr align="left" class="table-row-no-content">
+  <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+  </tr>
+  </table>
+</div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript" src="/script/organization-report/organization-report.js">
+</script>
+{% endblock %}

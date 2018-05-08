@@ -1,0 +1,140 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-3"> </div>
+        <div class="col-sm-6">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Form  Authorization - IP Settings Report</h3>
+                    <div class="portlet-widgets">
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+    
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group has-feedback" >
+                          <label class="col-sm-3 control-label">Group:</label>
+                            <div class="col-sm-9 controls">
+                              <input type="text" class="form-control input-sm" id="groupval" placeholder="Enter Group" tabindex="1">
+                              <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                              <input type="hidden" id="group">
+                              <div id="ac-group" class="ac-textbox default-display-none">
+                                  <ul style="width:85%;"></ul>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                          <label class="col-sm-3 control-label">IP:</label>
+                          <div class="col-md-9">
+                            <input type="text" data-mask="999.999.999.9999" id="ip-address" class="form-control input-sm" placeholder="">
+                            <span class="font-13 text-muted">e.g: "192.168.110.310"</span>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="form-group text-center m-b-0">
+                        <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
+                        <button class="btn btn-info waves-effect waves-light btn-export" type="button"> Export </button>
+                    </div>
+                       
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+                
+                </div>
+                <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                <div class="table-responsive">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><h4 class="m-t-0">Form  Authorization - IP Settings Report</h4></div>
+                    </div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="15%">Group Name</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-form-list">
+                           
+                        </tbody>
+                    </table>
+
+                    <table class="pagination-view default-display-none" style="width:100%">
+                      <tr>
+                        <td style="align:left">
+                          <span class="compliance_count"> </span>
+                          <span class="divider-view"> | </span>
+                          <span class="items-per-page">
+                          Show
+                          <select id="items_per_page">
+                          </select>
+                          entries
+                          </span>
+                        </td>
+                        
+                        <td style="text-align:right;padding-right:10px;">
+                          <ul id="pagination-rpt"></ul>
+                        </td>
+                      </tr>
+                    </table>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+
+<div id="templates">
+    <table class="table-no-record">
+        <tr>
+        <td colspan="2" align="center"> No Records Found</td>
+        </tr>
+    </table>
+
+    <table class="table-form-list">
+        <tr class="table-row-head">
+            <td class="sno"></td>
+            <td>
+                <a class="waves-effect waves-light c-pointer group-name" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="collapseExample"></a>
+            </td>
+        </tr>
+
+        <tr class="collapse table-row-child">
+            <td colspan="100%">
+                <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th width="15%">Form Name</th>
+                        <th width="15%">IP Details</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+
+        <tr class="table-row-forms">
+            <td class="form-name"></td>
+            <td class="ip-address"></td>
+        </tr>
+
+    </table>
+
+</div>
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/ip-settings-report/ip-settings-report.js"></script>
+{% endblock %}

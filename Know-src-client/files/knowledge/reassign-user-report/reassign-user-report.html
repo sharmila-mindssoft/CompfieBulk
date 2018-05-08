@@ -1,0 +1,371 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Reassign User Report</h3>
+                    <div class="portlet-widgets">
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                  <div class="portlet-body">
+                    <div class="form-horizontal group-border-dashed">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">Category: <span class="mandatory">*</span></label>
+                          <div class="col-sm-6">
+                            <select class="form-control input-sm" id="usercategory" tabindex="1">
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback filter-group" >
+                          <label class="col-sm-4 control-label">Group:<span class="mandatory" id="te" style="display: none;">*</span></label>
+                          <div class="col-sm-6">
+                            <input type="text" class="form-control input-sm" placeholder="Enter Group Name" id="groupsval" value="" tabindex="3">
+                            <i class="form-control-feedback fa fa-search"></i>
+                            <input type="hidden" id="group-id">
+                            <div id="ac-group" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback filter-legal"  style="display: none;">
+                          <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                          <div class="col-md-6">
+                            <input type="text" class="form-control input-sm" id="legalentityval" value="" tabindex="5">
+                            <input type="hidden" id="legalentityid">
+                            <div id="ac-legalentity" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+                            <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group has-feedback techno-mgr">
+                          <label class="col-sm-4 control-label">
+                            <span class="user_category_name">Techno Manager:</span>
+                            <span class="mandatory">*</span>
+                          </label>
+                          <div class="col-sm-6">
+                            <input type="text" class="form-control input-sm" id="managerval" value="" tabindex="2">
+                            <i class="form-control-feedback fa fa-search"></i>
+                            <input type="hidden" id="manager-id">
+                            <div id="ac-user" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback filter-business" style="display: none;">
+                          <label class="col-sm-4 control-label">Business Group:</label>
+                          <div class="col-md-6">
+                            <input type="text" class="form-control input-sm" id="businessgroupsval" value=""  tabindex="4">
+                            <input type="hidden" id="businessgroupid">
+                            <div id="ac-businessgroup" class="ac-textbox default-display-none" >
+                              <ul style="width:85%;"></ul>
+                            </div>
+                            <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback filter-domain" style="display: none;">
+                          <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
+                          <div class="col-md-6">
+                            <input type="hidden" id="domainid">
+                            <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="6">
+                            <div id="ac-domain" class="ac-textbox default-display-none">
+                              <ul style="width:85%;"></ul>
+                            </div>
+                            <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <center>
+                          <div class="form-group m-t-5 m-b-0">
+                            <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
+                            <button class="btn btn-info waves-effect waves-light" type="submit" id="export" tabindex="9"> Export </button>
+
+                          </div>
+                        </center>
+                      </div>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                  <div class="table-responsive techno-manager">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><h4 class="m-t-0">Reassign User Report</h4></div>
+                        <div class="col-sm-6 text-center"><h6>Category: <span style="margin-left:10px; font-weight:bold;" class="categoryval"></span></h6></div>
+                        <div class="col-sm-6 text-center"><h6>User: <span style="margin-left:10px; font-weight:bold;" class="userval"></span></h6></div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="10%">Country</th>
+                                <th width="13%">Group</th>
+                                <th width="10%" class="text-center">No.of Legal Entity</th>
+                                <th width="10%">Assign Date</th>
+                                <th width="10%">Assigned</th>
+                                <th width="10%">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-reassignuserrpt-techno-manager-list">
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <!-- techno exe. start -->
+                <div class="table-responsive techno-executive" style="display:none;">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><h4 class="m-t-0">Reassign User Report</h4></div>
+                        <div class="col-sm-6 text-center"><h6>Category: <span style="margin-left:10px; font-weight:bold;" class="categoryval"></span></h6></div>
+                        <div class="col-sm-6 text-center"><h6>User: <span style="margin-left:10px; font-weight:bold;" class="userval"></span></h6></div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="10%">Group</th>
+                                <th width="10%">Business Group</th>
+                                <th width="10%">Country</th>
+                                <th width="10%">Legal Entity</th>
+                                <th width="10%">Assign Date</th>
+                                <th width="10%">Assigned</th>
+                                <th width="10%">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-reassignuserrpt-techno-exec-list">
+                        </tbody>
+                      </table>
+                </div>
+
+                <!-- domain manager start -->
+                <div class="table-responsive domain-user" style="display:none;">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><h4 class="m-t-0">Reassign User Report</h4></div>
+                        <div class="col-sm-4 text-center"><h6>Category: <span style="margin-left:10px; font-weight:bold;" class="categoryval"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>User: <span style="margin-left:10px; font-weight:bold;" class="userval"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>Group: <span style="margin-left:10px; font-weight:bold;" class="groupval"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>Business Group: <span style="margin-left:10px; font-weight:bold;" class="bgval"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>Legal Entity: <span style="margin-left:10px; font-weight:bold;" class="leval"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>Domain: <span style="margin-left:10px; font-weight:bold;" class="domainval"></span></h6></div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="10%">Unit Code</th>
+                                <th width="10%">Unit Name</th>
+                                <th width="10%">Unit Location</th>
+                                <th width="10%">Assign Date</th>
+                                <th width="10%">Assigned</th>
+                                <th width="10%">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-reassignuserrpt-domain-user-list">
+                        </tbody>
+                    </table>
+
+                </div>
+                <table class="pagination-view default-display-none">
+                  <tr>
+                    <td>
+                      <span class="compliance_count"> </span>
+                      <span class="divider-view"> | </span>
+                      <span class="items-per-page">
+                      Show
+                      <select id="items_per_page">
+                      </select>
+                      entries
+                      </span>
+                    </td>
+                    <td style="width:650px;"></td>
+                    <td style="text-align:right;padding-right:10px;">
+                      <ul id="pagination-rpt"></ul>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        <!-- end col -->
+    </div>
+</div>
+
+<div id="templates">
+  <table class="techno-manager">
+    <tr class="table-row">
+      <td class="sno">#</td>
+      <td class="country-name">Country</td>
+      <td class="group-name c-pointer"></td>
+      <td align="center" class="no-of-le">
+      </td>
+      <td class="assigned-date">Assigned Date</td>
+      <td class="assigned">Assigned</td>
+      <td class="remarks">Remarks</td>
+    </tr>
+    <tr class="tree-open-close">
+      <td class="sno">#</td>
+      <td class="country-name">Country</td>
+      <td class="group-name c-pointer"></td>
+      <td align="center" class="no-of-le"></td>
+      <td class="assigned-date">Assigned Date</td>
+      <td class="assigned">Assigned</td>
+      <td class="remarks">Remarks</td>
+    </tr>
+    <tr class="tree-data">
+      <td colspan="2">&nbsp;</td>
+      <td colspan="100%">
+          <ul class="tree">
+              <li>
+                  <table width="100%">
+                      <tbody>
+                          <tr class="smallfont">
+                             <td width="20%">&nbsp;</td>
+                             <td width="20%">&nbsp;</td>
+                             <td width="18%" class="assigned-date p-l-7" align="left"></td>
+                             <td width="18%" class="assigned p-l-7" align="left"></td>
+                             <td width="16%" class="remarks p-l-7" align="left"></td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </li>
+          </ul>
+      </td>
+  </tr>
+
+  </table>
+  <table class="techno-exec">
+    <tr class="table-row">
+      <td class="sno">#</td>
+      <td class="group-name">Group</td>
+      <td class="bg-name">Business Group</td>
+      <td class="country-name">Country</td>
+      <td align="center">
+        <a class="no-of-le c-pointer"></a>
+      </td>
+      <td class="assigned-date">Assigned Date</td>
+      <td class="assigned">Assigned</td>
+      <td class="remarks">Remarks</td>
+    </tr>
+    <tr class="tree-open-close">
+      <td class="sno">#</td>
+      <td class="group-name">Group</td>
+      <td class="bg-name">Business Group</td>
+      <td class="country-name">Country</td>
+      <td align="center">
+        <a class="no-of-le c-pointer"></a>
+      </td>
+      <td class="assigned-date">Assigned Date</td>
+      <td class="assigned">Assigned</td>
+      <td class="remarks">Remarks</td>
+    </tr>
+    <tr class="tree-data">
+      <td colspan="4">&nbsp;</td>
+      <td colspan="100%">
+          <ul class="tree">
+              <li>
+                  <table width="100%">
+                      <tbody>
+                          <tr class="smallfont">
+                             <td width="16%">&nbsp;</td>
+                             <td width="17%" class="assigned-date p-l-4"></td>
+                             <td width="17%" class="assigned p-l-8"></td>
+                             <td width="16%" class="remarks p-l-10">Sample remarks</td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </li>
+          </ul>
+      </td>
+  </tr>
+  </table>
+  <table class="domain-user">
+    <tr class="table-row">
+      <td class="sno">#</td>
+      <td class="country-name">Unit Code</td>
+      <td>
+        <a class="u-name c-pointer">
+          <span class="unit-name"></span>
+        </a>
+      </td>
+      <td class="no-of-le">Unit Location</td>
+      <td class="assigned-date">Assigned Date</td>
+      <td class="assigned">Assigned</td>
+      <td class="remarks">Remarks</td>
+    </tr>
+    <tr class="tree-open-close">
+      <td class="sno">#</td>
+      <td class="country-name">Unit Code</td>
+      <td>
+        <a class="u-name c-pointer">
+          <span class="unit-name"></span>
+        </a>
+      </td>
+      <td class="no-of-le">Unit Location</td>
+      <td class="assigned-date">Assigned Date</td>
+      <td class="assigned">Assigned</td>
+      <td class="remarks">Remarks</td>
+    </tr>
+    <tr class="tree-data">
+        <td colspan="2">&nbsp;</td>
+        <td colspan="100%">
+            <ul class="tree">
+                <li>
+                    <table width="100%">
+                        <tbody>
+                            <tr class="smallfont">
+                               <td width="18%">&nbsp;</td>
+                               <td width="15%">&nbsp;</td>
+                               <td width="17%" class="assigned-date">01-Jun-2016</td>
+                               <td width="17%" class="assigned">EMP0011 - Murali</td>
+                               <td width="16%" class="remarks">Sample remarks</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </ul>
+        </td>
+    </tr>
+  </table>
+
+
+</div>
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+    <tr align="left" class="table-row-no-content">
+        <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em;"></td>
+    </tr>
+  </table>
+</div>
+<div class="category-drop-down">
+    <option value=""></option>
+</div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.tree-open-close').click(function() {
+        //$('.tree-data').show( "slow" );
+        //$('.tree-data').slideToggle();
+        $('.tree-data').toggle("slow");
+    });
+});
+</script>
+<script type="text/javascript" src="/script/reassign-user-report/reassign-user-report.js">
+
+</script>
+
+{% endblock %}

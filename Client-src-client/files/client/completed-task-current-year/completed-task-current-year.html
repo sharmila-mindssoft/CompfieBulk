@@ -1,0 +1,268 @@
+{% extends "files/client/common/html/container.html" %} {% block content %}
+<div class="content-page">
+    <div class="content">
+        <div class="container page_font_size_13">
+            <div class="row" id="animationSandbox">
+                <div class="col-sm-12">
+
+                    <div class="portlet">
+                        <div class="portlet-heading bg-info">
+                            <h3 class="portlet-title">Completed Task - Current Year</h3>
+                            <div class="portlet-widgets">
+
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="bg-primary1" class="panel-collapse collapse in">
+                            <div class="portlet-body">
+                                <!-- <form> -->
+                                <div id="basicwizard">
+                                    <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
+                                        <li class="tab-step-1 active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. Select Unit</a></li>
+                                        <li class="tab-step-2 disabled"><a href="#tab2" data-toggle="tab">2. Select Domain</a></li>
+                                        <li class="tab-step-3 disabled"><a href="#tab3" data-toggle="tab">3. Select Compliance</a></li>
+                                    </ul>
+                                    <div class="tab-content b-0 m-b-0 task-current-year-tab">
+                                        <div class="tab-pane m-t-0 fade active in box-height-350" id="tab1">
+                                            <div class="row">
+                                                <div class="col-sm-12 scroll_box">
+
+                                                    <div class="table-responsive">
+                                                        <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list" width="100%" cellspacing="0">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="width-50">
+                                                                        <h6 class="m-t-0">Legal Entity <span class="mandatory">*</span></h6>
+                                                                        <div class="form-group has-feedback">
+                                                                            <input class="form-control input-sm filter-list legalentity" placeholder="Enter Legal Entity" type="text">
+                                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                                        </div>
+                                                                        <ul class="list-unstyled  box-height-150" id="legalentity">
+
+                                                                        </ul>
+                                                                    </td>
+                                                                    <td class="width-50">
+                                                                        <h6 class="m-t-0">Division</h6>
+                                                                        <div class="form-group has-feedback">
+                                                                            <input class="form-control input-sm filter-list division" placeholder="Enter Division" type="text">
+                                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                                        </div>
+                                                                        <ul class="list-unstyled  box-height-150" id="division">
+
+
+                                                                        </ul>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12 scroll_box">
+                                                    <div class="table-responsive">
+                                                        <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list" width="100%" cellspacing="0">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="width-50">
+                                                                        <h6 class="m-t-0">Category</h6>
+                                                                        <div class="form-group has-feedback">
+                                                                            <input class="form-control input-sm filter-list category" placeholder="Enter Category" type="text">
+                                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                                        </div>
+                                                                        <ul class="list-unstyled  box-height-150" id="category">
+
+                                                                        </ul>
+                                                                    </td>
+                                                                    <td class="width-50">
+                                                                        <h6 class="m-t-0">Unit <span class="mandatory">*</span></h6>
+                                                                        <div class="form-group has-feedback">
+                                                                            <input class="form-control input-sm filter-list units" placeholder="Enter Unit" type="text">
+                                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                                        </div>
+                                                                        <ul class="list-unstyled box-height-150" id="units">
+
+                                                                        </ul>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane m-t-0 fade box-height-350" id="tab2">
+                                            <div class="row">
+                                                <div class="col-sm-12 scroll_box">
+                                                    <div class="table-responsive">
+                                                        <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list" width="100%" cellspacing="0">
+                                                            <tbody>
+                                                                <tr class="height-400">
+                                                                    <td class="width-32">
+                                                                        <h6 class="m-t-0">Domain <span class="mandatory">*</span></h6>
+                                                                        <div class="form-group has-feedback">
+                                                                            <input class="form-control input-sm filter-list domain" placeholder="Enter Domain" type="text">
+                                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                                        </div>
+                                                                        <ul class="list-unstyled box-height-350" id="domain">
+
+                                                                        </ul>
+                                                                    </td>
+                                                                    <td class="width-33">
+                                                                        <h6 class="m-t-0">Act</h6>
+                                                                        <div class="form-group has-feedback">
+                                                                            <input class="form-control input-sm filter-list level_1" placeholder="Enter Act" type="text">
+                                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                                        </div>
+                                                                        <ul class="list-unstyled box-height-350" id="level_1">
+
+                                                                        </ul>
+                                                                    </td>
+                                                                    <td>
+                                                                        <h6 class="m-t-0">Frequency <span class="mandatory">*</span></h6>
+                                                                        <div class="form-group has-feedback">
+                                                                            <input class="form-control input-sm filter-list frequency" placeholder="Enter Frequency" type="text">
+                                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                                        </div>
+                                                                        <ul class="list-unstyled box-height-350" id="frequency">
+
+                                                                        </ul>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane m-t-0 fade" id="tab3">
+                                            <div class="panel-group col-lg-12 accordian-past-records" id="accordion" role="tablist" aria-multiselectable="true">
+
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </div>
+
+                                        <center>
+                                            <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light default-display-none btn-showmore">Show More</button>
+                                        </center>
+
+                                        <div class="total_count_view default-display-none">
+                                            <br> <span class="total_count"></span>
+                                        </div>
+
+                                        <ul class="pager wizard m-b-0">
+                                            <li id="btn-previous" class="previous"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                            <li class="next" id="btn-next"><a class="btn btn-primary waves-effect waves-light">Next</a></li>
+                                            <li id="btn-submit" class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!--  </form> -->
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="templates">
+    <div class="ul-row">
+        <ul>
+            <li></li>
+        </ul>
+    </div>
+    <div class="accordion-list">
+        <div class="panel panel-default bx-shadow-none">
+            <div class="panel-heading p-0" role="tab" id="headingOne">
+                <h4 class="panel-title ">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 actname"></a>
+                    <div class="clearfix"></div>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse coll-title collapse " role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body no-padding">
+                    <div class="dataTable_wrapper top-lightborder">
+                        <div class="table-responsive">
+                            <table class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="22%">Compliance Task</th>
+                                        <th width="07%">Compliance Frequency</th>
+                                        <th width="12%">Statutory Date</th>
+                                        <th width="10%">Due Date<span class="mandatory">*</span></th>
+                                        <th width="10%">Completion Date<span class="mandatory">*</span></th>
+                                        <th width="13%">Document Upload</th>
+                                        <th width="12%">Assignee<span class="mandatory">*</span></th>
+                                        <th width="11%">Compliance Status<span class="mandatory">*</span></th>
+                                        <th width="03%">Completed<span class="mandatory">*</span></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="tbody-pastRecords">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="statutory-values" class="default-display-none">
+        <table class="table-statutory-values">
+            <tr class="compliance-details">
+                <input type="hidden" class="combineid-class" />
+                <td class="compliancetask"><i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title=""></i> <span></span></td>
+                <td class="compliancefrequency"></td>
+                <td class="statutorydate"></td>
+                <td class="duedate"></td>
+                <td class="completiondate"></td>
+
+                <td class="documentupload"></td>
+                <td class="assignee">
+
+                </td>
+                <td class="comp-status">
+                    <select class="form-control  input-sm">
+                <option value="Complied">Complied</option>
+                <option value="Delayed Complied">Delayed Complied</option>
+                <option value="Not Complied"></option>
+              </select>
+                </td>
+                <td class="text-center">
+                    <div class="checkbox completedtask checkbox-primary m-b-0 m-t-0 completedstatus ctcy-chkbox">
+                        <input id="checkbox8" type="checkbox" class="text-center ">
+                        <label for="checkbox8"></label>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <table style="width:100%" class="table-no-record">
+        <tr style="width:100%">
+            <td style="text-align:center; height:50px; vertical-align: middle">No Records Found</td>
+        </tr>
+    </table>
+</div>
+
+
+{% endblock %} {% block contentscript %}
+<script type="text/javascript" src="/script/completed-task-current-year/completed-task-current-year.js"></script>
+<script>
+    var resizefunc = [];
+</script>
+<script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#basicwizard .nav-tabs li a').click(function() {
+            return false;
+        });
+    });
+</script>
+
+{% endblock %}

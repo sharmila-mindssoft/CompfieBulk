@@ -1,0 +1,102 @@
+{% extends "files/client/common/html/container.html" %} {% block content %}
+<div class="content-page">
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-10">
+                    <h4 class="page-title">Escalations</h4>
+                </div>
+                <div class="col-sm-1"></div>
+            </div>
+            <div class="row">
+                <div id="animationSandbox">
+                    <div class="col-sm-1"> </div>
+                    <div class="col-sm-10">
+                        <div class="card-box table-responsive notify-list">
+                            <div class="col-sm-12 no-padding">
+                                <table id="datatable-responsive" class="table table-striped dt-responsive nowrap no-margin" cellspacing="0" width="100%">
+                                    <tbody class="tbody-message-list">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="templates">
+    <table class="table-message">
+        <tr class="table-row" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">
+            <td width="2%"><i class="fa fa-hand-o-right"></i></td>
+            <td width="80">
+                <div class="col-sm-11 message-content"></div>
+                <div class="col-sm-1">
+                    <span class="pull-left message-time"></span>
+                </div>
+                <div class="col-sm-6">
+                    <span class="pull-right message-user"></span>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table class="table-no-record">
+        <tr>
+            <td colspan="2" align="center"> No Records Found</td>
+        </tr>
+    </table>
+</div>
+
+
+
+
+
+<div id="custom-modal" class="modal-demo box-width-800">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Messages</h4>
+    <div class="custom-modal-text">
+        <div class="table-responsive">
+            <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+                <tbody>
+                    <tr class="table_bg_01">
+                        <td class="header-bg1">Act</td>
+                        <td class="header-bg1">Unit</td>
+                        <td class="header-bg1">Compliance</td>
+                        <td class="header-bg1">Due Date</td>
+                        <td class="header-bg1">Delayed By</td>
+                    </tr>
+                    <tr>
+                        <td class="act_name"></td>
+                        <td class="unit"></td>
+                        <td class="compliance_name"></td>
+                        <td class="due_date"></td>
+                        <td class="delayed_by"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+                <tbody>
+                    <tr class="table_bg_01">
+                        <td class="header-bg1">Assignee</td>
+                        <td class="header-bg1">Concurrence</td>
+                        <td class="header-bg1">Approval</td>
+                    </tr>
+                    <tr>
+                        <td class="assignee_name"></td>
+                        <td class="concurrer_name"></td>
+                        <td class="approver_name"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %} {% block contentscript %}
+<script src="/script/escalations/escalations.js"></script>
+{% endblock %}

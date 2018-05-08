@@ -1,0 +1,64 @@
+#freezer-example { /*width: 600px; max-height: 300px;*/ overflow: hidden;}
+#freezer-example .table th,#freezer-example .table td { /*white-space: nowrap;*/ }
+#freezer-example .table th { padding-top: 1px; padding-bottom: 1px; vertical-align: middle; font-weight: normal; /*outline: 1px solid crimson; background: #E74C3C;*/ }
+.columnfixed { background: #FFF !important; }
+#freezer-example .table thead th { /*outline: 1px solid gold;*/ }
+#freezer-example .table col { /*width: 120px;*/ }
+.divider-column{
+   /* -webkit-box-shadow: 3px 0px 0px 0px rgba(0,0,0,0.75); 
+box-shadow: 3px 0px 0px 0px rgba(0,0,0,0.75);*/
+border-right: 1px solid #ccc;}
+.table-freeze-multi,
+.table-freeze-multi-clone {
+    table-layout: fixed;
+    width: 100%;
+}
+.freeze-multi-scroll-wrapper {
+    position: relative;
+    clear: both;
+}
+.freeze-multi-scroll-table {}
+.freeze-multi-scroll-table-head {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+.freeze-multi-scroll-table-head-inner {
+    box-sizing: content-box;
+}
+.freeze-multi-scroll-table-body {
+    position: relative;
+    overflow: auto;
+    width: 100%;
+}
+.freeze-multi-scroll-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1px;
+}
+.freeze-multi-scroll-left-head {
+    position: relative;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+.freeze-multi-scroll-left-body,
+.freeze-multi-scroll-left-body-inner {
+    position: relative;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+.freeze-multi-scroll-left-body-inner {
+    overflow-y: scroll;
+}
+/* @see https://davidwalsh.name/detect-scrollbar-width */
+/* way the hell off screen */
+.freezer-scrollbar-measure {
+    width: 100px;
+    height: 100px;
+    overflow: scroll;
+    position: absolute;
+    top: -9999px;
+}

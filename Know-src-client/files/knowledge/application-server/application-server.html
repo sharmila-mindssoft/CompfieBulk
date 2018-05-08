@@ -1,0 +1,137 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container" id="application-server-view">
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <div class="btn-group pull-right m-t-5 m-b-20">
+        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light btn-add btn-client-server-add" aria-expanded="false">
+        <span class="m-l-5"><i class="fa fa-plus-circle"></i> Add </span></button>
+      </div>
+      <h4 class="page-title">Application Server</h4>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+  <div class="row">
+    <div id="animationSandbox">
+      <div class="col-sm-2"> </div>
+      <div class="col-sm-8">
+        <div class="card-box table-responsive clearfix">
+          <div class="col-sm-12">
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th width="1%">#</th>
+                  <th width="15%">Application Server</th>
+                  <th width="10%">No.of clients</th>
+                  <th width="10%">IP</th>
+                  <th width="06%">Port</th>
+                  <th width="06%" class="text-center">Edit</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td><input type="text" class="form-control input-sm js-filter" placeholder="Application Server" /></td>
+                  <td><input type="text" class="form-control input-sm js-filter" placeholder="No. of Clients" /></td>
+                  <td><input type="text" class="form-control input-sm js-filter" placeholder="IP" /></td>
+                  <td><input type="text" class="form-control input-sm js-filter" placeholder="Port" /></td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody class="tbody-client-server-list">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container default-display-none" id="application-server-add">
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-3"> </div>
+    <div class="col-sm-6">
+      <div class="portlet">
+        <!-- <h4 class="page-title">Application Server</h4>
+        <hr class="no-top-margin"> -->
+          <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+              Application Server
+            </h3>
+            <div class="portlet-widgets">
+              <a class="btn-cancel">
+                <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+              </a>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body">
+              <div class="form-horizontal group-border-dashed">
+                <div class="form-group">
+                  <label class="col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Application Server <span class="mandatory">*</span></label>
+                  <div class="col-sm-6">
+                    <input type="text" id="application-server-name" class="form-control input-sm" autofocus="autofocus" tabindex="1" placeholder="Enter Application Server"  maxlength="50">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">IP <span class="mandatory">*</span></label>
+                  <div class="col-sm-6 controls">
+                    <input type="text" id="application-server-ip" class="form-control input-sm" tabindex="2" placeholder="000:000:0:0" maxlength="15">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Port <span class="mandatory">*</span></label>
+                  <div class="col-sm-6 controls">
+                    <input type="text" id="application-server-port" class="form-control input-sm" tabindex="3" placeholder="0000" maxlength="4">
+                  </div>
+                </div>
+                <center>
+                  <div class="form-group">
+                    <button class="btn btn-primary waves-effect waves-light btn-submit" type="submit" id="submit" tabindex="4"> Submit </button>
+                    <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/application-server/list'"> Cancel </button> -->
+                  </div>
+                </center>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- end col -->
+</div>
+<div id="templates">
+  <table>
+    <tr class="table-row">
+      <td class="sno" align="center"></td>
+      <td class="client-server"></td>
+      <td class="no-of-clients"></td>
+      <td class="ip"></td>
+      <td class="port"></td>
+      <td class="icon-3x text-center">
+          <i class="fa c-pointer edit"></i>
+      </td>
+    </tr>
+  </table>
+</div>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript" src="/script/application-server/application-server.js"></script>
+{% endblock %}

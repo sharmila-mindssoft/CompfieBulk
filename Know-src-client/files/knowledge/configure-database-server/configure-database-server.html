@@ -1,0 +1,157 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container" id="config-db-view">
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <div class="btn-group pull-right m-t-5 m-b-20">
+        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light btn-db-server-add" aria-expanded="false"> <span class="m-l-5"><i class="fa fa-plus-circle"></i> Add</span></button>
+      </div>
+      <h4 class="page-title">Configure Database Server</h4>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+  <div class="row" >
+    <div id="animationSandbox">
+      <div class="col-sm-2"> </div>
+      <div class="col-sm-8">
+        <div class="card-box table-responsive clearfix">
+          <div class="col-sm-12">
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th width="1%">#</th>
+                  <th width="15%">Database Server</th>
+                  <th width="10%">No.of Legal Entities</th>
+                  <th width="10%">IP</th>
+                  <th width="06%">Port</th>
+                  <th width="10%">Username</th>
+                  <th width="06%" class="text-center">Edit</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <input type="text" class="form-control input-sm js-filter" placeholder="File Server" /></td>
+                  <td>
+                    <input type="text" class="form-control input-sm js-filter" placeholder="No. of Legal Entites" />
+                  </td>
+                  <td>
+                    <input type="text" class="form-control input-sm js-filter" placeholder="IP" /></td>
+                  <td>
+                    <input type="text" class="form-control input-sm js-filter" placeholder="Port" /></td>
+                  <td>
+                    <input type="text" class="form-control input-sm js-filter" placeholder="Username" />
+                  </td>
+                  <td></td>
+                </tr>
+              </thead>
+            <tbody class="tbody-db-server-list">
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+<!-- end col -->
+  </div>
+</div>
+</div>
+<div class="container default-display-none" id="config-db-add">
+  <div class="row" id="animationSandbox">
+    <div class="col-sm-3"> </div>
+    <div class="col-sm-6">
+      <div class="portlet">
+        <div class="portlet-heading bg-info">
+          <h3 class="portlet-title">
+            Configure Database Server
+          </h3>
+          <div class="portlet-widgets">
+            <a class="btn-cancel">
+              <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+            </a>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+          <div class="portlet-body">
+            <div class="form-horizontal group-border-dashed">
+              <div class="form-group">
+                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Database Server
+                <span class="mandatory">*</span></label>
+                <div class="col-sm-6">
+                  <input type="text" id="db-server-name" class="form-control input-sm" placeholder="Enter Database Server" maxlength="50" tabindex="1" autofocus="autofocus">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">IP <span class="mandatory">*</span></label>
+                <div class="col-sm-6 controls">
+                  <input type="text" id="db-server-ip" class="form-control input-sm" placeholder="999.999.999.999" maxlength="15" tabindex="2">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Port <span class="mandatory">*</span></label>
+                <div class="col-sm-6 controls">
+                  <input type="text" id="db-server-port" class="form-control input-sm" placeholder="0000" tabindex="3" maxlength="4" minlength="4">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Username <span class="mandatory">*</span></label>
+                <div class="col-sm-6 controls">
+                  <input type="text" id="db-server-username" class="form-control input-sm" placeholder="Enter Username" maxlength="50" tabindex="4">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Password <span class="mandatory">*</span></label>
+                <div class="col-sm-6 controls">
+                  <input type="password" id="db-server-pwd" class="form-control input-sm" placeholder="Enter Password" maxlength="20" minlength="6" tabindex="5">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class=" col-sm-offset-1 col-sm-3 control-label">&nbsp;</label>
+                <div class="col-sm-6">
+                  <button class="btn btn-primary waves-effect waves-light btn-submit" type="submit" tabindex="6"> Submit </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- end col -->
+</div>
+<div id="templates">
+    <table>
+        <tr class="table-row">
+            <td class="sno" align="center"></td>
+            <td class="db-server"></td>
+            <td class="no-of-clients"></td>
+            <td class="ip"></td>
+            <td class="port"></td>
+            <td class="username"></td>
+            <td class="icon-3x text-center">
+                <i class="fa c-pointer edit"></i>
+            </td>
+        </tr>
+    </table>
+</div>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript" src="/script/configure-database-server/configure-database-server.js"></script>
+{% endblock %}

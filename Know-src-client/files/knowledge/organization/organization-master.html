@@ -1,0 +1,179 @@
+ {% extends "files/knowledge/common/html/container.html" %} {% block content %}
+<div class="container" id="organization-view">
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+            <div class="btn-group pull-right m-t-5 m-b-25">
+                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light " id="btn-orgn-add"><span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add</button>
+            </div>
+            <h4 class="page-title">Organization</h4>
+        </div>
+        <div class="col-sm-2"></div>
+    </div>
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-2"> </div>
+        <div class="col-sm-8">
+            <div class="card-box table-responsive">
+                <div class="col-sm-12 no-padding">
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>#<span class="none-sort-sno"></span></th>
+                                <th>Country <span class="fa fa-sort pull-right sort"></span></th>
+                                <th>Domain <span class="fa fa-sort pull-right sort"></span></th>
+                                <th>Organization <span class="fa fa-sort pull-right sort"></span></th>
+                                <th class="text-center">Edit</th>
+                                <th class="text-center" width="15%">Status</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-0">
+                                        <input type="text" class="form-control input-sm filter-text-box"
+                                            placeholder="Country Name" id="search-country-name" />
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-0">
+                                        <input type="text" class="form-control input-sm filter-text-box"
+                                            placeholder="Domain" id="search-domain-name" />
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-0">
+                                        <input type="text" class="form-control input-sm filter-text-box"
+                                            placeholder="Organization" id="search-organization-name" />
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td align="center" >
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                        <i id="search-status" class="fa">All</i>
+                                        <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu no-bdr search-status-list">
+                                            <li value="all" class="search-status-li active"><a href="#" onclick="return false;">All</a></li>
+                                            <li value="1" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-check text-success"></i> Active</a></li>
+                                            <li value="0" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-organization-list"></tbody>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="templates">
+    <table class="table-orgn-master">
+        <tr class="table-row">
+            <td class="sno"></td>
+            <td class="country-name"></td>
+            <td class="domain-name"></td>
+            <td class="organization-name"></td>
+            <td class="icon-3x text-center edit">
+                <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click here to Edit"></i>
+            </td>
+            <td class="icon-3x text-center status">
+                <i class="fa fa-check text-success c-pointer status" data-toggle="tooltip"></i>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="container default-display-none" id="organization-add">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-3"> </div>
+        <div class="col-sm-6">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">
+                        Organization Master
+                    </h3>
+                    <div class="portlet-widgets">
+                        <a id="btn-orgn-cancel">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div class="form-horizontal group-border-dashed">
+                            <div class="form-group has-feedback">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country:
+                                    <span class="mandatory">*</span></label>
+                                <div class="col-sm-6 controls">
+                                    <input type="text" id="countryname" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="" tabindex="1">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    <input id="countryid" type="hidden">
+                                    <div id="ac-country" class="ac-textbox default-display-none">
+                                        <ul style="width:94%;"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Domain:
+                                    <span class="mandatory">*</span></label>
+                                <div class="col-sm-6 controls">
+                                    <input type="text" id="domainname" name="example-input-small" class="form-control input-sm" placeholder="Enter Domain Name" value="" tabindex="2">
+                                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    <input id="domainid" type="hidden">
+                                    <div id="ac-domain" class="ac-textbox default-display-none">
+                                        <ul style="width:94%;"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Organization
+                                    <span class="mandatory">*</span></label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="organizationname" name="example-input-small" class="form-control input-sm" placeholder="Organization Name" value="" tabindex="3" maxlength="50">
+                                    <input id="organizationid" type="hidden">
+                                </div>
+                            </div>
+                            <div class="form-group text-center m-b-0 m-t-20">
+                                <button class="btn btn-primary waves-effect waves-light" type="submit" id="btn-submit" tabindex="4"> Submit </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/organization/organization.js"></script>
+{% endblock %}

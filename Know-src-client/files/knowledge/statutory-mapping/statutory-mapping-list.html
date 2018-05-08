@@ -1,0 +1,641 @@
+
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+
+<div class="container" id="statutorymapping-view">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="btn-group pull-right m-t-5 m-b-25">
+                <button id="btn-add" type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false"><i class="fa fa-plus-circle"></i> Add </button>
+            </div>
+            <h4 class="page-title">Statutory Mapping List</h4>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+    <div class="row">
+        <div id="animationSandbox">
+            <div class="col-sm-12">
+                <div class="card-box table-responsive">
+                    <div class="col-sm-12 no-padding">
+                        <table id="datatable-responsive"  class="table table-striped dt-responsive nowrap m-b-0 tbl-statutorymapping-list table-fixed" cellspacing="0" width="100%">
+                            <thead style="background: #fff;">
+                                <tr class="mapping-header">
+                                    <th width="2%">#</th>
+                                    <th width="10%">Country</th>
+                                    <th width="10%">Domain</th>
+                                    <th width="10%">Organization</th>
+                                    <th width="10%">Statutory Nature</th>
+                                    <th width="26%">Statutory</th>
+                                    <th width="5%">Edit</th>
+                                    <th width="5%" class="text-center">Status</th>
+                                    <th align="center" width="10%" class="text-center">Approval Status</th>
+                                </tr>
+                                <tr class="mapping-filter">
+                                    <td></td>
+                                    <td>
+                                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                                          <input id="country-search" class="form-control input-sm filter-box" placeholder="Country" type="text">
+                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                                          <input id="domain-search" class="form-control input-sm filter-box" placeholder="Domain" type="text">
+                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                                          <input id="org-search" class="form-control input-sm filter-box" placeholder="Organization" type="text">
+                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                                          <input id="nature-search" class="form-control input-sm filter-box" placeholder="Statutory Nature" type="text">
+                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                                          <input id="statu-search" class="form-control input-sm filter-box" placeholder="Statutory" type="text">
+                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                      </div>
+                                    </td>
+                                    <td>&nbsp;</td>
+                                    <td align="center">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                                <i id="search-status" class="fa">All</i>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu search-status-list no-bdr">
+                                                <li value="3" class="search-status-li active"><a href="#" onclick="return false;">All</a></li>
+                                                <li value="1" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-check text-success"></i> Active</a></li>
+                                                <li value="0" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td align="center">
+                                    
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                <span id="ap-status">Rejected</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu no-bdr" id="ap-status-list">
+                                                <li value="6" class="ap-status-li"><a href="#" onclick="return false;">All</a></li>
+                                                <li value="4" class="ap-status-li active"><a href="#" onclick="return false;">Rejected</a></li>
+                                                <li value="0" class="ap-status-li"><a href="#" onclick="return false;">Yet to Submit</a></li>
+                                                <li value="1" class="ap-status-li"><a href="#" onclick="return false;">Pending</a></li>
+                                                <li value="2" class="ap-status-li"><a href="#" onclick="return false;">Approved</a></li>
+                                                <li value="3" class="ap-status-li"><a href="#" onclick="return false;">Approved & Notified</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </thead>
+                        </table>
+                        <table class="pagination-view default-display-none" style="width: 100%;">
+                            <tr>
+                              <td>
+                                <span class="compliance_count"> </span>
+                                <span class="divider-view"> | </span>
+                                <span class="items-per-page"> Show
+                                  <select id="items_per_page">
+                                  </select>
+                                  entries
+                                </span>
+                              </td>
+                              <td style="width:250px"></td>
+                              <td style="text-align:right;" class="pull-right">
+                                <ul id="pagination-rpt"></ul>
+                              </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container page_font_size_13 default-display-none" id="statutorymapping-add" >
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="portlet p-b-0 no-padding-top">
+                <div class="portlet-heading bg-info">
+              <h3 class="portlet-title">Statutory Mapping</h3>
+              <div class="portlet-widgets" id="btn-back">
+                  <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+              </div>
+              <div class="clearfix"></div>
+          </div>
+          <div id="bg-primary1" class="panel-collapse collapse in">
+            <div class="portlet-body p-b-0">
+                <form>
+                    <div id="basicwizard" >
+                        <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab m-b-0">
+                            <li class="tab-step-1 active"><a  data-toggle="tab" aria-expanded="true">Select Domain</a></li>
+                            <li class="tab-step-2"><a data-toggle="tab">Select Statutory</a></li>
+                            <li class="tab-step-3"><a data-toggle="tab">Compliances</a></li>
+                            <li class="tab-step-4"><a data-toggle="tab">Applicable Location</a></li>
+                        </ul>
+                        <div class="tab-content b-0 m-b-0">
+                            <div class="tab-pane fade m-t-0 active in" id="tab1" style="height: 380px;">
+                                <div class="scroll_box">
+                                    <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader m-b-0 statutory_mapping_table_one" width="100%" cellspacing="0" style="height: 380px;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width: 1%;">
+                                                    <h6 class="m-t-0">Country</h6>
+                                                    <div class="form-group has-feedback m-b-0">
+                                                        <input id = "ct-search" class="form-control input-sm" placeholder="Country" type="text">
+                                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                    </div>
+                                                    <ul id="country" class="list-unstyled box-height-250">
+
+                                                    </ul>
+                                                </td>
+                                                <td style="width: 1%;">
+                                                    <h6 class="m-t-0">Domain</h6>
+                                                    <div class="form-group has-feedback m-b-0">
+
+                                                        <input id="dt-search" class="form-control input-sm" placeholder="Domain"
+                                                        type="text">
+                                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                    </div>
+                                                    <ul id="domain" class="list-unstyled box-height-250">
+                                                    </ul>
+                                                </td>
+                                                <td style="width: 1%;">
+                                                    <h6 class="m-t-0">Organization</h6>
+                                                    <div class="form-group has-feedback m-b-0">
+
+                                                        <input id="orglist-search" class="form-control input-sm" placeholder="Organization" type="text">
+                                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                    </div>
+                                                    <ul id="industry" class="list-unstyled box-height-250">
+                                                    </ul>
+                                                </td>
+                                                <td style="width: 1%;">
+                                                    <h6 class="m-t-0">Statutory Nature</h6>
+                                                    <div class="form-group has-feedback m-b-0">
+
+                                                        <input id="naturelist-search" class="form-control input-sm" placeholder="Statutory Nature" type="text">
+                                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                    </div>
+                                                    <ul id="statutorynature" class="list-unstyled box-height-250">
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+
+                            <div class="tab-pane m-t-0 fade" id="tab2" style="height: 380px;">
+                                <div class="col-sm-12 no-padding">
+                                    <div class=" scroll_box">
+                                        <div id="datatable-fixed-header" style="overflow-x: auto;" class="table dt-responsive nowrap table-list no-bgheader m-b-0 statut-contant no-border" cellspacing="0">
+                                            <div id="tbody-statutory-level">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 text-center p-b-5 p-t-5 top-border">
+                                        <button type="button" id = "temp_addstatutories" class="btn btn-primary waves-effect waves-light" >Add</button>
+                                    </div>
+                                    <div class="col-sm-12 scroll_box box-height-100">
+                                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0">
+                                            <thead>
+                                                <tr class="sub_title_td">
+                                                    <th width="2%">#</th>
+                                                    <th>Statutory</th>
+                                                    <th width="10%" class="text-center">Remove</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="tbody-statutory-list">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+
+                            <div class="tab-pane m-t-0 fade box-height-350" id="tab3">
+                                <div class="row m-t-10">
+                                    <div class="col-sm-5">
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Statutory Provision <span class="mandatory">*</span></label>
+                                            <div class="col-sm-7">
+                                                <textarea placeholder="Statutory Provision" id="statutory_provision" maxlength="500" class="form-control input-sm" rows="1" > </textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Compliance Task <span class="mandatory">*</span></label>
+                                            <div class="col-sm-7">
+                                                <textarea placeholder="Compliance Task" maxlength="100" id="compliance_task" class="form-control input-sm" rows="1"></textarea>
+                                                <input id="comp_id" class="form-control input-sm" type="hidden" >
+                                                <input id="temp_id" class="form-control input-sm" type="hidden" >
+                                                <input id="comp_status_id" class="form-control input-sm" type="hidden" >
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Compliance Description <span class="mandatory">*</span></label>
+                                            <div class="col-sm-7">
+                                                <textarea placeholder="Compliance Description" maxlength="500" id='compliance_description' class="form-control input-sm" rows="1"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Compliance Document</label>
+                                            <div class="col-sm-7">
+                                                <textarea placeholder="Compliance Document" maxlength="50" id="compliance_document" class="form-control input-sm" rows="1"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Format</label>
+                                            <div class="col-sm-7">
+                                                <input  id="upload_file" class="form-control input-sm no-padding-top" type="file">
+                                            </div>
+                                            <div class="" id="uploaded_fileview" style="display:none">
+                                                <p id="uploaded_filename" style="width:60%;font-size:0.8em; color:gray; float:right; padding-left: 4% "> </p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Penal Consequences</label>
+                                            <div class="col-sm-7">
+                                                <textarea placeholder="Penal Consequences" maxlength="500" id="penal_consequences" class="form-control input-sm" rows="1"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-7 m-b-0">
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Reference Link</label>
+                                            <div class="col-sm-7">
+                                                <textarea placeholder="http://www.domain.com" maxlength="500" id="reference_link" class="form-control input-sm" rows="1" ></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix m-b-10">
+                                            <label class="col-sm-5 control-label">Compliance Frequency <span class="mandatory">*</span></label>
+                                            <div class="col-sm-7">
+                                                <select id="compliance_frequency" class="form-control input-sm tasktype">
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="card-box p-10 one_time scroll_box max-height-150 m-b-0"  id="One_Time" style="display: none; ">
+                                                <h4 class="header-title m-t-0 m-b-10">One Time</h4>
+                                                <div class="form-group clearfix m-b-10">
+                                                    <label class="col-sm-5 control-label">Statutory Date</label>
+                                                    <div class="col-sm-2">
+                                                        <select id="otstatutory_month" class="form-control input-sm"></select>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <select id="otstatutory_date" class="form-control input-sm"></select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group clearfix m-b-10">
+                                                    <label class="col-sm-5 control-label">Trigger Before Day(s)</label>
+                                                    <div class="col-sm-2">
+                                                        <input id="ottriggerbefore" class="form-control input-sm col-sm-3" maxlength="3" type="text">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="card-box p-10 recurring scroll_box max-height-150 m-b-0" id="Recurring" style="display: none;">
+                                                <h4 class="header-title m-t-0 m-b-10 legentclass">Periodical</h4>
+                                                <div class="form-group clearfix m-b-5">
+                                                    <label class="col-sm-2 p-l-0 control-label">Repeats Every <span class="mandatory remove-manditory">*</span></label>
+                                                    <div class="col-sm-2">
+                                                        <input type="text" maxlength="3"  id="repeats_every" class="form-control input-sm">
+                                                    </div>
+                                                    <div class="col-sm-2 no-padding-right">
+                                                        <select id="repeats_type" class="form-control input-sm">
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-5 multicheckbox" style="display: none;" >
+                                                        <div class="checkbox checkbox-primary" >
+                                                            <input id="multiselect" class="multi-date-box" type="checkbox">
+                                                            <label for="multiselect" class="multiselect">
+                                                            Multiple Input Selection
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 p-l-0 p-r-0">
+                                                    <div class="col-sm-6 p-l-0 p-r-0">
+                                                    <div class="form-group clearfix m-b-10 repeat-by">
+                                                        <label class="col-sm-4 control-label">Repeat by <span class="mandatory remove-manditory">*</span></label>
+                                                        <div class="col-sm-7 clearfix m-b-0 m-t-5">
+                                                            <div class="radio radio-success radio-single m-t-0 ">
+                                                                <input id="singleRadio1" class="radio-class" name="radioSingle1" checked="checked" value="1" type="radio">
+                                                                <label for="singleRadio1" class="singleRadio1">Day of the month</label>
+                                                            </div>
+                                                            <div class="radio radio-success radio-single m-t-0 m-b-0">
+                                                                <input id="singleRadio2" class="radio-class" name="radioSingle1" value="2"  type="radio">
+                                                                <label for="singleRadio2" class="singleRadio2">End day of the month</label>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="form-group clearfix m-b-10">
+                                                        <label class="col-sm-4 p-t-10 control-label">Summary</label>
+                                                        <div class="col-sm-8 recurr-summary p-t-10"></div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+
+                                                        <div class="col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1" >
+                                                            <label class="col-sm-6 p-t-10 no-padding-left statu-date-label"> Statutory Date</label>
+                                                            <label class="col-sm-6 p-t-10 no-padding-left text-right trigger-label"> Trigger Before(days)</label>
+                                                        </div>
+                                                        <div class="date-list">
+
+                                                        </div>
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-box p-10 occasional scroll_box max-height-150 m-b-0" id="Occasional" style="display: none;">
+                                                <h4 class="header-title m-t-0 m-b-10">On Occurrence</h4>
+                                                <div class="form-group clearfix m-b-10">
+                                                    <label class="col-sm-5 control-label">To Complete Within
+                                                    <span class="mandatory">*</span>
+                                                    </label>
+
+                                                    <div class="col-sm-1 no-padding-right">
+                                                        <input maxlength="3" id="duration" class="form-control input-sm" type="text">
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <select id="duration_type" class="form-control input-sm">
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group clearfix m-b-10">
+                                                    <label class="col-sm-5 p-t-10 control-label">Summary</label>
+                                                    <div class="col-sm-7 p-t-10 occasional_summary">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 text-center p-b-5  p-t-5">
+                                        <button class="btn btn-primary waves-effect waves-light" type="button" id="temp_addcompliance">Add</button>
+                                    </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                     <!-- <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0">
+                                                <thead>
+                                                    <tr class="sub_title_td">
+                                                        <th align="center">#</th>
+                                                        <th>Statutory Provision</th>
+                                                        <th>Task</th>
+                                                        <th>Description</th>
+                                                        <th>Frequency</th>
+                                                        <th>Repeats</th>
+                                                        <th class="text-center">Edit</th>
+                                                        <th class="text-center">Status</th>
+                                                    </tr>
+                                                </thead>
+
+                                            </table> -->
+                                        <div class="scroll_box box-height-150">
+                                            <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0">
+                                                     <thead>
+                                                    <tr class="sub_title_td">
+                                                        <th align="center">#</th>
+                                                        <th>Statutory Provision</th>
+                                                        <th>Task</th>
+                                                        <th>Description</th>
+                                                        <th>Frequency</th>
+                                                        <th>Repeats</th>
+                                                        <th class="text-center">Edit</th>
+                                                        <th class="text-center">Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="tbody-compliance-list">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    <!-- </div> -->
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="tab-pane m-t-0 fade" id="tab4" style="height: 380px;">
+                                <div class="row">
+                                    <div class="col-sm-12 scroll_box">
+                                        <table id="datatable-fixed-header" class="table table-striped dt-responsive nowrap table-list" width="100%" cellspacing="0" >
+                                            <tbody >
+                                                <tr class="tbody-geography-level">
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </div>
+                            <ul class="pager wizard  m-b-0">
+                                <li id="btn-previous" class="previous"><a  class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                <li id="btn-next" class="next"><a  class="btn btn-primary waves-effect waves-light">Next</a></li>
+                                <li id="btn-submit" class="finish pull-right"><a class="btn btn-primary waves-effect waves-light">Submit</a></li>
+                                <li id="btn-save" class="finish pull-right"><a  class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+                </div>
+                </div>
+                <div class="clearfix"></div>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="templates">
+    <table width="100%" >
+        <tr class="table-no-record">
+            <td width="100%" colspan="10" align="center"> No Records Found</td>
+        </tr>
+    </table>
+
+  <div>
+    <table>
+      <tr class="success mapping-row">
+        <td  class="sno"></td>
+        <td  class="c_name"></td>
+        <td  class="d_name"></td>
+        <td  class="org_name"></td>
+        <td  class="nature_name"></td>
+        <td  class="s_name"></td>
+        <td  class="icon-3x ">
+          <i class="fa c-pointer text-primary map_edit" data-toggle="tooltip"></i>
+        </td>
+
+        <td  align="center" class="icon-3x ">
+          <i class="fa c-pointer map_status" data-toggle="tooltip"></i>
+        </td>
+
+        <td align="center" class="approval_status">
+        </td>
+
+      </tr>
+    </table>
+  </div>
+  <div>
+    <table>
+      <tr class="compliance-row">
+        <td class="cno"></td>
+        <td colspan="5" class="comp_name"></td>
+        <td class="icon-3x ">
+          <i class="fa c-pointer text-primary comp_edit" data-toggle="tooltip"></i>
+        </td>
+        <td align="center" class="icon-3x">&nbsp;</td>
+        </td>
+        <td align="center" class="comp_approval_status">
+        </td>
+      </tr>
+    </table>
+  </div>
+
+    <div style="overflow: hidden; float:left" class="statutory_levelvalue statlvl">
+        <h6 class="m-t-2 statutory_title">Primary Legislation</h6>
+        <div class="form-group has-feedback m-b-0">
+            <input class="form-control input-sm filter-text-box" placeholder="" id="statutoryfilter1" type="text">
+            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+        </div>
+        <ul class="list-unstyled box-height-100 sname-list" style="overflow-y:auto" id="statutorylist1">
+
+        </ul>
+        <div class="input-group bottomfield">
+            <input class="form-control input-sm txtsname" maxlength="100" placeholder="Statutory name" >
+            <input type="hidden" class="form-control input-sm snameid" placeholder="" >
+            <input type="hidden" class="form-control input-sm snamepid" placeholder="" >
+            <span class="input-group-btn">
+            <button class="btn btn-primary btn-sm statut-add" type="button">
+            <i class="fa fa-plus"></i></button></span>
+        </div>
+    </div>
+
+  <div id="statutory-li-template">
+    <li width="100%">
+      <i style="float:left; padding-left:5px; padding-right:5px;" class="fa fa-pencil text-primary c-pointer edit-icon" data-toggle="tooltip"></i>
+      <div class="sname-holder" width="100%"">
+          <span id="sname">statutoryname</span>
+          <i id="select-act" class="fa pull-right select-act"></i>
+      </div>
+    </li>
+  </div>
+
+  <div id="statutory-grid-templates">
+    <table class="table-statutory">
+      <tr class="table-row">
+        <td class="sno">1</td>
+        <td class="statutory">Gratuity Act, 1972 <i class="ti-angle-double-right "></i> Tamil Nadu Gratuity Act, 1972 <i class="ti-angle-double-right "></i> Rule 3</td>
+        <td class="icon-3x text-center"><i class="remove fa fa-trash text-primary c-pointer" data-toggle="tooltip"></i></td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="compliance-templates">
+    <table>
+      <tr class="table-row">
+        <td class="sno" align="center">1</td>
+        <td class="statutory-provision">Rule 10, Section 1, Sub-Sec 1A</td>
+        <td class="task">FORM VIII - Notice of Opening</td>
+        <td class="description">Within 30 days of opening a branch</td>
+        <td class="frequency">One Time</td>
+        <td class="summary-repeats">-</td>
+        <td class="icon-3x text-center"><i id="edit-icon" class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip"></i></td>
+        <td class="icon-3x text-center"><i id="status" class="fa c-pointer" data-toggle="tooltip"></i></td>
+      </tr>
+    </table>
+  </div>
+
+  <div style="float:left;width:33.3%" id="geography-level-templates">
+    <table style="width:100%;">
+      <tr>
+        <td class="statlvl">
+            <h6 class="m-t-0 title">Region</h6>
+            <div class="form-group has-feedback m-b-0">
+                <input class="form-control input-sm geo-name-filter" placeholder="Region" type="text">
+                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+            </div>
+            <ul class="list-unstyled box-height-100 gname-list">
+
+            </ul>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="list-template">
+    <li class="items">
+      <span class="name-holder"></span>
+      <i class="fa pull-right">
+    </li>
+  </div>
+
+    <div id="date-list-templates" class="statu-date-pan col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1">
+        <div class="col-sm-8 no-padding-left statu-date-div">
+            <div class="col-sm-6 no-padding-left show-statutory-date-month-multiple-1 month-select-div">
+                <select class="form-control input-sm month-select"></select>
+            </div>
+            <div class="col-sm-6 no-padding show-statutory-date-day-multiple-1 date-select-div">
+                <select class="form-control input-sm date-select"></select>
+            </div>
+        </div>
+        <div class="col-sm-4 no-padding-left show-statutory-date-month-multiple-2">
+            <input type="text" maxlength="3" class="form-control input-sm trigger-value">
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block contentscript %}
+    <script type="text/javascript" src="/js/fixedheader.js"></script>
+    <script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-common.js"></script>
+    <script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-new.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+
+            $('#basicwizard .nav-tabs li a').click(function() {
+              return false;
+            });
+
+        });
+    </script>
+
+{% endblock %}

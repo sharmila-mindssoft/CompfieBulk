@@ -1,0 +1,203 @@
+.cal {
+    position: relative;
+    padding: 4px;
+    font-weight: bold;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.cal:before {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 4px;
+    right: 4px;
+    height: 6px;
+}
+
+.cal-table {
+    position: relative;
+    margin: 0px !important;
+    border-collapse: separate;
+    border-left: 1px solid #E0E0E0;
+    border-right: 1px solid #E0E0E0;
+    border-bottom: 1px solid #bbb;
+    border-radius: 0 0 3px 3px;
+    -webkit-box-shadow: 1px 0 rgba(0, 0, 0, 0.1), -1px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 0 rgba(0, 0, 0, 0.1), -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.cal-caption {
+    width: 100%;
+    padding-bottom: 1px;
+    line-height: 28px;
+    color: #555;
+    text-align: center;
+    text-shadow: 0 -1px rgba(0, 0, 0, 0.3);
+    /*background: #F5F5F5;*/
+    border-radius: 3px 3px 0 0;
+}
+
+.cal-caption a {
+    line-height: 30px;
+    padding: 0 10px;
+    font-size: 20px;
+    font-weight: normal;
+    color: white;
+    height: 100%;
+}
+
+.cal-caption .prev {
+    float: left;
+}
+
+.cal-caption .next {
+    float: right;
+}
+
+.cal-body td {
+    width: 110px;
+    height: 57px;
+    font-size: 13px;
+    border-top: 1px solid #eaeaea;
+    border-left: 1px solid #eaeaea;
+    text-align: center;
+    /*background: white;*/
+    background: #fcfcfc;
+    vertical-align: top;
+}
+
+.cal-body th {
+    height: 30px;
+    font-size: 13px;
+    border-top: 1px solid #eaeaea;
+    border-left: 1px solid #eaeaea;
+    background-color: #e0e0e0;
+    vertical-align: middle;
+    font-weight: bold !important;
+    padding: 0 15px;
+}
+
+.cal-body a {
+    display: block;
+    position: relative;
+    line-height: 28px;
+    color: #555;
+    text-align: center;
+    background: white;
+    height: 100%;
+}
+
+.cal-off {
+    background: #fff !important;
+}
+
+.cal-off a {
+    color: #ccc;
+    font-weight: normal;
+}
+
+.cal-body th {
+    color: #333;
+}
+
+.cal-today a {
+    color: black;
+    background: #f5f5f5;
+    background-image: -webkit-linear-gradient(top, whitesmoke, white 70%);
+    background-image: -moz-linear-gradient(top, whitesmoke, white 70%);
+    background-image: -o-linear-gradient(top, whitesmoke, white 70%);
+    background-image: linear-gradient(to bottom, whitesmoke, white 70%);
+}
+
+.cal-selected,
+.cal-body:active {
+    background: #fff5f6 !important;
+    border: 1px solid #e7d4d4;
+}
+
+.cal-check a {
+    overflow: hidden;
+    text-align: center;
+}
+
+.cal-check a:before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 12px;
+    height: 12px;
+    padding: 0 15px;
+}
+
+.count-round {
+    border-radius: 25px;
+    float: left;
+    font-size: 10px !important;
+    height: 30px;
+    line-height: 30px;
+    margin-left: 5px;
+    text-align: center;
+    vertical-align: middle;
+    width: 30px;
+}
+
+.date {
+    color: #555;
+    padding: 3px 5px 3px 0px;
+    text-align: right;
+    background-color: #fcfcfc;
+    font-size: 11px !important;
+}
+
+.upcomming-tab {
+    background-color: #3498DB;
+}
+
+.upcomming {
+    background: #87ceeb;
+    /*border: 3px solid #3498DB;*/
+    color: #666;
+    cursor: pointer;
+}
+
+.due-date {
+    background-color: #c69ee2;
+    /*border: 3px solid #C69EE2;*/
+    color: #666;
+    cursor: pointer;
+}
+
+.inprogress {
+    background-color: #f0f468;
+    /* border: 3px solid #f0f468;*/
+    color: #666;
+    cursor: pointer;
+}
+
+.over-due {
+    background-color: #ff4644;
+    /*#f32d2b*/
+    /*border: 3px solid #FF4644;*/
+    color: #666;
+    cursor: pointer;
+}
+
+.empty-space {
+    color: #fff;
+    border: none;
+}
+
+
+/*.cal-count {
+  color: #fff;
+  font-size: 14px !important;
+  background-color: #662d91;
+  line-height: 25px;
+  border-radius: 25px;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  margin:0 auto;
+}*/

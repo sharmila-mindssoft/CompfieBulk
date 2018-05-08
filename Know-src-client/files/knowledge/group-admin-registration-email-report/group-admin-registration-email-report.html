@@ -1,0 +1,136 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-10">
+            <div class="portlet">
+                <!-- <h4 class="page-title">Group Admin Registration Email Report</h4>
+                <hr class="no-top-margin"> -->
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Group Admin Registration Email Report</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                  <label class="col-sm-4 control-label">Group: <span class="mandatory">*</span></label>
+                                  <div class="col-sm-6">
+                                    <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="1"
+                                    placeholder="Enter Group">
+                                    <i class="form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="group-id">
+                                    <div id="ac-group" class="ac-textbox default-display-none">
+                                      <ul style="width:85%;"></ul>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback">
+                                  <label class="col-sm-4 control-label">Country: </label>
+                                  <div class="col-sm-6">
+                                    <input type="text" class="form-control input-sm" id="countryval" value="" tabindex="2" placeholder="Enter Country Name">
+                                    <i class="form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="country-id">
+                                    <div id="ac-country" class="ac-textbox default-display-none">
+                                      <ul style="width:85%;"></ul>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <center>
+                                    <div class="form-group m-t-5 m-b-0">
+                                        <button class="btn btn-primary waves-effect waves-light" type="button" id="btn-show"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="button" id="btn-export"> Export </button>
+                                    </div>
+                                </center>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="compliance_animation">
+                <div class="card-box details" style="display: none;">
+                    <div class="table-responsive grid-table-rpt default-display-none">
+                        <div class="col-sm-12 text-center"><h4 class="m-t-0">Group Admin Registration Email Report</h4></div>
+                        <div class="col-sm-4 text-center"><h6>Group: <span style="margin-left:10px; font-weight:bold;" class="groupsval"> </span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>Welcome Email :<span style="margin-left:10px; font-weight:bold;" class="countrynameval"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>Resend Email :<span style="margin-left:10px; font-weight:bold;" class="resenddate"></span></h6></div>
+                        <div class="clearfix"></div>
+                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th width="01%" rowspan="2">#</th>
+                                    <th width="10%" rowspan="2">Country</th>
+                                    <th width="10%" rowspan="2">Legal Entity</th>
+                                    <th width="10%" rowspan="2" class="text-center">No. of Units</th>
+                                    <th colspan="2" class="text-center">Email Sent Date</th>
+                                </tr>
+                                <tr>
+                                    <th width="10%">Unit Created</th>
+                                    <th width="10%">Assigned Statutory</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tbody-client-admin-regn-list">
+
+                            </tbody>
+                        </table>
+                        <table class="pagination-view default-display-none">
+                          <tr>
+                            <td>
+                              <span class="compliance_count"> </span>
+                              <span class="divider-view"> | </span>
+                              <span class="items-per-page">
+                              Show
+                              <select id="items_per_page">
+                              </select>
+                              entries
+                              </span>
+                            </td>
+                            <td style="width:500px;"></td>
+                            <td style="text-align:right;padding-right:10px;">
+                              <ul id="pagination-rpt"></ul>
+                            </td>
+                          </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+<div id="templates">
+    <table width="100%">
+        <tr class="table-row" >
+            <td align="center" class="sno"></td>
+            <td class="country-name"></td>
+            <td class="le-name"></td>
+            <td class="no-of-units" align="center"></td>
+            <td class="unit-email"></td>
+            <td class="statu-email"></td>
+        </tr>
+    </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+  <table class="table-no-content">
+    <tr align="left" class="table-row-no-content">
+      <td  align="left" colspan="10" class="no_records" style="padding:40px; font-size:1.2em;"></td>
+    </tr>
+  </table>
+</div>
+{% endblock %}
+{% block contentscript %}
+<script type="text/javascript" src="/script/group-admin-registration-email-report/group-admin-registration-email-report.js"></script>
+{% endblock %}

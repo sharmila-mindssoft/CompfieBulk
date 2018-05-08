@@ -1,0 +1,201 @@
+
+
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container" id="userGroupView">
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+            <div class="btn-group pull-right m-t-5 m-b-25">
+                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" id="btnUserGroupAdd"><span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add</button>
+            </div>
+            <h4 class="page-title">User Privileges</h4>
+        </div>
+    </div>
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-2"> </div>
+        <div class="col-sm-8">
+            <div class="card-box table-responsive">
+                <div class="col-sm-12 no-padding">
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight js-filtertable m-b-0 js-sorting-table" cellspacing="0" width="100%" >
+                        <thead>
+                            <tr>
+                                <th>#<span class="none-sort-sno"></span></th>
+                                <th>User Group Name <span class="fa fa-sort pull-right sort active"></span></th>
+                                <th>Category Name <span class="fa fa-sort pull-right sort active"></span></th>
+                                <th class="text-center">Edit</th>
+                                <th class="text-center" width="15%">Status</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-0">
+                                        <input type="text" class="form-control input-sm filter-text-box"
+                                            placeholder="User Group Name" id="groupNameSearch" />
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group col-sm-12 no-padding m-b-0">
+                                        <input type="text" class="form-control input-sm filter-text-box"
+                                            placeholder="Category Name" id="categoryNameSearch" />
+                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td align="center" >
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
+                                        <i id="search-status" class="fa">All</i>
+                                        <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu search-status-list">
+                                            <li value="all" class="search-status-li active"><a href="#" onclick="return false;">All</a></li>
+                                            <li value="1" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-check text-success"></i> Active</a></li>
+                                            <li value="0" class="search-status-li"><a href="#" onclick="return false;"><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-usergroups-list">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="containe default-display-none" id="userGroupAdd">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-2"> </div>
+        <div class="col-sm-8">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">
+                        User Privileges
+                    </h3>
+                    <div class="portlet-widgets">
+                        <a id="btnUserGroupCancel" >
+                        <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div class="form-horizontal group-border-dashed">
+                            <div class="col-lg-5 no-padding-right">
+                                <div class="form-group m-b-0">
+                                    <label class="col-sm-6 control-label" for="example-input-small">User Group Name:<span class="mandatory">*</span></label>
+                                    <div class="col-sm-6 no-padding-right">
+                                        <input type="text" class="form-control input-sm" name="groupName" id="groupName" maxlength="50" tabindex="1" placeholder="User Group Name" value="">
+                                        <input type="hidden" name="groupId" id="groupId" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group m-b-0">
+                                    <label class=" col-sm-5 control-label" for="example-input-small">Category Name:<span class="mandatory">*</span></label>
+                                    <div class="col-sm-7 controls">
+                                        <select class="form-control input-sm" data-placeholder="Choose a Category" tabindex="2" id="categoryName">
+                                            <option value="0"> Select</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div class="col-lg-2">
+                                <div class="form-group text-center">
+                                      <button class="btn btn-primary waves-effect waves-light" type="submit"> Show </button>
+                                  </div>
+                                </div>-->
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div id="formList" class="p-l-20 p-r-20">
+                        <div class="grid-table formNameList">
+                            <div class="table-responsive">
+                                <table id="datatable-responsive" class="table table-striped dt-responsive nowrap km-view highlight m-b-0" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr align="left">
+                                            <th width="5%"><input type="checkbox" class="checkbox-full-check"></th>
+                                            <th>Form Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="tableFormList">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group text-center m-t-20 m-b-20">
+                            <button class="btn btn-primary waves-effect waves-light" type="submit" id="btnUserGroupSubmit" tabindex="4"> Submit </button>
+                        </div>
+                    </div>
+                    <!-- End Form List -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="templates">
+    <table class="table-usergroup-list">
+        <tr class="table-row">
+            <td align="center" class="sno"></td>
+            <td class="group-name"></td>
+            <td class="catg-name"></td>
+            <td class="icon-3x text-center">
+                <i class="fa c-pointer edit"></i>
+            </td>
+            <td class="icon-3x text-center">
+                <i class="fa c-pointer status"></i>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="templates-form-list" class="default-display-none">
+    <table class="table-form-list ">
+        <tr class="table-row-form">
+            <td width="2%" class="checkbox-val"></td>
+            <td width="98%" class="form-name"></td>
+        </tr>
+    </table>
+</div>
+<div id="templates-form-heading" class="default-display-none">
+    <table class="table-form-heading">
+        <tr class="table-row-form-heading">
+            <td colspan="2"><span class="formHeading"><span></td>
+        </tr>
+    </table>
+</div>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text p-t-0">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-group">
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
+
+{% block contentscript %}
+    <script type="text/javascript" src="/script/user-privileges/userprivileges.js"></script>
+{% endblock %}

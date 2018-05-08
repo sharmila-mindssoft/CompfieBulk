@@ -1,0 +1,310 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<div class="content-page">
+<div class="content">
+<div class="container">
+  <div class="row">
+
+  <div id="animationSandbox">
+  <div class="col-sm-1"> </div>
+    <div class="col-sm-10">
+      <div class="portlet">
+        <div class="portlet-heading bg-info">
+              <h3 class="portlet-title">
+                  Settings
+              </h3>
+              <div class="portlet-widgets">
+                  <a href="#" onclick="parent.location='/settings/group-admin'">
+                      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                  </a>
+              </div>
+              <div class="clearfix"></div>
+          </div>
+          <!-- <h4 class="page-title">Settings</h4>
+          <hr class="no-top-margin"> -->
+           <div id="bg-primary1" class="panel-collapse collapse in">
+              <div class="portlet-body">
+        <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-5 control-label" for="example-input-small">Enable 2 levels of approval: <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <div class="radio radio-info radio-inline">
+                  <input type="radio" id="inlineRadio1" value="option1" name="radioInline" checked>
+                  <label for="inlineRadio1"> Yes </label>
+              </div>
+              <div class="radio radio-inline">
+                  <input type="radio" id="inlineRadio2" value="option2" name="radioInline" checked>
+                  <label for="inlineRadio2"> No </label>
+              </div>
+            </div>
+          </div>
+          <hr class="m-t-5 m-b-10">
+                                <h4 class="header-title p-l-10">Reminders Settings</h4>
+          <!-- <h4 class="header-title m-t-10 m-b-10">
+            <pre></pre>
+          </h4> -->
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-5 control-label" for="example-input-small">Reminder to Assignee: <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <label class="col-sm-2 control-label">For Every</label>
+              <div class="col-sm-1 no-padding">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="0" value="7">
+              </div>
+              <label class="col-sm-1 control-label t-a-l">Days</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-5 control-label" for="example-input-small">Escalation Reminders to Concurrence & Approval Person: <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <div class="col-sm-1 no-padding">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="0" value="7">
+              </div>
+              <label class="col-sm-1 control-label t-a-l">Days</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-5 control-label" for="example-input-small">Escalation Reminders to Assignee, Concurrence & Approval person: <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <label class="col-sm-2 control-label">For Every</label>
+              <div class="col-sm-1 no-padding">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="0" value="7">
+              </div>
+              <label class="col-sm-4 control-label t-a-l">Days after due date</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class=" col-sm-offset-1 col-sm-5 control-label" for="example-input-small">Reassign service provider compliance reminder to All: <span class="mandatory">*</span></label>
+            <div class="col-sm-6 controls">
+              <label class="col-sm-2 control-label">For Every</label>
+              <div class="col-sm-1 no-padding">
+              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="0" value="7">
+              </div>
+              <label class="col-sm-4 control-label t-a-l">Days</label>
+            </div>
+          </div>
+        </form>
+        <div class="form-group text-center">
+          <button class="btn btn-primary text-center waves-effect waves-light" type="button"> Submit </button>
+        </div>
+        <hr class="m-t-5 m-b-10">
+        <div class="clear"></div>
+        <div class="row  bg-lightdark">
+        
+        <form class="form-horizontal" role="form">
+              <div class="col-lg-2 no-padding"></div>
+              <div class="col-lg-2 no-padding">
+                  <div class="form-group m-b-0">
+                    <label class="col-md-5 control-label">Country:</label>
+                    <div class="col-md-7">
+                      <p class="form-control-static">India</p>
+                    </div>
+                  </div>
+              </div>
+              <!-- end col -->
+              <div class="col-lg-3 no-padding">
+                <div class="form-group m-b-0">
+                  <label class="col-sm-5 control-label">Business Group:</label>
+                  <div class="col-md-7 no-padding">
+                    <p class="form-control-static"> &nbsp; RG Business Group</p>
+                  </div>
+                </div>
+              </div>
+              <!-- end col -->
+              <div class="col-lg-3">
+                <div class="form-group m-b-0">
+                  <label class="col-sm-5 control-label">Legal Entity:</label>
+                  <div class="col-md-7">
+                    <p class="form-control-static">RG Legal Entity</p>
+                  </div>
+                </div>
+              </div>
+              <!-- end col -->
+              <div class="clear"></div>
+              <hr class="m-b-5 m-t-5">
+
+              <div class="col-lg-3"></div>
+              <div class="col-lg-3 no-padding">
+                  <div class="form-group m-b-0">
+                    <label class="col-md-5 control-label">Contract From:</label>
+                    <div class="col-md-7">
+                      <p class="form-control-static">01-Jan-2016</p>
+                    </div>
+                  </div>
+              </div>
+              <!-- end col -->
+              <div class="col-lg-3">
+                <div class="form-group m-b-0">
+                    <label class="col-md-5 control-label">Contract To:</label>
+                    <div class="col-md-7">
+                      <p class="form-control-static">31-Dec-2016</p>
+                    </div>
+                  </div>
+              </div>
+
+              <div class="clear p-t-5"></div>
+              </form>
+        </div>
+        <div class="row ">
+          <div class="col-lg-6 no-padding-left">
+            <h4 class="header-title p-l-10">
+              Domain / Organization Details
+            </h4>
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap border-1 highlight" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th width="10%">Domain</th>
+                  <th width="10%">Activation Date</th>
+                  <th width="10%">Organization</th>
+                </tr> 
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Finance Law</td>
+                  <td>20-Aug-2016</td>
+                  <td>Establishment - 5<br/>S & E - 4</td>
+                </tr>
+                <tr>
+                  <td>Labour Law</td>
+                  <td>30-Aug-2016</td>
+                  <td>Establishment - 5<br/>S & E - 4</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-lg-6 no-padding-right">
+            <h4 class="header-title p-l-10">
+              File Space
+            </h4>
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap border-1" cellspacing="0" width="100%">
+              <tbody>
+                <tr>
+                  <td class="text-center bg-info" width="20%">20%</td>
+                  <td class="text-center bg-muted" width="80%">80%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="clear"></div>
+            <div class="row bg-lightdark">
+            <form class="form-horizontal" role="form">
+              <div class="col-lg-4 m-b-5">
+                
+                  <div class="form-group m-b-0 pull-left">
+                    <label class="col-md-12 control-label font-bold">Licence Holders list</label>
+                  </div>
+                
+              </div>
+              <!-- end col -->
+              <div class="col-lg-8">
+                <div class="form-group m-b-0 pull-right">
+                  <label class="col-sm-12 control-label ">Total Licence(s): 20 - Used: 05 | Remaining: 15</label>
+                </div>
+              </div>
+              <!-- end col -->
+              </form>
+            </div>
+            <div class="row">
+             <div class="table-responsive">
+              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th width="1%">#</th>
+                    <th width="15%">Employee</th>
+                    <th width="10%">User ID</th>
+                    <th width="10%">User Level</th>
+                    <th width="10%">Licence(s) Type</th>
+                    <th width="15%">Seating Unit</th>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm" placeholder="Employee" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm" placeholder="User ID" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm" placeholder="User Level" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm" placeholder="License(s) Type" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                        <input type="text" class="form-control input-sm" placeholder="Seating Unit" />
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                      </div>
+                    </td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Legal Entity Admin</td>
+                    <td>admin123</td>
+                    <td>Level 2</td>
+                    <td>Full Access</td>
+                    <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Seating Unit: VBM1003 - Branch Office, 12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> VBM1003 - Branch Office</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>EMP0010 - Hariharan</td>
+                    <td>hari</td>
+                    <td>Level 3</td>
+                    <td>Full Access</td>
+                    <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Seating Unit: VBM1003 - Branch Office, 12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> VBM1001 - Corporate Office</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>EMP0012 - Sivaraman</td>
+                    <td>siva</td>
+                    <td>Level 2</td>
+                    <td>View Only</td>
+                    <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Seating Unit: VBM1003 - Branch Office, 12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> VBM1002 - Regional Office</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>EMP0015 - Srinivasan</td>
+                    <td>vasan</td>
+                    <td>Level 3</td>
+                    <td>Full Access</td>
+                    <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Seating Unit: VBM1003 - Branch Office, 12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> VBM1003 - Branch Office</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>ARM Solutions - Praveen</td>
+                    <td>arm123</td>
+                    <td>Level 4</td>
+                    <td>Full Access</td>
+                    <td>-</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="rpt-count text-center">Note: To incorporate any new compliance, please contact Aparajitha.</p>
+            </div>
+         </div>
+        
+        <div class="clear"></div>
+    <!-- end col -->
+    </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+</div>
+{% endblock %}

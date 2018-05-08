@@ -1,0 +1,306 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container" id="assignstatutory-view">
+  <div class="row">
+    <div class="col-sm-12">
+      <h4 class="page-title">Approve Assigned Statutory</h4>
+    </div>
+  </div>
+  <div class="row">
+  <div id="animationSandbox">
+    <div class="col-sm-12">
+      <div class="panel panel-default panel-info">
+        <!-- /.panel-heading -->
+        <div class="card-box table-responsive">
+          <div class="dataTable_wrapper">
+            <table  class="table table-striped dt-responsive nowrap highlight m-b-0 js-filtertable table-fixed" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th align="center" width="2%">#</th>
+                  <th width="10%">Country</th>
+                  <th width="10%">Group</th>
+                  <th width="10%">Business Group</th>
+                  <th width="10%">Legal Entity</th>
+                  <th width="10%">Division</th>
+                  <th width="10%">Category</th>
+                  <th width="10%">Unit</th>
+                  <th width="10%">Domain</th>
+                  <th width="08%" class="text-center">View</th>
+                </tr>
+
+                <tr class="odd gradeX">
+                  <td align="center"></td>
+                  <td>
+                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                        <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Country" id="filter1">
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                        <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Group" id="filter2">
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                        <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Business Group" id="filter3">
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                        <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Legal Entity" id="filter4">
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                        <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Division" id="filter5">
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                        <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Category" id="filter6">
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                        <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Unit" id="filter8">
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group has-feedback col-sm-12 no-padding m-b-10 m-t-10">
+                        <input class="form-control input-sm listfilter js-filter" type="text" placeholder="Domain" id="filter9">
+                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td align="center">&nbsp;</td>
+                </tr>
+                
+              </thead>
+              <tbody class="tbody-approved-assigned-statutories-list">
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div class="container default-display-none" id="assignstatutory-add">
+  <div class="row">
+  <div id="animationSandbox">
+    <div class="col-sm-12">
+      <div class="portlet">
+      <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                Approve Assigned Statutory
+            </h3>
+            <div class="portlet-widgets">
+                <a id="btn-user-cancel">
+                    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+      <div id="bg-primary1" class="panel-collapse collapse in">
+      <div class="portlet-body p-b-0">
+      <div class="table-responsive no-padding b-0">
+        <div class="panel-group col-lg-12 no-padding tbody-assignstatutory" id="accordion" role="tablist" aria-multiselectable="true">
+
+      </div>
+
+      <center style="padding-top:10px;">
+        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light default-display-none btn-showmore" >Show More</button>
+      </center>
+
+
+      <div class="total_count_view default-display-none">
+        <span class="total_count"></span>
+      </div>
+                              
+      <div class="row">
+        <div class="form-horizontal" role="form">
+              <div class="col-lg-6 action-view default-display-none" >
+                  <div class="form-group reassign-du" >
+                    <label class="col-md-5 control-label">Action: <span class="mandatory">*</span></label>
+                    <div class="col-md-6">
+                      <select class="form-control input-sm" id="approval-status">
+                        <option  value="">Select</option>
+                        <option value="3">Approve</option>
+                        <option value="4">Reject</option>
+                      </select>
+                    </div>
+                  </div>
+              </div>
+              <!-- end col -->
+              <div class="col-lg-6 reason-view default-display-none" >
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">Reason: <span class="mandatory">*</span></label>
+                  <div class="col-md-6">
+                    <textarea class="form-control input-sm" rows="2" id="reason" placeholder="Enter Reason Here" maxlength="500"></textarea>
+                  </div>
+                </div>
+              </div>
+              <!-- end col -->
+              </div>
+            </div>
+      </div>
+      <div class="form-group text-center m-b-20">
+          <button class="btn btn-primary waves-effect waves-light default-display-none" type="button" id="btn-submit"> Submit </button>
+      </div>
+    </div>
+    <!-- end col -->
+  </div>
+</div>
+
+</div>
+
+
+<div id="templates">
+<table class="table-no-record default-display-none">
+  <tr>
+  <td colspan="100%" align="center"> No Records Found</td>
+  </tr>
+</table>
+  
+<table class="table-approved-assigned-statutories">
+  <tr class="table-row">
+      <td class="tbl_sno" align="center"></td>
+      <td class="tbl_country"></td>
+      <td class="tbl_group"></td>
+      <td class="tbl_businessgroup"></td>
+      <td class="tbl_legalentity"></td>
+      <td class="tbl_division"></td>
+      <td class="tbl_category"></td>
+      <td class="tbl_unit"></td>
+      <td class="tbl_domain"></td>
+      
+      <td class="text-center view-icon">
+        <button class="btn btn-primary waves-effect m-l-5" type="reset" id="btn-view">View</button>
+      </td>
+          
+  </tr>
+</table>
+
+<div id="act-templates" class="default-display-none">
+      <div class="panel panel-default bx-shadow-none p-head">
+        <div class="panel-heading p-10 acc-title" role="tab">
+            <h4 class="m-b-0 m-t-0">
+              <div class="act-status" style="float:left; width:3%;">
+                 
+              </div>
+              <div class="panel-title">
+                <a role="button" data-toggle="collapse"
+                    data-parent="#accordion" 
+                    aria-expanded="true" >
+                    <span></span>
+
+                <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
+                  <label class="col-sm-3 control-label p-t-5" style="margin-right: 10px;">Remarks:</label>
+                  <div class="col-sm-8 no-padding remarks-div"><abbr class="custom-tooltip-class" data-toggle="tooltip" title=""> 
+                    <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
+                  </abbr>
+                  </div>
+                </div>
+                
+                </a>
+              </div>
+              
+            </h4>
+        </div>
+        <div class="panel-collapse collapse in coll-title" role="tabpanel">
+            <div class="panel-body no-padding">
+                <div class="dataTable_wrapper">
+                    <table  class="table table-striped dt-responsive nowrap wrap-td-text" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="2%"></th>
+                                <th align="center" width="4%">#</th>
+                                <th width="25%">Statutory Provision</th>
+                                <th width="25%">Compliance Task</th>
+                                <th width="30%">Compliance Description</th>
+                                <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Applicable"></i></th>
+                                <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not Applicable"></i></th>
+                                <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white" data-toggle="tooltip" data-original-title = "Not at All Applicable"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-compliance-list">                               
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      </div>
+  </div>
+  <div id="statutory-value">
+    <table class="table-statutory-values">
+      <tr class="sub-title-row">
+        <td colspan="100%">
+            <div class="col-sm-2 no-padding">
+                <mark class="p-l-10 p-r-10 sub-title"></mark>
+            </div>
+        </td>
+      </tr>
+      <tr class="compliance-details">
+          <td align="center" class="rejected">
+              <i class="fa fa-square text-muted c-pointer"></i>
+          </td>
+
+          <td><span class="sno"> </span></td>
+          <td class="statutoryprovision"></td>
+          <td>
+            <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
+            <span class="compliancetask"> </span>
+          </td>
+          <td class="compliancedescription"> 
+
+          </td>
+          <td align="center" class="tick">
+              <img src="images/tick1boldinactive.png">
+          </td>
+
+          <td align="center" class="untick">
+              <img src="images/deleteboldinactive.png">
+          </td>
+
+          <td align="center" class="minus">
+              <img src="images/iconminusinactive.png">
+          </td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/js/fixedheader.js"></script>
+    <script type="text/javascript" src="/script/approve-assigned-statutory/approve_assigned_statutory.js"></script>
+{% endblock %}

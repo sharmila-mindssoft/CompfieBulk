@@ -1,0 +1,258 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-1"> </div>
+    <div class="col-sm-10">
+      <div class="portlet">
+        <div class="portlet-heading bg-info">
+            <h3 class="portlet-title">
+                Approve Client Group
+            </h3>
+            <div class="portlet-widgets">
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="bg-primary1" class="panel-collapse collapse in">
+          <div class="portlet-body">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="row">
+              <div class="form-horizontal" role="form">
+                <div class="col-lg-6">
+                  <div class="form-group has-feedback">
+                    <label class="col-sm-4 control-label">Country <span class="mandatory">*</span></label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control input-sm" id="countryval" tabindex="1" autofocus="autofocus" value="" placeholder="Enter Country">
+                      <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                      <input type="hidden" id="country-id" value="">
+                      <div id="ac-country" class="ac-textbox default-display-none">
+                        <ul class="width85"></ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- end col -->
+                <div class="col-lg-6">
+                <div class="form-group has-feedback">
+                  <label class="col-sm-4 control-label">Client Group</label>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="2" placeholder="Enter Client Group">
+                    <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                    <input type="hidden" id="group-id">
+                    <div id="ac-group" class="ac-textbox default-display-none">
+                      <ul class="width85"></ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- end col -->
+              <div class="col-sm-12">
+                <div class="form-group text-center m-t-5 m-b-0">
+                  <button class="btn btn-primary text-center waves-effect waves-light btn-show" type="submit" tabindex="3" > Show </button>
+                </div>
+              </div>
+              <!-- end col -->
+              </div>
+            </div>
+            <br>
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight client-group-grid" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th width="2%">#</th>
+                  <th width="20%">Country</th>
+                  <th width="20%">Username</th>
+                  <th width="20%">Legal Entity Name</th>
+                  <th width="18%">Action <span class="mandatory">*</span></th>
+                  <th width="20%">Reason <span class="mandatory">*</span></th>
+                </tr>
+              </thead>
+                <tbody class="group-list">
+
+                </tbody>
+            </table>
+            <div class="col-sm-12">
+                <div class="form-group text-center approve-group-div">
+                  <button class="btn btn-primary text-center waves-effect waves-light approve-group" type="submit"> Submit </button>
+                </div>
+            </div>
+          </div>
+          <!-- end col -->
+        </div>
+        <!-- end row -->
+        </div>
+      </div>
+      </div>
+    </div>
+    <!-- end col -->
+  </div>
+</div>
+
+<div id="templates" class="default-display-none">
+    <table class="table-group-list">
+      <tr class="warning">
+      <th class="sno"></th>
+      <th class="group_name"></th>
+      <th class="email_id"></th>
+      <th></th>
+      <th>
+          <select class="form-control chosen sm-approve-control input-sm" data-placeholder="Choose a Action" tabindex="1">
+            <option value="0" selected="selected"> Select</option>
+            <option value="1">Approve</option>
+            <option value="2">Reject</option>
+          </select>
+      </th>
+      <td class="sm-reason-box">
+          <textarea class="form-control input-sm sm-reason default-display-none" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
+      </td>
+      </tr>
+  </table>
+
+  <table class="table-le-list">
+      <tr>
+        <td>&nbsp;</td>
+        <td class="country_name">
+          <!-- <a class="c-pointer"></a> -->
+        </td>
+        <td></td>
+        <td class="legal_entity_name">
+          <a href="#" class="c-pointer" data-toggle="modal" data-target=".bs-example-modal-lg"></a>
+        </td>
+      
+        <td>
+            <select class="form-control chosen compliance-approve-control input-sm" data-placeholder="Choose a Action" tabindex="1">
+              <option value="0"> Select</option>
+              <option value="1">Approve</option>
+              <option value="2">Reject</option>
+            </select>
+        </td>
+        <td class="compliance-reason-box">
+        <textarea class="form-control input-sm compliance-reason default-display-none" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
+      </td>
+      </tr>
+  </table>
+
+  <table class="table-no-record">
+      <tr>
+      <td colspan="8" align="center"> No Records Found</td>
+      </tr>
+  </table>
+  
+    <div class="le-row">
+        <table>
+            <tr class="le">
+                <td colspan="4">
+                    <table class="table">
+                        <tr>
+                            <td width="33%" class="le_country"></td>
+                            <td width="33%" class="le_bg"></td>
+                            <td width="33%" class="le_name"></td>
+                        </tr>
+                        <tr>
+                            <td class="total_licence"></td>
+                            <td>
+                                
+                            </td>
+                            <td class="file_space"></td>
+                        </tr>
+                        <tr>
+                            <td class="contract_from"></td>
+                            <td></td>
+                            <td class="contract_to"></td>
+                            
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="domain-header">
+                <td colspan="3">
+                    <div class="grid-table">
+                        <table style="width:100%">
+                            <tr>
+                                <th width="33%">Domain </th>
+                                <th width="33%">Organization</th>
+                            </tr>
+                            <tbody class="tbody-domain">
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="domain-row">
+        <table>
+            <tr>
+                <td class="domain-name"></td>
+                <td class="org-name"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="date-config-row">
+        <table>
+            <tr>
+                <td class="dconfig-country_name"></td>
+                <td class="dconfig-domain-name"></td>
+                <td class="dconfig-from"></td>
+                <td class="dconfig-to"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-lg overlay" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <h4 class="page-title"></h4>
+      <hr class="no-top-margin no-bottom-margin">
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+            <tr>
+              <td colspan="4" class="no-border"><table class="table" >
+                  <tr>
+                    <td width="30%" align="center" class="client_short_name"></td>
+                    <td width="30%" align="center" class="admin_username"></td>
+                    <td width="30%" align="center" class="view_only_licence"></td>
+                  </tr>
+
+                  <tr>
+                    <td colspan="3" align="left" class="remarks"></td>
+                  </tr>
+
+                  <tbody class="tbody-le">
+                      <td colspan=4>
+                      </td>
+                  </tbody>
+
+                </table></td>
+            </tr>
+          </table>
+
+          <div class="grid-table">
+            <table>
+                <tr class="default-display-none">
+                    <th>Country </th>
+                    <th>Domain </th>
+                    <th>From</th>
+                    <th>To</th>
+                </tr>
+                <tbody class="date-configuration-rows">
+
+                </tbody>
+            </table>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+
+{% endblock %}
+{% block contentscript %}
+    <script type="text/javascript" src="/script/approve-client-group/approve-client-group.js"></script>
+{% endblock %}

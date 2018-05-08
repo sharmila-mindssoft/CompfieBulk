@@ -1,0 +1,131 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-10">
+      <h4 class="page-title">User Management</h4>
+    </div>
+    <div class="col-sm-2">
+      <button type="submit" class="btn btn-success waves-effect waves-light m-l-10 btn-md pull-right" onclick="location.href='/user-management/create'"> <i class="fa fa-plus-circle"></i> Add</button>
+    </div>
+  </div>
+  <div class="row" id="animationSandbox">
+    <div class="col-lg-12">
+      <div class="panel panel-default panel-info">
+        <!-- /.panel-heading -->
+        <div class="panel-body" >
+          <div class="dataTable_wrapper">
+            <table  class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th width="3%">#</th>
+                  <th width="14%">Employee</th>
+                  <th width="11%">User ID</th>
+                  <th width="14%">Email ID</th>
+                  <th width="14%">Category Name</th>
+                  <th class="text-center" width="13%">Registration Email</th>
+                  <th class="text-center" width="7%">Edit</th>
+                  <th class="text-center" width="7%">Status</th>
+                  <th class="text-center" width="7%">Disable</th>
+                </tr>
+				   <tr >
+                  <td></td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm" placeholder="Employee Name" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm" placeholder="User ID" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm" placeholder="Email ID" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-group col-sm-12 no-padding m-b-0">
+                      <input type="text" class="form-control input-sm" placeholder="Category Name" />
+                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    </div>
+                  </td>
+                  <td align="center"></td>
+                  <td class="icon-3x text-center"> </td>
+                  <td class="text-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true"> 
+                                <i class="fa fa-check text-success"></i>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" onclick="return false;">All</a></li>
+                                <li><a href="#" onclick="return false;"><i class="fa fa-check text-success"></i> Active</a></li>
+                                <li><a href="#" onclick="return false;"><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                  <td class="icon-3x text-center"></td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="odd gradeX">
+                  <td>1</td>
+                  <td>Sivaraman</td>
+                  <td>siva</td>
+                  <td>siva@sample.com</td>
+                  <td>Knowledge Manager</td>
+                  <td align="center"></td>
+                  <td class="icon-3x text-center"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click Here to Edit"></i> </td>
+                  <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click Here to Deactivate"></i> </td>
+                  <td class="icon-3x text-center"><i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" title="Click Here to Disable"></i> </td>
+                </tr>
+                <tr class="even gradeC">
+                  <td>2</td>
+                  <td>Hariharan</td>
+                  <td>hari2512</td>
+                  <td>hari@sample.com</td>
+                  <td>Techno Manager</td>
+                  <td align="center"></td>
+            	 <td class="icon-3x text-center"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click Here to Edit"></i> </td>
+                  <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click Here to Deactivate"></i> </td>
+                  <td class="icon-3x text-center"><i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" title="Click Here to Disable"></i> </td>
+                </tr>
+                <tr class="even gradeC">
+                  <td>3</td>
+                  <td>Srinivasan</td>
+                  <td>-</td>
+                  <td>srinivasan@sample.com</td>
+                  <td>Domain Manager</td>
+                  <td align="center"><a href="#">Resend</a></td>
+                  <td class="icon-3x text-center"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click Here to Edit"></i> </td>
+                  <td class="icon-3x text-center"><i class="fa fa-times text-danger c-pointer" data-toggle="tooltip" title="Click Here to Activate"></i> </td>
+                  <td class="icon-3x text-center"><i class="fa fa-ban text-danger c-pointer" data-toggle="tooltip" title="Cannot Able to Enable"></i> </td>
+                </tr>
+                <tr class="even gradeC">
+                  <td>4</td>
+                  <td>Sundaram</td>
+                  <td>sundar</td>
+                  <td>sundaram@sample.com</td>
+                  <td>Knowledge Executive</td>
+                  <td align="center"></td>
+                  <td class="icon-3x text-center"><i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip" title="Click Here to Edit"></i> </td>
+                  <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" data-toggle="tooltip" title="Click Here to Deactivate"></i> </td>
+                  <td class="icon-3x text-center"><i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" title="Click Here to Disable"></i> </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- /.panel-body -->
+      </div>
+      <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+  </div>
+</div>
+{% endblock %}

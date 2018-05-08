@@ -1,0 +1,217 @@
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
+
+<div class="container" id="client-unit-approve-view">
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-10">
+            <h4 class="page-title">Client Unit Approval</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div id="animationSandbox">
+            <div class="col-sm-1"></div>
+            <div class="col-lg-10">
+                <div class="panel panel-default panel-info">
+                    <div class="card-box table-responsive">
+                        <div class="dataTable_wrapper">
+                            <table class="table table-striped dt-responsive nowrap highlight js-filtertable" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th align="center" width="2%">#</th>
+                                        <th width="15%">Group</th>
+                                        <th width="15%">Business Group</th>
+                                        <th width="15%">Country</th>
+                                        <th width="15%">Legal Entity</th>
+                                        <th width="10%" class="text-center">No. of Unit(s)</th>
+                                        <th width="10%" class="text-center">View</th>
+                                    </tr>
+                                    <tr class="odd gradeX filter-tr">
+                                        <td align="center"></td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm js-filter" id="search-group-name" placeholder="Enter Group" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm js-filter" id="search-bg-name" placeholder="Enter Business Group" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm js-filter" id="search-country-name" placeholder="Enter Country" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
+                                                <input type="text" class="form-control input-sm js-filter" id="search-le-name" placeholder="Enter Legal Entity" />
+                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                            </div>
+                                        </td>
+                                        <td align="center">&nbsp;</td>
+                                        <td align="center">&nbsp;</td>
+                                    </tr>
+                                </thead>
+                                <tbody class="tbody-client-unit-list">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container default-display-none" id="clientunit-approve">
+    <div class="row">
+        <div id="animationSandbox">
+            <div class="col-sm-12">
+                <div class="portlet">
+                    <div class="portlet-heading bg-info">
+                        <h3 class="portlet-title">Client Unit Approval</h3>
+                        <div class="portlet-widgets">
+                            <a id="btn-user-cancel">
+                                <i class="zmdi zmdi-close zmdi-hc-2x cancel-approval-form"></i>
+                            </a>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class=" table-responsive no-padding">
+                        <div class="col-lg-12">
+                            <div class="input-row">
+                                <div id="bg-primary1" class="panel-collapse collapse in">
+                                    <div class="portlet-body">
+                                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+                                            <div class="col-lg-3 text-center">
+                                                <div class="form-group">
+                                                    <label class="control-label approve_group_name" for="example-input-small"></label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 text-center">
+                                                <div class="form-group">
+                                                    <label class="control-label approve_bg_name" for="example-input-small"></label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 text-center">
+                                                <div class="form-group">
+                                                    <label class="control-label approve_country_name" for="example-input-small"></label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 text-center">
+                                                <div class="form-group">
+                                                    <label class="control-label approve_le_name" for="example-input-small"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tbody-approval-list">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <button class="btn btn-primary waves-effect waves-light submit-approval-form" type="submit"> Submit </button>
+                    </div>
+                </div>
+                <!-- end col -->
+            </div>
+        </div>
+    </div>
+</div>
+<div id="templates" class="default-display-none">
+    <table class="table-approval-list">
+        <tr>
+            <td align="center" class="sno"></td>
+            <td class="group-name"></td>
+            <td class="bg-name"></td>
+            <td class="country-name"></td>
+            <td class="le-name"></td>
+            <td class="no-of-units" align="center"></td>
+            <td align="center">
+                <button class="btn btn-primary waves-effect m-l-5 btn-save" type="reset"> View</button>
+            </td>
+        </tr>
+    </table>
+    <div class="add-container view-divition" style="padding-left:0px; padding-right:0px;">
+        <div class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap wrap-td-text" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th width="5%">#</th>
+                        <th width="10%">Unit Location</th>
+                        <th width="08%">Unit Code</th>
+                        <th width="13%">Unit Name</th>
+                        <th width="15%">Unit Address</th>
+                        <th width="08%">Postal Code</th>
+                        <th width="10%">Domain</th>
+                        <th width="10%">Organization</th>
+                        <th width="10%">Action <span class="mandatory">*</span> </th>
+                        <th width="12%">Reason</th>
+                    </tr>
+                </thead>
+                <tbody class="unit-tbody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <table class="table-no-record">
+        <tr>
+            <td colspan="7" align="center"> No Records Found</td>
+        </tr>
+    </table>
+
+</div>
+<div class="unit-head-template default-display-none">
+    <table>
+        <tr class="success font-bold">
+            <td colspan="8" class="v-align-middle">
+                <div class="col-sm-4 division"></div>
+                <div class="col-sm-4 category"></div>
+            </td>
+            <td>
+                <select class="form-control input-sm group-approve-control">
+                    <option value="0"> Select</option>
+                    <option value="1">Approve</option>
+                    <option value="2">Reject</option>
+                </select>
+            </td>
+            <td class="group-reason-box">
+                <textarea class="form-control input-sm group-reason default-display-none" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="unit-row-template">
+    <table>
+        <tr>
+            <td class="sno"></td>
+            <td class="unit-location"></td>
+            <td class="unit-code"></td>
+            <td class="unit-name"></td>
+            <td class="address"></td>
+            <td class="postal-code"></td>
+            <td class="domains"></td>
+            <td class="orgs"></td>
+            <td class="approve-control"></td>
+            <td class="reason-box">
+                <textarea class="form-control input-sm reason default-display-none" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="approve-drop-down default-display-none">
+    <select class="form-control input-sm">
+        <option value="0">Select</option>
+        <option value="1">Approve</option>
+        <option value="2">Reject</option>
+    </select>
+</div>
+{% endblock %} {% block contentscript %}
+<script type="text/javascript" src="/script/client-unit-approval/client-unit-approval.js"></script>
+{% endblock %}

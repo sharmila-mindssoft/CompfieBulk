@@ -1,0 +1,1197 @@
+
+# Request Format
+
+    {
+        "session_token": SESSION_TOKEN,
+        "request": will be any of the following requests
+    }
+
+    Possible Errors
+
+    [
+        "InvalidSessionToken",
+        {}
+    ]
+
+    Note : All the following Requests will be in the above format
+
+
+# Common
+##  Get Countries
+
+    [
+        "GetCountries",
+        {}
+    ]
+
+    On Success
+
+    [
+        "GetCountriesSuccess"
+        {
+            "countries": [
+                {
+                    c_id: INT,
+                    c_name: STRING
+                }
+            ]
+        }
+    ]
+
+## Get domains
+
+    [
+        "GetDomains",
+        {
+            c_id: INT
+        }
+    ]
+
+    On Success
+
+    [
+        "GetDomainsSuccess",
+        {
+            "domains": [
+                {
+                    d_id: INT,
+                    d_name: STRING,
+                }
+            ]
+        }
+    ]
+
+## Get client info
+
+    [
+        "GetClientInfo",
+        {}
+    ]
+
+    On Success
+
+    [
+        "GetClientInfoSuccess",
+        {
+            "clients": [
+                {
+                    cl_id: INT,
+                    cl_name: STRING
+                }
+            ],
+            "legalentites": [
+                {
+                    cl_id: INT,
+                    le_id: INT,
+                    le_name: STRING,
+                    domains: [
+                        {
+                            d_id: INT,
+                            d_name: STRING
+                        }
+                    ]
+                }
+            ],
+            "units": [
+                {
+                    cl_id: INT,
+                    le_id: INT,
+                    u_id: INT,
+                    u_name: INT,
+                    domains: [
+                        {
+                            d_id: INT,
+                            d_name: STRING
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+
+#  KNOWLEDGE - Statutory Mapping Bulk Upload
+
+## Get statutory mapping csv uploaded list
+
+    [
+        "GetStatutoryMappingCsvUploadedList",
+        {}
+    ]
+
+    On Success
+    [
+        "GetStatutoryMappingCsvUploadedListSuccess",
+        {
+            "upload_more": BOOLEAN,
+            "csv_list": [
+                {
+                    c_id: INT,
+                    c_name: STRING,
+                    d_id: INT,
+                    d_name: STRING,
+                    csv_id: INT,
+                    csv_name: STRING,
+                    no_of_records: INT,
+                    no_of_documents: INT,
+                    uploaded_documents: INT,
+                }
+            ]
+        }
+    ]
+
+## Upload Statutory Mapping
+
+    [
+        "UploadStatutoryMapping",
+        {
+            c_id: INT,
+            c_name: STRING,
+            d_id: INT,
+            d_name: STRING,
+            csv_name: STRING,
+            csv_data: base64
+        }
+    ]
+
+    On Success
+    [
+        "UploadStatutoryMappingSuccess",
+        {
+            total: INT,
+            valid: INT,
+            invalid: INT,
+            doc_count: INT,
+            doc_names: [STRING,]
+        }
+    ]
+    On Validation Failed
+    [
+        "InvalidDataSummary", {
+
+            invalid_file : STRING
+            mandatory_error: INT,
+            max_length_error: INT,
+            duplicate_error: INT,
+            invalid_char_error: INT,
+            invalid_data_error: INT,
+            inactive_error: INT,
+            total: INT,
+            invalid: INT,
+        }
+    ]
+
+## Get Rejected Statutory Mapping list
+
+    [
+        "GetRejectedStatutoryMappingList",
+        {}
+    ]
+
+    On Success
+    [
+        "GetRejectedStatutoryMappingListSuccess",
+        {
+            "rejected_list": [
+                {
+                    c_id: INT,
+                    c_name: STRING,
+                    d_id: INT,
+                    d_name: STRING,
+                    csv_id: INT,
+                    csv_name: STRING,
+                    no_of_records: INT,
+                    rej_by: STRING,
+                    rej_on: STRING,
+                    rej_count: INT,
+                    ref_file: STRING,
+                    rej_reason: STRING,
+                    remove: Boolean
+                }
+            ]
+        }
+    ]
+
+## Remove Rejected Data
+    [
+        "RemoveRejectedData",
+        {
+            csv_id: INT,
+            pwd: String
+        }
+    ]
+
+    On Success
+    [
+        RemoveRejectedDataSuccess,
+        {}
+    ]
+
+## Get Approve Statutory Mapping List
+
+    [
+        "GetApproveStatutoryMappingList",
+        {
+            c_id: INT,
+            d_id: INT
+        }
+    ]
+
+    on success
+    [
+        "GetApproveStatutoryMappingSuccess",
+        {
+            pending_csv_list: [
+                {
+                    csv_id: INT,
+                    csv_name: STRING,
+                    uploaded_by: STRING,
+                    uploaded_on: STRING,
+                    no_of_records: INT,
+                    action_count: INT,
+                    download_file: STRING
+                }
+            ]
+        }
+    ]
+## Get Filters For Approve Statutory Mapping
+    [
+        "GetApproveMappingFilter",
+        {
+            csv_id: INT
+        }
+    ]
+    on success
+    [
+        "GetApproveMappingFilterSuccess",
+        {
+            orga_names: [String, ],
+            s_natures: [String, ],
+            bu_statutories: [String, ],
+            frequencies: [String, ],
+            geo_locations: [String, ],
+            c_tasks: [String, ],
+            c_descs: [String, ],
+            c_docs: [String, ],
+        }
+    ]
+## Get Approve Statutory Mapping View From Filter Input
+
+    [
+        "GetApproveStatutoryMappingViewFilter",
+        {
+            csv_id: INT,
+            orga_name: String,
+            s_nature: String,
+            statutory: String,
+            frequency: String,
+            geo_location: String,
+            c_task_name: String,
+            c_desc: String,
+            c_doc: String
+
+        }
+    ]
+    On Success
+    [
+        "GetApproveStatutoryMappingViewFilterSuccess"
+        {
+            c_name: STRING,
+            d_name: STRING,
+            csv_name: STRING,
+            uploaded_by: STRING,
+            uploaded_on: STRING,
+            csv_id: INT,
+            mapping_data : [
+                {
+                    sm_id: INT,
+                    org : STRING,
+                    geo_location: STRING,
+                    s_nature: STRING,
+                    statutory: STRING,
+                    s_provision: STRING,
+                    c_task_name: STRING,
+                    c_doc: STRING,
+                    c_desc: STRING,
+                    p_cons: STRING,
+                    refer: STRING,
+                    frequency: STRING,
+                    statu_month: STRING,
+                    statu_date: STRING,
+                    trigger_before: STRING,
+                    r_every: INT,
+                    r_type: STRING,
+                    r_by: STRING,
+                    dur: INT,
+                    dur_type: STRING,
+                    multiple_input: STRING,
+                    format_file: STRING,
+                    bu_action: BOOLEAN,
+                    bu_remarks: STRING,
+                }
+            ]
+
+        }
+    ]
+
+## Get Approve Statutory Mapping View
+
+    [
+        "GetApproveStatutoryMappingView",
+        {
+            csv_id: INT,
+            f_count: INT,
+            r_range: INT
+        }
+    ]
+    On Success
+    [
+        "GetApproveStatutoryMappingViewSuccess"
+        {
+            c_name: STRING,
+            d_name: STRING,
+            csv_name: STRING,
+            uploaded_by: STRING,
+            uploaded_on: STRING,
+            csv_id: INT,
+            mapping_data : [
+                {
+                    sm_id: INT,
+                    organization : STRING,
+                    geo_location: STRING,
+                    statu_nature: STRING,
+                    statutory: STRING,
+                    statu_provision: STRING,
+                    c_task: STRING,
+                    c_document: STRING,
+                    c_description: STRING,
+                    penal_cons: STRING,
+                    refer_link: STRING,
+                    c_frequency: STRING,
+                    statu_month: STRING,
+                    statu_date: STRING,
+                    trigger_before: STRING,
+                    r_every: STRING,
+                    r_type: STRING,
+                    r_by: BOOLEAN,
+                    duration: STRING,
+                    duration_type: STRING,
+                    multiple_input: STRING,
+                    format_file: STRING,
+                    bu_action: BOOLEAN,
+                    bu_remarks: STRING,
+                }
+            ]
+
+        }
+    ]
+
+## Update Approve Action From List
+    [
+        "UpdateApproveActionFromList",
+        {
+            csv_id: INT,
+            bu_action: String,
+            bu_remarks: String
+        }
+    ]
+
+    On Success
+    [
+        "UpdateApproveActionFromListSuccess", {}
+    ]
+`
+## Update Approve Action
+    [
+        "UpdateApproveAction",
+        {
+            csv_id: INT,
+            sm_id: INT,
+            bu_action: String,
+            bu_remarks: String
+        }
+    ]
+
+    On Success
+
+    [
+        "UpdateApproveActionSuccess", {}
+    ]
+
+## Submit Statutory Mapping
+    [
+        "SubmitStatutoryMapping",
+        {
+            csv_id: Int,
+            pwd: String
+        }
+    ]
+
+    On Success
+
+    [
+        "SubmitStatutoryMappingSuccess", {}
+    ]
+
+    On Failure
+    [
+        "ApproveActionPendingForSomeCompliances", {}
+    ]
+
+    On Failure
+    [
+        "ValidationFailed", {}
+    ]
+
+
+# TECHNO - Client Unit Bulk Upload
+
+## Upload Bulk Client Unit
+    [
+        "UploadBulkClientUnit", {
+            cl_id: INT,
+            csv_file: String,
+            csv_data: base64
+        }
+    ]
+
+    On Success
+    [
+        "UploadBulkClientUnitSuccess", {
+            total: INT,
+            valid: INT,
+            invalid: INT,
+        }
+    ]
+    On Validation Failed
+    [
+        "InvalidDataSummary", {
+            total: INT,
+            valid: INT,
+            invalid: INT,
+            invalid_file: String,
+            "mandatory_failed": INT,
+            "duplication_failed": INT,
+            "status_failed": INT,
+            "maxlength_failed": INT,
+        }
+    ]
+
+## Get Rejected Client Unit List
+
+    [
+        "GetRejectedClientUnitList",
+        {
+            cl_id: INT
+        }
+    ]
+
+    On Success
+    [
+        "GetRejectedClientUnitList", {
+            unit_list: [
+                {
+                    csv_id: INT,
+                    csv_name: STRING,
+                    no_of_records: INT,
+                    rej_by: STRING,
+                    rej_on: STRING,
+                    rej_count: INT,
+                    ref_file: STRING,
+                    rej_reason: STRING,
+                    remove: Boolean
+                }
+            ]
+        }
+    ]
+
+## Remove Rejected Client Unit
+
+    [
+        "RemoveRejectedClientUnit", {
+            csv_id: INT,
+            pwd: String,
+        }
+    ]
+
+    on Success
+    [
+        "RemoveRejectedClientUnitSuccess", {}
+    ]
+
+## Get Client Unit Data For Approve
+
+    [
+        "GetClientUnitDataForApprove", {
+            cl_id: INT
+        }
+    ]
+
+    On Success
+    [
+        "GetClientUnitDataForApproveSuccess", {
+            unit_list: [
+                {
+                    csv_id: INT,
+                    csv_name: String,
+                    uploaded_by: String,
+                    uploaded_on: String,
+                    no_of_records: INT,
+                    approved_count: INT,
+                    download_file: String
+                }
+            ]
+        }
+    ]
+
+## Client Unit Approve Action In List
+
+    [
+        "ClientUnitApproveActionInList", {
+            csv_id: INT,
+            bu_action: Boolean,
+            bu_remarks: String,
+            pwd: String,
+        }
+    ]
+    On Success
+    [
+        "ClientUnitApproveActionInListSuccess", {}
+    ]
+
+## View Client Unit Data
+
+    [
+        "ViewClientUnitData", {
+            csv_id: INT,
+            range: INT,
+            f_count: INT,
+        }
+    ]
+
+    On Success
+    [
+        "ViewClientUnitDataSuccess", {
+            csv_id: INT,
+            csv_name: String,
+            cl_id: Int,
+            cl_name: String,
+            uploaded_on: String,
+            uploaded_by: String,
+            units: [
+                {
+                    u_id: INT,
+                    le_name: String,
+                    div_name: String,
+                    car_name: String,
+                    geo_level: String,
+                    u_location: String,
+                    u_code: String,
+                    u_name: String,
+                    address: String,
+                    p_code: String,
+                    d_name: String,
+                    org_name: String,
+                    bu_action: Boolean,
+                    bu_remarks: String,
+                }
+            ]
+        }
+    ]
+
+## Update Client Unit Approve Action
+    [
+        "UpdateClientUnitApproveAction", {
+            csv_id: INT,
+            u_id: INT,
+            bu_action: Boolean,
+            bu_remarks: String
+        }
+    ]
+
+    On Success
+    [
+        "UpdateClientUnitApproveActionSuccess", {}
+    ]
+
+## Submit Client Unit Data
+    [
+        "SubmitClientUnitData", {
+            csv_id: INT,
+            cl_id: INT,
+            pwd: String
+        }
+    ]
+
+    On Success
+    [
+        "SubmitClientUnitDataSuccess", {}
+    ]
+
+## Get Unit Filters
+    [
+        "GetUnitFilters", {
+            csv_id: INT
+        }
+    ]
+
+    On Success
+    [
+        "GetUnitFiltersSuccess", {
+            les: [String, ],
+            divs: [String, ],
+            cats: [String, ],
+            u_locations: [String, ],
+            u_codes: [String, ],
+            d_names: [String, ],
+            org_names: [String, ],
+        }
+    ]
+
+## View Client Unit Data From Filter
+
+    [
+        "ViewClientUnitDataFromFilter", {
+            csv_id: INT,
+            range: INT,
+            f_count: INT,
+            le_name: String,
+            div_name: String,
+            cat_name: String,
+            u_location: String,
+            u_code: String,
+            d_name: String,
+            org_name: String
+        }
+    ]
+
+    On Success
+    [
+        "ViewClientUnitDataFromFilterSuccess", {
+            csv_id: INT,
+            csv_name: String,
+            cl_id: Int,
+            cl_name: String,
+            uploaded_on: String,
+            uploaded_by: String,
+            units: [
+                {
+                    u_id: INT,
+                    le_name: String,
+                    div_name: String,
+                    car_name: String,
+                    geo_level: String,
+                    u_location: String,
+                    u_code: String,
+                    u_name: String,
+                    address: String,
+                    p_code: String,
+                    d_name: String,
+                    org_name: String,
+                    bu_action: Boolean,
+                    bu_remarks: String,
+                }
+            ]
+        }
+    ]
+
+
+# DOMAIN - Assign Statutory Bulk Upload
+
+## Download Assign Statutory
+    [
+        "DownloadAssignStatutory", {
+            cl_id: INT,
+            le_id: INT,
+            d_id: INT,
+            u_ids: [INT, ],
+        }
+    ]
+
+    on Success
+    [
+        "DownloadAssignStatutorySuccess", {
+            csv_name: String
+        }
+    ]
+
+## Upload Assign Statutory
+    [
+        "UploadAssignStatutory", {
+            csv_name: String
+        }
+    ]
+    On Success
+    [
+        "UploadAssignStatutorySuccess", {
+            total: INT,
+            valid: INT,
+            invalid: INT
+        }
+    ]
+
+    On Validation Failed
+    [
+        "InvalidDataSummary", {
+            invalid_file: String,
+            total: INT,
+            valid: INT,
+            invalid: INT,
+            status_count: INT
+        }
+    ]
+
+## Get Rejected Assign Statutory List
+
+    [
+        "GetRejectedAssignStatutoryList", {
+            cl_id: INT,
+            le_id: INT,
+            d_id: String,
+            u_name: String,
+        }
+    ]
+
+    On Success
+    [
+        "GetRejectedAssignStatutoryListSuccess", {
+            csv_id: INT,
+            csv_name: String,
+            no_of_records: INT,
+            rej_by: STRING,
+            rej_on: STRING,
+            rej_count: INT,
+            ref_file: STRING,
+            rej_reason: STRING,
+            remove: Boolean
+        }
+    ]
+
+## Remove Rejected Assign Statutory
+
+    [
+        "RemoveRejectedAssignStatutory", {
+            csv_id: INT,
+            pwd: String,
+        }
+    ]
+
+    on Success
+    [
+        "RemoveRejectedAssignStatutorySuccess", {}
+    ]
+
+## Get Assign Statutory For Approve
+    [
+        "GetAssignStatutoryForApprove", {
+            cl_id: INT,
+            le_id: INT,
+        }
+    ]
+
+    On Success
+    [
+        "GetAssignStatutoryForApproveSuccess", {
+            file_list: [
+                {
+                    csv_id: INT,
+                    csv_name: String,
+                    uploaded_by: String,
+                    uploaded_on: String,
+                    no_of_records: INT,
+                    approved_count: INT,
+                    download_file: String
+                }
+            ]
+        }
+    ]
+
+## Assign Statutory Approve Action In List
+
+    [
+        "AssignStatutoryApproveActionInList", {
+            csv_id: INT,
+            bu_action: Boolean,
+            bu_remarks: String,
+            pwd: String,
+        }
+    ]
+    On Success
+    [
+        "AssignStatutoryApproveActionInListSuccess", {}
+    ]
+
+## View Assign Statutory Data
+
+    [
+        "ViewAssignStatutoryData", {
+            csv_id: INT,
+            range: INT,
+            f_count: INT,
+        }
+    ]
+
+    On Success
+    [
+        "ViewAssignStatutoryDataSuccess", {
+            csv_id: INT,
+            csv_name: String,
+            cl_id: INT,
+            cl_name: String,
+            le_id: INT,
+            le_name: String,
+            uploaded_on: String,
+            uploaded_by: String,
+            data: [
+                {
+                    as_id: INT,
+                    u_location: String,
+                    u_code: String,
+                    u_name: String,
+                    d_name: String,
+                    org_name: String,
+                    p_legis: String,
+                    s_legis: String,
+                    s_prov: String,
+                    c_task: String,
+                    c_desc: String,
+                    s_status: Boolean,
+                    s_remarks: String,
+                    c_status: Boolean,
+                    bu_action: Boolean,
+                    bu_remarks: String,
+                }
+            ]
+        }
+    ]
+
+## Update Assign Statutory Approve Action
+    [
+        "UpdateAssignStatutoruApproveAction", {
+            csv_id: INT,
+            as_id: INT,
+            bu_action: Boolean,
+            bu_remarks: String
+        }
+    ]
+
+    On Success
+    [
+        "UpdateAssignStatutoruApproveActionSuccess", {}
+    ]
+
+## Submit Assign Statutory
+    [
+        "SubmitAssignStatutory", {
+            csv_id: INT,
+            cl_id: INT,
+            le_id: INT,
+            pwd: String
+        }
+    ]
+
+    On Success
+    [
+        "SubmitAssignStatutorySuccess", {}
+    ]
+
+## Get Assign Statutory Filters
+    [
+        "GetAssignStatutoryFilters", {
+            csv_id: INT
+        }
+    ]
+
+    On Success
+    [
+        "GetAssignStatutoryFiltersSuccess", {
+            d_names: [String, ],
+            u_names; [String, ],
+            p_legis: [String, ],
+            s_legis: [String, ],
+            s_provs: [String, ],
+            c_tasks: [String, ],
+            c_desc: [String, ],
+        }
+    ]
+
+## View Assign Statutory Data From Filter
+
+    [
+        "ViewAssignStatutoryDataFromFilter", {
+            csv_id: INT,
+            range: INT,
+            f_count: INT,
+            d_name: String,
+            u_name: String,
+            p_legis: String,
+            s_legis: String,
+            s_prov: String,
+            c_task: String,
+            c_desc: String
+        }
+    ]
+
+    On Success
+    [
+        "ViewAssignStatutoryDataFromFilterSuccess", {
+            csv_id: INT,
+            csv_name: String,
+            cl_id: INT,
+            cl_name: String,
+            le_id: INT,
+            le_name: String,
+            uploaded_on: String,
+            uploaded_by: String,
+            data: [
+                {
+                    as_id: INT,
+                    u_location: String,
+                    u_code: String,
+                    u_name: String,
+                    d_name: String,
+                    org_name: String,
+                    p_legis: String,
+                    s_legis: String,
+                    s_prov: String,
+                    c_task: String,
+                    c_desc: String,
+                    s_status: Boolean,
+                    bu_s_remarks: String,
+                    c_status: Boolean,
+                    bu_action: Boolean,
+                    bu_remarks: String,
+                }
+            ]
+        }
+    ]
+
+# KNOWLEDGE - Reports
+
+## Statutory Mapping Upload Summary
+
+    [
+        "GetStatutoryMappingUploadSummary", {
+            c_id: INT,
+            d_id: INT,
+            export: Boolean,
+        }
+    ]
+
+    On Success
+    [
+        "GetStatutoryMappingUploadSummarySuccess", {
+            uploaded_by: String,
+            report_data: [
+                {
+                    csv_name: String,
+                    uploaded_on: String,
+                    total: String
+                }
+            ]
+        }
+    ]
+
+## Approve/ Rejected Statutory Mapping Summary
+    [
+        "GetStatutoryMappingApproveSummary", {
+            c_id: INT,
+            d_id: INT,
+        }
+    ]
+    On Success
+    [
+        "GetStatutoryMappingApproveSummarySuccess", {
+            uploaded_by: String,
+            approved_by: Srting,
+            report_data: [
+                {
+                    csv_name: String,
+                    uploaded_on: String,
+                    total: INT,
+                    approved_count: INT,
+                    rejected_count: INT,
+                    approved_on: String,
+                    rej_reason: String
+                }
+            ]
+        }
+    ]
+
+# TECHNO - Reports
+
+## Client Unit Upload Summary
+    [
+        "GetClientUnitUploadSummary", {
+            cl_id: INT,
+            export: Boolean,
+        }
+    ]
+
+    On Success
+    [
+        "GetClientUnitUploadSummarySuccess", {
+            cl_name: String,
+            uploaded_by: String,
+            report_data: [
+                csv_name: String,
+                uploaded_on: String,
+                total: INT
+            ]
+        }
+    ]
+
+## Approve/ Rejected Client Unit Summary
+
+    [
+        "GetClientUnitApproveSummary", {
+            cl_id: INT,
+            export: Boolean
+        }
+    ]
+
+    On Success
+    [
+        "GetClientUnitApproveSummarySuccess", {
+            cl_name: String,
+            uploaded_by: String,
+            approved_by: String,
+            report_data: [
+                csv_name: String,
+                uploaded_on: String,
+                total: INT,
+                approve_count: INT,
+                reject_count: INT,
+                rej_resson: String,
+                approved_on: String
+            ]
+        }
+    ]
+
+# DOMAIN - Reports
+
+## Assign Statutory Upload Summary
+    [
+        "GetAssinStatutoryUploadSummary", {
+            cl_name: String,
+            le_name: String,
+            d_name: String,
+            u_name: String,
+            export: Boolean
+        }
+    ]
+
+    On Success
+    [
+        "GetAssinStatutoryUploadSummarySuccess", {
+            uploaded_by: String,
+            report_data: [
+                {
+                    csv_name: String,
+                    uploaded_on: String,
+                    total: INT,
+                }
+            ]
+        }
+    ]
+
+## Approved/Rejected Assign Statutory Summary
+    [
+        "GetAssignStatutoryApproveSummary", {
+            cl_id: String,
+            le_id: String,
+            d_id: String,
+            u_name: String,
+            export: Boolean
+        }
+    ]
+    On Success
+    [
+        "GetAssignStatutoryApproveSummarySuccess", {
+            uploaded_by: String,
+            approved_by: String,
+            report_data: [
+                csv_name: String,
+                uploaded_on: String,
+                total: INT,
+                approve_count: INT,
+                reject_count: INT,
+                approval_data: String,
+                rej_reason: String
+            ]
+
+        }
+    ]
+
+
+# Client API
+
+## Get Past Data csv uploaded list
+
+    [
+        "GetPastDataCsvUploadedList",
+        {}
+    ]
+
+    On Success
+    [
+        "GetPastDataCsvUploadedListSuccess",
+        {
+            "upload_more": BOOLEAN,
+            "csv_list": [
+                {
+
+                    csv_id: INT,
+                    csv_name: STRING,
+                    no_of_records: INT,
+                    no_of_documents: INT,
+                    uploaded_documents: INT,
+                    uploaded_file: STRING,
+                }
+            ]
+        }
+    ]
+
+## Download Past Data File
+    [
+        "DownloadPastData", {
+            le_id: INT,
+            d_id: INT,
+            u_id: INT
+        }
+    ]
+    On Success
+    [
+        "DownloadPastDataSuccess", {
+            csv_name: String
+        }
+    ]
+## Upload Past Data
+
+    [
+        "UploadPastData",
+        {
+            csv_file: STRING,
+            csv_data: base64
+        }
+    ]
+
+    On Success
+    [
+        "UploadPastDataSuccess",
+        {
+            total: INT,
+            valid: INT,
+            invalid: INT,
+        }
+    ]
+    On Validation Failed
+    [
+        "InvalidDataSummary", {
+
+            invalid_file: String,
+            "mandatory_failed": INT,
+            "duplication_failed": INT,
+            "status_failed": INT,
+            "maxlength_failed": INT,
+        }
+    ]

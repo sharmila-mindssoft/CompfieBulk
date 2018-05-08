@@ -1,0 +1,140 @@
+{% extends "files/knowledge/common/html/container.html" %}
+{% block content %}
+<div class="content-page">
+	<!-- Multiselect -->
+	<link href="/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+	<!-- Notification css (Toastr) -->
+	<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+	<div class="container">
+		<div class="row">
+			<div class="container">
+				<div class="row" id="animationSandbox">
+					<div class="col-sm-3"> </div>
+					<div class="col-sm-6">
+						<div class="portlet">
+							<div class="portlet-heading bg-info">
+								<h3 class="portlet-title">
+									Client Unit - Bulk Upload
+								</h3>
+								<div class="clearfix"></div>
+							</div>
+							<div id="bg_primary1" class="panel-collapse collapse in">
+								<div class="portlet-body">
+									<div class="form-horizontal group-border-dashed" novalidate="">
+										<div class="col-sm-12 col-sm-12-1">
+											<div class="form-group m-t-20">
+												<label class="col-sm-4 control-label">Client Group:<span class="mandatory">*</span></label>
+												<div class="col-sm-6 has-feedback">
+													<input type="text" class="form-control input-sm" autofocus="autofocus" tabindex="1" maxlength="50" id="group_name" autofocus="autofocus" placeholder="Client Group" />
+													<i class="fa-1-2x form-control-feedback fa fa-search"></i>
+													<input type="hidden" id="group_id">
+													<div id="ac_group" class="ac-textbox default-display-none">
+														<ul class="width-94"></ul>
+													</div>
+												</div>
+											</div>
+											<div class="form-group has-feedback field_input">
+												<label class="col-sm-4 control-label">Select File: <span class="mandatory">*</span></label>
+												<div class="col-sm-6">
+													<input class="form-control input-sm" type="file" name="csvfile" id="csvfile" tabindex="2" />
+													<small class="left-align-class">[ Accepted file format
+														<span class="small-text">.csv</span> ]
+													</small>
+												</div>
+											</div>
+											<div class="form-group col-sm-12 text-center">
+												<div class="col-sm-12 col-sm-offset-1">
+													<button class="btn btn-primary waves-effect waves-light animateprogress uploadbtn" type="button" id="showtoast"> Upload </button>
+													<!-- data-target="#myModal"  data-toggle="modal"-->
+													<div class="download-options">
+													<a class="btn btn-primary btn-trans invaliddata dropbtn" id="invalid_dwnload" onclick="showDownloadList()">  <i class="fa fa-download text-primary"></i> Valid / Invalid Data</a>
+													<div id="myDropdown" class="dropdown-content">
+														<a id="excel">Download Excel</a>
+														<a id="csv">Download CSV</a>
+														<a id="ods">Download ODS</a>
+														<a id="text">Download Text</a>
+													</div>
+													</div>
+												</div>
+											</div>
+											<div class="clear"></div>
+											<div class="view-summary default-display-none">
+												<div class="col-sm-6 no-padding">
+													<div class="form-group bg-muted">
+														<h5 class="col-sm-12 header-title">Uploaded Data - Summary</h5>
+													</div>
+													<ul class="p-l-20">
+														<li>Total No. Of Records: <b><span class="totalRecords"></span></b> </li>
+														<li>Valid Records: <b> <span class="validRecords"></span> </b> </li>
+														<li>Invalid Records: <b> <span class="invalidRecords"></span></b></li>
+													</ul>
+												</div>
+												<div class="col-sm-6 text-danger no-padding">
+													<div class="form-group bg-muted">
+														<h5 class="col-sm-12 text-danger header-title">Invalid Data - Summary</h5>
+													</div>
+													<ul class="p-l-20">
+														<li>Mandatory Field Blank:
+															<b><span class="mandatoryErrors">0</span></b>
+														</li>
+														<li>Duplicate Unit Code:
+															<b><span class="duplicateErrors">0</span></b>
+														</li>
+														<li>Master Data Inactive:
+															<b><span class="statusErrors">0</span></b>
+														</li>
+														<li>Max. Length Exceeded:
+															<b><span class="lengthErrors">0</span></b>
+														</li>
+														<li>Invalid Data:
+															<b><span class="invalidErrors">0</span></b>
+														</li>
+														<li>Max. Unit Count Exceeded:
+															<b><span class="UnitCountErrors">0</span></b>
+														</li>
+													</ul>
+												</div>
+											</div>
+											<div class="clear"></div>
+											<hr class="invaliddata m-t-0 m-b-15" />
+											<div class="form-group col-sm-12 text-right p-t-0">
+												<a class="text-primary c-pointer download-file" id="dwn_format" title="Click here to download"><i class="fa fa-download text-primary"></i> Download Template</a>
+											</div>
+										</div>
+										<div class="clear"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" role="dialog" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog">
+		  <!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Upload</h4>
+				</div>
+				<div class="modal-body">
+					<img src="/images/progress_loading.gif">
+					<!-- <div class="progress skill-bar ">
+						<div class="progress-bar progress-bar-success" role="progressbar"
+						aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+							<span class="skill">Uploading <i class="val">100%</i></span>
+						</div>
+					</div> -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+{% block contentscript %}
+<script src="/script/bulk-upload/client-unit-bulk-upload/client-unit-bulk-upload.js">
+</script>
+{% endblock %}

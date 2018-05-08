@@ -1,0 +1,247 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/jquery-ui.css">
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Unit List</h3>
+                    <div class="portlet-widgets">
+                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a> -->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!-- <h4 class="page-title">Unit List</h4> -->
+                <!-- <hr class="no-top-margin"> -->
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <p class="form-control-static country-name default-display-none"></p>
+                                <div class="country-name-ac default-display-none">
+                                    <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="country-id" value="">
+                                    <div id="ac-country" class="ac-textbox default-display-none">
+                                        <ul class="hidemenu"></ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Business Group: </label>
+                                <div class="col-sm-6 has-feedback">
+                                    <p class="form-control-static business-group-name default-display-none"></p>
+
+                                    <div class="business-group-name-ac default-display-none">
+                                        <input class="form-control input-sm" type="text" id="business_group_name" tabindex="2"  placeholder="Enter Business Group">
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="business_group_id">
+                                        <div id="ac-business-group" class="ac-textbox default-display-none">
+                                            <ul class="hidemenu"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                       <div class="form-group">
+                            <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                            <div class="col-sm-6 has-feedback">
+                                <p class="form-control-static legal-entity-name default-display-none"></p>
+                                <div class="legal-entity-name-ac default-display-none">
+                                    <input class="form-control input-sm" type="text" id="legal_entity_name" tabindex="3"
+                                     placeholder="Enter Legal Entity">
+                                    <i class="form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="legal_entity_id" value="">
+                                    <div id="ac-entity" class="ac-textbox default-display-none">
+                                        <ul class="hidemenu"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label class="col-sm-4 control-label">Division: </label>
+                         <div class="col-sm-6 has-feedback">
+                            <input type="text" class="form-control input-sm" id="division" placeholder="Enter Division" tabindex="4">
+                            <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                            <input type="hidden" id="division-id" value="">
+                            <div id="ac-division" class="ac-textbox default-display-none">
+                                <ul class="hidemenu"></ul>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Category: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" id="category" placeholder="Enter Category" tabindex="5">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <input type="hidden" id="category-id" value="">
+                                <div id="ac-category" class="ac-textbox default-display-none">
+                                    <ul class="hidemenu"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Unit: </label>
+                             <div class="col-sm-6 has-feedback">
+                                <input type="text" id="unit" class="form-control input-sm"  placeholder="Enter Unit" tabindex="6">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <input type="hidden" id="unit-id" value="">
+                                <div id="ac-unit" class="ac-textbox default-display-none">
+                                    <ul class="hidemenu"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Domain: </label>
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Enter Domain Name" id="domain" tabindex="7">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <input type="hidden" id="domain-id" value="">
+                                <div id="ac-domain" class="ac-textbox default-display-none">
+                                    <ul class="hidemenu"></ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Organization Type: </label>
+                             <div class="col-sm-6 has-feedback">
+                                <input type="text" class="form-control input-sm" id="orgtype" placeholder="Enter Organization Type" tabindex="8">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <input type="hidden" id="organization-type-id" value="">
+                                <div id="ac-organization-type" class="ac-textbox default-display-none">
+                                    <ul class="hidemenu"></ul>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Status:</label>
+                            <div class="col-sm-6">
+                                <select class="form-control input-sm" id="unit-status" tabindex="9" placeholder="Select Status">
+                                    <option>All</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <center>
+                            <div class="form-group m-b-0">
+                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="10"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button" tabindex="11"> Export </button>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="clear"></div>
+                </form>
+                </div>
+                </div>
+
+                </div>
+
+                <!-- report data -->
+                <div id="compliance_animation">
+                <div id="report-view" style="display: none;">
+                <div class="card-box">
+                <div class="table-responsive ">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 text-center"><img class="rpt-logo m-t-0 client-logo"></div>
+                        <div class="col-sm-12 text-center"><h4>Unit List</h4></div>
+                        <div class="col-sm-4 text-center"><h6>Legal Entity : <span class="le-header"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>Country : <span class="ctry-header"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>Domain : <span class="dom-header"></span></h6></div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="table-responsive">
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="01%">#</th>
+                                <th width="08%">Unit Code</th>
+                                <th width="13%">Unit Name</th>
+                                <th width="20%">Domain - Organization Type</th>
+                                <th width="10%">Location</th>
+                                <th width="20%">Address</th>
+                                <th width="08%">Status</th>
+                                <th width="08%">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-table-tbody">
+
+                        </tbody>
+                    </table>
+                    </div>
+                    <table class="pagination-view default-display-none">
+                      <tr>
+                        <td>
+                          <span class="compliance_count"> </span>
+                          <span class="divider-view"> | </span>
+                          <span class="items-per-page">
+                          Show
+                          <select id="items_per_page">
+                          </select>
+                          entries
+                          </span>
+                        </td>
+                        <td style="width:600px;"></td>
+                        <td style="text-align:right;padding-right:10px;">
+                          <ul id="pagination-rpt"></ul>
+                        </td>
+                      </tr>
+                    </table>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+</div>
+</div>
+
+<div id="template">
+    <table id="report-table">
+        <tr class="row-two">
+            <td colspan="100%">
+                <div class="col-sm-2 no-padding">
+                    <mark class="p-l-10 p-r-10 division-name"></mark>
+                </div>
+            </td>
+        </tr>
+        <tr class="row-three">
+            <td class="sno"></td>
+            <td class="unit-code"></td>
+            <td class="unit-name"></td>
+            <td class="domain-org-type"></td>
+            <td class="location"></td>
+            <td class="address"></td>
+            <td class="status"></td>
+            <td class="unit-date"></td>
+        </tr>
+    </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
+{% block contentscript %}
+    <script src="/script/unit-list/unit_list.js"></script>
+{% endblock %}

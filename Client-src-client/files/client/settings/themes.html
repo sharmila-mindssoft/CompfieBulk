@@ -1,0 +1,55 @@
+{% extends "files/client/common/html/container.html" %} {% block content %}
+<div class="content-page">
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <div class="portlet">
+                        <div class="portlet-heading bg-info">
+                            <h3 class="portlet-title">Themes</h3>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="bg-primary1" class="panel-collapse collapse in">
+                            <div class="portlet-body">
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-3">
+                                    <div class="themes-settings" id="theme_one">
+                                        <h5>Theme One</h5>
+                                        <img src="/images/theme_one.png" class="img-responsive">
+                                    </div>
+                                </div>
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-3">
+                                    <div class="themes-settings" id="theme_two">
+                                        <h5>Theme Two</h5>
+                                        <img src="/images/theme_two.png" class="img-responsive">
+                                    </div>
+                                </div>
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-3">
+                                    <div class="themes-settings" id="theme_three">
+                                        <h5>Theme Three</h5>
+                                        <img src="/images/theme_three.png" class="img-responsive">
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                                <br>
+                                <input type="hidden" value="" id="theme_name" name="">
+                                <center>
+                                    <button class="btn btn-primary waves-effect waves-light" onclick="change_theme()" type="button"> Submit </button>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block contentscript %}
+    <script src="/script/settings/themes.js"></script>
+{% endblock %}
