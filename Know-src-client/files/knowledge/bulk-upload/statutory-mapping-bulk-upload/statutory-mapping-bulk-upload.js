@@ -1,4 +1,3 @@
-
 var ListContainer = $('.tbody-sm-csv-list1');
 var AddScreen = $("#sm-csv-add");
 var ViewScreen = $("#sm-csv-view");

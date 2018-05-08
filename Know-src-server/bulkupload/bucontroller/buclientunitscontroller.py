@@ -4,7 +4,7 @@ from ..bucsvvalidation.clientunitsvalidation import (
     ValidateClientUnitsBulkDataForApprove
 )
 
-from ..bucsvvalidation.rejectedstatutorymapping import (
+from ..bucsvvalidation.rejecteddownloadvalidation import (
     ValidateRejectedDownloadBulkData)
 
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
@@ -97,7 +97,7 @@ def process_bu_client_units_request(request, db, session_user):
 
     if type(request_frame) is bu_cu.PerformClientUnitApproveReject:
         result = perform_bulk_client_unit_approve_reject(
-                db, request_frame, session_user
+            db, request_frame, session_user
         )
 
     if type(request_frame) is bu_cu.ConfirmClientUnitDeclination:
@@ -165,9 +165,9 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
     if get_bulk_client_unit_file_count(db, session_user.user_id()):
         # save csv file
         csv_name = convert_base64_to_file(
-                BULKUPLOAD_CSV_PATH, request_frame.csv_name,
-                request_frame.csv_data
-            )
+            BULKUPLOAD_CSV_PATH, request_frame.csv_name,
+            request_frame.csv_data
+        )
 
         # read data from csv file
         header, client_units_bulk_data = read_data_from_csv(csv_name)
@@ -404,8 +404,8 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
 
     try:
         clientUnitObj = ValidateClientUnitsBulkDataForApprove(
-                db, csv_id, bu_client_id, session_user
-            )
+            db, csv_id, bu_client_id, session_user
+        )
         if actionType == 1:
             system_declined_count, system_declined_error, \
                 manual_rejection_count = \

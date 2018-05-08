@@ -564,7 +564,8 @@ bu_api_params = {
     'assign_statutory_data': {
         'type': 'VECTOR_TYPE', 'length': None,
         'validation_method': None, 'is_optional': False,
-        'module_name': assign_statutory, "class_name": "AssignStatutoryReportData"
+        'module_name': assign_statutory,
+        "class_name": "AssignStatutoryReportData"
     },
 
     'rejected_unit_data': {
@@ -853,7 +854,7 @@ bu_api_params = {
         'is_optional': True,
         'module_name': assign_statutory,
         "class_name": "BulkUploadConstant"
-        },
+    },
     "bu_system_rejected_by": {
         'type': 'STRING',
         'length': 10,

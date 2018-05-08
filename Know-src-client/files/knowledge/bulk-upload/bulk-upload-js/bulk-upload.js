@@ -1,14 +1,11 @@
-/********* Delcare Constants Variables For Report and Rejected lists ****/
-var KM_USER_CATEGORY;
-var KE_USER_CATEGORY;
-var TM_USER_CATEGORY;
-var TE_USER_CATEGORY;
-var DM_USER_CATEGORY;
-var DE_USER_CATEGORY;
-var SYSTEM_REJECTED_BY;
-var REJECTED_FILE_DOWNLOADCOUNT;
-
-/********* Delcare Constants Variables For Report and Rejected lists ****/
+var KM_USER_CATEGORY = '';
+var KE_USER_CATEGORY = '';
+var TM_USER_CATEGORY = '';
+var TE_USER_CATEGORY = '';
+var DM_USER_CATEGORY = '';
+var DE_USER_CATEGORY = '';
+var SYSTEM_REJECTED_BY = '';
+var REJECTED_FILE_DOWNLOADCOUNT = '';
 
 function getStatutoryMappingCsvList(callback) {
     var request = [
@@ -424,7 +421,8 @@ function updateActionFromView(csvid, smid, action, remarks, callback) {
     apiRequest("bu/statutory_mapping", request, callback);
 }
 
-function performClientUnitApproveReject(csv_id, actionType, remarksText, pwd, client_id, callback) {
+function performClientUnitApproveReject(csv_id, actionType, remarksText, pwd,
+    client_id, callback) {
     var request = [
         'PerformClientUnitApproveReject',
         {
@@ -461,7 +459,8 @@ function getAssignedStatutoryBulkReportData(args, callback) {
 
 // fetches client unit bulk uploaded units list for approval/ rejection
 
-function getBulkClientUnitApproveRejectList(csv_id, f_count, r_range, callback) {
+function getBulkClientUnitApproveRejectList(csv_id, f_count,
+    r_range, callback) {
     var request = [
         'GetBulkClientUnitApproveRejectList',
         {
@@ -532,7 +531,8 @@ function getBulkClientUnitListForFilterView(csvid, f_count, r_range,
     apiRequest("bu/client_units", request, callback)
 }
 
-function updateClientUnitActionFromView(csvid, b_u_id, action, remarks, callback) {
+function updateClientUnitActionFromView(csvid, b_u_id, action, remarks,
+    callback) {
     var request = [
         'SaveBulkClientUnitListFromView',
         {
@@ -553,7 +553,8 @@ function getApproveMappingViewFromFilter(args, callback) {
 
 }
 
-function submitClientUnitActionFromView(csvid, action, remarks, pwd, client_id, callback) {
+function submitClientUnitActionFromView(csvid, action, remarks, pwd,
+    client_id, callback) {
     var request = [
         'SubmitBulkClientUnitListFromView',
         {
@@ -654,7 +655,6 @@ function getBulkUploadConstants(callback){
 function getLoadConstants(){
   bu.getBulkUploadConstants(function(error, data) {
     if (error == null) {
-
       KM_USER_CATEGORY=data.bu_constants[0].KnowledgeManager;
       KE_USER_CATEGORY=data.bu_constants[1].KnowledgeExecutive;
 
@@ -663,7 +663,6 @@ function getLoadConstants(){
 
       DM_USER_CATEGORY=data.bu_constants[4].DomainManager;
       DE_USER_CATEGORY=data.bu_constants[5].DomainExecutive;
-
 
       SYSTEM_REJECTED_BY = data.bu_system_rejected_by;
       REJECTED_FILE_DOWNLOADCOUNT = data.bu_rejected_download_count;
