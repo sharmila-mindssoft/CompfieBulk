@@ -65,6 +65,7 @@ StatutoryMappingBulkReport.prototype.validateMandatory = function() {
 
 //get statutory mapping bulk report filter details from api
 function getStatutoryMappings() {
+    console.log("KE_USER_CATEGORY"+ KE_USER_CATEGORY)
     function onSuccess(data) {
         COUNTRY_LIST = data.countries;
         DOMAIN_LIST = data.domains;
@@ -422,12 +423,16 @@ function loadCurrentUserDetails() {
             loggedUserId = value["user_id"];
         }
     });
+    console.log("USER_CATEGORY_ID "+ USER_CATEGORY_ID);
+    console.log("KE_USER_CATEGORY "+ KE_USER_CATEGORY);
     if (USER_CATEGORY_ID == KE_USER_CATEGORY) {
+        alert("QWEETERTETR")
         console.log("USER_CATEGORY_ID" +"=="+ "KE_USER_CATEGORY");
 
         console.log(USER_CATEGORY_ID +"=="+ KE_USER_CATEGORY);
         // KE-Name  : Knowledge-Executive
         knowledgeName = user.employee_code + " - " + user.employee_name;
+        console.log("IN REMOVE CLASS DEFAULT DISPLAY NONE");
         $('.active-knowledge-executive').removeClass("default-display-none");
         $('#knowledge_name').html(knowledgeName);
         knowledgeUserDetails = {

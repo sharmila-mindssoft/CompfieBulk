@@ -1177,7 +1177,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         data.get("Compliance_Task")
                     ):
                         self._error_summary["duplicate_error"] += 1
-                        dup_error = "Compliance_Task - Duplicate Compliances in Temp DB"
+                        dup_error = "Compliance_Task - Duplicate " +\
+                                    "Compliances in Temp DB"
                         res = make_error_desc(res, dup_error)
 
                     if not self.check_compliance_task_name_duplicate(

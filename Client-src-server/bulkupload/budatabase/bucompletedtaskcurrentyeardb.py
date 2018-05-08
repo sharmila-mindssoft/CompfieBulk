@@ -130,10 +130,13 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
     legal_entity_list = ",".join([str(x) for x in legal_entity_list])
     print "legal_entity_list>>", legal_entity_list
 
+    current_date = get_date_time()
+
     query = " SELECT DISTINCT T01.legal_entity_id, T02.legal_entity, " + \
             " T01.csv_past_id, T01.csv_name, T01.uploaded_on, T01.uploaded_by, " + \
             " total_records, total_documents, T01.uploaded_documents, " + \
-            " (T01.total_documents - t01.uploaded_documents) AS remaining_documents " + \
+            " (T01.total_documents - T01.uploaded_documents) AS remaining_documents, " + \
+            " T01.domain_id, T01.unit_id_id as unit_id, NOW() as start_date" + \
             " From tbl_bulk_past_data_csv  AS T01 " + \
             " INNER JOIN tbl_bulk_past_data AS T02 " + \
             " ON T01.csv_past_id = T02.csv_past_id " + \
@@ -142,7 +145,7 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
     param = [session_user, legal_entity_list]
 
     rows = db.select_all(query, param)
-    # print "getCompletedTaskCSVList>rows>>", rows
+    print "getCompletedTaskCSVList>rows>>", rows
 
     param1 = [session_user]
     docQuery = "select t1.csv_past_id, document_name from tbl_bulk_past_data as t1 " + \
@@ -165,11 +168,12 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
     csv_list = []
     for row in rows:
         uploaded_on = row["uploaded_on"].strftime("%d-%b-%Y %H:%M")
-
+        curr_date = datetime.datetime.now().strftime('%d-%b-%Y')
         csv_list.append(bu_ct.CsvList(row["csv_past_id"], row["csv_name"],
         uploaded_on, row["uploaded_by"], row["total_records"],
         row["total_documents"], row["uploaded_documents"], row["remaining_documents"],
-        doc_names.get(d.get("csv_past_id")), row["legal_entity"]
+        doc_names.get(d.get("csv_past_id")), row["legal_entity"],
+        row["domain_id"], row["unit_id"], curr_date
         )
         )
 

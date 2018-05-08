@@ -89,7 +89,12 @@ class GetCompletedTaskCsvUploadedList(Request):
         }
 
 class CsvList(object):
-    def __init__(self, csv_past_id, csv_name, uploaded_on, uploaded_by, total_records, total_documents, uploaded_documents, remaining_documents, doc_names, legal_entity):
+    def __init__(
+        self, csv_past_id, csv_name, uploaded_on, uploaded_by,
+        total_records, total_documents, uploaded_documents,
+        remaining_documents, doc_names, legal_entity, domain_id, unit_id,
+        start_date
+    ):
         self.csv_past_id = csv_past_id
         self.csv_name = csv_name
         self.uploaded_on = uploaded_on
@@ -100,12 +105,17 @@ class CsvList(object):
         self.remaining_documents = remaining_documents
         self.doc_names = doc_names
         self.legal_entity = legal_entity
+        self.domain_id = domain_id
+        self.unit_id = unit_id
+        self.start_date = start_date
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["csv_past_id", "csv_name", "uploaded_on", "uploaded_by",
-                                        "total_records", "total_documents", "uploaded_documents", "uploaded_documents"
-                                        "remaining_documents", "doc_names", "legal_entity"
+        data = parse_dictionary(data, [
+            "csv_past_id", "csv_name", "uploaded_on", "uploaded_by",
+            "total_records", "total_documents", "uploaded_documents",
+            "uploaded_documents", "remaining_documents", "doc_names",
+            "legal_entity", "domain_id", "unit_id", "start_date"
         ])
         return CsvList(
             data.get("csv_past_id"), data.get("csv_name"),
@@ -113,7 +123,11 @@ class CsvList(object):
             data.get("total_records"), data.get("total_documents"),
             data.get("uploaded_documents"), data.get("uploaded_documents"),
             data.get("remaining_documents"), data.get("doc_names"),
-            data.get("legal_entity")
+            data.get("legal_entity"),
+            data.get("domain_id"),
+            data.get("unit_id"),
+            data.get("start_date")
+
         )
 
     def to_structure(self):
@@ -127,7 +141,10 @@ class CsvList(object):
             "uploaded_documents": self.uploaded_documents,
             "remaining_documents": self.remaining_documents,
             "doc_names": self.doc_names,
-            "legal_entity_name": self.legal_entity
+            "legal_entity_name": self.legal_entity,
+            "domain_id": self.domain_id,
+            "unit_id": self.unit_id,
+            "start_date": self.start_date
         }
 
 
