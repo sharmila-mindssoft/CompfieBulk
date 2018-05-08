@@ -2,7 +2,7 @@ import traceback
 from ..bucsvvalidation.assignstatutoryvalidation import (
     ValidateAssignStatutoryCsvData, ValidateAssignStatutoryForApprove
 )
-from ..bucsvvalidation.rejectedstatutorymapping import (
+from ..bucsvvalidation.rejecteddownloadvalidation import (
     ValidateRejectedDownloadBulkData
 )
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as

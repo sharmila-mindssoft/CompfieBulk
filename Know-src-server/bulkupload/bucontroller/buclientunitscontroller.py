@@ -4,7 +4,7 @@ from ..bucsvvalidation.clientunitsvalidation import (
     ValidateClientUnitsBulkDataForApprove
 )
 
-from ..bucsvvalidation.rejectedstatutorymapping import (
+from ..bucsvvalidation.rejecteddownloadvalidation import (
     ValidateRejectedDownloadBulkData)
 
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
