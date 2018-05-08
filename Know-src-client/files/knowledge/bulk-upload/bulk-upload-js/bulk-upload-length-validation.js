@@ -4,7 +4,6 @@ bulk_upload_max_length = {
 }
 
 $.extend(max_length, bulk_upload_max_length);
-
 function postValidate(isValid, errMsg, inputElm) {
     if (!isValid) {
         displayMessage(errMsg);
