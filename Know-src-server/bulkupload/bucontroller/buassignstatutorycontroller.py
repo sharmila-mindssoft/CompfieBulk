@@ -183,8 +183,8 @@ def get_download_assing_statutory(db, request_frame, session_user):
     )
 
     converter = ConvertJsonToCSV(
-            db, request_frame, session_user, "DownloadAssignStatutory"
-        )
+        db, request_frame, session_user, "DownloadAssignStatutory"
+    )
     result = bu_as.DownloadAssignStatutorySuccess(
         converter.FILE_DOWNLOAD_PATH
     )
@@ -222,9 +222,9 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
 
         # save csv file
         csv_name = convert_base64_to_file(
-                BULKUPLOAD_CSV_PATH, request_frame.csv_name,
-                request_frame.csv_data
-            )
+            BULKUPLOAD_CSV_PATH, request_frame.csv_name,
+            request_frame.csv_data
+        )
         # read data from csv file
         header, assign_statutory_data = read_data_from_csv(csv_name)
 
@@ -269,7 +269,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
                 if (
                     save_assign_statutory_data(
                         db, new_csv_id, res_data["data"]
-                        ) is True
+                    ) is True
                 ):
                     u_ids = ",".join(map(str, cObj._unit_ids))
                     cObj.save_manager_message(
