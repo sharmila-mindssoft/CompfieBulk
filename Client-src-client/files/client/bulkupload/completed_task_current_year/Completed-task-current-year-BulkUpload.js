@@ -535,7 +535,7 @@ function submitUpload() {
     var dom_id = $("#dom_id_hdn").val();
     var unit_id = $("#unit_id_hdn").val();
     var start_date = $("#start_date_hdn").val();
-client_mirror.uploadComplianceTaskFile(
+    client_mirror.uploadComplianceTaskFile(
                                 parseInt(LEGALENTITYIDUPLOAD.val()),
                                     getCountryId(LEGALENTITYIDUPLOAD.val()),
                                     parseInt(dom_id),
