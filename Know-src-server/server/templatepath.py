@@ -187,16 +187,16 @@ CLIENT_TEMPLATE_PATHS = [
 
 TEMPLATE_PATHS = [
     # Removed
-    (
-        r"/",
-        "files/knowledge/login/login.html",
-        None, {}
-    ),
-    (
-        "/knowledge",
-        "files/knowledge/login/login.html",
-        None, {}
-    ),
+    # (
+    #     r"/",
+    #     "files/knowledge/login/login.html",
+    #     None, {}
+    # ),
+    # (
+    #     "/knowledge",
+    #     "files/knowledge/login/login.html",
+    #     None, {}
+    # ),
     (
         "/knowledge/login",
         "files/knowledge/login/login.html",
@@ -562,40 +562,9 @@ TEMPLATE_PATHS = [
         "files/knowledge/bulk-upload/assigned-statutory-bulk-upload-approve/approve-assign-statutory-bulk-upload.html",
         None, {}
     ),
-
-    (
-        "/knowledge/approved-rejected-statutory-mapping-summary",
-        "files/knowledge/bulk-upload/statutory-mapping-approve-rejected-summary-report/approve-rejected-statutory-mapping-summary.html",
-        None, {}
-    ),
-    (
-        "/knowledge/statutory-mapping-upload-summary",
-        "files/knowledge/bulk-upload/statutory-mapping-upload-summary-report/statutory-mapping-upload-summary.html",
-        None, {}
-    ),
     (
         "/knowledge/statutory-mapping-bulkupload-report",
         "files/knowledge/bulk-upload/statutory-mapping-bulk-upload-report/statutory-mapping-bulk-upload-report.html",
-        None, {}
-    ),
-    (
-        "/knowledge/client-unit-upload-summary",
-        "files/knowledge/bulk-upload/client-unit-upload-summary-report/client-unit-bulk-upload-summary.html",
-        None, {}
-    ),
-    (
-        "/knowledge/approved-rejected-client-unit-summary",
-        "files/knowledge/bulk-upload/client-unit-approve-rejected-summary-report/approve-rejected-client-unit-summary.html",
-        None, {}
-    ),
-    (
-        "/knowledge/assign-statutory-upload-summary",
-        "files/knowledge/bulk-upload/assign-statutory-upload-summary-report/assign-statutory-upload-summary.html",
-        None, {}
-    ),
-    (
-        "/knowledge/approved-rejected-assign-statutory-summary",
-        "files/knowledge/bulk-upload/assign-statutory-approve-rejected-summary-report/approve-rejected-assign-statu-summary.html",
         None, {}
     ),
     (

@@ -33,6 +33,34 @@ class Request(object):
         raise NotImplementedError
 
 
+class GetDomains(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetDomains()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class GetKExecutiveDetails(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetKExecutiveDetails()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 class GetStatutoryMappingCsvUploadedList(Request):
     def __init__(self):
         pass
@@ -517,7 +545,8 @@ def _init_Request_class_map():
         UpdateDownloadCountToRejectedStatutory,
         ExportSMBulkReportData,
         DownloadRejectedSMReportData,
-        SaveAction
+        SaveAction,
+        GetDomains, GetKExecutiveDetails
     ]
     class_map = {}
     for c in classes:
@@ -894,7 +923,6 @@ class PendingCsvList(object):
         self.download_file = download_file
         self.declined_count = declined_count
 
-
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
@@ -1048,6 +1076,61 @@ class MappingData(object):
             "task_id": self.task_id,
             "task_type": self.task_type
         }
+
+
+class Domain(object):
+    def __init__(
+        self, country_ids, country_names, domain_id, domain_name, is_active
+    ):
+        self.country_ids = country_ids
+        self.country_names = country_names
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "country_ids", "c_names", "domain_id", "domain_name", "is_active"
+        ])
+        return Domain(
+            data.get("country_ids"), data.get("c_names"),
+            data.get("domain_id"), data.get("domain_name"),
+            data.get("is_active")
+        )
+
+    def to_structure(self):
+        data = {
+            "country_ids": self.country_ids,
+            "c_names": self.country_names,
+            "domain_id": self.domain_id,
+            "domain_name": self.domain_name,
+            "is_active": self.is_active,
+        }
+        return to_structure_dictionary_values(data)
+
+
+class Country(object):
+    def __init__(self, country_id, country_name, is_active):
+        self.country_id = country_id
+        self.country_name = country_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, ["country_id", "country_name", "is_active"])
+        return Country(
+            data.get("country_id"), data.get("country_name"),
+            data.get("is_active")
+        )
+
+    def to_structure(self):
+        data = {
+            "country_id": self.country_id, "country_name": self.country_name,
+            "is_active": self.is_active
+        }
+        return to_structure_dictionary_values(data)
 
 
 #
@@ -1450,6 +1533,25 @@ class SubmitStatutoryMappingSuccess(Response):
         return {}
 
 
+class GetDomainsSuccess(Response):
+    def __init__(self, bsm_domains, bsm_countries):
+        self.bsm_domains = bsm_domains
+        self.bsm_countries = bsm_countries
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["bsm_domains", "bsm_countries"])
+        bsm_domains = data.get("bsm_domains")
+        bsm_countries = data.get("bsm_countries")
+        return GetDomainsSuccess(bsm_domains, bsm_countries)
+
+    def to_inner_structure(self):
+        return {
+            "bsm_domains": self.bsm_domains,
+            "bsm_countries": self.bsm_countries
+        }
+
+
 class ValidationSuccess(Response):
     def __init__(self, rej_count):
         self.rej_count = rej_count
@@ -1530,6 +1632,7 @@ class CsvFileCannotBeBlank(Response):
     def to_inner_structure(self):
         return {}
 
+
 class RejectionMaxCountReached(Response):
     def __init__(self):
         pass
@@ -1542,6 +1645,22 @@ class RejectionMaxCountReached(Response):
     def to_inner_structure(self):
         return {}
 
+
+class GetKExecutiveDetailsSuccess(Response):
+    def __init__(self, k_executive_info):
+        self.k_executive_info = k_executive_info
+
+    @staticmethod
+    def parse_inner_strucure(data):
+        data = parse_dictionary(data, ["k_executive_info"])
+        return GetKExecutiveDetailsSuccess(
+            data.get("k_executive_info")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "k_executive_info": self.k_executive_info
+        }
 
 
 def _init_Response_class_map():
@@ -1566,7 +1685,8 @@ def _init_Response_class_map():
         CsvFileExeededMaxLines,
         InvalidCsvFile,
         CsvFileCannotBeBlank,
-        RejectionMaxCountReached
+        RejectionMaxCountReached,
+        GetDomainsSuccess, GetKExecutiveDetailsSuccess
     ]
     class_map = {}
     for c in classes:
@@ -1604,4 +1724,32 @@ class RequestFormat(object):
             "request": to_VariantType(
                 self.request, statutory_mapping, "Response"
             ),
+        }
+
+
+class KExecutiveInfo(object):
+    def __init__(self, c_ids, d_ids, emp_code_name, user_id):
+        self.c_ids = c_ids
+        self.d_ids = d_ids
+        self.emp_code_name = emp_code_name
+        self.user_id = user_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "c_ids", "d_ids", "emp_code_name",
+            "user_id"
+        ])
+        return KExecutiveInfo(
+            data.get("c_ids"), data.get("d_ids"),
+            data.get("emp_code_name"),
+            data.get("user_id")
+        )
+
+    def to_structure(self):
+        return {
+            "c_ids": self.c_ids,
+            "d_ids": self.d_ids,
+            "emp_code_name": self.emp_code_name,
+            "user_id": self.user_id
         }

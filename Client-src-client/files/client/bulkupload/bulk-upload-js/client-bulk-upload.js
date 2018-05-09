@@ -77,9 +77,10 @@ function uploadCSVFile(fileListener, callback) {
 function getDownloadData(legalEntityId, domainId, unitId, complianceFrequency, startCount,
     LegalEntityName, domainName, unitName, unitCode,
     callback) {
+    console.log("legalEntityId>>> " + legalEntityId);
     var request = [
         'GetDownloadData', {
-            'le_id': legalEntityId,
+            'legal_entity_id': legalEntityId,
             'unit_id': unitId,
             'domain_id': domainId,
             'compliance_task_frequency': complianceFrequency,
@@ -90,5 +91,5 @@ function getDownloadData(legalEntityId, domainId, unitId, complianceFrequency, s
             "u_code": unitCode
         }
     ];
-    clientApiRequest('client_transaction', request, callback);
+    clientApiRequest('bu/completed_task', request, callback);
 }

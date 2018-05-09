@@ -215,7 +215,7 @@
                 <div class="col-md-12 p-0">
                  <span class="pull-left p-r-5">Filtered By - </span>
                  <span class="pull-left p-r-5 filtered-data"></span>
-                <span class="pull-left p-r-5 clear-filtered default-display-none"> &nbsp; 
+                <span class="pull-left p-r-5 clear-filtered default-display-none"> &nbsp;
                     <i class="fa fa-times fa-1-3x text-primary text-muted c-pointer" data-toggle="tooltip" title="" data-original-title="Click here to clear filter"></i>
                 </span>
                  <!-- <span class="pull-left p-r-5"> One Time,Periodical,Review </span>
@@ -588,7 +588,7 @@
     </span>
     <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
     <div class="custom-modal-text">
-        <form role="form">
+        <div>
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
                 <input type="password"- class="form-control input-sm inp_password" id="current-password-reject" placeholder="Password">
@@ -599,7 +599,7 @@
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
             >Submit</button>
-        </form>
+        </div>
     </div>
 </div>
  <div id="custom-modal-approve" class="modal-demo box-width-400">
@@ -608,14 +608,14 @@
     </span>
     <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
     <div class="custom-modal-text">
-        <form role="form">
+        <div>
             <div class="form-group">
                 <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
                 <input type="password" class="form-control input-sm inp_password_approve" id="current-password" placeholder="Password">
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
             >Submit</button>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -625,14 +625,14 @@
     </span>
     <h4 class="custom-modal-title p-t-10 p-b-10">Enter Reason</h4>
     <div class="custom-modal-text">
-        <form role="form">
+        <div>
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
                 <textarea class="form-control input-sm view-reason" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit"
             >Submit</button>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -780,6 +780,6 @@
 {% block contentscript %}
 
     <script type="text/javascript" src="/script/bulk-upload/statutory-mapping-bulk-upload-approve/approve-mapping-bulk-upload.js"></script>
-    <!-- <script type="text/javascript" src="/js/multifreezer.js"></script> -->
+    <!-- <script type="text/javascript" src="/script/bulk-upload/bulk-upload-js/multifreezer.js"></script> -->
 {% endblock %}
 

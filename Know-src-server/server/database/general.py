@@ -41,8 +41,7 @@ __all__ = [
     "update_statutory_notification_status",
     "get_short_name",
     "update_message_status",
-    "validate_user_rights",
-    "get_knowledge_executive",
+    "validate_user_rights"
 ]
 
 
@@ -1098,28 +1097,3 @@ def get_client_login_trace(
                 return generalprotocol.DatabaseConnectionFailure()
     else:
         return generalprotocol.DatabaseConnectionFailure()
-
-def get_knowledge_executive(db, manager_id):
-    result = db.call_proc("sp_know_executive_info", [manager_id])
-    user_info = {}
-    for r in result :
-        userid = r.get("child_user_id")
-        u = user_info.get(userid)
-        emp_name = "%s - %s" % (r.get("employee_code"), r.get("employee_name"))
-        if u is None :
-            u = generalprotocol.KExecutiveInfo(
-                [r.get("country_id")], [r.get("domain_id")],
-                emp_name, r.get("child_user_id")
-            )
-            user_info[userid] = u
-
-        else :
-            c_ids = user_info.get(userid).c_ids
-            c_ids.append(r.get("country_id"))
-            d_ids = user_info.get(userid).d_ids
-            d_ids.append(r.get("domain_id"))
-
-            user_info[userid].c_ids = c_ids
-            user_info[userid].d_ids = d_ids
-
-    return user_info.values()

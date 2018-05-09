@@ -128,7 +128,6 @@ class StatutorySource(object):
         self.get_statutory_levels(country_id, domain_id)
         self.get_level_position(country_id, domain_id)
 
-
     def get_compliance_frequency(self):
         data = self._source_db.call_proc("sp_bu_compliance_frequency")
         for d in data:
@@ -375,7 +374,9 @@ class StatutorySource(object):
                 if d["Statutory_Date"] != "":
                     msg.append("Statutory_Date - Invalid data")
                 if d["Repeats_Every"] < d["Trigger_Days"]:
-                    msg.append("Trigger_Days - cannot be greater than Repeat every days")
+                    msg.append(
+                        "Trigger_Days - cannot be greater than Repeat"
+                        " every days")
 
         elif (
             d["Multiple_Input_Section"] == "Yes" and
@@ -426,7 +427,8 @@ class StatutorySource(object):
                 if d["Repeats_Every"] == '':
                     msg.append("Repeats_Every - Field is blank")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 99:
-                    msg.append("Repeats_Every - Cannot exceed maximum 2 digits")
+                    msg.append("Repeats_Every - Cannot exceed maximum "
+                               "2 digits")
                 if d["Repeats_By (DOM/EOM)"] == "":
                     msg.append("Repeats_By (DOM/EOM)- Field is blank")
                 if d["Statutory_Month"] != "":
@@ -439,7 +441,8 @@ class StatutorySource(object):
 
             elif d["Repeats_Type"] == "Year(s)":
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 9:
-                    msg.append("Repeats_Every - Cannot exceed maximum 1 digits")
+                    msg.append("Repeats_Every - Cannot exceed "
+                               "maximum 1 digits")
                 if d["Repeats_By (DOM/EOM)"] == "":
                     msg.append("Repeats_By (DOM/EOM)- Field is blank")
                 if (
@@ -462,7 +465,8 @@ class StatutorySource(object):
                 if d["Statutory_Date"] != "":
                     msg.append("Statutory_Date - Invalid data")
                 if d["Repeats_Every"] < d["Trigger_Days"]:
-                    msg.append("Trigger_Days - cannot be greater than Repeat every days")
+                    msg.append("Trigger_Days - cannot be greater than "
+                               "Repeat every days")
 
             # Added for BUC588
             if (
@@ -690,6 +694,7 @@ class StatutorySource(object):
                 })
         return json.dumps(sdate)
 
+    # write update query
     def save_compliance_data(self, c_id, d_id, mapping_id, data):
         created_on = get_date_time()
         approved_on = get_date_time()
@@ -806,8 +811,8 @@ class StatutorySource(object):
         csv_name = actual_csv_name.split('_')
         csv_name = "_".join(csv_name[:-1])
         text = "Statutory mapping file %s of %s - %s uploaded for your %s" % (
-                csv_name, countryname, domainname, 'approval'
-            )
+            csv_name, countryname, domainname, 'approval'
+        )
         link = "/knowledge/approve-statutory-mapping-bu"
         save_messages(
             self._source_db, 3, "Statutory Mapping Bulk Upload",
@@ -1021,7 +1026,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         # duplicate_row_in_csv = self.check_duplicate_in_csv()
         # self._error_summary["duplicate_error"] += duplicate_row_in_csv
         duplicate = self.check_duplicate_task_name_in_csv()
-        duplicate_compliance_in_csv = duplicate[0]
+        # duplicate_compliance_in_csv = duplicate[0]
         duplicate_compliance_row = duplicate[1]
         # self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
         duplicate_task_ids = self.check_duplicate_task_id_in_csv()
@@ -1089,7 +1094,9 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                             )
                             if key in ["Applicable_Location", "Statutory"]:
                                 if v.find(">>") > 0:
-                                    v = " >> ".join(e.strip() for e in v.split(">>"))
+                                    v = " >> ".join(
+                                        e.strip() for e in v.split(">>")
+                                    )
 
                             print "v-> ", v
 
@@ -1120,7 +1127,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                                  key == "Repeats_Type" or
                                  key == "Duration_Type")
                             ):
-                                self._error_summary["invalid_frequency_error"] += 1
+                                self._error_summary[
+                                    "invalid_frequency_error"] += 1
 
                 if key == "Statutory":
                     msg = self.check_primary_legislation_value(value)
@@ -1318,8 +1326,10 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 "mandatory_error": self._error_summary["mandatory_error"],
                 "max_length_error": self._error_summary["max_length_error"],
                 "duplicate_error": self._error_summary["duplicate_error"],
-                "invalid_char_error": self._error_summary["invalid_char_error"],
-                "invalid_data_error": self._error_summary["invalid_data_error"],
+                "invalid_char_error": self._error_summary[
+                    "invalid_char_error"],
+                "invalid_data_error": self._error_summary[
+                    "invalid_data_error"],
                 "inactive_error": self._error_summary["inactive_error"],
                 "invalid_frequency_error": self._error_summary["invalid_frequency_error"],
                 "total": total,
@@ -1363,8 +1373,17 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         self.get_source_data()
         self.get_file_count()
 
+    def connect_bulk_database(self):
+        c_db_con = bulkupload_db_connect()
+        self._db = Database(c_db_con)
+        self._db.begin()
+
+    def source_bulkdb_commit(self):
+        self._db.commit()
+
     def get_source_data(self):
         print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        self.connect_bulk_database()
         self._source_data = self._db.call_proc(
             "sp_statutory_mapping_by_csvid", [self._csv_id]
         )
@@ -1596,8 +1615,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                     if(int(statu_level) > 1 and
                                        self.Statutories.get(statu_maps) is None
                                        ):
-                                        if(
-                                           self.Statu_dic.get(statu_maps) is None
+                                        if(self.Statu_dic.get(statu_maps) is None
                                            ):
                                             statu_id = self.save_statutories_data(
                                                 str(strip_data), level_id,
@@ -1664,12 +1682,12 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             self._db.execute(q1, [count, user_id, created_on, self._csv_id,
                              self._csv_id])
 
+            print "Rejection done"
+            self._db.commit()
+            return True
         except Exception, e:
             print str(traceback.format_exc())
             raise (e)
-
-    def remove_declined_docs(self, declined_info, user_id, csv_id):
-        print "declined_info-> ", declined_info
 
     def format_download_process_initiate(self, csvid):
         self.file_server_approve_call(csvid)
@@ -1696,7 +1714,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             _db_check = Database(c_db_con)
             try:
                 _db_check.begin()
-                data = _db_check.call_proc("sp_sm_get_file_download_status", [csvid])
+                data = _db_check.call_proc(
+                    "sp_sm_get_file_download_status", [csvid]
+                )
                 print "DAta -> ", data
                 if len(data) > 0:
                     file_status = data[0].get("file_download_status")
@@ -1713,13 +1733,16 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         check_status()
 
     def file_server_approve_call(self, csvid):
+        print "Approve call done"
         caller_name = "%sapprove?csvid=%s" % (TEMP_FILE_SERVER, csvid)
         print "caller_name", caller_name
         response = requests.post(caller_name)
         print "response.text-> ", response.text
 
     def file_server_download_call(self, csvid):
-        actual_zip_file = os.path.join(KNOWLEDGE_FORMAT_PATH, str(csvid) + ".zip")
+        actual_zip_file = os.path.join(
+            KNOWLEDGE_FORMAT_PATH, str(csvid) + ".zip"
+        )
         caller_name = "%sdownloadfile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
         print "Cller nameeeeee", caller_name
         urllib.urlretrieve(caller_name, actual_zip_file)

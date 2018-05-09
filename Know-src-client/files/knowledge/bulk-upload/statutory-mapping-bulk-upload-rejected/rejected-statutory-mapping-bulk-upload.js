@@ -1,11 +1,12 @@
+var USER_DETAILS = '';
+var DOMAIN_IDS = '';
+var EMP_CODE = '';
+var EMP_NAME = '';
+var REJECTED_STATUTORY_DATA = '';
+var REMOVE_STATUTORY_CSV_ID = '';
 var COUNTRIES_LIST = [];
 var DOMAIN_LIST = [];
 var ALL_USER_INFO = [];
-var USER_DETAILS;
-var DOMAIN_IDS;
-var EMP_CODE;
-var EMP_NAME;
-var REJECTED_STATUTORY_DATA;
 var COUNTRY_VAL = $('#countryval');
 var COUNTRY = $('#country');
 var DOMAIN = $('#domain');
@@ -13,35 +14,35 @@ var DOMAIN_VAL = $('#domainval');
 var AC_COUNTRY = $('#ac-country');
 var AC_DOMAIN = $('#ac-domain');
 var SHOW_BTN = $('#show');
-var EXPORT_CSV = $('.export-csv');
 var REPORT_VIEW = $('.grid-table-rpt');
 var PASSWORD_SUBMIT_BTN = $('#password-submit');
 var CURRENT_PASSWORD = $('#current-password');
-var REMOVE_STATUTORY_CSV_ID;
-
 // Creating New Class
 var rejStatuMapping = new RejectedStatutoryMappingBulk();
 
-// Handle All Page Controls like Button submit
+// Handle All Page Controls
 function pageControls() {
-    //load group form list in autocomplete text box
+    //load Country form list in autocomplete text box
     COUNTRY_VAL.keyup(function(e) {
         var textVal = $(this).val();
-        var cgList = [];
+        var countryList = [];
+        var i = '', j = '', occur = '', countryListID = '';
+        var apiCountryListID = '';
+
         resetfilter("domain");
-        var i = 0;
         for (i = 0; i < COUNTRIES_LIST.length; i++) {
             if (COUNTRIES_LIST[i].is_active == true) {
-                var occur = -1;
-                var j = 0;
-                for (j = 0; j < cgList.length; j++) {
-                    if (cgList[j].country_id == COUNTRIES_LIST[i].country_id) {
+                occur = -1;
+                j = 0;
+                for (j = 0; j < countryList.length; j++) {
+                    countryListID = countryList[j].country_id;
+                    apiCountryListID = COUNTRIES_LIST[i].country_id;
+                    if (countryListID == apiCountryListID) {
                         occur = 1;
                         break;
-                    }
-                }
+                    }                }
                 if (occur < 0) {
-                    cgList.push({
+                    countryList.push({
                         "country_id": COUNTRIES_LIST[i].country_id,
                         "country_name": COUNTRIES_LIST[i].country_name,
                         "is_active": true
@@ -52,7 +53,7 @@ function pageControls() {
         }
         commonAutoComplete(
             e, AC_COUNTRY, COUNTRY, textVal,
-            cgList, "country_name", "country_id",
+            countryList, "country_name", "country_id",
             function(val) {
                 onAutoCompleteSuccess(COUNTRY_VAL, COUNTRY, val);
             });
@@ -65,20 +66,20 @@ function pageControls() {
         var textVal = $(this).val();
         var dList = [];
         var ctryId = COUNTRY.val();
-        var c_id;
+        var cID = 0, i = 0;
+        var conditionFields = [];
+        var conditionValues = [];
+
         if (COUNTRY.val() > 0) {
-            var conditionFields = [];
-            var conditionValues = [];
             if (COUNTRY.val() != '') {
                 conditionFields.push("country_id");
                 conditionValues.push(COUNTRY.val());
             }
-            var i = 0;
             for (i = 0; i < COUNTRIES_LIST.length; i++) {
                 if ((COUNTRIES_LIST[i].country_id == ctryId)) {
                     for (var j = 0; j < DOMAIN_LIST.length; j++) {
-                        c_id = COUNTRIES_LIST[i].country_id
-                        if ($.inArray(c_id, DOMAIN_LIST[j].country_ids) >= 0) {
+                        cID = COUNTRIES_LIST[i].country_id
+                        if ($.inArray(cID, DOMAIN_LIST[j].country_ids) >= 0) {
                             dList.push({
                                 "domain_id": DOMAIN_LIST[j].domain_id,
                                 "domain_name": DOMAIN_LIST[j].domain_name,
@@ -95,7 +96,6 @@ function pageControls() {
                     onAutoCompleteSuccess(DOMAIN_VAL, DOMAIN, val);
                 });
         }
-
     });
 
     SHOW_BTN.click(function() {
@@ -118,10 +118,11 @@ function resetfilter(evt) {
 }
 
 function onAutoCompleteSuccess(valueElement, idElement, val) {
+    var currentId = 0;
     valueElement.val(val[1]);
     idElement.val(val[0]);
     valueElement.focus();
-    var currentId = idElement[0].id;
+    currentId = idElement[0].id;
     if (currentId == 'country') {} else if (currentId == 'domainid') {}
 }
 
@@ -131,19 +132,20 @@ function processSubmit() {
     var domainID = parseInt(DOMAIN.val());
 
     displayLoader();
-    filterdata = {
+    filterData = {
         "c_id": countryID,
         "d_id": domainID,
     };
-
     function onSuccess(data) {
+        var tableRow4 = '';
+        var clone4 = '';
         $('.details').show();
         REJECTED_STATUTORY_DATA = data.rejected_data;
         if (REJECTED_STATUTORY_DATA.length == 0) {
             $('.tbody-compliance').empty();
-            var tableRow4 = $('#nocompliance-templates ' +
+            tableRow4 = $('#nocompliance-templates ' +
                 '.table-nocompliances-list .table-row');
-            var clone4 = tableRow4.clone();
+            clone4 = tableRow4.clone();
             $('.tbl_norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
             REPORT_VIEW.show();
@@ -159,7 +161,7 @@ function processSubmit() {
         displayMessage(error);
         hideLoader();
     }
-    bu.getRejectedSMBulkData(filterdata, function(error, response) {
+    bu.getRejectedSMBulkData(filterData, function(error, response) {
         if (error == null) {
             onSuccess(response);
         } else {
@@ -170,22 +172,23 @@ function processSubmit() {
 
 //Display statutory mapping details accoring to count
 function loadCountwiseResult(data) {
-    var sno = 0;
-    var csvId;
-    var csvName;
-    var totalNoofTasks;
-    var rejectedOn;
-    var reasonForRejection;
-    var statutoryAction;
-    var rejectedBy;
-    var declinedCount;
-    var fileDownloadCount;
-    var downloadRejectedFiles;
-    var isFullyRejected;
+    var SNO = 0;
+    var csvId = 0;
+    var csvName = '';
+    var totalNoofTasks = 0;
+    var rejectedOn = '';
+    var reasonForRejection = '';
+    var statutoryAction = '';
+    var rejectedBy = '';
+    var declinedCount = '';
+    var fileDownloadCount = '';
+    var isFullyRejected = '';
+    var downloadCountLimit = 0;
+    var tr = '', clone1 = '', entity = '';
 
     $('.tbody-compliance').empty();
-    for (var entity in data) {
-        sno = parseInt(sno) + 1;
+    for (entity in data) {
+        SNO = parseInt(SNO) + 1;
         csvId = data[entity].csv_id;
         csvName = data[entity].csv_name_text;
         totalNoofTasks = data[entity].total_records;
@@ -208,17 +211,18 @@ function loadCountwiseResult(data) {
                     rejectedBy = EMP_CODE + " - " + EMP_NAME;
                 }
             });
-        } else if (parseInt(statutoryAction) == 3) {
+        }
+        else if (parseInt(statutoryAction) == 3) {
             rejectedBy = SYSTEM_REJECTED_BY;
             declinedCount = data[entity].declined_count;
             reasonForRejection = '';
             rejectedOn = approvedOn;
         }
 
-        var tr = $('#act-templates .table-act-list .table-row-act-list');
-        var clone1 = tr.clone();
+        tr = $('#act-templates .table-act-list .table-row-act-list');
+        clone1 = tr.clone();
 
-        $('.tbl_sno', clone1).text(sno);
+        $('.tbl_sno', clone1).text(SNO);
         $('.tbl_upload_filename', clone1).text(csvName);
         $(".tbl_rejected_on", clone1).text(rejectedOn);
         $('.tbl_rejected_by', clone1).text(rejectedBy);
@@ -232,7 +236,8 @@ function loadCountwiseResult(data) {
             onClick: "confirmAlert(this)",
         });
         /***** Rejected File Downloads ********/
-        if (parseInt(fileDownloadCount) < parseInt(REJECTED_FILE_DOWNLOADCOUNT)) {
+        downloadCountLimit = REJECTED_FILE_DOWNLOADCOUNT;
+        if(parseInt(fileDownloadCount) < parseInt(downloadCountLimit)) {
             $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
@@ -246,7 +251,7 @@ function loadCountwiseResult(data) {
                 onclick: "downloadClick(" + csvId + ",this)"
             });
         }
-        else{
+        else {
             $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
@@ -270,7 +275,8 @@ RejectedStatutoryMappingBulk.prototype.validateMandatory = function() {
     if (COUNTRY.val().trim().length == 0) {
         displayMessage(message.country_required);
         isValid = false;
-    } else if (DOMAIN.val().trim().length == 0) {
+    }
+    else if (DOMAIN.val().trim().length == 0) {
         displayMessage(message.domain_required);
         isValid = false;
     }
@@ -289,7 +295,6 @@ function initialize() {
         EMP_NAME = USER_DETAILS.employee_name;
         hideLoader();
     }
-
     function onFailure(error) {
         displayMessage(error);
         hideLoader();
@@ -312,7 +317,8 @@ function validateAuthentication() {
         displayMessage(message.password_required);
         CURRENT_PASSWORD.focus();
         return false;
-    } else if (validateMaxLength('password', password, "Password") == false) {
+    }
+    else if (validateMaxLength('password', password, "Password") == false) {
         return false;
     }
     displayLoader();
@@ -321,7 +327,8 @@ function validateAuthentication() {
             hideLoader();
             isAuthenticate = true;
             Custombox.close();
-        } else {
+        }
+        else {
             hideLoader();
             if (error == 'InvalidPassword') {
                 displayMessage(message.invalid_password);
@@ -351,9 +358,9 @@ function confirmAlert(event) {
                 effect: 'contentscale',
                 complete: function() {
                     if (CURRENT_PASSWORD != null) {
-                                    CURRENT_PASSWORD.focus();
-                                    CURRENT_PASSWORD.val('');
-                                }
+                        CURRENT_PASSWORD.focus();
+                        CURRENT_PASSWORD.val('');
+                    }
                     CURRENT_PASSWORD.focus();
                     isAuthenticate = false;
                     COUNTRY.val(countryId);
@@ -376,22 +383,21 @@ function confirmAlert(event) {
 // Remove Button functionality
 function RemoveStatutoryCsv(REMOVE_STATUTORY_CSV_ID, countryId, domainId) {
     displayLoader();
-
     function onSuccess(data) {
+        var tableRow4 = '', clone4 = '';
         $('.details').show();
         COUNTRY.val(countryId);
         DOMAIN.val(domainId);
-
         $('.details').show();
         $(this).show();
 
         REJECTED_STATUTORY_DATA = data.rejected_data;
         if (REJECTED_STATUTORY_DATA.length == 0) {
             $('.tbody-compliance').empty();
-            var tableRow4 = $('#nocompliance-templates '+
+            tableRow4 = $('#nocompliance-templates '+
                 '.table-nocompliances-list ' +
                 '.table-row');
-            var clone4 = tableRow4.clone();
+            clone4 = tableRow4.clone();
             $('.tbl_norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
             REPORT_VIEW.show();
@@ -402,7 +408,6 @@ function RemoveStatutoryCsv(REMOVE_STATUTORY_CSV_ID, countryId, domainId) {
             loadCountwiseResult(REJECTED_STATUTORY_DATA);
         }
         displaySuccessMessage(message.record_deleted);
-
     }
 
     function onFailure(error) {
@@ -410,13 +415,13 @@ function RemoveStatutoryCsv(REMOVE_STATUTORY_CSV_ID, countryId, domainId) {
         hideLoader();
     }
 
-    filterdata = {
+    filterData = {
         "d_id": parseInt(domainId),
         "csv_id": parseInt(REMOVE_STATUTORY_CSV_ID),
         "c_id": parseInt(countryId)
     };
 
-    bu.deleteRejectedSMByCsvID(filterdata, function(error, response) {
+    bu.deleteRejectedSMByCsvID(filterData, function(error, response) {
         if (error == null) {
             onSuccess(response)
         } else {
@@ -432,17 +437,17 @@ function downloadClick(CSV_ID, event) {
     var cId = COUNTRY.val();
     var dId = DOMAIN.val();
     var downloadFileFormat = $(event).attr("data-format");
+    var filterData = {};
+    var requestDownloadData = {};
 
     displayLoader();
-
     function onSuccess(data) {
         var updatedCount;
         var dataCsvId;
         var downloadCount;
         var eventId = "download_files_";
-        //delete_action_
-        updatedCount = data.updated_count;
 
+        updatedCount = data.updated_count;
         dataCsvId = updatedCount[0].csv_id;
         downloadCount = updatedCount[0].download_count;
         if (parseInt(downloadCount) == 1) {
@@ -467,17 +472,17 @@ function downloadClick(CSV_ID, event) {
         hideLoader();
     }
     //csvId
-    filterdata = {
+    filterData = {
         "csv_id": parseInt(CSV_ID)
     };
 
-    var requestDownloadData = {
+    requestDownloadData = {
         "csv_id": parseInt(CSV_ID),
         "c_id": parseInt(cId),
         "d_id": parseInt(dId),
         "download_format": downloadFileFormat
     };
-    bu.setDownloadClickCount(filterdata, function(error, response) {
+    bu.setDownloadClickCount(filterData, function(error, response) {
         if (error == null) {
             onSuccess(response);
             requestDownload(requestDownloadData, downloadFileFormat);
@@ -505,9 +510,9 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
                 return false;
             } else if (downloadFileFormat == "text") {
                     $.get(response.txt_link, function(data){
-                        txt_file_name = response.txt_link
-                        txt_file_name = txt_file_name.split('\\');
-                        download(txt_file_name[1], "text/plain", data);
+                        url = response.txt_link
+                        txt_file_name = url.substring(url.lastIndexOf('/')+1)
+                        download(txt_file_name, "text/plain", data);
                     },
                     'text');
                     hideLoader();
@@ -525,15 +530,12 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
 }
 function download(filename, mime_type, text) {
     var element = document.createElement('a');
-    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    var href = 'data:'+mime_type+';charset=utf-8,'+encodeURIComponent(text);
     element.setAttribute('href', href);
     element.setAttribute('download', filename);
-
     element.style.display = 'none';
     document.body.appendChild(element);
-
     element.click();
-
     document.body.removeChild(element);
 }
 // File Download
@@ -553,11 +555,12 @@ function rejectedFiles(event) {
 
 // Close the dropdown if the user clicks outside of it
 window.onclick = function(event) {
+    var dropdowns = '';
+    var i = 0, openDropdown = '';
     if (!event.target.matches('.dropbtn')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        var i;
+        dropdowns = document.getElementsByClassName("dropdown-content");        
         for (i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
+            openDropdown = dropdowns[i];
             if (openDropdown.classList.contains('show')) {
                 openDropdown.classList.remove('show');
             }

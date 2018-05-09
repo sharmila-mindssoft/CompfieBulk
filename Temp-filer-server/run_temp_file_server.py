@@ -85,7 +85,7 @@ def generate_random(length=7):
     )
 
 
-def update_file_status(file_name, file_size, csv_id):
+def update_file_status(old_file_name, new_file_name, file_size, csv_id):
     print "File size in update fn-> ", file_size
     res_ponse_data = None
     _db_con = bulkupload_db_connect()
@@ -93,7 +93,7 @@ def update_file_status(file_name, file_size, csv_id):
     try:
         _db.begin()
         print "update file status"
-        if _db.update_file_status(csv_id, file_name, file_size) is None:
+        if _db.update_file_status(old_file_name, csv_id, new_file_name, file_size) is None:
             res_ponse_data = False
             print "update failed"
         _db.commit()
@@ -155,6 +155,34 @@ def update_file_ddwnload_status(csv_id, status):
     return res_ponse_data
 
 
+def delete_declined_docs(csv_id):
+    print "csv_id-> ", csv_id
+    res_ponse_data = None
+    _db_con = bulkupload_db_connect()
+    print "_db_con>> ", _db_con
+    _db = Database(_db_con)
+    try:
+        _db.begin()
+
+        db_stat = _db.get_declined_docs(csv_id)
+        print "db_stat-> ", db_stat
+        if db_stat is not None:
+            res_ponse_data = db_stat
+        # _db.commit()
+    except Exception, e:
+        print "In Exception"
+        raise RuntimeError(str(e))
+        # _db.rollback()
+
+    finally:
+        _db.close()
+        _db_con.close()
+
+    print "res_ponse_data-> ", res_ponse_data
+    return res_ponse_data
+
+
+
 @app.route('/temp/upload', methods=['POST'])
 def upload():
     print request
@@ -178,29 +206,34 @@ def upload():
             print "f.filename->>> ", f.filename
             fn = f.filename
             fname = (fn).split(".")
-            # ext[1] = f.fname.split("-")
             random_file_name = fname[0] + '-' + random_string + "." + fname[1]
-            f.filename = random_file_name
             print "name->> ", f.name
             print "random_file_name>> ", random_file_name
-            actual_file = os.path.join(load_path, random_file_name)
+            actual_file = os.path.join(load_path, f.filename)
             print "Actual file -> ", actual_file
-            # f.save(actual_file)
             zip_f_name = actual_file + ".zip"
             print "zip_f_name--> ", zip_f_name
             print "F... ", f
             f.save(zip_f_name)
             zip_ref = zipfile.ZipFile(zip_f_name, 'r')
+            print "zip ref", zip_ref
+            print "load Path -> ", load_path
             zip_ref.extractall(load_path)
             zip_ref.close()
-            # os.remove(zip_f_name)
-            print "@" * 10
-            # actual_file_size = os.path.getsize(random_file_name)
-            # print actual_file_size
-            if update_file_status(random_file_name, 0, csvid) is False:
+            print "load_path + f.filename> ", load_path + f.filename
+            print "loadrandom_file_name", load_path + '/' + random_file_name
+            os.rename(actual_file, load_path + '/' + random_file_name)
+            renamed_file = os.path.join(load_path, random_file_name)
+            os.remove(zip_f_name)
+            renamed_file_size = os.path.getsize(renamed_file)
+            print "actual_file_size-> ", renamed_file_size
+            if update_file_status(
+                f.filename, random_file_name, renamed_file_size, csvid
+            ) is False:
                 return "update failed"
 
         return "success"
+
 
 @app.route('/client/temp/upload', methods=['POST'])
 def upload_client():
@@ -261,10 +294,20 @@ def zip_folder(folder_name, folder_path):
 @app.route('/temp/approve', methods=['POST'])
 def approve():
     print "CAME IN APPROVE"
+    csv_id = request.args.get('csvid')
+    dec_docs = delete_declined_docs(csv_id)
     folder_name = request.args.get('csvid')
     print "folder_name-> ", folder_name
     assert folder_name is not None
     folder_path = os.path.join(app.config['UPLOAD_PATH'], folder_name)
+    print "Folder path->> ", folder_path
+    for dd in dec_docs:
+        print "dd>> ", dd
+        if not os.path.isfile(folder_path + '/' + dd):
+            return "File not exists"
+        else:
+            os.remove(folder_path + '/' + dd)
+
     if not os.path.exists(folder_path):
         return "Error"
     if folder_name in zipping_in_process:

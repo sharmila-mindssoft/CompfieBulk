@@ -2,7 +2,7 @@ import traceback
 from ..bucsvvalidation.assignstatutoryvalidation import (
     ValidateAssignStatutoryCsvData, ValidateAssignStatutoryForApprove
 )
-from ..bucsvvalidation.rejectedstatutorymapping import (
+from ..bucsvvalidation.rejecteddownloadvalidation import (
     ValidateRejectedDownloadBulkData
 )
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
@@ -183,8 +183,8 @@ def get_download_assing_statutory(db, request_frame, session_user):
     )
 
     converter = ConvertJsonToCSV(
-            db, request_frame, session_user, "DownloadAssignStatutory"
-        )
+        db, request_frame, session_user, "DownloadAssignStatutory"
+    )
     result = bu_as.DownloadAssignStatutorySuccess(
         converter.FILE_DOWNLOAD_PATH
     )
@@ -222,9 +222,9 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
 
         # save csv file
         csv_name = convert_base64_to_file(
-                BULKUPLOAD_CSV_PATH, request_frame.csv_name,
-                request_frame.csv_data
-            )
+            BULKUPLOAD_CSV_PATH, request_frame.csv_name,
+            request_frame.csv_data
+        )
         # read data from csv file
         header, assign_statutory_data = read_data_from_csv(csv_name)
 
@@ -269,7 +269,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
                 if (
                     save_assign_statutory_data(
                         db, new_csv_id, res_data["data"]
-                        ) is True
+                    ) is True
                 ):
                     u_ids = ",".join(map(str, cObj._unit_ids))
                     cObj.save_manager_message(
@@ -514,7 +514,7 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     clientGroupId = request_frame.bu_client_id
     legalEntityId = request_frame.bu_legal_entity_id
     unitId = request_frame.bu_unit_id
-    domainId = request_frame.d_id
+    domainIds = request_frame.domain_ids
     from_date = request_frame.from_date
     to_date = request_frame.to_date
     record_count = request_frame.r_count
@@ -526,7 +526,7 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
     to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
     asm_reportdata, total_record = fetch_assigned_statutory_bulk_report(
         db, session_user, session_user.user_id(), clientGroupId, legalEntityId,
-        unitId, domainId, from_date, to_date, record_count, page_count,
+        unitId, domainIds, from_date, to_date, record_count, page_count,
         child_ids, user_category_id)
 
     result = bu_as.GetAssignedStatutoryReportDataSuccess(asm_reportdata,
