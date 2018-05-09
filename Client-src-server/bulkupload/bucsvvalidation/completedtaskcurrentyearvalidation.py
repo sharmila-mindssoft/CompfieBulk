@@ -525,7 +525,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         if invalid > 0 :
             return self.make_invalid_return(mapped_error_dict, mapped_header_dict)
         else :
-            return self.make_valid_return(mapped_error_dict, mapped_header_dict)
+            return self.make_valid_return(mapped_error_dict, mapped_header_dict, legal_entity_id)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
         fileString = self._csv_name.split('.')
@@ -562,9 +562,24 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         }
 
 
-    def make_valid_return(self, mapped_error_dict, mapped_header_dict):
+    def make_valid_return(self, mapped_error_dict, mapped_header_dict, legal_entity_id):
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
+        Unit_Code = self._source_data[0]["Unit_Code"]
+        domain_name = self._source_data[0]["Domain"]
+
+        self.connect_source_db(legal_entity_id)
+
+        unitCode = [Unit_Code]
+        q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
+        unit_id = self._source_db.select_all(q, unitCode)
+        unit_id = unit_id[0]["unit_id"]
+
+        domainName = [domain_name]
+        q = "select domain_id from tbl_domains where domain_name = TRIM(%s)"
+        domain_id = self._source_db.select_all(q, domainName)
+        domain_id = domain_id[0]["domain_id"]
+
         return {
             "return_status": True,
             "data": self._source_data,
@@ -573,6 +588,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "invalid": invalid,
             "doc_count": len(set(self._doc_names)),
             "doc_names": list(set(self._doc_names)),
+            "unit_id": unit_id,
+            "domain_id" : domain_id,
         }
 
 
