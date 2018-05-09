@@ -16,6 +16,11 @@ from server.clientdatabase.general import (
 from clientprotocol import (
     clienttransactions, clientcore
 )
+
+from  clientprotocol.clienttransactions import (
+    STATUTORY_WISE_COMPLIANCES,
+    UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS
+)
 from server.common import datetime_to_string
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..", "..")
@@ -148,8 +153,10 @@ def get_download_bulk_compliance_data(
         " SUBSTRING_INDEX(substring(substring(statutory_mapping,3),1, " + \
         " char_length(statutory_mapping) -4), '>>', 1) as statutory_mapping, " + \
         " document_name, compliance_task, compliance_description, " + \
-        " c.repeats_type_id, rt.repeat_type, c.repeats_every, frequency, " + \
-        " c.frequency_id FROM tbl_assign_compliances ac " + \
+        " c.repeats_type_id, rt.repeat_type, c.repeats_every, frequency, c.frequency_id, " + \
+        "date(subdate(ifnull((select min(due_date) from tbl_compliance_history ch where ch.unit_id = ac.unit_id and " +\
+        " ac.compliance_id = ch.compliance_id and ch.start_date < ch.due_date), ac.due_date), 1)) as start_date" +\
+        " FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_users u ON (ac.assignee = u.user_id) " + \
         " INNER JOIN tbl_compliances c ON " + \
         " (ac.compliance_id = c.compliance_id) " + \
@@ -209,7 +216,8 @@ def get_download_bulk_compliance_data(
                 repeat_by=1,
                 repeat_every=compliance["repeats_every"],
                 due_date=compliance["due_date"],
-                domain_id=domain_id
+                domain_id=domain_id,
+                start_date=compliance["start_date"]
             )
         elif compliance["repeats_type_id"] == 2:  # Months
             due_dates, summary = calculate_due_date(
@@ -218,7 +226,8 @@ def get_download_bulk_compliance_data(
                 repeat_by=2,
                 repeat_every=compliance["repeats_every"],
                 due_date=compliance["due_date"],
-                domain_id=domain_id
+                domain_id=domain_id,
+                start_date=compliance["start_date"]
             )
         elif compliance["repeats_type_id"] == 3:  # years
             due_dates, summary = calculate_due_date(
@@ -227,7 +236,8 @@ def get_download_bulk_compliance_data(
                 statutory_dates=compliance["statutory_dates"],
                 repeat_every=compliance["repeats_every"],
                 due_date=compliance["due_date"],
-                domain_id=domain_id
+                domain_id=domain_id,
+                start_date=compliance["start_date"]
             )
 
         final_due_dates = filter_out_due_dates(
@@ -249,7 +259,7 @@ def get_download_bulk_compliance_data(
             statutories_strip = statutories[0].strip()
 
             level_1_statutory_wise_compliances[level_1].append(
-                clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
+                UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                     compliance["compliance_id"], compliance_name,
                     compliance["compliance_description"],
                     clientcore.COMPLIANCE_FREQUENCY(compliance["frequency"]),
@@ -269,7 +279,7 @@ def get_download_bulk_compliance_data(
         print "len(compliances)-->", len(compliances)
         if len(compliances) > 0:
             statutory_wise_compliances.append(
-                clienttransactions.STATUTORY_WISE_COMPLIANCES_BU(
+                STATUTORY_WISE_COMPLIANCES(
                     level_1_statutory_name, compliances
                 )
             )

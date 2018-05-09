@@ -1340,7 +1340,7 @@ def validate_compliance_due_date(db, request):
             if c.due_date not in [None, ""] and due_date not in [None, ""]:
                 t_due_date = datetime.datetime.strptime(c.due_date, "%d-%b-%Y")
                 n_due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
-                
+
                 print '%s < %s' % (n_due_date, t_due_date)
                 if s_day is not None and s_day < t_due_date.day:
                     return False, task
@@ -1769,7 +1769,7 @@ def get_from_and_to_date_for_domain(db, country_id, domain_id):
 
 def calculate_due_date(
     db, domain_id, statutory_dates=None, repeat_by=None,
-    repeat_every=None, due_date=None
+    repeat_every=None, due_date=None, start_date=None
 ):
     def is_future_date(test_date):
         result = False
@@ -1878,14 +1878,14 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
         rows = db.select_all(
             query, [unit_id, ",".join([x for x in due_dates_list]),compliance_id]
         )
-        
+
         rows_copy = []
         if len(rows) > 0:
             for row in rows:
                 row = str(row["is_ok"])
                 row.replace(" ", "")
                 rows_copy.append("%s" % (row))
-            
+
             filtered_list = [x for x in formated_date_list if x not in set(rows_copy)]
             formated_date_list = filtered_list
 

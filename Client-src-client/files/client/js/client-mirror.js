@@ -1631,6 +1631,7 @@ function convert_to_base64(file, name, size, callback) {
     reader.onload = function(readerEvt) {
         var binaryString = readerEvt.target.result;
         file_content = btoa(binaryString);
+        console.log("file content -> ", file_content)
         callback(file_content, name, size);
     };
     reader.readAsBinaryString(file);
@@ -1661,7 +1662,9 @@ function uploadFile(fileListener, callback) {
         } else {
             file_content = null;
             if (file) {
-                convert_to_base64(file, file_name, file_size, function(file_content, name, size) {
+                convert_to_base64(file, file_name, file_size,
+                    function(file_content, name, size) {
+                        console.log("File content inside >> " + file_content)
                     if (file_content == null) {
                         callback(message.file_content_empty);
                     }
@@ -1671,7 +1674,9 @@ function uploadFile(fileListener, callback) {
                     var f_Name = fN + '-' + uniqueId + '.' + fE;
 
                     result = uploadFileFormat(size, f_Name, file_content);
+                    console.log("RESULT ->"+ result)
                     results.push(result);
+                    console.log("results ->"+ results)
                     if (results.length == files.length) {
                         callback(results);
                     }

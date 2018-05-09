@@ -82,7 +82,6 @@ class Database(object):
         assert cursor is not None
 
         try:
-
             if param is None:
                 cursor.execute(query)
             else:
@@ -95,6 +94,32 @@ class Database(object):
                     cursor.execute(query)
             cursor.nextset()
             res = cursor.fetchone()
+            cursor.nextset()
+            return res
+
+        except Exception, e:
+            raise RuntimeError(str(e))
+
+    def select_all(self, query, param=None):
+        cursor = self.cursor()
+        assert cursor is not None
+        try:
+
+            print "type(param)", type(param)
+            if param is None:
+                cursor.execute(query)
+            else:
+                if type(param) is tuple:
+                    cursor.execute(query, param)
+
+                elif type(param) is list:
+                    cursor.execute(query, param)
+
+                else:
+                    cursor.execute(query)
+            cursor.nextset()
+            res = cursor.fetchall()
+            print "RES in select all>> ", res
             cursor.nextset()
             return res
 
@@ -136,12 +161,13 @@ class Database(object):
             raise RuntimeError(str(e))
         return True
 
-    def update_file_status(self, csv_id, file_name, file_size):
+    def update_file_status(self, old_file_name, csv_id, file_name, file_size):
         print "file_size in dbase", file_size
         print "FileName-> ", file_name
         print "csv id", csv_id
+        param = [old_file_name, csv_id, file_name, file_size]
         return self.call_update_proc(
-            "sp_sm_format_file_status_update", [csv_id, file_name, file_size]
+            "sp_sm_format_file_status_update", param
         )
 
     def update_format_file_status(self, csv_id, status):
@@ -159,3 +185,17 @@ class Database(object):
         return self.call_update_proc(
             "sp_ct_format_file_status_update", [csv_id, file_name]
         )
+
+    def get_declined_docs(self, csv_id):
+        print "csv_id-in get_declined_docs >>>>> ", csv_id
+        query = "SELECT format_file FROM tbl_bulk_statutory_mapping WHERE csv_id = %s and action = 3"
+        param = [int(csv_id)]
+        print "Query---> ", query
+        print "Param -> ", param
+        
+        row = self.select_all(query, param)
+        dec_doc_list = []
+        for r in row:
+            dec_doc_list.append(r["format_file"].encode('ascii', 'ignore'))
+        print "dec_doc_list--->>>> ", dec_doc_list
+        return dec_doc_list

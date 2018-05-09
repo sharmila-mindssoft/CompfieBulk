@@ -640,19 +640,24 @@ csv_params = {
         isValidCharCheck=True, validation_method=is_alpha_numeric
     ),
     'Statutory_Provision_Column': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Compliance_Task_Column': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Compliance_Description_Column': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Unit_Name_Column': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Primary_Legislation_Column': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Statutory_Applicable_Status_Column': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
@@ -661,19 +666,23 @@ csv_params = {
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
     'Unit_Location_Column': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Unit_Code_Column': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
     'Organisation_Column': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Domain_Column': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Legal_Entity_Column': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True, isActiveCheck=True
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Client_Group_Column': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True

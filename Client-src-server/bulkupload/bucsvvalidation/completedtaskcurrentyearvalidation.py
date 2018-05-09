@@ -15,6 +15,8 @@ from client_keyvalidationsettings import csv_params, parse_csv_dictionary_values
 from ..client_bulkuploadcommon import (
     write_data_to_excel, rename_file_type
 )
+
+# from  clientprotocol.clienttransactions import ()
 from server.common import ( get_date_time )
 
 # from server.clientdatabase.general import ( is_two_levels_of_approval )
@@ -51,6 +53,7 @@ class SourceDB(object):
         self._csv_column_name = []
         self.csv_column_fields()
         self._doc_names = []
+        # self.get_doc_names()
 
     def connect_source_db(self, legal_entity_id):
 
@@ -335,7 +338,12 @@ class SourceDB(object):
 
             if values :
                 self._source_db.insert("tbl_compliance_history", columns, values)
+                # added for aparajtha
+                # clienttransaction.update_user_wise_task_status(self._source_db, users)
+
                 self._source_db.commit()
+
+
 
         return True
 
@@ -404,7 +412,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         returns : valid and invalid return format
         rType: dictionary
     '''
-
 
     def perform_validation(self, legal_entity_id):
         mapped_error_dict = {}
@@ -576,18 +583,101 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         self._csv_id = csv_id
         self._session_user_obj = session_user
         self._source_data = dataResult
+        self._doc_count = 0
+        # self.get_source_data()
+        self.get_file_count(db)
+
         # self._declined_row_idx = []
         # self._legal_entity = None
         # self._client_group = None
         # self._csv_name = None
         # self._unit_id = None
 
-    # def get_source_data(self):
-    #     self._source_data = self._db.call_proc(
-    #         "sp_assign_statutory_by_csvid", [self._csv_id]
-    #     )
+    def get_file_count(self, db):
+        query = "select total_documents from tbl_bulk_past_data_csv " + \
+                "where csv_past_id = %s"
+        param = [self._csv_id]
+        docRows = db.select_all(query, param)
 
-    def frame_data_for_main_db_insert(self, db, dataResult, legal_entity_id, session_user):
+        print "docRows--->> ", docRows
+        for d in docRows:
+            doc_count = d.get("total_documents")
+
+        print "self._doc_names >> ", doc_count
+        self._doc_count = doc_count
+
+    def document_download_process_initiate(self, csvid):
+        self.file_server_approve_call(csvid)
+        self._stop = False
+
+        def check_status():
+            if self._stop:
+                return
+
+            file_status = get_file_stats(csvid)
+            print " file Status -> ", file_status
+            if file_status == "completed":
+                self._stop = True
+                self.file_server_download_call(csvid)
+
+            if self._stop is False:
+                t = threading.Timer(60, check_status)
+                t.daemon = True
+                t.start()
+
+        def get_file_stats(csvid):
+            file_status = None
+            c_db_con = bulkupload_db_connect()
+            _db_check = Database(c_db_con)
+            try:
+                _db_check.begin()
+                data = _db_check.call_proc(
+                    "sp_sm_get_file_download_status", [csvid]
+                )
+                print "DAta -> ", data
+                if len(data) > 0:
+                    file_status = data[0].get("file_download_status")
+
+            except Exception, e:
+                print e
+                _db_check.rollback()
+
+            finally:
+                _db_check.close()
+                c_db_con.close()
+            return file_status
+
+        check_status()
+
+    def file_server_approve_call(self, csvid):
+        print "Approve call done"
+        caller_name = "%sapprove?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        print "caller_name", caller_name
+        response = requests.post(caller_name)
+        print "response.text-> ", response.text
+
+    def file_server_download_call(self, csvid):
+        actual_zip_file = os.path.join(
+            KNOWLEDGE_FORMAT_PATH, str(csvid) + ".zip"
+        )
+        caller_name = "%sdownloadfile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        print "Cller nameeeeee", caller_name
+        urllib.urlretrieve(caller_name, actual_zip_file)
+        zip_ref = ZipFile(actual_zip_file, 'r')
+        zip_ref.extractall(KNOWLEDGE_FORMAT_PATH)
+        zip_ref.close()
+        os.remove(actual_zip_file)
+        self.file_server_remove_call(csvid)
+        return True
+
+    def file_server_remove_call(self, csvid):
+        caller_name = "%sremovefile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        response = requests.post(caller_name)
+        print response.text
+
+    def frame_data_for_main_db_insert(
+        self, db, dataResult, legal_entity_id, session_user
+    ):
         # self.get_source_data()
         # self._source_data.sort(key=lambda x: (
         #      x["Domain"], x["Unit_Name"]
@@ -609,4 +699,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             # cs_id = self.save_client_statutories_data(
             #     self._client_id, unit_id, domain_id, user_id
             #     )
-        return self.save_completed_task_data(dataResult, legal_entity_id, session_user)
+        print "frame_data_for_main_db_insert>leentity_id>>", legal_entity_id
+        return self.save_completed_task_data(
+            dataResult, legal_entity_id, session_user
+        )

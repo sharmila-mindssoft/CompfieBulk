@@ -5,17 +5,17 @@ bulk_upload_max_length = {
 
 $.extend(max_length, bulk_upload_max_length);
 
-/*function postValidate(isValid, errMsg, inputElm) {
+function postValidate(isValid, errMsg, inputElm) {
     if (!isValid) {
         displayMessage(errMsg);
         if(errMsg.indexOf("From Date Required") < 0)
             inputElm.focus();
     }
 }
-*/
+
 
 /* Validate that input value length is between minLength and maxLength */
-/*function isLengthMinMax(inputElm, minLength, maxLength, errMsg) {
+function isLengthMinMax(inputElm, minLength, maxLength, errMsg) {
     var inputValue = inputElm.val().trim();
     console.log(inputValue)
     if ((inputValue.length >= minLength) && (inputValue.length <= maxLength)) {
@@ -27,4 +27,4 @@ $.extend(max_length, bulk_upload_max_length);
 
     postValidate(isValid, errMsg, inputElm);
     return isValid;
-}*/
+}

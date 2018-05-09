@@ -923,7 +923,6 @@ class PendingCsvList(object):
         self.download_file = download_file
         self.declined_count = declined_count
 
-
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
@@ -1095,8 +1094,9 @@ class Domain(object):
             "country_ids", "c_names", "domain_id", "domain_name", "is_active"
         ])
         return Domain(
-            data.get("country_ids"), data.get("c_names"), data.get("domain_id"),
-            data.get("domain_name"), data.get("is_active")
+            data.get("country_ids"), data.get("c_names"),
+            data.get("domain_id"), data.get("domain_name"),
+            data.get("is_active")
         )
 
     def to_structure(self):

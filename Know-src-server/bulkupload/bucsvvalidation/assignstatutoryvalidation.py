@@ -187,12 +187,12 @@ class SourceDB(object):
     def check_client_group(self, group_name):
         return self.check_base(
             True, self.Client_Group, group_name, None
-            )
+        )
 
     def check_legal_entity(self, legal_entity_name):
         return self.check_base(
             True, self.Legal_Entity, legal_entity_name, None
-            )
+        )
 
     def check_domain(self, domain_name):
         return self.check_base(True, self.Domain, domain_name, None)
@@ -212,12 +212,12 @@ class SourceDB(object):
     def check_statutory_provision(self, statutory_provision):
         return self.check_base(
             False, self.Statutory_Provision, statutory_provision, None
-            )
+        )
 
     def check_compliance_task(self, compliance_task):
         return self.check_base(
             True, self.Compliance_Task, compliance_task, None
-            )
+        )
 
     def check_compliance_description(self, compliance_description):
         return self.check_base(
@@ -239,6 +239,7 @@ class SourceDB(object):
             False, self.Child_Statutories, child_statutories, None
         )
 
+    # write update query
     def save_client_statutories_data(self, cl_id, u_id, d_id, user_id):
         created_on = get_date_time()
         client_statutory_value = [
@@ -257,6 +258,7 @@ class SourceDB(object):
             raise process_error("E018")
         return client_statutory_id
 
+    # write update query
     def save_client_compliances_data(
         self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, client_id_
     ):
@@ -268,6 +270,7 @@ class SourceDB(object):
             "remarks", "compliance_id", "compliance_applicable_status",
             "is_submitted", "is_approved", "approved_by", "approved_on",
             "updated_by", "updated_on"
+            # add the executive name"submitted_by, submitted_on, is_saved, savedon, saved  by"
         ]
 
         values = []
@@ -288,7 +291,7 @@ class SourceDB(object):
 
             statu_id = self.Statutories.get(d["Primary_Legislation"]).get(
                 "statutory_id"
-                )
+            )
             comp_id = None
             c_ids = self._source_db.call_proc(
                 "sp_bu_get_compliance_id_by_name",
@@ -308,6 +311,7 @@ class SourceDB(object):
                 d["Compliance_Applicable_Status"], submitted_status,
                 approval_status, int(user_id), created_on,
                 int(user_id), created_on
+                # ,  add executive name
             ))
 
         if values:
@@ -412,22 +416,22 @@ class SourceDB(object):
             action_type = "rejected with following reason %s" % (reason)
 
         msg = "Assign statutory file %s of %s - %s has been %s" % (
-                csv_name, clientgroup, legalentity, action_type
-            )
+            csv_name, clientgroup, legalentity, action_type
+        )
 
         if len(domain_users_id) > 0:
             self._source_db.save_toast_messages(
                 8, "Approve Assign Statutory Bulk Upload", msg, None,
                 domain_users_id, createdby
-                )
+            )
         if len(admin_users_id) > 0:
             self._source_db.save_toast_messages(
                 1, "Approve Assign Statutory Bulk Upload", msg, None,
                 admin_users_id, createdby
-                )
+            )
         self._source_db.save_activity(
             createdby, frmApproveAssignStatutoryBulkUpload, msg
-            )
+        )
 
     def save_manager_message(
         self, csv_name, domainname, unitname, createdby, unitids
@@ -450,15 +454,15 @@ class SourceDB(object):
             self._source_db.save_toast_messages(
                 7, "Assign Statutory Bulk Upload", msg, None, domain_users_id,
                 createdby
-                )
+            )
         if len(admin_users_id) > 0:
             self._source_db.save_toast_messages(
                 1, "Assign Statutory Bulk Upload", msg, None, admin_users_id,
                 createdby
-                )
+            )
         self._source_db.save_activity(
             createdby, frmAssignStatutoryBulkUpload, msg
-            )
+        )
 
     def get_country_id(self):
         country_id = 0
@@ -610,8 +614,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     self.Legal_Entity.get(grouped_list[0].get("Legal_Entity"))
                 ) != None:
                     self._legal_entity_id = self.Legal_Entity.get(
-                            grouped_list[0].get("Legal_Entity")
-                        ).get("legal_entity_id")
+                        grouped_list[0].get("Legal_Entity")
+                    ).get("legal_entity_id")
 
                 self._client_group = grouped_list[0].get("Client_Group")
 
@@ -620,7 +624,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 ) != None:
                     self._client_id = self.Client_Group.get(
                         grouped_list[0].get("Client_Group")
-                        ).get("client_id")
+                    ).get("client_id")
 
         self._unit_ids = []
         for k, v in groupby(self._source_data, key=lambda s: (
@@ -739,7 +743,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                     valid_failed, error_cnt = parse_csv_dictionary_values_as(
                         key, v
-                        )
+                    )
                     if valid_failed is not True:
                         if res is True:
                             res = valid_failed
@@ -1046,7 +1050,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
     def frame_data_for_main_db_insert(self, user_id):
         self.get_source_data()
         self._source_data.sort(key=lambda x: (
-             x["Domain"], x["Unit_Code"]
+            x["Domain"], x["Unit_Code"]
         ))
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Domain"], s["Unit_Code"]
@@ -1066,11 +1070,11 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
             cs_id = self.save_client_statutories_data(
                 self._client_id, unit_id, domain_id, user_id
-                )
+            )
             self.save_client_compliances_data(
                 self._client_id, self._legal_entity_id, unit_id, domain_id,
                 cs_id, grouped_list, user_id, country_id
-                )
+            )
 
     def make_rejection(self, declined_info, user_id):
         try:
