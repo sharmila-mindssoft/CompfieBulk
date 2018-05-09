@@ -239,11 +239,17 @@ class SourceDB(object):
             False, self.Child_Statutories, child_statutories, None
         )
 
-    def save_client_statutories_data(self, cl_id, u_id, d_id, user_id):
+    def save_client_statutories_data(
+        self, cl_id, u_id, d_id, user_id, is_rejected
+    ):
         created_on = get_date_time()
+        status = 3
+        if is_rejected is True:
+            status = 4
+
         client_statutory_value = [
             int(cl_id), int(u_id),
-            int(d_id), 3,
+            int(d_id), status,
             int(user_id), str(created_on)
         ]
         q = "INSERT INTO tbl_client_statutories (client_id, unit_id, " + \
@@ -257,8 +263,23 @@ class SourceDB(object):
             raise process_error("E018")
         return client_statutory_id
 
+    def get_client_compliance_rejected_status(
+        self, legal_entity, domain, unit_code, csv_id
+    ):
+        res = self._db.call_proc(
+            "sp_check_client_compliance_rejected_status",
+            [
+                legal_entity, domain, unit_code, csv_id
+            ]
+        )
+        if len(res) > 0:
+            return True
+        else:
+            return False
+
     def save_client_compliances_data(
-        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, client_id_
+        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, client_id_,
+        is_rejected, saved_by, saved_on
     ):
         created_on = get_date_time()
         columns = [
@@ -266,25 +287,25 @@ class SourceDB(object):
             "client_id", "legal_entity_id", "unit_id",
             "domain_id", "statutory_id", "statutory_applicable_status",
             "remarks", "compliance_id", "compliance_applicable_status",
-            "is_submitted", "is_approved", "approved_by", "approved_on",
+            "is_saved", "saved_by", "saved_on", "is_submitted", "submitted_by",
+            "submitted_on", "is_approved", "approved_by", "approved_on",
             "updated_by", "updated_on"
         ]
 
         values = []
-        is_rejected = False
-        rej_reason = ''
         for idx, d in enumerate(data):
             approval_status = 0
             submitted_status = 0
-            if d["Compliance_Applicable_Status"] == 3 and d["action"] == 1:
+
+            if is_rejected is True and d["action"] == 1:
+                approval_status = 2
+            elif d["Compliance_Applicable_Status"] == 3 and d["action"] == 1:
                 approval_status = 3
             elif d["Compliance_Applicable_Status"] != 3 and d["action"] == 1:
-                approval_status = 5
+                approval_status = 99
                 submitted_status = 1
             else:
                 approval_status = 4
-                is_rejected = True
-                rej_reason = d["remarks"]
 
             statu_id = self.Statutories.get(d["Primary_Legislation"]).get(
                 "statutory_id"
@@ -305,7 +326,9 @@ class SourceDB(object):
                 int(cs_id), cl_id, le_id, u_id, d_id, statu_id,
                 d["Statutory_Applicable_Status"],
                 d["Statutory_remarks"], comp_id,
-                d["Compliance_Applicable_Status"], submitted_status,
+                d["Compliance_Applicable_Status"],
+                1, saved_by, saved_on,
+                submitted_status, saved_by, saved_on,
                 approval_status, int(user_id), created_on,
                 int(user_id), created_on
             ))
@@ -315,12 +338,10 @@ class SourceDB(object):
                 "tbl_client_compliances", columns, values
             )
 
-            if is_rejected is True:
-                q = "update tbl_client_statutories set reason = %s," + \
-                    "status = 4 where client_statutory_id = %s"
-                params = [rej_reason, int(cs_id)]
-                self._source_db.execute(q, params)
-
+            q = "update tbl_client_compliances set is_approved = 5 " + \
+                "where is_approved = 99 and client_statutory_id = %s"
+            params = [int(cs_id)]
+            self._source_db.execute(q, params)
             return True
         else:
             return False
@@ -606,7 +627,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                 if(
                     self.Domain.get(grouped_list[0].get("Domain"))
-                ) != None:
+                ) is not None:
                     self._domain_ids.append(self.Domain.get(
                         grouped_list[0].get("Domain")).get("domain_id")
                     )
@@ -615,7 +636,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                 if(
                     self.Legal_Entity.get(grouped_list[0].get("Legal_Entity"))
-                ) != None:
+                ) is not None:
                     self._legal_entity_id = self.Legal_Entity.get(
                             grouped_list[0].get("Legal_Entity")
                         ).get("legal_entity_id")
@@ -624,7 +645,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                 if(
                     self.Client_Group.get(grouped_list[0].get("Client_Group"))
-                ) != None:
+                ) is not None:
                     self._client_id = self.Client_Group.get(
                         grouped_list[0].get("Client_Group")
                         ).get("client_id")
@@ -637,7 +658,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             if len(grouped_list) >= 1:
                 if(
                     self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
-                ) != None:
+                ) is not None:
                     self._unit_ids.append(self.Unit_Code.get(
                         grouped_list[0].get("Unit_Code")).get("unit_id")
                     )
@@ -972,7 +993,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             if len(grouped_list) >= 1:
                 if(
                     self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
-                ) != None:
+                ) is not None:
                     self._unit_ids.append(self.Unit_Code.get(
                         grouped_list[0].get("Unit_Code")).get("unit_id")
                     )
@@ -1071,13 +1092,20 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
             country_id, legal_entity_id = self.get_country_id()
 
+            is_rejected = self.get_client_compliance_rejected_status(
+                value.get("Legal_Entity"), value.get("Domain"),
+                value.get("Unit_Code"), self._csv_id
+            )
+
             cs_id = self.save_client_statutories_data(
-                self._client_id, unit_id, domain_id, user_id
-                )
+                self._client_id, unit_id, domain_id, user_id, is_rejected
+            )
+
             self.save_client_compliances_data(
                 self._client_id, self._legal_entity_id, unit_id, domain_id,
-                cs_id, grouped_list, user_id, country_id
-                )
+                cs_id, grouped_list, user_id, country_id, is_rejected,
+                value.get("uploaded_by"), value.get("uploaded_on")
+            )
 
     def make_rejection(self, declined_info, user_id):
         try:
