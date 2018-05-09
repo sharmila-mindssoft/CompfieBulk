@@ -79,7 +79,7 @@ def validate_session(session_id):
 
 
 def generate_random(length=7):
-    characters = string.ascii_lowercase + string.digits
+    characters = string.digits
     return ''.join(
         random.SystemRandom().choice(characters) for _ in range(length)
     )

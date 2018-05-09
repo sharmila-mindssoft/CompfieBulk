@@ -17,7 +17,7 @@ from ..client_bulkuploadcommon import (
 )
 
 # from  clientprotocol.clienttransactions import ()
-from server.common import ( get_date_time )
+from server.common import (get_date_time)
 
 # from server.clientdatabase.general import ( is_two_levels_of_approval )
 
