@@ -97,8 +97,11 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
     if res_data["return_status"] is True :
         current_date_time = get_date_time_in_date()
         str_current_date_time = datetime_to_string(current_date_time)
+        unit_id = res_data["unit_id"]
+        domain_id = res_data["domain_id"]
+
         csv_args = [
-            "1", request_frame.legal_entity_id, "1","1","1",
+            "1", request_frame.legal_entity_id, domain_id, unit_id,"1",
             csv_name, session_user,str_current_date_time, res_data["total"],res_data["doc_count"],"0", "0"
         ]
 

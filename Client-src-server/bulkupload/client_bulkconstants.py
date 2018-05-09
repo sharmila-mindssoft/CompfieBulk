@@ -14,7 +14,7 @@ CSV_DOWNLOAD_URL = "/knowledge/downloadcsv"
 BULK_UPLOAD_DB_HOST = "localhost"
 BULK_UPLOAD_DB_PORT = 3306
 BULK_UPLOAD_DB_USERNAME = "root"
-BULK_UPLOAD_DB_PASSWORD = "root"
+BULK_UPLOAD_DB_PASSWORD = "Msft!@#$%^"
 BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload"
 
 CSV_DELIMITER = '|;|'
