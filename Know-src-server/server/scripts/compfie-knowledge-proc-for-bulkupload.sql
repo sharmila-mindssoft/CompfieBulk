@@ -327,9 +327,7 @@ DELIMITER ;
 -- To get the domains and organization under client group with its alloted unit count
 -- -----------------------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_bu_domains_organization_unit_count`;
-
 DELIMITER //
-
 CREATE PROCEDURE `sp_bu_domains_organization_unit_count`(
   IN _client_id INT(11))
 BEGIN
@@ -350,9 +348,8 @@ BEGIN
   and t4.organisation_id = t2.organisation_id and
   t4.unit_id = t3.unit_id
   WHERE t1.client_id = _client_id
-  group by t1.legal_entity_id, t2.domain_id, t2.organisation_id;
+  group by t1.legal_entity_id, t2.domain_id, t2.organisation_id, t2.count;
 END //
-
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_bu_client_unit_geographies`;
@@ -377,7 +374,6 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_client_info`;
 
 DELIMITER //
-
 CREATE PROCEDURE `sp_client_info`(
     IN uid INT(11)
 )
@@ -408,15 +404,16 @@ BEGIN
     INNER JOIN tbl_units_organizations as t02 on t01.unit_id = t02.unit_id
     INNER JOIN tbl_user_units as t03 on t01.unit_id = t03.unit_id
     where t03.user_id = uid and t01.is_closed = 0 and t01.is_approved = 1
-    group by t01.unit_id,t02.unit_id;
+    group by t01.unit_id,t02.unit_id,t01.unit_code, 
+    t01.unit_name,t01.legal_entity_id, t01.client_id;
 
     -- check assigned units
     SELECT distinct domain_id, unit_id FROM tbl_client_compliances
     WHERE is_approved < 5;
 
-END //
-
+END//
 DELIMITER ;
+
 
 
 DROP PROCEDURE IF EXISTS `sp_know_executive_info`;
@@ -444,11 +441,9 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_get_assign_statutory_compliance`;
 
 DELIMITER //
-
 CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
     IN unitid text, domainid text
 )
-
 BEGIN
     SET SESSION group_concat_max_len = 1000000;
 
@@ -511,9 +506,17 @@ BEGIN
       AND FIND_IN_SET(t4.unit_id, unitid)
       AND FIND_IN_SET(t1.domain_id, domainid)
       AND t6.unit_id IS NULL
-    GROUP BY    t1.statutory_mapping_id , t1.compliance_id , t4.unit_id
+    GROUP BY   t1.statutory_mapping_id , t1.compliance_id , t4.unit_id, 
+        t1.domain_id, t4.unit_code, t4.unit_name, 
+        t4.geography_id, t.statutory_mapping,
+        t1.statutory_provision,
+        t1.compliance_task ,
+        t1.compliance_description,
+        t6.unit_id,
+        t6.domain_id,
+        t4.unit_id,
+        t1.domain_id
     ORDER BY TRIM(LEADING '[' FROM t.statutory_mapping) , t1.compliance_id , t4.unit_id;
-
 END//
 
 DELIMITER ;
@@ -694,10 +697,11 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To get the list of client groups under the user
 -- --------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------
+-- To get the list of client groups under the user
+-- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_client_groups_for_client_unit_bulk_upload`;
-
 DELIMITER //
-
 CREATE PROCEDURE `sp_client_groups_for_client_unit_bulk_upload`(
     IN userId INT(11))
 BEGIN
@@ -706,16 +710,15 @@ BEGIN
         SELECT t1.client_id, t1.group_name,t1.is_active, t1.is_approved
         FROM tbl_client_groups t1
         inner join tbl_user_clients t2 on t1.client_id = t2.client_id and t2.user_id = userId
-        GROUP BY t1.group_name ORDER BY t1.group_name;
+        GROUP BY t1.group_name, t1.client_id, t1.is_active, t1.is_approved ORDER BY t1.group_name;
     END IF;
     IF @u_cat_id = 6 THEN
         SELECT t1.client_id, t1.group_name,t1.is_active, t1.is_approved
         FROM tbl_client_groups t1
         inner join tbl_user_legalentity t2 on t1.client_id = t2.client_id and t2.user_id = userId
-        GROUP BY t1.group_name ORDER BY t1.group_name;
+        GROUP BY t1.group_name, t1.client_id, t1.is_active, t1.is_approved ORDER BY t1.group_name;
     END IF;
-END //
-
+END//
 DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_bu_organization_all`;
