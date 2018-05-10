@@ -74,7 +74,10 @@ CSVFILENAME.change(function(e){
         displayMessage("CSV file name should not exceed 100 characters");
         return false;
     }
-	if(CSVFILENAME.val() != '' && e.target.files != undefined && e.target.files.length > 0){
+	if(
+		CSVFILENAME.val() != '' && e.target.files != undefined
+		&& e.target.files.length > 0
+	){
 		bu.uploadCSVFile(e, function result_data(status, data) {
             if (status == false){
                 displayMessage(data);
@@ -91,12 +94,14 @@ CSVUPLOADBUTTON.click(function () {
 	$('.view-summary').hide();
 	var clientId = GROUPID.val().trim();
 	var groupName = GROUPNAME.val().trim();
+	var f_size = null, f_name = null, f_data = null;
+	var getValidCount = 0;
 	if (clientId != '' && CSVFILENAME.val() != '') {
 		if (CSVUPLOADEDFILE != '') {
 			$('#myModal').modal('show');
-			var f_size = CSVUPLOADEDFILE.file_size;
-			var f_name = CSVUPLOADEDFILE.file_name;
-			var f_data = CSVUPLOADEDFILE.file_content;
+			f_size = CSVUPLOADEDFILE.file_size;
+			f_name = CSVUPLOADEDFILE.file_name;
+			f_data = CSVUPLOADEDFILE.file_content;
 			function onSuccess(response) {
 				GROUPNAME.val('');
 				GROUPID.val('');
@@ -118,7 +123,9 @@ CSVUPLOADBUTTON.click(function () {
 					displayMessage(message.client_unit_file_max);
 				}
 				else if(error == "CSVFileLinesMaxREached") {
-					displayMessage("CSV File exceeded max " + response.csv_max_lines + " lines");
+					displayMessage(
+						"CSV File exceeded max " +
+						response.csv_max_lines + " lines");
 				}
 				else if (response.invalid_file != "" && response.invalid_file != null) {
 				    $('.invaliddata').show();
@@ -127,7 +134,7 @@ CSVUPLOADBUTTON.click(function () {
 					displayMessage(message.upload_failed);
 					INVALIDFILENAME = response.invalid_file;
 				    TOTALRECORDSCOUNT.text(response.total);
-					var getValidCount = parseInt(response.total) - parseInt(response.invalid);
+					getValidCount = parseInt(response.total) - parseInt(response.invalid);
 					VALIDRECORDSCOUNT.text(getValidCount);
 					INVALIDRECORDSCOUNT.text(response.invalid);
 					MANDATORYERRORSCOUNT.text(response.mandatory_error);
@@ -145,7 +152,8 @@ CSVUPLOADBUTTON.click(function () {
 				}
 			}
 			bu.uploadClientUnitsBulkCSV(
-				parseInt(clientId), groupName, f_name, f_data, f_size, function(error, response)
+				parseInt(clientId), groupName, f_name, f_data,
+				f_size, function(error, response)
 			{
 		    	$('#myModal').modal('hide');
 			    if (error == null) {
@@ -168,9 +176,7 @@ CSVUPLOADBUTTON.click(function () {
 
 // Start format file download for entering the client units
 document.getElementById("dwn_format").addEventListener("click", function(){
-    // Generate download of file with some content
     var fileName = "Client_Units.csv";
-
     download(
     	fileName,
     	'text/csv',
@@ -182,7 +188,8 @@ document.getElementById("dwn_format").addEventListener("click", function(){
 
 function download(filename, mime_type, text) {
     var element = document.createElement('a');
-    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    var href = 'data:' + mime_type + ';' +
+    	'charset=utf-8,' + encodeURIComponent(text);
     element.setAttribute('href', href);
     element.setAttribute('download', filename);
 
@@ -190,12 +197,10 @@ function download(filename, mime_type, text) {
     document.body.appendChild(element);
 
     element.click();
-
     document.body.removeChild(element);
 }
 
 // To download the invalid files returned from validation
-
 function download_file() {
 	if(INVALIDFILENAME != null) {
 		var splitFileName = INVALIDFILENAME.split(".")[0];
@@ -210,10 +215,6 @@ function download_file() {
 			}
 			else if(downloadTag[i].innerText == "Download ODS") {
 				$("#ods").attr("href", "/invalid_file/ods/" + splitFileName+".ods");
-			}
-			else if(downloadTag[i].innerText == "Download Text") {
-				//$("#text").attr({target: '_blank', href: "/invalid_file/txt/" + splitFileName+".txt"});
-				//$("#text").attr("onclick", getTextData(splitFileName));
 			}
 		}
 	}
