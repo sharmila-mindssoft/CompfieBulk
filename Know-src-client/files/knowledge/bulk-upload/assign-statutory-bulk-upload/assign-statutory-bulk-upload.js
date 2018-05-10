@@ -87,6 +87,8 @@ function fetchDomainMultiselect() {
 //load units into multi select box
 function fetchUnitMultiselect() {
     var str = '';
+    var ISVALID = true;
+
     if(MULTISELECTDOMAIN.val() != null){
         checkDomain = MULTISELECTDOMAIN.val().map(Number);
         if (UNITS.length > 0 && checkDomain.length > 0) {
@@ -94,7 +96,7 @@ function fetchUnitMultiselect() {
                 if(UNITS[i].le_id == LEGALENTITYID.val() &&
                     containsAll(checkDomain, UNITS[i].d_ids)
                     ){
-                        var ISVALID = true;
+                        ISVALID = true;
                         for(var j in ASSIGNEDUNITS){
                             if(
                                 ASSIGNEDUNITS[j].u_id == UNITS[i].u_id &&
@@ -142,6 +144,11 @@ function pageControls() {
     
     //download file button process
     DOWNLOADFILEBUTTON.click(function() {
+        var $this = null;
+        var ISVALID = true;
+        var selText = '';
+        var downloadURL = null;
+
         clientId = GROUPID.val();
         legalentityId = LEGALENTITYID.val();
         clientName = GROUPNAME.val();
@@ -160,7 +167,7 @@ function pageControls() {
             DOMAINIDS = MULTISELECTDOMAIN.val().map(Number);
             DOMAINNAMES = [];
             $("#domains option:selected").each(function () {
-               var $this = $(this);
+               $this = $(this);
                if ($this.length) {
                 DOMAINNAMES.push($this.text());
                }
@@ -173,7 +180,7 @@ function pageControls() {
                     if(UNITS[i].le_id == LEGALENTITYID.val() &&
                         containsAll(DOMAINIDS, UNITS[i].d_ids)){
 
-                        var ISVALID = true;
+                        ISVALID = true;
                         for(var j in ASSIGNEDUNITS){
                             if(
                                 ASSIGNEDUNITS[j].u_id == UNITS[i].u_id &&
@@ -194,9 +201,9 @@ function pageControls() {
                 }
             }else{
                 $("#units option:selected").each(function () {
-                   var $this = $(this);
+                   $this = $(this);
                    if ($this.length) {
-                    var selText = $this.text().split('-').pop();
+                    selText = $this.text().split('-').pop();
                     UNITNAMES.push(selText.trim());
                    }
                 });
@@ -210,7 +217,7 @@ function pageControls() {
                 legalentityName, DOMAINNAMES, UNITNAMES, 
                 function(error, data) {
                 if (error == null) {
-                    var downloadURL = data.link;
+                    downloadURL = data.link;
                     if (downloadURL != null){
                         window.open(downloadURL, '_blank');
                         hideLoader();
@@ -248,11 +255,13 @@ function pageControls() {
 
     //legal entity autocomplte textbox process
     LEGALENTITYNAME.keyup(function(e) {
+        var condetionFields = null;
+        var condetionValues = null;
+        var text_val = null;
         if (GROUPID.val() != '') {
-            var condetionFields = ["cl_id"];
-            var condetionValues = [GROUPID.val()];
-            
-            var text_val = $(this).val();
+            condetionFields = ["cl_id"];
+            condetionValues = [GROUPID.val()];
+            text_val = $(this).val();
             commonAutoComplete(
                 e, ACLEGALENTITY, LEGALENTITYID, text_val,
                 LEGAL_ENTITIES, "le_name", "le_id",
@@ -279,6 +288,8 @@ function pageControls() {
 
     //upload file button process
     UPLOADFILEBUTTON.click(function() {
+        var args = {};
+        var getValidCount = 0;
         clientId = GROUPID.val();
         legalentityId = LEGALENTITYID.val();
         legalentityName = LEGALENTITYNAME.val();
@@ -290,7 +301,7 @@ function pageControls() {
             displayMessage(message.invalid_file_format);
             return false;
         } else {
-            var args = {
+            args = {
                 "csv_name": CSVINFO["file_name"],
                 "csv_data": CSVINFO["file_content"],
                 "csv_size": CSVINFO["file_size"]
@@ -331,7 +342,7 @@ function pageControls() {
                         displayMessage(message.upload_failed);
                         INVALIDFILENAME = data.invalid_file.split('.');;
                         TOTALRECORD.text(data.total);
-                        var getValidCount = (parseInt(data.total) - 
+                        getValidCount = (parseInt(data.total) - 
                             parseInt(data.invalid));
                         VALIDRECORD.text(getValidCount);
                         INVALIDRECORD.text(data.invalid);

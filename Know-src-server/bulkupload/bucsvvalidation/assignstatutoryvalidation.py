@@ -42,21 +42,21 @@ class SourceDB(object):
     def __init__(self):
         self._source_db = None
         self._source_db_con = None
-        self.Client_Group = {}
-        self.Legal_Entity = {}
-        self.Domain = {}
-        self.Unit_Location = {}
-        self.Unit_Code = {}
-        self.Unit_Name = {}
-        self.Statutories = {}
-        self.Child_Statutories = {}
-        self.Statutory_Provision = {}
-        self.Compliance_Task = {}
-        self.Compliance_Description = {}
-        self.Organisation = {}
-        self.Applicable_Status = {}
+        self._client_group_ = {}
+        self._legal_entity_ = {}
+        self._domain = {}
+        self._unit_location = {}
+        self._unit_code = {}
+        self._unit_name = {}
+        self._statutories = {}
+        self._child_statutories = {}
+        self._statutory_provision = {}
+        self._compliance_task = {}
+        self._compliance_description = {}
+        self._organisation = {}
+        self._applicable_status = {}
         self.connect_source_db()
-        self._validation_method_maps = {}
+        self._validation_maps = {}
         self.statusCheckMethods()
         self._csv_column_name = []
         self.csv_column_fields()
@@ -95,72 +95,72 @@ class SourceDB(object):
     def get_client_groups(self, user_id):
         data = self._source_db.call_proc("sp_bu_as_user_groups", [user_id])
         for d in data:
-            self.Client_Group[d["group_name"]] = d
+            self._client_group_[d["group_name"]] = d
 
     def get_legal_entities(self, user_id):
         data = self._source_db.call_proc(
             "sp_bu_as_user_legal_entities", [user_id]
         )
         for d in data:
-            self.Legal_Entity[d["legal_entity_name"]] = d
+            self._legal_entity_[d["legal_entity_name"]] = d
 
     def get_domains(self, user_id):
         data = self._source_db.call_proc(
             "sp_bu_as_user_domains", [user_id]
         )
         for d in data:
-            self.Domain[d["domain_name"]] = d
+            self._domain[d["domain_name"]] = d
 
     def get_unit_location(self):
         data = self._source_db.call_proc("sp_bu_client_unit_geographies")
         for d in data:
-            self.Unit_Location[d["geography_name"]] = d
+            self._unit_location[d["geography_name"]] = d
 
     def get_unit_code(self, legal_entity_id):
         data = self._source_db.call_proc(
             "sp_bu_unit_code_and_name", [legal_entity_id]
         )
         for d in data:
-            self.Unit_Code[d["unit_code"]] = d
+            self._unit_code[d["unit_code"]] = d
 
     def get_unit_name(self, legal_entity_id):
         data = self._source_db.call_proc(
             "sp_bu_unit_code_and_name", [legal_entity_id]
         )
         for d in data:
-            self.Unit_Name[d["unit_name"]] = d
+            self._unit_name[d["unit_name"]] = d
 
     def get_statutories(self):
         data = self._source_db.call_proc("sp_bu_level_one_statutories")
         for d in data:
-            self.Statutories[d["statutory_name"]] = d
+            self._statutories[d["statutory_name"]] = d
 
     def get_child_statutories(self):
         data = self._source_db.call_proc("sp_bu_chils_level_statutories")
         for d in data:
-            self.Child_Statutories[d["statutory_name"]] = d
+            self._child_statutories[d["statutory_name"]] = d
 
     def get_statutory_provision(self):
         data = self._source_db.call_proc("sp_bu_compliance_info")
         for d in data:
-            self.Statutory_Provision[d["statutory_provision"]] = d
+            self._statutory_provision[d["statutory_provision"]] = d
 
     def get_compliance_task(self):
         data = self._source_db.call_proc("sp_bu_compliance_info")
         for d in data:
-            self.Compliance_Task[d["compliance_task"]] = d
+            self._compliance_task[d["compliance_task"]] = d
 
     def get_compliance_description(self):
         data = self._source_db.call_proc("sp_bu_compliance_info")
         for d in data:
-            self.Compliance_Description[d["compliance_description"]] = d
+            self._compliance_description[d["compliance_description"]] = d
 
     def get_organisation(self, country_id):
         data = self._source_db.call_proc(
             "sp_bu_organization_all", [country_id]
         )
         for d in data:
-            self.Organisation[d["organisation_name"]+'-'+d["domain_name"]] = d
+            self._organisation[d["organisation_name"]+'-'+d["domain_name"]] = d
 
     def get_applicable_status(self):
         data = [
@@ -169,7 +169,7 @@ class SourceDB(object):
             {'applicable_status': 'do not show'}
         ]
         for d in data:
-            self.Applicable_Status[d["applicable_status"]] = d
+            self._applicable_status[d["applicable_status"]] = d
 
     def check_base(self, check_status, store, key_name, status_name):
         data = store.get(key_name)
@@ -186,57 +186,57 @@ class SourceDB(object):
 
     def check_client_group(self, group_name):
         return self.check_base(
-            True, self.Client_Group, group_name, None
+            True, self._client_group_, group_name, None
         )
 
     def check_legal_entity(self, legal_entity_name):
         return self.check_base(
-            True, self.Legal_Entity, legal_entity_name, None
+            True, self._legal_entity_, legal_entity_name, None
         )
 
     def check_domain(self, domain_name):
-        return self.check_base(True, self.Domain, domain_name, None)
+        return self.check_base(True, self._domain, domain_name, None)
 
     def check_unit_location(self, geography_name):
-        return self.check_base(True, self.Unit_Location, geography_name, None)
+        return self.check_base(True, self._unit_location, geography_name, None)
 
     def check_unit_code(self, unit_code):
-        return self.check_base(True, self.Unit_Code, unit_code, None)
+        return self.check_base(True, self._unit_code, unit_code, None)
 
     def check_unit_name(self, unit_name):
-        return self.check_base(True, self.Unit_Name, unit_name, None)
+        return self.check_base(True, self._unit_name, unit_name, None)
 
     def check_statutories(self, statutories):
-        return self.check_base(False, self.Statutories, statutories, None)
+        return self.check_base(False, self._statutories, statutories, None)
 
     def check_statutory_provision(self, statutory_provision):
         return self.check_base(
-            False, self.Statutory_Provision, statutory_provision, None
+            False, self._statutory_provision, statutory_provision, None
         )
 
     def check_compliance_task(self, compliance_task):
         return self.check_base(
-            True, self.Compliance_Task, compliance_task, None
+            True, self._compliance_task, compliance_task, None
         )
 
     def check_compliance_description(self, compliance_description):
         return self.check_base(
-            False, self.Compliance_Description, compliance_description, None
+            False, self._compliance_description, compliance_description, None
         )
 
     def check_organisation(self, organisation_name):
         return self.check_base(
-            True, self.Organisation, organisation_name, None
+            True, self._organisation, organisation_name, None
         )
 
     def check_applicable_status(self, applicable_status):
         return self.check_base(
-            False, self.Applicable_Status, applicable_status.lower(), None
+            False, self._applicable_status, applicable_status.lower(), None
         )
 
     def check_child_statutories(self, child_statutories):
         return self.check_base(
-            False, self.Child_Statutories, child_statutories, None
+            False, self._child_statutories, child_statutories, None
         )
 
     def save_client_statutories_data(
@@ -307,7 +307,7 @@ class SourceDB(object):
             else:
                 approval_status = 4
 
-            statu_id = self.Statutories.get(d["Primary_Legislation"]).get(
+            statu_id = self._statutories.get(d["Primary_Legislation"]).get(
                 "statutory_id"
             )
             comp_id = None
@@ -349,7 +349,7 @@ class SourceDB(object):
 
     # main db related validation mapped with field name
     def statusCheckMethods(self):
-        self._validation_method_maps = {
+        self._validation_maps = {
             "Client_Group": self.check_client_group,
             "Legal_Entity": self.check_legal_entity,
             "Domain": self.check_domain,
@@ -395,8 +395,8 @@ class SourceDB(object):
         p_legislation, s_legislation
     ):
 
-        unit_id = self.Unit_Code.get(unit_code).get("unit_id")
-        domain_id = self.Domain.get(domain_name).get("domain_id")
+        unit_id = self._unit_code.get(unit_code).get("unit_id")
+        domain_id = self._domain.get(domain_name).get("domain_id")
         c_ids = self._source_db.call_proc(
             "sp_bu_get_compliance_id_by_name",
             [
@@ -521,7 +521,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         self._csv_name = csv_name
         self._csv_header = csv_header
         self._error_summary = {}
-        self.errorSummary()
+        self.error_summary()
         self._client_id = None
         self._client_group = None
         self._unit_ids = []
@@ -532,7 +532,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         self._sheet_name = "Assign Statutory"
 
     # error summary mapped with initial count
-    def errorSummary(self):
+    def error_summary(self):
         self._error_summary = {
             "mandatory_error": 0,
             "max_length_error": 0,
@@ -608,9 +608,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     unit_names.append(grouped_list[0].get("Unit_Code"))
 
         if len(unit_names) > 0:
-            error_msg = "Downloaded and uploaded records are not same for unit %s" % (
-                ','.join(unit_names)
-            )
+            error_msg = "Downloaded and uploaded records are not " + \
+                "same for unit %s" % (','.join(unit_names))
             raise ValueError(str(error_msg))
 
     def get_master_table_info(self):
@@ -627,27 +626,31 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 self._domain_names.append(grouped_list[0].get("Domain"))
 
                 if(
-                    self.Domain.get(grouped_list[0].get("Domain"))
+                    self._domain.get(grouped_list[0].get("Domain"))
                 ) is not None:
-                    self._domain_ids.append(self.Domain.get(
+                    self._domain_ids.append(self._domain.get(
                         grouped_list[0].get("Domain")).get("domain_id")
                     )
 
                 self._legal_entity = grouped_list[0].get("Legal_Entity")
 
                 if(
-                    self.Legal_Entity.get(grouped_list[0].get("Legal_Entity"))
+                    self._legal_entity_.get(
+                        grouped_list[0].get("Legal_Entity")
+                    )
                 ) is not None:
-                    self._legal_entity_id = self.Legal_Entity.get(
+                    self._legal_entity_id = self._legal_entity_.get(
                         grouped_list[0].get("Legal_Entity")
                     ).get("legal_entity_id")
 
                 self._client_group = grouped_list[0].get("Client_Group")
 
                 if(
-                    self.Client_Group.get(grouped_list[0].get("Client_Group"))
+                    self._client_group_.get(
+                        grouped_list[0].get("Client_Group")
+                    )
                 ) is not None:
-                    self._client_id = self.Client_Group.get(
+                    self._client_id = self._client_group_.get(
                         grouped_list[0].get("Client_Group")
                     ).get("client_id")
 
@@ -658,9 +661,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             grouped_list = list(v)
             if len(grouped_list) >= 1:
                 if(
-                    self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
+                    self._unit_code.get(grouped_list[0].get("Unit_Code"))
                 ) is not None:
-                    self._unit_ids.append(self.Unit_Code.get(
+                    self._unit_ids.append(self._unit_code.get(
                         grouped_list[0].get("Unit_Code")).get("unit_id")
                     )
 
@@ -787,7 +790,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                             csvParam.get("check_is_exists") is True or
                             csvParam.get("check_is_active") is True
                         ):
-                            unboundMethod = self._validation_method_maps.get(
+                            unboundMethod = self._validation_maps.get(
                                 key
                             )
                             if unboundMethod is not None:
@@ -993,9 +996,9 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             grouped_list = list(v)
             if len(grouped_list) >= 1:
                 if(
-                    self.Unit_Code.get(grouped_list[0].get("Unit_Code"))
+                    self._unit_code.get(grouped_list[0].get("Unit_Code"))
                 ) is not None:
-                    self._unit_ids.append(self.Unit_Code.get(
+                    self._unit_ids.append(self._unit_code.get(
                         grouped_list[0].get("Unit_Code")).get("unit_id")
                     )
 
@@ -1029,7 +1032,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                                 csvParam.get("check_is_exists") is True or
                                 csvParam.get("check_is_active") is True
                             ):
-                                unboundMethod = self._validation_method_maps.get(
+                                unboundMethod = self._validation_maps.get(
                                     key
                                 )
                                 if key == "Organization":
@@ -1088,8 +1091,10 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             domain_id = None
             value = grouped_list[0]
 
-            unit_id = self.Unit_Code.get(value.get("Unit_Code")).get("unit_id")
-            domain_id = self.Domain.get(value.get("Domain")).get("domain_id")
+            unit_id = self._unit_code.get(
+                value.get("Unit_Code")
+            ).get("unit_id")
+            domain_id = self._domain.get(value.get("Domain")).get("domain_id")
 
             country_id, legal_entity_id = self.get_country_id()
 
