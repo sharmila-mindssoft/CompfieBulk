@@ -394,25 +394,10 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
     except Exception, e:
         raise e
 
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+#############################################################
+# To update rejected asm download count by csvid in db table.
+#############################################################
 
 def update_rejected_asm_download_count(db, request_frame, session_user):
 
@@ -422,25 +407,11 @@ def update_rejected_asm_download_count(db, request_frame, session_user):
                                                            csv_id)
     result = bu_as.RejecteASMUpdatedDownloadCountSuccess(asm_updated_count)
     return result
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+
+###################################
+# To delete rejected asm by csvid.
+###################################
 
 def delete_rejected_asm_data(db, request_frame, session_user):
     client_id = request_frame.client_id
@@ -456,25 +427,10 @@ def delete_rejected_asm_data(db, request_frame, session_user):
     result = bu_as.GetRejectedASMDataSuccess(rejected_data)
     return result
 
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetRejectedASMBulkUploadDataSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+##################################
+# To get all rejected asm by user
+##################################
 
 def get_rejected_assign_sm_data(db, request_frame, session_user):
 
@@ -485,29 +441,14 @@ def get_rejected_assign_sm_data(db, request_frame, session_user):
     user_id = session_user.user_id()
 
     asm_rejected_data = fetch_rejected_assign_sm_data(
-        db, session_user, user_id, client_id, le_id, d_id, unit_code)
+        db, user_id, client_id, le_id, d_id, unit_code)
     result = bu_as.GetRejectedASMBulkUploadDataSuccess(asm_rejected_data)
     return result
 
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+###################################################
+# To get all asm report data by user
+###################################################
 
 def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
 
@@ -533,10 +474,10 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
                                                          total_record)
     return result
 
+
 ########################################################
 # To Export the Assign statu Report Data
 ########################################################
-
 
 def export_assigned_statutory_bulk_report_data(db, request, session_user):
     if request.csv:
@@ -550,6 +491,10 @@ def export_assigned_statutory_bulk_report_data(db, request, session_user):
                 link=converter.FILE_DOWNLOAD_PATH
             )
 
+
+###################################################
+# To download rejected asm data
+###################################################
 
 def download_rejected_asm_report(db, request_frame, session_user):
     client_id = request_frame.client_id
@@ -581,23 +526,14 @@ def download_rejected_asm_report(db, request_frame, session_user):
                        "Compliance_Description",
                        "Statutory_Applicable_Status*", "Statutory_remarks",
                        "Compliance_Applicable_Status*", "Error_Description"]
-
-    # csv_name = "RejectedData.xlsx"
     csv_name = get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id)
-
     source_data = fetch_rejected_asm_download_csv_report(
         db, session_user, user_id, client_id, le_id, d_id, asm_unit_code,
         csv_id)
-
-    # cObj = ValidateRejectedDownloadBulkData(
-    #     db, source_data, session_user, download_format, csv_name, csv_header
-    # )
     cObj = ValidateRejectedDownloadBulkData(
         db, source_data, session_user, download_format, csv_name,
         csv_header_key, csv_column_name, sheet_name)
-
     result = cObj.perform_validation()
-
     return bu_sm.DownloadActionSuccess(result["xlsx_link"],
                                        result["csv_link"],
                                        result["ods_link"],
