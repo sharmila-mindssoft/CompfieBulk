@@ -80,9 +80,9 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
         pass
     # save csv file
     csv_name = convert_base64_to_file(
-            BULKUPLOAD_CSV_PATH, request_frame.csv_name,
-            request_frame.csv_data
-        )
+        BULKUPLOAD_CSV_PATH, request_frame.csv_name,
+        request_frame.csv_data
+    )
     # read data from csv file
     header, completed_task_data = read_data_from_csv(csv_name)
     # print "completed_task_data>>", completed_task_data

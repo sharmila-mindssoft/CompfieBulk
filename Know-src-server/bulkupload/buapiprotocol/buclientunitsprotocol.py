@@ -594,17 +594,17 @@ class ClientReportData(object):
             "total_approve_records", "rejected_reason", "declined_count"
         ])
         return ClientReportData(
-                          data.get("uploaded_by"),
-                          data.get("uploaded_on"),
-                          data.get("csv_name"), data.get("total_records"),
-                          data.get("total_rejected_records"),
-                          data.get("approved_by"), data.get("rejected_by"),
-                          data.get("approved_on"), data.get("rejected_on"),
-                          data.get("is_fully_rejected"),
-                          data.get("total_approve_records"),
-                          data.get("rejected_reason"),
-                          data.get("declined_count")
-                          )
+            data.get("uploaded_by"),
+            data.get("uploaded_on"),
+            data.get("csv_name"), data.get("total_records"),
+            data.get("total_rejected_records"),
+            data.get("approved_by"), data.get("rejected_by"),
+            data.get("approved_on"), data.get("rejected_on"),
+            data.get("is_fully_rejected"),
+            data.get("total_approve_records"),
+            data.get("rejected_reason"),
+            data.get("declined_count")
+        )
 
     def to_structure(self):
         return {
@@ -803,7 +803,7 @@ class ClientUnitRejectData(object):
             data.get("declined_count"),
             data.get("rejected_file"),
             data.get("rejected_reason")
-            )
+        )
 
     def to_structure(self):
         return {

@@ -4,7 +4,7 @@ from ..bucsvvalidation.clientunitsvalidation import (
     ValidateClientUnitsBulkDataForApprove
 )
 
-from ..bucsvvalidation.rejectedstatutorymapping import (
+from ..bucsvvalidation.rejecteddownloadvalidation import (
     ValidateRejectedDownloadBulkData)
 
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
@@ -97,7 +97,7 @@ def process_bu_client_units_request(request, db, session_user):
 
     if type(request_frame) is bu_cu.PerformClientUnitApproveReject:
         result = perform_bulk_client_unit_approve_reject(
-                db, request_frame, session_user
+            db, request_frame, session_user
         )
 
     if type(request_frame) is bu_cu.ConfirmClientUnitDeclination:
@@ -165,22 +165,20 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
     if get_bulk_client_unit_file_count(db, session_user.user_id()):
         # save csv file
         csv_name = convert_base64_to_file(
-                BULKUPLOAD_CSV_PATH, request_frame.csv_name,
-                request_frame.csv_data
-            )
-
+            BULKUPLOAD_CSV_PATH, request_frame.csv_name,
+            request_frame.csv_data
+        )
         # read data from csv file
         header, client_units_bulk_data = read_data_from_csv(csv_name)
         # csv data validation
         clientUnitObj = ValidateClientUnitsBulkCsvData(
             db, client_units_bulk_data, session_user,
             request_frame.bu_client_id,
-            request_frame.csv_name, header
+            csv_name, header
         )
         validationResult = clientUnitObj.perform_validation()
         print "err--------------------------------------------"
         print validationResult
-        print "ordinal not in range(128)" in validationResult
         if (
             "No such file or directory" not in validationResult and
             validationResult != "Empty CSV File Uploaded" and
@@ -193,8 +191,7 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             generate_valid_file(csv_name)
             csv_args = [
                 request_frame.bu_client_id, request_frame.bu_group_name,
-                csv_name, session_user.user_id(),
-                validationResult["total"]
+                csv_name, session_user.user_id(), validationResult["total"]
             ]
             new_csv_id = save_client_units_mapping_csv(db, csv_args)
             if new_csv_id:
@@ -206,7 +203,6 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
                         session_user.user_id()
                     )
                     clientUnitObj.source_commit()
-                    print "saved activity"
                     result = bu_cu.UploadClientUnitBulkCSVSuccess(
                         validationResult["total"], validationResult["valid"],
                         validationResult["invalid"]
@@ -403,8 +399,8 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
 
     try:
         clientUnitObj = ValidateClientUnitsBulkDataForApprove(
-                db, csv_id, bu_client_id, session_user
-            )
+            db, csv_id, bu_client_id, session_user
+        )
         if actionType == 1:
             system_declined_count, system_declined_error, \
                 manual_rejection_count = \

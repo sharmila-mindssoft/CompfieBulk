@@ -583,6 +583,7 @@ class GetDomainExecutiveDetails(Request):
         return {
         }
 
+
 class GetBulkUploadConstants(Request):
     def __init__(self):
         pass
@@ -1435,6 +1436,7 @@ class GetBulkUploadConstantSuccess(Response):
             "bu_rejected_download_count": self.bu_rejected_download_count
         }
 
+
 def _init_Response_class_map():
     classes = [
         GetClientInfoSuccess,
@@ -1654,7 +1656,7 @@ class DomainExecutiveInfo(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-           "emp_code_name", "user_id"
+            "emp_code_name", "user_id"
         ])
         return DomainExecutiveInfo(
             data.get("emp_code_name"),

@@ -1,18 +1,18 @@
 var GROUP_NAME = $('#cgroupval');
-var GROUP_ID = $('#cgroup-id');
-var AC_GROUP = $('#ac-cgroup');
+var GROUP_ID = $('#cgroup_id');
+var AC_GROUP = $('#ac_cgroup');
 var SHOW_BTN = $('#show');
 var REPORT_VIEW = $('.grid-table-rpt');
-var PASSWORD_SUBMIT_BUTTON = $('#password-submit');
-var CURRENT_PASSWORD = $('#current-password');
-var AC_LEGAL_ENTITY = $('#ac-legalentity');
-var AC_UNIT = $('#ac-unit');
+var PASSWORD_SUBMIT_BUTTON = $('#password_submit');
+var CURRENT_PASSWORD = $('#current_password');
+var AC_LEGAL_ENTITY = $('#ac_legalentity');
+var AC_UNIT = $('#ac_unit');
 var LEGAL_ENTITY_VAL = $('#legalentityval');
 var LEGAL_ENTITY = $('#legalentityid');
 var UNIT_VAL = $('#unitval');
 var UNIT = $('#unitid');
 var DOMAIN = $('#domainid');
-var AC_DOMAIN = $('#ac-domain');
+var AC_DOMAIN = $('#ac_domain');
 var DOMAIN_VAL = $('#domainval');
 var DETAILS = $('.details');
 var MAPPING_ANIMATION = $('#mapping_animation');
@@ -202,7 +202,7 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
     valueElement.focus();
 
     currentId = idElement[0].id;
-    if (currentId == 'cgroup-id') {
+    if (currentId == 'cgroup_id') {
         resetFilter('clients');
     } else if (currentId == 'domainid') {
         resetFilter('domains');
@@ -290,11 +290,11 @@ function processSubmit() {
         if (rejectedAssignSMData.length == 0) {
             $('.tbody-compliance').empty();
 
-            tr = $('#nocompliance-templates .table-nocompliances-list' +
+            tr = $('#nocompliance_templates .table-nocompliances-list' +
                 ' .table-row');
             trRow = tr.clone();
 
-            $('.tbl_norecords', trRow).text('No Records Found');
+            $('.tbl-norecords', trRow).text('No Records Found');
             $('.tbody-compliance').append(trRow);
             REPORT_VIEW.show();
             hideLoader();
@@ -368,18 +368,18 @@ function loadCountwiseResult(filterList) {
             reasonRejectionComment = '';
         }
 
-        tr = $('#act-templates .table-act-list .table-row-act-list');
+        tr = $('#act_templates .table-act-list .table-row-act-list');
         trRow = tr.clone();
 
-        $('.tbl_sno', trRow).text(sNo);
-        $('.tbl_upload_filename', trRow).text(CSVName);
-        $(".tbl_rejected_on", trRow).text(rejectedOn);
-        $('.tbl_rejected_by', trRow).text(rejectedBy);
-        $('.tbl_no_of_tasks', trRow).text(totalNoOfTasks);
-        $('.tbl_declined_count', trRow).text(declinedCount);
-        $('.tbl_reason_for_rejection', trRow).text(reasonRejectionComment);
+        $('.tbl-sno', trRow).text(sNo);
+        $('.tbl-upload-filename', trRow).text(CSVName);
+        $(".tbl-rejected_on", trRow).text(rejectedOn);
+        $('.tbl-rejected-by', trRow).text(rejectedBy);
+        $('.tbl-no-of-tasks', trRow).text(totalNoOfTasks);
+        $('.tbl-declined-count', trRow).text(declinedCount);
+        $('.tbl-reason-for-rejection', trRow).text(reasonRejectionComment);
 
-        $('.tbl_remove .remove_a', trRow).attr({
+        $('.tbl-remove .remove-a', trRow).attr({
             'id': "delete_action_" + csvId,
             'data-csv-id': csvId,
             onClick: "confirm_alert(this)",
@@ -387,31 +387,31 @@ function loadCountwiseResult(filterList) {
 
         /***** Rejected File Downloads ********/
         if (parseInt(fileDownloadCount) < REJECTED_FILE_DOWNLOADCOUNT) {
-            $('.tbl_rejected_file .rejected_i_cls', trRow).attr({
+            $('.tbl-rejected-file .rejected-i-cls', trRow).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
                 onClick: "rejectedFiles(this)"
             });
-            $('.tbl_rejected_file .rejected_div_cls', trRow).attr({
+            $('.tbl-rejected-file .rejected-div-cls', trRow).attr({
                 'id': "download_files_" + csvId
             });
-            $('.tbl_rejected_file .rejected_div_cls .rej_excel, .rej_csv, ' +
-                '.rej_ods, .rej_text', trRow).attr({
+            $('.tbl-rejected-file .rejected-div-cls .rej-excel, .rej-csv, ' +
+                '.rej-ods, .rej-text', trRow).attr({
                 onclick: "downloadClick(" + csvId + ",this)"
             });
         } else {
-            $('.tbl_rejected_file .rejected_i_cls', trRow).attr({
+            $('.tbl-rejected-file .rejected-i-cls', trRow).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
                 onClick: "rejectedFiles(this)",
             });
-            $('.tbl_rejected_file .rejected_i_cls', trRow)
+            $('.tbl-rejected-file .rejected-i-cls', trRow)
                 .addClass("default-display-none");
         }
         if (parseInt(fileDownloadCount) < 1) {
-            $('.tbl_remove .remove_a', trRow).addClass("default-display-none");
+            $('.tbl-remove .remove-a', trRow).addClass("default-display-none");
         }
-        $('#datatable-responsive .tbody-compliance').append(trRow);
+        $('#datatable_responsive .tbody-compliance').append(trRow);
     }
     hideLoader();
 }
@@ -495,7 +495,7 @@ function confirm_alert(event) {
     }, function(isConfirm) {
         if (isConfirm) {
             Custombox.open({
-                target: '#custom-modal-approve',
+                target: '#custom_modal_approve',
                 effect: 'contentscale',
                 complete: function() {
                     CURRENT_PASSWORD.focus();
@@ -543,10 +543,10 @@ function RemoveStatutoryCsvData(REMOVE_UNIT_CSV_ID, groupId) {
         rejectedASMData = data.asm_rejected_data;
         if (rejectedASMData.length == 0) {
             $('.tbody-compliance').empty();
-            tr = $('#nocompliance-templates .table-nocompliances-list ' +
+            tr = $('#nocompliance_templates .table-nocompliances-list ' +
                 '.table-row');
             trRow = tr.clone();
-            $('.tbl_norecords', trRow).text('No Records Found');
+            $('.tbl-norecords', trRow).text('No Records Found');
             $('.tbody-compliance').append(trRow);
             REPORT_VIEW.show();
             hideLoader();

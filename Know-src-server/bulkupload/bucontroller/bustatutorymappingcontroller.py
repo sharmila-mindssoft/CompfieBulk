@@ -3,7 +3,7 @@ from ..bucsvvalidation.statutorymappingvalidation import (
     ValidateStatutoryMappingCsvData,
     ValidateStatutoryMappingForApprove
 )
-from ..bucsvvalidation.rejectedstatutorymapping import (
+from ..bucsvvalidation.rejecteddownloadvalidation import (
     ValidateRejectedDownloadBulkData
 )
 
@@ -30,10 +30,8 @@ from ..budatabase.bustatutorymappingdb import (
 )
 
 from ..bulkuploadcommon import (
-    convert_base64_to_file,
-    read_data_from_csv,
-    generate_valid_file,
-    remove_uploaded_file
+    convert_base64_to_file, read_data_from_csv,
+    generate_valid_file, remove_uploaded_file
 )
 from ..bulkexport import ConvertJsonToCSV
 import datetime
@@ -75,7 +73,6 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
     if type(request_frame) is bu_sm.GetKExecutiveDetails:
         result = process_get_know_users_bu(db, session_user)
-
 
     if type(request_frame) is bu_sm.GetStatutoryMappingCsvUploadedList:
         result = get_statutory_mapping_csv_list(db, request_frame,
@@ -320,6 +317,8 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         result: Object
 '''
 ########################################################
+
+
 def get_mapping_list_for_approve(db, request_frame, session_user):
 
     pending_data = get_pending_mapping_list(
@@ -350,6 +349,8 @@ def get_mapping_list_for_approve(db, request_frame, session_user):
         result: Object
 '''
 ########################################################
+
+
 def get_filter_for_approve_page(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     response = get_filters_for_approve(db, csv_id)
@@ -538,17 +539,10 @@ def get_sm_bulk_report_data(db, request_frame, session_user):
 
     from_date = datetime.datetime.strptime(from_date, '%d-%b-%Y')
     to_date = datetime.datetime.strptime(to_date, '%d-%b-%Y')
-    reportdata, total_record = fetch_statutory_bulk_report(db,
-                                                           session_user,
-                                                           user_id,
-                                                           country_ids,
-                                                           domain_ids,
-                                                           from_date,
-                                                           to_date,
-                                                           record_count,
-                                                           page_count,
-                                                           child_ids,
-                                                           user_category_id)
+    reportdata, total_record = fetch_statutory_bulk_report(
+        db, session_user, user_id, country_ids, domain_ids, from_date,
+        to_date, record_count, page_count, child_ids, user_category_id
+    )
     result = bu_sm.GetSMBulkReportDataSuccess(reportdata, total_record)
     return result
 
@@ -578,11 +572,9 @@ def get_rejected_sm_bulk_data(db, request_frame, session_user):
     domain_id = request_frame.d_id
     user_id = session_user.user_id()
 
-    rejecteddata = fetch_rejected_statutory_mapping_bulk_report(db,
-                                                                session_user,
-                                                                user_id,
-                                                                country_id,
-                                                                domain_id)
+    rejecteddata = fetch_rejected_statutory_mapping_bulk_report(
+        db, session_user, user_id, country_id, domain_id
+    )
     result = bu_sm.RejectedSMBulkDataSuccess(rejecteddata)
     return result
 
@@ -614,12 +606,9 @@ def delete_rejected_sm_csv_id(db, request_frame, session_user):
     domain_id = request_frame.d_id
     csv_id = request_frame.csv_id
     user_id = session_user.user_id()
-    rejected_data = process_delete_rejected_sm_csv_id(db,
-                                                      session_user,
-                                                      user_id,
-                                                      country_id,
-                                                      domain_id,
-                                                      csv_id)
+    rejected_data = process_delete_rejected_sm_csv_id(
+        db, session_user, user_id, country_id, domain_id, csv_id
+    )
     result = bu_sm.RejectedSMBulkDataSuccess(rejected_data)
     return result
 
@@ -687,12 +676,9 @@ def download_rejected_sm_report(db, request_frame, session_user):
                        "Error_Description"]
 
     csv_name = get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id)
-    source_data = fetch_rejected_sm_download_csv_report(db,
-                                                        session_user,
-                                                        user_id,
-                                                        country_id,
-                                                        domain_id,
-                                                        csv_id)
+    source_data = fetch_rejected_sm_download_csv_report(
+        db, session_user, user_id, country_id, domain_id, csv_id
+    )
     cObj = ValidateRejectedDownloadBulkData(
         db, source_data, session_user, download_format, csv_name,
         csv_header_key, csv_column_name, sheet_name)

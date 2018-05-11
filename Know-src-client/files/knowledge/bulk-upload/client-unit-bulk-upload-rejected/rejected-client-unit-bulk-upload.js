@@ -1,10 +1,10 @@
 var GROUP_NAME = $('#groupval');
 var GROUP_ID = $('#group');
-var AC_GROUP = $('#ac-group');
+var AC_GROUP = $('#ac_group');
 var SHOW_BTN = $('#show');
 var REPORT_VIEW = $('.grid-table-rpt');
-var PASSWORD_SUBMIT_BUTTON = $('#password-submit');
-var CURRENT_PASWORD = $('#current-password');
+var PASSWORD_SUBMIT_BUTTON = $('#password_submit');
+var CURRENT_PASWORD = $('#current_password');
 var REMOVE_UNIT_CSV_ID = '';
 var ALL_USER_INFO = '';
 var CLIENT_LIST = '';
@@ -42,7 +42,7 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
     currentId = idElement[0].id;
 }
 
-// Get Client Unit Rejected report data from api
+// Get Client Unit Rejected report data from api once click show button
 function processSubmit() {
     var groupId = parseInt(GROUP_ID.val());
     var filterData = {};
@@ -56,10 +56,10 @@ function processSubmit() {
         rejClientUnitData = data.rejected_unit_data;
         if (rejClientUnitData.length == 0) {
             $('.tbody-compliance').empty();
-            tableRow4 = $('#nocompliance-templates ' +
+            tableRow4 = $('#nocompliance_templates ' +
                 '.table-nocompliances-list .table-row');
             clone4 = tableRow4.clone();
-            $('.tbl_norecords', clone4).text('No Records Found');
+            $('.tbl-norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
             REPORT_VIEW.show();
             hideLoader();
@@ -133,48 +133,48 @@ function loadCountwiseResult(data) {
             rejectedOn = approvedOn;
             reasonForRejection = '';
         }
-        tblRow1 = $('#act-templates .table-act-list .table-row-act-list');
+        tblRow1 = $('#act_templates .table-act-list .table-row-act-list');
         clone1 = tblRow1.clone();
-        $('.tbl_sno', clone1).text(sno);
-        $('.tbl_upload_filename', clone1).text(csvName);
-        $(".tbl_rejected_on", clone1).text(rejectedOn);
-        $('.tbl_rejected_by', clone1).text(rejectedBy);
-        $('.tbl_no_of_tasks', clone1).text(totalNoOfTasks);
-        $('.tbl_declined_count', clone1).text(declinedCount);
-        $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
-        $('.tbl_remove .remove_a', clone1).attr({
+        $('.tbl-sno', clone1).text(sno);
+        $('.tbl-upload-filename', clone1).text(csvName);
+        $(".tbl-rejected-on", clone1).text(rejectedOn);
+        $('.tbl-rejected-by', clone1).text(rejectedBy);
+        $('.tbl-no-of-tasks', clone1).text(totalNoOfTasks);
+        $('.tbl-declined-count', clone1).text(declinedCount);
+        $('.tbl-reason-for-rejection', clone1).text(reasonForRejection);
+        $('.tbl-remove .remove-a', clone1).attr({
             'id': "delete_action_" + csvId,
             'data-csv-id': csvId,
             onClick: "confirm_alert(this)",
         });
         /***** Rejected File Downloads ********/
         if (parseInt(fileDownloadCount) < REJECTED_FILE_DOWNLOADCOUNT) {
-            $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
+            $('.tbl-rejected-file .rejected-i-cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
                 onClick: "rejectedFiles(this)"
             });
-            $('.tbl_rejected_file .rejected_div_cls', clone1).attr({
+            $('.tbl-rejected-file .rejected-div-cls', clone1).attr({
                 'id': "download_files_" + csvId
             });
-            $('.tbl_rejected_file .rejected_div_cls .rej_excel, .rej_csv, ' +
-                '.rej_ods, .rej_text', clone1).attr({
+            $('.tbl-rejected-file .rejected-div-cls .rej-excel, .rej-csv, ' +
+                '.rej-ods, .rej-text', clone1).attr({
                 onclick: "downloadClick(" + csvId + ",this)"
             });
         }
         else{
-            $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
+            $('.tbl-rejected-file .rejected-i-cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
                 onClick: "rejectedFiles(this)",
             });
-            $('.tbl_rejected_file .rejected_i_cls', clone1)
+            $('.tbl-rejected-file .rejected-i-cls', clone1)
             .addClass("default-display-none");
         }
         if (parseInt(fileDownloadCount) < 1){
-            $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
+            $('.tbl-remove .remove-a', clone1).addClass("default-display-none");
         }
-        $('#datatable-responsive .tbody-compliance').append(clone1);
+        $('#datatable_responsive .tbody-compliance').append(clone1);
     }
     hideLoader();
 }
@@ -210,6 +210,8 @@ function initialize() {
         }
     });
 }
+
+// Get logged user details from api
 function allUserInfo() {
     function onSuccess(data) {
         ALL_USER_INFO = data.user_details;
@@ -261,6 +263,7 @@ PASSWORD_SUBMIT_BUTTON.click(function() {
     validateAuthentication();
 });
 
+// popup confirmation box, this appear when delete clientunit
 function confirm_alert(event) {
     var groupId = GROUP_ID.val();
     CURRENT_PASWORD.val('');
@@ -274,7 +277,7 @@ function confirm_alert(event) {
     }, function(isConfirm) {
         if (isConfirm) {
             Custombox.open({
-                target: '#custom-modal-approve',
+                target: '#custom_modal_approve',
                 effect: 'contentscale',
                 complete: function() {
                     CURRENT_PASWORD.focus();
@@ -300,10 +303,10 @@ function removeClientUnitCsvData(REMOVE_UNIT_CSV_ID, groupId) {
         rejectedUnitData = data.rejected_unit_data;
         if (rejectedUnitData.length == 0) {
             $('.tbody-compliance').empty();
-            tblR4 = $('#nocompliance-templates '+
+            tblR4 = $('#nocompliance_templates '+
                 '.table-nocompliances-list .table-row');
             clone4 = tblR4.clone();
-            $('.tbl_norecords', clone4).text('No Records Found');
+            $('.tbl-norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
             REPORT_VIEW.show();
             hideLoader();
@@ -335,6 +338,7 @@ function removeClientUnitCsvData(REMOVE_UNIT_CSV_ID, groupId) {
     hideLoader();
 }
 
+// download rejected client unit data
 function downloadClick(csvId, event) {
     var downloadFileFormat = $(event).attr("data-format");
     var grpId = GROUP_ID.val();
@@ -423,6 +427,7 @@ function requestDownload(requestDownloadData, downloadFileFormat) {
         });
 }
 
+// download text format rejected client unit data
 function download(filename, mime_type, text) {
     var element = document.createElement('a');
     var href = 'data:'+mime_type+';charset=utf-8,'+encodeURIComponent(text);
@@ -461,6 +466,7 @@ window.onclick = function(event) {
     }
 }
 
+// Initial functions load
 $(function() {
     bu.getLoadConstants();
     REPORT_VIEW.hide();
