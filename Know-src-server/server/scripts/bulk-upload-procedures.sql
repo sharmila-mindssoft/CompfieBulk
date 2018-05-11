@@ -237,7 +237,7 @@ BEGIN
     FROM tbl_download_assign_statutory_template WHERE
     client_group = clientgroup_name AND legal_entity = le_name AND find_in_set (domain, domain_name)
     AND find_in_set (unit_name, unitname_)
-    ORDER BY unit_name;
+    ORDER BY domain, unit_code;
 END //
 
 DELIMITER ;
@@ -251,11 +251,11 @@ DELIMITER //
 
 
 CREATE PROCEDURE `sp_delete_assign_statutory_template`(in
-domain_name text, unitname_ text)
+legalentityname_ text, domainname_ text, unitname_ text)
 BEGIN
     DELETE FROM tbl_download_assign_statutory_template
-    WHERE
-    find_in_set (domain, domain_name) AND find_in_set (unit_name, unitname_);
+    WHERE legal_entity = legalentityname_ AND
+    find_in_set (domain, domainname_) AND find_in_set (unit_name, unitname_);
 END //
 
 DELIMITER ;
@@ -1407,7 +1407,7 @@ BEGIN
     t2.compliance_task_name AS Compliance_Task, t2.compliance_description AS Compliance_Description,
     t2.statutory_applicable_status AS Statutory_Applicable_Status, t2.statytory_remarks AS Statutory_remarks,
     t2.compliance_applicable_status AS Compliance_Applicable_Status,
-    t2.remarks, t2.action, t1.uploaded_by
+    t2.remarks, t2.action, t1.uploaded_by, t1.uploaded_on
     FROM tbl_bulk_assign_statutory as t2
     INNER join tbl_bulk_assign_statutory_csv as t1
     ON t1.csv_assign_statutory_id = t2.csv_assign_statutory_id
@@ -1784,11 +1784,11 @@ DROP PROCEDURE IF EXISTS `sp_check_upload_compliance_count_for_unit`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_check_upload_compliance_count_for_unit`(
-IN domain_ VARCHAR(50), unitcode_ VARCHAR(50)
+IN legalentityname_ VARCHAR(50), domain_ VARCHAR(50), unitcode_ VARCHAR(50)
 )
 BEGIN
   select count(1) as count from tbl_download_assign_statutory_template where
-    domain = domain_ and unit_code = unitcode_;
+  legal_entity = legalentityname_ and domain = domain_ and unit_code = unitcode_;
 END //
 
 DELIMITER ;
@@ -2056,6 +2056,24 @@ BEGIN
       uploaded_documents = total_documents and csv_past_id = csvid;
 END //
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_check_client_compliance_rejected_status`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_client_compliance_rejected_status`(
+IN legal_entity_ VARCHAR(50), domain_ VARCHAR(50), unitcode_ VARCHAR(50),
+csvid INT
+)
+BEGIN
+  select
+    unit_code
+    from tbl_bulk_assign_statutory where
+    legal_entity = legal_entity_ and domain = domain_ and unit_code = unitcode_ 
+    and csv_assign_statutory_id = csvid and action = 2;
+END //
+
+DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS `split_comma`;
 DELIMITER //

@@ -5,10 +5,10 @@ var UPLOADFILEBUTTON = $(".btn-upload-file");
 //autocomplte variable declaration
 var GROUPNAME = $('#group_name');
 var GROUPID = $("#group_id");
-var ACGROUP = $("#ac-group");
+var ACGROUP = $("#ac_group");
 var LEGALENTITYNAME = $("#legal_entity_name");
 var LEGALENTITYID = $("#legal_entity_id");
-var ACLEGALENTITY = $("#ac-entity");
+var ACLEGALENTITY = $("#ac_entity");
 var MULTISELECTDOMAIN = $('#domains');
 var MULTISELECTUNIT = $('#units');
 var UPLOADFILE = $("#upload_file");
@@ -87,6 +87,8 @@ function fetchDomainMultiselect() {
 //load units into multi select box
 function fetchUnitMultiselect() {
     var str = '';
+    var ISVALID = true;
+
     if(MULTISELECTDOMAIN.val() != null){
         checkDomain = MULTISELECTDOMAIN.val().map(Number);
         if (UNITS.length > 0 && checkDomain.length > 0) {
@@ -94,7 +96,7 @@ function fetchUnitMultiselect() {
                 if(UNITS[i].le_id == LEGALENTITYID.val() &&
                     containsAll(checkDomain, UNITS[i].d_ids)
                     ){
-                        var ISVALID = true;
+                        ISVALID = true;
                         for(var j in ASSIGNEDUNITS){
                             if(
                                 ASSIGNEDUNITS[j].u_id == UNITS[i].u_id &&
@@ -142,6 +144,11 @@ function pageControls() {
     
     //download file button process
     DOWNLOADFILEBUTTON.click(function() {
+        var $this = null;
+        var ISVALID = true;
+        var selText = '';
+        var downloadURL = null;
+
         clientId = GROUPID.val();
         legalentityId = LEGALENTITYID.val();
         clientName = GROUPNAME.val();
@@ -160,7 +167,7 @@ function pageControls() {
             DOMAINIDS = MULTISELECTDOMAIN.val().map(Number);
             DOMAINNAMES = [];
             $("#domains option:selected").each(function () {
-               var $this = $(this);
+               $this = $(this);
                if ($this.length) {
                 DOMAINNAMES.push($this.text());
                }
@@ -173,7 +180,7 @@ function pageControls() {
                     if(UNITS[i].le_id == LEGALENTITYID.val() &&
                         containsAll(DOMAINIDS, UNITS[i].d_ids)){
 
-                        var ISVALID = true;
+                        ISVALID = true;
                         for(var j in ASSIGNEDUNITS){
                             if(
                                 ASSIGNEDUNITS[j].u_id == UNITS[i].u_id &&
@@ -194,9 +201,9 @@ function pageControls() {
                 }
             }else{
                 $("#units option:selected").each(function () {
-                   var $this = $(this);
+                   $this = $(this);
                    if ($this.length) {
-                    var selText = $this.text().split('-').pop();
+                    selText = $this.text().split('-').pop();
                     UNITNAMES.push(selText.trim());
                    }
                 });
@@ -210,7 +217,7 @@ function pageControls() {
                 legalentityName, DOMAINNAMES, UNITNAMES, 
                 function(error, data) {
                 if (error == null) {
-                    var downloadURL = data.link;
+                    downloadURL = data.link;
                     if (downloadURL != null){
                         window.open(downloadURL, '_blank');
                         hideLoader();
@@ -248,11 +255,13 @@ function pageControls() {
 
     //legal entity autocomplte textbox process
     LEGALENTITYNAME.keyup(function(e) {
+        var condetionFields = null;
+        var condetionValues = null;
+        var text_val = null;
         if (GROUPID.val() != '') {
-            var condetionFields = ["cl_id"];
-            var condetionValues = [GROUPID.val()];
-            
-            var text_val = $(this).val();
+            condetionFields = ["cl_id"];
+            condetionValues = [GROUPID.val()];
+            text_val = $(this).val();
             commonAutoComplete(
                 e, ACLEGALENTITY, LEGALENTITYID, text_val,
                 LEGAL_ENTITIES, "le_name", "le_id",
@@ -279,6 +288,8 @@ function pageControls() {
 
     //upload file button process
     UPLOADFILEBUTTON.click(function() {
+        var args = {};
+        var getValidCount = 0;
         clientId = GROUPID.val();
         legalentityId = LEGALENTITYID.val();
         legalentityName = LEGALENTITYNAME.val();
@@ -290,7 +301,7 @@ function pageControls() {
             displayMessage(message.invalid_file_format);
             return false;
         } else {
-            var args = {
+            args = {
                 "csv_name": CSVINFO["file_name"],
                 "csv_data": CSVINFO["file_content"],
                 "csv_size": CSVINFO["file_size"]
@@ -331,7 +342,7 @@ function pageControls() {
                         displayMessage(message.upload_failed);
                         INVALIDFILENAME = data.invalid_file.split('.');;
                         TOTALRECORD.text(data.total);
-                        var getValidCount = (parseInt(data.total) - 
+                        getValidCount = (parseInt(data.total) - 
                             parseInt(data.invalid));
                         VALIDRECORD.text(getValidCount);
                         INVALIDRECORD.text(data.invalid);
@@ -353,20 +364,23 @@ function pageControls() {
                         '.ods';
                         txt_path = "/invalid_file/txt/" + INVALIDFILENAME[0] + 
                         '.txt';
-                        $('#csv-type').attr("href", csv_path);
-                        $('#xls-type').attr("href", xls_path);
-                        $('#ods-type').attr("href", ods_path);
-                        // $('#txt-type').attr("href", txt_path);
+                        $('#csv_type').attr("href", csv_path);
+                        $('#xls_type').attr("href", xls_path);
+                        $('#ods_type').attr("href", ods_path);
                     }else{
                         if(error == "InvalidCsvFile"){
                             displayMessage(message.invalid_csv_file);
                         }else if(error == "CsvFileBlank"){
                             displayMessage(message.csv_file_blank);
                         }else if(error == "CsvFileExeededMaxLines") {
-                            displayMessage(message.csv_max_lines_exceeded.replace(
-                                'MAX_LINES', data.csv_max_lines));
+                            displayMessage(
+                                message.csv_max_lines_exceeded.replace(
+                                'MAX_LINES', data.csv_max_lines)
+                            );
                         }else if(error == "RejectionMaxCountReached"){
-                            displayMessage(message.rejection_max_count_reached);
+                            displayMessage(
+                                message.rejection_max_count_reached
+                            );
                         }else if(error == "UnitsNotAssignedToUser"){
                             displayMessage(message.units_not_assigned_to_user);
                         }else{
@@ -383,9 +397,8 @@ function pageControls() {
     });
 }
 
-document.getElementById("txt-type").addEventListener("click", function(){
+document.getElementById("txt_type").addEventListener("click", function(){
     if(INVALIDFILENAME != null) {
-        // var splitFileName = INVALID_FILE_NAME.split(".")[0];
         $.get(
             "/invalid_file/txt/" + INVALIDFILENAME[0] + ".txt", function(data)
             {
@@ -397,7 +410,8 @@ document.getElementById("txt-type").addEventListener("click", function(){
 
 function download(filename, mime_type, text) {
     var element = document.createElement('a');
-    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    var href = 'data:' + mime_type + ';charset=utf-8,' + 
+        encodeURIComponent(text);
     element.setAttribute('href', href);
     element.setAttribute('download', filename);
 
@@ -418,10 +432,10 @@ function initialize() {
 
 $(function() {
     $('.download-options').hide();
-    $('#units').multiselect({
+    MULTISELECTUNIT.multiselect({
         includeSelectAllOption: true
     });
-    $('#domains').multiselect({
+    MULTISELECTDOMAIN.multiselect({
         includeSelectAllOption: true
     });
     MULTISELECTDOMAIN.multiselect({
