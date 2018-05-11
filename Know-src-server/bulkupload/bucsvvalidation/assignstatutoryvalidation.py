@@ -377,24 +377,36 @@ class SourceDB(object):
         ]
 
     def check_compliance_task_name_duplicate(
-        self, domain_name, unit_code, statutory_provision, task_name,
-        compliance_description, p_legislation, s_legislation, l_entity
+        self, data
     ):
-        data = self._db.call_proc("sp_check_duplicate_compliance_for_unit", [
+        domain_name = data.get("Domain")
+        unit_code = data.get("Unit_Code")
+        statutory_provision = data.get("Statutory_Provision")
+        task_name = data.get("Compliance_Task")
+        compliance_description = data.get("Compliance_Description")
+        p_legislation = data.get("Primary_Legislation")
+        s_legislation = data.get("Secondary_Legislation")
+        l_entity = data.get("Legal_Entity")
+
+        res = self._db.call_proc("sp_check_duplicate_compliance_for_unit", [
             domain_name, unit_code, statutory_provision, task_name,
             compliance_description, p_legislation, s_legislation, l_entity
         ])
-        if len(data) > 0:
+        if len(res) > 0:
             return False
         else:
             return True
 
     def check_compliance_task_name_duplicate_in_knowledge(
-        self, domain_name, unit_code, statutory_provision,
-        task_name, compliance_description, country_id,
-        p_legislation, s_legislation
+        self, data, country_id
     ):
-
+        domain_name = data.get("Domain")
+        unit_code = data.get("Unit_Code")
+        statutory_provision = data.get("Statutory_Provision")
+        task_name = data.get("Compliance_Task")
+        compliance_description = data.get("Compliance_Description")
+        p_legislation = data.get("Primary_Legislation")
+        s_legislation = data.get("Secondary_Legislation")
         unit_id = self._unit_code.get(unit_code).get("unit_id")
         domain_id = self._domain.get(domain_name).get("domain_id")
         c_ids = self._source_db.call_proc(
@@ -405,11 +417,11 @@ class SourceDB(object):
             ]
         )
         comp_id = c_ids[0]["compliance_id"]
-        data = self._source_db.call_proc(
+        res = self._source_db.call_proc(
             "sp_bu_check_duplicate_compliance_for_unit",
             [domain_id, unit_id, comp_id]
         )
-        if len(data) > 0:
+        if len(res) > 0:
             return False
         else:
             return True
@@ -695,22 +707,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         else:
             return False
 
-    def perform_validation(self):
-        mapped_error_dict = {}
-        mapped_header_dict = {}
-        invalid = 0
-        # self.check_duplicate_in_csv()
-        duplicate = self.check_duplicate_compliance_for_same_unit_in_csv()
-        duplicate_compliance_in_csv = duplicate[0]
-        duplicate_compliance_row = duplicate[1]
-        self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
-
-        country_id, legal_entity_id = self.get_country_id()
-        self.init_values(
-            self._session_user_obj.user_id(), country_id, legal_entity_id
-        )
-
-        def make_error_desc(res, msg):
+    def make_error_desc(self, res, msg):
             if res is True:
                 res = []
             if res is not True:
@@ -720,160 +717,143 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     res.append(msg)
             return res
 
-        # res = True
-        # dup_error = "Compliance_Task - Duplicate data"
-        # res = make_error_desc(res, dup_error)
-
-        for row_idx, data in enumerate(self._source_data):
-            res = True
-            error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
-            for key in self._csv_column_name:
-                value = data.get(key)
-                isFound = ""
-                values = value.strip().split(CSV_DELIMITER)
-                csvParam = csv_params_as.get(key)
-
-                for v in [v.strip() for v in values]:
-                    if (
-                        key == 'Statutory_remarks' and
-                        (
-                            (
-                                data.get(
-                                    'Statutory_Applicable_Status'
-                                ).lower() == 'not applicable' or
-                                data.get(
-                                    'Statutory_Applicable_Status'
-                                ).lower() == 'do not show'
-                            ) and
-                            data.get(
-                                'Statutory_remarks'
-                            ) == ''
-                        )
-                    ):
-                        self._error_summary["mandatory_error"] += 1
-                        mandatory_error = "Statutory_remarks - Field is blank"
-                        res = make_error_desc(res, mandatory_error)
-
-                    if (
-                        key == 'Statutory_remarks' and
+    def check_validation(
+        self, res, row_idx, data, duplicate_compliance_row, error_count,
+        mapped_header_dict
+    ):
+        for key in self._csv_column_name:
+            value = data.get(key)
+            isFound = ""
+            values = value.strip().split(CSV_DELIMITER)
+            csvParam = csv_params_as.get(key)
+            for v in [v.strip() for v in values]:
+                if (
+                    key == 'Statutory_remarks' and
+                    (
                         (
                             data.get(
                                 'Statutory_Applicable_Status'
-                            ).lower() == 'applicable' and
+                            ).lower() == 'not applicable' or
                             data.get(
-                                'Statutory_remarks'
-                            ) != ''
-                        )
-                    ):
-                        self._error_summary["mandatory_error"] += 1
-                        mandatory_error = "Statutory_Remarks - Not Required"
-                        res = make_error_desc(res, mandatory_error)
-
-                    valid_failed, error_cnt = parse_csv_dictionary_values_as(
-                        key, v
+                                'Statutory_Applicable_Status'
+                            ).lower() == 'do not show'
+                        ) and
+                        data.get('Statutory_remarks') == ''
                     )
-                    if valid_failed is not True:
-                        if res is True:
-                            res = valid_failed
-                            error_count = error_cnt
-                        else:
-                            res.extend(valid_failed)
-                            error_count["mandatory"] += error_cnt["mandatory"]
-                            error_count["max_length"] += error_cnt[
-                                "max_length"
-                            ]
-                            error_count["invalid_char"] += error_cnt[
-                                "invalid_char"
-                            ]
-                    if v != "":
-                        if (
-                            csvParam.get("check_is_exists") is True or
-                            csvParam.get("check_is_active") is True
-                        ):
-                            unboundMethod = self._validation_maps.get(
-                                key
-                            )
-                            if unboundMethod is not None:
-                                if key == "Organization":
-                                    org_val = v+'-'+data.get('Domain')
-                                    isFound = unboundMethod(org_val)
-                                else:
-                                    isFound = unboundMethod(v)
+                ):
+                    self._error_summary["mandatory_error"] += 1
+                    mandatory_error = "Statutory_remarks - Field is blank"
+                    res = self.make_error_desc(res, mandatory_error)
 
-                            if isFound is not True and isFound != "":
-                                if key == "Organization":
-                                    msg = "%s - %s %s" % (key, v, isFound)
-                                else:
-                                    msg = "%s - %s" % (key, isFound)
+                if (
+                    key == 'Statutory_remarks' and
+                    (
+                        data.get(
+                            'Statutory_Applicable_Status'
+                        ).lower() == 'applicable' and
+                        data.get('Statutory_remarks') != ''
+                    )
+                ):
+                    self._error_summary["mandatory_error"] += 1
+                    mandatory_error = "Statutory_Remarks - Not Required"
+                    res = self.make_error_desc(res, mandatory_error)
+                valid_failed, error_cnt = parse_csv_dictionary_values_as(
+                    key, v
+                )
+                if valid_failed is not True:
+                    if res is True:
+                        res = valid_failed
+                        error_count = error_cnt
+                    else:
+                        res.extend(valid_failed)
+                        error_count["mandatory"] += error_cnt["mandatory"]
+                        error_count["max_length"] += error_cnt["max_length"]
+                        error_count["invalid_char"] += error_cnt[
+                            "invalid_char"
+                        ]
+                if v != "":
+                    if (
+                        csvParam.get("check_is_exists") is True or
+                        csvParam.get("check_is_active") is True
+                    ):
+                        unboundMethod = self._validation_maps.get(key)
+                        if unboundMethod is not None:
+                            if key == "Organization":
+                                org_val = v+'-'+data.get('Domain')
+                                isFound = unboundMethod(org_val)
+                            else:
+                                isFound = unboundMethod(v)
+                        if isFound is not True and isFound != "":
+                            if key == "Organization":
+                                msg = "%s - %s %s" % (key, v, isFound)
+                            else:
+                                msg = "%s - %s" % (key, isFound)
+                            if res is not True:
+                                res.append(msg)
+                            else:
+                                res = [msg]
+                            if "Status" in isFound:
+                                self._error_summary["inactive_error"] += 1
+                            else:
+                                self._error_summary["invalid_data_error"] += 1
+            if res is not True:
+                err_str = (',').join(res)
+                if err_str.find(key) != -1:
+                    head_idx = mapped_header_dict.get(key)
+                    if head_idx is None:
+                        head_idx = [row_idx]
+                    else:
+                        head_idx.append(row_idx)
+                    mapped_header_dict[key] = head_idx
+            if key == "Compliance_Task":
+                for x in duplicate_compliance_row:
+                    if (
+                        x[0] == data.get("Statutory_Provision") and
+                        x[1] == data.get("Compliance_Task") and
+                        x[2] == data.get("Compliance_Description")
+                    ):
+                        dup_error = "Duplicate Compliance"
+                        res = self.make_error_desc(res, dup_error)
+        return res, mapped_header_dict, error_count
 
-                                if res is not True:
-                                    res.append(msg)
-                                else:
-                                    res = [msg]
-                                if "Status" in isFound:
-                                    self._error_summary[
-                                        "inactive_error"
-                                    ] += 1
-                                else:
-                                    self._error_summary[
-                                        "invalid_data_error"
-                                    ] += 1
-
-                if res is not True:
-                    err_str = (',').join(res)
-                    if err_str.find(key) != -1:
-                        head_idx = mapped_header_dict.get(key)
-                        if head_idx is None:
-                            head_idx = [row_idx]
-                        else:
-                            head_idx.append(row_idx)
-
-                        mapped_header_dict[key] = head_idx
-
-                if key == "Compliance_Task":
-                    for x in duplicate_compliance_row:
-                        if (
-                            x[0] == data.get("Statutory_Provision") and
-                            x[1] == data.get("Compliance_Task") and
-                            x[2] == data.get("Compliance_Description")
-                        ):
-                            dup_error = "Duplicate Compliance"
-                            res = make_error_desc(res, dup_error)
-
+    def perform_validation(self):
+        mapped_error_dict = {}
+        mapped_header_dict = {}
+        invalid = 0
+        duplicate = self.check_duplicate_compliance_for_same_unit_in_csv()
+        duplicate_compliance_in_csv = duplicate[0]
+        duplicate_compliance_row = duplicate[1]
+        self._error_summary["duplicate_error"] += duplicate_compliance_in_csv
+        country_id, legal_entity_id = self.get_country_id()
+        self.init_values(
+            self._session_user_obj.user_id(), country_id, legal_entity_id
+        )
+        for row_idx, data in enumerate(self._source_data):
+            res, mapped_header_dict, error_count = self.check_validation(
+                True,
+                row_idx,
+                data,
+                duplicate_compliance_row,
+                {"mandatory": 0, "max_length": 0, "invalid_char": 0},
+                mapped_header_dict
+            )
             if res is True:
-                if not self.check_compliance_task_name_duplicate(
-                    data.get("Domain"), data.get("Unit_Code"),
-                    data.get("Statutory_Provision"),
-                    data.get("Compliance_Task"),
-                    data.get("Compliance_Description"),
-                    data.get("Primary_Legislation"),
-                    data.get("Secondary_Legislation"),
-                    data.get("Legal_Entity")
-                ):
+                if not self.check_compliance_task_name_duplicate(data):
                     self._error_summary["duplicate_error"] += 1
                     dup_error = "Duplicate Compliance"
-                    res = make_error_desc(res, dup_error)
-
+                    res = self.make_error_desc(res, dup_error)
                 if not self.check_compliance_task_name_duplicate_in_knowledge(
-                    data.get("Domain"), data.get("Unit_Code"),
-                    data.get("Statutory_Provision"),
-                    data.get("Compliance_Task"),
-                    data.get("Compliance_Description"),
-                    country_id,
-                    data.get("Primary_Legislation"),
-                    data.get("Secondary_Legislation")
+                    data, country_id
                 ):
                     self._error_summary["duplicate_error"] += 1
                     dup_error = "Duplicate Compliance"
-                    res = make_error_desc(res, dup_error)
-
+                    res = self.make_error_desc(res, dup_error)
                 if not self.check_invalid_compliance_in_csv(
                     data
                 ):
                     self._error_summary["invalid_data_error"] += 1
                     invalid_error = "Invalid Compliance"
-                    res = make_error_desc(res, invalid_error)
-
+                    res = self.make_error_desc(res, invalid_error)
             if res is not True:
                 error_list = mapped_error_dict.get(row_idx)
                 if error_list is None:
@@ -881,16 +861,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 else:
                     error_list.extend(res)
                 res = True
-
                 mapped_error_dict[row_idx] = error_list
-
-                # head_idx = mapped_header_dict.get(key)
-                # if head_idx is None:
-                #     head_idx = [row_idx]
-                # else:
-                #     head_idx.append(row_idx)
-
-                # mapped_header_dict[key] = head_idx
                 invalid += 1
                 self._error_summary["mandatory_error"] += error_count[
                     "mandatory"
@@ -901,11 +872,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 self._error_summary["invalid_char_error"] += error_count[
                     "invalid_char"
                 ]
-
         if invalid == 0:
             self.check_uploaded_count_in_csv()
             self.get_master_table_info()
-
         if invalid > 0:
             return self.make_invalid_return(
                 mapped_error_dict, mapped_header_dict
@@ -1054,12 +1023,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                                     res = [msg]
 
             if not self.check_compliance_task_name_duplicate_in_knowledge(
-                data.get("Domain"), data.get("Unit_Code"),
-                data.get("Statutory_Provision"), data.get("Compliance_Task"),
-                data.get("Compliance_Description"),
-                country_id,
-                data.get("Primary_Legislation"),
-                data.get("Secondary_Legislation")
+                data, country_id
             ):
                 declined_count += 1
                 dup_error = "Compliance_Task - Duplicate data"
