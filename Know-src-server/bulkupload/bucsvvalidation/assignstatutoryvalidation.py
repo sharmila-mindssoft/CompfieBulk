@@ -598,21 +598,18 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         return duplicate_compliance, duplicate_compliance_row
 
     def check_uploaded_count_in_csv(self):
-        # self._source_data.sort(key=lambda x: (
-        #     x["Domain"], x["Unit_Code"]
-        # ))
         unit_names = []
-
         for k, v in groupby(self._source_data, key=lambda s: (
-            s["Domain"], s["Unit_Code"]
+            s["Legal_Entity"], s["Domain"], s["Unit_Code"]
         )):
             grouped_list = list(v)
             if len(grouped_list) >= 1:
                 unit_code = grouped_list[0].get("Unit_Code")
                 domain = grouped_list[0].get("Domain")
+                legal_entity = grouped_list[0].get("Legal_Entity")
                 data = self._db.call_proc(
                     "sp_check_upload_compliance_count_for_unit",
-                    [domain, unit_code]
+                    [legal_entity, domain, unit_code]
                 )
                 uploaded_count = data[0]["count"]
 

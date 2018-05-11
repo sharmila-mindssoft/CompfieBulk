@@ -237,7 +237,7 @@ BEGIN
     FROM tbl_download_assign_statutory_template WHERE
     client_group = clientgroup_name AND legal_entity = le_name AND find_in_set (domain, domain_name)
     AND find_in_set (unit_name, unitname_)
-    ORDER BY unit_name;
+    ORDER BY domain, unit_code;
 END //
 
 DELIMITER ;
@@ -251,11 +251,11 @@ DELIMITER //
 
 
 CREATE PROCEDURE `sp_delete_assign_statutory_template`(in
-domain_name text, unitname_ text)
+legalentityname_ text, domainname_ text, unitname_ text)
 BEGIN
     DELETE FROM tbl_download_assign_statutory_template
-    WHERE
-    find_in_set (domain, domain_name) AND find_in_set (unit_name, unitname_);
+    WHERE legal_entity = legalentityname_ AND
+    find_in_set (domain, domainname_) AND find_in_set (unit_name, unitname_);
 END //
 
 DELIMITER ;
@@ -1840,11 +1840,11 @@ DROP PROCEDURE IF EXISTS `sp_check_upload_compliance_count_for_unit`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_check_upload_compliance_count_for_unit`(
-IN domain_ VARCHAR(50), unitcode_ VARCHAR(50)
+IN legalentityname_ VARCHAR(50), domain_ VARCHAR(50), unitcode_ VARCHAR(50)
 )
 BEGIN
   select count(1) as count from tbl_download_assign_statutory_template where
-    domain = domain_ and unit_code = unitcode_;
+  legal_entity = legalentityname_ and domain = domain_ and unit_code = unitcode_;
 END //
 
 DELIMITER ;

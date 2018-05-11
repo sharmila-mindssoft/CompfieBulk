@@ -178,7 +178,7 @@ def get_download_assing_statutory_list(
         ac_list.append(ac_tuple)
 
     db.call_proc("sp_delete_assign_statutory_template", (
-        domain_names, unit_names
+        le_name, domain_names, unit_names
         ))
     if len(ac_list) > 0:
         db.bulk_insert(
