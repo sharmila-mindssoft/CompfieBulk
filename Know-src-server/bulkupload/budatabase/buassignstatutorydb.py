@@ -178,7 +178,7 @@ def get_download_assing_statutory_list(
         ac_list.append(ac_tuple)
 
     db.call_proc("sp_delete_assign_statutory_template", (
-        domain_names, unit_names
+        le_name, domain_names, unit_names
         ))
     if len(ac_list) > 0:
         db.bulk_insert(
@@ -507,7 +507,7 @@ def update_approve_action_from_list(
 ########################################################
 
 
-def fetch_rejected_assign_sm_data(db, session_user, user_id, client_id,
+def fetch_rejected_assign_sm_data(db, user_id, client_id,
                                   le_id, d_id, unit_id):
 
     reject_list = []
@@ -580,7 +580,7 @@ def get_list_and_delete_rejected_asm(db, session_user, user_id, client_id,
     args = [csv_id]
     db.call_proc('sp_delete_reject_asm_by_csvid', args)
     reject_list = fetch_rejected_assign_sm_data(
-        db, session_user, user_id, client_id, le_id, d_id, unit_code)
+        db, user_id, client_id, le_id, d_id, unit_code)
     return reject_list
 
 

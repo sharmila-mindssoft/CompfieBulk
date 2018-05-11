@@ -165,7 +165,7 @@ def get_clientunits_uploaded_csvList(db, clientId, groupName):
 
 ########################################################
 '''
-    returns statutory mapping bulk report list
+    returns client unit bulk report list
    :param
         db: database object
         session_user: logged in user details
@@ -173,8 +173,8 @@ def get_clientunits_uploaded_csvList(db, clientId, groupName):
         db: Object
         session_user: Object
    :returns
-        result: list of bulk data records by mulitple country,
-        domain, KnowledgeExecutives selections based.
+        result: list of bulk data records by client group id
+        selections based.
     rtype:
         result: List
 '''
@@ -235,6 +235,10 @@ def fetch_rejected_client_unit_report(db, session_user, user_id,
     return rejected_list
 
 
+#############################################################
+# To update client unit download count by csvid in db table.
+#############################################################
+
 def update_unit_count(db, session_user, csv_id):
     updated_unit_count = []
     args = [csv_id]
@@ -246,6 +250,10 @@ def update_unit_count(db, session_user, csv_id):
     return updated_unit_count
 
 
+###############################################
+# To delete rejected client unit by csvid.
+###############################################
+
 def get_list_and_delete_rejected_unit(db, session_user, user_id,
                                       csv_id, bu_client_id):
 
@@ -256,21 +264,25 @@ def get_list_and_delete_rejected_unit(db, session_user, user_id,
     return rejected_list
 
 
+#####################################################
+# To fetch client unit report data by clientGroupId,
+# fromdate, todate and dependent_users
+#####################################################
+
 def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
                                   from_date, to_date, record_count, page_count,
                                   dependent_users, user_category_id):
-
     client_list = []
     expected_result = 2
     if(len(dependent_users) >= 1):
         user_ids = ",".join(map(str, dependent_users))
     else:
         user_ids = user_id
+
     args = [clientGroupId, from_date, to_date, record_count, page_count,
             str(user_ids)]
     data = db.call_proc_with_multiresult_set('sp_client_unit_bulk_reportdata',
                                              args, expected_result)
-
     client_data = data[0]
     total_record = data[1][0]["total"]
     if(client_data):
@@ -292,7 +304,6 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
                 rejected_on = d["rejected_on"].strptime(
                     str(d["rejected_on"]),
                     '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
-
             client_list.append(bu_cu.ClientReportData(
                 int(d["uploaded_by"]),
                 str(uploaded_on),
@@ -309,8 +320,8 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
                 d["declined_count"]
             ))
     else:
-            client_list = []
-            total_record = 0
+        client_list = []
+        total_record = 0
     return client_list, total_record
 
 

@@ -12,7 +12,7 @@
                     <div class="portlet">
                         <div class="portlet-heading bg-info">
                             <h3 class="portlet-title">Approve / Reject Client Unit - Bulk Upload</h3>
-                            <div class="portlet-widgets"></div>
+                            <div class="plegal_entity_idortlet-widgets"></div>
                             <div class="clearfix"></div>
                         </div>
                         <div id="bg-primary1" class="panel-collapse collapse in">
@@ -177,7 +177,6 @@
                                             </div>
                                         </div>
                                         <div class="clearfix"></div>
-                                        <!-- <div class="col-md-12 p-0 filtered_items">    </div> -->
                                         <div class="col-md-12 p-0">
                                         <span class="pull-left p-r-5 filtered_items"></span>
                                             <span class="pull-left p-r-5 clear-filtered default-display-none"> &nbsp;
@@ -223,93 +222,93 @@
                                                             <td></td>
                                                             <td class="text-center" >
                                                                 <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-                                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all_approve">
+                                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all_approve" title="Click here to approve all">
                                                                     <label> </label>
                                                                 </div>
                                                             </td>
                                                             <td class="text-center" >
                                                                 <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
-                                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all_reject">
+                                                                    <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all_reject" title="Click here to reject all">
                                                                     <label> </label>
                                                                 </div>
                                                             </td>
                                                             <td></td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Legal Entity">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Legal Entity" id="filter_legal_entity">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Division">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Division" id="filter_division">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Category">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Category" id="filter_category">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Geography Level">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Geography Level" id="filter_geo_level">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
                                                                     <input type="text" class="form-control input-sm js-filter-view"
-                                                                    placeholder="Unit Location">
+                                                                    placeholder="Unit Location" id="filter_location">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Code">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Code" id="filter_unit_code">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Name">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Name" id="filter_unit_name">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Address">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Unit Address" id="filter_address">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="City">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="City" id="filter_city">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="State">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="State" id="filter_state">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Postal Code">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Postal Code" id="filter_post_code">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Domain">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Domain" id="filter_domain">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Organization">
+                                                                    <input type="text" class="form-control input-sm js-filter-view" placeholder="Organization" id="filter_orgn">
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
@@ -338,12 +337,6 @@
                                                     <td class="width-250"></td>
                                                     <td class="pull-right right-align-class">
                                                         <ul id="pagination_rpt" class="pagination-rpt">
-                                                            <!-- <li class="first disabled"><a href="#">First</a></li>
-                                                            <li class="prev disabled"><a href="#">Previous</a></li>
-                                                            <li class="page active"><a href="#">1</a></li>
-                                                            <li class="page"><a href="#">2</a></li>
-                                                            <li class="next disabled"><a href="#">Next</a></li>
-                                                            <li class="last disabled"><a href="#">Last</a></li> -->
                                                         </ul>
                                                     </td>
                                                 </tr>
@@ -376,13 +369,21 @@
             <td class="uploaded-by"></td>
             <td class="no-of-units text-center"></td>
             <td  class="approved-rejected text-center"></td>
-            <td class="text-center icon-3x download-invalidfile" >
+            <td class="text-center icon-3x" >
+                <i class="fa fa-download text-primary c-pointer dropbtn" ></i>
+                <div class="dropdown-content">
+                    <a class="dl-xls-file" >Download Excel</a>
+                    <a class="dl-csv-file">Download CSV</a>
+                    <a class="dl-ods-file">Download ODS</a>
+                    <a class="dl-txt-file">Download Text</a>
+                </div>
             </td>
             <td class="text-center btn-view">
-                <button class="btn btn-primary text-center waves-effect waves-light viewbtn" type="button">
+                <button class="btn btn-primary text-center waves-effect waves-light viewbtn" type="button"
+                title="Click here to View">
                 View </button>
                 <a href="#" class="editbtn default-display-none">
-                    <i class="fa fa-pencil text-primary c-pointer"></i>
+                    <i class="fa fa-pencil text-primary c-pointer" title="Click here to Edit"></i>
                 </a>
             </td>
             <td class="text-center">
@@ -425,9 +426,7 @@
                     <label></label>
                 </div>
             </td>
-            <td class="reject-reason">
-            <!-- <i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer reject-icon default-display-none" data-toggle="tooltip" title="" data-original-title="Reason for Rejection" id="reject-reason"></i> -->
-            </td>
+            <td class="reject-reason"></td>
             <td class="legal-entity-name"></td>
             <td class="division-name"></td>
             <td class="category-name"></td>
@@ -482,7 +481,7 @@
             <div class="has-feedback" >
                 <input type="text" class="form-control input-sm" placeholder="Enter Legal Entity" value="" id="search_le_name" maxlength="50" autofocus="autofocus" tabindex="4">
                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                <input type="hidden" name="legal-entity-id" id="legal_entity_id" value="">
+                <input type="hidden" name="legal-entity-id" value="">
                 <div id="ac_legal_entity" class="ac-textbox default-display-none">
                     <ul class="width-94"></ul>
                 </div>
@@ -493,7 +492,7 @@
             <div class="has-feedback">
                 <input type="text" class="form-control input-sm" placeholder="Enter Division" value="" id="search_division" maxlength="50" autofocus="autofocus" tabindex="5">
                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                <input type="hidden" name="division-id" id="division_id" value="">
+                <input type="hidden" name="division-id" value="">
                 <div id="ac_division" class="ac-textbox default-display-none">
                     <ul class="width-94"></ul>
                 </div>
@@ -504,7 +503,7 @@
             <div class="has-feedback">
                 <input type="text" class="form-control input-sm" placeholder="Enter Category" value="" id="search_category" maxlength="50" autofocus="autofocus" tabindex="6">
                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                <input type="hidden" name="category-id" id="category_id" value="">
+                <input type="hidden" name="category-id" value="">
                 <div id="ac_category" class="ac-textbox default-display-none">
                     <ul class="width-94"></ul>
                 </div>
@@ -513,9 +512,9 @@
         <div class="form-group col-sm-12">
             <label class="control-label">Unit Location</label>
             <div class="has-feedback">
-                <input type="text" class="form-control input-sm" placeholder="Enter Geography Location" value="" id="search_geo_location" maxlength="50" autofocus="autofocus" tabindex="7">
+                <input type="text" class="form-control input-sm" placeholder="Enter Unit Location" value="" id="search_geo_location" maxlength="50" autofocus="autofocus" tabindex="7">
                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                <input type="hidden" name="geography-id" id="geography_id" value="">
+                <input type="hidden" name="geography-id" value="">
                 <div id="ac_geography" class="ac-textbox default-display-none">
                     <ul class="width-94"></ul>
                 </div>
@@ -526,7 +525,7 @@
             <div class="has-feedback">
                 <input type="text" class="form-control input-sm" placeholder="Enter Unit Code" value="" id="search_unit_code" maxlength="50" autofocus="autofocus" tabindex="8">
                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                <input type="hidden" name="unit-code" id="unit_code" value="">
+                <input type="hidden" name="unit-code" value="">
                 <div id="ac_unit_code" class="ac-textbox default-display-none">
                     <ul class="width-94"></ul>
                 </div>
@@ -537,7 +536,7 @@
             <div class="has-feedback">
                 <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="" id="search_domain" maxlength="50" autofocus="autofocus" tabindex="9">
                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                <input type="hidden" name="domain" id="domain" value="">
+                <input type="hidden" name="domain" value="">
                 <div id="ac_domain" class="ac-textbox default-display-none">
                     <ul class="width-94"></ul>
                 </div>
@@ -548,7 +547,7 @@
             <div class="has-feedback">
                 <input type="text" class="form-control input-sm" placeholder="Enter Organization" value=""  id="search_organization" maxlength="50" autofocus="autofocus" tabindex="10">
                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                <input type="hidden" name="organization" id="organization_id" value="">
+                <input type="hidden" name="organization" value="">
                 <div id="ac_organization" class="ac-textbox default-display-none">
                     <ul class="width-94"></ul>
                 </div>

@@ -11,12 +11,12 @@ var COUNTRY_VAL = $('#countryval');
 var COUNTRY = $('#country');
 var DOMAIN = $('#domain');
 var DOMAIN_VAL = $('#domainval');
-var AC_COUNTRY = $('#ac-country');
-var AC_DOMAIN = $('#ac-domain');
+var AC_COUNTRY = $('#ac_country');
+var AC_DOMAIN = $('#ac_domain');
 var SHOW_BTN = $('#show');
 var REPORT_VIEW = $('.grid-table-rpt');
-var PASSWORD_SUBMIT_BTN = $('#password-submit');
-var CURRENT_PASSWORD = $('#current-password');
+var PASSWORD_SUBMIT_BTN = $('#password_submit');
+var CURRENT_PASSWORD = $('#current_password');
 // Creating New Class
 var rejStatuMapping = new RejectedStatutoryMappingBulk();
 
@@ -143,10 +143,10 @@ function processSubmit() {
         REJECTED_STATUTORY_DATA = data.rejected_data;
         if (REJECTED_STATUTORY_DATA.length == 0) {
             $('.tbody-compliance').empty();
-            tableRow4 = $('#nocompliance-templates ' +
+            tableRow4 = $('#nocompliance_templates ' +
                 '.table-nocompliances-list .table-row');
             clone4 = tableRow4.clone();
-            $('.tbl_norecords', clone4).text('No Records Found');
+            $('.tbl-norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
             REPORT_VIEW.show();
             hideLoader();
@@ -219,18 +219,18 @@ function loadCountwiseResult(data) {
             rejectedOn = approvedOn;
         }
 
-        tr = $('#act-templates .table-act-list .table-row-act-list');
+        tr = $('#act_templates .table-act-list .table-row-act-list');
         clone1 = tr.clone();
 
-        $('.tbl_sno', clone1).text(SNO);
-        $('.tbl_upload_filename', clone1).text(csvName);
-        $(".tbl_rejected_on", clone1).text(rejectedOn);
-        $('.tbl_rejected_by', clone1).text(rejectedBy);
-        $('.tbl_no_of_tasks', clone1).text(totalNoofTasks);
-        $('.tbl_declined_count', clone1).text(declinedCount);
-        $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
+        $('.tbl-sno', clone1).text(SNO);
+        $('.tbl-upload-filename', clone1).text(csvName);
+        $(".tbl-rejected-on", clone1).text(rejectedOn);
+        $('.tbl-rejected-by', clone1).text(rejectedBy);
+        $('.tbl-no-of-tasks', clone1).text(totalNoofTasks);
+        $('.tbl-declined-count', clone1).text(declinedCount);
+        $('.tbl-reason-for-rejection', clone1).text(reasonForRejection);
 
-        $('.tbl_remove .remove_a', clone1).attr({
+        $('.tbl-remove .remove-a', clone1).attr({
             'id': "delete_action_" + csvId,
             'data-csv-id': csvId,
             onClick: "confirmAlert(this)",
@@ -238,32 +238,32 @@ function loadCountwiseResult(data) {
         /***** Rejected File Downloads ********/
         downloadCountLimit = REJECTED_FILE_DOWNLOADCOUNT;
         if(parseInt(fileDownloadCount) < parseInt(downloadCountLimit)) {
-            $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
+            $('.tbl-rejected-file .rejected-i-cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
                 onClick: "rejectedFiles(this)"
             });
-            $('.tbl_rejected_file .rejected_div_cls', clone1).attr({
+            $('.tbl-rejected-file .rejected-div-cls', clone1).attr({
                 'id': "download_files_" + csvId
             });
-            $('.tbl_rejected_file .rejected_div_cls .rej_excel, .rej_csv, ' +
-                '.rej_ods, .rej_text', clone1).attr({
+            $('.tbl-rejected-file .rejected-div-cls .rej-excel, .rej-csv, ' +
+                '.rej-ods, .rej-text', clone1).attr({
                 onclick: "downloadClick(" + csvId + ",this)"
             });
         }
         else {
-            $('.tbl_rejected_file .rejected_i_cls', clone1).attr({
+            $('.tbl-rejected-file .rejected-i-cls', clone1).attr({
                 'id': "download_icon_" + csvId,
                 'data-id': csvId,
                 onClick: "rejectedFiles(this)",
             });
-            $('.tbl_rejected_file .rejected_i_cls', clone1)
+            $('.tbl-rejected-file .rejected-i-cls', clone1)
             .addClass("default-display-none");
         }
         if (parseInt(fileDownloadCount) < 1){
-            $('.tbl_remove .remove_a', clone1).addClass("default-display-none");
+            $('.tbl-remove .remove-a', clone1).addClass("default-display-none");
         }
-        $('#datatable-responsive .tbody-compliance').append(clone1);
+        $('#datatable_responsive .tbody-compliance').append(clone1);
     }
     hideLoader();
 }
@@ -354,7 +354,7 @@ function confirmAlert(event) {
     }, function(isConfirm) {
         if (isConfirm) {
             Custombox.open({
-                target: '#custom-modal-approve',
+                target: '#custom_modal_approve',
                 effect: 'contentscale',
                 complete: function() {
                     if (CURRENT_PASSWORD != null) {
@@ -394,11 +394,11 @@ function RemoveStatutoryCsv(REMOVE_STATUTORY_CSV_ID, countryId, domainId) {
         REJECTED_STATUTORY_DATA = data.rejected_data;
         if (REJECTED_STATUTORY_DATA.length == 0) {
             $('.tbody-compliance').empty();
-            tableRow4 = $('#nocompliance-templates '+
+            tableRow4 = $('#nocompliance_templates '+
                 '.table-nocompliances-list ' +
                 '.table-row');
             clone4 = tableRow4.clone();
-            $('.tbl_norecords', clone4).text('No Records Found');
+            $('.tbl-norecords', clone4).text('No Records Found');
             $('.tbody-compliance').append(clone4);
             REPORT_VIEW.show();
             hideLoader();
