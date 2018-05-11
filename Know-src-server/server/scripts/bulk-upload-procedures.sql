@@ -1950,6 +1950,7 @@ BEGIN
 END //
 DELIMITER ;
 
+
 DROP PROCEDURE IF EXISTS `sp_check_client_compliance_rejected_status`;
 DELIMITER //
 
@@ -1964,7 +1965,6 @@ BEGIN
     legal_entity = legal_entity_ AND domain = domain_ AND unit_code = unitcode_ 
     AND csv_assign_statutory_id = csvid AND action = 2;
 END //
-
 DELIMITER ;
 
 
@@ -1988,10 +1988,9 @@ BEGIN
 END //
 DELIMITER ;
 
+
 DROP PROCEDURE IF EXISTS `sp_sm_get_declined_docs`;
-
 DELIMITER //
-
 CREATE PROCEDURE `sp_sm_get_declined_docs`(
     IN csvid INT(11)
 )
@@ -1999,5 +1998,4 @@ BEGIN
   SELECT format_file FROM tbl_bulk_statutory_mapping WHERE csv_id = csvid
   AND action = 3;
 END //
-
 DELIMITER ;
