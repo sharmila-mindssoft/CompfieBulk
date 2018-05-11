@@ -108,3 +108,11 @@ def is_alphabet_wtih_bracket(value):
         return value
     else:
         raise expectation_error('a alphabets', value)
+
+
+def is_unit_code(value):
+    r = re.compile("^[a-zA-Z0-9_ ]*$")
+    if r.match(value):
+        return value
+    else:
+        raise expectation_error('valid unit code', value)

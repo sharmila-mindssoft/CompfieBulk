@@ -426,10 +426,11 @@ function getUserMappingsList(loggedUserID) {
 }
 
 function onAutoCompleteSuccess(valueElement, idElement, val) {
+    var currentID;
     valueElement.val(val[1]);
     idElement.val(val[0]);
     valueElement.focus();
-    var currentID = idElement[0].id;
+    currentID = idElement[0].id;
     if (currentID == 'group_id') {
         resetFilter('clients');
     } else if (currentID == 'businessgroupid') {
@@ -443,10 +444,11 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
 
 //Load group form list in autocomplete text box
 GROUP_VAL.keyup(function(e) {
-    resetFilter('clients');
     var textVal = $(this).val();
     var ctryGrps = [];
     var i = 0, occur = '', j = 0;
+
+    resetFilter('clients');    
     for (i = 0; i < CLIENT_LIST.length; i++) {
         if (CLIENT_LIST[i].country_id) {
             occur = -1
@@ -476,13 +478,13 @@ GROUP_VAL.keyup(function(e) {
 
 //load legalentity form list in autocomplete text box
 LEGAL_ENTITY_VAL.keyup(function(e) {
-    resetFilter('le');
     var textVal = $(this).val();
     var leList = [];
     var clientId = GROUP.val();
 	var conditionFields = [];
 	var conditionValues = [];
 	var i = 0, j = 0;
+    resetFilter('le');
     if (GROUP.val() > 0) {
         if (GROUP.val() != '') {
             conditionFields.push("client_id");
@@ -699,8 +701,6 @@ function processSubmit() {
 //display statutory mapping details accoring to count
 function loadCountwiseResult(data) {
     $('.tbody-compliance').empty();
-    lastActName = '';
-    lastOccuranceid = 0;
     var showFrom = SNO + 1;
     var isNull = true;
     var csvName = '', noOfTasks = '', uploadedBy = '', uploadedOn = '';
