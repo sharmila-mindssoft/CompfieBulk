@@ -241,6 +241,7 @@ class SourceDB(object):
             False, self._child_statutories, child_statutories, None
         )
 
+    # save client statutories data in tbl_client_statutories main db
     def save_client_statutories_data(
         self, cl_id, u_id, d_id, user_id, is_rejected
     ):
@@ -265,6 +266,7 @@ class SourceDB(object):
             raise process_error("E018")
         return client_statutory_id
 
+    # check rejected compliance is available or not in child table
     def get_client_compliance_rejected_status(
         self, legal_entity, domain, unit_code, csv_id
     ):
@@ -279,6 +281,7 @@ class SourceDB(object):
         else:
             return False
 
+    # save client compliance data in tbl_client_compliances main db
     def save_client_compliances_data(
         self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, client_id_,
         is_rejected, saved_by, saved_on
@@ -333,7 +336,6 @@ class SourceDB(object):
                 submitted_status, saved_by, saved_on,
                 approval_status, int(user_id), created_on,
                 int(user_id), created_on
-                # ,  add executive name
             ))
 
         if values:
@@ -367,7 +369,7 @@ class SourceDB(object):
             "Statutory_Applicable_Status": self.check_applicable_status,
             "Compliance_Applicable_Status": self.check_applicable_status
         }
-
+    # declare csv column field name
     def csv_column_fields(self):
         self._csv_column_name = [
             "S.No", "Client_Group", "Legal_Entity", "Domain",
@@ -378,6 +380,7 @@ class SourceDB(object):
             "Statutory_remarks", "Compliance_Applicable_Status"
         ]
 
+    # check duplicate compliance for same unit in csv
     def check_compliance_task_name_duplicate(
         self, data
     ):
@@ -399,6 +402,7 @@ class SourceDB(object):
         else:
             return True
 
+    # check duplicate compliance in already existing knowledge table
     def check_compliance_task_name_duplicate_in_knowledge(
         self, data, country_id
     ):
@@ -428,6 +432,7 @@ class SourceDB(object):
         else:
             return True
 
+    # save domain executive notification message
     def save_executive_message(
         self, a_type, csv_name, clientgroup, legalentity, createdby, unitids,
         reason, declined_count
@@ -472,6 +477,7 @@ class SourceDB(object):
             createdby, frmApproveAssignStatutoryBulkUpload, msg
         )
 
+    # save domain manager notification message
     def save_manager_message(
         self, csv_name, domainname, unitname, createdby, unitids
     ):
@@ -503,6 +509,7 @@ class SourceDB(object):
             createdby, frmAssignStatutoryBulkUpload, msg
         )
 
+    # get country_id and legal_entity_id by legal_entity_name
     def get_country_id(self):
         country_id = 0
         legal_entity_id = 0
@@ -520,6 +527,7 @@ class SourceDB(object):
                 legal_entity_id = le["legal_entity_id"]
         return country_id, legal_entity_id
 
+    # commit database after execute query
     def source_commit(self):
         self._source_db.commit()
 
@@ -556,6 +564,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             "inactive_error": 0
         }
 
+    # compare declared csv column with uploaded csv column heading
     def compare_csv_columns(self):
         res = collections.Counter(
             self._csv_column_name) == collections.Counter(self._csv_header)
@@ -566,6 +575,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         rType: dictionary
     '''
 
+    # check deplicate row in uploaded csv file
     def check_duplicate_in_csv(self):
         seen = set()
         for d in self._source_data:
@@ -576,6 +586,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         if len(seen) != len(self._source_data):
             raise ValueError("Duplicate data found in CSV")
 
+    # check duplicate compliance for same unit in csv file
     def check_duplicate_compliance_for_same_unit_in_csv(self):
         # self._source_data.sort(key=lambda x: (
         #     x["Domain"], x["Unit_Code"], x["Statutory_Provision"],
@@ -599,6 +610,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 ])
         return duplicate_compliance, duplicate_compliance_row
 
+    # check uploaded and downloaded compliance count for unit in csv file
     def check_uploaded_count_in_csv(self):
         unit_names = []
         for k, v in groupby(self._source_data, key=lambda s: (
@@ -623,10 +635,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 "same for unit %s" % (','.join(unit_names))
             raise ValueError(str(error_msg))
 
+    # get master table related values while upload csv
     def get_master_table_info(self):
-        # self._source_data.sort(key=lambda x: (
-        #     x["Domain"], x["Unit_Code"]
-        # ))
         self._domain_names = []
         self._domain_ids = []
         for k, v in groupby(self._source_data, key=lambda s: (
@@ -678,6 +688,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                         grouped_list[0].get("Unit_Code")).get("unit_id")
                     )
 
+    # check invalid compliance in csv while upload
     def check_invalid_compliance_in_csv(self, data):
         client_group = data.get("Client_Group")
         legal_entity = data.get("Legal_Entity")
@@ -716,6 +727,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     res.append(msg)
             return res
 
+    # check uploaded csv validation process
     def check_validation(
         self, res, row_idx, data, duplicate_compliance_row, error_count,
         mapped_header_dict
@@ -815,6 +827,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                         res = self.make_error_desc(res, dup_error)
         return res, mapped_header_dict, error_count
 
+    # call perform validation function
     def perform_validation(self):
         mapped_error_dict = {}
         mapped_header_dict = {}
@@ -883,6 +896,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 mapped_error_dict, mapped_header_dict
             )
 
+    # frame invalid return function while upload csv
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
         fileString = self._csv_name.split('.')
         file_name = "%s_%s.%s" % (
@@ -916,6 +930,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             "invalid": invalid
         }
 
+    # frame valid return function while upload csv
     def make_valid_return(self, mapped_error_dict, mapped_header_dict):
             invalid = len(mapped_error_dict.keys())
             total = len(self._source_data)
@@ -944,11 +959,13 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self._csv_name = None
         self._unit_ids = None
 
+    # get uploaded details by csv_id for approval process
     def get_source_data(self):
         self._source_data = self._db.call_proc(
             "sp_assign_statutory_by_csvid", [self._csv_id]
         )
 
+    # perform validate records before submit record to main db
     def perform_validation_before_submit(self):
         declined_count = 0
         self._declined_row_idx = {}
@@ -1038,6 +1055,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
         return self._declined_row_idx
 
+    # frame record for main db while approval process
     def frame_data_for_main_db_insert(self, user_id):
         self.get_source_data()
         self._source_data.sort(key=lambda x: (
@@ -1076,6 +1094,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 value.get("uploaded_by"), value.get("uploaded_on")
             )
 
+    # frame data for system rejected information while approval process
     def make_rejection(self, declined_info, user_id):
         try:
             created_on = get_date_time()
