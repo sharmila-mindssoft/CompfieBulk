@@ -434,7 +434,7 @@ BEGIN
       t6.domain_id,
       -- t6.compliance_id AS assigned_compid,
       t4.unit_id AS c_unit_id,
-      t1.domain_id
+      t1.domain_id, t.statutory_mapping
     FROM    tbl_compliances AS t1
       INNER JOIN
           tbl_statutory_mappings AS t ON t1.statutory_mapping_id = t.statutory_mapping_id
@@ -757,3 +757,18 @@ DELIMITER ;
 
 -- Remove procedure
 DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_is_valid_le`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_is_valid_le`(
+    IN le_name VARCHAR(50), client_group_name VARCHAR(50)
+)
+BEGIN
+  SELECT count(legal_entity_id) AS cntFROM tbl_legal_entities 
+  WHERE legal_entity_name = le_name and client_id = (
+    SELECT client_id from tbl_client_groups where group_name = client_group_name
+  ) 
+END //
+DELIMITER 

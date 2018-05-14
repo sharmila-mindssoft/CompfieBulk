@@ -109,8 +109,9 @@ def write_data_to_excel(
     file_src_path, file_name, headers, column_data,
     data_error_dict, header_dict, sheet_name
 ):
-
-    file_path = os.path.join(file_src_path, file_name)
+    if not os.path.exists(file_src_path):
+        os.makedirs(file_src_path)
+    file_path = os.path.join(file_src_path, file_name)        
     workbook = xlsxwriter.Workbook(file_path)
     worksheet = workbook.add_worksheet(sheet_name)
     worksheet.set_column('A:A', 30)

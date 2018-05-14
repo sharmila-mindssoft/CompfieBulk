@@ -164,18 +164,19 @@ def get_download_assing_statutory_list(
         return p_legislation, s_legislation
 
     ac_list = []
-    for r in result[1]:
-        p_legislation, s_legislation = status_list(r["statutory_mapping_id"])
-        if s_legislation == p_legislation:
-            s_legislation = ""
-        ac_tuple = (
-            cl_name, le_name, r["domain_name"], r["organizations"],
-            r["unit_code"], r["unit_name"], r["location"],
-            p_legislation.strip(), s_legislation.strip(),
-            r["statutory_provision"], r["compliance_task_name"],
-            r["compliance_description"]
-        )
-        ac_list.append(ac_tuple)
+    if result:
+        for r in result[1]:
+            p_legislation, s_legislation = status_list(r["statutory_mapping_id"])
+            if s_legislation == p_legislation:
+                s_legislation = ""
+            ac_tuple = (
+                cl_name, le_name, r["domain_name"], r["organizations"],
+                r["unit_code"], r["unit_name"], r["location"],
+                p_legislation.strip(), s_legislation.strip(),
+                r["statutory_provision"], r["compliance_task_name"],
+                r["compliance_description"]
+            )
+            ac_list.append(ac_tuple)
 
     db.call_proc("sp_delete_assign_statutory_template", (
         le_name, domain_names, unit_names
