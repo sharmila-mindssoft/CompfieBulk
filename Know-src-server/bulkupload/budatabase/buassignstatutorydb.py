@@ -294,6 +294,8 @@ def save_assign_statutory_data(db, csv_id, csv_data):
     :param
         db: database object
         session_user: logged in user details
+        cl_id: client_id 
+        le_id: legal_entity_id
     :type
         db: Object
         session_user: Object
@@ -322,6 +324,21 @@ def get_pending_list(db, cl_id, le_id, session_user):
     return csv_data
 
 
+########################################################
+'''
+    returns master details for filter process in approval page
+    :param
+        db: database object
+        csv_id: parent table id
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of pending csv data Object
+    rtype:
+        result: List
+'''
+########################################################
 def get_assign_statutory_filters_for_approve(db, csv_id):
     data = db.call_proc_with_multiresult_set(
         "sp_assign_statutory_filter_list", [csv_id], 7
@@ -369,6 +386,24 @@ def get_assign_statutory_filters_for_approve(db, csv_id):
     )
 
 
+########################################################
+'''
+    returns AssignStatutoryData by csv_id
+    :param
+        db: database object
+        session_user : user id who currently logged in
+        request_frame: api Request class object
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of assign statutory data for approval Object
+    rtype:
+        result: List
+'''
+########################################################
+
+
 def get_assign_statutory_by_csv_id(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     f_count = request_frame.f_count
@@ -408,6 +443,23 @@ def get_assign_statutory_by_csv_id(db, request_frame, session_user):
         upload_on,  as_data
     )
 
+########################################################
+'''
+    returns AssignStatutoryData by filtered page
+    :param
+        db: database object
+        session_user : user id who currently logged in
+        request_frame: api Request class object
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of assign statutory data for approval Object
+    rtype:
+        result: List
+'''
+########################################################
+
 
 def get_assign_statutory_by_filter(db, request_frame, session_user):
     csv_id = request_frame.csv_id
@@ -440,7 +492,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
 
     file_name = header_info[0]["csv_name"].split('.')
     remove_code = file_name[0].split('_')
-    csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
+    csv_name = "%s" % ('_'.join(remove_code[:-1]))
     upload_on = header_info[0]["uploaded_on"]
     upload_by = header_info[0]["uploaded_by"]
 

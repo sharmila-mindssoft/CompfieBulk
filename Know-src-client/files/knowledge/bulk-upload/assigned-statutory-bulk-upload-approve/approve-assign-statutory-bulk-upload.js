@@ -1223,8 +1223,12 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
         dNames = dNames.join();
     if (uNames != null)
         uNames = uNames.join();
-    if (pLeg != null)
+    if (pLeg != null){
+        for(var i=0;i<pLeg.length;i++){
+            pLeg[i] = pLeg[i].replace(',', '|')
+        }
         pLeg = pLeg.join();
+    }
     if (sLeg == "")
         sLeg = null;
     if (sPro == "")
