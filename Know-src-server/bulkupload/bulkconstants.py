@@ -18,6 +18,9 @@ MAX_REJECTED_COUNT = 20
 
 TEMP_FILE_SERVER = "http://localhost:8083/temp/"
 
+#
+# Constants For Bulk Upload Reports & Rejected
+#
 REJECTED_DOWNLOAD_PATH = os.path.join(
     ROOT_PATH, "..", "..", "rejected-downloads"
 )
@@ -25,3 +28,7 @@ REJECTED_DOWNLOAD_BASE_PATH = "/knowledge/rejected/downloads/"
 
 SYSTEM_REJECTED_BY = "COMPFIE"
 REJECTED_FILE_DOWNLOADCOUNT = 2
+
+#
+# Constants For Bulk Upload Reports & Rejected;
+#

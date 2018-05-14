@@ -97,8 +97,11 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
     if res_data["return_status"] is True :
         current_date_time = get_date_time_in_date()
         str_current_date_time = datetime_to_string(current_date_time)
+        unit_id = res_data["unit_id"]
+        domain_id = res_data["domain_id"]
+
         csv_args = [
-            "1", request_frame.legal_entity_id, "1","1","1",
+            "1", request_frame.legal_entity_id, domain_id, unit_id,"1",
             csv_name, session_user,str_current_date_time, res_data["total"],res_data["doc_count"],"0", "0"
         ]
 
@@ -121,16 +124,26 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
 
     return result
 
-def process_saveBulkRecords(db, request_frame, session_user):
 
+def process_saveBulkRecords(db, request_frame, session_user):
+    print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     csv_id = request_frame.new_csv_id
+    print "csv_id>>> ", csv_id
     dataResult = getPastRecordData(db, csv_id)
 
     cObj = ValidateCompletedTaskForSubmit(
-        db, csv_id, dataResult,  session_user)
+        db, csv_id, dataResult, session_user)
 
-    print "bucompletedtaskcurrentyearcontroller>request_frame.legal_entity_id>>", request_frame.legal_entity_id
-    if cObj.frame_data_for_main_db_insert(db, dataResult, request_frame.legal_entity_id, session_user) is True:
+    print "cobj.doccount>> ", cObj._doc_count
+
+    # if cObj._doc_count > 0:
+    #     cObj.document_download_process_initiate(csv_id)
+
+    print "legal_entity_id>>", request_frame.legal_entity_id
+
+    if cObj.frame_data_for_main_db_insert(
+        db, dataResult, request_frame.legal_entity_id, session_user
+    ) is True:
         result = bu_ct.saveBulkRecordSuccess()
     else:
         result = []

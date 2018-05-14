@@ -40,7 +40,7 @@ CAPTCHA_LENGTH = 6
 NO_OF_FAILURE_ATTEMPTS = 3
 FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js"]
 FILE_MAX_LIMIT = 1024 * 1024 * 50  # 50 MB
-SESSION_CUTOFF = 15   # minutes
+SESSION_CUTOFF = 150   # minutes
 REGISTRATION_EXPIRY = 72  # Hours
 DOWNLOAD_EXPIRY = 48  # Hours
 
