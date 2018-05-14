@@ -440,7 +440,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
 
     file_name = header_info[0]["csv_name"].split('.')
     remove_code = file_name[0].split('_')
-    csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
+    csv_name = "%s" % ('_'.join(remove_code[:-1]))
     upload_on = header_info[0]["uploaded_on"]
     upload_by = header_info[0]["uploaded_by"]
 

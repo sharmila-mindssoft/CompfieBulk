@@ -1352,7 +1352,7 @@ BEGIN
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid
     AND IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
     AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_name), 1)
-    AND IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
+    AND IF(p_legis IS NOT NULL, FIND_IN_SET(REPLACE(t2.perimary_legislation, ',', '|'), p_legis), 1)
     AND IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     AND IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
@@ -1375,7 +1375,7 @@ BEGIN
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid
     AND IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
     AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_name), 1)
-    AND IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
+    AND IF(p_legis IS NOT NULL, FIND_IN_SET(REPLACE(t2.perimary_legislation, ',', '|'), p_legis), 1)
     AND IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     AND IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)

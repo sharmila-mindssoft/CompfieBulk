@@ -182,6 +182,8 @@ class SourceDB(object):
                     return "Status Inactive"
                 if data.get("is_closed") == 1:
                     return "Status Inactive"
+                if data.get("is_approved") == 0:
+                    return "Status Inactive"
         return True
 
     def check_client_group(self, group_name):

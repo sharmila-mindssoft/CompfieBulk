@@ -534,10 +534,11 @@ CREATE PROCEDURE `sp_bu_as_user_legal_entities`(
 )
 BEGIN
     -- legal entity details
-    select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name, t1.is_closed
-     from tbl_legal_entities as t1
-     inner join tbl_user_units as t2
-     on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid;
+    select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name, t1.is_closed,
+    t1.is_approved
+    from tbl_legal_entities as t1
+    inner join tbl_user_units as t2
+    on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid;
 END //
 
 DELIMITER ;
