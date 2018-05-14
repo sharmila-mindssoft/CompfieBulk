@@ -46,12 +46,12 @@ def frame_file_name(file_name):
 def convert_base64_to_file(src_path, file_name, file_content):
     fileSplitString = file_name.split('.')
     framed_file_name = frame_file_name(fileSplitString[0])
-
+    file_folder_path = "%s/csv/" % (src_path)
     file_path = "%s/csv/%s" % (src_path, framed_file_name)
 
-    if os.path.exists(file_path):
-        framed_file_name = frame_file_name(fileSplitString[0])
-
+    if not os.path.exists(file_folder_path):
+        os.makedirs(file_folder_path)
+    framed_file_name = frame_file_name(fileSplitString[0])
     if file_content is not None:
         with io.FileIO(file_path, "wb") as fn:
             fn.write(file_content.decode('base64'))

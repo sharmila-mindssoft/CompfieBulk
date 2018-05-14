@@ -9,7 +9,7 @@ BULKUPLOAD_INVALID_PATH = os.path.join(ROOT_PATH, "..", "..", "bulkuploadinvalid
 REJECTED_DOWNLOAD_PATH = os.path.join(ROOT_PATH, "..", "..", "rejected-downloads")
 REJECTED_DOWNLOAD_BASE_PATH = "/knowledge/rejected/downloads/"
 
-CSV_DOWNLOAD_URL = "/knowledge/downloadcsv"
+CSV_DOWNLOAD_URL = "/download/csv"
 
 BULK_UPLOAD_DB_HOST = "localhost"
 BULK_UPLOAD_DB_PORT = 3306
