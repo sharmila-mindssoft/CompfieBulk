@@ -32,7 +32,8 @@ __all__ = [
     "delete_action_after_approval",
     "verify_user_units",
     "get_domain_executive",
-    "get_form_categories"
+    "get_form_categories",
+    "get_country_name_by_legal_entity_id"
     ]
 
 ########################################################
@@ -129,7 +130,7 @@ def get_download_assing_statutory_list(
     unit_names = ",".join(str(e) for e in u_names)
 
     column = [
-        "client_group", "legal_entity", "domain", "organization",
+        "client_group", "country", "legal_entity", "domain", "organization",
         "unit_code", "unit_name", "unit_location", "perimary_legislation",
         "secondary_legislation", "statutory_provision", "compliance_task_name",
         "compliance_description"
@@ -169,7 +170,8 @@ def get_download_assing_statutory_list(
         if s_legislation == p_legislation:
             s_legislation = ""
         ac_tuple = (
-            cl_name, le_name, r["domain_name"], r["organizations"],
+            cl_name, r["country_name"], le_name,
+            r["domain_name"], r["organizations"],
             r["unit_code"], r["unit_name"], r["location"],
             p_legislation.strip(), s_legislation.strip(),
             r["statutory_provision"], r["compliance_task_name"],
@@ -294,7 +296,7 @@ def save_assign_statutory_data(db, csv_id, csv_data):
     :param
         db: database object
         session_user: logged in user details
-        cl_id: client_id 
+        cl_id: client_id
         le_id: legal_entity_id
     :type
         db: Object
@@ -856,6 +858,18 @@ def get_domain_executive(db, session_user):
             )
         )
     return domain_users
+
+
+def get_country_name_by_legal_entity_id(le_id):
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc(
+        "sp_bu_get_country_by_legal_entity_id", [le_id]
+    )
+    _source_db.close()
+
+    return result[0]["country_id"], result[0]["country_name"]
 
 
 def connectKnowledgeDB():

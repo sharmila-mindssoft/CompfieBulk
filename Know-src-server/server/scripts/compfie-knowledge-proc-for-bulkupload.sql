@@ -421,6 +421,7 @@ BEGIN
     -- get compliances
     SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
       (SELECT domain_name FROM tbl_domains WHERE domain_id = t1.domain_id) AS domain_name,
+      (SELECT country_name FROM tbl_countries WHERE country_id = t1.country_id) AS country_name,
       GROUP_CONCAT(t7.organisation_name) AS organizations,
       t4.unit_code,
       t4.unit_name,
@@ -486,7 +487,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_bu_as_user_legal_entities`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_as_user_legal_entities`(
-    IN uid INT(11)
+    IN uid INT(11), client_id_ INT(11), country_id_ INT(11)
 )
 BEGIN
     -- legal entity details
@@ -494,7 +495,8 @@ BEGIN
     t1.is_approved
     from tbl_legal_entities as t1
     inner join tbl_user_units as t2
-    on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid;
+    on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid
+    AND t1.country_id = country_id_ AND t1.client_id = client_id_;
 END //
 DELIMITER ;
 
@@ -745,16 +747,68 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_bu_get_country_by_legal_entity_name`;
+DROP PROCEDURE IF EXISTS `sp_bu_get_legal_entity_id_by_name`;
 DELIMITER //
-CREATE PROCEDURE `sp_bu_get_country_by_legal_entity_name`(
-    IN legal_entity_name_ text
+CREATE PROCEDURE `sp_bu_get_legal_entity_id_by_name`(
+    IN client_id_ INT(11), country_id_ INT(11), legal_entity_name_ text
 )
 BEGIN
-    SELECT country_id, legal_entity_id FROM tbl_legal_entities
-    WHERE legal_entity_name = legal_entity_name_;
+    SELECT legal_entity_id FROM tbl_legal_entities
+    WHERE legal_entity_name = legal_entity_name_ AND client_id = client_id_
+    AND country_id = country_id_;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_country_by_legal_entity_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_country_by_legal_entity_id`(
+    IN legal_entity_id_ INT(11)
+)
+BEGIN
+    SELECT t1.country_id, t2.country_name
+    FROM tbl_legal_entities t1
+    INNER JOIN tbl_countries t2 ON t1.country_id = t2.country_id
+    WHERE t1.legal_entity_id = legal_entity_id_;
 END //
 DELIMITER ;
 
 -- Remove procedure
 DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;
+
+DROP PROCEDURE IF EXISTS `sp_bu_as_user_countries`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_as_user_countries`(
+   uid INT(11), le_id INT(11)
+)
+BEGIN
+  SELECT t1.country_id, t1.country_name, t1.is_active
+  FROM tbl_countries t1
+  INNER JOIN tbl_user_countries t2 ON t1.country_id = t2.country_id
+  INNER JOIN tbl_legal_entities t3 ON t1.country_id = t3.country_id
+  WHERE t2.user_id = uid AND t3.legal_entity_id = le_id;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_group_id_by_name`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_group_id_by_name`(
+    IN group_name_ text
+)
+BEGIN
+    SELECT client_id FROM tbl_client_groups
+    WHERE group_name = group_name_;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_country_id_by_name`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_country_id_by_name`(
+    IN country_name_ text
+)
+BEGIN
+    SELECT country_id FROM tbl_countries
+    WHERE country_name = country_name_;
+END //
+DELIMITER ;

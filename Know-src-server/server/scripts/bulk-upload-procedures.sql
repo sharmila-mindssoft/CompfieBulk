@@ -214,15 +214,15 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_download_assign_statutory_template`;
 DELIMITER //
 CREATE PROCEDURE `sp_download_assign_statutory_template`(
-    IN clientgroup_name TEXT, le_name TEXT, domain_name TEXT, unitname_ TEXT
+    IN clientgroup_name TEXT, country_name TEXT, le_name TEXT, domain_name TEXT, unitname_ TEXT
 )
 BEGIN
     SELECT
-    client_group, legal_entity, domain, organization, unit_code, unit_name,
+    client_group, country, legal_entity, domain, organization, unit_code, unit_name,
     unit_location, perimary_legislation, secondary_legislation, statutory_provision, compliance_task_name,
     compliance_description
     FROM tbl_download_assign_statutory_template WHERE
-    client_group = clientgroup_name AND legal_entity = le_name AND find_in_set (domain, domain_name)
+    client_group = clientgroup_name AND country = country_name AND legal_entity = le_name AND find_in_set (domain, domain_name)
     AND find_in_set (unit_name, unitname_)
     ORDER BY domain, unit_code;
 END //
