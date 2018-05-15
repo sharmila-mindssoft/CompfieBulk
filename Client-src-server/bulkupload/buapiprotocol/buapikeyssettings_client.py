@@ -75,7 +75,7 @@ bu_api_params = {
     'uploaded_on': make_text_field(is_optional=True),
     'total_records': make_int_field(),
     'total_documents': make_int_field(),
-    'uploaded_documents': make_int_field(),
+    'bu_uploaded_documents': make_int_field(),
     'remaining_documents': make_int_field(),
     'doc_names': make_vector_type_string(length=250, is_optional=True),
     'invalid_file_format': make_int_field(),
