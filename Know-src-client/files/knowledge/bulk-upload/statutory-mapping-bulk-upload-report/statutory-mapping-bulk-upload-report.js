@@ -426,10 +426,10 @@ function loadCurrentUserDetails() {
     console.log("USER_CATEGORY_ID "+ USER_CATEGORY_ID);
     console.log("KE_USER_CATEGORY "+ KE_USER_CATEGORY);
     if (USER_CATEGORY_ID == KE_USER_CATEGORY) {
-        alert("QWEETERTETR")
         console.log("USER_CATEGORY_ID" +"=="+ "KE_USER_CATEGORY");
 
         console.log(USER_CATEGORY_ID +"=="+ KE_USER_CATEGORY);
+
         // KE-Name  : Knowledge-Executive
         knowledgeName = user.employee_code + " - " + user.employee_name;
         console.log("IN REMOVE CLASS DEFAULT DISPLAY NONE");

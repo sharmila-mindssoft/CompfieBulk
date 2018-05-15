@@ -53,7 +53,9 @@ def process_bu_completed_task_current_year_request(request, db, session_user):
         result = upload_completed_task_current_year_csv(db, request_frame, session_user)
 
     if type(request_frame) is bu_ct.saveBulkRecords:
-        result = process_saveBulkRecords(db, request_frame, session_user)
+        result = process_saveBulkRecords(
+            db, request_frame, session_user, request.session_token
+        )
 
     if type(request_frame) is bu_ct.GetDownloadData:
         result = process_get_bulk_download_data(
@@ -64,9 +66,12 @@ def process_bu_completed_task_current_year_request(request, db, session_user):
 
 ########################################################
 
+
 def get_completed_task_csv_list(db, request_frame, session_user):
 
-    csv_data = getCompletedTaskCSVList(db, session_user, request_frame.legal_entity_list)
+    csv_data = getCompletedTaskCSVList(
+        db, session_user, request_frame.legal_entity_list
+    )
     # print "csv_data>>", csv_data
     result = bu_ct.GetCompletedTaskCsvUploadedListSuccess(csv_data)
     print "get_completed_task_csv_list>result>>", result
@@ -101,16 +106,21 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
         domain_id = res_data["domain_id"]
 
         csv_args = [
-            "1", request_frame.legal_entity_id, domain_id, unit_id,"1",
-            csv_name, session_user,str_current_date_time, res_data["total"],res_data["doc_count"],"0", "0"
+            "1", request_frame.legal_entity_id, domain_id, unit_id, "1",
+            csv_name, session_user, str_current_date_time, res_data["total"],
+            res_data["doc_count"], "0", "0"
         ]
 
-        new_csv_id = save_completed_task_current_year_csv(db, csv_args, session_user)
+        new_csv_id = save_completed_task_current_year_csv(
+            db, csv_args, session_user
+        )
         if new_csv_id:
             if save_completed_task_data(db, new_csv_id, res_data["data"]) is True:
                 result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
                     res_data["total"], res_data["valid"], res_data["invalid"],
-                    new_csv_id, csv_name, res_data["doc_count"], res_data["doc_names"])
+                    new_csv_id, csv_name, res_data["doc_count"],
+                    res_data["doc_names"], unit_id, domain_id
+                )
 
         # csv data save to temp db
     else:
@@ -125,9 +135,13 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
     return result
 
 
-def process_saveBulkRecords(db, request_frame, session_user):
-    print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+def process_saveBulkRecords(db, request_frame, session_user, session_token):
+    print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", session_token
     csv_id = request_frame.new_csv_id
+    country_id = request_frame.country_id
+    legal_id = request_frame.legal_entity_id
+    domain_id = request_frame.domain_id
+    unit_id = request_frame.unit_id
     print "csv_id>>> ", csv_id
     dataResult = getPastRecordData(db, csv_id)
 
@@ -137,7 +151,9 @@ def process_saveBulkRecords(db, request_frame, session_user):
     print "cobj.doccount>> ", cObj._doc_count
 
     # if cObj._doc_count > 0:
-    #     cObj.document_download_process_initiate(csv_id)
+    #     cObj.document_download_process_initiate(
+    #         csv_id, country_id, legal_id, domain_id, unit_id, session_token
+    #     )
 
     print "legal_entity_id>>", request_frame.legal_entity_id
 

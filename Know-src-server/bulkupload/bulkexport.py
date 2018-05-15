@@ -4,6 +4,9 @@ import csv
 import uuid
 import datetime
 import mysql.connector
+from .budatabase.buassignstatutorydb import (
+    get_country_name_by_legal_entity_id
+)
 from server.constants import (
     CSV_DOWNLOAD_URL, KNOWLEDGE_DB_HOST,
     KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
@@ -66,10 +69,16 @@ class ConvertJsonToCSV(object):
         le_name = request.le_name
         domain_names = ",".join(str(e) for e in request.d_names)
         unit_names = ",".join(str(e) for e in request.u_names)
+        country_id, country_name = get_country_name_by_legal_entity_id(
+            request.le_id
+        )
 
         download_assign_compliance_list = db.call_proc(
             'sp_download_assign_statutory_template',
-            [client_group_name, le_name, domain_names, unit_names]
+            [
+                client_group_name, country_name, le_name,
+                domain_names, unit_names
+            ]
         )
 
         sno = 0
@@ -77,6 +86,7 @@ class ConvertJsonToCSV(object):
             for ac in download_assign_compliance_list:
                 sno = sno + 1
                 client_group = ac["client_group"]
+                country = ac["country"]
                 legal_entity = ac["legal_entity"]
                 domain = ac["domain"]
                 organization = ac["organization"].replace(",", CSV_DELIMITER)
@@ -91,8 +101,8 @@ class ConvertJsonToCSV(object):
 
                 if not is_header:
                     csv_headers = [
-                        "S.No", "Client_Group", "Legal_Entity", "Domain",
-                        "Organization", "Unit_Code", "Unit_Name",
+                        "S.No", "Client_Group", "Country", "Legal_Entity",
+                        "Domain", "Organization", "Unit_Code", "Unit_Name",
                         "Unit_Location", "Primary_Legislation",
                         "Secondary_Legislation", "Statutory_Provision",
                         "Compliance_Task", "Compliance_Description",
@@ -103,11 +113,11 @@ class ConvertJsonToCSV(object):
                     self.write_csv(csv_headers, None)
                     is_header = True
                 csv_values = [
-                    sno, client_group, legal_entity, domain, organization,
-                    unit_code, unit_name, unit_location, perimary_legislation,
-                    secondary_legislation, statutory_provision,
-                    compliance_task_name, compliance_description,
-                    "", "", ""
+                    sno, client_group, country, legal_entity, domain,
+                    organization, unit_code, unit_name, unit_location,
+                    perimary_legislation, secondary_legislation,
+                    statutory_provision, compliance_task_name,
+                    compliance_description, "", "", ""
                 ]
                 self.write_csv(None, csv_values)
         else:

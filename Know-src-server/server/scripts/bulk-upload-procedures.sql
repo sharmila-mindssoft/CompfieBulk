@@ -214,15 +214,15 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_download_assign_statutory_template`;
 DELIMITER //
 CREATE PROCEDURE `sp_download_assign_statutory_template`(
-    IN clientgroup_name TEXT, le_name TEXT, domain_name TEXT, unitname_ TEXT
+    IN clientgroup_name TEXT, country_name TEXT, le_name TEXT, domain_name TEXT, unitname_ TEXT
 )
 BEGIN
     SELECT
-    client_group, legal_entity, domain, organization, unit_code, unit_name,
+    client_group, country, legal_entity, domain, organization, unit_code, unit_name,
     unit_location, perimary_legislation, secondary_legislation, statutory_provision, compliance_task_name,
     compliance_description
     FROM tbl_download_assign_statutory_template WHERE
-    client_group = clientgroup_name AND legal_entity = le_name AND find_in_set (domain, domain_name)
+    client_group = clientgroup_name AND country = country_name AND legal_entity = le_name AND find_in_set (domain, domain_name)
     AND find_in_set (unit_name, unitname_)
     ORDER BY domain, unit_code;
 END //
@@ -1298,7 +1298,7 @@ BEGIN
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid
     AND IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
     AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_name), 1)
-    AND IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
+    AND IF(p_legis IS NOT NULL, FIND_IN_SET(REPLACE(t2.perimary_legislation, ',', '|'), p_legis), 1)
     AND IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     AND IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
@@ -1321,7 +1321,7 @@ BEGIN
     t1.csv_assign_statutory_id  = t2.csv_assign_statutory_id WHERE t1.csv_assign_statutory_id = csvid
     AND IF(domain_name IS NOT NULL, FIND_IN_SET(t2.domain, domain_name), 1)
     AND IF(unit_name IS NOT NULL, FIND_IN_SET(t2.unit_code, unit_name), 1)
-    AND IF(p_legis IS NOT NULL, FIND_IN_SET(t2.perimary_legislation, p_legis), 1)
+    AND IF(p_legis IS NOT NULL, FIND_IN_SET(REPLACE(t2.perimary_legislation, ',', '|'), p_legis), 1)
     AND IF(s_legis IS NOT NULL, t2.secondary_legislation = s_legis, 1)
     AND IF(s_prov IS NOT NULL, t2.statutory_provision = s_prov, 1)
     AND IF(c_task IS NOT NULL, t2.compliance_task_name = c_task, 1)
@@ -1702,11 +1702,12 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_check_upload_compliance_count_for_unit`;
 DELIMITER //
 CREATE PROCEDURE `sp_check_upload_compliance_count_for_unit`(
-IN legalentityname_ VARCHAR(50), domain_ VARCHAR(50), unitcode_ VARCHAR(50)
+IN groupname_ VARCHAR(50), country_ VARCHAR(50), legalentityname_ VARCHAR(50), domain_ VARCHAR(50), unitcode_ VARCHAR(50)
 )
 BEGIN
   SELECT COUNT(1) AS count FROM tbl_download_assign_statutory_template WHERE
-  legal_entity = legalentityname_ AND domain = domain_ AND unit_code = unitcode_;
+  client_group = groupname_ AND country = country_ AND legal_entity = legalentityname_
+  AND domain = domain_ AND unit_code = unitcode_;
 END //
 DELIMITER ;
 

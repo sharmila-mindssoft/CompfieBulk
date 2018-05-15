@@ -404,29 +404,18 @@ CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
 )
 BEGIN
     SET SESSION group_concat_max_len = 1000000;
-
-    -- mapped statu names
-    SELECT t2.statutory_name, t1.statutory_id, IFNULL(t2.parent_ids, 0) AS parent_ids,
-    t2.parent_names, t1.statutory_mapping_id
-    FROM tbl_mapped_statutories AS t1
-    INNER JOIN tbl_statutories AS t2 ON t1.statutory_id = t2.statutory_id
-    INNER JOIN tbl_statutory_mappings AS t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
-    INNER JOIN tbl_mapped_locations AS t4 ON t1.statutory_mapping_id = t4.statutory_mapping_id
-    INNER JOIN (SELECT a.geography_id,b.parent_ids,a.unit_id FROM tbl_units a
-      INNER JOIN tbl_geographies b ON a.geography_id = b.geography_id
-      WHERE find_in_set(a.unit_id, unitid)) t7 ON
-      (t4.geography_id = t7.geography_id OR find_in_set(t4.geography_id,t7.parent_ids))
-    ORDER BY TRIM(LEADING '[' FROM t3.statutory_mapping);
-
     -- get compliances
     SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
       (SELECT domain_name FROM tbl_domains WHERE domain_id = t1.domain_id) AS domain_name,
+      (SELECT country_name FROM tbl_countries WHERE country_id = t1.country_id) AS country_name,
       GROUP_CONCAT(t7.organisation_name) AS organizations,
       t4.unit_code,
       t4.unit_name,
       (SELECT geography_name FROM tbl_geographies WHERE geography_id = t4.geography_id) AS location,
-      SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping))),'>>',1),'>>',- 1) AS primary_legislation,
-      SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1) AS secondary_legislation,
+      SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(t.statutory_mapping,3),1, CHAR_LENGTH(t.statutory_mapping) -4), '>>', 1),'",',1) AS primary_legislation,
+      TRIM(SUBSTRING(SUBSTRING(
+      SUBSTRING_INDEX(SUBSTRING(SUBSTRING(t.statutory_mapping,3),1,CHAR_LENGTH(t.statutory_mapping) -4),'>>',2),
+      CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(t.statutory_mapping,3),1, CHAR_LENGTH(t.statutory_mapping) -4), '>>', 1))+1),3)) AS secondary_legislation,
       t1.statutory_provision,
       t1.compliance_task AS compliance_task_name,
       t1.compliance_description,
@@ -486,14 +475,16 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_bu_as_user_legal_entities`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_as_user_legal_entities`(
-    IN uid INT(11)
+    IN uid INT(11), client_id_ INT(11), country_id_ INT(11)
 )
 BEGIN
     -- legal entity details
-    SELECT DISTINCT t1.client_id, t1.legal_entity_id, t1.legal_entity_name, t1.is_closed
-     FROM tbl_legal_entities AS t1
-     INNER JOIN tbl_user_units AS t2
-     ON t1.legal_entity_id = t2.legal_entity_id WHERE t2.user_id = uid;
+    select distinct t1.client_id, t1.legal_entity_id, t1.legal_entity_name, t1.is_closed,
+    t1.is_approved
+    from tbl_legal_entities as t1
+    inner join tbl_user_units as t2
+    on t1.legal_entity_id = t2.legal_entity_id where t2.user_id = uid
+    AND t1.country_id = country_id_ AND t1.client_id = client_id_;
 END //
 DELIMITER ;
 
@@ -615,16 +606,17 @@ CREATE PROCEDURE `sp_bu_get_compliance_id_by_name`(
   domain_id_ INT(11), p_legislation text, s_legislation text
 )
 BEGIN
-  SELECT compliance_id FROM tbl_compliances AS t1
-  INNER JOIN tbl_mapped_statutories AS t2 ON t1.statutory_mapping_id = t2.statutory_mapping_id
-  INNER JOIN tbl_statutories t3 ON t2.statutory_id = t3.statutory_id
-  WHERE
-  t1.domain_id = domain_id_ AND t1.country_id = country_id_
-  AND IF(parent_ids = '', statutory_name = p_legislation, 1)
-  AND IF(parent_ids <> '', statutory_name = s_legislation, 1)
-  AND statutory_provision = s_provision
-  AND compliance_task = c_task
-  AND compliance_description = c_desc;
+  SELECT compliance_id from tbl_compliances as t1
+  INNER JOIN tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+  WHERE 
+  t1.domain_id = domain_id_ and t1.country_id = country_id_ 
+  and SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4), '>>', 1),'",',1) = p_legislation 
+  and TRIM(SUBSTRING(SUBSTRING(
+  SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4),'>>',2),
+  CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4), '>>', 1))+1),3)) = s_legislation
+  and statutory_provision = s_provision 
+  and compliance_task = c_task 
+  and compliance_description = c_desc;
 END //
 DELIMITER ;
 
@@ -744,14 +736,29 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_bu_get_country_by_legal_entity_name`;
+DROP PROCEDURE IF EXISTS `sp_bu_get_legal_entity_id_by_name`;
 DELIMITER //
-CREATE PROCEDURE `sp_bu_get_country_by_legal_entity_name`(
-    IN legal_entity_name_ text
+CREATE PROCEDURE `sp_bu_get_legal_entity_id_by_name`(
+    IN client_id_ INT(11), country_id_ INT(11), legal_entity_name_ text
 )
 BEGIN
-    SELECT country_id, legal_entity_id FROM tbl_legal_entities
-    WHERE legal_entity_name = legal_entity_name_;
+    SELECT legal_entity_id FROM tbl_legal_entities
+    WHERE legal_entity_name = legal_entity_name_ AND client_id = client_id_
+    AND country_id = country_id_;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_country_by_legal_entity_id`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_country_by_legal_entity_id`(
+    IN legal_entity_id_ INT(11)
+)
+BEGIN
+    SELECT t1.country_id, t2.country_name
+    FROM tbl_legal_entities t1
+    INNER JOIN tbl_countries t2 ON t1.country_id = t2.country_id
+    WHERE t1.legal_entity_id = legal_entity_id_;
 END //
 DELIMITER ;
 
@@ -772,3 +779,40 @@ BEGIN
   ) 
 END //
 DELIMITER 
+
+DROP PROCEDURE IF EXISTS `sp_bu_as_user_countries`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_as_user_countries`(
+   uid INT(11), le_id INT(11)
+)
+BEGIN
+  SELECT t1.country_id, t1.country_name, t1.is_active
+  FROM tbl_countries t1
+  INNER JOIN tbl_user_countries t2 ON t1.country_id = t2.country_id
+  INNER JOIN tbl_legal_entities t3 ON t1.country_id = t3.country_id
+  WHERE t2.user_id = uid AND t3.legal_entity_id = le_id;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_group_id_by_name`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_group_id_by_name`(
+    IN group_name_ text
+)
+BEGIN
+    SELECT client_id FROM tbl_client_groups
+    WHERE group_name = group_name_;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_country_id_by_name`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_country_id_by_name`(
+    IN country_name_ text
+)
+BEGIN
+    SELECT country_id FROM tbl_countries
+    WHERE country_name = country_name_;
+END //
+DELIMITER ;

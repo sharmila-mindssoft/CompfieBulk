@@ -659,10 +659,7 @@ ApproveAssignStatutoryBU.prototype.fetchValues = function() {
     var clId = CLIENT_GROUP_ID.val();
     var leId = LEGAL_ENTITY_ID.val();
     var data = null;
-    var uploadedBy = null;
-    var userId = null;
-    var eName = null;
-
+   
     displayLoader();
     bu.getAssignStatutoryForApprove(parseInt(clId),
         parseInt(leId),
@@ -673,14 +670,12 @@ ApproveAssignStatutoryBU.prototype.fetchValues = function() {
                 bu.getDomainUserInfo(function(err, resp) {
                     if (err == null) {
                         statute.userList = resp.domain_executive_info;
-                        for (var i = 0; i < data.length; i++) {
-                            for (var j = 0; j < statute.userList.length; j++) {
-                                uploadedBy = data[i].uploaded_by;
-                                userId = statute.userList[j].user_id;
-                                eName = statute.userList[j].emp_code_name;
-
-                                if (uploadedBy == userId) {
-                                    uploadedBy = eName;
+                        var i;
+                        for (i = 0; i < data.length; i++) {
+                            var j;
+                            for (j = 0; j < statute.userList.length; j++) {
+                                if (data[i].uploaded_by == statute.userList[j].user_id) {
+                                    data[i].uploaded_by = statute.userList[j].emp_code_name;
                                     break;
                                 }
                             }
@@ -1223,8 +1218,12 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
         dNames = dNames.join();
     if (uNames != null)
         uNames = uNames.join();
-    if (pLeg != null)
+    if (pLeg != null){
+        for(var i=0;i<pLeg.length;i++){
+            pLeg[i] = pLeg[i].replace(',', '|')
+        }
         pLeg = pLeg.join();
+    }
     if (sLeg == "")
         sLeg = null;
     if (sPro == "")

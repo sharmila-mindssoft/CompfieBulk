@@ -109,6 +109,7 @@ DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_download_assign_statutory_templat
 CREATE TABLE `compfie_bulkupload`.`tbl_download_assign_statutory_template` (
   `as_id` INT PRIMARY KEY AUTO_INCREMENT not null,
   `client_group` varchar(50) not null,
+  `country` varchar(50) not null,
   `legal_entity` varchar(100) not null,
   `domain` text not null,
   `organization` text not null,
@@ -213,3 +214,4 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_past_data` (
 PRIMARY KEY (`bulk_past_data_id`),
 CONSTRAINT `fk_csv_past_id` FOREIGN KEY (`csv_past_id`) REFERENCES `tbl_bulk_past_data_csv` (`csv_past_id`));
 
+>>>>>>> kart/bulk-upload

@@ -754,4 +754,7 @@ csv_params_as = {
     'Client_Group': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
+    'Country': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
+    ),
 }
