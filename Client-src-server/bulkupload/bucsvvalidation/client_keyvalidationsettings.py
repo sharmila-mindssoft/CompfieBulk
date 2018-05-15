@@ -168,7 +168,8 @@ def parse_csv_dictionary_values(key, val):
     error_count = {
         "mandatory": 0,
         "max_length": 0,
-        "invalid_char": 0
+        "invalid_char": 0,
+        "invalid_date": 0
     }
     csvparam = csv_params.get(key)
 
@@ -193,9 +194,10 @@ def parse_csv_dictionary_values(key, val):
         if _validation_method(val) is False:
             if key == "Due_Date" or key == "Completion_Date" :
                 msg.append(key + " - Invalid Date Format")
+                error_count["invalid_date"] = 1
             else :
                 msg.append(key + " - Invalid character")
-            error_count["invalid_char"] = 1
+                error_count["invalid_char"] = 1
     if len(msg) == 0 :
         return True, error_count
     else :

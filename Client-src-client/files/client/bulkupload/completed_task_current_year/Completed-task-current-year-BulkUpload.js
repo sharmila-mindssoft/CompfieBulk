@@ -47,12 +47,12 @@ var buCtPage = null;
 var TOTALRECORD = $('.totalRecords');
 var VALIDRECORD = $('.validRecords');
 var INVALIDRECORD = $('.invalidRecords');
-var MANDATORYERROR = $('.mandatoryErrors');
+var INVALIDDATE = $('.invaliddate');
 var DUPLICATEERROR = $('.duplicateErrors');
-var STATUSERROR = $('.statusErrors');
+var MANDATORYERROR = $('.mandatoryfieldblank');
 var LENGTHERROR = $('.lengthErrors');
-var INVALIDERROR = $('.invalidErrors');
-var INVALIDFILEFORMATERROR = $('.invalidFileFormat');
+var INACTIVEERROR = $('.masterdatainactive');
+var INVALIDFILEFORMATERROR = $('.invalidfileformat');
 var INVALIDFILENAME = null;
 
 var unit_list_map = {};
@@ -210,11 +210,11 @@ function validateUpload() {
                     VALIDRECORD.text(parseInt(data.valid) - parseInt(data.invalid));
                     INVALIDRECORD.text(data.invalid);
                     INVALIDFILENAME = null;
-                    MANDATORYERROR.text("0");
+                    INVALIDDATE.text("0");
                     DUPLICATEERROR.text("0");
-                    STATUSERROR.text("0");
+                    MANDATORYERROR.text("0");
                     LENGTHERROR.text("0");
-                    INVALIDERROR.text("0");
+                    INACTIVEERROR.text("0");
                     INVALIDFILEFORMATERROR.text(0);
                     console.log("domain id >>> " + data.domain_id);
                     console.log("unit id >>> " + data.unit_id);
@@ -258,13 +258,14 @@ function validateUpload() {
                     var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
                     VALIDRECORD.text(getValidCount);
                     INVALIDRECORD.text(data.invalid);
-                    MANDATORYERROR.text(data.mandatory_error);
+                    INVALIDDATE.text(data.invalid_date);
                     DUPLICATEERROR.text(data.duplicate_error);
-                    STATUSERROR.text(data.inactive_error);
+                    MANDATORYERROR.text(data.mandatory_error);
                     LENGTHERROR.text(data.max_length_error);
                     getInvaliddataCount = parseInt(data.invalid_char_error) +
                         parseInt(data.invalid_data_error);
-                    INVALIDERROR.text(getInvaliddataCount);
+                    // INACTIVEERROR.text(getInvaliddataCount);
+                    INACTIVEERROR.text(data.inactive_error);
                     INVALIDFILEFORMATERROR.text(data.invalid_file_format);
                     $('.dropbtn').show();
                     $('.view-summary').show();
@@ -275,16 +276,19 @@ function validateUpload() {
                     $('#divSuccessFile').hide();
                     $('.divSuccessDocument').hide();
                     $('#divSuccessbutton').hide();
-
-                    csv_path = "/invalid_file/csv/" + INVALIDFILENAME[0] +
+                    base_path = "../download/invalid"
+                    csv_path = base_path + "/csv/" + INVALIDFILENAME[0] +
                         '.csv';
-                    xls_path = "/invalid_file/xlsx/" + INVALIDFILENAME[0] +
+                    xls_path = base_path + "/xlsx/" + INVALIDFILENAME[0] +
                         '.xlsx';
-                    ods_path = "/invalid_file/ods/" + INVALIDFILENAME[0] +
+                    ods_path = base_path + "/ods/" + INVALIDFILENAME[0] +
                         '.ods';
+                    txt_path = base_path + "/txt/" + INVALIDFILENAME[0] +
+                        '.txt';
                     $('#csv').attr("href", csv_path);
                     $('#excel').attr("href", xls_path);
                     $('#ods').attr("href", ods_path);
+                    $('#txt').attr("href", txt_path);
 
                     hideLoader();
                 }
@@ -301,7 +305,7 @@ function validateUpload() {
 document.getElementById("txt").addEventListener("click", function() {
     if (INVALIDFILENAME != null) {
         $.get(
-            "/invalid_file/txt/" + INVALIDFILENAME[0] + ".txt",
+            "../download/invalid/txt/" + INVALIDFILENAME[0] + ".txt",
             function(data) {
                 download(INVALIDFILENAME[0] + ".txt", "text/plain", data);
             },

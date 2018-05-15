@@ -126,7 +126,7 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
             res_data["max_length_error"], res_data["duplicate_error"],
             res_data["invalid_char_error"], res_data["invalid_data_error"],
             res_data["inactive_error"], res_data["total"], res_data["invalid"],
-            res_data["invalid_file_format"]
+            res_data["invalid_file_format"], res_data["invalid_date"]
         )
 
     return result

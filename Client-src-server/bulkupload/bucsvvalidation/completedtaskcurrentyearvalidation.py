@@ -448,7 +448,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 # self._Document_Names = data.get("Document_Name")
 
             res = True
-            error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0}
+            error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0, "invalid_date": 0}
             for key in self._csv_column_name:
                 value = data.get(key)
                 isFound = ""
@@ -457,7 +457,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
 
                 if (key == "Document_Name" and value != '') :
                     self._doc_names.append(value)
-
                 for v in [v.strip() for v in values] :
                     valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
                     if valid_failed is not True :
@@ -469,7 +468,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                             error_count["mandatory"] += error_cnt["mandatory"]
                             error_count["max_length"] += error_cnt["max_length"]
                             error_count["invalid_char"] += error_cnt["invalid_char"]
-
+                            error_count["invalid_date"] += error_cnt["invalid_date"]
                     if v != "":
                         if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
                             unboundMethod = self._validation_method_maps.get(key)
@@ -521,6 +520,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 self._error_summary["mandatory_error"] += error_count["mandatory"]
                 self._error_summary["max_length_error"] += error_count["max_length"]
                 self._error_summary["invalid_char_error"] += error_count["invalid_char"]
+                self._error_summary["invalid_date"] += error_count["invalid_date"]
 
         if invalid > 0 :
             return self.make_invalid_return(mapped_error_dict, mapped_header_dict)
@@ -558,7 +558,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "total": total,
             "invalid": invalid,
             "doc_count": len(set(self._doc_names)),
-            "invalid_file_format": self._error_summary["invalid_file_format"]
+            "invalid_file_format": self._error_summary["invalid_file_format"],
+            "invalid_date": self._error_summary["invalid_date"]
         }
 
 
