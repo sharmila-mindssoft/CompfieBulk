@@ -1,7 +1,6 @@
-{% extends "files/knowledge/common/html/container.html" %}
-{% block content %}
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="container">
-    <div class="row" id="animationSandbox">
+    <div class="row">
         <div class="col-sm-1"> </div>
         <div class="col-sm-10">
             <div class="portlet">
@@ -11,182 +10,126 @@
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <div id="bg-primary1" class="panel-collapse collapse in">
+                <div class="panel-collapse collapse in">
                     <div class="portlet-body">
                         <div class="form-horizontal group-border-dashed">
                             <div class="col-sm-6">
-                              <!--- ClientGroup -->
+                                <!--- ClientGroup -->
                                 <div class="form-group has-feedback">
                                     <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm" id="countryval" value="" tabindex="2" placeholder="Enter Country">
                                         <input type="hidden" id="country">
-                                        <div id="ac-country" class="ac-textbox default-display-none">
-                                          <ul class="width-85"></ul>
+                                        <div id="ac_country" class="ac-textbox default-display-none">
+                                            <ul class="width-85"></ul>
                                         </div>
                                         <i class="form-control-feedback fa fa-search"></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-6">
-
                                 <div class="form-group has-feedback">
                                     <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="4" placeholder="Enter Domain">
                                         <input type="hidden" id="domain">
-                                        <div id="ac-domain" class="ac-textbox default-display-none">
-                                          <ul class="width-85"></ul>
+                                        <div id="ac_domain" class="ac-textbox default-display-none">
+                                            <ul class="width-85"></ul>
                                         </div>
                                         <i class="form-control-feedback fa fa-search"></i>
                                     </div>
                                 </div>
-
-                    </div>
-
-                            <div class="col-sm-12">
-
-                                    <div class="form-group text-center">
-                                <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="8"> Show </button>
-                                    </div>
-
-
-
-
                             </div>
-
-
-
+                            <div class="col-sm-12">
+                                <div class="form-group text-center">
+                                    <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="8"> Show </button>
+                                </div>
+                            </div>
                             <div class="clear"></div>
                         </div>
-
-
-
-
-
-
-                    <!-- Table Grid -->
-
-            <div id="" class="grid-table-rpt default-display-none">
-                <div class="details">
-                    <div class="table-responsive">
-                        <div class="clearfix"></div>
-                        <table id="datatable-responsive" class="table table-striped dt-responsive nowrap">
-                            <thead>
-                                <tr>
-                                            <th class="width-2">#</th>
-                                            <th class="width-20">Uploaded File Name</th>
-                                            <th class="width-15">Rejected On</th>
-                                            <th class="width-15">Rejected By</th>
-                                            <th class="text-center">No. of Records</th>
-                                            <th class="text-center">Declined Count</th>
-                                            <th class="text-center">Rejected File</th>
-                                            <th class="width-15">Reason for Rejection</th>
-                                            <th>Remove</th>
-                                        </tr>
-                            </thead>
-                            <tbody class="tbody-compliance"></tbody>
-                        </table>
-                        <table class="pagination-view default-display-none">
-                          <tr>
-                            <td>
-                              <span class="compliance_count"> </span>
-                              <span class="divider-view"> | </span>
-                              <span class="items-per-page">
-                              Show
-                              <select id="items_per_page">
-                              </select>
-                              entries
-                              </span>
-                            </td>
-                            <td class="pagination-space"></td>
-                            <td class="pagination-right-side">
-                              <ul id="pagination-rpt"></ul>
-                            </td>
-                          </tr>
-                        </table>
+                        <!-- Table Grid -->
+                        <div class="grid-table-rpt default-display-none">
+                            <div class="details">
+                                <div class="table-responsive">
+                                    <div class="clearfix"></div>
+                                    <table id="datatable_responsive" class="table table-striped dt-responsive nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th class="width-2">#</th>
+                                                <th class="width-20">Uploaded File Name</th>
+                                                <th class="width-15">Rejected On</th>
+                                                <th class="width-15">Rejected By</th>
+                                                <th class="text-center">No. of Records</th>
+                                                <th class="text-center">Declined Count</th>
+                                                <th class="text-center">Rejected File</th>
+                                                <th class="width-15">Reason for Rejection</th>
+                                                <th>Remove</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="tbody-compliance"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-</div>
                     <!-- Table Grid -->
-
-
-
-
-
-
                 </div>
             </div>
-
         </div>
         <!-- end col -->
     </div>
 </div>
-<div id="act-templates" class="default-display-none">
+<div id="act_templates" class="default-display-none">
     <table class="font1 table-act-list">
-            <tr class="table-row-act-list">
-
-                <td class="tbl_sno"></td>
-                <td class="tbl_upload_filename"></td>
-                <td class="tbl_rejected_on"></td>
-                <td class="tbl_rejected_by"></td>
-                <td class="tbl_no_of_tasks text-center"></td>
-                <td class="tbl_declined_count text-center"></td>
-                <td class="text-center icon-3x tbl_rejected_file">
-                    <i title="Click here to download" class="fa fa-download text-primary c-pointer dropbtn rejected_i_cls"></i>
-                    <div class="dropdown-content show rejected_div_cls">
-                        <a class="rej_excel" data-format="excel" href="javascript:void(0);">Download Excel</a>
-                        <a class="rej_csv" data-format="csv" href="javascript:void(0);">Download CSV</a>
-                        <a class="rej_ods" data-format="ods" href="javascript:void(0);">Download ODS</a>
-                        <a class="rej_text" data-format="text" href="javascript:void(0);">Download Text</a>
-                    </div>
-                </td>
-                <td class="tbl_reason_for_rejection" class="width-15"></td>
-               <td class="tbl_remove text-center icon-3x">
-                <a class="remove_a" title="Click here to remove">
+        <tr class="table-row-act-list">
+            <td class="tbl-sno"></td>
+            <td class="tbl-upload-filename"></td>
+            <td class="tbl-rejected-on"></td>
+            <td class="tbl-rejected-by"></td>
+            <td class="tbl-no-of-tasks text-center"></td>
+            <td class="tbl-declined-count text-center"></td>
+            <td class="text-center icon-3x tbl-rejected-file">
+                <i title="Click here to download" class="fa fa-download text-primary c-pointer dropbtn rejected-i-cls"></i>
+                <div class="dropdown-content show rejected-div-cls">
+                    <a class="rej-excel" data-format="excel" href="javascript:void(0);">Download Excel</a>
+                    <a class="rej-csv" data-format="csv" href="javascript:void(0);">Download CSV</a>
+                    <a class="rej-ods" data-format="ods" href="javascript:void(0);">Download ODS</a>
+                    <a class="rej-text" data-format="text" href="javascript:void(0);">Download Text</a>
+                </div>
+            </td>
+            <td class="tbl-reason-for-rejection" class="width-15"></td>
+            <td class="tbl-remove text-center icon-3x">
+                <a class="remove-a" title="Click here to remove">
                     <i class="fa fa-times text-danger c-pointer"></i>
                 </a>
             </td>
         </tr>
     </table>
 </div>
-<div id="" class="default-display-none">
-
+<div class="default-display-none">
 </div>
 </div>
-
-
-
-<div id="head-templates">
+<div>
     <table class="table-compliance-frequency-list">
         <tr class="table-row-com-frequency">
             <td colspan="100%">
                 <div class="col-sm-12 no-padding">
-                    <mark class="p-l-10 p-r-10 tbl_heading"></mark>
+                    <mark class="p-l-10 p-r-10 tbl-heading"></mark>
                 </div>
             </td>
         </tr>
     </table>
     <div class="clearfix"></div>
 </div>
-
-<!-- <div id="compliance-templates" style="display:none;">
-    <table width="100%" class="table-compliances-list">
-    </table>
-</div>
- -->
-<div id="nocompliance-templates" class="default-display-none">
+<div id="nocompliance_templates" class="default-display-none">
     <table class="table-nocompliances-list">
-        <tr class="table-row" >
-            <td colspan="9" class="tbl_norecords text-center"></td>
+        <tr class="table-row">
+            <td colspan="9" class="tbl-norecords text-center"></td>
         </tr>
     </table>
 </div>
-
 <!-- Modal -->
-<div id="custom-modal-approve" class="modal-demo box-width-400">
+<div id="custom_modal_approve" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
     <i class="zmdi zmdi-close zmdi-hc-2x"></i>
     </span>
@@ -194,19 +137,16 @@
     <div class="custom-modal-text p-t-0">
         <div role="form">
             <div class="form-group">
-                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <label for="current_password" class="pull-left">Password <span class="mandatory">*</span></label>
             </div>
             <div class="clearfix"></div>
             <div class="form-group">
-                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+                <input type="password" class="form-control input-sm" id="current_password" placeholder="Password" maxlength="20">
             </div>
-            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password_submit">Submit</button>
         </div>
     </div>
 </div>
-{% endblock %}
-{% block contentscript %}
-
+{% endblock %} {% block contentscript %}
 <script type="text/javascript" src="/script/bulk-upload/statutory-mapping-bulk-upload-rejected/rejected-statutory-mapping-bulk-upload.js"></script>
-
 {% endblock %}

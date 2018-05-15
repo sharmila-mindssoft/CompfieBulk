@@ -3,7 +3,7 @@ from ..bucsvvalidation.statutorymappingvalidation import (
     ValidateStatutoryMappingCsvData,
     ValidateStatutoryMappingForApprove
 )
-from ..bucsvvalidation.rejectedstatutorymapping import (
+from ..bucsvvalidation.rejecteddownloadvalidation import (
     ValidateRejectedDownloadBulkData
 )
 

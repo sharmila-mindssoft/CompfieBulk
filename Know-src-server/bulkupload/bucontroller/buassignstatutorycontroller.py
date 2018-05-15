@@ -2,7 +2,7 @@ import traceback
 from ..bucsvvalidation.assignstatutoryvalidation import (
     ValidateAssignStatutoryCsvData, ValidateAssignStatutoryForApprove
 )
-from ..bucsvvalidation.rejectedstatutorymapping import (
+from ..bucsvvalidation.rejecteddownloadvalidation import (
     ValidateRejectedDownloadBulkData
 )
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
@@ -329,6 +329,10 @@ def get_assign_statutory_pending_list(db, request_frame, session_user):
     return result
 
 
+###################################################################
+# get master details for filter process in approve assign statutory
+###################################################################
+
 def get_assign_statutory_filter_for_approve_page(
     db, request_frame, session_user
 ):
@@ -337,16 +341,25 @@ def get_assign_statutory_filter_for_approve_page(
     return response
 
 
+################################
+# get filtered result by csv_id
+################################
 def get_assign_statutory_data_by_csvid(db, request_frame, session_user):
     response = get_assign_statutory_by_csv_id(db, request_frame, session_user)
     return response
 
 
+#####################################
+# get filtered result by filter page
+#####################################
 def get_assign_statutory_data_by_filter(db, request_frame, session_user):
     response = get_assign_statutory_by_filter(db, request_frame, session_user)
     return response
 
 
+#################################################################
+# To update records in table by approve all / reject all function
+#################################################################
 def update_assign_statutory_action_in_list(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     action = request_frame.bu_action
@@ -373,7 +386,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                     cObj.save_executive_message(
                         action, cObj._csv_name, cObj._client_group,
                         cObj._legal_entity, session_user.user_id(),
-                        u_ids, None
+                        u_ids, None, 0
                     )
                     cObj.source_commit()
                     delete_action_after_approval(db, csv_id)
@@ -386,7 +399,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                 cObj.save_executive_message(
                     action, cObj._csv_name, cObj._client_group,
                     cObj._legal_entity, session_user.user_id(),
-                    u_ids, remarks
+                    u_ids, remarks, 0
                 )
                 cObj.source_commit()
                 return bu_as.AssignStatutoryApproveActionInListSuccess()
@@ -394,25 +407,10 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
     except Exception, e:
         raise e
 
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+#############################################################
+# To update rejected asm download count by csvid in db table.
+#############################################################
 
 def update_rejected_asm_download_count(db, request_frame, session_user):
 
@@ -422,25 +420,11 @@ def update_rejected_asm_download_count(db, request_frame, session_user):
                                                            csv_id)
     result = bu_as.RejecteASMUpdatedDownloadCountSuccess(asm_updated_count)
     return result
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+
+###################################
+# To delete rejected asm by csvid.
+###################################
 
 def delete_rejected_asm_data(db, request_frame, session_user):
     client_id = request_frame.client_id
@@ -456,25 +440,10 @@ def delete_rejected_asm_data(db, request_frame, session_user):
     result = bu_as.GetRejectedASMDataSuccess(rejected_data)
     return result
 
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetRejectedASMBulkUploadDataSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+##################################
+# To get all rejected asm by user
+##################################
 
 def get_rejected_assign_sm_data(db, request_frame, session_user):
 
@@ -485,29 +454,14 @@ def get_rejected_assign_sm_data(db, request_frame, session_user):
     user_id = session_user.user_id()
 
     asm_rejected_data = fetch_rejected_assign_sm_data(
-        db, session_user, user_id, client_id, le_id, d_id, unit_code)
+        db, user_id, client_id, le_id, d_id, unit_code)
     result = bu_as.GetRejectedASMBulkUploadDataSuccess(asm_rejected_data)
     return result
 
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+###################################################
+# To get all asm report data by user
+###################################################
 
 def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
 
@@ -533,10 +487,10 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
                                                          total_record)
     return result
 
+
 ########################################################
 # To Export the Assign statu Report Data
 ########################################################
-
 
 def export_assigned_statutory_bulk_report_data(db, request, session_user):
     if request.csv:
@@ -550,6 +504,10 @@ def export_assigned_statutory_bulk_report_data(db, request, session_user):
                 link=converter.FILE_DOWNLOAD_PATH
             )
 
+
+###################################################
+# To download rejected asm data
+###################################################
 
 def download_rejected_asm_report(db, request_frame, session_user):
     client_id = request_frame.client_id
@@ -581,29 +539,23 @@ def download_rejected_asm_report(db, request_frame, session_user):
                        "Compliance_Description",
                        "Statutory_Applicable_Status*", "Statutory_remarks",
                        "Compliance_Applicable_Status*", "Error_Description"]
-
-    # csv_name = "RejectedData.xlsx"
     csv_name = get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id)
-
     source_data = fetch_rejected_asm_download_csv_report(
         db, session_user, user_id, client_id, le_id, d_id, asm_unit_code,
         csv_id)
-
-    # cObj = ValidateRejectedDownloadBulkData(
-    #     db, source_data, session_user, download_format, csv_name, csv_header
-    # )
     cObj = ValidateRejectedDownloadBulkData(
         db, source_data, session_user, download_format, csv_name,
         csv_header_key, csv_column_name, sheet_name)
-
     result = cObj.perform_validation()
-
     return bu_sm.DownloadActionSuccess(result["xlsx_link"],
                                        result["csv_link"],
                                        result["ods_link"],
                                        result["txt_link"])
 
 
+####################################################
+# save record in table by user using individual row
+#####################################################
 def save_action(db, request_frame, session_user):
     try:
         save_action_from_view(
@@ -617,6 +569,9 @@ def save_action(db, request_frame, session_user):
         raise e
 
 
+#########################################################
+# submit record by user after select all individual rpw
+#########################################################
 def submit_assign_statutory(db, request_frame, session_user):
     try:
         csv_id = request_frame.csv_id
@@ -643,7 +598,7 @@ def submit_assign_statutory(db, request_frame, session_user):
             cObj.save_executive_message(
                 1, cObj._csv_name, cObj._client_group,
                 cObj._legal_entity, session_user.user_id(),
-                u_ids, None
+                u_ids, None, 0
             )
             cObj.frame_data_for_main_db_insert(user_id)
             cObj.source_commit()
@@ -656,6 +611,9 @@ def submit_assign_statutory(db, request_frame, session_user):
         raise e
 
 
+############################################################
+# submit record bu user with system declined information
+#############################################################
 def confirm_submit_assign_statutory(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     client_id = request_frame.cl_id
@@ -672,7 +630,7 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
         cObj.save_executive_message(
             1, cObj._csv_name, cObj._client_group,
             cObj._legal_entity, session_user.user_id(),
-            u_ids, None
+            u_ids, None, len(is_declined.keys())
         )
         cObj.frame_data_for_main_db_insert(user_id)
         cObj.source_commit()
@@ -680,6 +638,9 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
         return bu_as.SubmitAssignStatutorySuccess()
 
 
+#####################################################
+# validate pending record count while submit process
+#####################################################
 def validate_assign_statutory(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     approved_count, un_saved_count = get_validation_info(db, csv_id)

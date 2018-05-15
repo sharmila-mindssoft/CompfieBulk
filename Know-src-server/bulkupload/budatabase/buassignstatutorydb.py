@@ -32,7 +32,8 @@ __all__ = [
     "delete_action_after_approval",
     "verify_user_units",
     "get_domain_executive",
-    "get_form_categories"
+    "get_form_categories",
+    "get_country_name_by_legal_entity_id"
     ]
 
 ########################################################
@@ -129,56 +130,32 @@ def get_download_assing_statutory_list(
     unit_names = ",".join(str(e) for e in u_names)
 
     column = [
-        "client_group", "legal_entity", "domain", "organization",
+        "client_group", "country", "legal_entity", "domain", "organization",
         "unit_code", "unit_name", "unit_location", "perimary_legislation",
         "secondary_legislation", "statutory_provision", "compliance_task_name",
         "compliance_description"
     ]
-    result = _source_db.call_proc_with_multiresult_set(
-        "sp_get_assign_statutory_compliance", [u, d], 2
-    )
 
+    result = _source_db.call_proc(
+        "sp_get_assign_statutory_compliance", [u, d]
+    )
     _source_db.close()
 
-    def status_list(map_id):
-        s_legislation = None
-        p_legislation = None
-        for s in result[0]:
-            if s["statutory_mapping_id"] == map_id:
-                if(
-                    s["parent_ids"] == '' or s["parent_ids"] == 0 or
-                    s["parent_ids"] == '0,'
-                ):
-                    s_legislation = s["statutory_name"]
-                    p_legislation = s_legislation
-                else:
-                    names = [
-                        x.strip() for x in s["parent_names"].split('>>')
-                        if x != ''
-                    ]
-                    p_legislation = names[0]
-                    if len(names) > 1:
-                        s_legislation = names[1]
-                    else:
-                        s_legislation = s["statutory_name"]
-        return p_legislation, s_legislation
-
     ac_list = []
-    for r in result[1]:
-        p_legislation, s_legislation = status_list(r["statutory_mapping_id"])
-        if s_legislation == p_legislation:
-            s_legislation = ""
+    for r in result:
         ac_tuple = (
-            cl_name, le_name, r["domain_name"], r["organizations"],
+            cl_name, r["country_name"], le_name,
+            r["domain_name"], r["organizations"],
             r["unit_code"], r["unit_name"], r["location"],
-            p_legislation.strip(), s_legislation.strip(),
+            r["primary_legislation"].strip(),
+            r["secondary_legislation"].strip(),
             r["statutory_provision"], r["compliance_task_name"],
             r["compliance_description"]
         )
         ac_list.append(ac_tuple)
 
     db.call_proc("sp_delete_assign_statutory_template", (
-        domain_names, unit_names
+        le_name, domain_names, unit_names
         ))
     if len(ac_list) > 0:
         db.bulk_insert(
@@ -294,6 +271,8 @@ def save_assign_statutory_data(db, csv_id, csv_data):
     :param
         db: database object
         session_user: logged in user details
+        cl_id: client_id
+        le_id: legal_entity_id
     :type
         db: Object
         session_user: Object
@@ -322,6 +301,21 @@ def get_pending_list(db, cl_id, le_id, session_user):
     return csv_data
 
 
+########################################################
+'''
+    returns master details for filter process in approval page
+    :param
+        db: database object
+        csv_id: parent table id
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of pending csv data Object
+    rtype:
+        result: List
+'''
+########################################################
 def get_assign_statutory_filters_for_approve(db, csv_id):
     data = db.call_proc_with_multiresult_set(
         "sp_assign_statutory_filter_list", [csv_id], 7
@@ -369,6 +363,24 @@ def get_assign_statutory_filters_for_approve(db, csv_id):
     )
 
 
+########################################################
+'''
+    returns AssignStatutoryData by csv_id
+    :param
+        db: database object
+        session_user : user id who currently logged in
+        request_frame: api Request class object
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of assign statutory data for approval Object
+    rtype:
+        result: List
+'''
+########################################################
+
+
 def get_assign_statutory_by_csv_id(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     f_count = request_frame.f_count
@@ -408,6 +420,23 @@ def get_assign_statutory_by_csv_id(db, request_frame, session_user):
         upload_on,  as_data
     )
 
+########################################################
+'''
+    returns AssignStatutoryData by filtered page
+    :param
+        db: database object
+        session_user : user id who currently logged in
+        request_frame: api Request class object
+    :type
+        db: Object
+        session_user: Object
+    :returns
+        result: list of assign statutory data for approval Object
+    rtype:
+        result: List
+'''
+########################################################
+
 
 def get_assign_statutory_by_filter(db, request_frame, session_user):
     csv_id = request_frame.csv_id
@@ -440,7 +469,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
 
     file_name = header_info[0]["csv_name"].split('.')
     remove_code = file_name[0].split('_')
-    csv_name = "%s.%s" % ('_'.join(remove_code[:-1]), file_name[1])
+    csv_name = "%s" % ('_'.join(remove_code[:-1]))
     upload_on = header_info[0]["uploaded_on"]
     upload_by = header_info[0]["uploaded_by"]
 
@@ -507,7 +536,7 @@ def update_approve_action_from_list(
 ########################################################
 
 
-def fetch_rejected_assign_sm_data(db, session_user, user_id, client_id,
+def fetch_rejected_assign_sm_data(db, user_id, client_id,
                                   le_id, d_id, unit_id):
 
     reject_list = []
@@ -580,7 +609,7 @@ def get_list_and_delete_rejected_asm(db, session_user, user_id, client_id,
     args = [csv_id]
     db.call_proc('sp_delete_reject_asm_by_csvid', args)
     reject_list = fetch_rejected_assign_sm_data(
-        db, session_user, user_id, client_id, le_id, d_id, unit_code)
+        db, user_id, client_id, le_id, d_id, unit_code)
     return reject_list
 
 
@@ -804,6 +833,18 @@ def get_domain_executive(db, session_user):
             )
         )
     return domain_users
+
+
+def get_country_name_by_legal_entity_id(le_id):
+    _source_db_con = connectKnowledgeDB()
+    _source_db = Database(_source_db_con)
+    _source_db.begin()
+    result = _source_db.call_proc(
+        "sp_bu_get_country_by_legal_entity_id", [le_id]
+    )
+    _source_db.close()
+
+    return result[0]["country_id"], result[0]["country_name"]
 
 
 def connectKnowledgeDB():

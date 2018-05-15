@@ -1,7 +1,5 @@
-var STATUTORY_MAPPING_REPORT_DATA;
 var COUNTRY_LIST = [];
 var DOMAIN_LIST = [];
-
 var ON_CURRENT_PAGE = 1;
 var SNO = 0;
 var TOTAL_RECORD = 0;
@@ -18,19 +16,22 @@ var TO_DATE = $("#to_date");
 var FROM_DATE = $("#from_date");
 var DOMAIN_IDS = [];
 var KNOWLEDGE_EXECUTIVES = [];
-var ALLUSERS = [];
-var EMP_CODE;
-var EMP_NAME;
+var ALL_USERS = [];
 var USER_CATEGORY_ID = 0;
 var CSV = false;
-var ALL_USER_INFO;
-var USER_DETAILS;
-/**** User Level Category ***********/
+var STATUTORY_MAPPING_REPORT_DATA = '';
+var EMP_CODE = '';
+var EMP_NAME = '';
+var ALL_USER_INFO = '';
+var USER_DETAILS = '';
+var SM_BULK_REPORT = '';
+
+
 // Creating StatutoryMappingBulkReport Class
 StatutoryMappingBulkReport = function() {}
 
 // Instance Creation of the page class
-var SMBulkReport = new StatutoryMappingBulkReport();
+SM_BULK_REPORT = new StatutoryMappingBulkReport();
 
 // To get the corresponding value
 StatutoryMappingBulkReport.prototype.getValue = function(fieldName, fId) {
@@ -67,6 +68,8 @@ StatutoryMappingBulkReport.prototype.validateMandatory = function() {
 function getStatutoryMappings() {
     console.log("KE_USER_CATEGORY"+ KE_USER_CATEGORY)
     function onSuccess(data) {
+        var c = '';
+        var option = '';
         COUNTRY_LIST = data.countries;
         DOMAIN_LIST = data.domains;
         ALL_USER_INFO = data.user_details;
@@ -75,8 +78,8 @@ function getStatutoryMappings() {
         EMP_CODE = USER_DETAILS.employee_code;
         EMP_NAME = USER_DETAILS.employee_name;
         //Load Countries MultiSelectBox
-        for (var c in COUNTRY_LIST) {
-            var option = $('<option></option>');
+        for (c in COUNTRY_LIST) {
+            option = $('<option></option>');
             option.val(COUNTRY_LIST[c].country_id);
             option.text(COUNTRY_LIST[c].country_name);
             COUNTRY.append(option);
@@ -102,18 +105,18 @@ function getStatutoryMappings() {
 //display statutory mapping details according to count
 function loadCountwiseResult(data) {
     $('.tbody-compliance').empty();
-    var countryName, domainName, csvName, totalTasks, uploadedBy;
-    var uploadedOn, totalRejectedRecords, rejectedOn, rejectedBy;
-    var approvedOn, approvedBy, isFullyRejected, totalApproveRecords;
-    var rejReason, approvedRejectedOn, approvedRejectedBy;
-    var approvedRejectedTasks, reasonForRejection, declinedCount;
-    var isNull = true;
-    var entity;
-    var tableRow;
+    var countryName = '', domainName = '', csvName = '', totalTasks = '';
+    var uploadedBy = '', uploadedOn = '', totalRejectedRecords = '';
+    var rejectedOn = '', rejectedBy = '', approvedOn = '', approvedBy = '';
+    var isFullyRejected = '', totalApproveRecords = '';
+    var rejReason = '', approvedRejectedOn = '', approvedRejectedBy = '';
+    var approvedRejectedTasks = '', reasonForRejection = '';
+    var declinedCount = '', isNull = true, entity  = '', tableRow = '';
+    var approvedByName = '', rejectedByName = '', uploadedByName = '';
+    var trClone = '';
     var showFrom = SNO + 1;
-    var approvedByName, rejectedByName, uploadedByName;
 
-    for (var entity in data) {
+    for (entity in data) {
         isNull = false;
         SNO = parseInt(SNO) + 1;
         countryName = data[entity].country_name;
@@ -131,7 +134,6 @@ function loadCountwiseResult(data) {
         totalApproveRecords = data[entity].total_approve_records;
         rejReason = data[entity].rejected_reason;
         declinedCount = data[entity].declined_count;
-
         approvedRejectedOn = '';
         approvedRejectedBy = '';
         approvedRejectedTasks = '-';
@@ -142,11 +144,13 @@ function loadCountwiseResult(data) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
                 uploadedByName = EMP_CODE + " - " + EMP_NAME;
-            } else if (parseInt(rejectedBy) == value["user_id"]) {
+            }
+            else if (parseInt(rejectedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
                 rejectedByName = EMP_CODE + " - " + EMP_NAME;
-            } else if (parseInt(approvedBy) == value["user_id"]) {
+            }
+            else if (parseInt(approvedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
                 approvedByName = EMP_CODE + " - " + EMP_NAME;
@@ -155,28 +159,28 @@ function loadCountwiseResult(data) {
 
         if (parseInt(isFullyRejected) == 1) {
             reasonForRejection = rejReason;
-        } else {
+        }
+        else {
             reasonForRejection = "";
             approvedRejectedTasks = totalApproveRecords;
             approvedRejectedTasks += " / ";
             approvedRejectedTasks += totalRejectedRecords;
         }
 
-        if(declinedCount >= 1)
-        {
+        if(declinedCount >= 1) {
             approvedRejectedBy = SYSTEM_REJECTED_BY;
             approvedRejectedOn = '';
-            if(approvedOn != null){
+            if(approvedOn != null) {
                 approvedRejectedOn = String(approvedOn);
             }
         }
         else if (rejectedOn != null && rejectedOn != '' &&
-            (declinedCount == 0 || declinedCount == null)){
+            (declinedCount == 0 || declinedCount == null)) {
             approvedRejectedOn = String(rejectedOn);
             approvedRejectedBy = rejectedByName;
         }
         else if (approvedOn != null && approvedOn != '' &&
-            (declinedCount == 0 || declinedCount == null)){
+            (declinedCount == 0 || declinedCount == null)) {
             approvedRejectedOn = String(approvedOn);
             approvedRejectedBy = approvedByName;
         }
@@ -186,7 +190,7 @@ function loadCountwiseResult(data) {
         }
 
         tableRow = $('#act_templates .table-act-list .table-row-act-list');
-        var trClone = tableRow.clone();
+        trClone = tableRow.clone();
         $('.tbl-sno', trClone).text(SNO);
         $('.tbl-country', trClone).text(countryName);
         $('.tbl-domain', trClone).text(domainName);
@@ -218,7 +222,8 @@ function processSubmit() {
     var selectedKe = [];
     var selectedCountryId = [];
     var selectedDomainId = [];
-    var splitDomainName;
+    var splitDomainName = '';
+    var pageLimit = '';
     /* multiple COUNTRY selection */
     $.each(country, function(key, value) {
         selectedCountryId.push(parseInt(value));
@@ -230,16 +235,18 @@ function processSubmit() {
     });
     if ($('#kename_kmanager').val() == null) {
         selectedKe = KNOWLEDGE_EXECUTIVES;
-    } else {
+    }
+    else {
         $('#kename_kmanager > option:selected').each(function() {
             selectedKe.push(parseInt(this.value));
         });
     }
 
-    var pageLimit = parseInt(ITEMS_PER_PAGE.val());
+    pageLimit = parseInt(ITEMS_PER_PAGE.val());
     if (ON_CURRENT_PAGE == 1) {
         SNO = 0
-    } else {
+    }
+    else {
         SNO = (ON_CURRENT_PAGE - 1) * pageLimit;
     }
     filterdata = {
@@ -254,14 +261,15 @@ function processSubmit() {
     };
     /******** API Response Data Sucess process *****/
     function onSuccess(data) {
-        var tr;
-        var div_class = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd';
-        div_class += 'oanimationend animationend';
+        var tr = '', tr_row = '';
         var table = '#nocompliance_templates .table-nocompliances-list';
         table += " .table-row";
+        var animateClass = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd';
+        animateClass += 'oanimationend animationend';
+
         $('.details').show();
         $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
-            .one(div_class, function() {
+            .one(animateClass, function() {
                 $(this).removeClass();
                 $(this).show();
             });
@@ -271,8 +279,9 @@ function processSubmit() {
         hideLoader();
         if (TOTAL_RECORD == 0) {
             $('.tbody-compliance').empty();
-            var tr = $('#nocompliance_templates .table-nocompliances-list .table-row');
-            var tr_row = tr.clone();
+            tr = $('#nocompliance_templates .table-nocompliances-list'+
+                ' .table-row');
+            tr_row = tr.clone();
             $('.tbl-norecords', tr_row).text('No Records Found');
             $('.tbody-compliance').append(tr_row);
             PAGINATION_VIEW.hide();
@@ -305,25 +314,27 @@ function processSubmit() {
 
 /******** Load Domain Lists *********/
 function loadDomains() {
+    var selectCountries = '', str = '';
+    var cId = '', flag = '', sText = '', dVal = '';
     DOMAIN.empty();
     if (COUNTRY.val() != null) {
-        var selectCountries = COUNTRY.val().map(Number);
-        var str = '';
+        selectCountries = COUNTRY.val().map(Number);
+        str = '';
         $.each(COUNTRY_LIST, function(key, value) {
-            var cId = value.country_id;
+            cId = value.country_id;
             if ($.inArray(cId, selectCountries) >= 0) {
-                var flag = true;
+                flag = true;
                 $.each(DOMAIN_LIST, function(key1, v) {
                     if (v.is_active == false) {
                         return;
                     }
                     if ($.inArray(cId, v.country_ids) >= 0) {
-                        var sText = '';
+                        sText = '';
                         if (flag) {
                             str += '<optgroup label="' + value.country_name;
                             str += '">';
                         }
-                        var dVal = cId + '-' + v.domain_id;
+                        dVal = cId + '-' + v.domain_id;
                         str += '<option value="' + dVal + '" ' + sText + '>';
                         str += v.domain_name + '</option>';
                         flag = false;
@@ -385,10 +396,10 @@ function pageControls() {
         processSubmit();
     });
     SHOW_BTN.click(function() {
-        isValid = SMBulkReport.validateMandatory();
+        isValid = SM_BULK_REPORT.validateMandatory();
         if (isValid == true) {
-            SMBulkReport._ON_CURRENT_PAGE = 1;
-            SMBulkReport._total_record = 0;
+            SM_BULK_REPORT._ON_CURRENT_PAGE = 1;
+            SM_BULK_REPORT._total_record = 0;
             $('#mapping_animation').
             removeClass().addClass('bounceInLeft animated')
                 .one('webkitAnimationEnd ' +
@@ -402,10 +413,10 @@ function pageControls() {
         }
     });
     EXPORT_BTN.click(function(e) {
-        isValid = SMBulkReport.validateMandatory();
+        isValid = SM_BULK_REPORT.validateMandatory();
         if (isValid == true) {
             CSV = true;
-            SMBulkReport.exportData();
+            SM_BULK_REPORT.exportData();
         }
     });
 }
@@ -413,12 +424,11 @@ function pageControls() {
 function loadCurrentUserDetails() {
     var user = mirror.getUserInfo();
     var loggedUserId = 0;
-    var knowledgeName;
+    var knowledgeName = '';
     var knowledgeUserDetails = {};
+
     $.each(ALL_USER_INFO, function(key, value) {
         if (user.user_id == value["user_id"]) {
-            console.log("==>>>>");
-            console.log(user.user_id +"=="+ value["user_id"]);
             USER_CATEGORY_ID = value["user_category_id"];
             loggedUserId = value["user_id"];
         }
@@ -426,27 +436,20 @@ function loadCurrentUserDetails() {
     console.log("USER_CATEGORY_ID "+ USER_CATEGORY_ID);
     console.log("KE_USER_CATEGORY "+ KE_USER_CATEGORY);
     if (USER_CATEGORY_ID == KE_USER_CATEGORY) {
-        alert("QWEETERTETR")
-        console.log("USER_CATEGORY_ID" +"=="+ "KE_USER_CATEGORY");
 
-        console.log(USER_CATEGORY_ID +"=="+ KE_USER_CATEGORY);
         // KE-Name  : Knowledge-Executive
         knowledgeName = user.employee_code + " - " + user.employee_name;
         console.log("IN REMOVE CLASS DEFAULT DISPLAY NONE");
         $('.active-knowledge-executive').removeClass("default-display-none");
         $('#knowledge_name').html(knowledgeName);
         knowledgeUserDetails = {
-            /*"user_name":knowledgeName,*/
             "user_id": user.user_id
         }
-        ALLUSERS.push(knowledgeUserDetails);
+        ALL_USERS.push(knowledgeUserDetails);
         KNOWLEDGE_EXECUTIVES.push(user.user_id);
-    } else if (USER_CATEGORY_ID == KM_USER_CATEGORY
+    }
+    else if (USER_CATEGORY_ID == KM_USER_CATEGORY
         && USER_CATEGORY_ID != KE_USER_CATEGORY && loggedUserId > 0) {
-
-        console.log("USER_CATEGORY_ID" +"=="+ "KM_USER_CATEGORY");
-        console.log(USER_CATEGORY_ID +"=="+ KM_USER_CATEGORY);
-
         // KE-Name  : Knowledge-Manager
         getUserMappingsList(loggedUserId);
     }
@@ -457,17 +460,14 @@ function getUserMappingsList(loggedUserId) {
     $('#kename_kmanager').multiselect('rebuild');
 
     function onSuccess(loggedUserId, data) {
-        console.log("loggedUserId->" + loggedUserId);
         var userMappingData = data;
-        var d;
-        var childUserId;
-        console.log(userMappingData);
+        var d = '';
+        var childUserId = '';
 
         $.each(userMappingData.user_mappings, function(key, value) {
             if (loggedUserId == value.parent_user_id) {
                 childUserId = value.child_user_id;
                 if (jQuery.inArray(childUserId, KNOWLEDGE_EXECUTIVES) == -1) {
-                    console.log("inif")
                     KNOWLEDGE_EXECUTIVES.push(childUserId);
                     childUsersDetails(ALL_USER_INFO, loggedUserId,
                         childUserId);
@@ -478,9 +478,10 @@ function getUserMappingsList(loggedUserId) {
 
     function childUsersDetails(ALL_USER_INFO, parentUserId, childUsrId) {
         var knowledgeUserDetails = {};
+        var option = '';
         $.each(ALL_USER_INFO, function(key, value) {
             if (childUsrId == value["user_id"] && value["is_active"] == true) {
-                var option = $('<option></option>');
+                option = $('<option></option>');
                 option.val(value["user_id"]);
                 option.text(value["employee_code"] + " - "
                     + value["employee_name"]);
@@ -492,7 +493,7 @@ function getUserMappingsList(loggedUserId) {
                     "name": knowledgeName,
                     "user_id": value["user_id"]
                 }
-                ALLUSERS.push(knowledgeUserDetails);
+                ALL_USERS.push(knowledgeUserDetails);
             }
         });
         $('#kename_kmanager').multiselect('rebuild');
@@ -519,29 +520,31 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
     var toDate = TO_DATE.val();
     var selectedCountryId = [];
     var selectedDomainId = [];
-    var splitDomainName;
+    var splitDomainName = '';
     var downloadCSV = true;
     var selectedKe = [];
+    var countryNames = '', domainNames = '';
     // multiple COUNTRY selection in to generate array
     $.each(country, function(key, value) {
         selectedCountryId.push(parseInt(value));
     });
-    var countryNames = $("#country option:selected").map(function() {
+    countryNames = $("#country option:selected").map(function() {
         return $(this).text();
     }).get().join(',');
-    console.log("countryNames-> " + countryNames);
+
     // multiple DOMAIN selection generate as a array
     $.each(domain, function(key, value) {
         splitDomainName = value.split("-");
         selectedDomainId.push(parseInt(splitDomainName[1]));
     });
-    var domainNames = $("#domain option:selected").map(function() {
+    domainNames = $("#domain option:selected").map(function() {
         return $(this).text();
     }).get().join(',');
-    console.log("domainNames-> " + domainNames);
+
     if ($('#kename_kmanager').val() == null) {
         selectedKe = KNOWLEDGE_EXECUTIVES;
-    } else {
+    }
+    else {
         $('#kename_kmanager > option:selected').each(function() {
             console.log(this.value);
             selectedKe.push(parseInt(this.value));
@@ -557,7 +560,6 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
         "to_date": toDate,
         "csv": downloadCSV,
         "user_category_id": USER_CATEGORY_ID
-        /*"dependent_users":ALLUSERS*/
     };
     displayLoader();
     bu.exportSMBulkReportData(filterdata,
@@ -568,7 +570,8 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
                     var downloadUrl = response.link;
                     $(location).attr('href', downloadUrl);
                 }
-            } else {
+            }
+            else {
                 hideLoader();
                 if (error == "ExportToCSVEmpty") {
                     displayMessage(message.empty_export);
@@ -587,7 +590,6 @@ $(function() {
     pageControls();
     loadItemsPerPage();
     getStatutoryMappings();
-
     COUNTRY.focus();
 });
 $(document).ready(function() {
