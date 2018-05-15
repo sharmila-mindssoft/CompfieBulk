@@ -16,5 +16,6 @@
 /Know-src-server/processes/expired/
 /knowledgeformat/
 /clientdocuments/
+/Client-src-server/logs/
 *.bat
 *.ods

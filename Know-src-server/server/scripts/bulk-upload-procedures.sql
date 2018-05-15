@@ -824,7 +824,7 @@ SELECT
   sm_csv.rejected_reason,
   (sm_csv.total_records - IFNULL(sm_csv.total_rejected_records, 0) - IFNULL(sm_csv.declined_count, 0)) AS total_approve_records
 FROM tbl_bulk_assign_statutory AS sm
-INNER JOIN tbl_bulk_assign_statutory_csv AS sm_csv 
+INNER JOIN tbl_bulk_assign_statutory_csv AS sm_csv
   ON sm_csv.csv_assign_statutory_id = sm.csv_assign_statutory_id
 WHERE
     sm_csv.client_id=client_id AND
@@ -2100,9 +2100,15 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_ct_format_file_status_update`;
 DELIMITER //
 CREATE PROCEDURE `sp_ct_format_file_status_update`(
-    IN csvid INT, filename VARCHAR(150)
+    IN old_file_name VARCHAR(150), IN csvid INT,
+    IN filename VARCHAR(150),
+    IN file_size FLOAT
 )
 BEGIN
+
+    update tbl_bulk_past_data set document_upload_status = 1,
+           document_file_size = file_size , document_name = filename
+      where csv_id = csvid and document_name=old_file_name;
 
     update tbl_bulk_past_data_csv
       set uploaded_documents = uploaded_documents + 1
@@ -2145,4 +2151,35 @@ BEGIN
   AND action = 3;
 END //
 
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_pastdata_get_file_download_status`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_pastdata_get_file_download_status`(
+    IN csvid INT
+)
+BEGIN
+
+    select document_download_status from tbl_bulk_past_data_csv
+    where csv_past_id = csvid;
+
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_pastdata_doc_download_status_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_pastdata_doc_download_status_update`(
+    IN csvid INT, download_status VARCHAR(50)
+)
+BEGIN
+
+    update  tbl_bulk_past_data_csv set file_download_status =  download_status
+      where csv_id = csvid;
+END //
 DELIMITER ;
