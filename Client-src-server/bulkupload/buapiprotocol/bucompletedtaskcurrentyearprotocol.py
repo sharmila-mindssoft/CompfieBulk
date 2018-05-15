@@ -265,6 +265,18 @@ class GetCompletedTaskCsvUploadedListSuccess(Response):
             "csv_list": self.csv_list
         }
 
+class InvalidCsvFile(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidCsvFile()
+
+    def to_inner_structure(self):
+        return {}
+
 class UploadCompletedTaskCurrentYearCSVSuccess(Response):
     def __init__(
         self, total, valid, invalid, new_csv_id, csv_name,
@@ -449,7 +461,7 @@ def _init_Response_class_map():
     classes = [
         UploadCompletedTaskCurrentYearCSVSuccess,
         UploadCompletedTaskCurrentYearCSVFailed,
-        saveBulkRecordSuccess,
+        saveBulkRecordSuccess, InvalidCsvFile,
         GetCompletedTaskCsvUploadedListSuccess, ExportToCSVEmpty, DownloadBulkPastDataSuccess
     ]
     class_map = {}

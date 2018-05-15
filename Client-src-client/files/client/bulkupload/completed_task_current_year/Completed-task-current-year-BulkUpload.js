@@ -202,8 +202,11 @@ function validateUpload() {
             };
 
             buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
-                if (error == null) {
-                    // console.log("data>>" + JSON.stringify(data));
+                if (error == "InvalidCsvFile"){
+                    $('#myModal').modal('hide');
+                    displayMessage(message.invalid_csv_file);
+                }
+                else if (error == null) {
                     var csv_split_name = data.csv_name.substring(0, data.csv_name.lastIndexOf("_"));
                     $('#myModal').modal('hide');
                     TOTALRECORD.text(data.total);

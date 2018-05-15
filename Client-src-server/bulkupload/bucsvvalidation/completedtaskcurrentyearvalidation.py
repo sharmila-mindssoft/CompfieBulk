@@ -405,8 +405,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
 
     def compare_csv_columns(self):
         res = collections.Counter(self._csv_column_name) == collections.Counter(self._csv_header)
-        if res is False :
-            raise ValueError("Csv column mismatched")
+        return res
     '''
         looped csv data to perform corresponding validation
         returns : valid and invalid return format
@@ -417,7 +416,10 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         mapped_error_dict = {}
         mapped_header_dict = {}
         invalid = 0
-        self.compare_csv_columns()
+        res = True
+        if not self.compare_csv_columns():
+            res = False
+            return res
         self.init_values(legal_entity_id)
 
         def make_error_desc(res, msg):

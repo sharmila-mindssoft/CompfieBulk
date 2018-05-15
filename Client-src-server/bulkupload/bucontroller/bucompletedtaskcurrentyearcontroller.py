@@ -4,7 +4,7 @@ from ..bucsvvalidation.completedtaskcurrentyearvalidation import (
     ValidateCompletedTaskForSubmit
 )
 
-from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
+from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct 
 from..budatabase.bucompletedtaskcurrentyeardb import *
 from ..client_bulkuploadcommon import (
     convert_base64_to_file,
@@ -95,8 +95,9 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
     # print "request_frame.legal_entity_id>>", request_frame.legal_entity_id
     res_data = cObj.perform_validation(request_frame.legal_entity_id)
 
-
-    if res_data["return_status"] is True :
+    if res_data is False:
+        return bu_ct.InvalidCsvFile()
+    elif res_data["return_status"] is True :
         current_date_time = get_date_time_in_date()
         str_current_date_time = datetime_to_string(current_date_time)
         unit_id = res_data["unit_id"]
@@ -118,7 +119,6 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
                     new_csv_id, csv_name, res_data["doc_count"],
                     res_data["doc_names"], unit_id, domain_id
                 )
-
         # csv data save to temp db
     else:
         result = bu_ct.UploadCompletedTaskCurrentYearCSVFailed(
