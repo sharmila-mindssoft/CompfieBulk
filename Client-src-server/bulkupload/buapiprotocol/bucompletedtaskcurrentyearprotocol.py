@@ -53,24 +53,38 @@ class UploadCompletedTaskCurrentYearCSV(Request):
             "legal_entity_id": self.legal_entity_id
         }
 
+
 class saveBulkRecords(Request):
-    def __init__(self, new_csv_id, legal_entity_id):
+    def __init__(
+        self, new_csv_id, country_id, legal_entity_id, domain_id, unit_id
+    ):
         self.new_csv_id = new_csv_id
         self.legal_entity_id = legal_entity_id
-
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.unit_id = unit_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["new_csv_id", "legal_entity_id"])
+        data = parse_dictionary(
+            data, ["new_csv_id", "country_id", "legal_entity_id",
+                   "domain_id", "unit_id"]
+        )
         return saveBulkRecords(
-            data.get("new_csv_id"), data.get("legal_entity_id")
+            data.get("new_csv_id"), data.get("country_id"),
+            data.get("legal_entity_id"),
+            data.get("domain_id"), data.get("unit_id")
         )
 
     def to_inner_structure(self):
         return {
             "new_csv_id": self.new_csv_id,
-            "legal_entity_id": self.legal_entity_id
+            "country_id": self.country_id,
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+            "unit_id": self.unit_id
         }
+
 
 class GetCompletedTaskCsvUploadedList(Request):
     def __init__(self, legal_entity_id, legal_entity_list):
@@ -88,10 +102,11 @@ class GetCompletedTaskCsvUploadedList(Request):
             "legal_entity_list": self.legal_entity_list
         }
 
+
 class CsvList(object):
     def __init__(
         self, csv_past_id, csv_name, uploaded_on, uploaded_by,
-        total_records, total_documents, uploaded_documents,
+        total_records, total_documents, bu_uploaded_documents,
         remaining_documents, doc_names, legal_entity, domain_id, unit_id,
         start_date
     ):
@@ -101,7 +116,7 @@ class CsvList(object):
         self.uploaded_by = uploaded_by
         self.total_records = total_records
         self.total_documents = total_documents
-        self.uploaded_documents = uploaded_documents
+        self.bu_uploaded_documents = bu_uploaded_documents
         self.remaining_documents = remaining_documents
         self.doc_names = doc_names
         self.legal_entity = legal_entity
@@ -113,21 +128,20 @@ class CsvList(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "csv_past_id", "csv_name", "uploaded_on", "uploaded_by",
-            "total_records", "total_documents", "uploaded_documents",
-            "uploaded_documents", "remaining_documents", "doc_names",
+            "total_records", "total_documents", "bu_uploaded_documents",
+            "remaining_documents", "doc_names",
             "legal_entity", "domain_id", "unit_id", "start_date"
         ])
         return CsvList(
             data.get("csv_past_id"), data.get("csv_name"),
             data.get("uploaded_on"), data.get("uploaded_by"),
             data.get("total_records"), data.get("total_documents"),
-            data.get("uploaded_documents"), data.get("uploaded_documents"),
+            data.get("bu_uploaded_documents"),
             data.get("remaining_documents"), data.get("doc_names"),
             data.get("legal_entity"),
             data.get("domain_id"),
             data.get("unit_id"),
             data.get("start_date")
-
         )
 
     def to_structure(self):
@@ -138,7 +152,7 @@ class CsvList(object):
             "uploaded_by": self.uploaded_by,
             "total_records": self.total_records,
             "total_documents": self.total_documents,
-            "uploaded_documents": self.uploaded_documents,
+            "bu_uploaded_documents": self.bu_uploaded_documents,
             "remaining_documents": self.remaining_documents,
             "doc_names": self.doc_names,
             "legal_entity_name": self.legal_entity,
@@ -190,54 +204,10 @@ class GetDownloadData(Request):
             "domain_id": self.domain_id,
             "compliance_task_frequency": self.compliance_frequency,
             "start_count": self.start_count, "le_name": self.le_name,
-            "d_name": self.d_name,  "u_name": self.u_name,
+            "d_name": self.d_name, "u_name": self.u_name,
             "d_name": self.u_code,
         }
 
-
-
-# class GetCompletedTaskCsvUploadedList(object):
-#     def __init__(
-#         self, csv_past_id, csv_name, uploaded_by, uploaded_on,
-#         total_records, total_documents, uploaded_documents, remaining_documents
-#     ):
-#         self.csv_past_id = csv_past_id
-#         self.csv_name = csv_name
-#         self.uploaded_by = uploaded_by
-#         self.uploaded_on = uploaded_on
-#         self.total_records = total_records
-#         self.total_documents = total_documents
-#         self.uploaded_documents = uploaded_documents
-#         self.remaining_documents = remaining_documents
-
-#     @staticmethod
-#     def parse_structure(data):
-#         data = parse_dictionary(data, [
-#             "csv_past_id", "csv_name", "uploaded_by", "uploaded_on",
-#             "total_records", "total_documents", "uploaded_documents", "remaining_documents"
-
-#         ])
-#         return PendingCsvList(
-#             data.get("csv_id"), data.get("csv_name"),
-#             data.get("csv_id"), data.get("csv_name"), data.get("uploaded_by"),
-#             data.get("uploaded_on"), data.get("no_of_records"),
-#             data.get("approve_count"),
-#             data.get("rej_count"),
-#             data.get("download_file"), data.get("declined_count")
-#         )
-
-#     def to_structure(self):
-#         return {
-#             "csv_id": self.csv_id,
-#             "csv_name": self.csv_name,
-#             "uploaded_by": self.uploaded_by,
-#             "uploaded_on": self.uploaded_on,
-#             "no_of_records": self.no_of_records,
-#             "approve_count": self.approve_count,
-#             "rej_count": self.rej_count,
-#             "download_file": self.download_file,
-#             "declined_count": self.declined_count
-#         }
 
 def _init_Request_class_map():
     classes = [
@@ -296,7 +266,10 @@ class GetCompletedTaskCsvUploadedListSuccess(Response):
         }
 
 class UploadCompletedTaskCurrentYearCSVSuccess(Response):
-    def __init__(self, total, valid, invalid, new_csv_id, csv_name, doc_count, doc_names):
+    def __init__(
+        self, total, valid, invalid, new_csv_id, csv_name,
+        doc_count, doc_names, unit_id, domain_id
+    ):
         self.total = total
         self.valid = valid
         self.invalid = invalid
@@ -304,14 +277,18 @@ class UploadCompletedTaskCurrentYearCSVSuccess(Response):
         self.csv_name = csv_name
         self.doc_count = doc_count
         self.doc_names = doc_names
+        self.unit_id = unit_id
+        self.domain_id = domain_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["total", "valid", "invalid", "new_csv_id", "csv_name", "doc_count", "doc_names"])
+        data = parse_dictionary(data, ["total", "valid", "invalid",
+            "new_csv_id", "csv_name", "doc_count", "doc_names", "unit_id",
+            "domain_id"])
         return UploadCompletedTaskCurrentYearCSVSuccess(
             data.get("total"), data.get("valid"), data.get("invalid"),
             data.get("new_csv_id"), data.get("csv_name"), data.get("doc_count"),
-            data.get("doc_names")
+            data.get("doc_names"), data.get("unit_id"), data.get("domain_id")
         )
 
     def to_inner_structure(self):
@@ -322,7 +299,9 @@ class UploadCompletedTaskCurrentYearCSVSuccess(Response):
             "new_csv_id": self.new_csv_id,
             "csv_name": self.csv_name,
             "doc_count": self.doc_count,
-            "doc_names": self.doc_names
+            "doc_names": self.doc_names,
+            "unit_id": self.unit_id,
+            "domain_id": self.domain_id
         }
 
 
@@ -388,25 +367,33 @@ class saveBulkRecordSuccess(Response):
         return{}
 
 class CsvListSuccess(object):
-    def __init__(self, csv_past_id, csv_name, uploaded_by, uploaded_on, total_records, total_documents, uploaded_documents, remaining_documents):
+    def __init__(
+        self, csv_past_id, csv_name, uploaded_by, uploaded_on,
+        total_records, total_documents, bu_uploaded_documents,
+        remaining_documents
+    ):
         self.csv_past_id = csv_past_id
         self.csv_name = csv_name
         self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
         self.total_records = total_records
         self.total_documents = total_documents
-        self.uploaded_documents = uploaded_documents
+        self.bu_uploaded_documents = bu_uploaded_documents
         self.remaining_documents = remaining_documents
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["csv_past_id", "csv_name", "uploaded_by", "uploaded_on",
-                                        "total_records", "total_documents", "uploaded_documents", "uploaded_documents"
-        ])
-        return CsvList(
-            data.get("csv_past_id"), data.get("csv_name"), data.get("uploaded_by"),
-            data.get("uploaded_on"), data.get("total_records"), data.get("total_documents"),
-            data.get("uploaded_documents"), data.get("uploaded_documents")
+        data = parse_dictionary(data, ["csv_past_id", "csv_name",
+                                       "uploaded_by", "uploaded_on",
+                                       "total_records", "total_documents",
+                                       "bu_uploaded_documents"]
+                                )
+        return CsvListSuccess(
+            data.get("csv_past_id"), data.get("csv_name"),
+            data.get("uploaded_by"),
+            data.get("uploaded_on"), data.get("total_records"),
+            data.get("total_documents"),
+            data.get("bu_uploaded_documents")
         )
 
     def to_structure(self):
@@ -417,8 +404,9 @@ class CsvListSuccess(object):
             "uploaded_on": self.uploaded_on,
             "total_records": self.total_records,
             "total_documents": self.total_documents,
-            "uploaded_documents": self.uploaded_documents
+            "bu_uploaded_documents": self.bu_uploaded_documents
         }
+
 
 class ExportToCSVEmpty(Response):
     def __init__(self):
