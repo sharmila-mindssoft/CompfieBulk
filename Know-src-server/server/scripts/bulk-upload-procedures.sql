@@ -1702,11 +1702,12 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_check_upload_compliance_count_for_unit`;
 DELIMITER //
 CREATE PROCEDURE `sp_check_upload_compliance_count_for_unit`(
-IN legalentityname_ VARCHAR(50), domain_ VARCHAR(50), unitcode_ VARCHAR(50)
+IN groupname_ VARCHAR(50), country_ VARCHAR(50), legalentityname_ VARCHAR(50), domain_ VARCHAR(50), unitcode_ VARCHAR(50)
 )
 BEGIN
   SELECT COUNT(1) AS count FROM tbl_download_assign_statutory_template WHERE
-  legal_entity = legalentityname_ AND domain = domain_ AND unit_code = unitcode_;
+  client_group = groupname_ AND country = country_ AND legal_entity = legalentityname_
+  AND domain = domain_ AND unit_code = unitcode_;
 END //
 DELIMITER ;
 
