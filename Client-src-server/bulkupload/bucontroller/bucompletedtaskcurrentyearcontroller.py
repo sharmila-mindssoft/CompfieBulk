@@ -74,7 +74,6 @@ def get_completed_task_csv_list(db, request_frame, session_user):
     )
     # print "csv_data>>", csv_data
     result = bu_ct.GetCompletedTaskCsvUploadedListSuccess(csv_data)
-    print "get_completed_task_csv_list>result>>", result
     return result
 
 ########################################################
@@ -90,8 +89,6 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
     )
     # read data from csv file
     header, completed_task_data = read_data_from_csv(csv_name)
-    # print "completed_task_data>>", completed_task_data
-
     # csv data validation
     cObj = ValidateCompletedTaskCurrentYearCsvData(
         db, completed_task_data, session_user, request_frame.csv_name, header)
@@ -142,20 +139,17 @@ def process_saveBulkRecords(db, request_frame, session_user, session_token):
     legal_id = request_frame.legal_entity_id
     domain_id = request_frame.domain_id
     unit_id = request_frame.unit_id
-    print "csv_id>>> ", csv_id
     dataResult = getPastRecordData(db, csv_id)
 
     cObj = ValidateCompletedTaskForSubmit(
         db, csv_id, dataResult, session_user)
 
-    print "cobj.doccount>> ", cObj._doc_count
 
     # if cObj._doc_count > 0:
     #     cObj.document_download_process_initiate(
     #         csv_id, country_id, legal_id, domain_id, unit_id, session_token
     #     )
 
-    print "legal_entity_id>>", request_frame.legal_entity_id
 
     if cObj.frame_data_for_main_db_insert(
         db, dataResult, request_frame.legal_entity_id, session_user

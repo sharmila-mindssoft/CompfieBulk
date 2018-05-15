@@ -51,10 +51,9 @@ def convert_base64_to_file(src_path, file_name, file_content):
 
     if not os.path.exists(file_folder_path):
         os.makedirs(file_folder_path)
-    framed_file_name = frame_file_name(fileSplitString[0])
-    if file_content is not None:
-        with io.FileIO(file_path, "wb") as fn:
-            fn.write(file_content.decode('base64'))
+    # framed_file_name = frame_file_name(fileSplitString[0])
+    with io.FileIO(file_path, "wb") as fn:
+        fn.write(file_content.decode('base64'))
 
     return framed_file_name
 

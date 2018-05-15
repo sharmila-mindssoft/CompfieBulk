@@ -35,9 +35,6 @@ class PastDataJsonToCSV(object):
         file_name = "%s.csv" % s.replace("-", "")
         self.FILE_DOWNLOAD_PATH = "%s/%s" % (
             CSV_DOWNLOAD_URL, file_name)
-        print "Root Path ----> ", ROOT_PATH
-        print "CSV_PATH ----> ", CSV_PATH
-        print "File Download Path", self.FILE_DOWNLOAD_PATH
         self.FILE_PATH = "%s/%s" % (CSV_PATH, file_name)
         self.documents_list = []
         if not os.path.exists(CSV_PATH):

@@ -89,6 +89,7 @@ function loadUnits(le_id, unit_id) {
             unitList = response.user_units;
             $.each(unitList, function(key, u) {
                 unit_list_map[parseInt(u["unit_id"])] = u["unit_code"];
+                u["unit_name"] = u["unit_code"]+"-"+u["unit_name"];
             });
         }
     });
