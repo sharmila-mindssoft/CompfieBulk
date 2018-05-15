@@ -656,9 +656,11 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 unit_code = grouped_list[0].get("Unit_Code")
                 domain = grouped_list[0].get("Domain")
                 legal_entity = grouped_list[0].get("Legal_Entity")
+                country = grouped_list[0].get("Country")
+                client_group = grouped_list[0].get("Client_Group")
                 data = self._db.call_proc(
                     "sp_check_upload_compliance_count_for_unit",
-                    [legal_entity, domain, unit_code]
+                    [client_group, country, legal_entity, domain, unit_code]
                 )
                 uploaded_count = data[0]["count"]
 
