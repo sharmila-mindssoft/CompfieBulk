@@ -143,9 +143,9 @@ BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
         $.each(list_data, function(idx, data) {
             balance = data.no_of_documents - data.uploaded_documents ;
             cloneRow = LIST_ROW_TEMPLATE.clone();
-            cname = cname_split.join("_");
             cname_split = data.csv_name.split("_");
             cname_split.pop();
+            cname = cname_split.join("_");
             
             $('.sno', cloneRow).text(j);
             $('.csv-name', cloneRow).text(cname);
