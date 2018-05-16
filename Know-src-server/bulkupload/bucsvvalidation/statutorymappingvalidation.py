@@ -35,7 +35,7 @@ from keyvalidationsettings import (
     csv_params, parse_csv_dictionary_values, is_numeric
 )
 from ..bulkuploadcommon import (
-    write_data_to_excel, rename_file_type
+    write_data_to_excel, rename_file_type, generate_random_string
 )
 
 __all__ = [
@@ -1285,14 +1285,14 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
         try:
             fileString = self._csv_name.split('.')
-            file_name = "%s_%s.%s" % (
-                fileString[0], "invalid", "xlsx"
+            file_name = "%s_%s_%s.%s" % (
+                fileString[0], "invalid", generate_random_string(), "xlsx"
             )
-            final_hearder = self._csv_column_name_with_mandatory
-            final_hearder.append("Error Description")
+            final_header = self._csv_column_name_with_mandatory
+            final_header.append("Error Description")
             write_data_to_excel(
                 os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"),
-                file_name, final_hearder,
+                file_name, final_header,
                 self._source_data, mapped_error_dict,
                 mapped_header_dict, self._sheet_name
             )

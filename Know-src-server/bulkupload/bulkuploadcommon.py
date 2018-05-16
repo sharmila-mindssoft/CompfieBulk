@@ -4,6 +4,8 @@ import uuid
 import csv
 import xlsxwriter
 import pyexcel
+import string
+import random
 
 from bulkconstants import (
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
@@ -24,6 +26,13 @@ def new_uuid():
 def remove_uploaded_file(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
+
+
+def generate_random_string(length=9):
+    characters = string.ascii_lowercase + string.digits
+    return ''.join(
+        random.SystemRandom().choice(characters) for _ in range(length)
+    )
 
 
 def frame_file_name(file_name):
