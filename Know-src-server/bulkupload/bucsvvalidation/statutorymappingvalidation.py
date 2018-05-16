@@ -1194,7 +1194,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     ):
                         self._error_summary["duplicate_error"] += 1
                         dup_error = "Compliance_Task - Duplicate compliances"
-                        +" in Knowledge DB"
+                        dup_error += " in Knowledge DB"
                         res = make_error_desc(res, dup_error)
 
                 if key == "Compliance_Frequency":
@@ -1498,17 +1498,28 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 x["Organization"], x["Statutory_Nature"],
                 x["Statutory"], x["Applicable_Location"]
             ))
-            msg = [], statu_exists_id = []
+            msg = []
+            statu_exists_id = []
             for k, v in groupby(self._source_data, key=lambda s: (
                 s["Organization"], s["Statutory_Nature"],
                 s["Statutory"], s["Applicable_Location"]
             )):
+                print "Group BYYYYYYYY >>>>>>>>>>>>>>>>>>>>>>>>>>"
                 grouped_list = list(v)
+                print grouped_list
+
                 if len(grouped_list) == 0:
                     continue
-                org_ids = [], statu_ids = [], geo_ids = [], nature_id = None
+                org_ids = []
+                statu_ids = []
+                geo_ids = []
+                nature_id = None
                 statu_mapping = None
                 value = grouped_list[0]
+
+                print "CSV_DELIMITER >>>>>>>>>>>>>>>>>>>>"
+                print value.get("Organization").strip().split(CSV_DELIMITER)
+
                 for org in value.get(
                     "Organization"
                 ).strip().split(CSV_DELIMITER):
