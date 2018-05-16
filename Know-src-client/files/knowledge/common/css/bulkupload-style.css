@@ -276,3 +276,37 @@
     .filter-by-div {
         height: 520px;
     }
+
+  /* approve-statutory-mapping-bulk-upload Inline Styles */
+.datatable-inline{
+  width: 3000px !important; 
+  overflow-x: auto;
+  margin:0;
+}
+.statutory{
+  font-weight: normal;
+  color: #1c1c1c;
+    }
+.pagination-inline{
+width: 100%; 
+display: table;
+}
+.td-inline-one{
+  width:250px
+}
+.td-inline-two{
+text-align:right;
+}
+.filter_by_inline{
+padding: 10px; text-transform: none; color: #fff !important; margin-top: 0px;
+}
+.ul-inline{
+  width:94%;
+}
+.b-t-0{
+    border-top: 0 none !important;
+}
+.b-b-0{
+    border-bottom: 0 none !important;
+}
+/* approve-statutory-mapping-bulk-upload Inline Styles */
