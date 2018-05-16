@@ -118,6 +118,7 @@ def getComplianceID(db, compliance_task_name):
 
     return complianceID
 
+
 def getCompletedTaskCSVList(db, session_user, legal_entity_list):
 
     doc_names = {}
@@ -133,7 +134,8 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
     query = " SELECT DISTINCT T01.legal_entity_id, T02.legal_entity, " + \
             " T01.csv_past_id, T01.csv_name, T01.uploaded_on, T01.uploaded_by, " + \
             " total_records, total_documents, T01.uploaded_documents, " + \
-            " (T01.total_documents - t01.uploaded_documents) AS remaining_documents " + \
+            " (T01.total_documents - T01.uploaded_documents) AS remaining_documents, " + \
+            " T01.domain_id, T01.unit_id_id as unit_id, NOW() as start_date" + \
             " From tbl_bulk_past_data_csv  AS T01 " + \
             " INNER JOIN tbl_bulk_past_data AS T02 " + \
             " ON T01.csv_past_id = T02.csv_past_id " + \
@@ -142,7 +144,7 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
     param = [session_user, legal_entity_list]
 
     rows = db.select_all(query, param)
-    # print "getCompletedTaskCSVList>rows>>", rows
+    print "getCompletedTaskCSVList>rows>>", rows
 
     param1 = [session_user]
     docQuery = "select t1.csv_past_id, document_name from tbl_bulk_past_data as t1 " + \
@@ -151,6 +153,7 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
                " where ifnull(t2.upload_status, 0) = 0 and document_name != '' " + \
                " and t2.uploaded_by = %s "
     docRows = db.select_all(docQuery, param1)
+    print "docRows-> ", docRows
 
     for d in docRows:
         csv_id = d.get("csv_past_id")
@@ -162,30 +165,21 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
             doc_list.append(docname)
         doc_names[csv_id] = doc_list
 
+    print "doc Names-> ", doc_names
     csv_list = []
     for row in rows:
         uploaded_on = row["uploaded_on"].strftime("%d-%b-%Y %H:%M")
-
-        csv_list.append(bu_ct.CsvList(row["csv_past_id"], row["csv_name"],
-        uploaded_on, row["uploaded_by"], row["total_records"],
-        row["total_documents"], row["uploaded_documents"], row["remaining_documents"],
-        doc_names.get(d.get("csv_past_id")), row["legal_entity"]
-        )
+        curr_date = datetime.datetime.now().strftime('%d-%b-%Y')
+        csv_list.append(
+            bu_ct.CsvList(
+                row["csv_past_id"], row["csv_name"],
+                uploaded_on, row["uploaded_by"], row["total_records"],
+                row["total_documents"], row["uploaded_documents"],
+                row["remaining_documents"],
+                doc_names.get(d.get("csv_past_id")), row["legal_entity"],
+                row["domain_id"], row["unit_id"], curr_date
+            )
         )
 
     # print "getCompletedTaskCSVList>csv_list>>", csv_list
     return csv_list
-########################################################
-def convertArrayToString(array_ids):
-    existing_id=[]
-    id_list=""
-    if(len(array_ids)>1):
-        for d in array_ids :
-         if d in existing_id:
-           break
-         id_list+=str(d)+","
-         existing_id.append(d)
-        id_list=id_list.rstrip(',');
-    else :
-        id_list=array_ids[0]
-    return id_list

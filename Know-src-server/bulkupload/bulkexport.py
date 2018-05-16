@@ -4,6 +4,9 @@ import csv
 import uuid
 import datetime
 import mysql.connector
+from .budatabase.buassignstatutorydb import (
+    get_country_name_by_legal_entity_id
+)
 from server.constants import (
     CSV_DOWNLOAD_URL, KNOWLEDGE_DB_HOST,
     KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
@@ -50,7 +53,7 @@ class ConvertJsonToCSV(object):
     def to_string(self, s):
         try:
             return str(s)
-        except:
+        except Exception:
             return s.encode('utf-8')
 
     def write_csv(self, header, values=None):
@@ -66,10 +69,16 @@ class ConvertJsonToCSV(object):
         le_name = request.le_name
         domain_names = ",".join(str(e) for e in request.d_names)
         unit_names = ",".join(str(e) for e in request.u_names)
+        country_id, country_name = get_country_name_by_legal_entity_id(
+            request.le_id
+        )
 
         download_assign_compliance_list = db.call_proc(
             'sp_download_assign_statutory_template',
-            [client_group_name, le_name, domain_names, unit_names]
+            [
+                client_group_name, country_name, le_name,
+                domain_names, unit_names
+            ]
         )
 
         sno = 0
@@ -77,6 +86,7 @@ class ConvertJsonToCSV(object):
             for ac in download_assign_compliance_list:
                 sno = sno + 1
                 client_group = ac["client_group"]
+                country = ac["country"]
                 legal_entity = ac["legal_entity"]
                 domain = ac["domain"]
                 organization = ac["organization"].replace(",", CSV_DELIMITER)
@@ -91,8 +101,8 @@ class ConvertJsonToCSV(object):
 
                 if not is_header:
                     csv_headers = [
-                        "S.No", "Client_Group", "Legal_Entity", "Domain",
-                        "Organization", "Unit_Code", "Unit_Name",
+                        "S.No", "Client_Group", "Country", "Legal_Entity",
+                        "Domain", "Organization", "Unit_Code", "Unit_Name",
                         "Unit_Location", "Primary_Legislation",
                         "Secondary_Legislation", "Statutory_Provision",
                         "Compliance_Task", "Compliance_Description",
@@ -103,11 +113,11 @@ class ConvertJsonToCSV(object):
                     self.write_csv(csv_headers, None)
                     is_header = True
                 csv_values = [
-                    sno, client_group, legal_entity, domain, organization,
-                    unit_code, unit_name, unit_location, perimary_legislation,
-                    secondary_legislation, statutory_provision,
-                    compliance_task_name, compliance_description,
-                    "", "", ""
+                    sno, client_group, country, legal_entity, domain,
+                    organization, unit_code, unit_name, unit_location,
+                    perimary_legislation, secondary_legislation,
+                    statutory_provision, compliance_task_name,
+                    compliance_description, "", "", ""
                 ]
                 self.write_csv(None, csv_values)
         else:
@@ -156,7 +166,9 @@ class ConvertJsonToCSV(object):
                     total_rejected_records = 0
                 rejected_by_name = ""
                 approved_by_name = ""
-                if ac["declined_count"] is not None and ac["declined_count"] > 1:
+                if(
+                    ac["declined_count"] is not None and ac["declined_count"]
+                ) > 1:
                     rejected_by_name = SYSTEM_REJECTED_BY
                     approved_by_name = SYSTEM_REJECTED_BY
                 else:
@@ -180,40 +192,43 @@ class ConvertJsonToCSV(object):
                     approvedRejectedBy = approved_by_name
                 approve_status = ac["total_approve_records"]
                 approve_reject_task = str(approve_status) + " / " + str(
-                                                    total_rejected_records)
+                    total_rejected_records)
                 reason_for_rejection = ""
                 if (ac["is_fully_rejected"] == 1):
                     approve_reject_task = "-"
                     reason_for_rejection = ac["rejected_reason"]
                 if not is_header:
-                    text = "Statutory Mapping - Bulk Upload Report"
-                    csv_header_line1 = [
-                        "", "", "", "", "", text, "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_header_line1, None)
-                    csv_header_line2 = [
-                        "", "", "", "Country", request.c_names, "", "Domain",
-                        request.d_names, "", "", ""
-                    ]
-                    self.write_csv(csv_header_line2, None)
-                    csv_header_line3 = [
-                        "", "", "", "From Date", request.from_date, "",
-                        "To Date", request.to_date, "", "", ""
-                    ]
-                    self.write_csv(csv_header_line3, None)
-                    csv_header_line4 = [
-                        "", "", "", "KE Name", user_name_list, "",
-                        "Exported Date and Time", exported_time, "", "", ""
-                    ]
-                    self.write_csv(csv_header_line4, None)
-                    csv_header_line5 = ["S.No", "Country", "Domain",
-                                        "Uploaded By", "Uploaded On",
-                                        "Uploaded File Name", "No. Of Tasks",
-                                        "Approved / Rejected Tasks",
-                                        "Approved / Rejected On",
-                                        "Approved / Rejected By",
-                                        "Reason for Rejection"]
-                    self.write_csv(csv_header_line5, None)
+                    # text = "Statutory Mapping - Bulk Upload Report"
+                    # csv_header_line1 = [
+                    #     "", "", "", "", "", text, "", "", "", "", ""
+                    # ]
+                    # self.write_csv(csv_header_line1, None)
+                    # csv_header_line2 = [
+                    #     "", "", "", "Country", request.c_names, "", "Domain",
+                    #     request.d_names, "", "", ""
+                    # ]
+                    # self.write_csv(csv_header_line2, None)
+                    # csv_header_line3 = [
+                    #     "", "", "", "From Date", request.from_date, "",
+                    #     "To Date", request.to_date, "", "", ""
+                    # ]
+                    # self.write_csv(csv_header_line3, None)
+                    # csv_header_line4 = [
+                    #     "", "", "", "KE Name", user_name_list, "",
+                    #     "Exported Date and Time", exported_time, "", "", ""
+                    # ]
+                    # self.write_csv(csv_header_line4, None)
+                    # csv_header_line5 = ["S.No", "Country", "Domain",
+                    #                     "Uploaded By", "Uploaded On",
+                    #                     "Uploaded File Name", "No. Of Tasks",
+                    #                     "Approved / Rejected Tasks",
+                    #                     "Approved / Rejected On",
+                    #                     "Approved / Rejected By",
+                    #                     "Reason for Rejection"]
+                    # self.write_csv(csv_header_line5, None)
+                    self.write_to_csv_statumapping(
+                        request, user_name_list, exported_time
+                    )
                     is_header = True
                 csv_values = [
                     sno, country_name, domain_name, uploaded_by_name,
@@ -227,6 +242,37 @@ class ConvertJsonToCSV(object):
                 os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
         cnx_pool.close()
+
+    def write_to_csv_statumapping(self, request, user_name_list, exported_time):
+        text = "Statutory Mapping - Bulk Upload Report"
+        csv_header_line1 = [
+            "", "", "", "", "", text, "", "", "", "", ""
+        ]
+        self.write_csv(csv_header_line1, None)
+        csv_header_line2 = [
+            "", "", "", "Country", request.c_names, "", "Domain",
+            request.d_names, "", "", ""
+        ]
+        self.write_csv(csv_header_line2, None)
+        csv_header_line3 = [
+            "", "", "", "From Date", request.from_date, "",
+            "To Date", request.to_date, "", "", ""
+        ]
+        self.write_csv(csv_header_line3, None)
+        csv_header_line4 = [
+            "", "", "", "KE Name", user_name_list, "",
+            "Exported Date and Time", exported_time, "", "", ""
+        ]
+        self.write_csv(csv_header_line4, None)
+        csv_header_line5 = ["S.No", "Country", "Domain",
+                            "Uploaded By", "Uploaded On",
+                            "Uploaded File Name", "No. Of Tasks",
+                            "Approved / Rejected Tasks",
+                            "Approved / Rejected On",
+                            "Approved / Rejected By",
+                            "Reason for Rejection"]
+        self.write_csv(csv_header_line5, None)
+
 
     def generate_export_client_unit_bulk(self, db, request, session_user):
         is_header = False
@@ -263,7 +309,10 @@ class ConvertJsonToCSV(object):
                     total_rejected_records = 0
                 rejected_by_name = ""
                 approved_by_name = ""
-                if cu["declined_count"] is not None and cu["declined_count"] > 1:
+                if(
+                    cu["declined_count"] is not None and
+                    cu["declined_count"]
+                ) > 1:
                     rejected_by_name = SYSTEM_REJECTED_BY
                     approved_by_name = SYSTEM_REJECTED_BY
                 else:
@@ -287,7 +336,7 @@ class ConvertJsonToCSV(object):
                     approvedRejectedBy = approved_by_name
                 approve_status = cu["total_approve_records"]
                 approve_reject_task = str(approve_status) + " / " + str(
-                                                    total_rejected_records)
+                    total_rejected_records)
                 reason_for_rejection = ""
                 if (cu["is_fully_rejected"] == 1):
                     approve_reject_task = "-"
@@ -375,7 +424,10 @@ class ConvertJsonToCSV(object):
                 result_domain = asr["domain_names"]
                 rejected_by_name = ""
                 approved_by_name = ""
-                if asr["declined_count"] is not None and asr["declined_count"] > 1:
+                if (
+                    asr["declined_count"] is not None and
+                    asr["declined_count"]
+                ) > 1:
                     rejected_by_name = SYSTEM_REJECTED_BY
                     approved_by_name = SYSTEM_REJECTED_BY
                 else:
@@ -398,7 +450,8 @@ class ConvertJsonToCSV(object):
                         asr["approved_on"], '%d-%b-%Y %H:%M')
                     approvedRejectedBy = approved_by_name
                 approve_status = asr["total_approve_records"]
-                approve_reject_task = str(approve_status) + " / " + str(total_rejected_records)
+                approve_reject_task = str(approve_status) + " / " + str(
+                    total_rejected_records)
                 reason_for_rejection = ""
                 if (asr["is_fully_rejected"] == 1):
                     approve_reject_task = "-"

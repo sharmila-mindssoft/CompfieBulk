@@ -188,7 +188,6 @@ function validateUpload() {
         $('#myModal').modal('hide');
         return false;
     } else {
-
         $('#myModal').modal('show');
         console.log("_ActionMode>>", buCtPage._ActionMode);
         if (buCtPage._ActionMode == "add") {
@@ -216,6 +215,10 @@ function validateUpload() {
                     LENGTHERROR.text("0");
                     INVALIDERROR.text("0");
                     INVALIDFILEFORMATERROR.text(0);
+                    console.log("domain id >>> " + data.domain_id);
+                    console.log("unit id >>> " + data.unit_id);
+                    $("#dom_id_hdn").val(data.domain_id);
+                    $("#unit_id_hdn").val(data.unit_id);
                     $('.view-summary').hide();
                     $('.dropbtn').hide();
                     $('#hdnCsvId').val(data.new_csv_id);
@@ -406,7 +409,7 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(list_data) {
         ListContainer.append(clone4);
     } else {
         $.each(list_data, function(idx, data) {
-            var balance = data.no_of_documents - data.uploaded_documents;
+            var balance = data.no_of_documents - data.bu_uploaded_documents;
             var cloneRow = ListRowTemplate.clone();
             var cname_split = data.csv_name.split("_");
             cname_split.pop();
@@ -417,7 +420,7 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(list_data) {
             $('.uploaded-on', cloneRow).text(data.uploaded_on);
             $('.tot-records', cloneRow).text(data.total_records);
             $('.req-docs', cloneRow).text(data.total_documents);
-            $('.uploaded-docs', cloneRow).text(data.uploaded_documents);
+            $('.uploaded-docs', cloneRow).text(data.bu_uploaded_documents);
             $('.remaining-docs', cloneRow).text(data.remaining_documents);
             csvId = data.csv_id;
             docNames = data.doc_names;
@@ -438,6 +441,9 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     // data
     console.log("data>>" + JSON.stringify(data));
     var uploadedCsvName = data.csv_name;
+    $("#dom_id_hdn").val(data.domain_id);
+    $("#unit_id_hdn").val(data.unit_id);
+    $("#start_date_hdn").val(data.start_date);
 
     $('#hdnCsvId').val(data.csv_past_id);
     csvId = data.csv_past_id;
@@ -449,7 +455,7 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     $('.uploaded_data').attr("download", csv_path);
 
     $('#bu-doc-total').text(data.total_documents);
-    $('#bu-upload-total').text(data.uploaded_documents);
+    $('#bu-upload-total').text(data.bu_uploaded_documents);
     $('#bu-remain-total').text(data.remaining_documents);
 
 };
@@ -515,11 +521,42 @@ function downloadData() {
     );
 }
 
+
+function getCountryId(le_id) {
+    var c_id = null;
+    $.each(LEGAL_ENTITIES, function(k, v) {
+        if (v.le_id == parseInt(le_id)) {
+            c_id = v.c_id;
+        }
+    });
+    return c_id;
+}
+
 function submitUpload() {
+
+    var dom_id = $("#dom_id_hdn").val();
+    var unit_id = $("#unit_id_hdn").val();
+    var start_date = $("#start_date_hdn").val();
+    client_mirror.uploadComplianceTaskFile(
+        parseInt(LEGALENTITYIDUPLOAD.val()),
+        getCountryId(LEGALENTITYIDUPLOAD.val()),
+        parseInt(dom_id), parseInt(unit_id),
+        start_date, file_list,
+        function(error, response) {
+            if (error == null) {
+                hideLoader();
+            } else {
+                console.log(error);
+                hideLoader();
+            }
+    });
 
     var args = {
         "new_csv_id": parseInt($('#hdnCsvId').val()),
-        "legal_entity_id": parseInt(LEGALENTITYIDUPLOAD.val())
+        "country_id": getCountryId(LEGALENTITYIDUPLOAD.val()),
+        "legal_entity_id": parseInt(LEGALENTITYIDUPLOAD.val()),
+        "domain_id": parseInt(dom_id),
+        "unit_id": parseInt(unit_id)
     };
     $('#myModal').modal('show');
     buClient.saveBulkRecords(args, function(error, data) {
@@ -533,7 +570,6 @@ function submitUpload() {
         }
     });
 }
-
 
 
 // $(function() {
@@ -599,6 +635,8 @@ function resetEdit() {
     UploadFile.val("");
 }
 
+var file_list =  [];
+
 Dropzone.autoDiscover = false;
 Dropzone.autoProcessQueue = false;
 var addedfiles = [];
@@ -632,6 +670,17 @@ var myDropzone = new Dropzone("div#myDrop", {
             } else {
                 addedfiles.push(file.name);
                 queueCount += 1;
+                console.log("File>" + file);
+                buClient.uploadFile(file, function result_data(data) {
+                    if (data != 'File max limit exceeded' || data != 'File content is empty') {
+                        uploadFile = data;
+                        file_list = data
+                    } else {
+                        file_list = [];
+                    }
+
+                    console.log("file_list->> "+ file_list);
+                });
             }
         });
         this.on("removedfile", function(file) {
