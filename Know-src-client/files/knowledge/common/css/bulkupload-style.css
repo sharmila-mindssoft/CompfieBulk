@@ -2,9 +2,11 @@
     width: 100%;
     overflow: hidden;
 }
-.multiselect-native-select > .btn-group{
+
+.multiselect-native-select>.btn-group {
     width: 100% !important;
 }
+
 
 /* using width css classes instead of html width attribute */
 
@@ -121,6 +123,9 @@
 }
 
 
+
+
+
 /* Dropdown download items*/
 
 .popover {
@@ -169,6 +174,9 @@
     color: #fff !important;
     margin-top: 0px;
 }
+
+
+
 
 /* pagination */
 
@@ -241,18 +249,25 @@
 
 
 
-.download-options{
+.download-options {
     display: inline-block;
 }
 
-.auto-text-box ul{
+.auto-text-box ul {
     width: 91% !important;
 }
+
+
+
+
 /**** Added For ApproveRejectStatu Mapping TaskID Alignment Fix ***/
 
 td.task-id {
     word-wrap: break-word;
 }
+
+
+
 
 
 /**** Added For ApproveRejectStatu Mapping Alignment Fix ***/
@@ -269,9 +284,11 @@ td.task-id {
 .break-word {
     word-wrap: break-word !important;
 }
-.filter-data{
-    height:455px !important;
+
+.filter-data {
+    height: 455px !important;
 }
+
 .vertical-scroll {
     overflow-y: scroll;
     height: 400px;
@@ -279,4 +296,96 @@ td.task-id {
 
 .filter-by-div {
     height: 520px;
+}
+
+
+
+
+/* approve-statutory-mapping-bulk-upload Inline Styles */
+
+.datatable-inline {
+    width: 3000px !important;
+    overflow-x: auto;
+    margin: 0;
+}
+
+.datatable-inline thead {
+    font-weight: normal;
+}
+
+.pagination-inline {
+    width: 100%;
+    display: table;
+}
+
+.td-inline-one {
+    width: 250px
+}
+
+.td-inline-two {
+    text-align: right;
+}
+
+.filter_by_inline {
+    padding: 10px;
+    text-transform: none;
+    color: #fff !important;
+    margin-top: 0px;
+}
+
+.ul-inline {
+    width: 94%;
+}
+
+.statutory {
+    font-weight: normal;
+    color: #1c1c1c;
+}
+
+.b-t-0 {
+    border-top: 0 none !important;
+}
+
+.b-b-0 {
+    border-bottom: 0 none !important;
+}
+
+
+/* approve-statutory-mapping-bulk-upload Inline Styles */
+
+
+/* statutory-mapping-bulk-upload Inline Styles */
+
+.ac-domain-ul {
+    width: 94%;
+}
+
+.bu_upload_csv_small {
+    text-align: left;
+}
+
+.smb_csv_extenstion {
+    color: #E64C3D !important;
+}
+
+.tablenopadd {
+    width: 100%;
+}
+
+.smb-csv-file-name {
+    width: 80%;
+}
+
+.smb-uploaded-csv-view {
+    width: 10%;
+}
+
+.download-document-td {
+    width: 10%;
+}
+
+.smb-inline-no-records {
+    padding: 40px;
+    font-size: 1.2em;
+    font-weight: bold;
 }
