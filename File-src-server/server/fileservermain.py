@@ -4,15 +4,22 @@ import random
 import os
 import traceback
 import json
+import requests
+import urllib
+from zipfile import ZipFile
+from constants import CLIENT_DOCS_BASE_PATH
 from flask import Flask, Response, request, send_from_directory
 from functools import wraps
 import fileprotocol
 from filecontroller import *
+from filehandler import *
 
 app = Flask(__name__)
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 EXP_BASE_PATH = os.path.join(ROOT_PATH, "exported_reports")
+TEMP_FILE_SERVER = "http://localhost:8083/temp/"
+
 
 def api_request(
     request_data_type
@@ -26,6 +33,56 @@ def api_request(
         return wrapped
     return wrapper
 
+
+@app.route('/clientfile', methods=['POST'])
+def move_client_files():
+    print "CAME IN file SERVER "
+    csv_id = request.args.get('csvid')
+
+    legal_entity_id = request.args.get('le_id')
+    country_id = request.args.get('c_id')
+    domain_id = request.args.get('d_id')
+    unit_id = request.args.get('u_id')
+    start_date = request.args.get('start_date')
+    client_id = request.args.get('client_id')
+    if " " in start_date:
+        start_date = string_to_datetime(start_date.split(" ")[0]).date()
+    else:
+        start_date = string_to_datetime(start_date).date()
+    year = start_date.year
+    month = "%s%s" % (string_months.get(start_date.month), str(year))
+
+    file_path = "%s/%s/%s/%s/%s/%s/%s/%s" % (
+        CLIENT_DOCS_BASE_PATH, client_id, country_id, legal_entity_id,
+        unit_id, domain_id, year, month
+    )
+    if not os.path.exists(file_path):
+        print "path created ", file_path
+        os.makedirs(file_path)
+
+    print "csv_id-> ", csv_id
+    actual_zip_file = os.path.join(
+        file_path, str(csv_id) + ".zip"
+    )
+    print "actual_zip_file > ", actual_zip_file
+    caller_name = "%sdownloadclientfile?csvid=%s" % (TEMP_FILE_SERVER, csv_id)
+    print "download file Cller nameeeeee in file server main ", caller_name
+    a, b = urllib.urlretrieve(caller_name, actual_zip_file)
+    print "A ", a
+    print "b ", b
+    zip_ref = ZipFile(actual_zip_file, 'r')
+    print "zip_ref>>> ", zip_ref
+    zip_ref.extractall(file_path)
+    zip_ref.close()
+    os.remove(actual_zip_file)
+    temp_file_server_remove_call(csv_id)
+    return "Success Response"
+
+
+def temp_file_server_remove_call(csv_id):
+    caller_name = "%sremoveclientfile?csvid=%s" % (TEMP_FILE_SERVER, csv_id)
+    response = requests.post(caller_name)
+    print response.text
 
 class API(object):
     def __init__(self):

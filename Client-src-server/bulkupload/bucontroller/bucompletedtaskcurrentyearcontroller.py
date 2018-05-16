@@ -98,7 +98,6 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
     # print "request_frame.legal_entity_id>>", request_frame.legal_entity_id
     res_data = cObj.perform_validation(request_frame.legal_entity_id)
 
-
     if res_data["return_status"] is True :
         current_date_time = get_date_time_in_date()
         str_current_date_time = datetime_to_string(current_date_time)
@@ -150,10 +149,10 @@ def process_saveBulkRecords(db, request_frame, session_user, session_token):
 
     print "cobj.doccount>> ", cObj._doc_count
 
-    # if cObj._doc_count > 0:
-    #     cObj.document_download_process_initiate(
-    #         csv_id, country_id, legal_id, domain_id, unit_id, session_token
-    #     )
+    if cObj._doc_count > 0:
+        cObj.document_download_process_initiate(
+            csv_id, country_id, legal_id, domain_id, unit_id, session_token
+        )
 
     print "legal_entity_id>>", request_frame.legal_entity_id
 

@@ -508,7 +508,7 @@ DROP TEMPORARY TABLE IF EXISTS my_temp_table;
     t1.approved_on,
     t1.rejected_on,
     t1.is_fully_rejected,
-    (t1.total_records - IFNULL(t1.total_rejected_records, 0) - IFNULL(t1.declined_count, 0)) 
+    (t1.total_records - IFNULL(t1.total_rejected_records, 0) - IFNULL(t1.declined_count, 0))
     AS total_approve_records,
     t1.approve_status,
     t1.rejected_reason,
@@ -564,7 +564,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_rejected_statutory_mapping_reportdata`;
 DELIMITER //
-CREATE PROCEDURE `sp_rejected_statutory_mapping_reportdata`(IN `country_id` INT(11), 
+CREATE PROCEDURE `sp_rejected_statutory_mapping_reportdata`(IN `country_id` INT(11),
   IN `domain_id` INT(11), IN `user_id` INT(11))
 BEGIN
  SELECT sm.csv_id,
@@ -1287,7 +1287,7 @@ BEGIN
     SELECT t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
     t1.client_id,  t1.uploaded_by,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') AS uploaded_on,
-    (SELECT distinct client_group FROM tbl_bulk_assign_statutory 
+    (SELECT distinct client_group FROM tbl_bulk_assign_statutory
       WHERE csv_assign_statutory_id = t1.csv_assign_statutory_id) AS client_group
     FROM tbl_bulk_assign_statutory_csv AS t1
     WHERE t1.csv_assign_statutory_id = csvid;
@@ -1938,13 +1938,19 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_ct_format_file_status_update`;
 DELIMITER //
 CREATE PROCEDURE `sp_ct_format_file_status_update`(
-    IN csvid INT, filename VARCHAR(150)
+    IN old_file_name VARCHAR(150), IN csvid INT,
+    IN filename VARCHAR(150),
+    IN file_size FLOAT
 )
 BEGIN
 
-    UPDATE tbl_bulk_past_data_csv
-      SET uploaded_documents = uploaded_documents + 1
-      WHERE csv_past_id = csvid AND uploaded_documents < total_documents;
+    update tbl_bulk_past_data set document_upload_status = 1,
+           document_file_size = file_size , document_name = filename
+      where csv_past_id = csvid and document_name=old_file_name;
+
+    update tbl_bulk_past_data_csv
+      set uploaded_documents = uploaded_documents + 1
+      where csv_past_id = csvid and uploaded_documents < total_documents;
 
     UPDATE tbl_bulk_past_data_csv SET upload_status = 1 WHERE
       uploaded_documents = total_documents AND csv_past_id = csvid;
@@ -1963,7 +1969,7 @@ BEGIN
   SELECT
     unit_code
     FROM tbl_bulk_assign_statutory WHERE
-    legal_entity = legal_entity_ AND domain = domain_ AND unit_code = unitcode_ 
+    legal_entity = legal_entity_ AND domain = domain_ AND unit_code = unitcode_
     AND csv_assign_statutory_id = csvid AND action = 2;
 END //
 DELIMITER ;
@@ -1990,13 +1996,31 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_sm_get_declined_docs`;
+DROP PROCEDURE IF EXISTS `sp_pastdata_doc_download_status_update`;
+
 DELIMITER //
-CREATE PROCEDURE `sp_sm_get_declined_docs`(
-    IN csvid INT(11)
+
+CREATE PROCEDURE `sp_pastdata_doc_download_status_update`(
+    IN csvid INT, download_status VARCHAR(50)
 )
 BEGIN
-  SELECT format_file FROM tbl_bulk_statutory_mapping WHERE csv_id = csvid
-  AND action = 3;
+
+    update  tbl_bulk_past_data_csv set file_download_status =  download_status
+      where csv_id = csvid;
 END //
+
 DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_pastdata_get_file_download_status`;
+DROP PROCEDURE IF EXISTS `sp_sm_get_declined_docs`;
+
+
+ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data`
+ADD COLUMN `document_upload_status` TINYINT NULL AFTER `document_name`,
+ADD COLUMN `document_file_size` FLOAT DEFAULT '0' AFTER `document_upload_status`;
+
+
+
+ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv`
+ADD COLUMN `file_download_status` VARCHAR(50) NULL AFTER `upload_status`;

@@ -33,7 +33,6 @@ function convert_to_base64(file, callback) {
     reader.onload = function(readerEvt) {
         var binaryString = readerEvt.target.result;
         file_content = btoa(binaryString);
-        console.log("file_content>> " + file_content);
         callback(file_content);
     };
     reader.readAsBinaryString(file);
@@ -97,7 +96,7 @@ function getDownloadData(legalEntityId, domainId, unitId, complianceFrequency, s
 
 function uploadFile(file, callback) {
     console.log(JSON.stringify(file))
-        // var evt = fileListener;
+    // var evt = fileListener;
     max_limit = 1024 * 1024 * 50;
     // file max limit 50MB
     // var files = evt.target.files;
@@ -123,7 +122,6 @@ function uploadFile(file, callback) {
         if (file) {
             convert_to_base64(file,
                 function(file_content) {
-                    console.log("File content inside >> " + file_content);
                     if (file_content == null) {
                         callback(message.file_content_empty);
                     }

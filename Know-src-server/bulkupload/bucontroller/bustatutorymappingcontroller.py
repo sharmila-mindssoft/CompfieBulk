@@ -411,6 +411,11 @@ def update_statutory_mapping_action(db, request_frame, session_user):
                     cObj._domain_name, session_user.user_id(), remarks, 0
                 )
                 cObj.source_commit()
+                # print "DB Comitted >>"
+                # cObj.source_bulkdb_commit()
+                # if cObj._doc_count > 0:
+                #     print "inside if"
+                #     cObj.format_download_process_initiate(csv_id)
                 return bu_sm.UpdateApproveActionFromListSuccess()
 
     except Exception, e:
