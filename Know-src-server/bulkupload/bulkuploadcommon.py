@@ -28,7 +28,7 @@ def remove_uploaded_file(file_path):
         os.remove(file_path)
 
 
-def generate_random_string(length=9):
+def generate_random_string(length=10):
     characters = string.ascii_lowercase + string.digits
     return ''.join(
         random.SystemRandom().choice(characters) for _ in range(length)

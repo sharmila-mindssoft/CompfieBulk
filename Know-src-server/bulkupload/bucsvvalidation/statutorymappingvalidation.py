@@ -1071,7 +1071,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     valid_failed, error_cnt = parse_csv_dictionary_values(
                         key, v
                     )
-                    # print "valid_failed----> ", valid_failed
                     if valid_failed is not True:
                         if res is True:
                             res = valid_failed
@@ -1100,18 +1099,11 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                                     v = " >> ".join(
                                         e.strip() for e in v.split(">>")
                                     )
-
                             print "v-> ", v
-
                             if unboundMethod is not None:
                                 isFound = unboundMethod(v)
-
-                            # print "isFound-> ", isFound
-
                             if isFound is not True and isFound != "":
                                 msg = "%s - %s %s" % (key, v, isFound)
-                                # print msg
-                                # print row_idx
                                 if res is not True:
                                     res.append(msg)
                                 else:
@@ -1286,7 +1278,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         try:
             fileString = self._csv_name.split('.')
             file_name = "%s_%s_%s.%s" % (
-                fileString[0], "invalid", generate_random_string(), "xlsx"
+                fileString[0], generate_random_string(), "invalid", "xlsx"
             )
             final_header = self._csv_column_name_with_mandatory
             final_header.append("Error Description")
