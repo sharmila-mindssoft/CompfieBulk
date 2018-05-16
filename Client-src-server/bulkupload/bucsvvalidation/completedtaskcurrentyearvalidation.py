@@ -596,7 +596,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "doc_count": len(set(self._doc_names)),
             "doc_names": list(set(self._doc_names)),
             "unit_id": unit_id,
-            "domain_id" : domain_id,
+            "domain_id": domain_id,
         }
 
 
@@ -647,7 +647,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             if file_status == "completed":
                 self._stop = True
                 self.call_file_server(
-                    csvid, country_id, legal_id, domain_id, unit_id, session_token
+                    csvid, country_id, legal_id, domain_id, unit_id,
+                    session_token
                 )
 
             if self._stop is False:

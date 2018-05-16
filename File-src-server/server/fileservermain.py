@@ -70,7 +70,6 @@ def move_client_files():
     a, b = urllib.urlretrieve(caller_name, actual_zip_file)
     print "A ", a
     print "b ", b
-    # print os.path.getsize(actual_zip_file)
     zip_ref = ZipFile(actual_zip_file, 'r')
     print "zip_ref>>> ", zip_ref
     zip_ref.extractall(file_path)

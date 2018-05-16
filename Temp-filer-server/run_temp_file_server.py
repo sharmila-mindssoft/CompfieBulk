@@ -282,7 +282,7 @@ def upload_client():
         )
         if not os.path.exists(load_path):
             os.makedirs(load_path)
-            os.chmod(load_path, 0o777)
+            os.chmod(load_path, 0777)
 
         actual_file = os.path.join(load_path, f.filename)
         zip_f_name = actual_file + ".zip"
@@ -397,7 +397,7 @@ def removeclientfile():
     folder_name = request.args.get('csvid')
     assert folder_name is not None
     folder_path = os.path.join(app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], folder_name)
-    zip_f_name = get_zip_file(folder_name)
+    zip_f_name = get_client_zip_file(folder_name)
     if not os.path.exists(folder_path):
         return "Error"
     if not os.path.isfile(zip_f_name):
@@ -483,7 +483,7 @@ def download_client_file():
     folder_path = os.path.join(
         app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], folder_name)
     print "FOLDER pATH IN DOWNLOAD"
-    zip_f_name = get_zip_file(folder_name)
+    zip_f_name = get_client_zip_file(folder_name)
     print 'Path Exists ->>>', os.path.exists(folder_path)
     print 'zip size ->>> ', os.path.getsize(folder_path)
 
