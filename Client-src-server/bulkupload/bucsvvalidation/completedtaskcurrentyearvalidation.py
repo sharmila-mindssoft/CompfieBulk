@@ -213,6 +213,9 @@ class SourceDB(object):
     def check_primary_legislation(self, statutories):
         return self.check_base(False, self.Statutories, statutories, None)
 
+    def check_secondary_legislation(self, statutories):
+        return self.check_base(False, self.Statutories, statutories, None)
+
     def check_compliance_task(self, compliance_task):
         return self.check_base(True, self.Compliance_Task, compliance_task, None)
 
@@ -355,7 +358,7 @@ class SourceDB(object):
             "Unit_Code": self.check_unit_code,
             "Unit_Name": self.check_unit_name,
             "Primary_Legislation": self.check_primary_legislation,
-            # "Secondary_Legislation": self.get_secondary_legislation,
+            "Secondary_Legislation": self.check_secondary_legislation,
             "Compliance_Task": self.check_compliance_task,
             "Compliance_Description": self.check_compliance_description,
             "Compliance_Frequency": self.check_frequency,
@@ -423,111 +426,114 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         self.init_values(legal_entity_id)
 
         def make_error_desc(res, msg):
-            if res is True :
+            if res is True:
                 res = []
-            if res is not True :
+            if res is not True:
                 if type(msg) is list:
                     res.extend(msg)
-                else :
+                else:
                     res.append(msg)
             return res
-
         for row_idx, data in enumerate(self._source_data):
             if row_idx == 0:
                 self._legal_entity_names = data.get("Legal_Entity")
                 self._Domains = data.get("Domain")
-                # self._Unit_Codes = data.get("Unit_Code")
-                # self._Unit_Names = data.get("Unit_Name")
-                # self._Primary_Legislations = data.get("Primary_Legislation")
-                # self._Secondary_Legislations = data.get("Secondary_Legislation")
-                # self._Compliance_Tasks = data.get("Compliance_Task")
-                # self._Compliance_Descriptions = data.get("Compliance_Description")
-                # self._Compliance_Frequencys = data.get("Compliance_Frequency")
-                # self._Statutory_Dates = data.get("Statutory_Date")
-                # self._Due_Dates = data.get("Due_Date")
-                # self._Assignees = data.get("Assignee")
-                # self._Completion_Dates = data.get("Completion_Date")
-                # self._Document_Names = data.get("Document_Name")
 
             res = True
-            error_count = {"mandatory": 0, "max_length": 0, "invalid_char": 0, "invalid_date": 0}
+            error_count = {
+                "mandatory": 0, "max_length": 0, "invalid_char": 0,
+                "invalid_date": 0
+                }
             for key in self._csv_column_name:
                 value = data.get(key)
                 isFound = ""
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
 
-                if (key == "Document_Name" and value != '') :
+                if (key == "Document_Name" and value != ''):
                     self._doc_names.append(value)
-                for v in [v.strip() for v in values] :
-                    valid_failed, error_cnt = parse_csv_dictionary_values(key, v)
-                    if valid_failed is not True :
-                        if res is True :
+                for v in [v.strip() for v in values]:
+                    valid_failed, error_cnt = parse_csv_dictionary_values(
+                        key, v)
+                    if valid_failed is not True:
+                        if res is True:
                             res = valid_failed
                             error_count = error_cnt
-                        else :
+                        else:
                             res.extend(valid_failed)
                             error_count["mandatory"] += error_cnt["mandatory"]
-                            error_count["max_length"] += error_cnt["max_length"]
-                            error_count["invalid_char"] += error_cnt["invalid_char"]
-                            error_count["invalid_date"] += error_cnt["invalid_date"]
+                            error_count["max_length"] += error_cnt[
+                                "max_length"]
+                            error_count["invalid_char"] += error_cnt[
+                                "invalid_char"]
+                            error_count["invalid_date"] += error_cnt[
+                                "invalid_date"]
                     if v != "":
-                        if csvParam.get("check_is_exists") is True or csvParam.get("check_is_active") is True :
-                            unboundMethod = self._validation_method_maps.get(key)
+                        if csvParam.get(
+                                "check_is_exists"
+                                ) is True or csvParam.get(
+                                "check_is_active"
+                                ) is True:
+                            unboundMethod = self._validation_method_maps.get(
+                                key)
 
-                            if unboundMethod is not None :
+                            if unboundMethod is not None:
                                 isFound = unboundMethod(v)
-
-                            if isFound is not True and isFound != "" :
+                            if isFound is not True and isFound != "":
                                 msg = "%s - %s" % (key, isFound)
-                                if res is not True :
+                                print "msg: %s" % msg
+                                if res is not True:
                                     res.append(msg)
-                                else :
+                                else:
                                     res = [msg]
-                                print res
-                                if "Status" in isFound :
+                                if "Status" in isFound:
                                     self._error_summary["inactive_error"] += 1
-                                else :
-                                    self._error_summary["invalid_data_error"] += 1
-
+                                else:
+                                    self._error_summary[
+                                        "invalid_data_error"] += 1
                 if key is "Document_Name":
                     msg = []
                     if data["Document_Name"] != "":
-                        file_extension = os.path.splitext(data["Document_Name"])
+                        file_extension = os.path.splitext(
+                            data["Document_Name"])
                         allowed_file_formats = [".pdf", ".doc", ".docx",
-                                                    ".xls", ".xlsx"]
+                                                ".xls", ".xlsx"]
                         if file_extension[1] not in allowed_file_formats:
                             msg.append("Document Name - Invalid File Format")
                             self._error_summary["invalid_file_format"] += 1
                             res = make_error_desc(res, msg)
+                if res is not True:
+                    error_list = mapped_error_dict.get(row_idx)
+                    if error_list is None:
+                        error_list = res
+                    else:
+                        error_list.extend(res)
+                    res = True
 
-            if res is not True :
-                error_list = mapped_error_dict.get(row_idx)
-                if error_list is None:
-                    error_list = res
-                else :
-                    error_list.extend(res)
-                res = True
+                    mapped_error_dict[row_idx] = error_list
+                    head_idx = mapped_header_dict.get(key)
+                    if head_idx is None:
+                        head_idx = [row_idx]
+                    else:
+                        head_idx.append(row_idx)
 
-                mapped_error_dict[row_idx] = error_list
+                    mapped_header_dict[key] = head_idx
+                    invalid += 1
+                    self._error_summary["mandatory_error"] += error_count[
+                        "mandatory"]
+                    self._error_summary["max_length_error"] += error_count[
+                        "max_length"]
+                    self._error_summary["invalid_char_error"] += error_count[
+                        "invalid_char"]
+                    self._error_summary["invalid_date"] += error_count[
+                        "invalid_date"]
 
-                head_idx = mapped_header_dict.get(key)
-                if head_idx is None :
-                    head_idx = [row_idx]
-                else :
-                    head_idx.append(row_idx)
-
-                mapped_header_dict[key] = head_idx
-                invalid += 1
-                self._error_summary["mandatory_error"] += error_count["mandatory"]
-                self._error_summary["max_length_error"] += error_count["max_length"]
-                self._error_summary["invalid_char_error"] += error_count["invalid_char"]
-                self._error_summary["invalid_date"] += error_count["invalid_date"]
-
-        if invalid > 0 :
-            return self.make_invalid_return(mapped_error_dict, mapped_header_dict)
-        else :
-            return self.make_valid_return(mapped_error_dict, mapped_header_dict, legal_entity_id)
+        if invalid > 0:
+            return self.make_invalid_return(
+                mapped_error_dict, mapped_header_dict)
+        else:
+            return self.make_valid_return(
+                mapped_error_dict, mapped_header_dict, legal_entity_id)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
         fileString = self._csv_name.split('.')
@@ -537,8 +543,10 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         final_hearder = self._csv_header
         final_hearder.append("Error Description")
         write_data_to_excel(
-            os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"), file_name, final_hearder,
-            self._source_data, mapped_error_dict, mapped_header_dict, self._sheet_name
+            os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx"),
+            file_name, final_hearder,
+            self._source_data, mapped_error_dict, mapped_header_dict,
+            self._sheet_name
         )
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
@@ -619,11 +627,9 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         param = [self._csv_id]
         docRows = db.select_all(query, param)
 
-        print "docRows--->> ", docRows
         for d in docRows:
             doc_count = d.get("total_documents")
 
-        print "self._doc_names >> ", doc_count
         self._doc_count = doc_count
 
     def document_download_process_initiate(self, csvid):
@@ -635,7 +641,6 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 return
 
             file_status = get_file_stats(csvid)
-            print " file Status -> ", file_status
             if file_status == "completed":
                 self._stop = True
                 self.file_server_download_call(csvid)
@@ -654,7 +659,6 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 data = _db_check.call_proc(
                     "sp_sm_get_file_download_status", [csvid]
                 )
-                print "DAta -> ", data
                 if len(data) > 0:
                     file_status = data[0].get("file_download_status")
 
@@ -670,18 +674,14 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         check_status()
 
     def file_server_approve_call(self, csvid):
-        print "Approve call done"
         caller_name = "%sapprove?csvid=%s" % (TEMP_FILE_SERVER, csvid)
-        print "caller_name", caller_name
         response = requests.post(caller_name)
-        print "response.text-> ", response.text
 
     def file_server_download_call(self, csvid):
         actual_zip_file = os.path.join(
             KNOWLEDGE_FORMAT_PATH, str(csvid) + ".zip"
         )
         caller_name = "%sdownloadfile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
-        print "Cller nameeeeee", caller_name
         urllib.urlretrieve(caller_name, actual_zip_file)
         zip_ref = ZipFile(actual_zip_file, 'r')
         zip_ref.extractall(KNOWLEDGE_FORMAT_PATH)
@@ -693,7 +693,6 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def file_server_remove_call(self, csvid):
         caller_name = "%sremovefile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
         response = requests.post(caller_name)
-        print response.text
 
     def frame_data_for_main_db_insert(
         self, db, dataResult, legal_entity_id, session_user
@@ -719,7 +718,6 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             # cs_id = self.save_client_statutories_data(
             #     self._client_id, unit_id, domain_id, user_id
             #     )
-        print "frame_data_for_main_db_insert>leentity_id>>", legal_entity_id
         return self.save_completed_task_data(
             dataResult, legal_entity_id, session_user
         )

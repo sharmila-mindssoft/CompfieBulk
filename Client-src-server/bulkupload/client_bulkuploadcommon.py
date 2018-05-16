@@ -71,25 +71,26 @@ def convert_base64_to_file(src_path, file_name, file_content):
 '''
 ########################################################
 
+
 def read_data_from_csv(file_name):
     mapped_data = []
     headerrow = []
     csv_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
     file_path = os.path.join(csv_path, file_name)
     if os.path.exists(file_path):
-        with io.FileIO(file_path, "rb") as fn :
+        with io.FileIO(file_path, "rb") as fn:
             rows = csv.reader(
                 fn, quotechar='"', delimiter=',',
                 quoting=csv.QUOTE_ALL, skipinitialspace=True
             )
-            for idx, r in enumerate(rows) :
-                if idx == 0 :
-                    for c in r :
+            for idx, r in enumerate(rows):
+                if idx == 0:
+                    for c in r:
                         c = c.replace('*', '')
                         headerrow.append(c.strip())
-                else :
+                else:
                     data = {}
-                    for cdx, c in enumerate(r) :
+                    for cdx, c in enumerate(r):
                         val = c.strip()
                         data[headerrow[cdx]] = val
                     mapped_data.append(data)
@@ -108,16 +109,18 @@ def write_data_to_excel(
     error_format = workbook.add_format({
         'font_color': 'red'
     })
-    cells = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    cells = [
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+        'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+        'Y', 'Z']
     for idx, h in enumerate(headers):
-        if idx < 26 :
+        if idx < 26:
             x = idx
-        else :
+        else:
             x = idx - 26
 
         c = "%s%s" % (cells[x], 1)
         worksheet.write(c, h, bold)
-
 
     row = 1
     col = 0
@@ -127,20 +130,20 @@ def write_data_to_excel(
         for i, h in enumerate(headers):
             error_col = header_dict.get(h)
             d = str(dat.get(h))
-            if h == "Error Description" :
+            if h == "Error Description":
                 error_text = data_error_dict.get(idx)
-                if error_text is None :
+                if error_text is None:
                     e = ""
-                else :
+                else:
                     e = "|;|".join(error_text)
                 worksheet.write_string(row, col + i, e)
-            else :
-                if error_col is not None :
-                    if i in error_col :
-                        worksheet.write_string(row, col+i, d, error_format)
-                    else :
-                        worksheet.write_string(row, col+i, d)
-                else :
+            else:
+                if error_col is not None:
+                    # if i in error_col:
+                    worksheet.write_string(row, col+i, d, error_format)
+                    # else:
+                    #     worksheet.write_string(row, col+i, d)
+                else:
                         worksheet.write_string(row, col+i, d)
         row += 1
 

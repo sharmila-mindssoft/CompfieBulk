@@ -1,5 +1,6 @@
 import os
 import io
+import re
 import csv
 import uuid
 import datetime
@@ -72,7 +73,7 @@ class PastDataJsonToCSV(object):
         domain_name = request.d_name
         unit_name = request.u_name
         unit_code = request.u_code
-
+        unit_name = re.sub(unit_code+'-', '', unit_name)
         # country_id = request.country_id
         start_count = request.start_count
         statutory_wise_compliances = []
