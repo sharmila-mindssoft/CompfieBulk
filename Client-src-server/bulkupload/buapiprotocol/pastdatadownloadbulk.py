@@ -83,51 +83,44 @@ class PastDataJsonToCSV(object):
                 start_count, 100
         )
         # sno = 0
-        print "statutory_wise_compliances", statutory_wise_compliances
+        if not is_header:
+            # csv_headers = [
+            #     "SNO", "Legal_Entity", "Domain", "Unit_Code",
+            #     "Unit_Name", "Primary_Legislation",
+            #     "Secondary_Legislation", "Compliance_Task",
+            #     "Compliance_Description", "Compliance_Frequency",
+            #     "Statutory_Date", "Due_Date", "Assignee",
+            #     "Completion_Date*", "Document_Name"
+            # ]
+            csv_headers = [
+                "Legal_Entity", "Domain", "Unit_Code",
+                "Unit_Name", "Primary_Legislation",
+                "Secondary_Legislation", "Compliance_Task",
+                "Compliance_Description", "Compliance_Frequency",
+                "Statutory_Date", "Due_Date", "Assignee",
+                "Completion_Date*", "Document_Name"
+            ]
+            self.write_csv(csv_headers, None)
         if len(statutory_wise_compliances) > 0:
             for swc in statutory_wise_compliances[0]:
-                print "swc ->> ", swc
-                # print "level 1 -->>>", swc.level_1_statutory_name
-                print "pr_compliances-->>>", swc.compliances[0]
-
                 level_statu_name = swc.level_1_statutory_name
                 compliances = swc.compliances
-
-                if not is_header:
-                    # csv_headers = [
-                    #     "SNO", "Legal_Entity", "Domain", "Unit_Code",
-                    #     "Unit_Name", "Primary_Legislation",
-                    #     "Secondary_Legislation", "Compliance_Task",
-                    #     "Compliance_Description", "Compliance_Frequency",
-                    #     "Statutory_Date", "Due_Date", "Assignee",
-                    #     "Completion_Date*", "Document_Name"
-                    # ]
-                    csv_headers = [
-                        "Legal_Entity", "Domain", "Unit_Code",
-                        "Unit_Name", "Primary_Legislation",
-                        "Secondary_Legislation", "Compliance_Task",
-                        "Compliance_Description", "Compliance_Frequency",
-                        "Statutory_Date", "Due_Date", "Assignee",
-                        "Completion_Date*", "Document_Name"
+                for comp in compliances:
+                    description = comp.description
+                    due_date = comp.due_date
+                    compliance_name = comp.compliance_name
+                    compliance_task_frequency = comp.frequency.to_structure()
+                    statutory_date = comp.statutory_date
+                    assignee_name = comp.assignee_name
+                    is_header = True
+                    csv_values = [
+                        le_name, domain_name, unit_code, unit_name,
+                        level_statu_name, "",
+                        compliance_name, description,
+                        compliance_task_frequency, statutory_date,
+                        due_date, assignee_name, "", ""
                     ]
-                    self.write_csv(csv_headers, None)
-
-                    for comp in compliances:
-                        description = comp.description
-                        due_date = comp.due_date
-                        compliance_name = comp.compliance_name
-                        compliance_task_frequency = comp.frequency.to_structure()
-                        statutory_date = comp.statutory_date
-                        assignee_name = comp.assignee_name
-                        is_header = True
-                        csv_values = [
-                            le_name, domain_name, unit_code, unit_name,
-                            level_statu_name, "",
-                            compliance_name, description,
-                            compliance_task_frequency, statutory_date,
-                            due_date, assignee_name, "", ""
-                        ]
-                        self.write_csv(None, csv_values)
+                    self.write_csv(None, csv_values)
         else:
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)

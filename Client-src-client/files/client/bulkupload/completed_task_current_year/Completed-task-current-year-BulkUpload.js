@@ -185,7 +185,7 @@ function getPastRecords(legalEntity) {
 
 function validateUpload() {
     if ($('#fileInput').val() == "" && buCtPage._ActionMode != 'upload') {
-        displayMessage("Select file to upload");
+        displayMessage("File required");
         $('#myModal').modal('hide');
         return false;
     } else {
@@ -481,12 +481,12 @@ function downloadData() {
         LegalEntityName.focus();
         return false;
     }
-    if (txtdomain.val().trim() == "") {
+    if (hdnDomain.val().trim() == "") {
         displayMessage(message.domain_required);
         txtdomain.focus();
         return false;
     }
-    if (txtUnit.val().trim() == "") {
+    if (hdnUnit.val().trim() == "") {
         displayMessage(message.unit_required);
         txtUnit.focus();
         return false;
@@ -506,7 +506,6 @@ function downloadData() {
     var frequency = "Periodical";
     var startCount = 0;
 
-    console.log("leId->>>>>>> " + leId);
     buClient.getDownloadData(
         parseInt(leId), parseInt(domainId), parseInt(unitId), frequency, startCount,
         legalEntityName, domainName, unitName, unitCode,
