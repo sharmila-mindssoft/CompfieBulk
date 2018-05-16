@@ -124,6 +124,8 @@
 
 
 
+
+
 /* Dropdown download items*/
 
 .popover {
@@ -172,6 +174,8 @@
     color: #fff !important;
     margin-top: 0px;
 }
+
+
 
 
 /* pagination */
@@ -254,11 +258,15 @@
 }
 
 
+
+
 /**** Added For ApproveRejectStatu Mapping TaskID Alignment Fix ***/
 
 td.task-id {
     word-wrap: break-word;
 }
+
+
 
 
 
@@ -291,7 +299,10 @@ td.task-id {
 }
 
 
+
+
 /* approve-statutory-mapping-bulk-upload Inline Styles */
+
 .datatable-inline {
     width: 3000px !important;
     overflow-x: auto;
@@ -326,4 +337,55 @@ td.task-id {
     width: 94%;
 }
 
+.statutory {
+    font-weight: normal;
+    color: #1c1c1c;
+}
+
+.b-t-0 {
+    border-top: 0 none !important;
+}
+
+.b-b-0 {
+    border-bottom: 0 none !important;
+}
+
+
 /* approve-statutory-mapping-bulk-upload Inline Styles */
+
+
+/* statutory-mapping-bulk-upload Inline Styles */
+
+.ac-domain-ul {
+    width: 94%;
+}
+
+.bu_upload_csv_small {
+    text-align: left;
+}
+
+.smb_csv_extenstion {
+    color: #E64C3D !important;
+}
+
+.tablenopadd {
+    width: 100%;
+}
+
+.smb-csv-file-name {
+    width: 80%;
+}
+
+.smb-uploaded-csv-view {
+    width: 10%;
+}
+
+.download-document-td {
+    width: 10%;
+}
+
+.smb-inline-no-records {
+    padding: 40px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
