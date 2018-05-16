@@ -138,7 +138,6 @@ class ConvertJsonToCSV(object):
             user_ids = session_user.user_id()
         user_name_list = ",".join(
             getUserNameAndCode(cnx_pool, e) for e in child_ids)
-        print "form date ", request.from_date
         from_date = datetime.datetime.strptime(request.from_date, '%d-%b-%Y')
         to_date = datetime.datetime.strptime(request.to_date, '%d-%b-%Y')
 
@@ -148,7 +147,6 @@ class ConvertJsonToCSV(object):
         sno = 0
 
         exported_time = datetime.datetime.now().strftime('%d-%b-%Y %H:%M')
-        print "exported_time -> ", exported_time
         if len(export_bu_statutory_list) > 0:
             for ac in export_bu_statutory_list:
                 sno = sno + 1
@@ -198,34 +196,6 @@ class ConvertJsonToCSV(object):
                     approve_reject_task = "-"
                     reason_for_rejection = ac["rejected_reason"]
                 if not is_header:
-                    # text = "Statutory Mapping - Bulk Upload Report"
-                    # csv_header_line1 = [
-                    #     "", "", "", "", "", text, "", "", "", "", ""
-                    # ]
-                    # self.write_csv(csv_header_line1, None)
-                    # csv_header_line2 = [
-                    #     "", "", "", "Country", request.c_names, "", "Domain",
-                    #     request.d_names, "", "", ""
-                    # ]
-                    # self.write_csv(csv_header_line2, None)
-                    # csv_header_line3 = [
-                    #     "", "", "", "From Date", request.from_date, "",
-                    #     "To Date", request.to_date, "", "", ""
-                    # ]
-                    # self.write_csv(csv_header_line3, None)
-                    # csv_header_line4 = [
-                    #     "", "", "", "KE Name", user_name_list, "",
-                    #     "Exported Date and Time", exported_time, "", "", ""
-                    # ]
-                    # self.write_csv(csv_header_line4, None)
-                    # csv_header_line5 = ["S.No", "Country", "Domain",
-                    #                     "Uploaded By", "Uploaded On",
-                    #                     "Uploaded File Name", "No. Of Tasks",
-                    #                     "Approved / Rejected Tasks",
-                    #                     "Approved / Rejected On",
-                    #                     "Approved / Rejected By",
-                    #                     "Reason for Rejection"]
-                    # self.write_csv(csv_header_line5, None)
                     self.write_to_csv_statumapping(
                         request, user_name_list, exported_time
                     )
@@ -243,7 +213,9 @@ class ConvertJsonToCSV(object):
                 self.FILE_DOWNLOAD_PATH = None
         cnx_pool.close()
 
-    def write_to_csv_statumapping(self, request, user_name_list, exported_time):
+    def write_to_csv_statumapping(
+        self, request, user_name_list, exported_time
+    ):
         text = "Statutory Mapping - Bulk Upload Report"
         csv_header_line1 = [
             "", "", "", "", "", text, "", "", "", "", ""
@@ -342,33 +314,9 @@ class ConvertJsonToCSV(object):
                     approve_reject_task = "-"
                     reason_for_rejection = cu["rejected_reason"]
                 if not is_header:
-                    text = "Client Unit - Bulk Upload Report"
-                    csv_header_line1 = [
-                        "", "", "", "", "", text, "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_header_line1, None)
-                    csv_header_line2 = [
-                        "", "", "", "Client Group", clientGroupName, "",
-                        "TE Name ", user_name_list, "", "", ""
-                    ]
-                    self.write_csv(csv_header_line2, None)
-                    csv_header_line3 = [
-                        "", "", "", "From Date", request.from_date, "",
-                        "To Date", request.to_date, "", "", ""
-                    ]
-                    self.write_csv(csv_header_line3, None)
-                    csv_header_line4 = [
-                        "", "", "", "Exported Date and Time ", exported_time,
-                        "", "", "", "", "", ""
-                    ]
-                    self.write_csv(csv_header_line4, None)
-                    csv_header_line5 = ["S.No", "Uploaded By", "Uploaded On",
-                                        "Uploaded File Name", "No. Of Units",
-                                        "Approved / Rejected Units",
-                                        "Approved / Rejected On",
-                                        "Approved / Rejected By",
-                                        "Reason for Rejection"]
-                    self.write_csv(csv_header_line5, None)
+                    self.write_to_csv_clientunit(
+                        request, user_name_list, exported_time, clientGroupName
+                    )
                     is_header = True
                 csv_values = [
                     sno, uploaded_by_name, uploaded_on,
@@ -382,6 +330,38 @@ class ConvertJsonToCSV(object):
                 os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
         cnx_pool.close()
+
+    def write_to_csv_clientunit(
+        self, request, user_name_list, exported_time, clientGroupName
+    ):
+        text = "Client Unit - Bulk Upload Report"
+        csv_header_line1 = [
+            "", "", "", "", "", text, "", "", "", "", ""
+        ]
+        self.write_csv(csv_header_line1, None)
+        csv_header_line2 = [
+            "", "", "", "Client Group", clientGroupName, "",
+            "TE Name ", user_name_list, "", "", ""
+        ]
+        self.write_csv(csv_header_line2, None)
+        csv_header_line3 = [
+            "", "", "", "From Date", request.from_date, "",
+            "To Date", request.to_date, "", "", ""
+        ]
+        self.write_csv(csv_header_line3, None)
+        csv_header_line4 = [
+            "", "", "", "Exported Date and Time ", exported_time,
+            "", "", "", "", "", ""
+        ]
+        self.write_csv(csv_header_line4, None)
+        csv_header_line5 = ["S.No", "Uploaded By", "Uploaded On",
+                            "Uploaded File Name", "No. Of Units",
+                            "Approved / Rejected Units",
+                            "Approved / Rejected On",
+                            "Approved / Rejected By",
+                            "Reason for Rejection"]
+        self.write_csv(csv_header_line5, None)
+
 
     def generate_export_assigned_statutory_bulk(
         self, db, request, session_user
@@ -457,39 +437,9 @@ class ConvertJsonToCSV(object):
                     approve_reject_task = "-"
                     reason_for_rejection = asr["rejected_reason"]
                 if not is_header:
-                    text = "Assigned Statutory - Bulk Upload Report"
-                    csv_header_line1 = [
-                        "", "", "", "", "", text, "", "", "", "", "", ""]
-                    self.write_csv(csv_header_line1, None)
-                    csv_header_line2 = [
-                        "", "", "", "Client Group", request.bu_group_name, "",
-                        "Legal Entity ", request.legal_entity_name,
-                        "", "", "", ""
-                    ]
-                    self.write_csv(csv_header_line2, None)
-                    csv_header_line3 = [
-                        "", "", "", "Domain", request.d_names, "",
-                        "Unit", request.unit_name, "", "", "", ""
-                    ]
-                    self.write_csv(csv_header_line3, None)
-                    csv_header_line4 = [
-                        "", "", "", "From Date", request.from_date, "",
-                        "To Date", request.to_date, "", "", "", ""
-                    ]
-                    self.write_csv(csv_header_line4, None)
-                    csv_header_line5 = [
-                        "", "", "", "Exported Date and Time", exported_time,
-                        "", "DE Name", user_name_list, "", "", ""
-                    ]
-                    self.write_csv(csv_header_line5, None)
-                    csv_header_line6 = ["S.No", "Domain", "Uploaded By",
-                                        "Uploaded On", "Uploaded File Name",
-                                        "No. Of Tasks",
-                                        "Approved / Rejected Tasks",
-                                        "Approved / Rejected On",
-                                        "Approved / Rejected By",
-                                        "Reason for Rejection"]
-                    self.write_csv(csv_header_line6, None)
+                    self.write_to_csv_assignstatu(
+                        request, user_name_list, exported_time
+                    )
                     is_header = True
                 csv_values = [
                     sno, result_domain, uploaded_by_name, uploaded_on,
@@ -503,6 +453,43 @@ class ConvertJsonToCSV(object):
                 os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
         cnx_pool.close()
+
+    def write_to_csv_assignstatu(
+        self, request, user_name_list, exported_time
+    ):
+        text = "Assigned Statutory - Bulk Upload Report"
+        csv_header_line1 = [
+            "", "", "", "", "", text, "", "", "", "", "", ""]
+        self.write_csv(csv_header_line1, None)
+        csv_header_line2 = [
+            "", "", "", "Client Group", request.bu_group_name, "",
+            "Legal Entity ", request.legal_entity_name,
+            "", "", "", ""
+        ]
+        self.write_csv(csv_header_line2, None)
+        csv_header_line3 = [
+            "", "", "", "Domain", request.d_names, "",
+            "Unit", request.unit_name, "", "", "", ""
+        ]
+        self.write_csv(csv_header_line3, None)
+        csv_header_line4 = [
+            "", "", "", "From Date", request.from_date, "",
+            "To Date", request.to_date, "", "", "", ""
+        ]
+        self.write_csv(csv_header_line4, None)
+        csv_header_line5 = [
+            "", "", "", "Exported Date and Time", exported_time,
+            "", "DE Name", user_name_list, "", "", ""
+        ]
+        self.write_csv(csv_header_line5, None)
+        csv_header_line6 = ["S.No", "Domain", "Uploaded By",
+                            "Uploaded On", "Uploaded File Name",
+                            "No. Of Tasks",
+                            "Approved / Rejected Tasks",
+                            "Approved / Rejected On",
+                            "Approved / Rejected By",
+                            "Reason for Rejection"]
+        self.write_csv(csv_header_line6, None)
 
 
 def connectKnowledgeDB():
