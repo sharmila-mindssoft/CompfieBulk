@@ -262,27 +262,29 @@ def parse_csv_dictionary_values(key, val):
 def make_required_validation(
     keyType,
     isMandatoryCheck=False, maxLengthCheck=None, isValidCharCheck=False, validation_method=None,
-    isFoundCheck=False, isActiveCheck=False
+    isFoundCheck=False, isActiveCheck=False, isValidDueDate=False
 ):
     constraints = {
         'key_type': keyType
     }
 
-    if isMandatoryCheck is True :
+    if isMandatoryCheck is True:
         constraints["check_mandatory"] = True
 
-    if maxLengthCheck is not None :
+    if maxLengthCheck is not None:
         constraints["max_length"] = maxLengthCheck
 
     if isValidCharCheck is not False and validation_method is not None:
         constraints["validation_method"] = validation_method
 
-    if isFoundCheck is not False :
+    if isFoundCheck is not False:
         constraints["check_is_exists"] = True
 
-    if isActiveCheck is not False :
+    if isActiveCheck is not False:
         constraints["check_is_active"] = True
 
+    if isValidDueDate is not False:
+        constraints["check_due_date"] = True
     return constraints
 
 
@@ -311,7 +313,7 @@ csv_params = {
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
     'Compliance_Frequency': make_required_validation(
-        keyType='STRING', isValidCharCheck=True,
+        keyType='STRING', isValidCharCheck=True, isMandatoryCheck=True,
         validation_method=is_alphabet, isFoundCheck=True
     ),
     'Primary_Legislation': make_required_validation(
@@ -339,7 +341,7 @@ csv_params = {
     ),
     'Due_Date': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
-        validation_method=is_date
+        validation_method=is_date, isValidDueDate=True
     ),
     'Assignee': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False,

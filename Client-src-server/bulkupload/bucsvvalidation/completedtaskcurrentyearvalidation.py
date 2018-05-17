@@ -1,4 +1,5 @@
 import os
+import datetime
 import collections
 import mysql.connector
 from itertools import groupby
@@ -10,14 +11,18 @@ from server.constants import (
 from bulkupload.client_bulkconstants import(
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
 )
-
-from client_keyvalidationsettings import csv_params, parse_csv_dictionary_values
+from ..buapiprotocol.pastdatadownloadbulk import (
+        calculate_final_due_dates, return_past_due_dates
+    )
+from client_keyvalidationsettings import (
+        csv_params, parse_csv_dictionary_values
+    )
 from ..client_bulkuploadcommon import (
     write_data_to_excel, rename_file_type
 )
 
 # from  clientprotocol.clienttransactions import ()
-from server.common import (get_date_time)
+from server.common import (get_date_time, convert_string_to_date)
 
 # from server.clientdatabase.general import ( is_two_levels_of_approval )
 
@@ -167,7 +172,8 @@ class SourceDB(object):
             self.Compliance_Description[d["compliance_description"]] = d
 
     def get_compliance_frequency(self):
-        query = "select frequency_id, frequency from tbl_compliance_frequency"
+        query = "select frequency_id, frequency from tbl_compliance_frequency " + \
+                " where frequency_id in (2,3)"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.Compliance_Frequency[d["frequency"]] = d
@@ -185,8 +191,8 @@ class SourceDB(object):
         if data is None:
             return "Not found"
 
-        if check_status is True :
-            if status_name is None :
+        if check_status is True:
+            if status_name is None:
                 if data.get("is_active") == 0 :
                     return "Status Inactive"
             elif status_name == "is_closed" :
@@ -195,6 +201,30 @@ class SourceDB(object):
 
         return True
 
+    def check_due_date(
+        self, due_date, domain_name, unit_name, level_1_statutory_name
+    ):
+        query = "SELECT domain_id from tbl_domains " + \
+                "where domain_name  = '%s'" % domain_name
+        rows = self._source_db.select_all(query)
+        domain_id = rows[0]["domain_id"]
+        query = "SELECT unit_id from tbl_units " + \
+                "where unit_name  = '%s'" % unit_name
+        rows = self._source_db.select_all(query)
+        unit_id = rows[0]["unit_id"]
+        rows = return_past_due_dates(
+                self._source_db, unit_id, domain_id,
+                level_1_statutory_name
+            )
+        due_dates = calculate_final_due_dates(
+                self._source_db, rows, domain_id, unit_id
+            )
+        due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
+        due_date = due_date.date().strftime("%Y-%m-%d")
+        if due_date in due_dates[0]:
+            return True
+        else:
+            return "Not Found"
     # def check_client_group(self, group_name):
     #     return self.check_base(True, self.Client_Group, group_name, None)
 
@@ -345,9 +375,6 @@ class SourceDB(object):
                 # clienttransaction.update_user_wise_task_status(self._source_db, users)
 
                 self._source_db.commit()
-
-
-
         return True
 
     # main db related validation mapped with field name
@@ -363,6 +390,7 @@ class SourceDB(object):
             "Compliance_Description": self.check_compliance_description,
             "Compliance_Frequency": self.check_frequency,
             "Assignee": self.check_assignee,
+            "Due_Date": self.check_due_date
         }
 
     def csv_column_fields(self):
@@ -473,12 +501,21 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                 "check_is_exists"
                                 ) is True or csvParam.get(
                                 "check_is_active"
+                                ) is True or csvParam.get(
+                                "check_due_date"
                                 ) is True:
                             unboundMethod = self._validation_method_maps.get(
                                 key)
 
                             if unboundMethod is not None:
-                                isFound = unboundMethod(v)
+                                if key == "Due_Date":
+                                    isFound = unboundMethod(
+                                        v, data.get("Domain"),
+                                        data.get("Unit_Name"),
+                                        data.get("Primary_Legislation")
+                                    )
+                                else:
+                                    isFound = unboundMethod(v)
                             if isFound is not True and isFound != "":
                                 msg = "%s - %s" % (key, isFound)
                                 print "msg: %s" % msg

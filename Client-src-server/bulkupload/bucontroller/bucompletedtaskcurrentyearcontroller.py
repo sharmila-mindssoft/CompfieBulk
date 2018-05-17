@@ -1,10 +1,9 @@
-import traceback
 from ..bucsvvalidation.completedtaskcurrentyearvalidation import (
     ValidateCompletedTaskCurrentYearCsvData,
     ValidateCompletedTaskForSubmit
 )
 
-from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct 
+from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
 from..budatabase.bucompletedtaskcurrentyeardb import *
 from ..client_bulkuploadcommon import (
     convert_base64_to_file,
