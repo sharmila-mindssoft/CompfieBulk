@@ -234,9 +234,8 @@ def get_download_bulk_compliance_data(
         assingee_name = "%s - %s" % (
             employee_code, compliance["employee_name"]
         )
-
-        final_due_dates = calculate_final_due_dates(
-            db, compliance, domain_id, unit_id)
+        final_due_dates, summary = calculate_final_due_dates(
+            db, (compliance,), domain_id, unit_id)
         total_count += len(final_due_dates)
 
         for due_date in final_due_dates:

@@ -212,7 +212,7 @@ def parse_csv_dictionary_values(key, val):
         msg.append(key + " - Cannot exceed max length")
         error_count["max_length"] = 1
 
-    if _validation_method is not None:
+    if _validation_method is not None and val != "":
         if _validation_method(val) is False:
             if key == "Due_Date" or key == "Completion_Date":
                 msg.append(key + " - Invalid Date Format")
@@ -222,7 +222,7 @@ def parse_csv_dictionary_values(key, val):
                 error_count["invalid_char"] = 1
     if len(msg) == 0:
         return True, error_count
-    else :
+    else:
         return msg, error_count
 
 ########################################################
