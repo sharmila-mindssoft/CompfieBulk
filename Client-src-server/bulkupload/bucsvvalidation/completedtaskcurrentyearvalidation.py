@@ -1,5 +1,5 @@
 import os
-import datetime
+from datetime import datetime, timedelta
 import collections
 import mysql.connector
 import requests
@@ -238,22 +238,23 @@ class SourceDB(object):
             return "Not Found"
 
     def check_completion_date(
-        self, completion_date, domain_name, unit_name,
-        level_1_statutory_name, index
+        self, completion_date, statutory_date, due_date
     ):
-        (unit_id, domain_id) = self.return_unit_domain_id(
-            domain_name, unit_name)
-        rows = return_past_due_dates(
-                self._source_db, domain_id, unit_id,
-                level_1_statutory_name
-            )
-        start_date = rows[0]["start_date"]
+        statu_array = statutory_date.split()
+        trigger_before_days_string = statu_array[len(statu_array)-1]
+        trigger_before_days = int(
+            trigger_before_days_string.strip(")(")
+        )
+        due_date = datetime.datetime.strptime(
+            due_date, "%d-%b-%Y")
+        start_date = due_date.date() - timedelta(days=trigger_before_days)
         completion_date = datetime.datetime.strptime(
             completion_date, "%d-%b-%Y")
         if completion_date.date() < start_date:
             return "Should be greater than Start Date"
         else:
             return True
+
     # def check_client_group(self, group_name):
     #     return self.check_base(True, self.Client_Group, group_name, None)
 
@@ -401,9 +402,6 @@ class SourceDB(object):
                 values.append(1)
                 values.append(concurred_by)
                 values.append(completion_date)
-            print "before insert ===============================>"
-            print columns
-            print values
             if values :
                 self._source_db.insert("tbl_compliance_history", columns, values)
                 # added for aparajtha
@@ -538,10 +536,9 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                 "check_is_active"
                                 ) is True or csvParam.get(
                                 "check_due_date"
+                                ) is True or csvParam.get(
+                                "check_completion_date"
                                 ) is True:
-                                # or csvParam.get(
-                                # "check_completion_date"
-                                # ) is True:
                             unboundMethod = self._validation_method_maps.get(
                                 key)
 
@@ -554,10 +551,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                     )
                                 elif key == "Completion_Date":
                                     isFound = unboundMethod(
-                                        v, data.get("Domain"),
-                                        data.get("Unit_Name"),
-                                        data.get("Primary_Legislation"),
-                                        row_idx
+                                        v, data.get("Statutory_Date"),
+                                        data.get("Due_Date")
                                     )
                                 else:
                                     isFound = unboundMethod(v)
