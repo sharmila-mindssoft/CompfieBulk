@@ -20,7 +20,8 @@ __all__ = [
     "save_completed_task_current_year_csv",
     "save_completed_task_data",
     "getPastRecordData",
-    "getCompletedTaskCSVList"
+    "getCompletedTaskCSVList",
+    "get_client_id_by_le"
 ]
 
 def get_legal_entity_domains(
@@ -43,7 +44,9 @@ def get_legal_entity_domains(
 
     return results
 
-def save_completed_task_current_year_csv(db, completed_task, session_user):
+def save_completed_task_current_year_csv(
+    db, completed_task, session_user
+):
 
     columns = [
         "client_id", "legal_entity_id", "domain_id","unit_id_id", "client_group",
@@ -52,7 +55,6 @@ def save_completed_task_current_year_csv(db, completed_task, session_user):
     ]
     # print "completed_task[7]>>", completed_task[7]
     # print "string_to_datetime(completed_task[7])>>", string_to_datetime(completed_task[7])
-
     values = [
         completed_task[0],completed_task[1],
         completed_task[2], completed_task[3],
@@ -66,9 +68,9 @@ def save_completed_task_current_year_csv(db, completed_task, session_user):
 
     return completed_task_id
 
-def save_completed_task_data(db, csv_id, csv_data):
+def save_completed_task_data(db, csv_id, csv_data, client_id):
     try:
-        columns = ["csv_past_id", "Legal_Entity", "Domain",
+        columns = ["csv_past_id",  "Legal_Entity", "Domain",
         "Unit_Code", "Unit_Name", "perimary_legislation",
         "Secondary_Legislation", "compliance_task_name",
         "Compliance_Description", "Compliance_Frequency", "Statutory_Date",
@@ -100,7 +102,13 @@ def save_completed_task_data(db, csv_id, csv_data):
 
 def getPastRecordData(db, csvID):
 
-    query = " SELECT bulk_past_data_id, csv_past_id, legal_entity, domain, unit_code, unit_name, perimary_legislation, secondary_legislation, compliance_task_name, compliance_description, compliance_frequency, statutory_date, due_date, assignee, completion_date, document_name                FROM tbl_bulk_past_data where csv_past_id = %s; "
+    query = " SELECT bulk_past_data_id, csv_past_id, legal_entity, "+\
+        " domain, unit_code, unit_name, perimary_legislation, " + \
+        " secondary_legislation, compliance_task_name, " + \
+        " compliance_description, compliance_frequency, " + \
+        " statutory_date, due_date, assignee, completion_date, " + \
+        " document_name" +\
+        "  FROM tbl_bulk_past_data where csv_past_id = %s; "
 
     param = [csvID]
     rows = db.select_all(query, param)
@@ -183,3 +191,28 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
 
     # print "getCompletedTaskCSVList>csv_list>>", csv_list
     return csv_list
+
+
+def connectKnowledgeDB():
+    try:
+        _source_db_con = mysql.connector.connect(
+            user=KNOWLEDGE_DB_USERNAME,
+            password=KNOWLEDGE_DB_PASSWORD,
+            host=KNOWLEDGE_DB_HOST,
+            database=KNOWLEDGE_DATABASE_NAME,
+            port=KNOWLEDGE_DB_PORT,
+            autocommit=False,
+        )
+        return _source_db_con
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
+
+def get_client_id_by_le(db, legal_entity_id): 
+    # _source_db = connectKnowledgeDB()
+    # query = "SELECT client_id fro tbl_legal_entities where " + \
+    #         "legal_enitity id=%s" 
+    # rows = _source_db.select_all(query, (legal_entity_id,))
+    # client_id = rows[1]
+    client_id = 1
+    return client_id

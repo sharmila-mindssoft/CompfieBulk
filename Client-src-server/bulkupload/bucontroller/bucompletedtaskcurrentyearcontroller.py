@@ -1,6 +1,6 @@
 from ..bucsvvalidation.completedtaskcurrentyearvalidation import (
     ValidateCompletedTaskCurrentYearCsvData,
-    ValidateCompletedTaskForSubmit
+    ValidateCompletedTaskForSubmit, SourceDB
 )
 
 from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
@@ -44,7 +44,6 @@ __all__ = [
 ########################################################
 def process_bu_completed_task_current_year_request(request, db, session_user):
     request_frame = request.request
-
     if type(request_frame) is bu_ct.GetCompletedTaskCsvUploadedList:
         result = get_completed_task_csv_list(db, request_frame, session_user)
 
@@ -101,9 +100,11 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
         str_current_date_time = datetime_to_string(current_date_time)
         unit_id = res_data["unit_id"]
         domain_id = res_data["domain_id"]
-
+        client_id = get_client_id_by_le(
+            db, request_frame.legal_entity_id
+        )
         csv_args = [
-            "1", request_frame.legal_entity_id, domain_id, unit_id, "1",
+            client_id, request_frame.legal_entity_id, domain_id, unit_id, "1",
             csv_name, session_user, str_current_date_time, res_data["total"],
             res_data["doc_count"], "0", "0"
         ]
@@ -112,12 +113,15 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
             db, csv_args, session_user
         )
         if new_csv_id:
-            if save_completed_task_data(db, new_csv_id, res_data["data"]) is True:
-                result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
-                    res_data["total"], res_data["valid"], res_data["invalid"],
-                    new_csv_id, csv_name, res_data["doc_count"],
-                    res_data["doc_names"], unit_id, domain_id
-                )
+            if save_completed_task_data(
+                    db, new_csv_id, res_data["data"], client_id
+                    ) is True:
+                    result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
+                        res_data["total"], res_data["valid"],
+                        res_data["invalid"],
+                        new_csv_id, csv_name, res_data["doc_count"],
+                        res_data["doc_names"], unit_id, domain_id
+                    )
         # csv data save to temp db
     else:
         result = bu_ct.UploadCompletedTaskCurrentYearCSVFailed(

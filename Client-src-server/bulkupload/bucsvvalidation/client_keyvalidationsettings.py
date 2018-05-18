@@ -261,8 +261,9 @@ def parse_csv_dictionary_values(key, val):
 
 def make_required_validation(
     keyType,
-    isMandatoryCheck=False, maxLengthCheck=None, isValidCharCheck=False, validation_method=None,
-    isFoundCheck=False, isActiveCheck=False, isValidDueDate=False
+    isMandatoryCheck=False, maxLengthCheck=None, isValidCharCheck=False,
+    validation_method=None, isFoundCheck=False, isActiveCheck=False,
+    isValidDueDate=False, isValidCompletionDate=False
 ):
     constraints = {
         'key_type': keyType
@@ -285,6 +286,9 @@ def make_required_validation(
 
     if isValidDueDate is not False:
         constraints["check_due_date"] = True
+
+    if isValidCompletionDate is not False:
+        constraints["check_completion_date"] = True
     return constraints
 
 
@@ -349,7 +353,7 @@ csv_params = {
     ),
     'Completion_Date': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
-        validation_method=is_date
+        validation_method=is_date, isValidCompletionDate=True
     ),
     'Document_Name': make_required_validation(
         keyType='STRING', isValidCharCheck=False

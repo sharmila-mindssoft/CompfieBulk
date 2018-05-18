@@ -201,9 +201,7 @@ class SourceDB(object):
 
         return True
 
-    def check_due_date(
-        self, due_date, domain_name, unit_name, level_1_statutory_name
-    ):
+    def return_unit_domain_id(self, domain_name, unit_name):
         query = "SELECT domain_id from tbl_domains " + \
                 "where domain_name  = '%s'" % domain_name
         rows = self._source_db.select_all(query)
@@ -212,10 +210,18 @@ class SourceDB(object):
                 "where unit_name  = '%s'" % unit_name
         rows = self._source_db.select_all(query)
         unit_id = rows[0]["unit_id"]
+        return unit_id, domain_id
+
+    def check_due_date(
+        self, due_date, domain_name, unit_name, level_1_statutory_name
+    ):
+        (unit_id, domain_id) = self.return_unit_domain_id(
+            domain_name, unit_name)
         rows = return_past_due_dates(
-                self._source_db, unit_id, domain_id,
+                self._source_db, domain_id, unit_id,
                 level_1_statutory_name
             )
+        print "rows: %s" % rows
         due_dates = calculate_final_due_dates(
                 self._source_db, rows, domain_id, unit_id
             )
@@ -225,11 +231,31 @@ class SourceDB(object):
             return True
         else:
             return "Not Found"
+
+    def check_completion_date(
+        self, completion_date, domain_name, unit_name,
+        level_1_statutory_name, index
+    ):
+        (unit_id, domain_id) = self.return_unit_domain_id(
+            domain_name, unit_name)
+        rows = return_past_due_dates(
+                self._source_db, domain_id, unit_id,
+                level_1_statutory_name
+            )
+        start_date = rows[0]["start_date"]
+        completion_date = datetime.datetime.strptime(
+            completion_date, "%d-%b-%Y")
+        if completion_date.date() < start_date:
+            return "Should be greater than Start Date"
+        else:
+            return True
     # def check_client_group(self, group_name):
     #     return self.check_base(True, self.Client_Group, group_name, None)
 
     def check_legal_entity(self, legal_entity_name):
-        return self.check_base(True, self.Legal_Entity, legal_entity_name, None)
+        return self.check_base(
+            True, self.Legal_Entity, legal_entity_name, None
+        )
 
     def check_domain(self, domain_name):
         return self.check_base(True, self.Domain, domain_name, None)
@@ -390,7 +416,8 @@ class SourceDB(object):
             "Compliance_Description": self.check_compliance_description,
             "Compliance_Frequency": self.check_frequency,
             "Assignee": self.check_assignee,
-            "Due_Date": self.check_due_date
+            "Due_Date": self.check_due_date,
+            "Completion_Date": self.check_completion_date
         }
 
     def csv_column_fields(self):
@@ -477,7 +504,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 isFound = ""
                 values = value.strip().split(CSV_DELIMITER)
                 csvParam = csv_params.get(key)
-
                 if (key == "Document_Name" and value != ''):
                     self._doc_names.append(value)
                 for v in [v.strip() for v in values]:
@@ -504,6 +530,9 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                 ) is True or csvParam.get(
                                 "check_due_date"
                                 ) is True:
+                                # or csvParam.get(
+                                # "check_completion_date"
+                                # ) is True:
                             unboundMethod = self._validation_method_maps.get(
                                 key)
 
@@ -513,6 +542,13 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                         v, data.get("Domain"),
                                         data.get("Unit_Name"),
                                         data.get("Primary_Legislation")
+                                    )
+                                elif key == "Completion_Date":
+                                    isFound = unboundMethod(
+                                        v, data.get("Domain"),
+                                        data.get("Unit_Name"),
+                                        data.get("Primary_Legislation"),
+                                        row_idx
                                     )
                                 else:
                                     isFound = unboundMethod(v)

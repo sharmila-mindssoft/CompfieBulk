@@ -128,7 +128,7 @@ class PastDataJsonToCSV(object):
 
 
 def return_past_due_dates(
-    db, unit_id, domain_id, level_1_statutory_name
+    db, domain_id, unit_id, level_1_statutory_name
 ):
     condition = ""
     condition_val = []
@@ -163,16 +163,15 @@ def return_past_due_dates(
     if condition != "":
         query += condition
         param.extend(condition_val)
-
     rows = db.select_all(query, param)
     return rows
 
 
 def calculate_final_due_dates(db, data, domain_id, unit_id):
     final_due_dates = None
+    due_dates = []
+    summary = ""
     for compliance in data:
-        due_dates = []
-        summary = ""
         if compliance["repeats_type_id"] == 1:  # Days
             due_dates, summary = calculate_due_date(
                 db,
