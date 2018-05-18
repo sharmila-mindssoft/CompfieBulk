@@ -343,6 +343,16 @@ def run_web_front_end(port, knowledge_server_address):
         seven_year_data_download = os.path.join(
             src_server_path, "seven_years_before_data"
         )
+        BULK_CSV_UPLOAD_PATH_CSV = os.path.join(
+            ROOT_PATH, "bulkuploadcsv/csv"
+        )
+
+        web_server.low_level_url(
+            r"/uploaded_file/csv/<path:filename>",
+            StaticFileHandler,
+            dict(path=BULK_CSV_UPLOAD_PATH_CSV)
+        )
+
 
         web_server.low_level_url(
             r"/client/compliance_format/(.*)",

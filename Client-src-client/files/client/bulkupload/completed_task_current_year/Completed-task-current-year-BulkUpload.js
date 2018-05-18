@@ -66,6 +66,7 @@ txtdomain.keyup(function(e) {
     commonAutoComplete(e, divDomain, hdnDomain, text_val, domainList,
         "d_name", "d_id",
         function(val) {
+            loadUnits(parseInt(LegalEntityId.val()));
             onAutoCompleteSuccess(txtdomain, hdnDomain, val);
         }, condition_fields, condition_values);
 });
@@ -120,7 +121,6 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     // hdn_legal_entity_id_upload
     if (id_element[0].id == 'hdn_legal_entity_id') {
         getPastRecords(parseInt(LegalEntityId.val()));
-        loadUnits(parseInt(LegalEntityId.val()));
     }
 }
 
@@ -154,7 +154,6 @@ function loadEntityDetails() {
         LegalEntityId.val(LE_ID);
         LEGALENTITYIDUPLOAD.val(LE_ID);
 
-        loadUnits(parseInt(LegalEntityId.val()));
         getPastRecords(parseInt(LegalEntityId.val()));
     }
 }
