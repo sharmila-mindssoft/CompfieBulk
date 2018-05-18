@@ -1,9 +1,10 @@
+import mysql
 from server.exceptionmessage import fetch_error
 import traceback
 from server import logger
 from ..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
 import datetime
-
+from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
@@ -44,14 +45,16 @@ def get_legal_entity_domains(
 
     return results
 
+
 def save_completed_task_current_year_csv(
     db, completed_task, session_user
 ):
 
     columns = [
-        "client_id", "legal_entity_id", "domain_id","unit_id_id", "client_group",
-        "csv_name", "uploaded_by", "uploaded_on",
-        "total_records", "total_documents", "uploaded_documents", "upload_status"
+        "client_id", "legal_entity_id", "domain_id", "unit_id_id",
+        "client_group", "csv_name", "uploaded_by", "uploaded_on",
+        "total_records", "total_documents", "uploaded_documents",
+        "upload_status"
     ]
     # print "completed_task[7]>>", completed_task[7]
     # print "string_to_datetime(completed_task[7])>>", string_to_datetime(completed_task[7])
@@ -193,9 +196,9 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
     return csv_list
 
 
-def connectKnowledgeDB():
+def connectKnowledgeDB(le_id):
     try:
-        _source_db_con = mysql.connector.connect(
+        _source_knowledge_db_con = mysql.connector.connect(
             user=KNOWLEDGE_DB_USERNAME,
             password=KNOWLEDGE_DB_PASSWORD,
             host=KNOWLEDGE_DB_HOST,
@@ -203,16 +206,23 @@ def connectKnowledgeDB():
             port=KNOWLEDGE_DB_PORT,
             autocommit=False,
         )
-        return _source_db_con
+
+        _source_knowledge_db = Database(_source_knowledge_db_con)
+        _source_knowledge_db.begin()
+        return _source_knowledge_db
     except Exception, e:
         print "Connection Exception Caught"
         print e
 
-def get_client_id_by_le(db, legal_entity_id): 
-    # _source_db = connectKnowledgeDB()
-    # query = "SELECT client_id fro tbl_legal_entities where " + \
-    #         "legal_enitity id=%s" 
-    # rows = _source_db.select_all(query, (legal_entity_id,))
-    # client_id = rows[1]
-    client_id = 1
-    return client_id
+
+def get_client_id_by_le(db, legal_entity_id):
+    db = connectKnowledgeDB(legal_entity_id)
+    query = "SELECT client_id, group_name from tbl_client_groups " + \
+            " where client_id = ( select client_id from " + \
+            " tbl_legal_entities where " + \
+            "legal_entity_id='%s')"
+    query = query % legal_entity_id
+    rows = db.select_all(query)
+    client_id = rows[0]["client_id"]
+    client_name = rows[0]["group_name"]
+    return client_id, client_name

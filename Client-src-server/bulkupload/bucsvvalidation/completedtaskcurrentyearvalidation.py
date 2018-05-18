@@ -401,7 +401,9 @@ class SourceDB(object):
                 values.append(1)
                 values.append(concurred_by)
                 values.append(completion_date)
-
+            print "before insert ===============================>"
+            print columns
+            print values
             if values :
                 self._source_db.insert("tbl_compliance_history", columns, values)
                 # added for aparajtha

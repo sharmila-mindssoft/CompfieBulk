@@ -78,7 +78,7 @@ def get_completed_task_csv_list(db, request_frame, session_user):
 
 def upload_completed_task_current_year_csv(db, request_frame, session_user):
 
-    if request_frame.csv_size > 0 :
+    if request_frame.csv_size > 0:
         pass
     # save csv file
     csv_name = convert_base64_to_file(
@@ -95,17 +95,18 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
 
     if res_data is False:
         return bu_ct.InvalidCsvFile()
-    elif res_data["return_status"] is True :
+    elif res_data["return_status"] is True:
         current_date_time = get_date_time_in_date()
         str_current_date_time = datetime_to_string(current_date_time)
         unit_id = res_data["unit_id"]
         domain_id = res_data["domain_id"]
-        client_id = get_client_id_by_le(
+        client_id, client_group_name = get_client_id_by_le(
             db, request_frame.legal_entity_id
         )
         csv_args = [
-            client_id, request_frame.legal_entity_id, domain_id, unit_id, "1",
-            csv_name, session_user, str_current_date_time, res_data["total"],
+            client_id, request_frame.legal_entity_id, domain_id,
+            unit_id, client_group_name, csv_name, session_user,
+            str_current_date_time, res_data["total"],
             res_data["doc_count"], "0", "0"
         ]
 
@@ -143,16 +144,13 @@ def process_saveBulkRecords(db, request_frame, session_user, session_token):
     domain_id = request_frame.domain_id
     unit_id = request_frame.unit_id
     dataResult = getPastRecordData(db, csv_id)
-
     cObj = ValidateCompletedTaskForSubmit(
         db, csv_id, dataResult, session_user)
-
 
     if cObj._doc_count > 0:
         cObj.document_download_process_initiate(
             csv_id, country_id, legal_id, domain_id, unit_id, session_token
         )
-
 
     if cObj.frame_data_for_main_db_insert(
         db, dataResult, request_frame.legal_entity_id, session_user
