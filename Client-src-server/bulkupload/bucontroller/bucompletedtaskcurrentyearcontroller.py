@@ -148,10 +148,10 @@ def process_saveBulkRecords(db, request_frame, session_user, session_token):
         db, csv_id, dataResult, session_user)
 
 
-    # if cObj._doc_count > 0:
-    #     cObj.document_download_process_initiate(
-    #         csv_id, country_id, legal_id, domain_id, unit_id, session_token
-    #     )
+    if cObj._doc_count > 0:
+        cObj.document_download_process_initiate(
+            csv_id, country_id, legal_id, domain_id, unit_id, session_token
+        )
 
 
     if cObj.frame_data_for_main_db_insert(

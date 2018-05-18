@@ -2,14 +2,19 @@ import os
 import datetime
 import collections
 import mysql.connector
+import requests
+import threading
+import datetime
 from itertools import groupby
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
-from bulkupload.client_bulkconstants import(
-    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
+from bulkupload.client_bulkconstants import (
+    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, TEMP_FILE_SERVER, FILE_SERVER,
+    BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DB_HOST,
+    BULK_UPLOAD_DATABASE_NAME, BULK_UPLOAD_DB_PORT
 )
 from ..buapiprotocol.pastdatadownloadbulk import (
         calculate_final_due_dates, return_past_due_dates
@@ -332,8 +337,10 @@ class SourceDB(object):
 
             # Unit ID
             unitCode = [d["unit_code"]]
+            print "unitCode >>>> ", unitCode
             q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
             unit_id = self._source_db.select_all(q, unitCode)
+            print "unit_id ->> ", unit_id
             unit_id = unit_id[0]["unit_id"]
 
             # assignee_id
@@ -673,7 +680,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "doc_count": len(set(self._doc_names)),
             "doc_names": list(set(self._doc_names)),
             "unit_id": unit_id,
-            "domain_id" : domain_id,
+            "domain_id": domain_id,
         }
 
 
@@ -705,8 +712,12 @@ class ValidateCompletedTaskForSubmit(SourceDB):
 
         self._doc_count = doc_count
 
-    def document_download_process_initiate(self, csvid):
-        self.file_server_approve_call(csvid)
+    def document_download_process_initiate(
+        self, csvid, country_id, legal_id, domain_id, unit_id, session_token
+    ):
+        self.file_server_approve_call(
+            csvid, country_id, legal_id, domain_id, unit_id
+        )
         self._stop = False
 
         def check_status():
@@ -716,7 +727,10 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             file_status = get_file_stats(csvid)
             if file_status == "completed":
                 self._stop = True
-                self.file_server_download_call(csvid)
+                self.call_file_server(
+                    csvid, country_id, legal_id, domain_id, unit_id,
+                    session_token
+                )
 
             if self._stop is False:
                 t = threading.Timer(60, check_status)
@@ -729,9 +743,15 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             _db_check = Database(c_db_con)
             try:
                 _db_check.begin()
-                data = _db_check.call_proc(
-                    "sp_sm_get_file_download_status", [csvid]
-                )
+                # data = _db_check.call_proc(
+                #     "sp_pastdata_get_file_download_status", [csvid]
+                # )
+                query = "select file_download_status from " \
+                        "tbl_bulk_past_data_csv where csv_past_id = %s"
+                param = [csvid]
+
+                data = _db_check.select_all(query, param)
+                print "DAta -> ", data
                 if len(data) > 0:
                     file_status = data[0].get("file_download_status")
 
@@ -746,26 +766,28 @@ class ValidateCompletedTaskForSubmit(SourceDB):
 
         check_status()
 
-    def file_server_approve_call(self, csvid):
-        caller_name = "%sapprove?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+
+    def file_server_approve_call(
+        self, csvid, country_id, legal_id, domain_id, unit_id
+    ):
+        print "Approve call done"
+        caller_name = "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s" % (
+            TEMP_FILE_SERVER, csvid, country_id, legal_id, domain_id, unit_id)
+        print "caller_name", caller_name
         response = requests.post(caller_name)
 
-    def file_server_download_call(self, csvid):
-        actual_zip_file = os.path.join(
-            KNOWLEDGE_FORMAT_PATH, str(csvid) + ".zip"
-        )
-        caller_name = "%sdownloadfile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
-        urllib.urlretrieve(caller_name, actual_zip_file)
-        zip_ref = ZipFile(actual_zip_file, 'r')
-        zip_ref.extractall(KNOWLEDGE_FORMAT_PATH)
-        zip_ref.close()
-        os.remove(actual_zip_file)
-        self.file_server_remove_call(csvid)
-        return True
-
-    def file_server_remove_call(self, csvid):
-        caller_name = "%sremovefile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
-        response = requests.post(caller_name)
+    def call_file_server(
+        self, csvid, country_id, legal_id, domain_id, unit_id, session_token
+    ):
+        print "Call to File Server"
+        current_date = datetime.datetime.now().strftime('%d-%b-%Y')
+        print "client id----> ", str(session_token).split('-')[0]
+        client_id = str(session_token).split('-')[0]
+        caller = "%sclientfile?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s&start_date=%s&client_id=%s" % (
+            FILE_SERVER, csvid, country_id, legal_id, domain_id, unit_id, current_date, client_id)
+        print "caller-> ", caller
+        response = requests.post(caller)
+        print "response>> ", response
 
     def frame_data_for_main_db_insert(
         self, db, dataResult, legal_entity_id, session_user
@@ -794,3 +816,15 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         return self.save_completed_task_data(
             dataResult, legal_entity_id, session_user
         )
+
+
+def bulkupload_db_connect():
+    cnx_pool = mysql.connector.connect(
+        user=BULK_UPLOAD_DB_USERNAME,
+        password=BULK_UPLOAD_DB_PASSWORD,
+        host=BULK_UPLOAD_DB_HOST,
+        database=BULK_UPLOAD_DATABASE_NAME,
+        port=BULK_UPLOAD_DB_PORT,
+        autocommit=False,
+    )
+    return cnx_pool

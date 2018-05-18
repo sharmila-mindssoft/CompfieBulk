@@ -162,37 +162,52 @@ class Database(object):
         return True
 
     def update_file_status(self, old_file_name, csv_id, file_name, file_size):
-        print "file_size in dbase", file_size
-        print "FileName-> ", file_name
-        print "csv id", csv_id
         param = [old_file_name, csv_id, file_name, file_size]
         return self.call_update_proc(
             "sp_sm_format_file_status_update", param
         )
 
     def update_format_file_status(self, csv_id, status):
-        print "In update format file status"
-        print "status ", status
-        print "csv_id", csv_id
         res_update_stats = self.call_update_proc(
             "sp_sm_file_download_status_update", [csv_id, status]
         )
-
         print "res_update_stats->>>>> ", res_update_stats
         return res_update_stats
 
-    def update_file_status_client(self, csv_id, file_name):
+
+
+    def update_file_status_client(
+            self, old_file_name, csv_id, file_name, file_size
+    ):
+        param = [old_file_name, csv_id, file_name, file_size]
         return self.call_update_proc(
-            "sp_ct_format_file_status_update", [csv_id, file_name]
+            "sp_ct_format_file_status_update", param
         )
+
+    def update_pastdata_document_status(
+        self, csv_id, status
+    ):
+        res_update_stats = self.call_update_proc(
+            "sp_pastdata_doc_download_status_update", [csv_id, status]
+        )
+        print "res_update_stats->>>>> ", res_update_stats
+        return res_update_stats
+
 
     def get_declined_docs(self, csv_id):
         print "csv_id-in get_declined_docs >>>>> ", csv_id
-        query = "SELECT format_file FROM tbl_bulk_statutory_mapping WHERE csv_id = %s and action = 3"
+
+        # query = "SELECT format_file FROM tbl_bulk_statutory_mapping as t1 " \
+        #         "inner join tbl_bulk_statutory_mapping_csv AS t2 on " \
+        #         "t1.csv_id  = t2.csv_id WHERE t1.csv_id = %s and "\
+        #         "(t1.action=3 or t2.is_fully_rejected = 1)"
+
+        query = "SELECT format_file FROM tbl_bulk_statutory_mapping WHERE " \
+                "csv_id = %s and action = 3"
         param = [int(csv_id)]
         print "Query---> ", query
         print "Param -> ", param
-        
+
         row = self.select_all(query, param)
         dec_doc_list = []
         for r in row:

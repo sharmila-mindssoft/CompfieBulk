@@ -4,12 +4,12 @@ var SHOW_BTN = $('#show');
 var EXPORT_BTN = $('#export');
 var ITEMS_PER_PAGE = $('#items_per_page');
 var PAGINATION_VIEW = $('.pagination-view');
-var PAGINATION = $('#pagination-rpt');
+var PAGINATION = $('#pagination_rpt');
 var ASS_STAT_COUNT = $('.assigned-statu-count');
 var DE_NAME = $('#de_name');
 var REPORT_VIEW = $('.grid-table-rpt');
-var AC_GROUP = $('#ac-group');
-var AC_LEGAL_ENTITY = $('#ac-legalentity');
+var AC_GROUP = $('#ac_group');
+var AC_LEGAL_ENTITY = $('#ac_legalentity');
 var GROUP_VAL = $('#groupsval');
 var GROUP = $('#group_id');
 var LEGAL_ENTITY_VAL = $('#legalentityval');
@@ -163,7 +163,7 @@ function processPaging() {
     SNO = SNO;
     if (TOTAL_RECORD == 0) {
         hideLoader();
-        tr = $('#nocompliance-templates '+
+        tr = $('#nocompliance_templates '+
         	'.table-nocompliances-list .table-row');
         tr_row = tr.clone();
         $('.tbl-norecords', tr_row).text('No Records Found');
@@ -266,7 +266,7 @@ function loadUserMappingDetailsList() {
         $('.techno-user', clone1).text(technoDetails[i].techno_user);
         $('.tbody-usermappingdetails-list').append(clone1);
         for (k = col; k <= thCnt; k++) {
-            headerObj = $('#datatable-responsive').find('th').eq(k);
+            headerObj = $('#datatable_responsive').find('th').eq(k);
             getDomainVal = getDomainAssigned(headerObj.text(),
                             technoDetails[i].unit_id, USER_MAPPING_LIST);
             if (assignedDomVal == '') {
@@ -355,7 +355,7 @@ function loadCurrentUserDetails() {
         // KE-Name  : Knowledge-Executive User Name and Code
         domainName = user.employee_code + " - " + user.employee_name;
         $('.active-domain-executive').removeClass("default-display-none");
-        $('#domain-name').html(domainName);
+        $('#domain_name').html(domainName);
         domainUserDetails = {
             "user_id": user.user_id
         }
@@ -666,7 +666,7 @@ function processSubmit() {
 
         if (TOTAL_RECORD == 0) {
             $('.tbody-compliance').empty();
-            tableRow4 = $('#nocompliance-templates'
+            tableRow4 = $('#nocompliance_templates'
                 +' .table-nocompliances-list .table-row');
             clone4 = tableRow4.clone();
             $('.tbl-norecords', clone4).text('No Records Found');
@@ -786,20 +786,20 @@ function loadCountwiseResult(data) {
 
         occurance = '';
         occuranceid;
-        tR = $('#act-templates .table-act-list .table-row-act-list');
+        tR = $('#act_templates .table-act-list .table-row-act-list');
         clone1 = tR.clone();
 
-        $('.tbl_sno', clone1).text(SNO);
-        $('.tbl_uploaded_file_name', clone1).text(csvName);
-        $(".tbl_uploaded_by", clone1).text(uploadedByName);
-        $('.tbl_uploaded_on', clone1).text(uploadedOn);
-        $('.tbl_no_of_tasks', clone1).text(noOfTasks);
-        $('.tbl_approved_rejected_tasks', clone1).text(approvedRejectedTasks);
-        $('.tbl_approved_rejected_on', clone1).text(approvedRejectedOn);
-        $('.tbl_approved_rejected_by', clone1).text(approvedRejectedBy);
-        $('.tbl_reason_for_rejection', clone1).text(reasonForRejection);
-        $('.tbl_domain', clone1).text(domainName);
-        $('#datatable-responsive .tbody-compliance').append(clone1);
+        $('.tbl-sno', clone1).text(SNO);
+        $('.tbl-uploaded-file-name', clone1).text(csvName);
+        $(".tbl-uploaded-by", clone1).text(uploadedByName);
+        $('.tbl-uploaded-on', clone1).text(uploadedOn);
+        $('.tbl-no-of-tasks', clone1).text(noOfTasks);
+        $('.tbl-approved-rejected-tasks', clone1).text(approvedRejectedTasks);
+        $('.tbl-approved-rejected-on', clone1).text(approvedRejectedOn);
+        $('.tbl-approved-rejected-by', clone1).text(approvedRejectedBy);
+        $('.tbl-reason-for-rejection', clone1).text(reasonForRejection);
+        $('.tbl-domain', clone1).text(domainName);
+        $('#datatable_responsive .tbody-compliance').append(clone1);
     }
 
     if (isNull == true) {

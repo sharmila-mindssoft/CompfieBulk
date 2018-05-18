@@ -544,6 +544,7 @@ function submitUpload() {
     var dom_id = $("#dom_id_hdn").val();
     var unit_id = $("#unit_id_hdn").val();
     var start_date = $("#start_date_hdn").val();
+    /*
     client_mirror.uploadComplianceTaskFile(
         parseInt(LEGALENTITYIDUPLOAD.val()),
         getCountryId(LEGALENTITYIDUPLOAD.val()),
@@ -556,7 +557,7 @@ function submitUpload() {
                 console.log(error);
                 hideLoader();
             }
-    });
+    });*/
 
     var args = {
         "new_csv_id": parseInt($('#hdnCsvId').val()),
@@ -642,8 +643,6 @@ function resetEdit() {
     UploadFile.val("");
 }
 
-var file_list =  [];
-
 Dropzone.autoDiscover = false;
 Dropzone.autoProcessQueue = false;
 var addedfiles = [];
@@ -678,16 +677,6 @@ var myDropzone = new Dropzone("div#myDrop", {
                 addedfiles.push(file.name);
                 queueCount += 1;
                 console.log("File>" + file);
-                buClient.uploadFile(file, function result_data(data) {
-                    if (data != 'File max limit exceeded' || data != 'File content is empty') {
-                        uploadFile = data;
-                        file_list = data
-                    } else {
-                        file_list = [];
-                    }
-
-                    console.log("file_list->> "+ file_list);
-                });
             }
         });
         this.on("removedfile", function(file) {

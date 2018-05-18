@@ -1194,7 +1194,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     ):
                         self._error_summary["duplicate_error"] += 1
                         dup_error = "Compliance_Task - Duplicate compliances"
-                        +" in Knowledge DB"
+                        dup_error += " in Knowledge DB"
                         res = make_error_desc(res, dup_error)
 
                 if key == "Compliance_Frequency":
@@ -1250,30 +1250,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                             head_idx.append(row_idx)
 
                         mapped_header_dict[key] = head_idx
-                # print "Header Dict-->", mapped_header_dict
-
-                # if key == "Format" and res is True:
-                    # if not self.check_compliance_task_name_duplicate(
-                    #     self._country_id, self._domain_id,
-                    #     data.get("Statutory"),
-                    #     data.get("Statutory_Provision"),
-                    #     data.get("Compliance_Task")
-                    # ):
-                    #     self._error_summary["duplicate_error"] += 1
-                    #     dup_error =
-                    # "Compliance_Task - Duplicate compliances in Knowledge DB"
-                    #     res = make_error_desc(res, dup_error)
-
-                    # if not self.check_task_id_duplicate(
-                    #     self._country_id, self._domain_id,
-                    #     data.get("Statutory"),
-                    #     data.get("Statutory_Provision"),
-                    #     data.get("Compliance_Task"),
-                    #     data.get("Task_ID")
-                    # ):
-                    #     self._error_summary["duplicate_error"] += 1
-                    #     dup_error = "Task_ID - Duplicate in Knowledge DB"
-                    #     res = make_error_desc(res, dup_error)
             if res is not True:
                 error_list = mapped_error_dict.get(row_idx)
                 if error_list is None:
@@ -1339,7 +1315,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                 "invalid_data_error": self._error_summary[
                     "invalid_data_error"],
                 "inactive_error": self._error_summary["inactive_error"],
-                "invalid_frequency_error": self._error_summary["invalid_frequency_error"],
+                "invalid_frequency_error": self._error_summary[
+                    "invalid_frequency_error"],
                 "total": total,
                 "invalid": invalid,
                 "doc_count": len(set(self._doc_names))
@@ -1446,7 +1423,9 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
 
                                     if key in ["Applicable_Location", "Statutory"]:
                                         if v.find(">>") > 0:
-                                            v = " >> ".join(e.strip() for e in v.split(">>"))
+                                            v = " >> ".join(
+                                                e.strip() for e in v.split(">>")
+                                            )
 
                                     if unboundMethod is not None:
                                         isFound = unboundMethod(v)
@@ -1516,20 +1495,31 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         try:
             self.get_source_data()
             self._source_data.sort(key=lambda x: (
-                 x["Organization"], x["Statutory_Nature"],
-                 x["Statutory"], x["Applicable_Location"]
+                x["Organization"], x["Statutory_Nature"],
+                x["Statutory"], x["Applicable_Location"]
             ))
-            msg = [], statu_exists_id = []
+            msg = []
+            statu_exists_id = []
             for k, v in groupby(self._source_data, key=lambda s: (
                 s["Organization"], s["Statutory_Nature"],
                 s["Statutory"], s["Applicable_Location"]
             )):
+                print "Group BYYYYYYYY >>>>>>>>>>>>>>>>>>>>>>>>>>"
                 grouped_list = list(v)
+                print grouped_list
+
                 if len(grouped_list) == 0:
                     continue
-                org_ids = [], statu_ids = [], geo_ids = [], nature_id = None
+                org_ids = []
+                statu_ids = []
+                geo_ids = []
+                nature_id = None
                 statu_mapping = None
                 value = grouped_list[0]
+
+                print "CSV_DELIMITER >>>>>>>>>>>>>>>>>>>>"
+                print value.get("Organization").strip().split(CSV_DELIMITER)
+
                 for org in value.get(
                     "Organization"
                 ).strip().split(CSV_DELIMITER):
