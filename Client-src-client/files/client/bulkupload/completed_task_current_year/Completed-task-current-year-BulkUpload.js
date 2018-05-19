@@ -227,9 +227,9 @@ function validateUpload() {
                     $('#hdnCsvId').val(data.new_csv_id);
                     csvId = data.new_csv_id;
                     $('.successFileName').text(csv_split_name);
-                    csv_path = "../../../../../uploaded_file/csv/" + csv_split_name + '.csv';
+                    csv_path = "../../../../../uploaded_file/csv/" + data.csv_name;
                     $('.uploaded_data').attr("href", csv_path);
-                    $('.uploaded_data').attr("download", csv_path);
+                    $('.uploaded_data').attr("download", data.csv_name);
 
                     if (data.doc_count > 0) {
                         $('.divSuccessDocument').show();
@@ -457,8 +457,9 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
 
     var csv_split_name = uploadedCsvName.substring(0, uploadedCsvName.lastIndexOf("_"));
     $('.successFileName').text(csv_split_name);
-    csv_path = "../../../../../uploaded_file/csv/" + csv_split_name + '.csv';
+    csv_path = "../../../../../uploaded_file/csv/" + uploadedCsvName;
     $('.uploaded_data').attr("href", csv_path);
+    $('.uploaded_data').attr("download", uploadedCsvName);
     $('.uploaded_data').attr("download", csv_path);
 
     $('#bu-doc-total').text(data.total_documents);
