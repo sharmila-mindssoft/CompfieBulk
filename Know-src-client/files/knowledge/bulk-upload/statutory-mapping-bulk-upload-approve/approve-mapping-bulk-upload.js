@@ -1450,6 +1450,12 @@ function PageControls() {
             pending = "View Data : Pending";
             appendFilter(pending);
         }
+        if ($('input[id="all_data"]:checked').length == 1)
+        {
+            viewalldata = "View Data : All";
+            appendFilter(viewalldata);
+        }
+        
         if(ORG_NAME.val() != "") {
             orgs = "Organization : " + ORG_NAME.val();
             appendFilter(orgs);
