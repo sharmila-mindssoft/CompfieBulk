@@ -163,44 +163,44 @@ function loadClientUnitCSVFilesList() {
 			App_Rej = value.approved_count + " / " + value.rej_count;
 			$('.approved-rejected', clone).text(App_Rej);
 
-            $('.dropbtn',clone).on('click', function(){
-                if($(".dropdown-content", clone).hasClass("show")==false){
-                    $(".dropdown-content", clone).show();
-                    $(".dropdown-content", clone).addClass("show");
-                }
-                else{
-                    $(".dropdown-content", clone).hide();
-                    $(".dropdown-content", clone).removeClass("show");
-                }
-            });
-
-            $(".dl-xls-file, .dl-csv-file, .dl-ods-file,"+
-                " .dl-txt-file", clone).on("click", function(){
-                $(".dropdown-content", clone).hide();
-                $(".dropdown-content", clone).removeClass("show");
-            });
-
+            $('.download-invalidfile', clone).html(
+                '<i class="fa fa-download text-primary c-pointer dropbtn" ' +
+                'onClick="showFormats('+value.csv_id+')" title="Click here to download" />'
+            );
+            $('.download-invalidfile', clone).append
+            (
+                $('<div/>')
+                .addClass("dropdown-content default-display-none")
+                .attr("id","myDropdown-"+value.csv_id)
+            );
             SplitFileName = value.csv_name.split(".")[0];
-            DOWNLOADFILE = value.csv_name.split(".")[0];
-
-            $('.dl-xls-file',clone).attr(
-                "href", "/uploaded_file/xlsx/"+SplitFileName+'.xlsx'
+            $('.download-invalidfile #myDropdown-'+value.csv_id, clone).append
+            (
+                $('<a/>')
+                .text("Download Excel")
+                .addClass("dl-xls-file-"+value.csv_id)
+                .attr("href","/uploaded_file/xlsx/"+SplitFileName+'.xlsx'),
+                $('<a/>')
+                .text("Download CSV")
+                .addClass("dl-csv-file-"+value.csv_id)
+                .attr("href","/uploaded_file/csv/"+SplitFileName+'.csv'),
+                $('<a/>')
+                .text("Download ODS")
+                .addClass("dl-ods-file-"+value.csv_id)
+                .attr("href","/uploaded_file/ods/"+SplitFileName+'.ods'),
+                $('<a/>')
+                .text("Download Text")
+                .addClass("dl-txt-file-"+value.csv_id)
+                .on("click",function(){
+                    $.get(
+                        "/uploaded_file/txt/" + SplitFileName+".txt",
+                        function(data)
+                        {
+                           download(SplitFileName+".txt", "text/plain", data);
+                        },
+                    'text');
+                })
             );
-            $('.dl-csv-file',clone).attr(
-                "href", "/uploaded_file/csv/"+SplitFileName+'.csv'
-            );
-            $('.dl-ods-file',clone).attr(
-                "href", "/uploaded_file/ods/"+SplitFileName+ '.ods'
-            );
-            $('.dl-txt-file',clone).on("click", function(){
-                $.get(
-                    "/uploaded_file/txt/" + SplitFileName+".txt",
-                    function(data)
-                    {
-                       download(SplitFileName+".txt", "text/plain", data);
-                    },
-                'text');
-            });
 
 			//approve all
 			$('.approve-checkbox', clone).on('change', function(e){
@@ -736,13 +736,20 @@ function bindClientUnitList(data){
             if(value.bu_remarks != null && value.bu_remarks != ''){
                 $('.reject-reason', CloneRow).append(
                     '<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
-                    "text-primary c-pointer" +
+                    "text-primary c-pointer " +
                     'data-original-title="' + value.bu_remarks + '" ' +
                     'data-toggle="tooltip"></i>'
                 );
                 $('[data-toggle="tooltip"]').tooltip();
             }
             $('.legal-entity-name', CloneRow).text(value.bu_le_name);
+            $('.legal-entity-name', CloneRow).append(
+                '&nbsp;&nbsp;<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
+                "text-primary c-pointer " +
+                'data-original-title="Country : ' + value.country_name + '" ' +
+                'data-toggle="tooltip"></i>'
+            );
+            $('[data-toggle="tooltip"]').tooltip();
             $('.division-name', CloneRow).text(value.bu_division_name);
             $('.category-name', CloneRow).text(value.bu_category_name);
             $('.geography-level', CloneRow).text(value.bu_geography_level);
@@ -1013,6 +1020,22 @@ CANCEL_BUTTON.click(function() {
     FILTER_GEO_LOCATION.val('');
     FILTER_DOMAIN.val('');
     FILTER_ORGANIZATION.val('');
+    $('#filter_legal_entity').val('');
+    $('#filter_division').val('');
+    $('#filter_category').val('');
+    $('#filter_geo_level').val('');
+    $('#filter_location').val('');
+    $('#filter_unit_code').val('');
+    $('#filter_unit_name').val('');
+    $('#filter_address').val('');
+    $('#filter_city').val('');
+    $('#filter_state').val('');
+    $('#filter_post_code').val('');
+    $('#filter_domain').val('');
+    $('#filter_orgn').val('');
+    _PAGE_LIMIT = parseInt(ITEMS_PER_PAGE.val());
+    _ON_CURRENT_PAGE = 1;
+    _SHOW_FROM = 0;
     BTN_UPLOADED_FILELIST.trigger('click');
 });
 
@@ -1027,7 +1050,7 @@ FILTER_LEGAL_ENTITY.keyup(function(e){
     commonArrayAutoComplete(
         e, FILTER_LEGAL_ENTITY_NAME, text_val,
         LEGALENTITYLIST, function (val) {
-            FILTER_LEGAL_ENTITY.val(val[0])
+            FILTER_LEGAL_ENTITY.val(val[0].trim())
         }
     );
 });
@@ -1183,11 +1206,8 @@ BTN_FILTER_GO.click(function(){
         $('.filtered_items').text('');
     }
     _PAGE_LIMIT = parseInt(ITEMS_PER_PAGE.val());
-    if (_ON_CURRENT_PAGE == 1) {
-        _SHOW_FROM = 0
-    } else {
-        _SHOW_FROM = (_ON_CURRENT_PAGE - 1) * _PAGE_LIMIT;
-    }
+    _ON_CURRENT_PAGE = 1;
+    _SHOW_FROM = 0;
     bu.getBulkClientUnitListForFilterView(
         parseInt($('#view_csv_unit_id').val()), _SHOW_FROM, _PAGE_LIMIT,
         FILTER_LEGAL_ENTITY.val().trim(), FILTER_DIVISION.val().trim(),
