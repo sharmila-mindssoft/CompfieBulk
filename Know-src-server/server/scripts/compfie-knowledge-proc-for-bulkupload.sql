@@ -123,7 +123,7 @@ BEGIN
   IF @u_cat_id = 5 THEN
     SELECT t2.legal_entity_id, t2.legal_entity_name, t2.is_closed, t2.is_approved,
     t2.country_id,
-    (SELECT country_nameFROM tbl_countries WHERE country_id=t2.country_id)
+    (SELECT country_name FROM tbl_countries WHERE country_id=t2.country_id)
     AS country_name, t2.business_group_id,
     DATEDIFF(t2.contract_to,curdate()) AS le_contract_days,
     t3.user_id
