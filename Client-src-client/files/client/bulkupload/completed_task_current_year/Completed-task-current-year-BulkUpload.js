@@ -201,9 +201,15 @@ function validateUpload() {
             };
 
             buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
+                console.log("error:" + error);
                 if (error == "InvalidCsvFile"){
                     $('#myModal').modal('hide');
                     displayMessage(message.invalid_csv_file);
+                }else if(data == "Bad Request"){
+                    displayMessage(message.upload_failed);
+                    displayMessage(data + "\n" +error);
+                    $('#myModal').modal('hide');
+                    hideLoader();
                 }
                 else if (error == null) {
                     var csv_split_name = data.csv_name.substring(0, data.csv_name.lastIndexOf("_"));
@@ -252,7 +258,6 @@ function validateUpload() {
                     displaySuccessMessage("Records uploaded successfully");
                     hideLoader();
                 } else {
-                    console.log(JSON.stringify(data));
                     $('#myModal').modal('hide');
                     displayMessage(message.upload_failed);
                     INVALIDFILENAME = data.invalid_file.split('.');
@@ -291,7 +296,6 @@ function validateUpload() {
                     $('#excel').attr("href", xls_path);
                     $('#ods').attr("href", ods_path);
                     $('#txt').attr("href", txt_path);
-
                     hideLoader();
                 }
             });
