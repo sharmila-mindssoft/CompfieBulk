@@ -66,7 +66,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units_csv` (
   `csv_unit_id` INT NOT NULL AUTO_INCREMENT,
   `client_id` INT NOT NULL,
   `client_group` varchar(50) NOT NULL,
-  `csv_name` varchar(100) NOT NULL,
+  `csv_name` varchar(500) NOT NULL,
   `uploaded_by` INT NOT NULL,
   `uploaded_on` datetime NOT NULL,
   `total_records` INT NOT NULL,
@@ -87,6 +87,7 @@ DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_units` ;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units` (
   `bulk_unit_id` INT not null AUTO_INCREMENT,
   `csv_unit_id` INT not null,
+  `country` varchar(50) not null,
   `legal_entity` varchar(100) not null,
   `division` varchar(100) not null,
   `category` varchar(100) not null,
