@@ -9,7 +9,7 @@ CREATE PROCEDURE `sp_bu_organization`(
 IN cId INT, dId INT
 )
 BEGIN
-   SELECT organisation_id, organisation_name, is_active 
+   SELECT organisation_id, organisation_name, is_active
    FROM tbl_organisation
    WHERE country_id = cId AND domain_id = dId;
 END //
@@ -22,7 +22,7 @@ CREATE PROCEDURE `sp_bu_statutory_nature`(
 IN cId INT
 )
 BEGIN
-   SELECT statutory_nature_id, statutory_nature_name, is_active 
+   SELECT statutory_nature_id, statutory_nature_name, is_active
    FROM tbl_statutory_natures
    WHERE country_id = cId;
 END //
@@ -116,14 +116,14 @@ DROP PROCEDURE IF EXISTS `sp_bu_legal_entities`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_legal_entities`(IN _client_id INT(11), _user_id INT(11))
 BEGIN
-  SELECT @u_cat_id := user_category_id 
-  FROM tbl_user_login_details 
+  SELECT @u_cat_id := user_category_id
+  FROM tbl_user_login_details
   WHERE user_id = _user_id;
 
   IF @u_cat_id = 5 THEN
     SELECT t2.legal_entity_id, t2.legal_entity_name, t2.is_closed, t2.is_approved,
     t2.country_id,
-    (SELECT country_nameFROM tbl_countries WHERE country_id=t2.country_id)
+    (SELECT country_name FROM tbl_countries WHERE country_id=t2.country_id)
     AS country_name, t2.business_group_id,
     DATEDIFF(t2.contract_to,curdate()) AS le_contract_days,
     t3.user_id
@@ -288,7 +288,7 @@ DELIMITER ;
 
 
 -- ----------------------------------------------------------------------------
--- To get the domains AND organization under client group with its alloted 
+-- To get the domains AND organization under client group with its alloted
 -- unit count
 -- ----------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_bu_domains_organization_unit_count`;
@@ -368,7 +368,7 @@ BEGIN
     INNER JOIN tbl_units_organizations AS t02 ON t01.unit_id = t02.unit_id
     INNER JOIN tbl_user_units AS t03 ON t01.unit_id = t03.unit_id
     WHERE t03.user_id = uid AND t01.is_closed = 0 AND t01.is_approved = 1
-    GROUP BY t01.unit_id,t02.unit_id,t01.unit_code, 
+    GROUP BY t01.unit_id,t02.unit_id,t01.unit_code,
     t01.unit_name,t01.legal_entity_id, t01.client_id;
 
     -- check assigned units
@@ -464,8 +464,8 @@ BEGIN
       AND FIND_IN_SET(t4.unit_id, unitid)
       AND FIND_IN_SET(t1.domain_id, domainid)
       AND t6.unit_id IS NULL
-    GROUP BY   t1.statutory_mapping_id , t1.compliance_id , t4.unit_id, 
-        t1.domain_id, t4.unit_code, t4.unit_name, 
+    GROUP BY   t1.statutory_mapping_id , t1.compliance_id , t4.unit_id,
+        t1.domain_id, t4.unit_code, t4.unit_name,
         t4.geography_id, t.statutory_mapping,
         t1.statutory_provision,
         t1.compliance_task ,
@@ -757,3 +757,19 @@ DELIMITER ;
 
 -- Remove procedure
 DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_countries`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_countries`(
+IN _user_id INT(11))
+BEGIN
+  SELECT t1.country_id, t2.country_name, t2.is_active
+  FROM tbl_user_countries as t1
+  INNER JOIN tbl_countries as t2
+  ON t2.country_id = t1.country_id
+  WHERE t1.user_id = _user_id;
+END //
+
+DELIMITER ;
