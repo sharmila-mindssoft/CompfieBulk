@@ -666,11 +666,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                 if(len(grouped_list) != uploaded_count):
                     unit_names.append(grouped_list[0].get("Unit_Code"))
-
-        if len(unit_names) > 0:
-            error_msg = "Downloaded and uploaded records are not " + \
-                "same for unit %s" % (','.join(unit_names))
-            raise ValueError(str(error_msg))
+        return unit_names
 
     # get master table related values while upload csv
     def get_master_table_info(self):
@@ -924,7 +920,6 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     "invalid_char"
                 ]
         if invalid == 0:
-            self.check_uploaded_count_in_csv()
             self.get_master_table_info()
         if invalid > 0:
             return self.make_invalid_return(

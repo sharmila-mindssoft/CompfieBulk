@@ -1392,6 +1392,23 @@ class CsvFileExeededMaxLines(Response):
         }
 
 
+class UploadedRecordsCountNotMatch(Response):
+    def __init__(self, u_names):
+        self.u_names = u_names
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["u_names"])
+        return UploadedRecordsCountNotMatch(
+            data.get("u_names")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "u_names": self.u_names
+        }
+
+
 class GetDomainExecutiveDetailsSuccess(Response):
     def __init__(self, domain_executive_info):
         self.domain_executive_info = domain_executive_info

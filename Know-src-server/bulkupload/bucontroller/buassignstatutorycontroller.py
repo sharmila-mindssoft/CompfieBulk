@@ -254,6 +254,10 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
             return bu_as.UnitsNotAssignedToUser()
 
         if res_data["return_status"] is True:
+            invalid_units = cObj.check_uploaded_count_in_csv()
+            if len(invalid_units) > 0:
+                return bu_as.UploadedRecordsCountNotMatch(invalid_units)
+
             generate_valid_file(csv_name)
             d_ids = ",".join(map(str, cObj._domain_ids))
             d_names = ",".join(cObj._domain_names)
