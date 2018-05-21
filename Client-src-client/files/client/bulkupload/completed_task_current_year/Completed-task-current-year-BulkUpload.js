@@ -183,7 +183,11 @@ function getPastRecords(legalEntity) {
 }
 
 function validateUpload() {
-    if ($('#fileInput').val() == "" && buCtPage._ActionMode != 'upload') {
+    if(LEGAL_ENTITIES.length > 1 && hdn_legal_entity_id_upload.val().trim() == "") {
+        displayMessage(message.legalentity_required);
+        txt_legal_entity_name_upload.focus();
+        return false;
+    }else if ($('#fileInput').val() == "" && buCtPage._ActionMode != 'upload') {
         displayMessage("File required");
         $('#myModal').modal('hide');
         return false;
@@ -207,7 +211,7 @@ function validateUpload() {
                     displayMessage(message.invalid_csv_file);
                 }else if(data == "Bad Request"){
                     displayMessage(message.upload_failed);
-                    displayMessage(data + "\n" +error);
+                    // displayMessage(data + "\n" +error);
                     $('#myModal').modal('hide');
                     hideLoader();
                 }
@@ -521,11 +525,14 @@ function downloadData() {
                     window.open(download_url, '_blank');
                     hideLoader();
                 } else {
-                    displayMessage("message.empty_export");
+                    displayMessage(message.no_compliance_available);
                     hideLoader();
                 }
             } else {
-                displayMessage(error);
+                if (error == "ExportToCSVEmpty"){
+                    displayMessage(message.no_compliance_available);    
+                }
+                
                 hideLoader();
             }
         }

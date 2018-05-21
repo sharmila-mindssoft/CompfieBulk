@@ -192,7 +192,11 @@ def process_get_bulk_download_data(
     converter = PastDataJsonToCSV(
                 db, request_frame, session_user, "DownloadPastData"
             )
-    if converter.FILE_DOWNLOAD_PATH is None:
+
+    if(
+        converter.FILE_DOWNLOAD_PATH is None or
+        converter.data_available_status is False
+    ):
             return bu_ct.ExportToCSVEmpty()
     else:
         result = bu_ct.DownloadBulkPastDataSuccess(
