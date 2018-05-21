@@ -66,7 +66,7 @@ txtdomain.keyup(function(e) {
     commonAutoComplete(e, divDomain, hdnDomain, text_val, domainList,
         "d_name", "d_id",
         function(val) {
-            loadUnits(parseInt(LegalEntityId.val()));
+            loadUnits(parseInt(LegalEntityId.val()), parseInt(val));
             onAutoCompleteSuccess(txtdomain, hdnDomain, val);
         }, condition_fields, condition_values);
 });
@@ -84,8 +84,8 @@ txtUnit.keyup(function(e) {
         }, condition_fields, condition_values);
 });
 
-function loadUnits(le_id, unit_id) {
-    client_mirror.complianceFilters(le_id, function(error, response) {
+function loadUnits(le_id, domain_id) {
+    buClient.getUnits(le_id, domain_id, function(error, response) {
         if (error == null) {
             unitList = response.user_units;
             $.each(unitList, function(key, u) {

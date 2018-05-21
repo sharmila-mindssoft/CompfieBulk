@@ -103,6 +103,23 @@ class GetCompletedTaskCsvUploadedList(Request):
         }
 
 
+class GetUnits(Request):
+    def __init__(self, legal_entity_id, domain_id):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id", "domain_id"])
+        return GetUnits(data.get("legal_entity_id"), data.get("domain_id"))
+
+    def to_inner_structure(self):
+        return{
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id
+        }
+
+
 class CsvList(object):
     def __init__(
         self, csv_past_id, csv_name, uploaded_on, uploaded_by,
@@ -214,7 +231,7 @@ def _init_Request_class_map():
         UploadCompletedTaskCurrentYearCSV,
         saveBulkRecords,
         GetCompletedTaskCsvUploadedList,
-        GetDownloadData
+        GetDownloadData, GetUnits
     ]
     class_map = {}
     for c in classes:
@@ -437,6 +454,23 @@ class ExportToCSVEmpty(Response):
         return {
         }
 
+
+class GetUnitsSuccess(Response):
+    def __init__(self, user_units):
+        self.user_units = user_units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_units"])
+        user_units = data.get("user_units")
+        return GetUnitsSuccess(user_units)
+
+    def to_inner_structure(self):
+        return {
+            "user_units": self.user_units
+        }
+
+
 class DownloadBulkPastDataSuccess(Response):
     def __init__(self, link):
         self.link = link
@@ -462,7 +496,8 @@ def _init_Response_class_map():
         UploadCompletedTaskCurrentYearCSVSuccess,
         UploadCompletedTaskCurrentYearCSVFailed,
         saveBulkRecordSuccess, InvalidCsvFile,
-        GetCompletedTaskCsvUploadedListSuccess, ExportToCSVEmpty, DownloadBulkPastDataSuccess
+        GetCompletedTaskCsvUploadedListSuccess, ExportToCSVEmpty,
+        DownloadBulkPastDataSuccess, GetUnitsSuccess
     ]
     class_map = {}
     for c in classes:
