@@ -82,9 +82,12 @@ def get_domains_for_le(db, legal_entity_id):
 
 
 def get_units_for_le_domain(db, country_id, legal_entity_id):
-    query = "SELECT t1.unit_id, t1.unit_code, t1.unit_name, t2.domain_id, t1.country_id, t1.legal_entity_id " + \
-            "FROM tbl_units as t1 inner join tbl_units_organizations as t2 on t2.unit_id = t1.unit_id " + \
-            "where t1.legal_entity_id = %s and t1.country_id = %s group by t1.unit_id;"
+    query = "SELECT t1.unit_id, t1.unit_code, t1.unit_name, " + \
+            "t2.domain_id, t1.country_id, t1.legal_entity_id " + \
+            "FROM tbl_units as t1 inner join tbl_units_organizations" + \
+            " as t2  on t2.unit_id = t1.unit_id " + \
+            "where t1.legal_entity_id = %s and t1.country_id = %s " + \
+            "group by t1.unit_id, t2.domain_id;"
     result = db.select_all(query, [legal_entity_id, country_id])
     # print "units"
     # print result

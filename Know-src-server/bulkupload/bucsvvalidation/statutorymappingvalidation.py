@@ -737,6 +737,7 @@ class StatutorySource(object):
                                                   Statutory_Month,
                                                   Trigger_Days,
                                                   Repeats_By)
+
             values.append((
                 d["Statutory_Provision"], d["Compliance_Task"],
                 d["Compliance_Description"], d["Compliance_Document"],
@@ -1515,6 +1516,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                         org_ids.append(
                             org_info.get("organisation_id")
                         )
+
                 nature = value.get("Statutory_Nature")
                 nature_id = self.Statutory_Nature.get(
                     nature).get("statutory_nature_id")
