@@ -8,7 +8,8 @@ function initMethods() {
         getDownloadData: getDownloadData,
         saveBulkRecords: saveBulkRecords,
         GetCompletedTaskCsvUploadedList: GetCompletedTaskCsvUploadedList,
-        uploadFile : uploadFile
+        uploadFile : uploadFile,
+        getUnits : getUnits
     };
 }
 

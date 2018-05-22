@@ -15,6 +15,8 @@ from server.common import (
    get_date_time, string_to_datetime, datetime_to_string,
    get_date_time_in_date
 )
+from server.clientdatabase.general import get_user_category
+from clientprotocol import clientcore
 
 __all__ = [
     "get_legal_entity_domains",
@@ -22,7 +24,8 @@ __all__ = [
     "save_completed_task_data",
     "getPastRecordData",
     "getCompletedTaskCSVList",
-    "get_client_id_by_le"
+    "get_client_id_by_le",
+    "get_units_for_user"
 ]
 
 def get_legal_entity_domains(
@@ -226,3 +229,53 @@ def get_client_id_by_le(db, legal_entity_id):
     client_id = rows[0]["client_id"]
     client_name = rows[0]["group_name"]
     return client_id, client_name
+
+
+def get_units_for_user(db, le_id, domain_id, user_id):
+    db = connectKnowledgeDB(le_id)
+    user_category_id = get_user_category(db, user_id)
+    if user_category_id > 3:
+        query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
+                "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "FROM tbl_user_units AS t1 " + \
+                "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
+                "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
+                "WHERE t1.user_id = %s and t2.legal_entity_id = %s " + \
+                " and %s in (t3.domain_id) AND t2.is_closed = 0 group by t2.unit_id ORDER BY t2.unit_name"
+        rows = db.select_all(query, [user_id, le_id, domain_id])
+    else:
+        query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
+                "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "FROM tbl_user_units AS t1 " + \
+                "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
+                "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
+                "WHERE t2.is_closed = 0 and t2.legal_entity_id = %s " + \
+                " and %s in (t3.domain_id) group by t2.unit_id ORDER BY t2.unit_name"
+        print query
+        print [le_id, domain_id]
+        rows = db.select_all(query, [le_id, domain_id])
+    return return_units(rows)
+
+def return_units(units):
+        results = []
+        for unit in units:
+            division_id = None
+            category_id = None
+            b_group_id = None
+            if unit["division_id"] > 0:
+                division_id = unit["division_id"]
+            if unit["category_id"] > 0:
+                category_id = unit["category_id"]
+            if unit["business_group_id"] > 0:
+                b_group_id = unit["business_group_id"]
+            results.append(clientcore.ClientUnit(
+                unit["unit_id"], division_id, category_id, unit["legal_entity_id"],
+                b_group_id, unit["unit_code"],
+                unit["unit_name"], unit["address"],
+                [int(x) for x in unit["domain_ids"].split(",")],
+                unit["country_id"],
+                bool(unit["is_closed"])
+            ))
+        return results

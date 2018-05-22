@@ -60,9 +60,24 @@ def process_bu_completed_task_current_year_request(request, db, session_user):
             db, request_frame, session_user
         )
 
+    if type(request_frame) is bu_ct.GetUnits:
+        result = process_get_units(
+            db, request_frame, session_user
+        )
+
     return result
 
 ########################################################
+
+
+def process_get_units(
+    db, request, session_user
+):
+    le_id = request.legal_entity_id
+    domain_id = request.domain_id
+    user_units = get_units_for_user(db, le_id, domain_id, session_user)
+
+    return bu_ct.GetUnitsSuccess(user_units=user_units)
 
 
 def get_completed_task_csv_list(db, request_frame, session_user):
@@ -177,7 +192,11 @@ def process_get_bulk_download_data(
     converter = PastDataJsonToCSV(
                 db, request_frame, session_user, "DownloadPastData"
             )
-    if converter.FILE_DOWNLOAD_PATH is None:
+
+    if(
+        converter.FILE_DOWNLOAD_PATH is None or
+        converter.data_available_status is False
+    ):
             return bu_ct.ExportToCSVEmpty()
     else:
         result = bu_ct.DownloadBulkPastDataSuccess(
