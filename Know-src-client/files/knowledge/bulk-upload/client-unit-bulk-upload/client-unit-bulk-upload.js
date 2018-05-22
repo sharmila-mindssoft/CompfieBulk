@@ -180,7 +180,7 @@ document.getElementById("dwn_format").addEventListener("click", function(){
     download(
     	fileName,
     	'text/csv',
-    	'Legal_Entity*,Division,Category,Geography_Level*,Unit_Location*,' +
+    	'Country*,Legal_Entity*,Division,Category,Geography_Level*,Unit_Location*,' +
     	'Unit_Code*,Unit_Name*,Unit_Address*,City*,State*,Postal_Code*,' +
     	'Domain*,Organization*'
     );

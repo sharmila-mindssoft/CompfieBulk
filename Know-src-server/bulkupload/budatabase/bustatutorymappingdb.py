@@ -835,7 +835,6 @@ def get_all_compliance_frequency():
     _source_db = Database(_source_db_con)
     _source_db.begin()
     result = _source_db.call_proc('sp_bu_compliance_frequency')
-    result.pop(0)
     return result
 
 

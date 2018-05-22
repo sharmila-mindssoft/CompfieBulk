@@ -488,7 +488,7 @@ bu_api_params = {
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
     'tsk_type': {
-        'type': 'STRING', 'length': 25,
+        'type': 'STRING', 'length': 150,
         'validation_method': is_alphabet, 'is_optional': True
     },
 
@@ -921,5 +921,8 @@ bu_api_params = {
         'module_name': statutory_mapping,
         "class_name": "KExecutiveInfo"
     },
-
+    "c_d_ids": {
+        'type': 'VECTOR_TYPE_STRING', 'length': 100000,
+        'validation_method': is_alpha_numeric, 'is_optional': True
+    }
 }

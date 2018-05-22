@@ -53,6 +53,7 @@ var ITEMS_PER_PAGE = $('#items_per_page');
 var SUBMIT = $('#submit');
 var CLIENT_GROUP_NAME = $('#client_group_name');
 var LEGAL_ENTITY_NAME = $('#legal_entity_name');
+var COUNTRY_NAME = $('#country_name');
 var UPLOADED_FILE_NAME = $('#uploaded_file_name');
 var UPLOADED_ON = $('#uploaded_on');
 var UPLOADED_BY = $('#uploaded_by');
@@ -612,7 +613,7 @@ keySearchDetailsList = function(d) {
 
     for (e in d) {
         valueOne = d[e].d_name.toLowerCase();
-        valueTwo = d[e].u_name.toLowerCase();
+        valueTwo = (d[e].u_code + ' - ' +d[e].u_name).toLowerCase();
         valueThree = d[e].p_leg.toLowerCase();
         valueFour = d[e].s_leg.toLowerCase();
         valueFive = d[e].s_prov.toLowerCase();
@@ -630,16 +631,6 @@ keySearchDetailsList = function(d) {
         }
     }
     return fList
-}
-
-// download click show hide download list
-download = function(element) {
-    if ($("." + element).is(':visible') == false) {
-        $(".dropdown-content").hide();
-        $("." + element).toggle();
-    } else {
-        $("." + element).toggle();
-    }
 }
 
 viewListPage = function() {
@@ -731,24 +722,43 @@ ApproveAssignStatutoryBU.prototype.displayListPage = function(data) {
                     ' waves-effect waves-light" type="button"> View </button>')
                 .attr("onClick", "goToDetailsPage(" + v.csv_id + ")");
         }
-        $('.fa-download', clone)
-            .attr("onClick", "download('show-download" + v.csv_id + "')");
-        
-        $('.download .dowload-excel', clone).attr({
-            href: path + "xlsx/" + v.download_file.split('.')[0] + ".xlsx",
-            download: "download"
+
+        $('.dropbtn',clone).on('click', function(){
+            if($(".dropdown-content", clone).hasClass("show")==false){
+                $(".dropdown-content", clone).show();
+                $(".dropdown-content", clone).addClass("show");
+            }
+            else{
+                $(".dropdown-content", clone).hide();
+                $(".dropdown-content", clone).removeClass("show");
+            }
         });
-        $('.download .dowload-csv', clone).attr({
-            href: path + "csv/" + v.download_file.split('.')[0] + ".csv",
-            download: "download"
+
+        $(".dowload-excel, .dowload-csv, .dowload-ods,"+
+            " .dowload-text", clone).on("click", function(){
+            $(".dropdown-content", clone).hide();
+            $(".dropdown-content", clone).removeClass("show");
         });
-        $('.download .dowload-ods', clone).attr({
-            href: path + "ods/" + v.download_file.split('.')[0] + ".ods",
-            download: "download"
-        });
-        $('.download .dowload-text', clone).attr({
-            href: path + "txt/" + v.download_file.split('.')[0] + ".txt",
-            download: "download"
+
+        $('.dowload-excel',clone).attr(
+            "href", path + "xlsx/" + v.download_file.split('.')[0] + ".xlsx"
+        );
+        $('.dowload-csv',clone).attr(
+            "href", path + "csv/" + v.download_file.split('.')[0] + ".csv"
+        );
+        $('.dowload-ods',clone).attr(
+            "href", path + "ods/" + v.download_file.split('.')[0] + ".ods"
+        );
+        $('.dowload-text',clone).on("click", function(){
+            $.get(
+                path + "txt/" + v.download_file.split('.')[0] + ".txt",
+                function(data)
+                {
+                   download(
+                    v.download_file.split('.')[0]+".txt", "text/plain", data
+                    );
+                },
+            'text');
         });
         $('.dropdown-content', clone).addClass("show-download" + v.csv_id);
         $('.approve span', clone)
@@ -774,7 +784,9 @@ confirmationAction = function(id, action) {
         target: '#custom_modal_' + action,
         effect: 'contentscale',
         complete: function() {
+            SUBMIT_PASSWORD.focus();
             APPROVE_PASSWORD.focus();
+            REJECT_PASSWORD.focus();
         }
     });
 }
@@ -984,7 +996,7 @@ ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
                 $('.single-reject', clone).prop('checked', false);
             }
             $('.domain-name', clone).html(v.d_name);
-            $('.unit-name span', clone).html(v.u_name);
+            $('.unit-name span', clone).html(v.u_code + ' - ' +v.u_name);
             $('.unit-name i', clone).attr(
                 "title", "Location: " + v.u_location
             );
@@ -1251,6 +1263,7 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
         function(error, response) {
             CLIENT_GROUP_NAME.html(response.cl_name);
             LEGAL_ENTITY_NAME.html(response.le_name);
+            COUNTRY_NAME.html(response.c_name);
             UPLOADED_FILE_NAME.html(response.csv_name);
             UPLOADED_ON.html(response.uploaded_on);
             var j;
@@ -1375,6 +1388,22 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
     });
 }
 
+function download(filename, mime_type, text) {
+    alert('hi')
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';' +
+        'charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
 // Create class
 STATUTE = new ApproveAssignStatutoryBU();
 
@@ -1382,6 +1411,6 @@ STATUTE = new ApproveAssignStatutoryBU();
 $(document).ready(function() {
     STATUTE.pageLoad();
     PageControls();
-    loadItemsPerPage();
+    bulkLoadItemsPerPage();
     $(".nicescroll").niceScroll();
 });

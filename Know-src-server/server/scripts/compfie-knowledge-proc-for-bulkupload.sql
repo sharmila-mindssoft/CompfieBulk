@@ -1,15 +1,10 @@
-ALTER TABLE `tbl_compliances`
-ADD COLUMN `task_id` VARCHAR(25) NOT NULL AFTER `is_updated`,
-ADD COLUMN `task_type` VARCHAR(150) NOT NULL AFTER `task_id`;
-
-
 DROP PROCEDURE IF EXISTS `sp_bu_organization`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_organization`(
 IN cId INT, dId INT
 )
 BEGIN
-   SELECT organisation_id, organisation_name, is_active 
+   SELECT organisation_id, organisation_name, is_active
    FROM tbl_organisation
    WHERE country_id = cId AND domain_id = dId;
 END //
@@ -22,7 +17,7 @@ CREATE PROCEDURE `sp_bu_statutory_nature`(
 IN cId INT
 )
 BEGIN
-   SELECT statutory_nature_id, statutory_nature_name, is_active 
+   SELECT statutory_nature_id, statutory_nature_name, is_active
    FROM tbl_statutory_natures
    WHERE country_id = cId;
 END //
@@ -116,8 +111,8 @@ DROP PROCEDURE IF EXISTS `sp_bu_legal_entities`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_legal_entities`(IN _client_id INT(11), _user_id INT(11))
 BEGIN
-  SELECT @u_cat_id := user_category_id 
-  FROM tbl_user_login_details 
+  SELECT @u_cat_id := user_category_id
+  FROM tbl_user_login_details
   WHERE user_id = _user_id;
 
   IF @u_cat_id = 5 THEN
@@ -288,7 +283,7 @@ DELIMITER ;
 
 
 -- ----------------------------------------------------------------------------
--- To get the domains AND organization under client group with its alloted 
+-- To get the domains AND organization under client group with its alloted
 -- unit count
 -- ----------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_bu_domains_organization_unit_count`;
@@ -368,7 +363,7 @@ BEGIN
     INNER JOIN tbl_units_organizations AS t02 ON t01.unit_id = t02.unit_id
     INNER JOIN tbl_user_units AS t03 ON t01.unit_id = t03.unit_id
     WHERE t03.user_id = uid AND t01.is_closed = 0 AND t01.is_approved = 1
-    GROUP BY t01.unit_id,t02.unit_id,t01.unit_code, 
+    GROUP BY t01.unit_id,t02.unit_id,t01.unit_code,
     t01.unit_name,t01.legal_entity_id, t01.client_id;
 
     -- check assigned units
@@ -413,15 +408,15 @@ BEGIN
       t4.unit_name,
       (SELECT geography_name FROM tbl_geographies WHERE geography_id = t4.geography_id) AS location,
       SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(t.statutory_mapping,3),1, CHAR_LENGTH(t.statutory_mapping) -4), '>>', 1),'",',1) AS primary_legislation,
-      TRIM(SUBSTRING(SUBSTRING(
-      SUBSTRING_INDEX(SUBSTRING(SUBSTRING(t.statutory_mapping,3),1,CHAR_LENGTH(t.statutory_mapping) -4),'>>',2),
-      CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(t.statutory_mapping,3),1, CHAR_LENGTH(t.statutory_mapping) -4), '>>', 1))+1),3)) AS secondary_legislation,
+      TRIM(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(
+    SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4),'>>',2),
+    CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,
+        CHAR_LENGTH(statutory_mapping) -4), '>>', 1))+1),3),'",',1)) AS secondary_legislation,
       t1.statutory_provision,
       t1.compliance_task AS compliance_task_name,
       t1.compliance_description,
       t6.unit_id,
       t6.domain_id,
-      -- t6.compliance_id AS assigned_compid,
       t4.unit_id AS c_unit_id,
       t1.domain_id, t.statutory_mapping
     FROM    tbl_compliances AS t1
@@ -453,8 +448,8 @@ BEGIN
       AND FIND_IN_SET(t4.unit_id, unitid)
       AND FIND_IN_SET(t1.domain_id, domainid)
       AND t6.unit_id IS NULL
-    GROUP BY   t1.statutory_mapping_id , t1.compliance_id , t4.unit_id, 
-        t1.domain_id, t4.unit_code, t4.unit_name, 
+    GROUP BY   t1.statutory_mapping_id , t1.compliance_id , t4.unit_id,
+        t1.domain_id, t4.unit_code, t4.unit_name,
         t4.geography_id, t.statutory_mapping,
         t1.statutory_provision,
         t1.compliance_task ,
@@ -608,18 +603,18 @@ CREATE PROCEDURE `sp_bu_get_compliance_id_by_name`(
 BEGIN
   SELECT compliance_id from tbl_compliances as t1
   INNER JOIN tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-  WHERE 
-  t1.domain_id = domain_id_ and t1.country_id = country_id_ 
-  and SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4), '>>', 1),'",',1) = p_legislation 
-  and TRIM(SUBSTRING(SUBSTRING(
-  SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4),'>>',2),
-  CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4), '>>', 1))+1),3)) = s_legislation
-  and statutory_provision = s_provision 
-  and compliance_task = c_task 
+  WHERE
+  t1.domain_id = domain_id_ and t1.country_id = country_id_
+  and SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4), '>>', 1),'",',1) = p_legislation
+  and TRIM(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(
+    SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4),'>>',2),
+    CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,
+        CHAR_LENGTH(statutory_mapping) -4), '>>', 1))+1),3),'",',1)) = s_legislation
+  and statutory_provision = s_provision
+  and compliance_task = c_task
   and compliance_description = c_desc;
 END //
 DELIMITER ;
-
 
 -- --------------------------------------------------------------------------------
 -- Client unit bulk upload - procedures starts
@@ -766,19 +761,18 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;
 
 
-
 DROP PROCEDURE IF EXISTS `sp_bu_is_valid_le`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_is_valid_le`(
     IN le_name VARCHAR(50), client_group_name VARCHAR(50)
 )
 BEGIN
-  SELECT count(legal_entity_id) AS cntFROM tbl_legal_entities 
+  SELECT count(legal_entity_id) AS cnt FROM tbl_legal_entities
   WHERE legal_entity_name = le_name and client_id = (
     SELECT client_id from tbl_client_groups where group_name = client_group_name
-  ) 
+  );
 END //
-DELIMITER 
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_bu_as_user_countries`;
 DELIMITER //
@@ -816,3 +810,22 @@ BEGIN
     WHERE country_name = country_name_;
 END //
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_countries`;
+DELIMITER //
+
+CREATE PROCEDURE `sp_bu_countries`(
+IN _user_id INT(11))
+BEGIN
+  SELECT t1.country_id, t2.country_name, t2.is_active
+  FROM tbl_user_countries as t1
+  INNER JOIN tbl_countries as t2
+  ON t2.country_id = t1.country_id
+  WHERE t1.user_id = _user_id;
+END //
+
+DELIMITER ;
+
+ALTER TABLE `tbl_compliances`
+ADD COLUMN `task_id` VARCHAR(25) NOT NULL AFTER `is_updated`,
+ADD COLUMN `task_type` VARCHAR(150) NOT NULL AFTER `task_id`;

@@ -61,6 +61,7 @@ function initMethods() {
         getTechnoUserDetails: getTechnoUserDetails,
         getDomainList: getDomainList,
         getKnowledgeUserInfo: getKnowledgeUserInfo,
+        saveExecutiveMessage: saveExecutiveMessage,
 
     };
 }

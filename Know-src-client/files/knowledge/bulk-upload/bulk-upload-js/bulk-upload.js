@@ -75,6 +75,13 @@ function uploadCSVFile(fileListener, callback) {
     var file_name = file.name;
     var file_size = file.size;
     var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
+    if (file_name.length > 50)
+        callback(status, 'File Name length exceeded 50');
+
+    var format = /^[a-zA-Z0-9-_.-//@#() ]*$/;
+    if(!format.test(file_name))
+        callback(status, 'Invalid File name')
+
     if (file_name.indexOf('.') !== -1) {
         console.log("file_extension--" + file_extension);
         if (file_size > max_limit) {
@@ -687,4 +694,11 @@ function getKnowledgeUserInfo(callback) {
       {}
   ];
   apiRequest('bu/statutory_mapping', request, callback);
+}
+
+function saveExecutiveMessage(args, callback){
+var request = [
+        'SaveExecutiveMessageAfterDocUpload', args
+    ];
+    apiRequest("bu/statutory_mapping", request, callback);
 }
