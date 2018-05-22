@@ -738,13 +738,18 @@ class StatutorySource(object):
                                                   Trigger_Days,
                                                   Repeats_By)
 
+            if(d["action"] == 2):
+                is_approved = 4
+            else:
+                is_approved = 2
+
             values.append((
                 d["Statutory_Provision"], d["Compliance_Task"],
                 d["Compliance_Description"], d["Compliance_Document"],
                 d["Format"], d["format_file_size"],
                 d["Penal_Consequences"], d["Reference_Link"], freq_id,
                 mapped_date, int(mapping_id), 1, d["uploaded_by"],
-                created_on, d_id, c_id, 2,
+                created_on, d_id, c_id, is_approved,
                 None if d["Duration"] == '' else d["Duration"],
                 duration_type_id,
                 None if d["Repeats_Every"] == '' else d["Repeats_Every"],
