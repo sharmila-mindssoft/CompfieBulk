@@ -155,7 +155,8 @@ function displayPopUp(TYPE, csvId, smId, callback) {
                     }
                     else if (TYPE == "reject") {
                         if ($('.reject-reason-txt').val() == '') {
-                            displayMessage(message.reason_required)
+                            displayMessage(message.reason_required);
+                            hideLoader();
                         }
                         else {
                             BU_APPROVE_PAGE.actionFromList(
@@ -172,6 +173,7 @@ function displayPopUp(TYPE, csvId, smId, callback) {
                     else if (TYPE == "view-reject") {
                         if ($('.view-reason').val()== '') {
                             displayMessage(message.reason_required)
+                            hideLoader();
                         }
                         else {
                             bu.updateActionFromView(
@@ -211,7 +213,8 @@ function displayViewRejectAllPopUp(callback) {
                 displayLoader();
                 setTimeout(function() {
                     if ($('.view-reason').val() == '') {
-                        displayMessage(message.reason_required)
+                        displayMessage(message.reason_required);
+                        hideLoader();
                     }
                     else {
                         callback($('.view-reason').val());
@@ -233,11 +236,13 @@ function validateAuthentication() {
         displayMessage(message.password_required);
         CURRENT_PASSWORD.focus();
         return false;
-    }else if(isLengthMinMax(
+    }
+    else if(isLengthMinMax(
         CURRENT_PASSWORD, 1, 20, message.password_20_exists) == false
     ) {
         return false;
-    } else {
+    }
+    else {
         IS_AUTHENTICATE = true;
         Custombox.close();
     }
@@ -398,6 +403,8 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
                 $('.bu-view-mapping', cloneRow).hide();
                 $('.editbtn', cloneRow).show();
                 $('.editbtn', cloneRow).on('click', function() {
+                    $('.reject-all').attr("checked", false);
+                    $('.approve-all').attr("checked", false);
                     tThis.CSVID = data.csv_id;
                     tThis.countryId = data.c_id;
                     tThis.domainId = data.d_id;
@@ -410,6 +417,8 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
                 $('.bu-view-mapping', cloneRow).show();
                 $('.editbtn', cloneRow).hide();
                 $('.bu-view-mapping', cloneRow).on('click', function() {
+                    $('.reject-all').attr("checked", false);
+                    $('.approve-all').attr("checked", false);
                     tThis.CSVID = data.csv_id;
                     tThis.countryId = data.c_id;
                     tThis.domainId = data.d_id;
@@ -524,6 +533,8 @@ ApproveBulkMapping.prototype.actionFromList = function(
                                     }
                                     else {
                                         hideLoader();
+                                        error = (error == "InvalidPassword")
+                                        ? "Invalid Password" : error;
                                         tThis.possibleFailures(error);
                                     }
                                 }
@@ -673,7 +684,10 @@ ApproveBulkMapping.prototype.fetchViewData = function(
 };
 ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
     var tr = '', clone4 = '', formatDownloadUrl = '';
-    var isChecked = '', actionStatus = '', cloneRow = '', approveCheckCount;
+    var isChecked = '';
+    var actionStatus = '';
+    var cloneRow = '';
+    var approveCheckCount;
     tThis = this;
     showFrom = tThis.showMapCount;
     showFrom += 1;
@@ -690,7 +704,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
         
         $.each(viewData, function(idx, data) {
 
-            formatDownloadUrl = "/uploadedformat/" +
+            formatDownloadUrl = "knowledge/uploadedformat/" +
                 $('#view_csv_id').val() + "/" + data.format_file;
             cloneRow = VIEW_LIST_ROW_TEMPLATE.clone();
             $('.sno', cloneRow).text(j);
@@ -718,32 +732,40 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
             $('.geography', cloneRow).text(data.geo_location);
             $('.comp-desc', cloneRow).text(data.c_desc);
             $('.penal', cloneRow).text(data.p_cons);
+            
+            $('.view-approve-check',cloneRow).attr("id", "view-approve-"+j);
+            $('.view-reject-check',cloneRow).attr("id", "view-reject-"+j);
+
+            $('.reject-reason .fa-info-circle',cloneRow).attr("id","fa-info-circle-"+j);
+
             if (parseInt(data.bu_action) == 1) {
-                $('.view-approve-check',cloneRow).attr("checked", true);
-                $('.view-reject-check',cloneRow).attr("checked", false);
+                /*$('.view-approve-check',cloneRow).attr("checked", true);
+                $('.view-reject-check',cloneRow).attr("checked", false);*/
+                $('#view-approve-'+j).attr("checked", true);
+                $('#view-reject-'+j).attr("checked", false);
             }
             else if (data.bu_action == null) {
-                $('.view-approve-check',cloneRow).attr("checked", false);
-                $('.view-reject-check',cloneRow).attr("checked", false);
+                $('#view-approve-'+j).attr("checked", false);
+                $('#view-reject-'+j).attr("checked", false);
             }
             else if (data.bu_action == 2) {
-                $('.view-approve-check',cloneRow).attr("checked", false);
-                $('.view-reject-check',cloneRow).attr("checked", true);
+                $('#view-approve-'+j).attr("checked", false);
+                $('#view-reject-'+j).attr("checked", true);
                 if(parseInt(data.bu_action)==2 && data.bu_remarks != null) {
-                    $('.reject-reason .fa-info-circle',cloneRow).
-                    removeClass("default-display-none");
-                    $('.reject-reason .fa-info-circle',cloneRow).
-                    attr("data-original-title", data.bu_remarks);
+                    $('#fa-info-circle-'+j,cloneRow
+                        ).removeClass("default-display-none");
+                    $('#fa-info-circle-'+j,cloneRow
+                        ).attr("data-original-title", data.bu_remarks);
                 }
                 else {
-                    $('.reject-reason .fa-info-circle',cloneRow).
-                    addClass("default-display-none");
+                    $('#fa-info-circle-'+j,cloneRow
+                        ).addClass("default-display-none");
                 }
 
             }
             else {
-                $('.view-approve-check',cloneRow).attr("checked", false);
-                $('.view-reject-check',cloneRow).attr("checked", false);
+                $('#view-approve-'+j).attr("checked", false);
+                $('#view-reject-'+j).attr("checked", false);
                 $('.reject-reason .fa-info-circle',cloneRow).each(function() {
 
                     $(this).addClass("default-display-none");
@@ -770,10 +792,10 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                         tThis.possibleFailures(err);
                     }
                     else {
-                        $('.view-reject-check',cloneRow).attr(
+                        $('#view-reject-'+j).attr(
                             "checked", isChecked
                         );
-                        $('.reject-reason .fa-info-circle', cloneRow)
+                        $('#fa-info-circle-'+j,cloneRow)
                         .addClass("default-display-none");
                     }
                 });
@@ -781,20 +803,20 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
             $(".view-reject-check", cloneRow).on('change', function(e) {
                 if(e.target.checked) {
                     csvId = $('#view_csv_id').val();
-                    $('.view-approve-check',cloneRow).attr("checked", false);
+                    $('#view-approve-'+j).attr("checked", false);
                     $('.approve-all').attr("checked", false);
                     displayPopUp('view-reject', parseInt(csvId), data.sm_id,
                         function(viewReason) {
-                            $('.reject-reason .fa-info-circle', cloneRow).
-                            removeClass("default-display-none");
-                            $('.reject-reason .fa-info-circle', cloneRow).
-                            attr("data-original-title", viewReason);
+                            $('#fa-info-circle-'+j,cloneRow
+                                ).removeClass("default-display-none");
+                            $('#fa-info-circle-'+j,cloneRow
+                                ).attr("data-original-title",viewReason);
                     });
                 }
                 else
                 {
                     csvId = $('#view_csv_id').val();
-                    $('.view-reject-check',cloneRow).attr("checked", false);
+                    $('#view-reject-'+j).attr("checked", false);
                     bu.updateActionFromView(
                         parseInt(csvId), data.sm_id, 0, null,
                         function(err, res) {
@@ -802,13 +824,13 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                             tThis.possibleFailures(err);
                         }
                         else{
-                            $('.view-reject-check',cloneRow).attr(
+                            $('#view-reject-'+j).attr(
                                 "checked", false);
 
-                            $('.reject-reason .fa-info-circle', cloneRow)
+                            $('#fa-info-circle-'+j,cloneRow)
                             .addClass("default-display-none");
 
-                            $('.reject-reason .fa-info-circle', cloneRow)
+                            $('#fa-info-circle-'+j,cloneRow)
                             .attr("data-original-title", '');
                         }
                     });
@@ -1028,7 +1050,7 @@ ApproveBulkMapping.prototype.finalSubmit = function(csvId, pwd) {
                     }
                 });
             }else {
-                displaySuccessMessage(message.submit_success);
+                displaySuccessMessage(message.approve_reject_submit_success);
                 LIST_SCREEN.show();
                 VIEW_SCREEN.hide();
                 SEARCH_FILENAME.val('');
@@ -1450,6 +1472,12 @@ function PageControls() {
             pending = "View Data : Pending";
             appendFilter(pending);
         }
+        if ($('input[id="all_data"]:checked').length == 1)
+        {
+            viewalldata = "View Data : All";
+            appendFilter(viewalldata);
+        }
+        
         if(ORG_NAME.val() != "") {
             orgs = "Organization : " + ORG_NAME.val();
             appendFilter(orgs);
@@ -1561,7 +1589,7 @@ function PageControls() {
             ".view-reject-check").prop('checked', false);
             $('.reject-reason '
                 +'.fa-info-circle').addClass("default-display-none");
-
+            $('.reject-all').attr("checked", false);
             $('.tbody-sm-approve-view .view-approve-check').each(
                 function(index, el) {
                 var data = BU_APPROVE_PAGE.viewDataList[index];
@@ -1595,6 +1623,8 @@ function PageControls() {
             displayViewRejectAllPopUp(function(reason) {
                 var viewReason = $('.view-reason').val();
                 var i = 0;
+
+                $('.approve-all').attr("checked", false);
                 $(".tbody-sm-approve-view "+
                 ".view-approve-check").prop('checked', false);
                 $(".tbody-sm-approve-view"+

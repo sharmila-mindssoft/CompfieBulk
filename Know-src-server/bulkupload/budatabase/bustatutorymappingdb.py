@@ -258,7 +258,6 @@ def save_mapping_data(db, csv_id, csv_data):
         values = []
 
         for idx, d in enumerate(csv_data):
-
             values.append((
                 csv_id, idx + 1, d["Organization"], d["Applicable_Location"],
                 d["Statutory_Nature"], d["Statutory"],
@@ -285,6 +284,15 @@ def save_mapping_data(db, csv_id, csv_data):
     except Exception, e:
         print str(e)
         raise ValueError("Transaction failed")
+
+
+def remove_white_spaces(v):
+    print "v >>>", v
+    if v.find("|;|") > 0:
+        v = "|;|".join(e.strip() for e in v.split("|;|"))
+        print "IF v >>>", v
+    print "Retrun v >>>", v
+    return v
 
 ########################################################
 '''
@@ -375,7 +383,8 @@ def get_filters_for_approve(db, csv_id):
     if len(data) > 0:
         if len(data[0]) > 0:
             for d in data[0]:
-                org_names.extend(d["organization"].strip().split('|;|'))
+                organization = remove_white_spaces(d["organization"])
+                org_names.extend(organization.strip().split('|;|'))
                 org_names = list(set(org_names))
 
         if len(data[1]) > 0:
@@ -384,7 +393,8 @@ def get_filters_for_approve(db, csv_id):
 
         if len(data[2]) > 0:
             for d in data[2]:
-                statutories.extend(d["statutory"].strip().split('|;|'))
+                statutory = remove_white_spaces(d["statutory"])
+                statutories.extend(statutory.strip().split('|;|'))
                 statutories = list(set(statutories))
 
         compliance_frequency = get_all_compliance_frequency()
@@ -394,8 +404,9 @@ def get_filters_for_approve(db, csv_id):
 
         if len(data[4]) > 0:
             for d in data[4]:
+                geography_loc = remove_white_spaces(d["geography_location"])
                 geo_locations.extend(
-                    d["geography_location"].strip().split('|;|')
+                    geography_loc.strip().split('|;|')
                 )
                 geo_locations = list(set(geo_locations))
 
@@ -824,7 +835,6 @@ def get_all_compliance_frequency():
     _source_db = Database(_source_db_con)
     _source_db.begin()
     result = _source_db.call_proc('sp_bu_compliance_frequency')
-    result.pop(0)
     return result
 
 

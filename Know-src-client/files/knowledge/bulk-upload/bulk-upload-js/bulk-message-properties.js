@@ -37,7 +37,9 @@ var bulkMessage = {
     "rejection_max_count_reached": "Rejected CSV files limit exceeded",
     "reason_invalid": "Reason should accept only 0-9, A-Z, a-z, dot, comma, hyphen.",
     "units_not_assigned_to_user": "Some Units not assigned to you",
-    "document_required": "Document Required"
+    "document_required": "Document Required",
+    "approve_reject_submit_success": "Selected Action submitted successfully",
+    "uploaded_record_count_invalid": "Downloaded and uploaded records are not same for unit \"UNITS\"",
 }
 
 $.extend(message, bulkMessage);

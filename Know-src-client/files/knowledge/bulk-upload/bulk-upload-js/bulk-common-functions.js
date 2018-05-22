@@ -30,3 +30,11 @@ function commonArrayAutoComplete(
     }
     onCommonArrowKey(e, ac_div, callback);
 }
+
+var bulkPageList = [500, 750, 1000];
+function bulkLoadItemsPerPage() {
+    for (var i = 0; i < bulkPageList.length; i++) {
+        var Id = bulkPageList[i];
+        $('#items_per_page').append($('<option value="' + Id + '">' + Id + '</option>'));
+    };
+}

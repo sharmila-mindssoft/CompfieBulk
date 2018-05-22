@@ -254,6 +254,10 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
             return bu_as.UnitsNotAssignedToUser()
 
         if res_data["return_status"] is True:
+            invalid_units = cObj.check_uploaded_count_in_csv()
+            if len(invalid_units) > 0:
+                return bu_as.UploadedRecordsCountNotMatch(invalid_units)
+
             generate_valid_file(csv_name)
             d_ids = ",".join(map(str, cObj._domain_ids))
             d_names = ",".join(cObj._domain_names)
@@ -261,7 +265,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
                 session_user.user_id(),
                 cObj._client_id, cObj._legal_entity_id,
                 d_ids, cObj._legal_entity, d_names,
-                csv_name,
+                csv_name, cObj._country,
                 res_data["total"]
             ]
             new_csv_id = save_assign_statutory_csv(db, csv_args)
@@ -520,7 +524,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
 
     sheet_name = "Rejected Assign Statutory"
 
-    csv_header_key = ["client_group", "legal_entity", "domain",
+    csv_header_key = ["client_group", "legal_entity", "country", "domain",
                       "organization", "unit_code", "unit_name",
                       "unit_location", "perimary_legislation",
                       "secondary_legislation", "statutory_provision",
@@ -530,7 +534,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
                       "rejected_reason", "is_fully_rejected"
                       ]
 
-    csv_column_name = ["Client_Group", "Legal_Entity",
+    csv_column_name = ["Client_Group", "Legal_Entity", "Country",
                        "Domain", "Organisation",
                        "Unit_Code", "Unit_Name",
                        "Unit_Location",

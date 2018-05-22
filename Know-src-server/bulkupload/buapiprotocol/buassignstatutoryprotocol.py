@@ -1103,12 +1103,13 @@ class GetAssignStatutoryFiltersSuccess(Response):
 
 class ViewAssignStatutoryDataSuccess(Response):
     def __init__(
-        self, csv_id, csv_name, cl_name, le_name, uploaded_by,
+        self, csv_id, csv_name, cl_name, c_name, le_name, uploaded_by,
         uploaded_on, assign_statutory_data_list, count
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
         self.cl_name = cl_name
+        self.c_name = c_name
         self.le_name = le_name
         self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
@@ -1118,13 +1119,15 @@ class ViewAssignStatutoryDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "csv_id", "csv_name", "cl_name", "le_name", "uploaded_by",
-            "uploaded_on", "assign_statutory_data_list", "count"
+            "csv_id", "csv_name", "cl_name", "c_name", "le_name",
+            "uploaded_by", "uploaded_on", "assign_statutory_data_list",
+            "count"
         ])
         return ViewAssignStatutoryDataSuccess(
             data.get("csv_id"),
             data.get("csv_name"),
             data.get("cl_name"),
+            data.get("c_name"),
             data.get("le_name"),
             data.get("uploaded_by"),
             data.get("uploaded_on"),
@@ -1137,6 +1140,7 @@ class ViewAssignStatutoryDataSuccess(Response):
             "csv_id": self.csv_id,
             "csv_name": self.csv_name,
             "cl_name": self.cl_name,
+            "c_name": self.c_name,
             "le_name": self.le_name,
             "uploaded_by": self.uploaded_by,
             "uploaded_on": self.uploaded_on,
@@ -1389,6 +1393,23 @@ class CsvFileExeededMaxLines(Response):
     def to_inner_structure(self):
         return {
             "csv_max_lines": self.csv_max_lines
+        }
+
+
+class UploadedRecordsCountNotMatch(Response):
+    def __init__(self, u_names):
+        self.u_names = u_names
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["u_names"])
+        return UploadedRecordsCountNotMatch(
+            data.get("u_names")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "u_names": self.u_names
         }
 
 

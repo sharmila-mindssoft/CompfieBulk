@@ -1,9 +1,10 @@
+import mysql
 from server.exceptionmessage import fetch_error
 import traceback
 from server import logger
 from ..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
 import datetime
-
+from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
@@ -20,7 +21,8 @@ __all__ = [
     "save_completed_task_current_year_csv",
     "save_completed_task_data",
     "getPastRecordData",
-    "getCompletedTaskCSVList"
+    "getCompletedTaskCSVList",
+    "get_client_id_by_le"
 ]
 
 def get_legal_entity_domains(
@@ -43,16 +45,19 @@ def get_legal_entity_domains(
 
     return results
 
-def save_completed_task_current_year_csv(db, completed_task, session_user):
+
+def save_completed_task_current_year_csv(
+    db, completed_task, session_user
+):
 
     columns = [
-        "client_id", "legal_entity_id", "domain_id","unit_id_id", "client_group",
-        "csv_name", "uploaded_by", "uploaded_on",
-        "total_records", "total_documents", "uploaded_documents", "upload_status"
+        "client_id", "legal_entity_id", "domain_id", "unit_id_id",
+        "client_group", "csv_name", "uploaded_by", "uploaded_on",
+        "total_records", "total_documents", "uploaded_documents",
+        "upload_status"
     ]
     # print "completed_task[7]>>", completed_task[7]
     # print "string_to_datetime(completed_task[7])>>", string_to_datetime(completed_task[7])
-
     values = [
         completed_task[0],completed_task[1],
         completed_task[2], completed_task[3],
@@ -66,9 +71,9 @@ def save_completed_task_current_year_csv(db, completed_task, session_user):
 
     return completed_task_id
 
-def save_completed_task_data(db, csv_id, csv_data):
+def save_completed_task_data(db, csv_id, csv_data, client_id):
     try:
-        columns = ["csv_past_id", "Legal_Entity", "Domain",
+        columns = ["csv_past_id",  "Legal_Entity", "Domain",
         "Unit_Code", "Unit_Name", "perimary_legislation",
         "Secondary_Legislation", "compliance_task_name",
         "Compliance_Description", "Compliance_Frequency", "Statutory_Date",
@@ -100,7 +105,13 @@ def save_completed_task_data(db, csv_id, csv_data):
 
 def getPastRecordData(db, csvID):
 
-    query = " SELECT bulk_past_data_id, csv_past_id, legal_entity, domain, unit_code, unit_name, perimary_legislation, secondary_legislation, compliance_task_name, compliance_description, compliance_frequency, statutory_date, due_date, assignee, completion_date, document_name                FROM tbl_bulk_past_data where csv_past_id = %s; "
+    query = " SELECT bulk_past_data_id, csv_past_id, legal_entity, "+\
+        " domain, unit_code, unit_name, perimary_legislation, " + \
+        " secondary_legislation, compliance_task_name, " + \
+        " compliance_description, compliance_frequency, " + \
+        " statutory_date, due_date, assignee, completion_date, " + \
+        " document_name" +\
+        "  FROM tbl_bulk_past_data where csv_past_id = %s; "
 
     param = [csvID]
     rows = db.select_all(query, param)
@@ -183,3 +194,35 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
 
     # print "getCompletedTaskCSVList>csv_list>>", csv_list
     return csv_list
+
+
+def connectKnowledgeDB(le_id):
+    try:
+        _source_knowledge_db_con = mysql.connector.connect(
+            user=KNOWLEDGE_DB_USERNAME,
+            password=KNOWLEDGE_DB_PASSWORD,
+            host=KNOWLEDGE_DB_HOST,
+            database=KNOWLEDGE_DATABASE_NAME,
+            port=KNOWLEDGE_DB_PORT,
+            autocommit=False,
+        )
+
+        _source_knowledge_db = Database(_source_knowledge_db_con)
+        _source_knowledge_db.begin()
+        return _source_knowledge_db
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
+
+
+def get_client_id_by_le(db, legal_entity_id):
+    db = connectKnowledgeDB(legal_entity_id)
+    query = "SELECT client_id, group_name from tbl_client_groups " + \
+            " where client_id = ( select client_id from " + \
+            " tbl_legal_entities where " + \
+            "legal_entity_id='%s')"
+    query = query % legal_entity_id
+    rows = db.select_all(query)
+    client_id = rows[0]["client_id"]
+    client_name = rows[0]["group_name"]
+    return client_id, client_name

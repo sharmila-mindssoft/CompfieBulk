@@ -1,5 +1,7 @@
+var STATUTORY_MAPPING_REPORT_DATA;
 var COUNTRY_LIST = [];
 var DOMAIN_LIST = [];
+
 var ON_CURRENT_PAGE = 1;
 var SNO = 0;
 var TOTAL_RECORD = 0;
@@ -16,22 +18,20 @@ var TO_DATE = $("#to_date");
 var FROM_DATE = $("#from_date");
 var DOMAIN_IDS = [];
 var KNOWLEDGE_EXECUTIVES = [];
-var ALL_USERS = [];
+var ALLUSERS = [];
 var USER_CATEGORY_ID = 0;
 var CSV = false;
-var STATUTORY_MAPPING_REPORT_DATA = '';
+var ALL_USER_INFO = '';
 var EMP_CODE = '';
 var EMP_NAME = '';
-var ALL_USER_INFO = '';
-var USER_DETAILS = '';
-var SM_BULK_REPORT = '';
 
-
+var USER_DETAILS;
+/**** User Level Category ***********/
 // Creating StatutoryMappingBulkReport Class
 StatutoryMappingBulkReport = function() {}
 
 // Instance Creation of the page class
-SM_BULK_REPORT = new StatutoryMappingBulkReport();
+var SMBulkReport = new StatutoryMappingBulkReport();
 
 // To get the corresponding value
 StatutoryMappingBulkReport.prototype.getValue = function(fieldName, fId) {
@@ -134,6 +134,7 @@ function loadCountwiseResult(data) {
         totalApproveRecords = data[entity].total_approve_records;
         rejReason = data[entity].rejected_reason;
         declinedCount = data[entity].declined_count;
+
         approvedRejectedOn = '';
         approvedRejectedBy = '';
         approvedRejectedTasks = '-';
@@ -144,13 +145,11 @@ function loadCountwiseResult(data) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
                 uploadedByName = EMP_CODE + " - " + EMP_NAME;
-            }
-            else if (parseInt(rejectedBy) == value["user_id"]) {
+            } else if (parseInt(rejectedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
                 rejectedByName = EMP_CODE + " - " + EMP_NAME;
-            }
-            else if (parseInt(approvedBy) == value["user_id"]) {
+            } else if (parseInt(approvedBy) == value["user_id"]) {
                 EMP_CODE = value["employee_code"];
                 EMP_NAME = value["employee_name"];
                 approvedByName = EMP_CODE + " - " + EMP_NAME;
@@ -159,28 +158,28 @@ function loadCountwiseResult(data) {
 
         if (parseInt(isFullyRejected) == 1) {
             reasonForRejection = rejReason;
-        }
-        else {
+        } else {
             reasonForRejection = "";
             approvedRejectedTasks = totalApproveRecords;
             approvedRejectedTasks += " / ";
             approvedRejectedTasks += totalRejectedRecords;
         }
 
-        if(declinedCount >= 1) {
+        if(declinedCount >= 1)
+        {
             approvedRejectedBy = SYSTEM_REJECTED_BY;
             approvedRejectedOn = '';
-            if(approvedOn != null) {
+            if(approvedOn != null){
                 approvedRejectedOn = String(approvedOn);
             }
         }
         else if (rejectedOn != null && rejectedOn != '' &&
-            (declinedCount == 0 || declinedCount == null)) {
+            (declinedCount == 0 || declinedCount == null)){
             approvedRejectedOn = String(rejectedOn);
             approvedRejectedBy = rejectedByName;
         }
         else if (approvedOn != null && approvedOn != '' &&
-            (declinedCount == 0 || declinedCount == null)) {
+            (declinedCount == 0 || declinedCount == null)){
             approvedRejectedOn = String(approvedOn);
             approvedRejectedBy = approvedByName;
         }
@@ -396,10 +395,10 @@ function pageControls() {
         processSubmit();
     });
     SHOW_BTN.click(function() {
-        isValid = SM_BULK_REPORT.validateMandatory();
+        isValid = SMBulkReport.validateMandatory();
         if (isValid == true) {
-            SM_BULK_REPORT._ON_CURRENT_PAGE = 1;
-            SM_BULK_REPORT._total_record = 0;
+            SMBulkReport._ON_CURRENT_PAGE = 1;
+            SMBulkReport._total_record = 0;
             $('#mapping_animation').
             removeClass().addClass('bounceInLeft animated')
                 .one('webkitAnimationEnd ' +
@@ -413,10 +412,10 @@ function pageControls() {
         }
     });
     EXPORT_BTN.click(function(e) {
-        isValid = SM_BULK_REPORT.validateMandatory();
+        isValid = SMBulkReport.validateMandatory();
         if (isValid == true) {
             CSV = true;
-            SM_BULK_REPORT.exportData();
+            SMBulkReport.exportData();
         }
     });
 }
@@ -426,9 +425,10 @@ function loadCurrentUserDetails() {
     var loggedUserId = 0;
     var knowledgeName = '';
     var knowledgeUserDetails = {};
-
     $.each(ALL_USER_INFO, function(key, value) {
         if (user.user_id == value["user_id"]) {
+            console.log("==>>>>");
+            console.log(user.user_id +"=="+ value["user_id"]);
             USER_CATEGORY_ID = value["user_category_id"];
             loggedUserId = value["user_id"];
         }
@@ -436,6 +436,9 @@ function loadCurrentUserDetails() {
     console.log("USER_CATEGORY_ID "+ USER_CATEGORY_ID);
     console.log("KE_USER_CATEGORY "+ KE_USER_CATEGORY);
     if (USER_CATEGORY_ID == KE_USER_CATEGORY) {
+        console.log("USER_CATEGORY_ID" +"=="+ "KE_USER_CATEGORY");
+
+        console.log(USER_CATEGORY_ID +"=="+ KE_USER_CATEGORY);
 
         // KE-Name  : Knowledge-Executive
         knowledgeName = user.employee_code + " - " + user.employee_name;
@@ -443,13 +446,17 @@ function loadCurrentUserDetails() {
         $('.active-knowledge-executive').removeClass("default-display-none");
         $('#knowledge_name').html(knowledgeName);
         knowledgeUserDetails = {
+            /*"user_name":knowledgeName,*/
             "user_id": user.user_id
         }
-        ALL_USERS.push(knowledgeUserDetails);
+        ALLUSERS.push(knowledgeUserDetails);
         KNOWLEDGE_EXECUTIVES.push(user.user_id);
-    }
-    else if (USER_CATEGORY_ID == KM_USER_CATEGORY
+    } else if (USER_CATEGORY_ID == KM_USER_CATEGORY
         && USER_CATEGORY_ID != KE_USER_CATEGORY && loggedUserId > 0) {
+
+        console.log("USER_CATEGORY_ID" +"=="+ "KM_USER_CATEGORY");
+        console.log(USER_CATEGORY_ID +"=="+ KM_USER_CATEGORY);
+
         // KE-Name  : Knowledge-Manager
         getUserMappingsList(loggedUserId);
     }
@@ -460,6 +467,7 @@ function getUserMappingsList(loggedUserId) {
     $('#kename_kmanager').multiselect('rebuild');
 
     function onSuccess(loggedUserId, data) {
+        console.log("loggedUserId->" + loggedUserId);
         var userMappingData = data;
         var d = '';
         var childUserId = '';
@@ -468,6 +476,7 @@ function getUserMappingsList(loggedUserId) {
             if (loggedUserId == value.parent_user_id) {
                 childUserId = value.child_user_id;
                 if (jQuery.inArray(childUserId, KNOWLEDGE_EXECUTIVES) == -1) {
+                    console.log("inif")
                     KNOWLEDGE_EXECUTIVES.push(childUserId);
                     childUsersDetails(ALL_USER_INFO, loggedUserId,
                         childUserId);
@@ -493,7 +502,7 @@ function getUserMappingsList(loggedUserId) {
                     "name": knowledgeName,
                     "user_id": value["user_id"]
                 }
-                ALL_USERS.push(knowledgeUserDetails);
+                ALLUSERS.push(knowledgeUserDetails);
             }
         });
         $('#kename_kmanager').multiselect('rebuild');
@@ -544,8 +553,7 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
 
     if ($('#kename_kmanager').val() == null) {
         selectedKe = KNOWLEDGE_EXECUTIVES;
-    }
-    else {
+    } else {
         $('#kename_kmanager > option:selected').each(function() {
             console.log(this.value);
             selectedKe.push(parseInt(this.value));
@@ -572,8 +580,7 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
                     var downloadUrl = response.link;
                     $(location).attr('href', downloadUrl);
                 }
-            }
-            else {
+            } else {
                 hideLoader();
                 if (error == "ExportToCSVEmpty") {
                     displayMessage(message.empty_export);

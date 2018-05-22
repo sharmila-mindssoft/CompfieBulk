@@ -753,13 +753,19 @@ class StatutorySource(object):
                                                   Statutory_Month,
                                                   Trigger_Days,
                                                   Repeats_By)
+
+            if(d["action"] == 2):
+                is_approved = 4
+            else:
+                is_approved = 2
+
             values.append((
                 d["Statutory_Provision"], d["Compliance_Task"],
                 d["Compliance_Description"], d["Compliance_Document"],
                 d["Format"], d["format_file_size"],
                 d["Penal_Consequences"], d["Reference_Link"], freq_id,
                 mapped_date, int(mapping_id), 1, d["uploaded_by"],
-                created_on, d_id, c_id, 2,
+                created_on, d_id, c_id, is_approved,
                 None if d["Duration"] == '' else d["Duration"],
                 duration_type_id,
                 None if d["Repeats_Every"] == '' else d["Repeats_Every"],
@@ -1185,8 +1191,6 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         dup_error = "Task_ID - Duplicate in Knowledge DB"
                         res = make_error_desc(res, dup_error)
 
-                print "res-> ", res
-                print "comp task ->> ", str(res).find("Statutory_Provision -")
                 if (
                     key == "Compliance_Task" and
                     str(res).find("Statutory -") == -1 and
@@ -1533,10 +1537,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 s["Organization"], s["Statutory_Nature"],
                 s["Statutory"], s["Applicable_Location"]
             )):
-                print "Group BYYYYYYYY >>>>>>>>>>>>>>>>>>>>>>>>>>"
                 grouped_list = list(v)
-                print grouped_list
-
                 if len(grouped_list) == 0:
                     continue
                 org_ids = []
@@ -1545,9 +1546,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 nature_id = None
                 statu_mapping = None
                 value = grouped_list[0]
-
-                print "CSV_DELIMITER >>>>>>>>>>>>>>>>>>>>"
-                print value.get("Organization").strip().split(CSV_DELIMITER)
 
                 for org in value.get(
                     "Organization"
@@ -1558,6 +1556,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                         org_ids.append(
                             org_info.get("organisation_id")
                         )
+
                 nature = value.get("Statutory_Nature")
                 nature_id = self.statutory_nature.get(
                     nature).get("statutory_nature_id")
@@ -1571,8 +1570,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 if len(grouped_list) > 1:
                     msg.append(grouped_list[0].get("Compliance_Task"))
                 uploaded_by = grouped_list[0].get("uploaded_by")
+
                 statu_mapping = value.get("Statutory").split(CSV_DELIMITER)
                 for statu_m in statu_mapping:
+                    parent_id = ''
+                    parent_names = ''
                     statu_limit = [i for i in self.statu_level]
                     statu_level_limit = statu_limit[0]
                     statu_m = self.get_statu_maps(statu_m)
@@ -1583,70 +1585,76 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                 self.statutories.get(statu_m).get(
                                     "statutory_id"
                                 ))
-                        statu_exists_id.append(statu_m)
+                            statu_exists_id.append(statu_m)
                     else:
-                        if self.t_statu.get(statu_m) is not None:
-                            if(len(legis_data) <= statu_level_limit):
-                                statu_ids.append(self.t_statu.get(statu_m))
-                                statu_exists_id.append(statu_m)
                         if(len(legis_data) <= statu_level_limit):
-                            parent_names = ''
-                            parent_id = ''
                             for statu_level, data in enumerate(legis_data, 1):
-                                strip_data = data.lstrip()
-                                strip_data = strip_data.rstrip()
-                                if strip_data.find(">>") > 0:
-                                    strip_data = ">>".join(
-                                        e.strip() for e in strip_data.split(
-                                            ">>"))
+                                legis_name = data.lstrip()
+                                legis_name = legis_name.rstrip()
+                                strip_data = ">>".join(
+                                    str(legis_data[e])
+                                    for e in range(0, statu_level)
+                                    )
                                 statu_position = self.statu_level_position
                                 level_id = statu_position.get(statu_level)
                                 if(self.t_statu.get(strip_data) is not None):
-                                    parent_id = self.t_statu.get(strip_data)
+                                    parent_id += str(self.t_statu.get(strip_data))+","
                                     parent_names = str(strip_data)
+                                    print "parent_id"
+                                    print parent_id
                                 if(
                                    self.statutories.get(strip_data) is not None
                                    ):
-                                    parent_id = self.statutories.get(
-                                        strip_data).get("statutory_id")
+                                    parent_id += str(self.statutories.get(
+                                        strip_data).get("statutory_id"))+","
                                     parent_names = str(strip_data)
+                                    print "parent_id"
+                                    print parent_id
+
                                 if (int(statu_level) == 1 and
                                    self.statutories.get(strip_data) is None):
                                     if(strip_data not in statu_exists_id):
                                         statu_id = self.save_statu_data(
-                                            str(strip_data), level_id,
+                                            str(legis_name), level_id,
                                             parent_id, parent_names,
                                             uploaded_by)
                                         if(len(legis_data) == 1):
-                                            statu_ids.append(statu_id)
+                                            if statu_id not in statu_ids:
+                                                statu_ids.append(statu_id)
                                         statu_exists_id.append(strip_data)
                                         self.t_statu[strip_data] = statu_id
-                                        parent_id = statu_id
+                                        parent_id += str(statu_id)+","
                                         parent_names = str(strip_data)
+                                        print "parent_id"
+                                        print parent_id
                                 else:
                                     if(
                                         int(statu_level) > 1 and
-                                        self.statutories.get(statu_m) is None
+                                        self.statutories.get(strip_data) is None
                                     ):
-                                        if(self.t_statu.get(statu_m) is None):
+                                        if(self.t_statu.get(strip_data) is None):
                                             statu_id = self.save_statu_data(
-                                                str(strip_data), level_id,
+                                                str(legis_name), level_id,
                                                 parent_id, parent_names,
                                                 uploaded_by)
-                                            statu_ids.append(statu_id)
-                                            statu_exists_id.append(statu_m)
-                                            self.t_statu[statu_m] = statu_id
-                                            parent_id = statu_id
+                                            if len(legis_data) == statu_level:
+                                                if statu_id not in statu_ids:
+                                                    statu_ids.append(statu_id)
+                                                    statu_exists_id.append(strip_data)
+                                            self.t_statu[strip_data] = statu_id
+                                            parent_id += str(statu_id)+","
                                             parent_names = str(strip_data)
-                                        if(self.t_statu.get(statu_m)
-                                            is not None and
-                                           statu_m not in statu_exists_id
-                                           ):
-                                            stat_id = self.t_statu.get(statu_m)
-                                            statu_ids.append(stat_id)
-                                            statu_exists_id.append(statu_m)
-                                            self.t_statu[statu_m] = stat_id
-
+                                            print "parent_id"
+                                            print parent_id
+                                        # if(self.T_Statu.get(strip_data)
+                                        #     is not None and
+                                        #    strip_data not in statu_exists_id
+                                        #    ):
+                                        #     stat_id = self.T_Statu.get(strip_data)
+                                        #     if stat_id not in statu_ids:
+                                        #         statu_ids.append(stat_id)
+                                        #         statu_exists_id.append(strip_data)
+                                        #         self.T_Statu[strip_data] = stat_id
                 self.save_statutories_data(
                     self._country_id, self._domain_id, nature_id, uploaded_by,
                     str(statu_mapping), grouped_list, org_ids, statu_ids,

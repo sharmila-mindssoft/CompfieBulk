@@ -261,7 +261,7 @@ class SourceDB(object):
 
     # save client statutories data in tbl_client_statutories main db
     def save_client_statutories_data(
-        self, cl_id, u_id, d_id, user_id, is_rejected
+        self, cl_id, u_id, d_id, user_id, is_rejected, rej_reason
     ):
         created_on = get_date_time()
         status = 3
@@ -270,12 +270,12 @@ class SourceDB(object):
 
         client_statutory_value = [
             int(cl_id), int(u_id),
-            int(d_id), status,
+            int(d_id), status, rej_reason,
             int(user_id), str(created_on)
         ]
         q = "INSERT INTO tbl_client_statutories (client_id, unit_id, " + \
-            " domain_id, status, approved_by, approved_on) values " + \
-            " (%s, %s, %s, %s, %s, %s)"
+            " domain_id, status, reason, approved_by, approved_on) values " + \
+            " (%s, %s, %s, %s, %s, %s, %s)"
         client_statutory_id = self._source_db.execute_insert(
             q, client_statutory_value
         )
@@ -295,9 +295,9 @@ class SourceDB(object):
             ]
         )
         if len(res) > 0:
-            return True
+            return True, res[0]["remarks"]
         else:
-            return False
+            return False, None
 
     # save client compliance data in tbl_client_compliances main db
     def save_client_compliances_data(
@@ -400,7 +400,7 @@ class SourceDB(object):
             "Statutory_remarks", "Compliance_Applicable_Status"
         ]
 
-    # check duplicate compliance for same unit in csv
+    # check duplicate compliance for same unit in temp db
     def check_compliance_task_name_duplicate(
         self, data
     ):
@@ -590,6 +590,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         self._legal_entity = None
         self._domain_ids = []
         self._domain_names = []
+        self._country = None
         self._sheet_name = "Assign Statutory"
 
     # error summary mapped with initial count
@@ -666,11 +667,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
                 if(len(grouped_list) != uploaded_count):
                     unit_names.append(grouped_list[0].get("Unit_Code"))
-
-        if len(unit_names) > 0:
-            error_msg = "Downloaded and uploaded records are not " + \
-                "same for unit %s" % (','.join(unit_names))
-            raise ValueError(str(error_msg))
+        return unit_names
 
     # get master table related values while upload csv
     def get_master_table_info(self):
@@ -691,6 +688,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     )
 
                 self._legal_entity = grouped_list[0].get("Legal_Entity")
+                self._country = grouped_list[0].get("Country")
 
                 if(
                     self._legal_entity_.get(
@@ -764,16 +762,35 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     res.append(msg)
             return res
 
+    def is_le_under_client_group(self, client_group_name, legal_entity_name):
+        data = self._source_db.call_proc(
+                    "sp_bu_is_valid_le",
+                    [legal_entity_name, client_group_name]
+                )
+        count = data[0]["cnt"]
+        if count > 0:
+            return True
+        return False
+
     # check uploaded csv validation process
+
     def check_validation(
         self, res, row_idx, data, duplicate_compliance_row, error_count,
         mapped_header_dict
     ):
+        i=0
         for key in self._csv_column_name:
+            i = i+1
             value = data.get(key)
             isFound = ""
             values = value.strip().split(CSV_DELIMITER)
             csvParam = csv_params_as.get(key)
+            if key == "Legal_Entity":
+                client_group_name = data.get("Client_Group")
+                legal_entity_name = value
+                if not self.is_le_under_client_group(client_group_name, legal_entity_name):
+                    self._error_summary["invalid_data_error"] += 1
+                    res = self.make_error_desc(res, "Legal Entity - Not Found")
             for v in [v.strip() for v in values]:
                 if (
                     key == 'Statutory_remarks' and
@@ -891,7 +908,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             if res is True:
                 if not self.check_compliance_task_name_duplicate(data):
                     self._error_summary["duplicate_error"] += 1
-                    dup_error = "Duplicate Compliance"
+                    dup_error = "Duplicate Compliance in Temp DB"
                     res = self.make_error_desc(res, dup_error)
                 if not self.check_compliance_task_name_duplicate_in_knowledge(
                     data, country_id
@@ -924,7 +941,6 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     "invalid_char"
                 ]
         if invalid == 0:
-            self.check_uploaded_count_in_csv()
             self.get_master_table_info()
         if invalid > 0:
             return self.make_invalid_return(
@@ -1123,13 +1139,14 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 self._legal_entity_id
             )
 
-            is_rejected = self.get_client_compliance_rejected_status(
+            is_rejected, reason = self.get_client_compliance_rejected_status(
                 value.get("Legal_Entity"), value.get("Domain"),
                 value.get("Unit_Code"), self._csv_id
             )
 
             cs_id = self.save_client_statutories_data(
-                self._client_id, unit_id, domain_id, user_id, is_rejected
+                self._client_id, unit_id, domain_id, user_id, is_rejected,
+                reason
             )
 
             self.save_client_compliances_data(

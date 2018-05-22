@@ -592,11 +592,8 @@ class Database(object):
     def is_already_exists(self, table, condition, condition_val):
         query = "SELECT count(0) as count FROM %s WHERE %s " % (table, condition)
         rows = None
-        print "query>>", query
-        print "condition_val>>", condition_val
         rows = self.select_one(query, condition_val)
         if rows:
-            print "rows[count]", rows["count"]
             if rows["count"] > 0:
                 return True
             else:
@@ -678,9 +675,7 @@ class Database(object):
         caller_name = [str(x) for x in rcaller_name.split("/") if x != ""]
         caller_name = "/%s" % (caller_name[0])
         try :
-            print caller_name
             user_id, user_category_id = self.validate_session_token(session_token)
-            print user_category_id, user_id
             if user_id is not None :
                 if user_category_id == 1 :
                     q = "select t2.form_url from tbl_form_category as t1 " + \

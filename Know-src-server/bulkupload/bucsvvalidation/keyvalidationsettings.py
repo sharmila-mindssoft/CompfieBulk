@@ -580,7 +580,8 @@ csv_params = {
     ),
     'Secondary_Legislaion': make_required_validation(
         keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        validation_method=is_alpha_numeric, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Client_Group': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
@@ -688,6 +689,12 @@ csv_params = {
     ),
     'Client_Group_Column': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
+    ),
+    'Country': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
+        isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True,
+        isActiveCheck=True
     ),
 }
 

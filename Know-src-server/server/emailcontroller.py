@@ -164,6 +164,7 @@ class EmailHandler(Email):
             <p align="left">Regards</p>
             <p align="left">Compfie Administrator</p>
         ''' % (reset_link)
+        print message
         # message = '''
         #     Dear %s, <br> \
         #     <p>Use the following link to confirm your registration </p>  <br>\
@@ -220,6 +221,8 @@ class EmailHandler(Email):
         #     <p> Thanks & Regards, </p>  <br>\
         #     Compfie Support Team
         # ''' % (reset_link)
+        print message
+        print reset_link
         self.send_email(receiver, subject, message, is_credential=True)
     # Unit Creation Mail
     def send_notification_groupadmin_unit(
@@ -242,6 +245,7 @@ class EmailHandler(Email):
             <p align="left">Thanks & regards,</p> \
             <p align="left">Compfie Administrator</p> \
         ''' % (legal_entity_name)
+        print message
         # message = '''
         #     Dear Group Admin, <br> \
         #     <p>For your kind information. </p>\
