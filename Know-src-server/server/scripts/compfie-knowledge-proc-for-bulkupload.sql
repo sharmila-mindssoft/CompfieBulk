@@ -1,8 +1,3 @@
-ALTER TABLE `tbl_compliances`
-ADD COLUMN `task_id` VARCHAR(25) NOT NULL AFTER `is_updated`,
-ADD COLUMN `task_type` VARCHAR(150) NOT NULL AFTER `task_id`;
-
-
 DROP PROCEDURE IF EXISTS `sp_bu_organization`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_organization`(
@@ -831,3 +826,6 @@ END //
 
 DELIMITER ;
 
+ALTER TABLE `tbl_compliances`
+ADD COLUMN `task_id` VARCHAR(25) NOT NULL AFTER `is_updated`,
+ADD COLUMN `task_type` VARCHAR(150) NOT NULL AFTER `task_id`;
