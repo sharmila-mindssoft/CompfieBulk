@@ -250,7 +250,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_client_units_bulk_csv_save`;
 DELIMITER //
 CREATE PROCEDURE `sp_client_units_bulk_csv_save`(
-    IN _client_id INT(11), _group_name VARCHAR(50), _csv_name VARCHAR(100),
+    IN _client_id INT(11), _group_name VARCHAR(50), _csv_name VARCHAR(500),
     _upl_by INT(11), _total_rec INT(11))
 BEGIN
     INSERT INTO tbl_bulk_units_csv
@@ -1422,8 +1422,9 @@ CREATE PROCEDURE `sp_bulk_client_unit_by_csvid`(
     IN _csv_id INT)
 BEGIN
     SELECT t1.client_id, t1.client_group, t2.bulk_unit_id,
-    t2.legal_entity AS Legal_Entity, t2.division AS Division,
-    t2.category AS Category, t2.geography_level AS Geography_Level,
+    t2.country as Country, t2.legal_entity AS Legal_Entity,
+    t2.division AS Division, t2.category AS Category,
+    t2.geography_level AS Geography_Level,
     t2.unit_location AS Unit_Location, t2.unit_code AS Unit_Code,
     t2.unit_name AS Unit_Name, t2.address AS Unit_Address,
     t2.city AS City, t2.state AS State, t2.postalcode AS Postal_Code,
@@ -1518,7 +1519,7 @@ CREATE PROCEDURE `sp_bulk_client_unit_view_by_csvid`(
     IN _csv_unit_id INT, f_count INT, f_range INT)
 BEGIN
     SELECT t1.client_id, t1.client_group, t2.bulk_unit_id,
-    t2.legal_entity, t2.division, t2.category,
+    t2.country, t2.legal_entity, t2.division, t2.category,
     t2.geography_level, t2.unit_location, t2.unit_code,
     t2.unit_name, t2.address, t2.city, t2.state,
     t2.postalcode, t2.domain, t2.organization,
@@ -1576,7 +1577,7 @@ BEGIN
     t2.unit_name, t2.address, t2.city, t2.state,
     t2.postalcode, t2.domain, t2.organization,
     t1.uploaded_by, t1.csv_name, t1.csv_unit_id, t1.uploaded_on,
-    t2.action, t2.remarks
+    t2.action, t2.remarks, t2.country
     FROM tbl_bulk_units_csv AS t1 INNER JOIN tbl_bulk_units AS t2
     ON t2.csv_unit_id = t1.csv_unit_id WHERE t1.csv_unit_id = _csv_unit_id
     AND legal_entity LIKE legal_entity AND division LIKE _div_name AND

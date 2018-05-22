@@ -690,6 +690,12 @@ csv_params = {
     'Client_Group_Column': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
+    'Country': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
+        isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True,
+        isActiveCheck=True
+    ),
 }
 
 
