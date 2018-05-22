@@ -183,11 +183,12 @@ function getPastRecords(legalEntity) {
 }
 
 function validateUpload() {
-    if(LEGAL_ENTITIES.length > 1 && LegalEntityId.val().trim() == "") {
-        displayMessage(message.legalentity_required);
-        txt_legal_entity_name_upload.focus();
-        return false;
-    }else if ($('#fileInput').val() == "" && buCtPage._ActionMode != 'upload') {
+    // if(LEGAL_ENTITIES.length > 1 && LegalEntityId.val().trim() == "") {
+    //     displayMessage(message.legalentity_required);
+    //     txt_legal_entity_name_upload.focus();
+    //     return false;
+    // }else 
+    if ($('#fileInput').val() == "" && buCtPage._ActionMode != 'upload') {
         displayMessage("File required");
         $('#myModal').modal('hide');
         return false;
