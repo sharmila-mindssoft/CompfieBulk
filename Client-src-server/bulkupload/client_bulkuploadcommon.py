@@ -5,9 +5,10 @@ import csv
 import xlsxwriter
 import pyexcel
 
-from bulkupload.client_bulkconstants import(
+from bulkupload.client_bulkconstants import (
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH
 )
+
 
 #   returns: unique random string
 def new_uuid():
@@ -20,10 +21,12 @@ def remove_uploaded_file(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
 
+
 def frame_file_name(file_name):
     return "%s_%s.csv" % (
-            file_name, new_uuid()
+        file_name, new_uuid()
     )
+
 
 ########################################################
 '''
@@ -42,6 +45,7 @@ def frame_file_name(file_name):
         result: string
 '''
 ########################################################
+
 
 def convert_base64_to_file(src_path, file_name, file_content):
     fileSplitString = file_name.split('.')
@@ -140,11 +144,12 @@ def write_data_to_excel(
             else:
                 if error_col is not None:
                     if idx in error_col:
-                        worksheet.write_string(row, col+i, d, error_format)
+                        worksheet.write_string(
+                            row, col + i, d, error_format)
                     else:
-                        worksheet.write_string(row, col+i, d)
+                        worksheet.write_string(row, col + i, d)
                 else:
-                        worksheet.write_string(row, col+i, d)
+                        worksheet.write_string(row, col + i, d)
         row += 1
 
     # summary sheet
@@ -165,6 +170,7 @@ def write_data_to_excel(
 
     # workbook.close()
 
+
 def rename_file_type(src_file_name, des_file_type):
     src_path = os.path.join(BULKUPLOAD_INVALID_PATH, "xlsx")
     str_split = src_file_name.split('.')
@@ -181,6 +187,7 @@ def rename_file_type(src_file_name, des_file_type):
             file_name=src_file, dest_file_name=new_dst_file_name
         )
 
+
 def general_txt_file(src_file, dst_txt_file_name):
     src_file = src_file.replace('xlsx', 'csv')
     with open(dst_txt_file_name, "w") as my_output_file:
@@ -188,9 +195,10 @@ def general_txt_file(src_file, dst_txt_file_name):
             for row in csv.reader(my_input_file):
                 my_output_file.write(" ".join(row) + '\n')
 
+
 def generate_valid_file(src_file_name):
     f_types = ["xlsx", "ods"]
-    for f in f_types :
+    for f in f_types:
         src_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
         str_split = src_file_name.split('.')
         new_file = str_split[0] + "." + f
@@ -200,6 +208,7 @@ def generate_valid_file(src_file_name):
 
         new_dst_file_name = os.path.join(dst_dir, new_file)
         pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
+
 
 def rename_download_file_type(src_file_name, des_file_type):
     src_path = os.path.join(REJECTED_DOWNLOAD_PATH, "xlsx")

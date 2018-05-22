@@ -4,8 +4,6 @@ import collections
 import mysql.connector
 import requests
 import threading
-import datetime
-from itertools import groupby
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
@@ -27,7 +25,7 @@ from ..client_bulkuploadcommon import (
 )
 
 # from  clientprotocol.clienttransactions import ()
-from server.common import (get_date_time, convert_string_to_date)
+from server.common import get_date_time
 
 # from server.clientdatabase.general import ( is_two_levels_of_approval )
 
@@ -41,6 +39,8 @@ __all__ = [
     also check csv data validation
 '''
 ################################
+
+
 class SourceDB(object):
     def __init__(self):
         self._source_db = None
@@ -66,19 +66,26 @@ class SourceDB(object):
         # self.get_doc_names()
 
     def connect_source_db(self, legal_entity_id):
-
         self._knowledge_db_con = mysql.connector.connect(
-        user=KNOWLEDGE_DB_USERNAME,
-        password=KNOWLEDGE_DB_PASSWORD,
-        host=KNOWLEDGE_DB_HOST,
-        database=KNOWLEDGE_DATABASE_NAME,
-        port=KNOWLEDGE_DB_PORT,
-        autocommit=False, )
+                user=KNOWLEDGE_DB_USERNAME,
+                password=KNOWLEDGE_DB_PASSWORD,
+                host=KNOWLEDGE_DB_HOST,
+                database=KNOWLEDGE_DATABASE_NAME,
+                port=KNOWLEDGE_DB_PORT,
+                autocommit=False)
 
         self._knowledge_db = Database(self._knowledge_db_con)
         self._knowledge_db.begin()
 
-        query = "select t1.client_database_id, t1.database_name, t1.database_username, t1.database_password, t3.database_ip, database_port from tbl_client_database_info as t1 inner join tbl_client_database as t2 on t2.client_database_id = t1.client_database_id inner join tbl_database_server as t3 on t3.database_server_id = t2.database_server_id where t1.db_owner_id = %s and t1.is_group = 0;"
+        query = "select t1.client_database_id, t1.database_name, " + \
+            "t1.database_username, t1.database_password, " + \
+            "t3.database_ip, database_port " + \
+            " from tbl_client_database_info as t1 " + \
+            " inner join tbl_client_database as t2 on " + \
+            " t2.client_database_id = t1.client_database_id " + \
+            " inner join tbl_database_server as t3 on " + \
+            " t3.database_server_id = t2.database_server_id " + \
+            " where t1.db_owner_id = %s and t1.is_group = 0;"
         param = [legal_entity_id]
 
         result = self._knowledge_db.select_all(query, param)
@@ -129,64 +136,94 @@ class SourceDB(object):
         self.get_assignee()
 
     def get_legal_entities(self):
-        query = "SELECT legal_entity_id, legal_entity_name, is_closed FROM tbl_legal_entities;"
+        query = "SELECT legal_entity_id, legal_entity_name, " + \
+            "is_closed FROM tbl_legal_entities;"
         rows = self._source_db.select_all(query)
-        for d in rows :
+        for d in rows:
             self.Legal_Entity[d["legal_entity_name"]] = d
 
     def get_domains(self):
         query = "SELECT domain_id, domain_name, is_active  FROM tbl_domains"
         rows = self._source_db.select_all(query)
-        for d in rows :
+        for d in rows:
             self.Domain[d["domain_name"]] = d
 
     def get_unit_code(self):
-        query = "SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name, is_closed FROM tbl_units"
+        query = "SELECT unit_id, client_id, legal_entity_id, " + \
+            "unit_code, unit_name, is_closed FROM tbl_units"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.Unit_Code[d["unit_code"]] = d
 
     def get_unit_name(self):
-        query = "SELECT unit_id, client_id, legal_entity_id, unit_code, unit_name, is_closed FROM tbl_units"
+        query = "SELECT unit_id, client_id, legal_entity_id, " + \
+            "unit_code, unit_name, is_closed FROM tbl_units"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.Unit_Name[d["unit_name"]] = d
 
     def get_primary_legislation(self):
-        query = "select trim(SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '\"]' FROM TRIM(LEADING '[\"' FROM t.statutory_mapping))),'>>',1),'>>',- 1)) AS primary_legislation, trim(SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '\"]' FROM TRIM(LEADING '[\"' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1)) AS secondary_legislation from tbl_compliances t"
+        query = "select trim(SUBSTRING_INDEX" + \
+            " (SUBSTRING_INDEX((TRIM(TRAILING '\"]' " + \
+            "FROM TRIM(LEADING '[\"' FROM t.statutory_mapping)))," + \
+            " '>>',1),'>>',- 1)) AS primary_legislation, " + \
+            " trim(SUBSTRING_INDEX(SUBSTRING_INDEX( " + \
+            " CONCAT(TRIM(TRAILING '\"]' " + \
+            " FROM TRIM(LEADING '[\"' " + \
+            " FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1)) " + \
+            " AS secondary_legislation from tbl_compliances t"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.Statutories[d["primary_legislation"]] = d
 
     def get_secondary_legislation(self):
-        query = "select trim(SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '\"]' FROM TRIM(LEADING '[\"' FROM t.statutory_mapping))),'>>',1),'>>',- 1)) AS primary_legislation, trim(SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '\"]' FROM TRIM(LEADING '[\"' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1)) AS secondary_legislation from tbl_compliances t;"
+        query = "select trim(SUBSTRING_INDEX(" + \
+            " SUBSTRING_INDEX((TRIM(TRAILING '\"]' " + \
+            "FROM TRIM(LEADING '[\"' " + \
+            " FROM t.statutory_mapping))),'>>',1),'>>',- 1)) " + \
+            " AS primary_legislation, trim(SUBSTRING_INDEX( " + \
+            " SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '\"]' " + \
+            " FROM TRIM(LEADING '[\"' FROM t.statutory_mapping) " + \
+            "),'>>'),'>>',2),'>>',- 1)) AS secondary_legislation " + \
+            " from tbl_compliances t;"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.Statutories[d["secondary_legislation"]] = d
 
     def get_compliance_task(self):
-        query = "SELECT compliance_id, statutory_provision, case when ifnull(document_name,'') = '' then trim(compliance_task) else trim(Concat_ws(' - ',document_name, compliance_task)) end AS compliance_task, compliance_description, is_active from tbl_compliances"
+        query = "SELECT compliance_id, statutory_provision, " + \
+            "case when ifnull(document_name,'') = '' then " + \
+            "trim(compliance_task) else trim(Concat_ws( " + \
+            "' - ',document_name, compliance_task)) end AS " + \
+            " compliance_task, compliance_description, " + \
+            "is_active from tbl_compliances"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.Compliance_Task[d["compliance_task"]] = d
 
     def get_compliance_description(self):
-        query = "SELECT compliance_id, statutory_provision, compliance_task, compliance_description, is_active from tbl_compliances"
+        query = "SELECT compliance_id, statutory_provision, " + \
+            " compliance_task, compliance_description, is_active " + \
+            "from tbl_compliances"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.Compliance_Description[d["compliance_description"]] = d
 
     def get_compliance_frequency(self):
-        query = "select frequency_id, frequency from tbl_compliance_frequency " + \
+        query = "select frequency_id, frequency " + \
+            " from tbl_compliance_frequency " + \
                 " where frequency_id in (2,3)"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.Compliance_Frequency[d["frequency"]] = d
 
     def get_assignee(self):
-        query = "SELECT Distinct assignee as ID, employee_code, employee_name, " + \
-                " CONCAT_WS(' - ', employee_code, employee_name) As Assignee " + \
-                " FROM tbl_assign_compliances ac INNER JOIN tbl_users u ON (ac.assignee = u.user_id)"
+        query = "SELECT Distinct assignee as ID, employee_code," + \
+                " employee_name, " + \
+                " CONCAT_WS(' - ', employee_code, employee_name) " + \
+                " As Assignee " + \
+                " FROM tbl_assign_compliances ac INNER JOIN " + \
+                " tbl_users u ON (ac.assignee = u.user_id)"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.Assignee[d["Assignee"]] = d
@@ -198,10 +235,10 @@ class SourceDB(object):
 
         if check_status is True:
             if status_name is None:
-                if data.get("is_active") == 0 :
+                if data.get("is_active") == 0:
                     return "Status Inactive"
-            elif status_name == "is_closed" :
-                if data.get("is_closed") == 0 :
+            elif status_name == "is_closed":
+                if data.get("is_closed") == 0:
                     return "Status Inactive"
 
         return True
@@ -288,13 +325,17 @@ class SourceDB(object):
         return self.check_base(False, self.Statutories, statutories, None)
 
     def check_compliance_task(self, compliance_task):
-        return self.check_base(True, self.Compliance_Task, compliance_task, None)
+        return self.check_base(
+            True, self.Compliance_Task, compliance_task, None)
 
     def check_compliance_description(self, compliance_description):
-        return self.check_base(True, self.Compliance_Description, compliance_description, None)
+        return self.check_base(
+            True, self.Compliance_Description, compliance_description, None)
 
-    def check_frequency(self, frequency):
-        return self.check_base(False, self.Compliance_Frequency, frequency, None)
+    def check_frequency(
+            self, frequency):
+        return self.check_base(
+            False, self.Compliance_Frequency, frequency, None)
 
     def check_assignee(self, assignee):
         return self.check_base(False, self.Assignee, assignee, None)
@@ -325,21 +366,18 @@ class SourceDB(object):
         for idx, d in enumerate(data):
             self.connect_source_db(legal_entity_id)
             columns = [
-            "legal_entity_id", "unit_id", "compliance_id", "start_date",
-            "due_date", "completion_date", "completed_by",
-            "completed_on",
-            "approve_status", "approved_by", "approved_on", "current_status"
-            ]
+                "legal_entity_id", "unit_id", "compliance_id", "start_date",
+                "due_date", "completion_date", "completed_by",
+                "completed_on",
+                "approve_status", "approved_by", "approved_on",
+                "current_status"
+                ]
 
             # Compliance ID
             cName = [
                 d["compliance_task_name"], d["compliance_description"],
                 d["compliance_frequency"]
             ]
-            # q = "SELECT compliance_id FROM tbl_compliances where " + \
-            #     " case when ifnull(document_name,'') = '' then compliance_task = TRIM(%s) " + \
-            #     " else concat(document_name,' - ',compliance_task) = " + \
-            #     " TRIM(%s) end AND compliance_description = TRIM(%s) LIMIT 1 "
             q = "SELECT compliance_id FROM tbl_compliances where " + \
                 "compliance_task = TRIM(%s) and compliance_description = " + \
                 "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
@@ -362,14 +400,14 @@ class SourceDB(object):
             assignee = [d["assignee"]]
             q = " SELECT distinct ac.assignee as ID, u.employee_code, " + \
                 " u.employee_name, " + \
-                " CONCAT_WS(' - ', u.employee_code, u.employee_name) As Assignee " + \
+                " CONCAT_WS(' - ', u.employee_code, " + \
+                " u.employee_name) As Assignee " + \
                 " FROM tbl_assign_compliances ac INNER JOIN tbl_users u " + \
                 " ON (ac.assignee = u.user_id) where " + \
                 " CONCAT_WS(' - ', u.employee_code, u.employee_name)=TRIM(%s)"
             assignee_id = self._source_db.select_all(q, assignee)
             assignee_id = assignee_id[0]["ID"]
 
-            #Check two level of approval
             query = "SELECT two_levels_of_approval FROM tbl_reminder_settings"
             rows = self._source_db.select_all(query)
             if int(rows[0]["two_levels_of_approval"]) == 1:
@@ -390,10 +428,8 @@ class SourceDB(object):
             )
             concurred_by = 0
             approved_by = 0
-            if rows:
+            if len(rows) > 0:
                 approved_by = rows[0]["approval_person"]
-                country_id = rows[0]["country_id"]
-                domain_id = rows[0]["domain_id"]
                 users = [assignee_id, approved_by]
                 if is_two_level:
                     concurred_by = rows[0]["concurrence_person"]
@@ -405,7 +441,7 @@ class SourceDB(object):
                 assignee_id, completion_date,
                 1, approved_by, completion_date, 3]
 
-            if d["document_name"] != "" :
+            if d["document_name"] != "":
                 columns.append("documents")
                 values.append(d["document_name"])
 
@@ -416,11 +452,9 @@ class SourceDB(object):
                 values.append(1)
                 values.append(concurred_by)
                 values.append(completion_date)
-            if values :
-                self._source_db.insert("tbl_compliance_history", columns, values)
-                # added for aparajtha
-                # clienttransaction.update_user_wise_task_status(self._source_db, users)
-
+            if values:
+                self._source_db.insert(
+                    "tbl_compliance_history", columns, values)
                 self._source_db.commit()
         return True
 
@@ -452,6 +486,7 @@ class SourceDB(object):
             "Document_Name"
         ]
 
+
 class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
     def __init__(self, db, source_data, session_user, csv_name, csv_header):
         SourceDB.__init__(self)
@@ -474,7 +509,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         self._error_summary = {
             "mandatory_error": 0,
             "max_length_error": 0,
-            "duplicate_error" : 0,
+            "duplicate_error": 0,
             "invalid_char_error": 0,
             "invalid_data_error": 0,
             "inactive_error": 0,

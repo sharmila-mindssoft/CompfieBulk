@@ -316,6 +316,8 @@ def get_pending_list(db, cl_id, le_id, session_user):
         result: List
 '''
 ########################################################
+
+
 def get_assign_statutory_filters_for_approve(db, csv_id):
     data = db.call_proc_with_multiresult_set(
         "sp_assign_statutory_filter_list", [csv_id], 7
@@ -613,7 +615,7 @@ def get_list_and_delete_rejected_asm(db, session_user, user_id, client_id,
     return reject_list
 
 
-def convertArrayToString(array_ids):
+def convert_array_to_string(array_ids):
     existing_id = []
     id_list = ""
     if(len(array_ids) > 1):
