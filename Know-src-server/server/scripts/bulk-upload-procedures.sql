@@ -1022,9 +1022,6 @@ CREATE PROCEDURE `sp_rejected_asm_csv_report`(
   IN `csv_id` INT(11),
   IN `user_id` INT(11))
 BEGIN
-
-IF(unit_id!='') THEN
-
   SELECT
    asm.client_group,
    asm.legal_entity,
@@ -1054,53 +1051,14 @@ IF(unit_id!='') THEN
   FROM tbl_bulk_assign_statutory AS asm
   INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statutory_id=asm.csv_assign_statutory_id
    WHERE
-    FIND_IN_SET(d_id, asm_csv.domain_ids) AND
+    IF(d_id != 0, FIND_IN_SET(d_id, asm_csv.domain_ids), 1) AND
     asm_csv.client_id=client_id AND
     asm_csv.legal_entity_id=le_id AND
-    asm.unit_code=unit_id AND
+    IF(unit_id != 0, FIND_IN_SET(unit_id, asm.unit_code), 1) AND
     asm_csv.uploaded_by=user_id AND
     asm.csv_assign_statutory_id=csv_id AND
     (asm.action=3 OR asm_csv.is_fully_rejected=1)
     ORDER BY asm_csv.rejected_on, asm_csv.approved_on DESC;
-ELSE
-  SELECT
-   asm.client_group,
-   asm.legal_entity,
-   asm_csv.country,
-   asm.domain,
-   asm.organization,
-   asm.unit_code,
-   asm.unit_name,
-   asm.unit_location,
-   asm.perimary_legislation,
-   asm.secondary_legislation,
-   asm.statutory_provision,
-   asm.compliance_task_name,
-   asm.compliance_description,
-   (CASE WHEN asm.statutory_applicable_status = 1 THEN 'Applicable'
-         WHEN asm.statutory_applicable_status = 2 THEN 'Not Applicable'
-         WHEN asm.statutory_applicable_status = 3 THEN 'Do Not Show'
-    END) AS statutory_applicable_status,
-   asm.statytory_remarks,
-   (CASE WHEN asm.compliance_applicable_status = 1 THEN 'Applicable'
-         WHEN asm.compliance_applicable_status = 2 THEN 'Not Applicable'
-         WHEN asm.compliance_applicable_status = 3 THEN 'Do Not Show'
-    END) AS compliance_applicable_status,
-   asm_csv.rejected_reason,
-   asm.remarks,
-   (CASE WHEN asm_csv.is_fully_rejected = 1 THEN asm_csv.rejected_reason ELSE '' END) AS rejected_reason,
-   asm_csv.is_fully_rejected
-  FROM tbl_bulk_assign_statutory AS asm
-  INNER JOIN tbl_bulk_assign_statutory_csv AS asm_csv ON asm_csv.csv_assign_statutory_id=asm.csv_assign_statutory_id
-   WHERE
-    FIND_IN_SET(d_id, asm_csv.domain_ids) AND
-    asm_csv.client_id=client_id AND
-    asm_csv.legal_entity_id=le_id AND
-    asm_csv.uploaded_by=user_id AND
-    asm.csv_assign_statutory_id=csv_id AND
-    (asm.action=3 OR asm_csv.is_fully_rejected=1)
-    ORDER BY asm_csv.rejected_on, asm_csv.approved_on DESC;
-  END IF;
 END //
 DELIMITER ;
 

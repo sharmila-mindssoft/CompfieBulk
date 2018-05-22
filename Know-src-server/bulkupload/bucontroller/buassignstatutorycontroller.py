@@ -522,6 +522,9 @@ def download_rejected_asm_report(db, request_frame, session_user):
     download_format = request_frame.download_format
     user_id = session_user.user_id()
 
+    if asm_unit_code == '':
+        asm_unit_code = 0
+    print "asm_unit_code >>>>>>>>>>>>>>>>>>>>>>>>>", asm_unit_code
     sheet_name = "Rejected Assign Statutory"
 
     csv_header_key = ["client_group", "legal_entity", "country", "domain",

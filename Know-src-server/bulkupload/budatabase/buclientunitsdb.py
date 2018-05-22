@@ -189,21 +189,14 @@ def fetch_rejected_client_unit_report(db, session_user, user_id,
         uploaded_on = ''
         approved_on = ''
         rejected_on = ''
-
         if(d["uploaded_on"] is not None):
-            uploaded_on = datetime.datetime.strptime(
-                str(d["uploaded_on"]),
-                '%Y-%m-%s %H:%M:%S').strftime('%s-%b-%Y %H:%M')
+            uploaded_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
 
         if(d["approved_on"] is not None):
-            approved_on = datetime.datetime.strptime(
-                str(d["approved_on"]),
-                '%Y-%m-%s %H:%M:%S').strftime('%s-%b-%Y %H:%M')
+            approved_on = d["approved_on"].strftime("%d-%b-%Y %H:%M")
 
         if(d["rejected_on"] is not None):
-            rejected_on = datetime.datetime.strptime(
-                str(d["rejected_on"]),
-                '%Y-%m-%s %H:%M:%S').strftime('%s-%b-%Y %H:%M')
+            rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
 
         if (d["rejected_file_download_count"] is None):
             download_count = 0
@@ -276,21 +269,16 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
             approved_on = ""
             rejected_on = ""
             uploaded_on = ""
+
             if(d["uploaded_on"] is not None):
-                uploaded_on = d["uploaded_on"].strptime(
-                    str(d["uploaded_on"]),
-                    '%Y-%m-%s %H:%M:%S').strftime('%s-%b-%Y %H:%M')
+                uploaded_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
 
             if(d["approved_on"] is not None):
-                approved_on = d["approved_on"].strptime(
-                    str(d["approved_on"]),
-                    '%Y-%m-%s %H:%M:%S').strftime('%s-%b-%Y %H:%M')
+                approved_on = d["approved_on"].strftime("%d-%b-%Y %H:%M")
 
             if(d["rejected_on"] is not None):
-                rejected_on = d["rejected_on"].strptime(
-                    str(d["rejected_on"]),
-                    '%Y-%m-%s %H:%M:%S').strftime('%s-%b-%Y %H:%M')
-
+                rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
+            
             client_list.append(bu_cu.ClientReportData(
                 int(d["uploaded_by"]),
                 str(uploaded_on),

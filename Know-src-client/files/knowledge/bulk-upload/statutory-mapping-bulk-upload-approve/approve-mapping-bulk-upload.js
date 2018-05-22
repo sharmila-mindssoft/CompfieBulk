@@ -372,14 +372,18 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             fileName = data.csv_name.split('.')
             fileName = fileName[0]
 
+            $(".dropdown-content", cloneRow).attr("id", "myDropdown_"+j);
+            $(".dropbtn", cloneRow).attr("data-dropdown-id", j);
+
             $('.dropbtn',cloneRow).on('click', function() {
-                if($(".dropdown-content", cloneRow).hasClass("show")==false) {
-                    $(".dropdown-content", cloneRow).show();
-                    $(".dropdown-content", cloneRow).addClass("show");
+                var dropDownID = $(this).attr("data-dropdown-id");
+                if($("#myDropdown_"+dropDownID).hasClass("show") == false) {
+                    $("#myDropdown_"+dropDownID).show();
+                    $("#myDropdown_"+dropDownID).addClass("show");
                 }
                 else{
-                    $(".dropdown-content", cloneRow).hide();
-                    $(".dropdown-content", cloneRow).removeClass("show");
+                    $("#myDropdown_"+dropDownID).hide();
+                    $("#myDropdown_"+dropDownID).removeClass("show");
                 }
             });
 
@@ -710,7 +714,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
         
         $.each(viewData, function(idx, data) {
 
-            formatDownloadUrl = "knowledge/uploadedformat/";
+            formatDownloadUrl = "/uploadedformat/";
             formatDownloadUrl += $('#view_csv_id').val();
             formatDownloadUrl += "/" + data.format_file;
 
@@ -859,7 +863,9 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
     }
 
     setTimeout(function() {
-        $(".tbody-sm-approve-view tr").removeAttr("style");
+        $(".tbody-sm-approve-view tr").each(function(){
+            $(this).removeAttr("style");
+        });
     }, 500);
 
     $('.js-filtertable-action-sm').each(function() {
