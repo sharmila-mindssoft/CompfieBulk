@@ -524,7 +524,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
 
     sheet_name = "Rejected Assign Statutory"
 
-    csv_header_key = ["client_group", "legal_entity", "domain",
+    csv_header_key = ["client_group", "legal_entity", "country", "domain",
                       "organization", "unit_code", "unit_name",
                       "unit_location", "perimary_legislation",
                       "secondary_legislation", "statutory_provision",
@@ -534,7 +534,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
                       "rejected_reason", "is_fully_rejected"
                       ]
 
-    csv_column_name = ["Client_Group", "Legal_Entity",
+    csv_column_name = ["Client_Group", "Legal_Entity", "Country",
                        "Domain", "Organisation",
                        "Unit_Code", "Unit_Name",
                        "Unit_Location",

@@ -1027,6 +1027,7 @@ IF(unit_id!='') THEN
   SELECT
    asm.client_group,
    asm.legal_entity,
+   asm_csv.country,
    asm.domain,
    asm.organization,
    asm.unit_code,
@@ -1064,6 +1065,7 @@ ELSE
   SELECT
    asm.client_group,
    asm.legal_entity,
+   asm_csv.country,
    asm.domain,
    asm.organization,
    asm.unit_code,
