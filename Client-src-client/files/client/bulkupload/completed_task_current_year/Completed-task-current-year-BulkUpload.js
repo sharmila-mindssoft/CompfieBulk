@@ -183,7 +183,7 @@ function getPastRecords(legalEntity) {
 }
 
 function validateUpload() {
-    if(LEGAL_ENTITIES.length > 1 && hdn_legal_entity_id_upload.val().trim() == "") {
+    if(LEGAL_ENTITIES.length > 1 && LegalEntityId.val().trim() == "") {
         displayMessage(message.legalentity_required);
         txt_legal_entity_name_upload.focus();
         return false;
