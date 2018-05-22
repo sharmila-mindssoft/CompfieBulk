@@ -524,6 +524,7 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
     var downloadCSV = true;
     var selectedKe = [];
     var countryNames = '', domainNames = '';
+
     // multiple COUNTRY selection in to generate array
     $.each(country, function(key, value) {
         selectedCountryId.push(parseInt(value));
@@ -559,7 +560,8 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
         "from_date": fromDate,
         "to_date": toDate,
         "csv": downloadCSV,
-        "user_category_id": USER_CATEGORY_ID
+        "user_category_id": USER_CATEGORY_ID,
+        "c_d_ids": domain
     };
     displayLoader();
     bu.exportSMBulkReportData(filterdata,

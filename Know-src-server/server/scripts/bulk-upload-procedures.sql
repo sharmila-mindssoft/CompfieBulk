@@ -911,7 +911,8 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_export_client_unit_bulk_reportdata`;
 DELIMITER //
-CREATE PROCEDURE `sp_export_client_unit_bulk_reportdata`(IN `client_group_id` INT(11),
+CREATE PROCEDURE `sp_export_client_unit_bulk_reportdata`(
+  IN `client_group_id` INT(11),
   IN `FROM_date` DATE, IN `to_date` DATE, IN `user_ids` VARCHAR(100))
 BEGIN
 SELECT
@@ -920,7 +921,7 @@ SELECT
   t1.uploaded_on,
   LEFT(t1.csv_name, LENGTH(t1.csv_name) - LOCATE('_', REVERSE(t1.csv_name))) AS csv_name,
   t1.total_records,
-  IFNULL(t1.total_rejected_records, 0) AS total_rejected_records,
+  (IFNULL(t1.total_rejected_records, 0) + IFNULL(t1.declined_count, 0)) AS total_rejected_records,
   t1.approved_by,
   t1.rejected_by,
   t1.approved_on,
