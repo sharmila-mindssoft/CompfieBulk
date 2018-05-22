@@ -7,7 +7,7 @@ import json
 import requests
 import urllib
 from zipfile import ZipFile
-from constants import CLIENT_DOCS_BASE_PATH
+from constants import CLIENT_DOCS_BASE_PATH, TEMP_FILE_SERVER
 from flask import Flask, Response, request, send_from_directory
 from functools import wraps
 import fileprotocol
@@ -18,7 +18,6 @@ app = Flask(__name__)
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 EXP_BASE_PATH = os.path.join(ROOT_PATH, "exported_reports")
-TEMP_FILE_SERVER = "http://localhost:8083/temp/"
 
 
 def api_request(
