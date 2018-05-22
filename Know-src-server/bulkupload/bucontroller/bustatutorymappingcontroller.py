@@ -1,7 +1,8 @@
 import traceback
 from ..bucsvvalidation.statutorymappingvalidation import (
     ValidateStatutoryMappingCsvData,
-    ValidateStatutoryMappingForApprove
+    ValidateStatutoryMappingForApprove,
+    StatutorySource
 )
 from ..bucsvvalidation.rejecteddownloadvalidation import (
     ValidateRejectedDownloadBulkData
@@ -128,6 +129,11 @@ def process_bu_statutory_mapping_request(request, db, session_user):
 
     if type(request_frame) is bu_sm.ConfirmStatutoryMappingSubmit:
         result = confirm_submit_statutory_mapping(
+            db, request_frame, session_user
+        )
+
+    if type(request_frame) is bu_sm.SaveExecutiveMessageAfterDocUpload:
+        result = save_executive_message_after_docupload(
             db, request_frame, session_user
         )
 
@@ -267,12 +273,15 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             new_csv_id = save_mapping_csv(db, csv_args)
 
             if new_csv_id:
+                print "res_data[doc_count] -->> ", res_data["doc_count"]
                 if save_mapping_data(db, new_csv_id, res_data["data"]) is True:
-                    cObj.save_executive_message(
-                        csv_name, request_frame.c_name,
-                        request_frame.d_name, session_user.user_id()
-                    )
-                    cObj.source_commit()
+                    if(res_data["doc_count"] == 0):
+                        cObj.save_executive_message(
+                            csv_name, request_frame.c_name,
+                            request_frame.d_name, session_user.user_id()
+                        )
+                        cObj.source_commit()
+                        print "executive message sent"
                     result = bu_sm.UploadStatutoryMappingCSVValidSuccess(
                         new_csv_id, res_data["csv_name"],
                         res_data["total"], res_data["valid"],
@@ -280,7 +289,6 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                         res_data["doc_count"], res_data["doc_names"],
                         csv_name
                     )
-
             # csv data save to temp db
         else:
             result = bu_sm.UploadStatutoryMappingCSVInvalidSuccess(
@@ -292,8 +300,30 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
                 res_data["total"] - res_data["invalid"],
                 res_data["invalid_frequency_error"]
             )
-
         return result
+    except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        raise e
+
+########################################################
+# To Save Executives notification message to manager once
+# documents are uploaded
+########################################################
+
+
+def save_executive_message_after_docupload(db, request_frame, session_user):
+    try:
+        cObj = StatutorySource()
+        print "cObj", cObj
+        cObj.save_executive_message(
+            request_frame.csv_name, request_frame.c_name,
+            request_frame.d_name, session_user.user_id()
+        )
+        cObj.source_commit()
+        result = bu_sm.SendExecutiveMessageSuccess()
+        return result
+
     except Exception, e:
         print e
         print str(traceback.format_exc())

@@ -110,6 +110,31 @@ class UploadStatutoryMappingCSV(Request):
             "csv_size": self.csv_size,
         }
 
+class SaveExecutiveMessageAfterDocUpload(Request):
+    def __init__(
+        self, c_name, d_name, csv_name
+    ):
+        self.c_name = c_name
+        self.d_name = d_name
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "c_name", "d_name", "csv_name"
+        ])
+        return SaveExecutiveMessageAfterDocUpload(
+            data.get("c_name"),
+            data.get("d_name"),
+            data.get("csv_name")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "c_name": self.c_name,
+            "d_name": self.d_name,
+            "csv_name": self.csv_name
+        }
 
 class GetSMBulkReportData(Request):
     def __init__(self, c_ids, d_ids, from_date, to_date, r_count, p_count,
@@ -151,7 +176,7 @@ class GetSMBulkReportData(Request):
 
 class ExportSMBulkReportData(Request):
     def __init__(self, c_ids, c_names, d_ids, d_names, from_date, to_date,
-                 child_ids, user_category_id, csv):
+                 child_ids, user_category_id, csv, c_d_ids):
         self.c_ids = c_ids
         self.c_names = c_names
         self.d_ids = d_ids
@@ -161,12 +186,13 @@ class ExportSMBulkReportData(Request):
         self.child_ids = child_ids
         self.user_category_id = user_category_id
         self.csv = csv
+        self.c_d_ids = c_d_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["c_ids", "c_names", "d_ids", "d_names",
                                        "from_date", "to_date", "child_ids",
-                                       "user_category_id", "csv"])
+                                       "user_category_id", "csv", "c_d_ids"])
         return ExportSMBulkReportData(
             data.get("c_ids"),
             data.get("c_names"),
@@ -176,7 +202,8 @@ class ExportSMBulkReportData(Request):
             data.get("to_date"),
             data.get("child_ids"),
             data.get("user_category_id"),
-            data.get("csv")
+            data.get("csv"),
+            data.get("c_d_ids")
         )
 
     def to_inner_structure(self):
@@ -188,7 +215,8 @@ class ExportSMBulkReportData(Request):
             "from_date": self.from_date, "to_date": self.to_date,
             "child_ids": self.child_ids,
             "user_category_id": self.user_category_id,
-            "csv": self.csv
+            "csv": self.csv,
+            "c_d_ids": self.c_d_ids
         }
 
 
@@ -546,7 +574,8 @@ def _init_Request_class_map():
         ExportSMBulkReportData,
         DownloadRejectedSMReportData,
         SaveAction,
-        GetDomains, GetKExecutiveDetails
+        GetDomains, GetKExecutiveDetails,
+        SaveExecutiveMessageAfterDocUpload
     ]
     class_map = {}
     for c in classes:
@@ -1663,6 +1692,20 @@ class GetKExecutiveDetailsSuccess(Response):
         }
 
 
+class SendExecutiveMessageSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SendExecutiveMessageSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+
+
 def _init_Response_class_map():
     classes = [
         GetStatutoryMappingCsvUploadedListSuccess,
@@ -1686,7 +1729,8 @@ def _init_Response_class_map():
         InvalidCsvFile,
         CsvFileCannotBeBlank,
         RejectionMaxCountReached,
-        GetDomainsSuccess, GetKExecutiveDetailsSuccess
+        GetDomainsSuccess, GetKExecutiveDetailsSuccess,
+        SendExecutiveMessageSuccess
     ]
     class_map = {}
     for c in classes:
@@ -1752,4 +1796,23 @@ class KExecutiveInfo(object):
             "d_ids": self.d_ids,
             "emp_code_name": self.emp_code_name,
             "user_id": self.user_id
+        }
+
+
+class CountryDomainIds(object):
+    def __init__(self, c_d_ids):
+        self.c_d_ids = c_d_ids
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "c_d_ids"
+        ])
+        return CountryDomainIds(
+            data.get("c_d_ids")
+        )
+
+    def to_structure(self):
+        return {
+            "c_d_ids": self.c_d_ids
         }

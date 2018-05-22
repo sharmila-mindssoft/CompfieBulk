@@ -435,9 +435,9 @@ var Dropzone = function (_Emitter) {
 
         /**
          * If the filesize is too big.
-         * `{{filesize}}` and `{{maxFilesize}}` will be replaced with the respective configuration values.
+         * `{{selectedFileName}} - {{filesize}}` and `{{maxFilesize}}` will be replaced with the respective configuration values.
          */
-        dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
+        dictFileTooBig: "{{selectedFileName}} is too big ({{filesize}}MiB) in selected file list. \n Max filesize: {{maxFilesize}}MiB.",
 
         /**
          * If the file doesn't match the file type.
@@ -1796,7 +1796,7 @@ var Dropzone = function (_Emitter) {
     value: function accept(file, done) {
         console.log("file.size-> "+ file.size);
       if (file.size > this.options.maxFilesize * 1024 * 1024) {
-        return done(this.options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", this.options.maxFilesize));
+        return done(this.options.dictFileTooBig.replace("{{selectedFileName}}", file.name).replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", this.options.maxFilesize));
       } else if (!Dropzone.isValidFile(file, this.options.acceptedFiles)) {
         return done(this.options.dictInvalidFileType);
       } else if (this.options.maxFiles != null && this.getAcceptedFiles().length >= this.options.maxFiles) {

@@ -166,7 +166,7 @@ class ConvertJsonToCSV(object):
                 approved_by_name = ""
                 if(
                     ac["declined_count"] is not None and ac["declined_count"]
-                ) > 1:
+                ) >= 1:
                     rejected_by_name = SYSTEM_REJECTED_BY
                     approved_by_name = SYSTEM_REJECTED_BY
                 else:
@@ -196,8 +196,9 @@ class ConvertJsonToCSV(object):
                     approve_reject_task = "-"
                     reason_for_rejection = ac["rejected_reason"]
                 if not is_header:
+                    # {'1': ['1', '3', '2'], '3': ['4'], '2': ['1', '3', '2']}
                     self.write_to_csv_statumapping(
-                        request, user_name_list, exported_time
+                        request, user_name_list, exported_time, cnx_pool
                     )
                     is_header = True
                 csv_values = [
@@ -213,9 +214,25 @@ class ConvertJsonToCSV(object):
                 self.FILE_DOWNLOAD_PATH = None
         cnx_pool.close()
 
+
     def write_to_csv_statumapping(
-        self, request, user_name_list, exported_time
+        self, request, user_name_list, exported_time, cnx_pool
     ):
+
+        c_d_ids = convert_array_map(request.c_d_ids)
+        print "c_d_id->>>>>>>> ", c_d_ids
+        # c_d_ids = {'1': ['1', '3', '2'], '2': ['1', '3', '2']}
+
+        c_d_names = ''
+        for cntry_id, dom_ids in c_d_ids.iteritems():
+            cntry_name = getCountryName(cnx_pool, cntry_id)
+            print "cntry_name->> ", cntry_name
+            c_d_names += cntry_name + " - "
+
+            c_d_names += ",".join(getDomainName(cnx_pool, d) for d in dom_ids)
+            c_d_names += " "
+        print "c_d_names->> ", c_d_names
+
         text = "Statutory Mapping - Bulk Upload Report"
         csv_header_line1 = [
             "", "", "", "", "", text, "", "", "", "", ""
@@ -223,7 +240,7 @@ class ConvertJsonToCSV(object):
         self.write_csv(csv_header_line1, None)
         csv_header_line2 = [
             "", "", "", "Country", request.c_names, "", "Domain",
-            request.d_names, "", "", ""
+            c_d_names, "", "", ""
         ]
         self.write_csv(csv_header_line2, None)
         csv_header_line3 = [
@@ -284,7 +301,7 @@ class ConvertJsonToCSV(object):
                 if(
                     cu["declined_count"] is not None and
                     cu["declined_count"]
-                ) > 1:
+                ) >= 1:
                     rejected_by_name = SYSTEM_REJECTED_BY
                     approved_by_name = SYSTEM_REJECTED_BY
                 else:
@@ -407,7 +424,7 @@ class ConvertJsonToCSV(object):
                 if (
                     asr["declined_count"] is not None and
                     asr["declined_count"]
-                ) > 1:
+                ) >= 1:
                     rejected_by_name = SYSTEM_REJECTED_BY
                     approved_by_name = SYSTEM_REJECTED_BY
                 else:
@@ -524,3 +541,51 @@ def getUserNameAndCode(cnx_pool, userId):
         else:
             user_name_res = row["employee_name"]
     return user_name_res
+
+def getCountryName(cnx_pool, countryId):
+    query = "select country_name " + \
+           "from tbl_countries  as t1 where t1.country_id = %s ;"
+    print query
+    condition_val = []
+    condition_val.append(countryId)
+    c = cnx_pool.cursor(dictionary=True, buffered=True)
+    result = c.execute(query, condition_val)
+    result = c.fetchall()
+    print "Res0", result[0]
+    for row in result:
+        countryName = row["country_name"]
+    print "countryName ", countryName
+    return countryName
+
+def getDomainName(cnx_pool, domainId):
+    query = "select domain_name " + \
+           "from tbl_domains  as t1 where t1.domain_id = %s ;"
+    condition_val = []
+    condition_val.append(domainId)
+    c = cnx_pool.cursor(dictionary=True, buffered=True)
+    result = c.execute(query, condition_val)
+    result = c.fetchall()
+    print "Res0", result[0]
+    for row in result:
+        domainName = row["domain_name"]
+    print "domName ", domainName
+    return domainName
+
+def convert_array_map(c_d_ids_list):
+    keymap = []
+    dom_map = {}
+    for i in c_d_ids_list:
+        c = i.split('-')[0]
+        if c not in keymap:
+            keymap.append(c)
+
+    for k in keymap:
+        dom_map[k] = []
+
+    for i in c_d_ids_list:
+        c = i.split('-')[0]
+        d = i.split('-')[1]
+        dom_map[c].append(str(d))
+
+    print dom_map
+    return dom_map
