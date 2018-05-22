@@ -828,11 +828,6 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                             $('#fa-info-circle-'+currentElement).attr(
                                 "data-original-title", viewReason);
                     });
-                   /* if($('#fa-info-circle-'+currentElement).attr("data-original-title").length == 0)
-                    {
-                        $('#view-approve-'+currentElement).prop("checked", false);
-                        $('#view-reject-'+currentElement).prop("checked", false);
-                    }*/
                 }
                 else
                 {
