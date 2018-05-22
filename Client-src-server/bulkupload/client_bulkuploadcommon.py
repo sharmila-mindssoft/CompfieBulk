@@ -55,8 +55,7 @@ def convert_base64_to_file(src_path, file_name, file_content):
 
     if not os.path.exists(file_folder_path):
         os.makedirs(file_folder_path)
-    # framed_file_name = frame_file_name(fileSplitString[0])
-    with io.FileIO(file_path, "wb") as fn:
+    with open(file_path, 'wb') as fn:
         fn.write(file_content.decode('base64'))
 
     return framed_file_name
@@ -82,7 +81,7 @@ def read_data_from_csv(file_name):
     csv_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
     file_path = os.path.join(csv_path, file_name)
     if os.path.exists(file_path):
-        with io.FileIO(file_path, "rb") as fn:
+        with open(file_path, 'rb') as fn:
             rows = csv.reader(
                 fn, quotechar='"', delimiter=',',
                 quoting=csv.QUOTE_ALL, skipinitialspace=True
