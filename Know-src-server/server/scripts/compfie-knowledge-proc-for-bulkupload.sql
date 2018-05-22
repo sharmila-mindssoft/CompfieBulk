@@ -413,15 +413,15 @@ BEGIN
       t4.unit_name,
       (SELECT geography_name FROM tbl_geographies WHERE geography_id = t4.geography_id) AS location,
       SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(t.statutory_mapping,3),1, CHAR_LENGTH(t.statutory_mapping) -4), '>>', 1),'",',1) AS primary_legislation,
-      TRIM(SUBSTRING(SUBSTRING(
-      SUBSTRING_INDEX(SUBSTRING(SUBSTRING(t.statutory_mapping,3),1,CHAR_LENGTH(t.statutory_mapping) -4),'>>',2),
-      CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(t.statutory_mapping,3),1, CHAR_LENGTH(t.statutory_mapping) -4), '>>', 1))+1),3)) AS secondary_legislation,
+      TRIM(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(
+    SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4),'>>',2),
+    CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, 
+        CHAR_LENGTH(statutory_mapping) -4), '>>', 1))+1),3),'",',1)) AS secondary_legislation,
       t1.statutory_provision,
       t1.compliance_task AS compliance_task_name,
       t1.compliance_description,
       t6.unit_id,
       t6.domain_id,
-      -- t6.compliance_id AS assigned_compid,
       t4.unit_id AS c_unit_id,
       t1.domain_id, t.statutory_mapping
     FROM    tbl_compliances AS t1
@@ -611,15 +611,15 @@ BEGIN
   WHERE 
   t1.domain_id = domain_id_ and t1.country_id = country_id_ 
   and SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4), '>>', 1),'",',1) = p_legislation 
-  and TRIM(SUBSTRING(SUBSTRING(
-  SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4),'>>',2),
-  CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4), '>>', 1))+1),3)) = s_legislation
+  and TRIM(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(
+    SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4),'>>',2),
+    CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, 
+        CHAR_LENGTH(statutory_mapping) -4), '>>', 1))+1),3),'",',1)) = s_legislation
   and statutory_provision = s_provision 
   and compliance_task = c_task 
   and compliance_description = c_desc;
 END //
 DELIMITER ;
-
 
 -- --------------------------------------------------------------------------------
 -- Client unit bulk upload - procedures starts

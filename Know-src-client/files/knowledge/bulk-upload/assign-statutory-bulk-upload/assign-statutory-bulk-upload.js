@@ -383,6 +383,12 @@ function pageControls() {
                             );
                         }else if(error == "UnitsNotAssignedToUser"){
                             displayMessage(message.units_not_assigned_to_user);
+                        }else if(error == "UploadedRecordsCountNotMatch"){
+                            displayMessage(
+                                message.uploaded_record_count_invalid.replace(
+                                'UNITS', data.u_names.toString()
+                                )
+                            );
                         }else{
                             displayMessage(error);
                         }
