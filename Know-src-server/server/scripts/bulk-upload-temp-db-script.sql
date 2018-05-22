@@ -61,6 +61,8 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping` (
   PRIMARY KEY (`bulk_statutory_mapping_id`),
   CONSTRAINT `fk_csv_id` FOREIGN KEY (`csv_id`) REFERENCES `tbl_bulk_statutory_mapping_csv` (`csv_id`));
 
+-- Client Unit
+
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_units_csv`;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units_csv` (
   `csv_unit_id` INT NOT NULL AUTO_INCREMENT,
