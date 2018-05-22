@@ -447,14 +447,15 @@ DROP PROCEDURE IF EXISTS `sp_assign_statutory_csv_save`;
 DELIMITER //
 CREATE PROCEDURE `sp_assign_statutory_csv_save`(
 IN uploadedby VARCHAR(200), cl_id INT, le_id INT, d_ids TEXT,
-    le_name VARCHAR(100), d_names TEXT, csv_name VARCHAR(100),no_of_records INT
+    le_name VARCHAR(100), d_names TEXT, csv_name VARCHAR(100),
+    c_name VARCHAR(50), no_of_records INT
 )
 BEGIN
     INSERT INTO tbl_bulk_assign_statutory_csv(client_id, legal_entity_id,
-        domain_ids, legal_entity, domain_names, csv_name, uploaded_by, uploaded_on,
+        domain_ids, country, legal_entity, domain_names, csv_name, uploaded_by, uploaded_on,
         total_records)
-    VALUES (cl_id, le_id, d_ids, le_name, d_names, csv_name, uploadedby,
-        current_ist_datetime(), no_of_records
+    VALUES (cl_id, le_id, d_ids, c_name, le_name, d_names, csv_name,
+        uploadedby, current_ist_datetime(), no_of_records
     );
 END //
 DELIMITER ;
@@ -1285,7 +1286,7 @@ CREATE PROCEDURE `sp_assign_statutory_view_by_filter`(
 BEGIN
 
     SELECT t1.csv_assign_statutory_id, t1.csv_name, t1.legal_entity,
-    t1.client_id,  t1.uploaded_by,
+    t1.client_id,  t1.uploaded_by, t1.country,
     DATE_FORMAT(t1.uploaded_on, '%d-%b-%Y %h:%i') AS uploaded_on,
     (SELECT distinct client_group FROM tbl_bulk_assign_statutory 
       WHERE csv_assign_statutory_id = t1.csv_assign_statutory_id) AS client_group
@@ -1961,7 +1962,7 @@ csvid INT
 )
 BEGIN
   SELECT
-    unit_code
+    unit_code, remarks
     FROM tbl_bulk_assign_statutory WHERE
     legal_entity = legal_entity_ AND domain = domain_ AND unit_code = unitcode_ 
     AND csv_assign_statutory_id = csvid AND action = 2;

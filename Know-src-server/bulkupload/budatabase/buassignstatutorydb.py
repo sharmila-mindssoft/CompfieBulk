@@ -466,6 +466,7 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
 
     client_name = header_info[0]["client_group"]
     legal_entity_name = header_info[0]["legal_entity"]
+    country_name = header_info[0]["country"]
 
     file_name = header_info[0]["csv_name"].split('.')
     remove_code = file_name[0].split('_')
@@ -495,7 +496,8 @@ def get_assign_statutory_by_filter(db, request_frame, session_user):
                 d["compliance_applicable_status"], d["action"], d["remarks"]
             ))
     return bu_as.ViewAssignStatutoryDataSuccess(
-        csv_id, csv_name, client_name, legal_entity_name, upload_by,
+        csv_id, csv_name, client_name, country_name,
+        legal_entity_name, upload_by,
         upload_on,  as_data, total_records
     )
 

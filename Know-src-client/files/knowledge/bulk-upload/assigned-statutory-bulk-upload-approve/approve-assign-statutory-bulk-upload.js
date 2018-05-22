@@ -53,6 +53,7 @@ var ITEMS_PER_PAGE = $('#items_per_page');
 var SUBMIT = $('#submit');
 var CLIENT_GROUP_NAME = $('#client_group_name');
 var LEGAL_ENTITY_NAME = $('#legal_entity_name');
+var COUNTRY_NAME = $('#country_name');
 var UPLOADED_FILE_NAME = $('#uploaded_file_name');
 var UPLOADED_ON = $('#uploaded_on');
 var UPLOADED_BY = $('#uploaded_by');
@@ -612,7 +613,7 @@ keySearchDetailsList = function(d) {
 
     for (e in d) {
         valueOne = d[e].d_name.toLowerCase();
-        valueTwo = d[e].u_name.toLowerCase();
+        valueTwo = (d[e].u_code + ' - ' +d[e].u_name).toLowerCase();
         valueThree = d[e].p_leg.toLowerCase();
         valueFour = d[e].s_leg.toLowerCase();
         valueFive = d[e].s_prov.toLowerCase();
@@ -774,7 +775,9 @@ confirmationAction = function(id, action) {
         target: '#custom_modal_' + action,
         effect: 'contentscale',
         complete: function() {
+            SUBMIT_PASSWORD.focus();
             APPROVE_PASSWORD.focus();
+            REJECT_PASSWORD.focus();
         }
     });
 }
@@ -984,7 +987,7 @@ ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
                 $('.single-reject', clone).prop('checked', false);
             }
             $('.domain-name', clone).html(v.d_name);
-            $('.unit-name span', clone).html(v.u_name);
+            $('.unit-name span', clone).html(v.u_code + ' - ' +v.u_name);
             $('.unit-name i', clone).attr(
                 "title", "Location: " + v.u_location
             );
@@ -1251,6 +1254,7 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
         function(error, response) {
             CLIENT_GROUP_NAME.html(response.cl_name);
             LEGAL_ENTITY_NAME.html(response.le_name);
+            COUNTRY_NAME.html(response.c_name);
             UPLOADED_FILE_NAME.html(response.csv_name);
             UPLOADED_ON.html(response.uploaded_on);
             var j;

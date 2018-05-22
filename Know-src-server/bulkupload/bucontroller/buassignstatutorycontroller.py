@@ -265,7 +265,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
                 session_user.user_id(),
                 cObj._client_id, cObj._legal_entity_id,
                 d_ids, cObj._legal_entity, d_names,
-                csv_name,
+                csv_name, cObj._country,
                 res_data["total"]
             ]
             new_csv_id = save_assign_statutory_csv(db, csv_args)
