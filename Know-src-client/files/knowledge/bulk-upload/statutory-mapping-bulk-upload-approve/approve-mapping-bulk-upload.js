@@ -813,6 +813,8 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                     }
                 });
             });
+
+
             $(".view-reject-check", cloneRow).on('change', function(e) {
                 var currentElement = $(this).attr("data-sno");
                 if(e.target.checked) {
@@ -821,9 +823,16 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                     $('.approve-all').prop("checked", false);
                     displayPopUp('view-reject', parseInt(csvId), data.sm_id,
                         function(viewReason) {
-                            $('#fa-info-circle-'+currentElement).removeClass("default-display-none");
-                            $('#fa-info-circle-'+currentElement).attr("data-original-title", viewReason);
+                            $('#fa-info-circle-'+currentElement).removeClass(
+                                "default-display-none");
+                            $('#fa-info-circle-'+currentElement).attr(
+                                "data-original-title", viewReason);
                     });
+                   /* if($('#fa-info-circle-'+currentElement).attr("data-original-title").length == 0)
+                    {
+                        $('#view-approve-'+currentElement).prop("checked", false);
+                        $('#view-reject-'+currentElement).prop("checked", false);
+                    }*/
                 }
                 else
                 {
@@ -842,6 +851,10 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                         }
                     });
                 }
+                $(".zmdi-close").click(function(){
+                    $('#view-approve-'+currentElement).prop("checked", false);
+                    $('#view-reject-'+currentElement).prop("checked", false);
+                });
 
             });
             VIEW_LIST_CONTAINER.append(cloneRow);
