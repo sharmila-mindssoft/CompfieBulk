@@ -415,7 +415,7 @@ BEGIN
       SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(t.statutory_mapping,3),1, CHAR_LENGTH(t.statutory_mapping) -4), '>>', 1),'",',1) AS primary_legislation,
       TRIM(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(
     SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4),'>>',2),
-    CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, 
+    CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,
         CHAR_LENGTH(statutory_mapping) -4), '>>', 1))+1),3),'",',1)) AS secondary_legislation,
       t1.statutory_provision,
       t1.compliance_task AS compliance_task_name,
@@ -608,15 +608,15 @@ CREATE PROCEDURE `sp_bu_get_compliance_id_by_name`(
 BEGIN
   SELECT compliance_id from tbl_compliances as t1
   INNER JOIN tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-  WHERE 
-  t1.domain_id = domain_id_ and t1.country_id = country_id_ 
-  and SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4), '>>', 1),'",',1) = p_legislation 
+  WHERE
+  t1.domain_id = domain_id_ and t1.country_id = country_id_
+  and SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4), '>>', 1),'",',1) = p_legislation
   and TRIM(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(
     SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4),'>>',2),
-    CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, 
+    CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,
         CHAR_LENGTH(statutory_mapping) -4), '>>', 1))+1),3),'",',1)) = s_legislation
-  and statutory_provision = s_provision 
-  and compliance_task = c_task 
+  and statutory_provision = s_provision
+  and compliance_task = c_task
   and compliance_description = c_desc;
 END //
 DELIMITER ;
@@ -772,12 +772,12 @@ CREATE PROCEDURE `sp_bu_is_valid_le`(
     IN le_name VARCHAR(50), client_group_name VARCHAR(50)
 )
 BEGIN
-  SELECT count(legal_entity_id) AS cntFROM tbl_legal_entities 
+  SELECT count(legal_entity_id) AS cnt FROM tbl_legal_entities
   WHERE legal_entity_name = le_name and client_id = (
     SELECT client_id from tbl_client_groups where group_name = client_group_name
-  ) 
+  );
 END //
-DELIMITER 
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_bu_as_user_countries`;
 DELIMITER //
