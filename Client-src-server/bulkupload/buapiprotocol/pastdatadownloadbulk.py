@@ -38,6 +38,7 @@ class PastDataJsonToCSV(object):
             CSV_DOWNLOAD_URL, file_name)
         self.FILE_PATH = "%s/%s" % (CSV_PATH, file_name)
         self.documents_list = []
+        self.data_available_status = True
         if not os.path.exists(CSV_PATH):
             os.makedirs(CSV_PATH)
         with io.FileIO(self.FILE_PATH, "wb+") as f:
@@ -78,31 +79,31 @@ class PastDataJsonToCSV(object):
         start_count = request.start_count
         statutory_wise_compliances = []
         # To Do - Loop for complaince frequency
-        statutory_wise_compliances = get_download_bulk_compliance_data(
+        statutory_wise_compliances, total_count = get_download_bulk_compliance_data(
                 cnx_pool, unit_id, domain_id, "", compliance_frequency, session_user,
                 start_count, 100
         )
         # sno = 0
-        if not is_header:
-            # csv_headers = [
-            #     "SNO", "Legal_Entity", "Domain", "Unit_Code",
-            #     "Unit_Name", "Primary_Legislation",
-            #     "Secondary_Legislation", "Compliance_Task",
-            #     "Compliance_Description", "Compliance_Frequency",
-            #     "Statutory_Date", "Due_Date", "Assignee",
-            #     "Completion_Date*", "Document_Name"
-            # ]
-            csv_headers = [
-                "Legal_Entity", "Domain", "Unit_Code",
-                "Unit_Name", "Primary_Legislation",
-                "Secondary_Legislation", "Compliance_Task",
-                "Compliance_Description", "Compliance_Frequency",
-                "Statutory_Date", "Due_Date", "Assignee",
-                "Completion_Date*", "Document_Name"
-            ]
+        if total_count > 0:
+            if not is_header:
+                # csv_headers = [
+                #     "SNO", "Legal_Entity", "Domain", "Unit_Code",
+                #     "Unit_Name", "Primary_Legislation",
+                #     "Secondary_Legislation", "Compliance_Task",
+                #     "Compliance_Description", "Compliance_Frequency",
+                #     "Statutory_Date", "Due_Date", "Assignee",
+                #     "Completion_Date*", "Document_Name"
+                # ]
+                csv_headers = [
+                    "Legal_Entity", "Domain", "Unit_Code",
+                    "Unit_Name", "Primary_Legislation",
+                    "Secondary_Legislation", "Compliance_Task",
+                    "Compliance_Description", "Compliance_Frequency",
+                    "Statutory_Date", "Due_Date", "Assignee",
+                    "Completion_Date*", "Document_Name"
+                ]
             self.write_csv(csv_headers, None)
-        if len(statutory_wise_compliances) > 0:
-            for swc in statutory_wise_compliances[0]:
+            for swc in statutory_wise_compliances:
                 level_statu_name = swc.level_1_statutory_name
                 compliances = swc.compliances
                 for comp in compliances:
@@ -122,6 +123,7 @@ class PastDataJsonToCSV(object):
                     ]
                     self.write_csv(None, csv_values)
         else:
+            self.data_available_status = False
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None

@@ -230,8 +230,11 @@ class SourceDB(object):
         due_dates = calculate_final_due_dates(
                 self._source_db, rows, domain_id, unit_id
             )
-        due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
-        due_date = due_date.date().strftime("%Y-%m-%d")
+        try:
+            due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
+            due_date = due_date.date().strftime("%Y-%m-%d")
+        except:
+            return "Not Found"
         if due_date in due_dates[0]:
             return True
         else:
@@ -245,11 +248,17 @@ class SourceDB(object):
         trigger_before_days = int(
             trigger_before_days_string.strip(")(")
         )
-        due_date = datetime.datetime.strptime(
-            due_date, "%d-%b-%Y")
+        try:
+            due_date = datetime.datetime.strptime(
+                due_date, "%d-%b-%Y")
+        except:
+            return True
         start_date = due_date.date() - timedelta(days=trigger_before_days)
-        completion_date = datetime.datetime.strptime(
-            completion_date, "%d-%b-%Y")
+        try:
+            completion_date = datetime.datetime.strptime(
+                completion_date, "%d-%b-%Y")
+        except:
+            return "Invalid Date"
         if completion_date.date() < start_date:
             return "Should be greater than Start Date"
         else:
@@ -315,7 +324,6 @@ class SourceDB(object):
         values = []
         for idx, d in enumerate(data):
             self.connect_source_db(legal_entity_id)
-
             columns = [
             "legal_entity_id", "unit_id", "compliance_id", "start_date",
             "due_date", "completion_date", "completed_by",
@@ -324,12 +332,18 @@ class SourceDB(object):
             ]
 
             # Compliance ID
-            cName = [d["compliance_task_name"], d["compliance_task_name"], d["compliance_description"]]
+            cName = [
+                d["compliance_task_name"], d["compliance_description"],
+                d["compliance_frequency"]
+            ]
+            # q = "SELECT compliance_id FROM tbl_compliances where " + \
+            #     " case when ifnull(document_name,'') = '' then compliance_task = TRIM(%s) " + \
+            #     " else concat(document_name,' - ',compliance_task) = " + \
+            #     " TRIM(%s) end AND compliance_description = TRIM(%s) LIMIT 1 "
             q = "SELECT compliance_id FROM tbl_compliances where " + \
-                " case when ifnull(document_name,'') = '' then compliance_task = TRIM(%s) " + \
-                " else concat(document_name,' - ',compliance_task) = " + \
-                " TRIM(%s) end AND compliance_description = TRIM(%s) LIMIT 1 "
-
+                "compliance_task = TRIM(%s) and compliance_description = " + \
+                "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
+                " tbl_compliance_frequency WHERE frequency=TRIM(%s))"
 
             compliance_id = self._source_db.select_all(q, cName)
             compliance_id = compliance_id[0]["compliance_id"]
@@ -563,7 +577,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                     res.append(msg)
                                 else:
                                     res = [msg]
-                                if "Status" in isFound:
+                                if "Status" in str(isFound):
                                     self._error_summary["inactive_error"] += 1
                                 else:
                                     self._error_summary[

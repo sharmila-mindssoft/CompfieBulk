@@ -7,6 +7,16 @@ function getDomains(le_id, callback) {
     clientApiRequest('bu/completed_task', request, callback);
 }
 
+function getUnits(le_id, domain_id, callback) {
+    var request = [
+        'GetUnits', {
+            'legal_entity_id': le_id,
+            'domain_id': domain_id
+        }
+    ];
+    clientApiRequest('bu/completed_task', request, callback);
+}
+
 function UploadCompletedTaskCurrentYearCSV(args, callback) {
     var request = [
         'UploadCompletedTaskCurrentYearCSV', args
