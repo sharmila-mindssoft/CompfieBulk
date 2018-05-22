@@ -516,7 +516,7 @@ function confirm_alert(event) {
 function RemoveStatutoryCsvData(REMOVE_UNIT_CSV_ID, groupId) {
     var clientId = parseInt(GROUP_ID.val());
     var legalEntityId = parseInt(LEGAL_ENTITY.val());
-    var domainId = DOMAIN.val();
+    var domainId =  DOMAIN.val() ? DOMAIN.val() : 0;
     var unitId = UNIT.val();
 
     requestData = {
@@ -577,7 +577,7 @@ function downloadClick(csv_id, event) {
     var downloadFileFormat = $(event).attr("data-format");
     var clientId = parseInt(GROUP_ID.val());
     var legalEntityId = parseInt(LEGAL_ENTITY.val());
-    var domainId = DOMAIN.val();
+    var domainId =  DOMAIN.val() ? DOMAIN.val() : 0;
     var unitId = '';
     var selectedDomain = [];
     if (UNIT.val()) {

@@ -762,16 +762,35 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     res.append(msg)
             return res
 
+    def is_le_under_client_group(self, client_group_name, legal_entity_name):
+        data = self._source_db.call_proc(
+                    "sp_bu_is_valid_le",
+                    [legal_entity_name, client_group_name]
+                )
+        count = data[0]["cnt"]
+        if count > 0:
+            return True
+        return False
+
     # check uploaded csv validation process
+
     def check_validation(
         self, res, row_idx, data, duplicate_compliance_row, error_count,
         mapped_header_dict
     ):
+        i=0
         for key in self._csv_column_name:
+            i = i+1
             value = data.get(key)
             isFound = ""
             values = value.strip().split(CSV_DELIMITER)
             csvParam = csv_params_as.get(key)
+            if key == "Legal_Entity":
+                client_group_name = data.get("Client_Group")
+                legal_entity_name = value
+                if not self.is_le_under_client_group(client_group_name, legal_entity_name):
+                    self._error_summary["invalid_data_error"] += 1
+                    res = self.make_error_desc(res, "Legal Entity - Not Found")
             for v in [v.strip() for v in values]:
                 if (
                     key == 'Statutory_remarks' and

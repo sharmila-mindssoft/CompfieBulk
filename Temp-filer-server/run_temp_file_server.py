@@ -79,7 +79,7 @@ def validate_session(session_id):
 
 
 def generate_random(length=7):
-    characters = string.ascii_lowercase + string.digits
+    characters = string.digits
     return ''.join(
         random.SystemRandom().choice(characters) for _ in range(length)
     )
@@ -107,14 +107,17 @@ def update_file_status(old_file_name, new_file_name, file_size, csv_id):
     return res_ponse_data
 
 
-def update_file_status_client(file_name, csv_id):
+def update_file_status_client(old_file_name, new_file_name, file_size, csv_id):
     res_ponse_data = None
     _db_con = bulkupload_db_connect()
     _db = Database(_db_con)
     try:
         _db.begin()
         print "update file status"
-        if _db.update_file_status_client(csv_id, file_name) is None:
+        if (
+            _db.update_file_status_client(
+                old_file_name, csv_id, new_file_name, file_size)
+        ) is None:
             res_ponse_data = False
             print "update failed"
         _db.commit()
@@ -155,6 +158,33 @@ def update_file_ddwnload_status(csv_id, status):
     return res_ponse_data
 
 
+def update_document_download_status(csv_id, status):
+    res_ponse_data = None
+    _db_con = bulkupload_db_connect()
+    print "DB CON ", _db_con
+    _db = Database(_db_con)
+    print "_db- >", _db
+    try:
+        _db.begin()
+        print "update past data doc file status *** db ", _db
+        db_stat = _db.update_pastdata_document_status(csv_id, status)
+        print "db_stat-> ", db_stat
+        if db_stat is None:
+            res_ponse_data = False
+            print "update failed"
+        _db.commit()
+    except Exception, e:
+        print "In Exception", e
+        _db.rollback()
+
+    finally:
+        _db.close()
+        _db_con.close()
+
+    print "res_ponse_data-> ", res_ponse_data
+    return res_ponse_data
+
+
 def delete_declined_docs(csv_id):
     print "csv_id-> ", csv_id
     res_ponse_data = None
@@ -180,7 +210,6 @@ def delete_declined_docs(csv_id):
 
     print "res_ponse_data-> ", res_ponse_data
     return res_ponse_data
-
 
 
 @app.route('/temp/upload', methods=['POST'])
@@ -240,12 +269,17 @@ def upload_client():
     print request
     if request.method == 'POST':
         f = request.files['file']
-
         session_id = request.args.get('session_id')
         session_output = validate_session(session_id)
 
+        random_string = generate_random(5)
+        fn = f.filename
+        fname = (fn).split(".")
+        random_file_name = fname[0] + '-' + random_string + "." + fname[1]
         csvid = request.args.get("csvid")
-        load_path = os.path.join(app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], csvid)
+        load_path = os.path.join(
+            app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], csvid
+        )
         if not os.path.exists(load_path):
             os.makedirs(load_path)
             os.chmod(load_path, 0777)
@@ -256,17 +290,24 @@ def upload_client():
         zip_ref = zipfile.ZipFile(zip_f_name, 'r')
         zip_ref.extractall(load_path)
         zip_ref.close()
+        os.rename(actual_file, load_path + '/' + random_file_name)
+        renamed_file = os.path.join(load_path, random_file_name)
+        renamed_file_size = os.path.getsize(renamed_file)
         os.remove(zip_f_name)
-        if update_file_status_client(f.filename, csvid) is False :
+        if update_file_status_client(
+            f.filename, random_file_name, renamed_file_size, csvid
+        ) is False:
             return "update failed"
 
         return "success"
+
 
 def get_zip_file(folder_name):
     zip_f_name = os.path.join(
         app.config['UPLOAD_PATH'], "%s.zip" % (folder_name)
     )
     return zip_f_name
+
 
 def zip_folder(folder_name, folder_path):
     assert folder_name not in zipping_in_process
@@ -280,7 +321,7 @@ def zip_folder(folder_name, folder_path):
     print files
     with zipfile.ZipFile(zip_f_name, "w", zipfile.ZIP_DEFLATED) as newzip:
         for f in files:
-            arcname = f[len(folder_path)+0:]
+            arcname = f[len(folder_path) + 0:]
             newzip.write(f, arcname)
     print "*" * 10
     print "Completed", zip_f_name
@@ -350,6 +391,22 @@ def removefile():
     rmtree(folder_path)
     return "removed zip file"
 
+
+@app.route('/temp/removeclientfile', methods=['POST'])
+def removeclientfile():
+    folder_name = request.args.get('csvid')
+    assert folder_name is not None
+    folder_path = os.path.join(app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], folder_name)
+    zip_f_name = get_client_zip_file(folder_name)
+    if not os.path.exists(folder_path):
+        return "Error"
+    if not os.path.isfile(zip_f_name):
+        return "file not found"
+    os.remove(zip_f_name)
+    rmtree(folder_path)
+    return "removed zip file"
+
+
 @app.route('/uploadedformat/<csvid>/<filename>', methods=['GET'])
 def downloadformatfile(csvid, filename):
     print csvid, filename
@@ -365,11 +422,87 @@ def downloadformatfile(csvid, filename):
     )
 
 
+@app.route('/temp/docsubmit', methods=['POST'])
+def approve_client():
+    print "CAME IN Client APPROVE"
+    folder_name = request.args.get('csvid')
+    print "folder_name-> ", folder_name
+    print "country id>>", request.args.get('c_id')
+    assert folder_name is not None
+    folder_path = os.path.join(
+        app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], folder_name
+    )
+    print "Folder path->> ", folder_path
+
+    if not os.path.exists(folder_path):
+        return "Error"
+    if folder_name in zipping_in_process:
+        return "Already Started"
+    thread.start_new_thread(client_zip_folder, (folder_name, folder_path))
+    print "Thred ", thread
+    print " at before started zippng"
+    return "started zipping"
+
+
+def client_zip_folder(folder_name, folder_path):
+    assert folder_name not in zipping_in_process
+    zipping_in_process.append(folder_name)
+    file_status[folder_name] = "Zipping Started"
+    zip_f_name = get_client_zip_file(folder_name)
+    print "folder_path-> ", folder_path
+    files = glob.glob(os.path.join(folder_path, "*"))
+    print "Files ->", files
+    files = [x for x in files if os.path.isfile(x)]
+    print files
+    with zipfile.ZipFile(zip_f_name, "w", zipfile.ZIP_DEFLATED) as newzip:
+        for f in files:
+            arcname = f[len(folder_path) + 0:]
+            newzip.write(f, arcname)
+    print "@" * 10
+    print "Completed", zip_f_name
+    print "@" * 10
+    if update_document_download_status(folder_name, "completed") is False:
+        return "download status update failed"
+    zipping_in_process.remove(folder_name)
+    file_status[folder_name] = "Zipping Completed"
+
+
+def get_client_zip_file(folder_name):
+    zip_f_name = os.path.join(
+        app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], "%s.zip" % (folder_name)
+    )
+    return zip_f_name
+
+
+@app.route('/temp/downloadclientfile', methods=['GET'])
+def download_client_file():
+    print "in download client file"
+    folder_name = request.args.get('csvid')
+    assert folder_name is not None
+    print "folder Name-> ", folder_name
+    folder_path = os.path.join(
+        app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], folder_name)
+    print "FOLDER pATH IN DOWNLOAD"
+    zip_f_name = get_client_zip_file(folder_name)
+    print 'Path Exists ->>>', os.path.exists(folder_path)
+    print 'zip size ->>> ', os.path.getsize(folder_path)
+
+    if not os.path.exists(folder_path):
+        return "Error"
+    if not os.path.isfile(zip_f_name):
+        return "file not found"
+    return send_from_directory(
+        directory=app.config['CLIENT_DOCUMENT_UPLOAD_PATH'],
+        filename="%s.zip" % (folder_name,)
+    )
+
+
 args_parser = argparse.ArgumentParser()
 args_parser.add_argument(
     "port",
     help="port to listen at (PORT)"
 )
+
 
 def parse_port(port):
     try:
@@ -378,6 +511,7 @@ def parse_port(port):
         return port
     except Exception:
         return None
+
 
 def parse_ip_address(ip_address):
     try:
@@ -396,6 +530,7 @@ def parse_ip_address(ip_address):
     assert port is not None
     return ip, port
 
+
 def main():
     args = args_parser.parse_args()
 
@@ -409,6 +544,7 @@ def main():
         "threaded": True
     }
     app.run(host="0.0.0.0", port=port, **settings)
+
 
 if __name__ == "__main__":
     main()

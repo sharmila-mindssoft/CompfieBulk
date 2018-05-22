@@ -32,6 +32,7 @@ def parse_ip_address(ip_address):
     assert port is not None
     return ip, port
 
+
 def main():
     args = args_parser.parse_args()
     address = parse_ip_address(args.address)

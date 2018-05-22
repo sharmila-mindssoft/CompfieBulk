@@ -389,7 +389,7 @@ def get_user_service_provider_wise(db, service_provider_id):
     if service_provider_id != None:
         q= " select IFNULL(Concat(T01.user_id, '-', GROUP_CONCAT(T02.legal_entity_id)),0) as user_id from tbl_users as T01 " + \
             " inner join tbl_user_legal_entities as T02 ON T01.user_id = T02.user_id " + \
-            " where T01.user_category_id = 6 and T01.service_provider_id = %s "
+            " where T01.user_category_id = 6 and T01.service_provider_id = %s group by T01.user_id"
         row = db.select_all(q, [service_provider_id])
         results = []
         for r in row:

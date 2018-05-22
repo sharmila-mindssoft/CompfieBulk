@@ -7,7 +7,8 @@ function initMethods() {
         uploadCSVFile: uploadCSVFile,
         getDownloadData: getDownloadData,
         saveBulkRecords: saveBulkRecords,
-        GetCompletedTaskCsvUploadedList: GetCompletedTaskCsvUploadedList
+        GetCompletedTaskCsvUploadedList: GetCompletedTaskCsvUploadedList,
+        uploadFile : uploadFile
     };
 }
 

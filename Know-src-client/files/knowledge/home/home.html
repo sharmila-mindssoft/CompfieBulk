@@ -1,19 +1,15 @@
-{% extends "files/knowledge/common/html/container.html" %}
-{% block content %}
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="container">
-  <div class="row">
-    <div class="col-sm-12 m-t-30 dashboard-home">
-      <h4 class="page-title text-center"></h4>
+    <div class="row">
+        <div class="col-sm-12 m-t-30 dashboard-home">
+            <h4 class="page-title text-center"></h4>
+        </div>
     </div>
-  </div>
-  <div class="row">
-    <!-- end col -->
-  </div>
+    <div class="row">
+        <!-- end col -->
+    </div>
 </div>
 <!-- content -->
-
+{% endblock %} {% block contentscript %}
+<script type="text/javascript" src="/script/home/home.js"></script>
 {% endblock %}
-{% block contentscript %}
-    <script type="text/javascript" src="/script/home/home.js"></script>
-{% endblock %}
-

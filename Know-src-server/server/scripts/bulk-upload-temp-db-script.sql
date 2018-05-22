@@ -191,6 +191,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv` (
   `total_documents` INT NOT NULL,
   `uploaded_documents` INT NOT NULL,
   `upload_status` TINYINT default 0,
+  `file_download_status` VARCHAR(50) NULL,
   PRIMARY KEY (`csv_past_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_past_data`;
@@ -211,7 +212,17 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_past_data` (
   `assignee` VARCHAR(50) not null,
   `completion_date` DATETIME not null,
   `document_name` text not null,
-  `document_size` int(11) DEFAULT null,
+  `document_upload_status` TINYINT null,
+  `document_file_size` FLOAT DEFAULT '0',
 PRIMARY KEY (`bulk_past_data_id`),
 CONSTRAINT `fk_csv_past_id` FOREIGN KEY (`csv_past_id`) REFERENCES `tbl_bulk_past_data_csv` (`csv_past_id`));
 
+
+ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data`
+ADD COLUMN `document_upload_status` TINYINT NULL AFTER `document_name`,
+ADD COLUMN `document_file_size` FLOAT DEFAULT '0' AFTER `document_upload_status`;
+
+
+
+ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv`
+ADD COLUMN `file_download_status` VARCHAR(50) NULL AFTER `upload_status`;

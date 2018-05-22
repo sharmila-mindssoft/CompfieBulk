@@ -123,7 +123,7 @@ BEGIN
   IF @u_cat_id = 5 THEN
     SELECT t2.legal_entity_id, t2.legal_entity_name, t2.is_closed, t2.is_approved,
     t2.country_id,
-    (SELECT country_nameFROM tbl_countries WHERE country_id=t2.country_id)
+    (SELECT country_name FROM tbl_countries WHERE country_id=t2.country_id)
     AS country_name, t2.business_group_id,
     DATEDIFF(t2.contract_to,curdate()) AS le_contract_days,
     t3.user_id
@@ -423,7 +423,7 @@ BEGIN
       t6.unit_id,
       t6.domain_id,
       t4.unit_id AS c_unit_id,
-      t1.domain_id
+      t1.domain_id, t.statutory_mapping
     FROM    tbl_compliances AS t1
       INNER JOIN
           tbl_statutory_mappings AS t ON t1.statutory_mapping_id = t.statutory_mapping_id
@@ -764,6 +764,21 @@ DELIMITER ;
 
 -- Remove procedure
 DROP PROCEDURE IF EXISTS `sp_usermapping_statutory_unit_details`;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_is_valid_le`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_is_valid_le`(
+    IN le_name VARCHAR(50), client_group_name VARCHAR(50)
+)
+BEGIN
+  SELECT count(legal_entity_id) AS cntFROM tbl_legal_entities 
+  WHERE legal_entity_name = le_name and client_id = (
+    SELECT client_id from tbl_client_groups where group_name = client_group_name
+  ) 
+END //
+DELIMITER 
 
 DROP PROCEDURE IF EXISTS `sp_bu_as_user_countries`;
 DELIMITER //
