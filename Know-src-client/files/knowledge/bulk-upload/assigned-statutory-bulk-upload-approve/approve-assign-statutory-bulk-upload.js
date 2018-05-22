@@ -1386,6 +1386,6 @@ STATUTE = new ApproveAssignStatutoryBU();
 $(document).ready(function() {
     STATUTE.pageLoad();
     PageControls();
-    loadItemsPerPage();
+    bulkLoadItemsPerPage();
     $(".nicescroll").niceScroll();
 });
