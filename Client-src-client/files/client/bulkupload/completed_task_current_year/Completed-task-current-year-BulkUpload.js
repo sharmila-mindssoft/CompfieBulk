@@ -25,7 +25,7 @@ var LEGALENTITYNAMEACUPLOAD = $(".legal-entity-name-ac-upload");
 var ListContainer = $('.tbody-ct-csv-list');
 var ListRowTemplate = $('#templates .table-ct-csv-info .table-row');
 
-var txtdomain = $("#txtdomain");
+var txtDomain = $("#txtdomain");
 var hdnDomain = $("#hdnDomain");
 var divDomain = $("#divDomain");
 
@@ -55,11 +55,11 @@ var INACTIVEERROR = $('.masterdatainactive');
 var INVALIDFILEFORMATERROR = $('.invalidfileformat');
 var INVALIDFILENAME = null;
 
-var unit_list_map = {};
-var LEGAL_ENTITY_USR = [];
+var unitListMap = {};
+var LEGALENTITYUSR = [];
 
 
-txtdomain.keyup(function(e) {
+txtDomain.keyup(function(e) {
     var condition_fields = [];
     var condition_values = [];
     var text_val = $(this).val();
@@ -67,7 +67,7 @@ txtdomain.keyup(function(e) {
         "d_name", "d_id",
         function(val) {
             loadUnits(parseInt(LegalEntityId.val()), parseInt(val));
-            onAutoCompleteSuccess(txtdomain, hdnDomain, val);
+            onAutoCompleteSuccess(txtDomain, hdnDomain, val);
         }, condition_fields, condition_values);
 });
 
@@ -85,11 +85,12 @@ txtUnit.keyup(function(e) {
 });
 
 function loadUnits(le_id, domain_id) {
+    var unitList = [];
     buClient.getUnits(le_id, domain_id, function(error, response) {
         if (error == null) {
             unitList = response.user_units;
             $.each(unitList, function(key, u) {
-                unit_list_map[parseInt(u["unit_id"])] = u["unit_code"];
+                unitListMap[parseInt(u["unit_id"])] = u["unit_code"];
                 u["unit_name"] = u["unit_code"]+"-"+u["unit_name"];
             });
         }
@@ -110,22 +111,24 @@ LEGALENTITYNAMEUPLOAD.keyup(function(e) {
         e, ACLEGALENTITYUPLOAD, LEGALENTITYIDUPLOAD, text_val,
         LEGAL_ENTITIES, "le_name", "le_id",
         function(val) {
-            onAutoCompleteSuccess(LEGALENTITYNAMEUPLOAD, LEGALENTITYIDUPLOAD, val);
+            onAutoCompleteSuccess(
+                LEGALENTITYNAMEUPLOAD, LEGALENTITYIDUPLOAD, val
+            );
         });
 });
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
-    // alert(id_element[0].id);
-    // hdn_legal_entity_id_upload
     if (id_element[0].id == 'hdn_legal_entity_id') {
         getPastRecords(parseInt(LegalEntityId.val()));
     }
 }
 
 function loadEntityDetails() {
-    LEGAL_ENTITY_USR = [];
+    var LE_NAME = "";
+    var LE_ID = "";
+    LEGALENTITYUSR = [];
     if (LEGAL_ENTITIES.length > 1) {
         LegalEntityNameLabel.hide();
         LEGALENTITYNAMELABELUPLOAD.hide();
@@ -134,15 +137,15 @@ function loadEntityDetails() {
 
         for (var i = 0; i < LEGAL_ENTITIES.length; i++) {
             console.log(LEGAL_ENTITIES[i]["le_id"]);
-            LEGAL_ENTITY_USR.push(LEGAL_ENTITIES[i]["le_id"]);
+            LEGALENTITYUSR.push(LEGAL_ENTITIES[i]["le_id"]);
         }
-        console.log("loadEntityDetails>1>>" + LEGAL_ENTITY_USR);
+        console.log("loadEntityDetails>1>>" + LEGALENTITYUSR);
 
     } else {
-        var LE_NAME = LEGAL_ENTITIES[0]["le_name"];
-        var LE_ID = LEGAL_ENTITIES[0]["le_id"];
-        LEGAL_ENTITY_USR.push(LE_ID);
-        console.log("loadEntityDetails=1>" + LEGAL_ENTITY_USR);
+        LE_NAME = LEGAL_ENTITIES[0]["le_name"];
+        LE_ID = LEGAL_ENTITIES[0]["le_id"];
+        LEGALENTITYUSR.push(LE_ID);
+        console.log("loadEntityDetails=1>" + LEGALENTITYUSR);
 
         LegalEntityNameLabel.show();
         LEGALENTITYNAMELABELUPLOAD.show();
@@ -162,9 +165,7 @@ function getPastRecords(legalEntity) {
     displayLoader();
 
     function onSuccess(data) {
-        // unitsList = data["in_units"];
         domainList = data.domains;
-        // loadUnit();
         hideLoader();
     }
 
@@ -188,7 +189,9 @@ function validateUpload() {
     //     txt_legal_entity_name_upload.focus();
     //     return false;
     // }else 
-    if ($('#fileInput').val() == "" && buCtPage._ActionMode != 'upload') {
+    if (
+        $('#fileInput').val() == "" && buCtPage._ActionMode != 'upload'
+    ) {
         displayMessage("File required");
         $('#myModal').modal('hide');
         return false;
@@ -196,8 +199,6 @@ function validateUpload() {
         $('#myModal').modal('show');
         console.log("_ActionMode>>", buCtPage._ActionMode);
         if (buCtPage._ActionMode == "add") {
-            // alert(LEGALENTITYIDUPLOAD.val());
-
             var args = {
                 "csv_name": csvInfo["file_name"],
                 "csv_data": csvInfo["file_content"],
@@ -205,7 +206,8 @@ function validateUpload() {
                 "legal_entity_id": parseInt(LEGALENTITYIDUPLOAD.val())
             };
 
-            buClient.UploadCompletedTaskCurrentYearCSV(args, function(error, data) {
+            buClient.UploadCompletedTaskCurrentYearCSV(
+                args, function(error, data) {
                 console.log("error:" + error);
                 if (error == "InvalidCsvFile"){
                     $('#myModal').modal('hide');
@@ -217,10 +219,12 @@ function validateUpload() {
                     hideLoader();
                 }
                 else if (error == null) {
-                    var csv_split_name = data.csv_name.substring(0, data.csv_name.lastIndexOf("_"));
+                    var csv_split_name = data.csv_name.substring(
+                        0, data.csv_name.lastIndexOf("_"));
                     $('#myModal').modal('hide');
                     TOTALRECORD.text(data.total);
-                    VALIDRECORD.text(parseInt(data.valid) - parseInt(data.invalid));
+                    VALIDRECORD.text(parseInt(data.valid) - parseInt(
+                        data.invalid));
                     INVALIDRECORD.text(data.invalid);
                     INVALIDFILENAME = null;
                     INVALIDDATE.text("0");
@@ -238,7 +242,8 @@ function validateUpload() {
                     $('#hdnCsvId').val(data.new_csv_id);
                     csvId = data.new_csv_id;
                     $('.successFileName').text(csv_split_name);
-                    csv_path = "../../../../../uploaded_file/csv/" + data.csv_name;
+                    csv_path = "../../../../../uploaded_file/csv/" + 
+                                    data.csv_name;
                     $('.uploaded-data').attr("href", csv_path);
                     $('.uploaded-data').attr("download", data.csv_name);
 
@@ -251,7 +256,6 @@ function validateUpload() {
                     } else {
                         $('.divSuccessDocument').hide();
                         $('#divSuccessbutton').show();
-                        // buCtPage._ActionMode = "upload";
                         BTNUPLOAD.hide();
                     }
 
@@ -260,25 +264,28 @@ function validateUpload() {
                     $('#divFileUpload').hide();
                     $('#divSuccessFile').show();
 
-                    displaySuccessMessage("Records uploaded successfully");
+                    displaySuccessMessage(
+                        "Records uploaded successfully");
                     hideLoader();
                 } else {
                     $('#myModal').modal('hide');
                     displayMessage(message.upload_failed);
                     INVALIDFILENAME = data.invalid_file.split('.');
                     TOTALRECORD.text(data.total);
-                    var getValidCount = (parseInt(data.total) - parseInt(data.invalid));
+                    var getValidCount = (
+                        parseInt(data.total) - parseInt(data.invalid));
                     VALIDRECORD.text(getValidCount);
                     INVALIDRECORD.text(data.invalid);
                     INVALIDDATE.text(data.invalid_date);
                     DUPLICATEERROR.text(data.duplicate_error);
                     MANDATORYERROR.text(data.mandatory_error);
                     LENGTHERROR.text(data.max_length_error);
-                    getInvaliddataCount = parseInt(data.invalid_char_error) +
+                    getInvaliddataCount = parseInt(
+                        data.invalid_char_error) +
                         parseInt(data.invalid_data_error);
-                    // INACTIVEERROR.text(getInvaliddataCount);
                     INACTIVEERROR.text(data.inactive_error);
-                    INVALIDFILEFORMATERROR.text(data.invalid_file_format);
+                    INVALIDFILEFORMATERROR.text(
+                        data.invalid_file_format);
                     $('.dropbtn').show();
                     $('.view-summary').show();
 
@@ -289,14 +296,14 @@ function validateUpload() {
                     $('.divSuccessDocument').hide();
                     $('#divSuccessbutton').hide();
                     base_path = "../download/invalid"
-                    csv_path = base_path + "/csv/" + INVALIDFILENAME[0] +
-                        '.csv';
-                    xls_path = base_path + "/xlsx/" + INVALIDFILENAME[0] +
-                        '.xlsx';
-                    ods_path = base_path + "/ods/" + INVALIDFILENAME[0] +
-                        '.ods';
-                    txt_path = base_path + "/txt/" + INVALIDFILENAME[0] +
-                        '.txt';
+                    csv_path = base_path + "/csv/" + 
+                                INVALIDFILENAME[0] + '.csv';
+                    xls_path = base_path + "/xlsx/" 
+                                + INVALIDFILENAME[0] + '.xlsx';
+                    ods_path = base_path + "/ods/" 
+                                + INVALIDFILENAME[0] + '.ods';
+                    txt_path = base_path + "/txt/" 
+                                + INVALIDFILENAME[0] + '.txt';
                     $('#csv').attr("href", csv_path);
                     $('#excel').attr("href", xls_path);
                     $('#ods').attr("href", ods_path);
@@ -318,7 +325,8 @@ document.getElementById("txt").addEventListener("click", function() {
         $.get(
             "../download/invalid/txt/" + INVALIDFILENAME[0] + ".txt",
             function(data) {
-                download(INVALIDFILENAME[0] + ".txt", "text/plain", data);
+                download(
+                    INVALIDFILENAME[0] + ".txt", "text/plain", data);
             },
             'text');
     }
@@ -326,7 +334,8 @@ document.getElementById("txt").addEventListener("click", function() {
 
 function download(filename, mime_type, text) {
     var element = document.createElement('a');
-    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    var href = 'data:' + mime_type + ';charset=utf-8,' 
+                + encodeURIComponent(text);
     element.setAttribute('href', href);
     element.setAttribute('download', filename);
 
@@ -392,7 +401,7 @@ BulkCompletedTaskCurrentYear.prototype.showList = function() {
     var t_this = this;
     var args = {
         "legal_entity_id": parseInt(LegalEntityId.val()),
-        "legal_entity_list": LEGAL_ENTITY_USR
+        "legal_entity_list": LEGALENTITYUSR
     };
 
     displayLoader();
@@ -410,34 +419,43 @@ BulkCompletedTaskCurrentYear.prototype.showList = function() {
     );
 };
 
-BulkCompletedTaskCurrentYear.prototype.renderList = function(list_data) {
+BulkCompletedTaskCurrentYear.prototype.renderList = function(
+    list_data) {
     // console.log("LEGAL_ENTITIES> " + LEGAL_ENTITIES);
     var t_this = this;
     var j = 1;
+    var tableRow4 = null;
+    var clone4 = null;
+    var balance = null;
+    var cloneRow  = null;
+    var cname_split = null;
+    var cname = null;
     ListContainer.find('tr').remove();
     if (list_data.length == 0) {
         ListContainer.empty();
-        var tableRow4 = $(
+        tableRow4 = $(
             '#no_record_templates .table-no-content .table-row-no-content'
         );
-        var clone4 = tableRow4.clone();
+        clone4 = tableRow4.clone();
         $('.no-records', clone4).text('No Records Found');
         ListContainer.append(clone4);
     } else {
         $.each(list_data, function(idx, data) {
-            var balance = data.no_of_documents - data.bu_uploaded_documents;
-            var cloneRow = ListRowTemplate.clone();
-            var cname_split = data.csv_name.split("_");
+            balance = data.no_of_documents - data.bu_uploaded_documents;
+            cloneRow = ListRowTemplate.clone();
+            cname_split = data.csv_name.split("_");
             cname_split.pop();
-            var cname = cname_split.join("_");
+            cname = cname_split.join("_");
             $('.sno', cloneRow).text(j);
             $('.legal-entity', cloneRow).text(data.legal_entity_name);
             $('.csv-name', cloneRow).text(cname);
             $('.uploaded-on', cloneRow).text(data.uploaded_on);
             $('.tot-records', cloneRow).text(data.total_records);
             $('.req-docs', cloneRow).text(data.total_documents);
-            $('.uploaded-docs', cloneRow).text(data.bu_uploaded_documents);
-            $('.remaining-docs', cloneRow).text(data.remaining_documents);
+            $('.uploaded-docs', cloneRow).text(
+                data.bu_uploaded_documents);
+            $('.remaining-docs', cloneRow).text(
+                data.remaining_documents);
             csvId = data.csv_id;
             docNames = data.doc_names;
             $('.upload i', cloneRow).on('click', function() {
@@ -452,11 +470,10 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(list_data) {
 };
 
 BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
-    // this.showAddScreen();
-    resetEdit();
-    // data
-    console.log("data>>" + JSON.stringify(data));
     var uploadedCsvName = data.csv_name;
+    var csv_split_name = null;
+    resetEdit();
+    console.log("data>>" + JSON.stringify(data));
     $("#dom_id_hdn").val(data.domain_id);
     $("#unit_id_hdn").val(data.unit_id);
     $("#start_date_hdn").val(data.start_date);
@@ -464,7 +481,8 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     $('#hdnCsvId').val(data.csv_past_id);
     csvId = data.csv_past_id;
 
-    var csv_split_name = uploadedCsvName.substring(0, uploadedCsvName.lastIndexOf("_"));
+    csv_split_name = uploadedCsvName.substring(
+        0, uploadedCsvName.lastIndexOf("_"));
     $('.successFileName').text(csv_split_name);
     csv_path = "../../../../../uploaded_file/csv/" + uploadedCsvName;
     $('.uploaded-data').attr("href", csv_path);
@@ -478,12 +496,22 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
 };
 
 
-BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
+BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(
+    error) {
     displayMessage(error);
 };
 
 function downloadData() {
     var legalEntityName;
+    var domainName = txtDomain.val();
+    var unitName = txtUnit.val();
+    var leId = LegalEntityId.val();
+    var domainId = hdnDomain.val();
+    var unitId = hdnUnit.val();
+    var unitCode = unitListMap[unitId];
+    var frequency = "Periodical";
+    var startCount = 0;
+    var download_url  = null;
 
     if (LegalEntityId.val().trim() == "") {
         displayMessage(message.legalentity_required);
@@ -492,7 +520,7 @@ function downloadData() {
     }
     if (hdnDomain.val().trim() == "") {
         displayMessage(message.domain_required);
-        txtdomain.focus();
+        txtDomain.focus();
         return false;
     }
     if (hdnUnit.val().trim() == "") {
@@ -506,21 +534,13 @@ function downloadData() {
         legalEntityName = LegalEntityNameLabel.text();
     }
 
-    var domainName = txtdomain.val();
-    var unitName = txtUnit.val();
-    var leId = LegalEntityId.val();
-    var domainId = hdnDomain.val();
-    var unitId = hdnUnit.val();
-    var unitCode = unit_list_map[unitId];
-    var frequency = "Periodical";
-    var startCount = 0;
-
     buClient.getDownloadData(
-        parseInt(leId), parseInt(domainId), parseInt(unitId), frequency, startCount,
+        parseInt(leId), parseInt(domainId), parseInt(unitId),
+        frequency, startCount,
         legalEntityName, domainName, unitName, unitCode,
         function(error, data) {
             if (error == null) {
-                var download_url = data.link;
+                download_url = data.link;
                 console.log("download_url>>>>> " + download_url);
                 if (download_url != null) {
                     window.open(download_url, '_blank');
@@ -556,21 +576,6 @@ function submitUpload() {
     var dom_id = $("#dom_id_hdn").val();
     var unit_id = $("#unit_id_hdn").val();
     var start_date = $("#start_date_hdn").val();
-    /*
-    client_mirror.uploadComplianceTaskFile(
-        parseInt(LEGALENTITYIDUPLOAD.val()),
-        getCountryId(LEGALENTITYIDUPLOAD.val()),
-        parseInt(dom_id), parseInt(unit_id),
-        start_date, file_list,
-        function(error, response) {
-            if (error == null) {
-                hideLoader();
-            } else {
-                console.log(error);
-                hideLoader();
-            }
-    });*/
-
     var args = {
         "new_csv_id": parseInt($('#hdnCsvId').val()),
         "country_id": getCountryId(LEGALENTITYIDUPLOAD.val()),
@@ -592,12 +597,8 @@ function submitUpload() {
 }
 
 
-// $(function() {
-//     loadEntityDetails();
-
-// });
-
-BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(error) {
+BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(
+    error) {
     displayMessage(error);
 };
 
@@ -606,7 +607,6 @@ function file_upload_rul() {
 
     var file_base_url = "/client/temp/upload?session_id=" +
         session_id + "&csvid=" + csvId;
-    console.log(file_base_url);
     return file_base_url;
 }
 
@@ -635,21 +635,12 @@ function resetEdit() {
 
     $('.divSuccessDocument').show();
     $('.bu-doc-summary').show();
-    // $('.successFileName').show();
     $('#divSuccessFile').show();
 
     $('.view-summary').hide();
     $('#divSuccessbutton').hide();
     $('.invaliddata').hide();
     $('#divFileUpload').hide();
-
-
-    // $('#hdnCsvId').val(data.new_csv_id);
-    // csvId = data.new_csv_id;
-    // $('.successFileName').text(csv_split_name);
-    // csv_path = "../../../../../uploaded_file/csv/" + csv_split_name + '.csv';
-    // $('.uploaded_data').attr("href", csv_path);
-    // $('.uploaded_data').attr("download", csv_path);
 
     buCtPage._ActionMode = "upload";
     UploadFile.val("");
