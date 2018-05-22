@@ -1156,9 +1156,12 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     if len(msg) > 0:
                         res = make_error_desc(res, msg)
 
-                print "res-> ", res
-
-                if key == "Task_ID" and res is True:
+                if (
+                    key == "Task_ID" and str(res).find("Task_ID -") == -1 and
+                    str(res).find("Statutory -") == -1 and
+                    str(res).find("Statutory_Provision -") == -1 and
+                    str(res).find("Compliance_Task -") == -1
+                ):
                     if v in duplicate_task_ids:
                         dup_error = "Task_ID - Duplicate data"
                         self._error_summary["duplicate_error"] += 1
@@ -1182,7 +1185,14 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         dup_error = "Task_ID - Duplicate in Knowledge DB"
                         res = make_error_desc(res, dup_error)
 
-                if (key == "Compliance_Task") and res is True:
+                print "res-> ", res
+                print "comp task ->> ", str(res).find("Statutory_Provision -")
+                if (
+                    key == "Compliance_Task" and
+                    str(res).find("Statutory -") == -1 and
+                    str(res).find("Statutory_Provision -") == -1 and
+                    str(res).find("Compliance_Task -") == -1
+                ):
                     for x in duplicate_compliance_row:
                         if (
                             x[0] == v and
