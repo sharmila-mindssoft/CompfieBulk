@@ -1109,6 +1109,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_rejected_cu_csv_report`(IN `cg_id` INT(11), IN `csv_id` INT(11), IN `user_id` INT(11))
 BEGIN
  SELECT
+  u.country,
   u.legal_entity,
   u.division,
   u.category,

@@ -478,14 +478,14 @@ def download_rejected_cu_report(db, request_frame, session_user):
     user_id = session_user.user_id()
     sheet_name = "Rejected Client Unit"
 
-    csv_header_key = ["legal_entity", "division", "category",
+    csv_header_key = ["country", "legal_entity", "division", "category",
                       "geography_level", "unit_location", "unit_code",
                       "unit_name", "address",
                       "city", "state",
                       "postalcode", "domain", "organization",
                       "remarks", "rejected_reason", "is_fully_rejected"]
 
-    csv_column_name = ["Legal_Entity*", "Division*",
+    csv_column_name = ["Country", "Legal_Entity*", "Division*",
                        "Category*", "Geography_Level*",
                        "Unit_Location*", "Unit_Code*",
                        "Unit_Name*  ",
