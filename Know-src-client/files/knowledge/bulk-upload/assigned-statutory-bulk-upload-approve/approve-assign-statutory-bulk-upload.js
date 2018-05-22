@@ -633,16 +633,6 @@ keySearchDetailsList = function(d) {
     return fList
 }
 
-// download click show hide download list
-download = function(element) {
-    if ($("." + element).is(':visible') == false) {
-        $(".dropdown-content").hide();
-        $("." + element).toggle();
-    } else {
-        $("." + element).toggle();
-    }
-}
-
 viewListPage = function() {
     LIST_PAGE.show();
     DATA_LIST_PAGE.hide();
@@ -732,24 +722,43 @@ ApproveAssignStatutoryBU.prototype.displayListPage = function(data) {
                     ' waves-effect waves-light" type="button"> View </button>')
                 .attr("onClick", "goToDetailsPage(" + v.csv_id + ")");
         }
-        $('.fa-download', clone)
-            .attr("onClick", "download('show-download" + v.csv_id + "')");
-        
-        $('.download .dowload-excel', clone).attr({
-            href: path + "xlsx/" + v.download_file.split('.')[0] + ".xlsx",
-            download: "download"
+
+        $('.dropbtn',clone).on('click', function(){
+            if($(".dropdown-content", clone).hasClass("show")==false){
+                $(".dropdown-content", clone).show();
+                $(".dropdown-content", clone).addClass("show");
+            }
+            else{
+                $(".dropdown-content", clone).hide();
+                $(".dropdown-content", clone).removeClass("show");
+            }
         });
-        $('.download .dowload-csv', clone).attr({
-            href: path + "csv/" + v.download_file.split('.')[0] + ".csv",
-            download: "download"
+
+        $(".dowload-excel, .dowload-csv, .dowload-ods,"+
+            " .dowload-text", clone).on("click", function(){
+            $(".dropdown-content", clone).hide();
+            $(".dropdown-content", clone).removeClass("show");
         });
-        $('.download .dowload-ods', clone).attr({
-            href: path + "ods/" + v.download_file.split('.')[0] + ".ods",
-            download: "download"
-        });
-        $('.download .dowload-text', clone).attr({
-            href: path + "txt/" + v.download_file.split('.')[0] + ".txt",
-            download: "download"
+
+        $('.dowload-excel',clone).attr(
+            "href", path + "xlsx/" + v.download_file.split('.')[0] + ".xlsx"
+        );
+        $('.dowload-csv',clone).attr(
+            "href", path + "csv/" + v.download_file.split('.')[0] + ".csv"
+        );
+        $('.dowload-ods',clone).attr(
+            "href", path + "ods/" + v.download_file.split('.')[0] + ".ods"
+        );
+        $('.dowload-text',clone).on("click", function(){
+            $.get(
+                path + "txt/" + v.download_file.split('.')[0] + ".txt",
+                function(data)
+                {
+                   download(
+                    v.download_file.split('.')[0]+".txt", "text/plain", data
+                    );
+                },
+            'text');
         });
         $('.dropdown-content', clone).addClass("show-download" + v.csv_id);
         $('.approve span', clone)
@@ -1377,6 +1386,22 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
                 });
         }
     });
+}
+
+function download(filename, mime_type, text) {
+    alert('hi')
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';' +
+        'charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
 }
 
 // Create class
