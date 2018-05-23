@@ -251,8 +251,7 @@ class SourceDB(object):
         if domain_id is None:
             return "Domain not exists"
         rows = return_past_due_dates(
-                self._source_db, domain_id, unit_id,
-                level_1_statutory_name
+                self._source_db, domain_id, unit_id, None
             )
         due_dates = calculate_final_due_dates(
                 self._source_db, rows, domain_id, unit_id
@@ -271,15 +270,13 @@ class SourceDB(object):
     ):
         statu_array = statutory_date.split()
         trigger_before_days_string = statu_array[len(statu_array)-1]
-        trigger_before_days = int(
-            trigger_before_days_string.strip(")(")
-        )
-        try:
-            due_date = datetime.datetime.strptime(
-                due_date, "%d-%b-%Y")
-        except:
-            return True
-        start_date = due_date.date() - timedelta(days=trigger_before_days)
+        due_date = datetime.strptime(due_date, "%d-%b-%Y")
+        start_date = due_date.date()
+        trigger_before_days = trigger_before_days_string.replace("(", "")
+        trigger_before_days = trigger_before_days.replace(")", "")
+        if trigger_before_days.isalpha() is False:
+            start_date = due_date.date() - timedelta(
+                days=int(trigger_before_days))
         try:
             completion_date = datetime.datetime.strptime(
                 completion_date, "%d-%b-%Y")
