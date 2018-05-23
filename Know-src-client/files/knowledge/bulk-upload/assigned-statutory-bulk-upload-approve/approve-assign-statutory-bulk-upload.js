@@ -905,11 +905,8 @@ goToDetailsPage = function(id) {
     CLEAR_FILTERED.hide();
     $(".all-data").trigger('click');
     DOMAIN.find("option").remove();
-    DOMAIN.multiselect('destroy');
     UNIT.find("option").remove();
-    UNIT.multiselect('destroy');
     PRIMARY_LEGISLATION.find("option").remove();
-    PRIMARY_LEGISLATION.multiselect('destroy');
     SECONDARY_LEGISLATION.val("");
     STATUTORY_PROVISION_NAME.val("");
     COMPLIANCE_TASK_NAME.val("");
@@ -1184,7 +1181,7 @@ ApproveAssignStatutoryBU.prototype.displayFilterList = function() {
         $.each(statute.filterDomain, function(k, v) {
             DOMAIN.append('<option value="' + v + '">' + v + '</option>');
         });
-        DOMAIN.multiselect();
+        DOMAIN.multiselect('rebuild');
     }
     if (statute.filterUnits.length > 0 && UNIT.val() == null) {
         UNIT.find("option").remove();
@@ -1192,7 +1189,7 @@ ApproveAssignStatutoryBU.prototype.displayFilterList = function() {
             var unitCode = v.split("-")[0].trim();
             UNIT.append('<option value="' + unitCode + '">' + v + '</option>');
         });
-        UNIT.multiselect();
+        UNIT.multiselect('rebuild');
     }
     if (statute.filterPrimaryLegislation.length > 0 &&
         PRIMARY_LEGISLATION.val() == null) {
@@ -1201,7 +1198,7 @@ ApproveAssignStatutoryBU.prototype.displayFilterList = function() {
             var str = '<option value="' + v + '">' + v + '</option>';
             PRIMARY_LEGISLATION.append(str);
         });
-        PRIMARY_LEGISLATION.multiselect();
+        PRIMARY_LEGISLATION.multiselect('rebuild');
     }
     if (statute.filterStatutoryStatus.length > 0 &&
         STATUTORY_STATUS.val() == "") {
@@ -1389,7 +1386,6 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
 }
 
 function download(filename, mime_type, text) {
-    alert('hi')
     var element = document.createElement('a');
     var href = 'data:' + mime_type + ';' +
         'charset=utf-8,' + encodeURIComponent(text);
@@ -1409,8 +1405,26 @@ STATUTE = new ApproveAssignStatutoryBU();
 
 // To start ready function
 $(document).ready(function() {
+    DOMAIN.multiselect({
+        includeSelectAllOption: true
+    });
+    UNIT.multiselect({
+        includeSelectAllOption: true
+    });
+    PRIMARY_LEGISLATION.multiselect({
+        includeSelectAllOption: true
+    });
     STATUTE.pageLoad();
     PageControls();
     bulkLoadItemsPerPage();
     $(".nicescroll").niceScroll();
+});
+
+$(document).mouseup(function(e) 
+{
+    var container = $(".dropdown-content");
+    if (!container.is(e.target) && container.has(e.target).length === 0) 
+    {
+        container.hide();
+    }
 });
