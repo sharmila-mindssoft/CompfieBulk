@@ -5,6 +5,7 @@ var bulkMessage = {
     "reject_success": "CSV file rejected successfully",
     "upload_failed": "CSV file upload failed",
     "document_upload_success": "Document uploaded successfully",
+    'invalid_csv_file': 'Invalid CSV file'
 };
 
 $.extend(message, bulkMessage);
