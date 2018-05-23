@@ -270,7 +270,7 @@ class SourceDB(object):
         self, completion_date, statutory_date, due_date
     ):
         statu_array = statutory_date.split()
-        trigger_before_days_string = statu_array[len(statu_array)-1]
+        trigger_before_days_string = statu_array[len(statu_array) - 2]
         trigger_before_days = int(
             trigger_before_days_string.strip(")(")
         )
