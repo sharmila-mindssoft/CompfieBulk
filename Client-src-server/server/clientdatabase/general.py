@@ -83,7 +83,6 @@ __all__ = [
     "verify_username_forgotpassword",
     "update_task_status_in_chart",
     "get_reassign_client_users",
-    "get_user_category"
     ]
 
 
