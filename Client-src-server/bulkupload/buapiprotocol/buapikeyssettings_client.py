@@ -122,4 +122,5 @@ bu_api_params = {
     'doc_names': make_vector_type_string(length=250, is_optional=True),
     'invalid_file_format': make_int_field(),
     'legal_entity_list': make_vector_type_int(),
+    "invalid_date":make_int_field(is_optional=True)
 }

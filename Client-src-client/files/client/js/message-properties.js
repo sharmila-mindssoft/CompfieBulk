@@ -488,8 +488,7 @@ var message = {
     "current_start_date": "Compliance can not be started for past date. Enter Current Date",
     'duedatelessthantoday': 'Due date must be greater than or equal to current date',
     'reminder_expire': 'Legal entity contract is about to expire',
-    'sp_contract_to': 'Contract To Date must be Greater than Current Date',
-    'invalid_csv_file': 'Invalid CSV file'
+    'sp_contract_to': 'Contract To Date must be Greater than Current Date'
 };
 
 function clearMessage() {

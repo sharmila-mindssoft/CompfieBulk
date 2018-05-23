@@ -1717,7 +1717,6 @@ def calculate_from_and_to_date_for_domain(db, domain_id):
     rows = db.get_data(tblLegalEntities, columns, "1")
     if rows:
         contract_from = rows[0]["contract_from"]
-        # contract_to = rows[0]["contract_to"]
     else:
         contract_from = None
     # contract_to = rows[0][1]
