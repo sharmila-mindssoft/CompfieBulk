@@ -277,11 +277,8 @@ class SourceDB(object):
         if trigger_before_days.isalpha() is False:
             start_date = due_date.date() - timedelta(
                 days=int(trigger_before_days))
-        try:
-            completion_date = datetime.datetime.strptime(
+        completion_date = datetime.strptime(
                 completion_date, "%d-%b-%Y")
-        except:
-            return "Invalid Date"
         if completion_date.date() < start_date:
             return "Should be greater than Start Date"
         else:
