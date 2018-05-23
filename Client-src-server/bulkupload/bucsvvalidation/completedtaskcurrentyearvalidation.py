@@ -230,11 +230,15 @@ class SourceDB(object):
         query = "SELECT domain_id from tbl_domains " + \
                 "where domain_name  = '%s'" % domain_name
         rows = self._source_db.select_all(query)
-        domain_id = rows[0]["domain_id"]
+        domain_id = None
+        if len(rows) > 0:
+            domain_id = rows[0]["domain_id"]
         query = "SELECT unit_id from tbl_units " + \
                 "where unit_name  = '%s'" % unit_name
         rows = self._source_db.select_all(query)
-        unit_id = rows[0]["unit_id"]
+        unit_id = None
+        if len(rows) > 0:
+            unit_id = rows[0]["unit_id"]
         return unit_id, domain_id
 
     def check_due_date(
@@ -242,19 +246,21 @@ class SourceDB(object):
     ):
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_name)
+        if unit_id is None:
+            return "Unit not exists"
+        if domain_id is None:
+            return "Domain not exists"
         rows = return_past_due_dates(
                 self._source_db, domain_id, unit_id,
                 level_1_statutory_name
             )
-        print "rows: %s" % rows
         due_dates = calculate_final_due_dates(
                 self._source_db, rows, domain_id, unit_id
             )
-        try:
-            due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y")
-            due_date = due_date.date().strftime("%Y-%m-%d")
-        except:
+        if due_dates[0] is None:
             return "Not Found"
+        due_date = datetime.strptime(due_date, "%d-%b-%Y")
+        due_date = due_date.date().strftime("%Y-%m-%d")
         if due_date in due_dates[0]:
             return True
         else:
@@ -359,10 +365,8 @@ class SourceDB(object):
 
             # Unit ID
             unitCode = [d["unit_code"]]
-            print "unitCode >>>> ", unitCode
             q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
             unit_id = self._source_db.select_all(q, unitCode)
-            print "unit_id ->> ", unit_id
             unit_id = unit_id[0]["unit_id"]
 
             # assignee_id
@@ -507,7 +511,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
     def validate_csv_values(
         self, row_idx, res, values, key, csvParam, data,
         mapped_error_dict, mapped_header_dict, invalid,
-        isFound
+        isFound, error_count
     ):
         for v in [v.strip() for v in values]:
             valid_failed, error_cnt = parse_csv_dictionary_values(
@@ -537,7 +541,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                         ) is True:
                     unboundMethod = self._validation_method_maps.get(
                         key)
-
                     if unboundMethod is not None:
                         if key == "Due_Date":
                             isFound = unboundMethod(
@@ -552,6 +555,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                             )
                         else:
                             isFound = unboundMethod(v)
+                    if isFound is False:
+                        return isFound
                     if isFound is not True and isFound != "":
                         msg = "%s - %s" % (key, isFound)
                         print "msg: %s" % msg
@@ -565,12 +570,14 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                             self._error_summary[
                                 "invalid_data_error"] += 1
         return (
-            mapped_error_dict, mapped_header_dict, invalid, error_count
+            mapped_error_dict, mapped_header_dict, invalid, error_count,
+            res
         )
 
     def validate_csv_data(
         self, row_idx, res, data, _csv_column_name,
-        mapped_error_dict, mapped_header_dict, invalid
+        mapped_error_dict, mapped_header_dict, invalid,
+        error_count
     ):
         for key in _csv_column_name:
                 value = data.get(key)
@@ -579,11 +586,18 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 csvParam = csv_params.get(key)
                 if (key == "Document_Name" and value != ''):
                     self._doc_names.append(value)
-                self.validate_csv_values(
+                result = self.validate_csv_values(
                     row_idx, res, values, key, csvParam, data,
                     mapped_error_dict, mapped_header_dict, invalid,
-                    isFound
+                    isFound, error_count
                 )
+                if result is not False:
+                    (
+                        mapped_error_dict, mapped_header_dict,
+                        invalid, error_count, res
+                    ) = result
+                else:
+                    return False
                 if key is "Document_Name":
                     msg = []
                     if data["Document_Name"] != "":
@@ -620,7 +634,9 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                         "invalid_char"]
                     self._error_summary["invalid_date"] += error_count[
                         "invalid_date"]
-        return (mapped_error_dict, mapped_header_dict, invalid)
+        return (
+            mapped_error_dict, mapped_header_dict, invalid, error_count
+        )
 
     def perform_validation(self, legal_entity_id):
         mapped_error_dict = {}
@@ -631,23 +647,26 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             res = False
             return res
         self.init_values(legal_entity_id)
-
+        error_count = {
+            "mandatory": 0, "max_length": 0, "invalid_char": 0,
+            "invalid_date": 0
+            }
         for row_idx, data in enumerate(self._source_data):
             if row_idx == 0:
                 self._legal_entity_names = data.get("Legal_Entity")
                 self._domains = data.get("Domain")
-            (
+            result = self.validate_csv_data(
+                row_idx, res, data, self._csv_column_name,
                 mapped_error_dict, mapped_header_dict, invalid,
                 error_count
-            ) = self.validate_csv_data(
-                row_idx, res, data, self._csv_column_name,
-                mapped_error_dict, mapped_header_dict, invalid
             )
-            # res = True
-            # error_count = {
-            #     "mandatory": 0, "max_length": 0, "invalid_char": 0,
-            #     "invalid_date": 0
-            #     }
+            if result is False:
+                return result
+            else:
+                (
+                    mapped_error_dict, mapped_header_dict, invalid,
+                    error_count
+                ) = result
         if invalid > 0:
             return self.make_invalid_return(
                 mapped_error_dict, mapped_header_dict)
@@ -782,7 +801,6 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 param = [csvid]
 
                 data = _db_check.select_all(query, param)
-                print "DAta -> ", data
                 if len(data) > 0:
                     file_status = data[0].get("file_download_status")
 
@@ -800,30 +818,24 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def file_server_approve_call(
         self, csvid, country_id, legal_id, domain_id, unit_id
     ):
-        print "Approve call done"
         caller_name = "%sdocsubmit?csvid=%s&" + \
             "c_id=%s&le_id=%s&d_id=%s&u_id=%s" % (
                 TEMP_FILE_SERVER, csvid, country_id,
                 legal_id, domain_id, unit_id)
-        print "caller_name", caller_name
         response = requests.post(caller_name)
         return response
 
     def call_file_server(
         self, csvid, country_id, legal_id, domain_id, unit_id, session_token
     ):
-        print "Call to File Server"
         current_date = datetime.datetime.now().strftime('%d-%b-%Y')
-        print "client id----> ", str(session_token).split('-')[0]
         client_id = str(session_token).split('-')[0]
         caller = "%sclientfile?csvid=%s&" + \
             "c_id=%s&le_id=%s&d_id=%s&u_id=%s&" + \
             "start_date=%s&client_id=%s" % (
                 FILE_SERVER, csvid, country_id, legal_id,
                 domain_id, unit_id, current_date, client_id)
-        print "caller-> ", caller
         response = requests.post(caller)
-        print "response>> ", response
         return response
 
     def frame_data_for_main_db_insert(

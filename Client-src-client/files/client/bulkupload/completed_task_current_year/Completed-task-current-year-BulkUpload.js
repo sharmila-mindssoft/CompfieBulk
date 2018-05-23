@@ -85,7 +85,6 @@ txtUnit.keyup(function(e) {
 });
 
 function loadUnits(le_id, domain_id) {
-    var unitList = [];
     buClient.getUnits(le_id, domain_id, function(error, response) {
         if (error == null) {
             unitList = response.user_units;
@@ -572,7 +571,6 @@ function getCountryId(le_id) {
 }
 
 function submitUpload() {
-
     var dom_id = $("#dom_id_hdn").val();
     var unit_id = $("#unit_id_hdn").val();
     var start_date = $("#start_date_hdn").val();

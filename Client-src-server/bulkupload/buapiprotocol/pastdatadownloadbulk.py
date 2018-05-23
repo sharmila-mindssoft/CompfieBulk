@@ -10,8 +10,7 @@ from server.constants import (
     KNOWLEDGE_DB_HOST,
     KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
     KNOWLEDGE_DATABASE_NAME)
-from bulkupload.client_bulkconstants import (
-    CSV_DOWNLOAD_URL, ROOT_PATH)
+from bulkupload.client_bulkconstants import CSV_DOWNLOAD_URL
 
 from server.clientdatabase.general import (
     calculate_due_date, filter_out_due_dates)
@@ -23,6 +22,7 @@ from clientprotocol.clienttransactions import(
 )
 from server.common import datetime_to_string
 
+ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..", "..")
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
 FILE_DOWNLOAD_BASE_PATH = "/download/csv"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
@@ -39,7 +39,7 @@ class PastDataJsonToCSV(object):
         self.data_available_status = True
         if not os.path.exists(CSV_PATH):
             os.makedirs(CSV_PATH)
-        with io.FileIO(self.FILE_PATH, "wb+") as f:
+        with open(self.FILE_PATH, "wb+") as f:
             self.writer = csv.writer(f)
             if report_type == "DownloadPastData":
                 self.download_past_data(

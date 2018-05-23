@@ -26,7 +26,7 @@ function UploadCompletedTaskCurrentYearCSV(args, callback) {
 
 function saveBulkRecords(args, callback) {
     var request = [
-        'saveBulkRecords', args
+        'SaveBulkRecords', args
     ];
     clientApiRequest("bu/completed_task", request, callback);
 }
