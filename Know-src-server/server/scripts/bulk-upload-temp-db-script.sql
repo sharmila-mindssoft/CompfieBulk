@@ -89,6 +89,7 @@ DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_units` ;
 CREATE TABLE `compfie_bulkupload`.`tbl_bulk_units` (
   `bulk_unit_id` INT not null AUTO_INCREMENT,
   `csv_unit_id` INT not null,
+  `country` VARCHAR(50) not null,
   `legal_entity` varchar(100) not null,
   `division` varchar(100) not null,
   `category` varchar(100) not null,
@@ -229,8 +230,3 @@ ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv`
 ADD COLUMN `file_download_status` VARCHAR(50) NULL AFTER `upload_status`;
 
 
-ALTER TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory_csv`
-ADD COLUMN `country` VARCHAR(50) NOT NULL AFTER `domain_ids`;
-
-ALTER TABLE `compfie_bulkupload`.`tbl_bulk_units`
-ADD COLUMN `country` VARCHAR(50) NOT NULL AFTER `csv_unit_id`;
