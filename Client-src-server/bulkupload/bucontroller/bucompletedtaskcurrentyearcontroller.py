@@ -124,13 +124,13 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
         if new_csv_id:
             if save_completed_task_data(
                     db, new_csv_id, res_data["data"], client_id
-                    ) is True:
-                    result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
-                        res_data["total"], res_data["valid"],
-                        res_data["invalid"],
-                        new_csv_id, csv_name, res_data["doc_count"],
-                        res_data["doc_names"], unit_id, domain_id
-                    )
+            ) is True:
+                result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
+                    res_data["total"], res_data["valid"],
+                    res_data["invalid"],
+                    new_csv_id, csv_name, res_data["doc_count"],
+                    res_data["doc_names"], unit_id, domain_id
+                )
         # csv data save to temp db
     else:
         result = bu_ct.UploadCompletedTaskCurrentYearCSVFailed(
@@ -183,8 +183,8 @@ def process_get_bulk_download_data(
     # print "request_frame>> ", request_frame
     # print "leid->>>> ", request_frame.legal_entity_id
     converter = PastDataJsonToCSV(
-                db, request_frame, session_user, "DownloadPastData"
-            )
+        db, request_frame, session_user, "DownloadPastData"
+    )
 
     if(
         converter.FILE_DOWNLOAD_PATH is None or
@@ -193,5 +193,6 @@ def process_get_bulk_download_data(
             return bu_ct.ExportToCSVEmpty()
     else:
         result = bu_ct.DownloadBulkPastDataSuccess(
-                 converter.FILE_DOWNLOAD_PATH)
+            converter.FILE_DOWNLOAD_PATH
+        )
     return result

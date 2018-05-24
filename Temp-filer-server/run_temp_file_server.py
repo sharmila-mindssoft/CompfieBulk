@@ -1,6 +1,5 @@
 import os
 import glob
-from os import rename
 from flask import (
     Flask, request,
     send_from_directory
@@ -34,6 +33,7 @@ zipping_in_process = []
 
 # In DB
 file_status = {}
+
 
 def knowledge_db_connect():
     cnx = mysql.connector.connect(
@@ -93,7 +93,9 @@ def update_file_status(old_file_name, new_file_name, file_size, csv_id):
     try:
         _db.begin()
         print "update file status"
-        if _db.update_file_status(old_file_name, csv_id, new_file_name, file_size) is None:
+        if _db.update_file_status(
+            old_file_name, csv_id, new_file_name, file_size
+        ) is None:
             res_ponse_data = False
             print "update failed"
         _db.commit()

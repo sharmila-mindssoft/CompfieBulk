@@ -1970,7 +1970,7 @@ CREATE PROCEDURE `sp_pastdata_doc_download_status_update`(
 BEGIN
 
     update  tbl_bulk_past_data_csv set file_download_status =  download_status
-      where csv_id = csvid;
+      where csv_past_id = csvid;
 END //
 DELIMITER ;
 
