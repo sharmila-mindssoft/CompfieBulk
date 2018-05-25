@@ -1,6 +1,6 @@
 var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
 
-var CANCEL_BUTTON = $("#cancelButton");
+var CANCEL_BUTTON = $("#cancel_button");
 var ADD_SCREEN = $("#add_screen");
 var VIEW_SCREEN = $("#list_screen");
 var ADD_BUTTON = $("#btn_add");
@@ -24,13 +24,13 @@ var LEGALENTITY_NAME_AC_UPLOAD = $(".legal-entity-name-ac-upload");
 var LIST_CONTAINER = $('.tbody-ct-csv-list');
 var LIST_ROW_TEMPLATE = $('#templates .table-ct-csv-info .table-row');
 
-var TXT_DOMAIN = $("#txtdomain");
-var HDN_DOMAIN = $("#hdnDomain");
-var DIV_DOMAIN = $("#divDomain");
+var TXT_DOMAIN = $("#txt_domain");
+var HDN_DOMAIN = $("#hdn_domain");
+var DIV_DOMAIN = $("#div_domain");
 
-var TXT_UNIT = $('#txtUnit');
-var HDN_UNIT = $('#hdnUnit');
-var DIV_UNIT = $('#divUnit');
+var TXT_UNIT = $('#txt_unit');
+var HDN_UNIT = $('#hdn_unit');
+var DIV_UNIT = $('#div_unit');
 
 var BTN_UPLOAD = $('#btnUpload');
 var INVALID_FILE_NAME = null;
@@ -81,7 +81,7 @@ TXT_UNIT.keyup(function(e) {
         }, conditionFields, conditionValues);
 });
 
-function loadUnits(leID, domainId) {
+function loadUnits(leId, domainId) {
     buClient.getUnits(leId, domainId, function(error, response) {
         if (error == null) {
             UNIT_LIST = response.user_units;
@@ -113,7 +113,7 @@ LEGALENTITY_NAME_UPLOAD.keyup(function(e) {
         });
 });
 
-function onAutoCompleteSuccess(valuElement, idElement, val) {
+function onAutoCompleteSuccess(valueElement, idElement, val) {
     valueElement.val(val[1]);
     idElement.val(val[0]);
     if (idElement[0].id == 'hdn_legal_entity_id') {
@@ -133,16 +133,13 @@ function loadEntityDetails() {
         LEGALENTITY_NAME_AC_UPLOAD.show();
 
         for (i = 0; i < LEGAL_ENTITIES.length; i++) {
-            console.log(LEGAL_ENTITIES[i]["le_id"]);
             LEGALENTITYUSR.push(LEGAL_ENTITIES[i]["le_id"]);
         }
-        console.log("loadEntityDetails>1>>" + LEGALENTITYUSR);
 
     } else {
         leName = LEGAL_ENTITIES[0]["le_name"];
         leId = LEGAL_ENTITIES[0]["le_id"];
         LEGALENTITYUSR.push(leId);
-        console.log("loadEntityDetails=1>" + LEGALENTITYUSR);
 
         LEGALENTITY_NAME_LABEL.show();
         LEGALENTITY_NAME_LABEL_UPLOAD.show();
@@ -192,7 +189,6 @@ function validateUpload() {
         return false;
     } else {
         $('#myModal').modal('show');
-        console.log("_ActionMode>>", BUCT_PAGE._ActionMode);
         if (BUCT_PAGE._ActionMode == "add") {
             args = {
                 "csv_name": CSV_INFO["file_name"],
@@ -203,7 +199,6 @@ function validateUpload() {
 
             buClient.UploadCompletedTaskCurrentYearCSV(
                 args, function(error, data) {
-                console.log("error:" + error);
                 if (error == "InvalidCsvFile"){
                     $('#myModal').modal('hide');
                     displayMessage(message.invalid_csv_file);
@@ -228,13 +223,11 @@ function validateUpload() {
                     LENGTH_ERROR.text("0");
                     INACTIVE_ERROR.text("0");
                     INVALID_FILE_FORMAT_ERROR.text(0);
-                    console.log("domain id >>> " + data.domain_id);
-                    console.log("unit id >>> " + data.unit_id);
                     $("#dom_id_hdn").val(data.domain_id);
                     $("#unit_id_hdn").val(data.unit_id);
                     $('.view-summary').hide();
                     $('.dropbtn').hide();
-                    $('#hdnCsvId').val(data.new_csv_id);
+                    $('#hdn_csv_id').val(data.new_csv_id);
                     CSV_ID = data.new_csv_id;
                     $('.successFileName').text(csvSplitName);
                     csvPath = "../../../../../uploaded_file/csv/" + 
@@ -454,7 +447,6 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(
             DOC_NAMES = data.doc_names;
             $('.upload i', cloneRow).on('click', function() {
                 tThis.showEdit(data);
-                console.log("upload fired");
             });
             LIST_CONTAINER.append(cloneRow);
             j += 1;
@@ -467,12 +459,11 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     var uploadedCsvName = data.csv_name;
     var csvSplitName = null;
     resetEdit();
-    console.log("data>>" + JSON.stringify(data));
     $("#dom_id_hdn").val(data.domain_id);
     $("#unit_id_hdn").val(data.unit_id);
     $("#start_date_hdn").val(data.start_date);
 
-    $('#hdnCsvId').val(data.csv_past_id);
+    $('#hdn_csv_id').val(data.csv_past_id);
     CSV_ID = data.csv_past_id;
 
     csvSplitName = uploadedCsvName.substring(
@@ -535,7 +526,6 @@ function downloadData() {
         function(error, data) {
             if (error == null) {
                 downloadUrl = data.link;
-                console.log("downloadUrl>>>>> " + downloadUrl);
                 if (downloadUrl != null) {
                     window.open(downloadUrl, '_blank');
                     hideLoader();
@@ -570,7 +560,7 @@ function submitUpload() {
     var unitId = $("#unit_id_hdn").val();
     var startDate = $("#start_date_hdn").val();
     var args = {
-        "new_csv_id": parseInt($('#hdnCsvId').val()),
+        "new_csv_id": parseInt($('#hdn_csv_id').val()),
         "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val()),
         "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val()),
         "domain_id": parseInt(domId),
@@ -664,7 +654,6 @@ var myDropzone = new Dropzone("div#myDrop", {
     init: function() {
         this.on("addedfile", function(file) {
             if (jQuery.inArray(file.name, addedfiles) > -1) {
-                console.log("addedfiles part");
                 myDropzone.removeFile(file);
             }
             if (jQuery.inArray(file.name, DOC_NAMES) == -1) {
@@ -672,7 +661,6 @@ var myDropzone = new Dropzone("div#myDrop", {
             } else {
                 addedfiles.push(file.name);
                 queueCount += 1;
-                console.log("File>" + file);
             }
         });
         this.on("removedfile", function(file) {
