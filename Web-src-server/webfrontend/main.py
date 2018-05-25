@@ -338,13 +338,19 @@ def run_web_front_end(port, knowledge_server_address):
         format_path = os.path.join(server_path, "knowledgeformat")
         reports_path = os.path.join(ROOT_PATH, "exported_reports")
         invalid_path = os.path.join(ROOT_PATH, "bulkuploadinvalid")
-        BULK_CSV_UPLOAD_PATH_CSV = os.path.join(os.path.join(
-            ROOT_PATH, "bulkuploadcsv"
-        ), "csv")
         client_docs_path = os.path.join(server_path, "clientdocuments")
         expiry_download = os.path.join(src_server_path, "expired")
         seven_year_data_download = os.path.join(
             src_server_path, "seven_years_before_data"
+        )
+        BULK_CSV_UPLOAD_PATH_CSV = os.path.join(
+            ROOT_PATH, "bulkuploadcsv/csv"
+        )
+
+        web_server.low_level_url(
+            r"/uploaded_file/csv/<path:filename>",
+            StaticFileHandler,
+            dict(path=BULK_CSV_UPLOAD_PATH_CSV)
         )
 
 
@@ -358,11 +364,6 @@ def run_web_front_end(port, knowledge_server_address):
             r"/download/csv/(.*)",
             StaticFileHandler,
             dict(path=reports_path)
-        )
-        web_server.low_level_url(
-            r"/uploaded_file/csv/(.*)",
-            StaticFileHandler,
-            dict(path=BULK_CSV_UPLOAD_PATH_CSV)
         )
         web_server.low_level_url(
             r"/download/invalid/(.*)",

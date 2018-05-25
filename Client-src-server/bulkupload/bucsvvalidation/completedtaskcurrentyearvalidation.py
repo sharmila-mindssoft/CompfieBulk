@@ -244,6 +244,7 @@ class SourceDB(object):
     def check_due_date(
         self, due_date, domain_name, unit_name, level_1_statutory_name
     ):
+        
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_name)
         if unit_id is None:
@@ -253,13 +254,17 @@ class SourceDB(object):
         rows = return_past_due_dates(
                 self._source_db, domain_id, unit_id, None
             )
+        
         due_dates = calculate_final_due_dates(
                 self._source_db, rows, domain_id, unit_id
             )
+        
+        
         if due_dates[0] is None:
             return "Not Found"
         due_date = datetime.strptime(due_date, "%d-%b-%Y")
         due_date = due_date.date().strftime("%Y-%m-%d")
+
         if due_date in due_dates[0]:
             return True
         else:
@@ -812,10 +817,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def file_server_approve_call(
         self, csvid, country_id, legal_id, domain_id, unit_id
     ):
-        caller_name = "%sdocsubmit?csvid=%s&" + \
-            "c_id=%s&le_id=%s&d_id=%s&u_id=%s" % (
-                TEMP_FILE_SERVER, csvid, country_id,
-                legal_id, domain_id, unit_id)
+        caller_name = "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s" % (TEMP_FILE_SERVER, csvid, country_id, legal_id, domain_id, unit_id)
         response = requests.post(caller_name)
         return response
 
@@ -825,10 +827,10 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         current_date = datetime.datetime.now().strftime('%d-%b-%Y')
         client_id = str(session_token).split('-')[0]
         caller = "%sclientfile?csvid=%s&" + \
-            "c_id=%s&le_id=%s&d_id=%s&u_id=%s&" + \
-            "start_date=%s&client_id=%s" % (
-                FILE_SERVER, csvid, country_id, legal_id,
-                domain_id, unit_id, current_date, client_id)
+                 "c_id=%s&le_id=%s&d_id=%s&u_id=%s&" + \
+                 "start_date=%s&client_id=%s" % (
+                    FILE_SERVER, csvid, country_id, legal_id,
+                    domain_id, unit_id, current_date, client_id)
         response = requests.post(caller)
         return response
 

@@ -164,7 +164,7 @@ def return_past_due_dates(
 
 
 def calculate_final_due_dates(db, data, domain_id, unit_id):
-    final_due_dates = None
+    final_due_dates = []
     due_dates = []
     summary = ""
     for compliance in data:
@@ -197,9 +197,9 @@ def calculate_final_due_dates(db, data, domain_id, unit_id):
                 domain_id=domain_id,
                 start_date=compliance["start_date"]
             )
-        final_due_dates = filter_out_due_dates(
+        final_due_dates+=(filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
-        )
+        ))
     return final_due_dates, summary
 
 
