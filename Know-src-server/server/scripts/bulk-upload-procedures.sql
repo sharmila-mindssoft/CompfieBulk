@@ -430,7 +430,7 @@ BEGIN
     t2.reference_link AS Reference_Link, t2.compliance_frequency AS Compliance_Frequency,
     t2.statutory_month AS Statutory_Month, t2.statutory_date AS Statutory_Date, t2.trigger_before AS Trigger_Days,
     t2.repeats_every AS Repeats_Every, t2.repeats_type AS Repeats_Type, t2.repeat_by AS `Repeats_By (DOM/EOM)`, t2.duration AS Duration,
-    t2.duration_type AS Duration_Type, t2.multiple_input AS Multiple_Input_Section, t2.format_file AS Format,
+    t2.duration_type AS Duration_Type, t2.multiple_input AS Multiple_Input_Selection, t2.format_file AS Format,
     t2.task_id AS Task_ID, t2.task_type AS Task_Type,
     t2.action, t2.remarks, t2.format_file_size,
     t1.uploaded_by, t1.country_name, t1.domain_name, t1.csv_name,

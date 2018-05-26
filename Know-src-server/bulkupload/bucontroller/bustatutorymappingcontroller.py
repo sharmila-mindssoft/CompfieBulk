@@ -707,7 +707,7 @@ def download_rejected_sm_report(db, request_frame, session_user):
                        "Trigger_Days", "Repeats_Every",
                        "Repeats_Type", "Repeats_By (DOM/EOM)",
                        "Duration", "Duration_Type",
-                       "Multiple_Input_Section", "Format",
+                       "Multiple_Input_Selection", "Format",
                        "Error_Description"]
 
     csv_name = get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id)

@@ -86,7 +86,7 @@ class StatutorySource(object):
             "Statutory_Date", "Trigger_Days", "Repeats_Every",
             "Repeats_Type", "Repeats_By (DOM/EOM)", "Duration",
             "Duration_Type",
-            "Multiple_Input_Section", "Format"
+            "Multiple_Input_Selection", "Format"
         ]
         self._csv_column_name_with_mandatory = [
             "Organization*", "Applicable_Location*",
@@ -98,7 +98,7 @@ class StatutorySource(object):
             "Statutory_Date", "Trigger_Days", "Repeats_Every",
             "Repeats_Type", "Repeats_By (DOM/EOM)", "Duration",
             "Duration_Type",
-            "Multiple_Input_Section", "Format"
+            "Multiple_Input_Selection", "Format"
         ]
 
     def connect_source_db(self):
@@ -290,7 +290,7 @@ class StatutorySource(object):
 
         keys = [
             "Repeats_Type", "Repeats_Every", "Repeats_By (DOM/EOM)",
-            "Duration", "Duration_Type", "Multiple_Input_Section"
+            "Duration", "Duration_Type", "Multiple_Input_Selection"
         ]
         invalid = self.check_empty_for_compliance_frequency(d, keys)
         msg.extend(invalid)
@@ -320,7 +320,7 @@ class StatutorySource(object):
         keys = [
             "Statutory_Month", "Statutory_Date", "Trigger_Days",
             "Repeats_Type", "Repeats_Every", "Repeats_By (DOM/EOM)",
-            "Multiple_Input_Section"
+            "Multiple_Input_Selection"
         ]
         msg.extend(self.check_empty_for_compliance_frequency(d, keys))
         return msg
@@ -343,8 +343,8 @@ class StatutorySource(object):
             msg.append("Repeats_Type - Field is blank")
 
         if (
-            d["Multiple_Input_Section"] == "No" or
-            d["Multiple_Input_Section"] == ""
+            d["Multiple_Input_Selection"] == "No" or
+            d["Multiple_Input_Selection"] == ""
         ):
             msg.extend(self.check_single_input(d))
             if d["Repeats_Type"] == "Month(s)":
@@ -368,7 +368,7 @@ class StatutorySource(object):
                 if d["Repeats_By (DOM/EOM)"] == "":
                     msg.append("Repeats_By (DOM/EOM) - Field is blank")
                 # if (
-                #     d["Multiple_Input_Section"] == "No"
+                #     d["Multiple_Input_Selection"] == "No"
                 # ):
                 #     msg.append("Statutory_Date - Invalid data")
                 if (
@@ -378,8 +378,8 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)":
-                if d["Multiple_Input_Section"] != "":
-                    msg.append("Multiple_Input_Section - Invalid data")
+                if d["Multiple_Input_Selection"] != "":
+                    msg.append("Multiple_Input_Selection - Invalid data")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999:
                     msg.append(
                         "Repeats_Every - Cannot exceed maximum 3 digits")
@@ -395,7 +395,7 @@ class StatutorySource(object):
                         " every days")
 
         elif (
-            d["Multiple_Input_Section"] == "Yes" and
+            d["Multiple_Input_Selection"] == "Yes" and
             d["Repeats_Type"] == "Month(s)"
         ):
 
@@ -419,7 +419,7 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
         else:
-            msg.append("Multiple_Input_Section - Invalid data")
+            msg.append("Multiple_Input_Selection - Invalid data")
 
         return msg
 
@@ -434,8 +434,8 @@ class StatutorySource(object):
             if not is_numeric(d["Repeats_Every"]):
                 return msg
         if (
-            d["Multiple_Input_Section"] == "No" or
-            d["Multiple_Input_Section"] == ""
+            d["Multiple_Input_Selection"] == "No" or
+            d["Multiple_Input_Selection"] == ""
         ):
             # msg.extend(self.check_single_input(d))
 
@@ -468,8 +468,8 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)":
-                if d["Multiple_Input_Section"] != "":
-                    msg.append("Multiple_Input_Section - Invalid data")
+                if d["Multiple_Input_Selection"] != "":
+                    msg.append("Multiple_Input_Selection - Invalid data")
                 if d["Repeats_Every"] != '' and int(d["Repeats_Every"]) > 999:
                     msg.append(
                         "Repeats_Every - Cannot exceed maximum 2 digits"
@@ -498,7 +498,7 @@ class StatutorySource(object):
                     msg.append("Trigger_Days - Invalid data")
 
         elif (
-            d["Multiple_Input_Section"] == "Yes" and
+            d["Multiple_Input_Selection"] == "Yes" and
             d["Repeats_Type"] == "Month(s)"
         ):
 
@@ -523,7 +523,7 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
 
         else:
-            msg.append("Multiple_Input_Section - Invalid data")
+            msg.append("Multiple_Input_Selection - Invalid data")
 
         return msg
 
@@ -1086,7 +1086,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                     "Compliance_Description", "Penal_Consequences",
                     "Task_Type", "Reference_Link", "Compliance_Frequency",
                     "Repeats_Every", "Repeats_Type", "Repeats_By (DOM/EOM)",
-                    "Duration", "Duration_Type", "Multiple_Input_Section",
+                    "Duration", "Duration_Type", "Multiple_Input_Selection",
                     "Format"
                 ]
                 if key in non_delimiter_keys:

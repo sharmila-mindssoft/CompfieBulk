@@ -272,7 +272,7 @@ def save_mapping_data(db, csv_id, csv_data):
                 None if d["Repeats_By (DOM/EOM)"] == '' else
                 d["Repeats_By (DOM/EOM)"],
                 None if d["Duration"] == '' else d["Duration"],
-                d["Duration_Type"], d["Multiple_Input_Section"],
+                d["Duration_Type"], d["Multiple_Input_Selection"],
                 d["Format"], d["Task_ID"], d["Task_Type"],
             ))
 

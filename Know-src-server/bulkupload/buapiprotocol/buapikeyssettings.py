@@ -787,7 +787,7 @@ bu_api_params = {
         'validation_method': is_alphabet, 'is_optional': True
     },
     'unit_locations': {
-        'type': 'VECTOR_TYPE_STRING', 'length': 50,
+        'type': 'VECTOR_TYPE_STRING', 'length': 600,
         'validation_method': is_alphabet, 'is_optional': True
     },
     'unit_codes': {
