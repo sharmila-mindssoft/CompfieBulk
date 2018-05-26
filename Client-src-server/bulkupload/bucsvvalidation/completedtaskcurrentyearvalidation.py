@@ -245,6 +245,7 @@ class SourceDB(object):
     def check_due_date(
         self, due_date, domain_name, unit_name, level_1_statutory_name
     ):
+        
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_name)
         if unit_id is None:
@@ -261,6 +262,7 @@ class SourceDB(object):
             return "Not Found"
         due_date = datetime.strptime(due_date, "%d-%b-%Y")
         due_date = due_date.date().strftime("%Y-%m-%d")
+
         if due_date in due_dates[0]:
             return True
         else:

@@ -189,8 +189,7 @@ class ConvertJsonToCSV(object):
                         ac["approved_on"], '%d-%b-%Y %H:%M')
                     approvedRejectedBy = approved_by_name
                 approve_status = ac["total_approve_records"]
-                approve_reject_task = str(approve_status) + " / " + str(
-                    total_rejected_records)
+                approve_reject_task =" %s   /   %s " % (int(approve_status), int(total_rejected_records))
                 reason_for_rejection = ""
                 if (ac["is_fully_rejected"] == 1):
                     approve_reject_task = "-"
@@ -203,7 +202,7 @@ class ConvertJsonToCSV(object):
                     is_header = True
                 csv_values = [
                     sno, country_name, domain_name, uploaded_by_name,
-                    uploaded_on, csv_name, total_records, approve_reject_task,
+                    str(uploaded_on), csv_name, total_records, approve_reject_task,
                     approvedRejectedOn, approvedRejectedBy,
                     reason_for_rejection
                 ]
@@ -324,8 +323,8 @@ class ConvertJsonToCSV(object):
                         cu["approved_on"], '%d-%b-%Y %H:%M')
                     approvedRejectedBy = approved_by_name
                 approve_status = cu["total_approve_records"]
-                approve_reject_task = str(approve_status) + " / " + str(
-                    total_rejected_records)
+                approve_reject_task =" %s   /   %s " % (int(approve_status), 
+                    int(total_rejected_records))
                 reason_for_rejection = ""
                 if (cu["is_fully_rejected"] == 1):
                     approve_reject_task = "-"
@@ -447,8 +446,8 @@ class ConvertJsonToCSV(object):
                         asr["approved_on"], '%d-%b-%Y %H:%M')
                     approvedRejectedBy = approved_by_name
                 approve_status = asr["total_approve_records"]
-                approve_reject_task = str(approve_status) + " / " + str(
-                    total_rejected_records)
+                approve_reject_task =" %s   /   %s " % (int(approve_status), 
+                    int(total_rejected_records))
                 reason_for_rejection = ""
                 if (asr["is_fully_rejected"] == 1):
                     approve_reject_task = "-"
