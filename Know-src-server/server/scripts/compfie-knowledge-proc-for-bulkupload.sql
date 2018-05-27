@@ -773,10 +773,10 @@ CREATE PROCEDURE `sp_bu_is_valid_le`(
     IN le_name VARCHAR(50), client_group_name VARCHAR(50)
 )
 BEGIN
-  SELECT count(legal_entity_id) AS cntFROM tbl_legal_entities 
+  SELECT count(legal_entity_id) AS cnt FROM tbl_legal_entities 
   WHERE legal_entity_name = le_name and client_id = (
     SELECT client_id from tbl_client_groups where group_name = client_group_name
-  ) 
+  );
 END //
 DELIMITER 
 
@@ -814,5 +814,18 @@ CREATE PROCEDURE `sp_bu_get_country_id_by_name`(
 BEGIN
     SELECT country_id FROM tbl_countries
     WHERE country_name = country_name_;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_bu_unit_location`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_unit_location`(
+IN le_id INT(11)
+)
+BEGIN
+   SELECT t1.unit_code, t2.geography_id, t2.geography_name, t2.is_active
+   FROM tbl_units AS t1
+   INNER JOIN tbl_geographies AS t2 ON t1.geography_id = t2.geography_id
+   WHERE t1.legal_entity_id = le_id;
 END //
 DELIMITER ;
