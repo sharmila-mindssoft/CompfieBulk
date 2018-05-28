@@ -859,10 +859,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def file_server_approve_call(
         self, csvid, country_id, legal_id, domain_id, unit_id
     ):
-        caller_name = "%sdocsubmit?csvid=%s&" + \
-            "c_id=%s&le_id=%s&d_id=%s&u_id=%s" % (
-                TEMP_FILE_SERVER, csvid, country_id,
-                legal_id, domain_id, unit_id)
+        caller_name = "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s" % (TEMP_FILE_SERVER, csvid, country_id, legal_id, domain_id, unit_id)
         response = requests.post(caller_name)
         return response
 
@@ -872,10 +869,10 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         current_date = datetime.datetime.now().strftime('%d-%b-%Y')
         client_id = str(session_token).split('-')[0]
         caller = "%sclientfile?csvid=%s&" + \
-            "c_id=%s&le_id=%s&d_id=%s&u_id=%s&" + \
-            "start_date=%s&client_id=%s" % (
-                FILE_SERVER, csvid, country_id, legal_id,
-                domain_id, unit_id, current_date, client_id)
+                 "c_id=%s&le_id=%s&d_id=%s&u_id=%s&" + \
+                 "start_date=%s&client_id=%s" % (
+                    FILE_SERVER, csvid, country_id, legal_id,
+                    domain_id, unit_id, current_date, client_id)
         response = requests.post(caller)
         return response
 

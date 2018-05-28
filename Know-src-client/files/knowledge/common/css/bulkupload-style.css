@@ -570,3 +570,6 @@ td.task-id {
     font-size: 1.2em;
     font-weight: bold;
 }
+.tbody-sm-approve-view .format a {
+    word-wrap: break-word;
+}
