@@ -199,7 +199,7 @@ def calculate_final_due_dates(db, data, domain_id, unit_id):
             )
         final_due_dates += filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
-        ))
+        )
     return final_due_dates, summary
 
 

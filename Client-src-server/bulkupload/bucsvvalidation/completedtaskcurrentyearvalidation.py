@@ -271,6 +271,11 @@ class SourceDB(object):
     def check_completion_date(
         self, completion_date, statutory_date, due_date
     ):
+        print "statutory dataeeeeeeeeeeeeeeeeeeeeeeeee============>"
+        print "==================================================>"
+        print statutory_date
+        if statutory_date is None or statutory_date == "":
+            return
         statu_array = statutory_date.split()
         trigger_before_days_string = statu_array[len(statu_array)-1]
         try:
