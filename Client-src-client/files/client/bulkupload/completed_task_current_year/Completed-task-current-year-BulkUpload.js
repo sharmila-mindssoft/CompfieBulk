@@ -41,6 +41,10 @@ var DOC_NAMES = [];
 var CSV_INFO = null;
 var CSV_ID = null;
 var BUCT_PAGE = null;
+//Filters
+var UPLOADED_ON_FILTER = $("#filter_uploaded_on");
+var UPLOADED_FILE_FILTER = $("#filter_uploaded_file");
+
 //error description variable declaration
 var TOTAL_RECORD = $('.totalRecords');
 var VALID_RECORD = $('.validRecords');
@@ -79,6 +83,18 @@ TXT_UNIT.keyup(function(e) {
         function(val) {
             onAutoCompleteSuccess(TXT_UNIT, HDN_UNIT, val);
         }, conditionFields, conditionValues);
+});
+
+//Uploaded on Filter
+UPLOADED_ON_FILTER.keyup(function() {
+    fList = key_search(BUCT_PAGE._ListDataForView);
+    BUCT_PAGE.renderList(fList);
+});
+
+//Uploaded file Filter
+UPLOADED_FILE_FILTER.keyup(function() {
+    fList = key_search(BUCT_PAGE._ListDataForView);
+    BUCT_PAGE.renderList(fList);
 });
 
 function loadUnits(leId, domainId) {
@@ -181,10 +197,17 @@ function validateUpload() {
     var csvSplitName = null;
     var getValidCount = null;
     var args = null;
-    if (
+    if(
+        $('#txt_legal_entity_name_upload').val() == ""
+    ){
+        displayMessage(message.legalentity_required);
+        $('#myModal').modal('hide');
+        return false;
+    }
+    else if (
         $('#fileInput').val() == "" && BUCT_PAGE._ActionMode != 'upload'
     ) {
-        displayMessage("File required");
+        displayMessage(message.upload_csv);
         $('#myModal').modal('hide');
         return false;
     } else {
@@ -199,9 +222,12 @@ function validateUpload() {
 
             buClient.UploadCompletedTaskCurrentYearCSV(
                 args, function(error, data) {
-                if (error == "InvalidCsvFile"){
+                if (error == "InvalidCsvFile" ){
                     $('#myModal').modal('hide');
                     displayMessage(message.invalid_csv_file);
+                }else if(error == 'DataAlreadyExists'){
+                    $('#myModal').modal('hide');
+                    displayMessage(message.data_already_exists);
                 }else if(data == "Bad Request"){
                     displayMessage(message.upload_failed);
                     // displayMessage(data + "\n" +error);
@@ -549,7 +575,7 @@ function getCountryId(le_id) {
     var cId = null;
     $.each(LEGAL_ENTITIES, function(k, v) {
         if (v.le_id == parseInt(le_id)) {
-            cId = v.cId;
+            cId = v.c_id;
         }
     });
     return cId;
@@ -585,11 +611,35 @@ BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(
     displayMessage(error);
 };
 
-function file_upload_rul() {
-    var sessionId = client_mirror.getSessionToken();
+key_search = function(mainList) {
+    key_one = UPLOADED_ON_FILTER.val().toLowerCase();
+    key_two = UPLOADED_FILE_FILTER.val().toLowerCase();
+    var fList = [];
+    for (var entity in mainList) {
+        uploaded_file = mainList[entity].bu_uploaded_documents;
+        uploaded_on = mainList[entity].uploaded_on;
+        console.log("uploaded_file:"+uploaded_file);
+        console.log("uploaded_on:"+uploaded_on);
+        if (
+            (~uploaded_on.toString().toLowerCase().indexOf(
+                key_one)) && 
+            (~uploaded_file.toString().toLowerCase().indexOf(
+                key_two))
+        ) {
+            fList.push(mainList[entity]);
+            
+        }
+    }
+    return fList
+}
 
+function file_upload_rul() {
+    // console.log("inside file upload rul");
+    var sessionId = client_mirror.getSessionToken();
     var fileBaseUrl = "/client/temp/upload?session_id=" +
         sessionId + "&csvid=" + CSV_ID;
+    // var fileBaseUrl = "../api/bu/completed_task?session_id=" +
+    //     sessionId + "&csvid=" + CSV_ID;
     return fileBaseUrl;
 }
 
