@@ -292,7 +292,14 @@ function ApproveBulkMapping() {
     this.totRecords = null;
 }
 ApproveBulkMapping.prototype.possibleFailures = function(error) {
-    displayMessage(error);
+
+    if (error == 'InvalidPassword') {
+        displayMessage(message.invalid_password);
+    }
+    else{
+        displayMessage(error);    
+    }
+    
     hideLoader();
 };
 ApproveBulkMapping.prototype.showList = function() {
@@ -575,8 +582,6 @@ ApproveBulkMapping.prototype.actionFromList = function(
                                     }
                                     else {
                                         hideLoader();
-                                        error = (error == "InvalidPassword")
-                                        ? "Invalid Password" : error;
                                         tThis.possibleFailures(error);
                                     }
                                 }
@@ -1729,8 +1734,6 @@ function PageControls() {
 
     REJECT_SELECT_ALL.on("change", function(e) {
         CURRENT_PAGE_SMID = [];
-
-
         console.log(BU_APPROVE_PAGE.viewDataList.length > 0);
         console.log(REJECT_SELECT_ALL.prop('checked') == true);
         if (BU_APPROVE_PAGE.viewDataList.length > 0 && REJECT_SELECT_ALL.prop('checked') == true) {
@@ -1748,15 +1751,15 @@ function PageControls() {
                     function(index, el) {
                     var data = BU_APPROVE_PAGE.viewDataList[index];
                     var csvId = 0;
-
+                    var sno;
+                    sno = $(this).attr("data-sno");
                     if (e.target.checked) {
                         $(this).prop("checked", true);
-                        $(".tbody-sm-approve-view th.reject-reason")
-                        .find("*").removeClass("default-display-none");
+                        $('#fa-info-circle-'+sno).removeClass(
+                            "default-display-none");
+                        $('#fa-info-circle-'+sno).attr(
+                            "data-original-title", viewReason);
 
-                        $(".tbody-sm-approve-view th.reject-reason")
-                        .find("*").attr("data-original-title", viewReason);
-                        //$(".reject-reason").find(*)
                         if (data) {
                             csvId = $('#view_csv_id').val();
                             bu.updateActionFromView(
@@ -1769,12 +1772,16 @@ function PageControls() {
                         }
                     }
                     else {
-                        $(this).find("*").prop("checked", false);
-                        $(".tbody-sm-approve-view th.reject-reason")
-                        .find("*").addClass("default-display-none");
+                        console.log('#fa-info-circle-'+sno);
+                        $('#fa-info-circle-'+sno).addClass(
+                            "default-display-none");
+                        $('#fa-info-circle-'+sno).attr(
+                            "data-original-title", "");
 
-                        $(".tbody-sm-approve-view th.reject-reason")
-                        .find("*").attr("data-original-title","");
+                        $(this).find("*").prop("checked", false);
+                        /*$('.reject-reason .fa-info-circle').addClass("default-display-none");
+
+                        $('.reject-reason .fa-info-circle').attr("data-original-title","");*/
 
                         $('.tbody-sm-approve-view .view-reject-check').each(
                             function() {
@@ -1790,13 +1797,15 @@ function PageControls() {
             $(this).find("*").prop("checked", false);
             $('.tbody-sm-approve-view .view-reject-check').each(
             function(index, el) {
+                var sno;
                 var data = BU_APPROVE_PAGE.viewDataList[index];
+                sno = $(this).attr("data-sno");
                 $(this).prop("checked", false);
-                $(".tbody-sm-approve-view th.reject-reason")
-                .find("*").addClass("default-display-none");
-
-                $(".tbody-sm-approve-view th.reject-reason")
-                .find("*").attr("data-original-title","");
+                        console.log('#fa-info-circle-'+sno);
+                $('#fa-info-circle-'+sno).addClass(
+                    "default-display-none");
+                $('#fa-info-circle-'+sno).attr(
+                    "data-original-title", "");
                 
                 if (data) {
                     csvId = $('#view_csv_id').val();

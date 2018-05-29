@@ -281,7 +281,7 @@ bu_api_params = {
         'validation_method': is_alphabet, 'is_optional': True
     },
     'format_file': {
-        'type': 'STRING', 'length': 100,
+        'type': 'STRING', 'length': 150,
         'validation_method': is_file_name, 'is_optional': True
     },
     'bu_remarks': {
