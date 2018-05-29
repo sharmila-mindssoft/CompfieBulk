@@ -1,9 +1,9 @@
 import os
-from datetime import datetime, timedelta
 import collections
 import mysql.connector
 import requests
 import threading
+from datetime import datetime, timedelta
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
@@ -15,7 +15,7 @@ from bulkupload.client_bulkconstants import (
 from ..buapiprotocol.pastdatadownloadbulk import (
     calculate_final_due_dates, return_past_due_dates)
 from client_keyvalidationsettings import (
-        csv_params, parse_csv_dictionary_values)
+    csv_params, parse_csv_dictionary_values)
 from ..client_bulkuploadcommon import (
     write_data_to_excel, rename_file_type)
 from server.common import get_date_time
@@ -59,12 +59,13 @@ class SourceDB(object):
 
     def connect_source_db(self, legal_entity_id):
         self._knowledge_db_con = mysql.connector.connect(
-                user=KNOWLEDGE_DB_USERNAME,
-                password=KNOWLEDGE_DB_PASSWORD,
-                host=KNOWLEDGE_DB_HOST,
-                database=KNOWLEDGE_DATABASE_NAME,
-                port=KNOWLEDGE_DB_PORT,
-                autocommit=False)
+            user=KNOWLEDGE_DB_USERNAME,
+            password=KNOWLEDGE_DB_PASSWORD,
+            host=KNOWLEDGE_DB_HOST,
+            database=KNOWLEDGE_DATABASE_NAME,
+            port=KNOWLEDGE_DB_PORT,
+            autocommit=False
+        )
 
         self._knowledge_db = Database(self._knowledge_db_con)
         self._knowledge_db.begin()
@@ -251,11 +252,11 @@ class SourceDB(object):
         if domain_id is None:
             return "Domain not exists"
         rows = return_past_due_dates(
-                self._source_db, domain_id, unit_id, None
-            )
+            self._source_db, domain_id, unit_id, None
+        )
         due_dates = calculate_final_due_dates(
-                self._source_db, rows, domain_id, unit_id
-            )
+            self._source_db, rows, domain_id, unit_id
+        )
         if due_dates[0] is None:
             return "Not Found"
         try:
@@ -285,8 +286,7 @@ class SourceDB(object):
         if trigger_before_days.isalpha() is False:
             start_date = due_date.date() - timedelta(
                 days=int(trigger_before_days))
-        completion_date = datetime.strptime(
-                completion_date, "%d-%b-%Y")
+        completion_date = datetime.strptime(completion_date, "%d-%b-%Y")
         if completion_date.date() < start_date:
             return "Should be greater than Start Date"
         else:
@@ -355,7 +355,7 @@ class SourceDB(object):
                 "completed_on",
                 "approve_status", "approved_by", "approved_on",
                 "current_status"
-                ]
+            ]
 
             # Compliance ID
             compliance_task_name = self.get_compliance_task_name(
@@ -543,14 +543,14 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                         "invalid_date"]
             if v != "":
                 if csvParam.get(
-                        "check_is_exists"
-                        ) is True or csvParam.get(
-                        "check_is_active"
-                        ) is True or csvParam.get(
-                        "check_due_date"
-                        ) is True or csvParam.get(
-                        "check_completion_date"
-                        ) is True:
+                    "check_is_exists"
+                ) is True or csvParam.get(
+                    "check_is_active"
+                ) is True or csvParam.get(
+                    "check_due_date"
+                ) is True or csvParam.get(
+                    "check_completion_date"
+                ) is True:
                     unboundMethod = self._validation_method_maps.get(
                         key)
                     if unboundMethod is not None:
@@ -694,7 +694,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         error_count = {
             "mandatory": 0, "max_length": 0, "invalid_char": 0,
             "invalid_date": 0
-            }
+        }
         for row_idx, data in enumerate(self._source_data):
             if row_idx == 0:
                 self._legal_entity_names = data.get("Legal_Entity")
@@ -864,19 +864,19 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     ):
         caller_name = "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s" % (TEMP_FILE_SERVER, csvid, country_id, legal_id, domain_id, unit_id)
         response = requests.post(caller_name)
+        print "Temp server Caller name->", caller_name
+        print "response-> ", response
         return response
 
     def call_file_server(
         self, csvid, country_id, legal_id, domain_id, unit_id, session_token
     ):
-        current_date = datetime.datetime.now().strftime('%d-%b-%Y')
+        current_date = datetime.now().strftime('%d-%b-%Y')
         client_id = str(session_token).split('-')[0]
-        caller = "%sclientfile?csvid=%s&" + \
-                 "c_id=%s&le_id=%s&d_id=%s&u_id=%s&" + \
-                 "start_date=%s&client_id=%s" % (
-                    FILE_SERVER, csvid, country_id, legal_id,
-                    domain_id, unit_id, current_date, client_id)
+        caller = "%sclientfile?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s&start_date=%s&client_id=%s" % (FILE_SERVER, csvid, country_id, legal_id, domain_id, unit_id, current_date, client_id)
+        print "caller Fileserver->", caller
         response = requests.post(caller)
+        print "Response from file server", response
         return response
 
     def frame_data_for_main_db_insert(

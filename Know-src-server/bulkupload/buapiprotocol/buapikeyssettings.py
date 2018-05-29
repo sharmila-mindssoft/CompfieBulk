@@ -281,7 +281,7 @@ bu_api_params = {
         'validation_method': is_alphabet, 'is_optional': True
     },
     'format_file': {
-        'type': 'STRING', 'length': 100,
+        'type': 'STRING', 'length': 150,
         'validation_method': is_file_name, 'is_optional': True
     },
     'bu_remarks': {
@@ -787,7 +787,7 @@ bu_api_params = {
         'validation_method': is_alphabet, 'is_optional': True
     },
     'unit_locations': {
-        'type': 'VECTOR_TYPE_STRING', 'length': 50,
+        'type': 'VECTOR_TYPE_STRING', 'length': 600,
         'validation_method': is_alphabet, 'is_optional': True
     },
     'unit_codes': {

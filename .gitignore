@@ -10,6 +10,8 @@
 /Know-src-server/logs/
 /Know-src-server/processes/*.log
 /Know-src-server/server/knowledgeformat/
+/Know-src-server/bulkupload/bulkconstants.py
+/Know-src-server/server/constants.py
 /Know-src-server/server/clientdocuments/
 /Know-src-server/server/clientlogo/
 /exported_reports/
@@ -20,3 +22,6 @@
 *.bat
 *.ods
 *.2*
+*.xml
+*.iml
+*.gitignore
