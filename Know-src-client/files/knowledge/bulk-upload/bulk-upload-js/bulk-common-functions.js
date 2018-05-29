@@ -1,3 +1,4 @@
+var maxUnitSelection = 50;
 function commonArrayAutoComplete(
     e, ac_div, text_val, list_val, callback
 ) {

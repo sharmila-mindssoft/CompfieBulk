@@ -37,6 +37,7 @@ var UNITIDS = [];
 var DOMAINNAMES = [];
 var DOMAINIDS = [];
 var CSVINFO = null;
+var PREVIOUSVAL = [];
 
 
 //Autocomplete success function
@@ -163,6 +164,9 @@ function pageControls() {
         } else if (MULTISELECTDOMAIN.val() == null) {
             displayMessage(message.domain_required);
             return false;
+        } else if (MULTISELECTUNIT.val() == null) {
+            displayMessage(message.unit_required);
+            return false;
         } else {
             DOMAINIDS = MULTISELECTDOMAIN.val().map(Number);
             DOMAINNAMES = [];
@@ -240,6 +244,22 @@ function pageControls() {
         UNITIDS = [];
         fetchUnitMultiselect()
         MULTISELECTUNIT.multiselect('rebuild');
+    });
+
+    //unit multiselect box change process
+    MULTISELECTUNIT.change(function(e) {
+        if(
+            MULTISELECTUNIT.val() != null && 
+            MULTISELECTUNIT.val().length > maxUnitSelection
+        ){
+            PREVIOUSVAL = $(this).val().slice(0, maxUnitSelection)
+            $(this).val(PREVIOUSVAL);
+            $("#units").multiselect('rebuild');
+            displayMessage(message.maximum_units);
+        } else {
+            PREVIOUSVAL = $(this).val();
+            $("#units").multiselect('rebuild');
+        }
     });
 
     //group autocomplte textbox process
