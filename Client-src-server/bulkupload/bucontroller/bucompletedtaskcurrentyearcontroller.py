@@ -63,6 +63,11 @@ def process_bu_completed_task_current_year_request(
             db, request_frame, session_user
         )
 
+    if type(request_frame) is bu_ct.DownloadUploadedData:
+        result = process_download_uploaded_data(
+            db, request_frame, session_user
+        )
+
     return result
 
 
@@ -186,8 +191,8 @@ def process_get_bulk_download_data(
     # print "request_frame>> ", request_frame
     # print "leid->>>> ", request_frame.legal_entity_id
     converter = PastDataJsonToCSV(
-                db, request_frame, session_user, "DownloadPastData"
-            )
+        db, request_frame, session_user, "DownloadPastData"
+    )
 
     if(
         converter.FILE_DOWNLOAD_PATH is None or
@@ -198,3 +203,15 @@ def process_get_bulk_download_data(
         result = bu_ct.DownloadBulkPastDataSuccess(
                  converter.FILE_DOWNLOAD_PATH)
     return result
+
+
+def process_download_uploaded_data(
+    db, request_frame, session_user
+):
+    csv_id = request_frame.csv_id
+    file_download_path = get_files_as_zip(
+        db, csv_id
+    )
+    return bu_ct.DownloadUploadedDataSuccess(
+        file_download_path
+    )
