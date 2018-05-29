@@ -87,6 +87,18 @@ var TOTAL_VIEW_ITEMS = 0;
 var TOTAL_VIEW_APPROVE_ITEMS = 0;
 var TOTAL_VIEW_REJECT_ITEMS = 0;
 
+var FREEZER_TABLE = $("#multi_col_freezer .table-responsive table");
+var FREEZER_TBODY = $("#multi_col_freezer .table-responsive tbody");
+var FREEZER_THEAD = $('#multi_col_freezer .table-responsive thead');
+var FREEZER_TH = $('#multi_col_freezer .table-responsive thead tr th');
+
+var FREEZER_TH_CHILD_1 = $('#multi_col_freezer .table-responsive thead th:nth-child(1)');
+var FREEZER_TH_CHILD_2 = $('#multi_col_freezer .table-responsive thead th:nth-child(2)');
+var FREEZER_TH_CHILD_3 = $('#multi_col_freezer .table-responsive thead th:nth-child(3)');
+var FREEZER_TH_CHILD_4 = $('#multi_col_freezer .table-responsive thead th:nth-child(4)');
+var FREEZER_TH_CHILD_5 = $('#multi_col_freezer .table-responsive thead th:nth-child(5)');
+var FREEZER_TH_CHILD_6 = $('#multi_col_freezer .table-responsive thead th:nth-child(6)');
+
 function displayLoader() {
   $('.loading-indicator-spin').show();
 }
@@ -727,6 +739,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
     showFrom = tThis.showMapCount;
     showFrom += 1;
     VIEW_LIST_CONTAINER.find('tr').remove();
+    
     if(viewData.length == 0) {
         VIEW_LIST_CONTAINER.empty();
         tr = $('#no_record_templates .table-no-content .table-row-no-content');
@@ -902,13 +915,6 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
 };
 
 ApproveBulkMapping.prototype.approveRejectAllCheck = function(){
- console.log("TOTAL_VIEW_ITEMS");
- console.log(TOTAL_VIEW_ITEMS);
- console.log("TOTAL_VIEW_APPROVE_ITEMS");
- console.log(TOTAL_VIEW_APPROVE_ITEMS);
- console.log("TOTAL_VIEW_REJECT_ITEMS");
- console.log(TOTAL_VIEW_REJECT_ITEMS);
- console.log(onCurrentPage);
  if(parseInt(TOTAL_VIEW_APPROVE_ITEMS) == parseInt(TOTAL_VIEW_ITEMS) &&
             parseInt(TOTAL_VIEW_REJECT_ITEMS) == 0){
             $('.approve-all').prop("checked", true);
@@ -918,6 +924,11 @@ ApproveBulkMapping.prototype.approveRejectAllCheck = function(){
         TOTAL_VIEW_APPROVE_ITEMS == 0){
         $('.reject-all').prop("checked", true);
         $('.approve-all').prop("checked", false);
+    }
+    else{
+        $('.reject-all').prop("checked", false);
+        $('.approve-all').prop("checked", false);
+
     }
 };
 
@@ -1526,7 +1537,8 @@ function PageControls() {
         var filtered = '';
         FILTERED_DATA.empty();
         CLEAR_FILTERED.hide();
-        
+        $('.approve-all').prop("checked", false);
+        $('.reject-all').prop("checked", false);
         appendFilter = function(val) {
             if (filtered == '') {
                 filtered += val;
@@ -1804,6 +1816,36 @@ function PageControls() {
     ITEMS_PER_PAGE.on("change", function(e) {
         pageLimit = parseInt(ITEMS_PER_PAGE.val());
         tThis.showViewScreen(tThis.CSVID, 0, pageLimit);
+    });
+
+    FREEZER_TABLE.scroll(function(e) {
+        FREEZER_THEAD.css("left", -FREEZER_TBODY.scrollLeft());
+        FREEZER_TH_CHILD_1.css("left", FREEZER_TABLE.scrollLeft() -0 ); 
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(1)'
+            ).css("left", FREEZER_TABLE.scrollLeft());
+
+        FREEZER_TH_CHILD_2.css("left", FREEZER_TABLE.scrollLeft() -0 );
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(2)'
+            ).css("left", FREEZER_TABLE.scrollLeft());
+
+        FREEZER_TH_CHILD_3.css("left", FREEZER_TABLE.scrollLeft() -0 );
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(3)'
+            ).css("left", FREEZER_TABLE.scrollLeft());
+
+        FREEZER_TH_CHILD_4.css("left", FREEZER_TABLE.scrollLeft() -0 );
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(4)'
+            ).css("left", FREEZER_TABLE.scrollLeft());
+
+        FREEZER_TH_CHILD_5.css("left", FREEZER_TABLE.scrollLeft() -0 );
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(5)'
+            ).css("left", FREEZER_TABLE.scrollLeft());
+
+        FREEZER_TH_CHILD_6.css("left", FREEZER_TABLE.scrollLeft() -0 );
+/*        $('#multi_col_freezer .table-responsive tbody td:nth-child(6)'
+            ).css("left", FREEZER_TABLE.scrollLeft());*/
+
+        FREEZER_THEAD.css("top", -FREEZER_TBODY.scrollTop());
+        FREEZER_TH.css("top", FREEZER_TABLE.scrollTop());
     });
 }
 

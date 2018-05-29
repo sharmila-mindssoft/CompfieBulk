@@ -573,3 +573,61 @@ td.task-id {
 .tbody-sm-approve-view .format a {
     word-wrap: break-word;
 }
+
+/** MULTI COLUMN FREEZER FOR APPROVE-REJECT STATU MAPPING */
+#multi_col_freezer .table-responsive table {
+    position: relative;
+    border-collapse: collapse;
+    display: block;
+    height: 450px;
+    max-width: 100%;
+}
+#multi_col_freezer .table-responsive  thead {
+  position: relative;
+  overflow: visible;
+}
+#multi_col_freezer .table-responsive  thead th {
+  position: relative; 
+}
+.thead-tr-1-tr th:nth-child(1),  
+.thead-tr-1-tr th:nth-child(2), 
+.thead-tr-1-tr th:nth-child(3),
+.thead-tr-2-tr th:nth-child(1), 
+.thead-tr-2-tr th:nth-child(2), 
+.thead-tr-2-tr th:nth-child(3),
+.thead-tr-3-tr th:nth-child(1), 
+.thead-tr-3-tr th:nth-child(2), 
+.thead-tr-3-tr th:nth-child(3), 
+.thead-tr-3-tr th:nth-child(4), 
+.thead-tr-3-tr th:nth-child(5) {
+  position: relative;
+  z-index: 99;
+}
+#multi_col_freezer .table-responsive tbody tr td:nth-child(1),
+#multi_col_freezer .table-responsive tbody tr td:nth-child(2),
+#multi_col_freezer .table-responsive tbody tr td:nth-child(3),
+#multi_col_freezer .table-responsive tbody tr td:nth-child(4),
+#multi_col_freezer .table-responsive tbody tr td:nth-child(5) {
+  position: relative;
+  height: 40px;
+  background: #fff;
+}
+#multi_col_freezer .table-responsive.vertical-scroll {
+    overflow: hidden;
+    height: 490px;
+}
+.table-striped>tbody>tr:nth-of-type(odd) td {
+    background: #E6F2F7!important;
+}
+tr.thead-tr-3-tr .columnfixed {
+    background: #fff;
+}
+/*th.divider-column, td.divider-column {
+    border-right: 1px solid #ccc;
+}*/
+.table-freeze-multi td{
+    width: 500px;
+}
+.js-filter-sm.sfilter-sticky-header{
+    width: 160px;
+}
