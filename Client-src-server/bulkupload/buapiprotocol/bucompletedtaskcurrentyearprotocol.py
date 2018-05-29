@@ -307,6 +307,19 @@ class InvalidCsvFile(Response):
         return {}
 
 
+class DataAlreadyExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return DataAlreadyExists()
+
+    def to_inner_structure(self):
+        return {}
+
+
 class UploadCompletedTaskCurrentYearCSVSuccess(Response):
     def __init__(
         self, total, valid, invalid, new_csv_id, csv_name,
