@@ -510,8 +510,7 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
     bu.submitClientUnitActionFromView(
         csv_id, actionType, remarksText, pwd,
         parseInt(SEARCH_GROUP_ID.val().trim()),
-    function(error, response)
-    {
+    function(error, response){
         if (error == null) {
             if (actionType == 4) {
                 displaySuccessMessage(message.action_selection_success);
@@ -520,12 +519,15 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
                 initialize('list');
             }
         }
-        else
-        {
+        else{
             hideLoader();
+            if(error == "InvalidPassword"){
+                displayMessage(
+                    "Invalid Password"
+                );
+            }
             if(error == "ReturnDeclinedCount") {
-                if(response.declined_count > 0)
-                {
+                if(response.declined_count > 0){
                     msg = response.declined_count +
                         " units declined, Do you want to continue ?";
                     confirm_alert(msg, function(isConfirm) {
