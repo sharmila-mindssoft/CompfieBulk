@@ -605,9 +605,10 @@ class BulkUploadConstant(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_category_id"])
+        data = parse_dictionary(data, ["user_category_id", "user_category_name"])
         return BulkUploadConstant(
-            data.get("user_category_id")
+            data.get("user_category_id"),
+            data.get("user_category_name")
         )
 
     def to_structure(self):
