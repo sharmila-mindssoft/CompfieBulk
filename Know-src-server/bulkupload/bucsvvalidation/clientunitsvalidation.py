@@ -898,8 +898,8 @@ class SourceDB(object):
                                         str(le_id) + "-" + domain
                                     ).get("domain_id")) + "-" +
                                 str(self._organization.get(
-                                        str(le_id) + "-" + neworgn
-                                    ).get("organisation_id")))
+                                    str(le_id) + "-" + neworgn
+                                ).get("organisation_id")))
                     if int(d["action"]) == 0 or int(d["action"]) == 1:
                         action_val = 1
                         remarks_text = None
@@ -2191,7 +2191,7 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
 
     def process_data_to_main_db_insert(self, system_declined_units):
         self._temp_data.sort(key=lambda x: (
-             x["Legal_Entity"], x["Division"], x["Category"]
+            x["Legal_Entity"], x["Division"], x["Category"]
         ))
         for k, v in groupby(self._temp_data, key=lambda s: (
             s["Legal_Entity"], s["Division"], s["Category"]
@@ -2210,8 +2210,9 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
             main_category_id = 0
 
             # fetch legal_entity_id
-            if self._legal_entity.get(value.get("Legal_Entity")) is not None:
-                le_id = self._legal_entity.get(
+
+            if self._legal_entity.get(str(c_id) + "-" + value.get("Legal_Entity")) is not None:
+                le_id = self._legal_entity.get(str(c_id) + "-" +
                     value.get("Legal_Entity")
                 ).get("legal_entity_id")
 

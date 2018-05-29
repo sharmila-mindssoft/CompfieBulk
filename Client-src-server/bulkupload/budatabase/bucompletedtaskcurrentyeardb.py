@@ -1,34 +1,34 @@
-from server.exceptionmessage import fetch_error
-import traceback
-from server import logger
+import mysql
 from ..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
 import datetime
-
+from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
-from bulkupload.client_bulkconstants import(CSV_DELIMITER, CSV_MAX_LINE_ITEM)
-
-from server.common import (
-   get_date_time, string_to_datetime, datetime_to_string,
-   get_date_time_in_date
-)
+from server.common import string_to_datetime
+from clientprotocol import clientcore
 
 __all__ = [
     "get_legal_entity_domains",
     "save_completed_task_current_year_csv",
     "save_completed_task_data",
-    "getPastRecordData",
-    "getCompletedTaskCSVList"
+    "get_past_record_data",
+    "get_completed_task_CSV_list",
+    "get_client_id_by_le",
+    "get_units_for_user"
 ]
+
 
 def get_legal_entity_domains(
     db, user_id, session_user, le_id
 ):
-    query = "SELECT T02. domain_name, T01.le_domain_id, T01.legal_entity_id, " + \
-            "T01.domain_id, T02.domain_id FROM tbl_legal_entity_domains AS T01 " + \
-            "INNER JOIN tbl_domains AS T02 ON T01.domain_id = T02.domain_id " + \
+    query = "SELECT T02. domain_name, T01.le_domain_id, " + \
+            "T01.legal_entity_id, " + \
+            "T01.domain_id, T02.domain_id " + \
+            " FROM tbl_legal_entity_domains AS T01 " + \
+            "INNER JOIN tbl_domains AS T02 " + \
+            " ON T01.domain_id = T02.domain_id " + \
             "WHERE is_active ='0' AND T01.legal_entity_id = %s " + \
             "Group by T01.domain_id;"
 
@@ -36,25 +36,26 @@ def get_legal_entity_domains(
     rows = db.select_all(query, param)
     results = []
     for domains in rows:
-        domainObj =bu_ct.Domains(
+        domainObj = bu_ct.Domains(
             domains["legal_entity_id"], domains["le_domain_id"],
-            domains["domain_name"] )
+            domains["domain_name"])
         results.append(domainObj)
 
     return results
 
-def save_completed_task_current_year_csv(db, completed_task, session_user):
+
+def save_completed_task_current_year_csv(
+    db, completed_task, session_user
+):
 
     columns = [
-        "client_id", "legal_entity_id", "domain_id","unit_id_id", "client_group",
-        "csv_name", "uploaded_by", "uploaded_on",
-        "total_records", "total_documents", "uploaded_documents", "upload_status"
+        "client_id", "legal_entity_id", "domain_id", "unit_id_id",
+        "client_group", "csv_name", "uploaded_by", "uploaded_on",
+        "total_records", "total_documents", "uploaded_documents",
+        "upload_status"
     ]
-    # print "completed_task[7]>>", completed_task[7]
-    # print "string_to_datetime(completed_task[7])>>", string_to_datetime(completed_task[7])
-
     values = [
-        completed_task[0],completed_task[1],
+        completed_task[0], completed_task[1],
         completed_task[2], completed_task[3],
         completed_task[4], completed_task[5],
         completed_task[6], string_to_datetime(completed_task[7]),
@@ -66,14 +67,16 @@ def save_completed_task_current_year_csv(db, completed_task, session_user):
 
     return completed_task_id
 
-def save_completed_task_data(db, csv_id, csv_data):
+
+def save_completed_task_data(db, csv_id, csv_data, client_id):
     try:
-        columns = ["csv_past_id", "Legal_Entity", "Domain",
-        "Unit_Code", "Unit_Name", "perimary_legislation",
-        "Secondary_Legislation", "compliance_task_name",
-        "Compliance_Description", "Compliance_Frequency", "Statutory_Date",
-        "Due_Date","Assignee","Completion_Date","document_name"
-        ]
+        columns = [
+            "csv_past_id",  "Legal_Entity", "Domain",
+            "Unit_Code", "Unit_Name", "perimary_legislation",
+            "Secondary_Legislation", "compliance_task_name",
+            "Compliance_Description", "Compliance_Frequency", "Statutory_Date",
+            "Due_Date", "Assignee", "Completion_Date", "document_name"
+            ]
 
         values = []
         for idx, d in enumerate(csv_data):
@@ -88,52 +91,58 @@ def save_completed_task_data(db, csv_id, csv_data):
 
             ))
 
-        if values :
+        if values:
             db.bulk_insert("tbl_bulk_past_data", columns, values)
             return True
-        else :
+        else:
             return False
     except Exception, e:
         print "e>>", str(e)
         print "Exception>>", Exception
         raise ValueError("Transaction failed")
 
-def getPastRecordData(db, csvID):
 
-    query = " SELECT bulk_past_data_id, csv_past_id, legal_entity, domain, unit_code, unit_name, perimary_legislation, secondary_legislation, compliance_task_name, compliance_description, compliance_frequency, statutory_date, due_date, assignee, completion_date, document_name                FROM tbl_bulk_past_data where csv_past_id = %s; "
+def get_past_record_data(db, csvID):
+    query = " SELECT bulk_past_data_id, csv_past_id, " + \
+        " legal_entity, " + \
+        " domain, unit_code, unit_name, perimary_legislation, " + \
+        " secondary_legislation, compliance_task_name, " + \
+        " compliance_description, compliance_frequency, " + \
+        " statutory_date, due_date, assignee, completion_date, " + \
+        " document_name" + \
+        "  FROM tbl_bulk_past_data where csv_past_id = %s; "
 
     param = [csvID]
     rows = db.select_all(query, param)
-    # print "getPastRecordData>rows>>", rows
+    # print "get_past_record_data>rows>>", rows
 
     return rows
 
 
-def getComplianceID(db, compliance_task_name):
-
-    query = "SELECT compliance_id FROM tbl_compliances where compliance_task = '%s' limit 1"
+def get_compliance_id(db, compliance_task_name):
+    query = "SELECT compliance_id FROM tbl_compliances " + \
+        "where compliance_task = '%s' limit 1"
 
     param = [compliance_task_name]
     complianceID = db.select_all(query, param)
 
     return complianceID
 
-def getCompletedTaskCSVList(db, session_user, legal_entity_list):
+
+def get_completed_task_CSV_list(db, session_user, legal_entity_list):
 
     doc_names = {}
-
-    # query = " Select legal_entity_id, csv_past_id, csv_name, uploaded_on, uploaded_by, total_records, total_documents, " + \
-    #         " uploaded_documents, (total_documents - uploaded_documents) AS remaining_documents " + \
-    #         " From tbl_bulk_past_data_csv where (total_documents - uploaded_documents) >= 1 " + \
-    #         " and uploaded_by = %s and legal_entity_id like '%' "
-    print "legal_entity_list>>", legal_entity_list
     legal_entity_list = ",".join([str(x) for x in legal_entity_list])
-    print "legal_entity_list>>", legal_entity_list
 
-    query = " SELECT DISTINCT T01.legal_entity_id, T02.legal_entity, " + \
-            " T01.csv_past_id, T01.csv_name, T01.uploaded_on, T01.uploaded_by, " + \
+    query = " SELECT DISTINCT T01.legal_entity_id, " + \
+            " T02.legal_entity, " + \
+            " T01.csv_past_id, T01.csv_name, T01.uploaded_on, " + \
+            " T01.uploaded_by, " + \
             " total_records, total_documents, T01.uploaded_documents, " + \
-            " (T01.total_documents - t01.uploaded_documents) AS remaining_documents " + \
+            " (T01.total_documents - T01.uploaded_documents) " + \
+            " AS remaining_documents, " + \
+            " T01.domain_id, T01.unit_id_id as unit_id, " + \
+            " NOW() as start_date" + \
             " From tbl_bulk_past_data_csv  AS T01 " + \
             " INNER JOIN tbl_bulk_past_data AS T02 " + \
             " ON T01.csv_past_id = T02.csv_past_id " + \
@@ -142,50 +151,148 @@ def getCompletedTaskCSVList(db, session_user, legal_entity_list):
     param = [session_user, legal_entity_list]
 
     rows = db.select_all(query, param)
-    # print "getCompletedTaskCSVList>rows>>", rows
+    print "get_completed_task_CSV_list>rows>>", rows
 
     param1 = [session_user]
-    docQuery = "select t1.csv_past_id, document_name from tbl_bulk_past_data as t1 " + \
+    docQuery = "select t1.csv_past_id, document_name " + \
+               " from tbl_bulk_past_data as t1 " + \
                " INNER JOIN tbl_bulk_past_data_csv as t2 " + \
                " ON t2.csv_past_id = t1.csv_past_id " + \
-               " where ifnull(t2.upload_status, 0) = 0 and document_name != '' " + \
+               " where ifnull(t2.upload_status, 0) = 0 " + \
+               " and document_name != '' " + \
                " and t2.uploaded_by = %s "
     docRows = db.select_all(docQuery, param1)
+    print "docRows-> ", docRows
+    if docRows is not None:
+        for d in docRows:
+            csv_id = d.get("csv_past_id")
+            docname = d.get("document_name")
+            doc_list = doc_names.get(csv_id)
+            if doc_list is None:
+                doc_list = [docname]
+            else:
+                doc_list.append(docname)
+            doc_names[csv_id] = doc_list
 
-    for d in docRows:
-        csv_id = d.get("csv_past_id")
-        docname = d.get("document_name")
-        doc_list = doc_names.get(csv_id)
-        if doc_list is None:
-            doc_list = [docname]
-        else:
-            doc_list.append(docname)
-        doc_names[csv_id] = doc_list
-
+    print "doc Names-> ", doc_names
     csv_list = []
-    for row in rows:
-        uploaded_on = row["uploaded_on"].strftime("%d-%b-%Y %H:%M")
-
-        csv_list.append(bu_ct.CsvList(row["csv_past_id"], row["csv_name"],
-        uploaded_on, row["uploaded_by"], row["total_records"],
-        row["total_documents"], row["uploaded_documents"], row["remaining_documents"],
-        doc_names.get(d.get("csv_past_id")), row["legal_entity"]
-        )
-        )
-
-    # print "getCompletedTaskCSVList>csv_list>>", csv_list
+    if rows is not None:
+        for row in rows:
+            uploaded_on = row["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+            curr_date = datetime.datetime.now().strftime('%d-%b-%Y')
+            csv_list.append(
+                bu_ct.CsvList(
+                    row["csv_past_id"], row["csv_name"],
+                    uploaded_on, row["uploaded_by"], row["total_records"],
+                    row["total_documents"], row["uploaded_documents"],
+                    row["remaining_documents"],
+                    doc_names.get(d.get("csv_past_id")), row["legal_entity"],
+                    row["domain_id"], row["unit_id"], curr_date
+                )
+            )
     return csv_list
-########################################################
-def convertArrayToString(array_ids):
-    existing_id=[]
-    id_list=""
-    if(len(array_ids)>1):
-        for d in array_ids :
-         if d in existing_id:
-           break
-         id_list+=str(d)+","
-         existing_id.append(d)
-        id_list=id_list.rstrip(',');
-    else :
-        id_list=array_ids[0]
-    return id_list
+
+
+def connectKnowledgeDB(le_id):
+    try:
+        _source_knowledge_db_con = mysql.connector.connect(
+            user=KNOWLEDGE_DB_USERNAME,
+            password=KNOWLEDGE_DB_PASSWORD,
+            host=KNOWLEDGE_DB_HOST,
+            database=KNOWLEDGE_DATABASE_NAME,
+            port=KNOWLEDGE_DB_PORT,
+            autocommit=False,
+        )
+
+        _source_knowledge_db = Database(_source_knowledge_db_con)
+        _source_knowledge_db.begin()
+        return _source_knowledge_db
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
+
+
+def get_client_id_by_le(db, legal_entity_id):
+    db = connectKnowledgeDB(legal_entity_id)
+    query = "SELECT client_id, group_name from tbl_client_groups " + \
+            " where client_id = ( select client_id from " + \
+            " tbl_legal_entities where " + \
+            "legal_entity_id='%s')"
+    query = query % legal_entity_id
+    rows = db.select_all(query)
+    client_id = rows[0]["client_id"]
+    client_name = rows[0]["group_name"]
+    return client_id, client_name
+
+
+def get_user_category(db, user_id):
+    q = "select user_category_id from tbl_users where user_id = %s"
+    row = db.select_one(q, [user_id])
+    if row:
+        return row["user_category_id"]
+    else:
+        return None
+
+
+def get_units_for_user(db, le_id, domain_id, user_id):
+    db = connectKnowledgeDB(le_id)
+    user_category_id = get_user_category(db, user_id)
+    if user_category_id > 3:
+        query = "SELECT t2.unit_id, t2.legal_entity_id, " + \
+                " t2.division_id, " + \
+                "t2.category_id, t2.unit_code, t2.unit_name, " + \
+                " t2.is_closed, " + \
+                "t2.address, " + \
+                " GROUP_CONCAT(t3.domain_id) as domain_ids, " + \
+                " t2.country_id, t2.business_group_id " + \
+                "FROM tbl_user_units AS t1 " + \
+                "INNER JOIN tbl_units AS t2 " + \
+                " ON t2.unit_id = t1.unit_id  " + \
+                "INNER JOIN tbl_units_organizations AS t3 " + \
+                " ON t3.unit_id = t2.unit_id " + \
+                "WHERE t1.user_id = %s and t2.legal_entity_id = %s " + \
+                " and %s in (t3.domain_id) AND t2.is_closed = 0 " + \
+                " group by t2.unit_id ORDER BY t2.unit_name"
+        rows = db.select_all(query, [user_id, le_id, domain_id])
+    else:
+        query = "SELECT t2.unit_id, t2.legal_entity_id, " + \
+                " t2.division_id, " + \
+                "t2.category_id, t2.unit_code, t2.unit_name," + \
+                " t2.is_closed, " + \
+                "t2.address, GROUP_CONCAT(t3.domain_id) " + \
+                " as domain_ids, t2.country_id, " + \
+                " t2.business_group_id " + \
+                "FROM tbl_user_units AS t1 " + \
+                "INNER JOIN tbl_units AS t2 ON " + \
+                " t2.unit_id = t1.unit_id  " + \
+                "INNER JOIN tbl_units_organizations AS t3 ON " + \
+                " t3.unit_id = t2.unit_id " + \
+                "WHERE t2.is_closed = 0 and t2.legal_entity_id = %s " + \
+                " and %s in (t3.domain_id) group by t2.unit_id " + \
+                " ORDER BY t2.unit_name"
+        rows = db.select_all(query, [le_id, domain_id])
+    return return_units(rows)
+
+
+def return_units(units):
+        results = []
+        for unit in units:
+            division_id = None
+            category_id = None
+            b_group_id = None
+            if unit["division_id"] > 0:
+                division_id = unit["division_id"]
+            if unit["category_id"] > 0:
+                category_id = unit["category_id"]
+            if unit["business_group_id"] > 0:
+                b_group_id = unit["business_group_id"]
+            results.append(clientcore.ClientUnit(
+                unit["unit_id"], division_id, category_id,
+                unit["legal_entity_id"],
+                b_group_id, unit["unit_code"],
+                unit["unit_name"], unit["address"],
+                [int(x) for x in unit["domain_ids"].split(",")],
+                unit["country_id"],
+                bool(unit["is_closed"])
+            ))
+        return results

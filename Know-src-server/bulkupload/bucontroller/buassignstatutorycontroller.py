@@ -254,6 +254,10 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
             return bu_as.UnitsNotAssignedToUser()
 
         if res_data["return_status"] is True:
+            invalid_units = cObj.check_uploaded_count_in_csv()
+            if len(invalid_units) > 0:
+                return bu_as.UploadedRecordsCountNotMatch(invalid_units)
+
             generate_valid_file(csv_name)
             d_ids = ",".join(map(str, cObj._domain_ids))
             d_names = ",".join(cObj._domain_names)
@@ -261,7 +265,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
                 session_user.user_id(),
                 cObj._client_id, cObj._legal_entity_id,
                 d_ids, cObj._legal_entity, d_names,
-                csv_name,
+                csv_name, cObj._country,
                 res_data["total"]
             ]
             new_csv_id = save_assign_statutory_csv(db, csv_args)
@@ -329,6 +333,10 @@ def get_assign_statutory_pending_list(db, request_frame, session_user):
     return result
 
 
+###################################################################
+# get master details for filter process in approve assign statutory
+###################################################################
+
 def get_assign_statutory_filter_for_approve_page(
     db, request_frame, session_user
 ):
@@ -337,16 +345,25 @@ def get_assign_statutory_filter_for_approve_page(
     return response
 
 
+################################
+# get filtered result by csv_id
+################################
 def get_assign_statutory_data_by_csvid(db, request_frame, session_user):
     response = get_assign_statutory_by_csv_id(db, request_frame, session_user)
     return response
 
 
+#####################################
+# get filtered result by filter page
+#####################################
 def get_assign_statutory_data_by_filter(db, request_frame, session_user):
     response = get_assign_statutory_by_filter(db, request_frame, session_user)
     return response
 
 
+#################################################################
+# To update records in table by approve all / reject all function
+#################################################################
 def update_assign_statutory_action_in_list(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     action = request_frame.bu_action
@@ -505,9 +522,12 @@ def download_rejected_asm_report(db, request_frame, session_user):
     download_format = request_frame.download_format
     user_id = session_user.user_id()
 
+    if asm_unit_code == '':
+        asm_unit_code = 0
+    print "asm_unit_code >>>>>>>>>>>>>>>>>>>>>>>>>", asm_unit_code
     sheet_name = "Rejected Assign Statutory"
 
-    csv_header_key = ["client_group", "legal_entity", "domain",
+    csv_header_key = ["client_group", "legal_entity", "country", "domain",
                       "organization", "unit_code", "unit_name",
                       "unit_location", "perimary_legislation",
                       "secondary_legislation", "statutory_provision",
@@ -517,7 +537,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
                       "rejected_reason", "is_fully_rejected"
                       ]
 
-    csv_column_name = ["Client_Group", "Legal_Entity",
+    csv_column_name = ["Client_Group", "Legal_Entity", "Country",
                        "Domain", "Organisation",
                        "Unit_Code", "Unit_Name",
                        "Unit_Location",
@@ -540,6 +560,9 @@ def download_rejected_asm_report(db, request_frame, session_user):
                                        result["txt_link"])
 
 
+####################################################
+# save record in table by user using individual row
+#####################################################
 def save_action(db, request_frame, session_user):
     try:
         save_action_from_view(
@@ -553,6 +576,9 @@ def save_action(db, request_frame, session_user):
         raise e
 
 
+#########################################################
+# submit record by user after select all individual rpw
+#########################################################
 def submit_assign_statutory(db, request_frame, session_user):
     try:
         csv_id = request_frame.csv_id
@@ -592,6 +618,9 @@ def submit_assign_statutory(db, request_frame, session_user):
         raise e
 
 
+############################################################
+# submit record bu user with system declined information
+#############################################################
 def confirm_submit_assign_statutory(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     client_id = request_frame.cl_id
@@ -616,6 +645,9 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
         return bu_as.SubmitAssignStatutorySuccess()
 
 
+#####################################################
+# validate pending record count while submit process
+#####################################################
 def validate_assign_statutory(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     approved_count, un_saved_count = get_validation_info(db, csv_id)

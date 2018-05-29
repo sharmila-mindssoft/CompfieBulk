@@ -996,7 +996,7 @@ def get_assign_compliance_statutories_for_units(
 
     # applicable unit list
 
-    qry_applicable = " SELECT distinct A.compliance_id, " + \
+    qry_applicable = " SELECT  A.compliance_id, " + \
         " A.unit_id units FROM " + \
         " tbl_client_compliances A " + \
         " INNER JOIN tbl_compliances C " + \
@@ -1020,7 +1020,7 @@ def get_assign_compliance_statutories_for_units(
     ]
 
     # compliance info for the selected units and domain
-    query = " SELECT distinct " + \
+    query = " SELECT  " + \
         " t2.compliance_id, " + \
         " t2.domain_id, " + \
         " t3.compliance_task, " + \
@@ -1483,10 +1483,8 @@ def get_statutory_wise_compliances(
 
         # s_maps = json.loads(compliance["statutory_mapping"])
         # statutories = s_maps[0]
-        s_maps = compliance["statutory_mapping"]
-        statutories = s_maps
-
-        if level_1_statutory_name is None or level_1_statutory_name == "" :
+        statutories = compliance["statutory_mapping"]
+        if level_1_statutory_name is None or level_1_statutory_name == "":
             level_1 = statutories
         else:
             level_1 = level_1_statutory_name
@@ -1517,6 +1515,7 @@ def get_statutory_wise_compliances(
                 domain_id=domain_id
             )
         elif compliance["repeats_type_id"] == 2:  # Months
+            print " inside months: "
             due_dates, summary = calculate_due_date(
                 db,
                 statutory_dates=compliance["statutory_dates"],
@@ -1525,6 +1524,8 @@ def get_statutory_wise_compliances(
                 due_date=compliance["due_date"],
                 domain_id=domain_id
             )
+            print due_dates
+            print "summary : %s " % summary
         elif compliance["repeats_type_id"] == 3:  # years
             due_dates, summary = calculate_due_date(
                 db,
@@ -1580,6 +1581,9 @@ def get_statutory_wise_compliances(
                     level_1_statutory_name, compliances
                 )
             )
+    print "statutory_wise_compliances :"
+    print statutory_wise_compliances
+    print "total count : %d" % total_count
     return statutory_wise_compliances, total_count
 
 

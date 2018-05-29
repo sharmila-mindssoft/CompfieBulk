@@ -241,24 +241,3 @@
 .bu-doc-summary li {
     list-style: inside;
 }
-
-/* approve-statutory-mapping-bulk-upload Inline Styles */
-.datatable-inline{
-  width: 3000px; overflow-x: auto;
-}
-.pagination-inline{
-width: 100%; display: table;
-}
-.td-inline-one{
-  width:250px
-}
-.td-inline-two{
-text-align:right;
-}
-.filter_by_inline{
-padding: 10px; text-transform: none; color: #fff !important; margin-top: 0px;
-}
-.ul-inline{
-  width:94%;
-}
-/* approve-statutory-mapping-bulk-upload Inline Styles */
