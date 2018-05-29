@@ -152,7 +152,7 @@ class GetRejectedAssignSMData(Request):
 
     def to_inner_structure(self):
         return {
-            "client_id": self.c_id,
+            "client_id": self.client_id,
             "le_id": self.le_id,
             "d_id": self.d_id,
             "asm_unit_code": self.asm_unit_code
