@@ -735,7 +735,7 @@ class Domains(object):
         data = parse_dictionary(data, [
             "d_id", "d_name"
         ])
-        return Units(
+        return Domains(
             data.get("d_id"), data.get("d_name")
         )
 
