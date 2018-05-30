@@ -30,6 +30,9 @@ var DOCUMENT_TOTAL = $('#bu_doc_total');
 var DOCUMENT_UPLOADED = $('#bu_upload_total');
 var DOCUMENT_REMAINING = $('#bu_remain_total');
 
+var UPL_DOC_TXT = $("#bu_upl_txt");
+var UPL_DOC_REM = $("#bu_upl_rem");
+
 var LBL_COUNTRY_NAME = $('.lbl-c-name');
 var LBL_DOMAIN_NAME = $('.lbl-d-name');
 var TXT_COUNTRY_NAME = $('.txt-c-name');
@@ -242,8 +245,10 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
 
                     UPLOAD_DOCUMENT.show();
                     DOCUMENT_TOTAL.text(response.doc_count);
-                    DOCUMENT_UPLOADED.text("0");
-                    DOCUMENT_REMAINING.text("0");
+                    UPL_DOC_TXT.hide();
+                    UPL_DOC_REM.hide();
+                    // DOCUMENT_UPLOADED.text("0");
+                    // DOCUMENT_REMAINING.text("0");
 
                     DOCUMENT_SUMMARY.hide();
                     t_this.changeTxttoLabel(COUNTRY_AC.val(), DOMAIN_AC.val(),
@@ -382,6 +387,10 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     UPLOAD_DOCUMENT.show();
     DOCUMENT_SUMMARY.show();
     DOCUMENT_TOTAL.text(data.no_of_documents);
+
+    UPL_DOC_TXT.show();
+    UPL_DOC_REM.show();
+
     DOCUMENT_UPLOADED.text(data.uploaded_documents);
     DOCUMENT_REMAINING.text(
         parseInt(data.no_of_documents) - parseInt(data.uploaded_documents)

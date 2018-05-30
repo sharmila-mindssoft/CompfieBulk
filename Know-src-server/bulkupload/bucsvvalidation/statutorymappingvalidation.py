@@ -307,11 +307,12 @@ class StatutorySource(object):
             "Duration", "Duration_Type", "Multiple_Input_Selection"
         ]
         invalid = self.check_empty_for_compliance_frequency(d, keys)
-        invalid_date = self.check_date_validation(
-            d["Statutory_Date"], d["Statutory_Month"]
-        )
         msg.extend(invalid)
-        msg.extend(invalid_date)
+        if (d["Statutory_Date"] != "" and d["Statutory_Month"]):
+            invalid_date = self.check_date_validation(
+                int(d["Statutory_Date"]), int(d["Statutory_Month"])
+            )
+            msg.extend(invalid_date)
         return msg
 
     def check_on_occurrence(self, d):
@@ -379,7 +380,7 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
                 if (d["Statutory_Date"] != "" and d["Statutory_Month"] != ""):
                     invalid_date_msg = self.check_date_validation(
-                        d["Statutory_Date"], d["Statutory_Month"]
+                        int(d["Statutory_Date"]), int(d["Statutory_Month"])
                     )
                     msg.extend(invalid_date_msg)
 
@@ -438,7 +439,7 @@ class StatutorySource(object):
                     mon_list = d["Statutory_Month"].split(CSV_DELIMITER)
                     for s_date, s_month in zip(date_list, mon_list):
                         invalid_date_msg = self.check_date_validation(
-                            s_date, s_month
+                            int(s_date), int(s_month)
                         )
                         msg.extend(invalid_date_msg)
 
@@ -486,7 +487,7 @@ class StatutorySource(object):
 
                 if (d["Statutory_Date"] != "" and d["Statutory_Month"] != ""):
                     invalid_date_msg = self.check_date_validation(
-                        d["Statutory_Date"], d["Statutory_Month"]
+                        int(d["Statutory_Date"]), int(d["Statutory_Month"])
                     )
                     msg.extend(invalid_date_msg)
 
@@ -556,7 +557,7 @@ class StatutorySource(object):
                     mon_list = d["Statutory_Month"].split(CSV_DELIMITER)
                     for s_date, s_month in zip(date_list, mon_list):
                         invalid_date_msg = self.check_date_validation(
-                            s_date, s_month
+                            int(s_date), int(s_month)
                         )
                         msg.extend(invalid_date_msg)
 

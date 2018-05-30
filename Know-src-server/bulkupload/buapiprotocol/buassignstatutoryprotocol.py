@@ -734,7 +734,7 @@ class Domains(object):
         data = parse_dictionary(data, [
             "d_id", "d_name"
         ])
-        return Units(
+        return Domains(
             data.get("d_id"), data.get("d_name")
         )
 
@@ -1418,7 +1418,7 @@ class GetDomainExecutiveDetailsSuccess(Response):
         self.domain_executive_info = domain_executive_info
 
     @staticmethod
-    def parse_inner_strucure(data):
+    def parse_inner_structure(data):
         data = parse_dictionary(data, ["domain_executive_info"])
         return GetDomainExecutiveDetailsSuccess(
             data.get("domain_executive_info")
