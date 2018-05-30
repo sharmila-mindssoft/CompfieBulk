@@ -257,7 +257,7 @@ function validateUpload() {
                     $('#hdn_csv_id').val(data.new_csv_id);
                     CSV_ID = data.new_csv_id;
                     $('.successFileName').text(csvSplitName);
-                    // csvPath = "../../../../../uploaded_file/csv/" + 
+                    // csvPath = "../../../../../uploaded_file/csv/" +
                     //                 data.csv_name;
                     $('.uploaded-data').attr("id", CSV_ID);
                     $('.uploaded-data .text-primary').attr(
@@ -314,13 +314,13 @@ function validateUpload() {
                     $('.divSuccessDocument').hide();
                     $('#divSuccessbutton').hide();
                     base_path = "../download/invalid"
-                    csvPath = base_path + "/csv/" + 
+                    csvPath = base_path + "/csv/" +
                                 INVALID_FILE_NAME[0] + '.csv';
-                    xls_path = base_path + "/xlsx/" 
+                    xls_path = base_path + "/xlsx/"
                                 + INVALID_FILE_NAME[0] + '.xlsx';
-                    ods_path = base_path + "/ods/" 
+                    ods_path = base_path + "/ods/"
                                 + INVALID_FILE_NAME[0] + '.ods';
-                    txt_path = base_path + "/txt/" 
+                    txt_path = base_path + "/txt/"
                                 + INVALID_FILE_NAME[0] + '.txt';
                     $('#csv').attr("href", csvPath);
                     $('#excel').attr("href", xls_path);
@@ -352,7 +352,7 @@ document.getElementById("txt").addEventListener("click", function() {
 
 function download(filename, mime_type, text) {
     var element = document.createElement('a');
-    var href = 'data:' + mime_type + ';charset=utf-8,' 
+    var href = 'data:' + mime_type + ';charset=utf-8,'
                 + encodeURIComponent(text);
     element.setAttribute('href', href);
     element.setAttribute('download', filename);
@@ -528,7 +528,7 @@ BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(
 function downloadUploadedData(
     legal_entity_id, CSV_ID){
     res = buClient.downloadUploadedData(
-        legal_entity_id, CSV_ID, 
+        legal_entity_id, CSV_ID,
         function(error, data) {
             if (error == null) {
                     downloadUrl = data.link;
@@ -587,9 +587,9 @@ function downloadData() {
                 }
             } else {
                 if (error == "ExportToCSVEmpty"){
-                    displayMessage(message.no_compliance_available);    
+                    displayMessage(message.no_compliance_available);
                 }
-                
+
                 hideLoader();
             }
         }
@@ -646,12 +646,12 @@ key_search = function(mainList) {
         uploaded_on = mainList[entity].uploaded_on;
         if (
             (~uploaded_on.toString().toLowerCase().indexOf(
-                key_one)) && 
+                key_one)) &&
             (~uploaded_file.toString().toLowerCase().indexOf(
                 key_two))
         ) {
             fList.push(mainList[entity]);
-            
+
         }
     }
     return fList
