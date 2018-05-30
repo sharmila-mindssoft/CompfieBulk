@@ -68,6 +68,11 @@ def process_bu_completed_task_current_year_request(
             db, request_frame, session_user
         )
 
+    if type(request_frame) is bu_ct.UpdateDocumentCount:
+        result = process_update_document_count(
+            db, request_frame, session_user
+        )
+
     return result
 
 
@@ -216,3 +221,12 @@ def process_download_uploaded_data(
     return bu_ct.DownloadUploadedDataSuccess(
         file_download_path
     )
+
+
+def process_update_document_count(
+    db, request_frame, session_user
+):
+    csv_id = request_frame.csv_id
+    count = request_frame.count
+    print update_document_count(db, csv_id, count)
+    return bu_ct.UpdateDocumentCountSuccess()

@@ -175,3 +175,16 @@ function downloadUploadedData(
     ]
     return clientApiRequest('bu/completed_task', request, callback);
 }
+
+function updateDocumentCount(
+    legal_entity_id, csv_id, count, callback){
+    request =[
+        "UpdateDocumentCount",
+        {   
+            "legal_entity_id": legal_entity_id,
+            "csv_id": csv_id,
+            "count": count
+        }
+    ]
+    return clientApiRequest('bu/completed_task', request, callback);
+}
