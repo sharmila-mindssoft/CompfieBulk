@@ -1,5 +1,6 @@
 {% extends "files/knowledge/common/html/container.html" %} {% block content %}
-<link href="/css/multifreezer.css" rel="stylesheet" type="text/css" />
+<!-- <link href="/css/multifreezer.css" rel="stylesheet" type="text/css" /> -->
+
 <div class="content">
     <div class="container" id="sm_approve_list">
         <div class="row">
@@ -205,14 +206,14 @@
                                         <span class="pull-left p-r-5 clear-filtered default-display-none"> &nbsp;
                     <i class="fa fa-times fa-1-3x text-primary text-muted c-pointer" data-toggle="tooltip" title="" data-original-title="Click here to clear filter"></i>
                 </span>
-                                    </div>
+                                    </div> 
                                     <div class="clearfix"></div>
-                                    <div id="freezer_example">
+                                    <div id="multi_col_freezer">
                                         <div class="table-responsive vertical-scroll">
                                             <table id="datatable_responsive" class="table table-striped dt-responsive nowrap table-freeze-multi js-filtertable-action-sm datatable-inline" cellspacing="0">
                                                 <thead>
-                                                    <tr>
-                                                        <th width="1%" rowspan="2">#</th>
+                                                    <tr class="thead-tr-1-tr">
+                                                        <th width="1%" rowspan="2" >#</th>
                                                         <th width="3%" class="text-left b-b-0 p-l-10" colspan="3">Action</th>
                                                         <th width="5%" class="divider-column" rowspan="2">Statutory</th>
                                                         <th width="1%" rowspan="2"></th>
@@ -238,7 +239,7 @@
                                                         <th width="4%" rowspan="2">Format File</th>
                                                         <th width="5%" rowspan="2">Geography Location</th>
                                                     </tr>
-                                                    <tr>
+                                                    <tr class="thead-tr-2-tr">
                                                         <th class="b-t-0 p-t-0 p-b-0">
                                                             <div class="icon-3x">
                                                                 <i class="fa fa-check-square-o text-primary c-pointer" title="Approve"></i>
@@ -251,7 +252,7 @@
                                                         </th>
                                                         <th class="b-t-0 p-t-0 p-b-0"></th>
                                                     </tr>
-                                                    <tr>
+                                                    <tr class="thead-tr-3-tr">
                                                         <th class=" columnfixed" width="2%"></th>
                                                         <th class="text-center columnfixed">
                                                             <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
@@ -267,77 +268,77 @@
                                                                 <label></label>
                                                             </div>
                                                         </th>
-                                                        <th class="columnfixed"></th>
+                                                        <th class="columnfixed" ></th>
                                                         <th class="columnfixed divider-column">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_statutory" placeholder="Statutory">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_statutory" placeholder="Statutory">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed" width="1%"></th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_organization" placeholder="Organization">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_organization" placeholder="Organization">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_nature" placeholder="Statutory Nature">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_nature" placeholder="Statutory Nature">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_provision" placeholder="Statutory Provision">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_provision" placeholder="Statutory Provision">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_c_task" placeholder="Compliance Task">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_c_task" placeholder="Compliance Task">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_c_doc" placeholder="Compliance Document">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_c_doc" placeholder="Compliance Document">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_task_id" placeholder="Task ID">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_task_id" placeholder="Task ID">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_c_desc" placeholder="Compliance Description">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_c_desc" placeholder="Compliance Description">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_p_cons" placeholder="Penal Consequences">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_p_cons" placeholder="Penal Consequences">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_task_type" placeholder="Task Type">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_task_type" placeholder="Task Type">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_refer_link" placeholder="Reference Link">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_refer_link" placeholder="Reference Link">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_frequency" placeholder="Frequency">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_frequency" placeholder="Frequency">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
@@ -351,13 +352,13 @@
                                                         <th class="columnfixed"></th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_format" placeholder="Format File">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_format" placeholder="Format File">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
                                                         <th class="columnfixed">
                                                             <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                <input type="text" class="form-control input-sm js-filter-sm" id="search_geo" placeholder="Geography Location">
+                                                                <input type="text" class="form-control input-sm js-filter-sm sfilter-sticky-header" id="search_geo" placeholder="Geography Location">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                         </th>
@@ -377,6 +378,7 @@
                                                     <span class="items-per-page">
                           Show
                           <select id="items_per_page" autocomplete="off">
+                            <option value="250">250</option>
                             <option value="500">500</option>
                             <option value="750">750</option>
                             <option value="1000">1000</option>
@@ -439,18 +441,18 @@
               </a>
                 </td>
                 <td class="text-center">
-                    <div class="checkbox checkbox-danger checkbox-single m-b-0">
-                        <a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove">
+                    <div class="checkbox checkbox-primary checkbox-single m-b-0">
+                        <!-- <a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove"> -->
                             <input value="option2" type="checkbox" class="approve-checkbox" title="Click here to approve">
-                        </a>
+                        <!-- </a> -->
                         <label></label>
                     </div>
                 </td>
                 <td class="text-center">
                     <div class="checkbox checkbox-danger checkbox-single m-b-0">
-                        <a href="#custom_modal_approve" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove">
+                        <!-- <a href="#custom_modal_approve" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove"> -->
                             <input value="option2" type="checkbox" class="reject-checkbox" title="Click here to reject">
-                        </a>
+                        <!-- </a> -->
                         <label></label>
                     </div>
                 </td>
@@ -458,26 +460,26 @@
         </table>
         <table class="table-sm-approve-info">
             <tr>
-                <th class="sno" width="1%">1</th>
-                <th class="text-center action-approve" width="1%">
+                <td class="sno" width="1%">1</td>
+                <td class="text-center action-approve" width="1%">
                     <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
                         <!-- id="singleCheckbox2" -->
                         <input value="option2" class="view-approve-check" type="checkbox" title="Click here to approve">
                         <label></label>
                     </div>
-                </th>
-                <th class="text-center action-reject" width="1%">
+                </td>
+                <td class="text-center action-reject" width="1%">
                     <div class="checkbox checkbox-danger checkbox-single pull-right m-b-0">
                         <!-- id="singleCheckbox2" -->
                         <input value="option2" class="view-reject-check" type="checkbox" title="Click here to reject">
                         <label></label>
                     </div>
-                </th>
-                <th class="text-center reject-reason" width="1%">
+                </td>
+                <td class="text-center reject-reason" width="1%">
                     <i class="fa fa-info-circle fa-1-2x l-h-51 text-primary c-pointer default-display-none" data-toggle="tooltip" title="" data-original-title=""></i>
-                </th>
-                <th class="divider-column statutory break-word" width="5%"></th>
-                <th width="1%"></th>
+                </td>
+                <td class="divider-column statutory break-word" width="5%"></td>
+                <td width="1%"></td>
                 <td class="organization break-word" width="4%"></td>
                 <td class="nature break-word" width="3%"></td>
                 <td class="provision break-word" width="4%"></td>
@@ -555,7 +557,7 @@
         <div>
             <div class="form-group">
                 <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
-                <textarea class="form-control input-sm view-reason" rows="2" placeholder="Enter Reason" maxlength="500"></textarea>
+                <textarea id="view_reason_id" class="form-control input-sm view-reason" rows="2" placeholder="Enter Reason" maxlength="500" tabindex="1"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit">Submit</button>
         </div>

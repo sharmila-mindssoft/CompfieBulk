@@ -129,7 +129,7 @@ function pageControls() {
                              $.inArray(checkDomain, UNITS[i].d_ids) == -1){
                                 ISVALID = true;
 
-                                for(j in ASSIGNED_UNIT_LIST){                                    
+                                for(j in ASSIGNED_UNIT_LIST){
                                     assigned_Uid = ASSIGNED_UNIT_LIST[j].u_id;
                                     unitsUid = UNITS[i].u_id;
                                     aDomainId = ASSIGNED_UNIT_LIST[j].d_id;

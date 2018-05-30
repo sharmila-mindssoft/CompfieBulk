@@ -6,6 +6,7 @@ __all__ = [
     "csv_params", "parse_csv_dictionary_values"
 ]
 
+
 def expectation_error(expected, received):
     msg = "expected %s, but received: %s"
     return ValueError(msg % (expected, str(received)))
@@ -231,16 +232,23 @@ def parse_csv_dictionary_values(key, val):
     :param
 
         keyType: type of key name
-        isMandatoryCheck=False: to enable mandatory validation value has to be True,
+        isMandatoryCheck=False: to enable mandatory validation
+        value has to be True,
             otherwise it will not validate
-        maxLengthCheck=None: to enable max length validation value should not be None
-        isValidCharCheck=False: to enable character validation value should be True
-        validation_method=None: corresponding validation will done if the isValidCharCheck is True
-        isFoundCheck=False: to check data already found given value should be True
+        maxLengthCheck=None: to enable max length validation
+        value should not be None
+        isValidCharCheck=False: to enable character validation
+        value should be True
+        validation_method=None: corresponding validation will
+        done if the isValidCharCheck is True
+        isFoundCheck=False: to check data already found given
+        value should be True
         isActiveCheck=False: to check data status given value shoould be True
 
-        if the param boolean value False means it will skip the corresponding validation
-        maxlength param is not meant for INT type if the value not None means that will check maximum given value not length
+        if the param boolean value False means it will skip the
+        corresponding validation
+        maxlength param is not meant for INT type if the value not
+        None means that will check maximum given value not length
 
     :type
         keyName: string
@@ -258,6 +266,7 @@ def parse_csv_dictionary_values(key, val):
         result: dictionary
 '''
 ########################################################
+
 
 def make_required_validation(
     keyType,
@@ -357,8 +366,5 @@ csv_params = {
     ),
     'Document_Name': make_required_validation(
         keyType='STRING', isValidCharCheck=False
-    ),
-    #  isMandatoryCheck=False, maxLengthCheck=None, isValidCharCheck=False,
-    # validation_method=None,
-    # isFoundCheck=False, isActiveCheck=False
+    )
 }

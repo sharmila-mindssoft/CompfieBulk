@@ -132,7 +132,7 @@ function processSubmit() {
     var isValid = clientUnitBulkReport.validateMandatory();
     if (isValid == true) {
     var clientGroup = parseInt(GROUP_ID.val());
-    var teIds = TE_NAME.val();    
+    var teIds = TE_NAME.val();
     var fromDate = FROM_DATE.val();
     var toDate = TO_DATE.val();
     var selectedTEName = [];
@@ -154,7 +154,7 @@ function processSubmit() {
         $.each(teIds, function(key, value) {
             selectedTEName.push(parseInt(value));
         });
-    }    
+    }
     displayLoader();
     filterData = {
         "bu_client_id": clientGroup,
@@ -285,7 +285,8 @@ function loadCurrentUserDetails() {
                 loggedUserId = value["user_id"];
             }
         });
-        if (USER_CATEGORY_ID == TE_USER_CATEGORY) {
+
+        if (parseInt(USER_CATEGORY_ID) == parseInt(TE_USER_CATEGORY)) {
             // KE-Name  : ClientUnit-Executive
             clientName = user.employee_code + " - " + user.employee_name;
             $('.active-techno-executive').removeClass("default-display-none");
@@ -308,15 +309,15 @@ function getUserMappingsList(loggedUserId) {
     $('.form-group-tename-tmanager').attr("style", "display:block !important");
     $('#tename_tmanager').multiselect('rebuild');
 
-    function onSuccess(loggedUserId, data) {        
+    function onSuccess(loggedUserId, data) {
         var userMappingData = data;
         var d = '';
-        var childUserId = 0;        
+        var childUserId = 0;
         $.each(userMappingData.user_mappings, function(key, value) {
             if (loggedUserId == value.parent_user_id) {
                 childUserId = value.child_user_id;
                 if (jQuery.inArray(childUserId, CLIENT_EXECUTIVES) == -1) {
-                    
+
                     CLIENT_EXECUTIVES.push(value.child_user_id);
                     childUsersDetails(ALL_USER_INFO, loggedUserId,
                         value.child_user_id)
@@ -327,7 +328,6 @@ function getUserMappingsList(loggedUserId) {
     function childUsersDetails(ALL_USER_INFO, parentUserId, childUsrId) {
         var clientUserDetails = {};
         $.each(ALL_USER_INFO, function(key, value) {
-
             if (childUsrId == value["user_id"] && value["is_active"] == true
                 && value["user_category_id"] == TE_USER_CATEGORY) {
                 var option = $('<option></option>');
@@ -364,7 +364,7 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
     var currentId = 0;
     valueElement.val(val[1]);
     idElement.val(val[0]);
-    valueElement.focus();    
+    valueElement.focus();
     currentId = idElement[0].id;
 }
 
@@ -542,7 +542,7 @@ ClientUnitBulkReport.prototype.exportData = function() {
     }
     /* multiple TechExec Names selection in to generate array */
     if ($('#tename_tmanager option:selected').text() == "") {
-        selectedTEName = CLIENT_EXECUTIVES; // When execute unselected the Field.
+        selectedTEName = selectOnlyTechnoExecutives(CLIENT_EXECUTIVES); // When execute unselected the Field.
     } else {
         $.each(teIds, function(key, value) {
             selectedTEName.push(parseInt(value));
@@ -575,6 +575,19 @@ ClientUnitBulkReport.prototype.exportData = function() {
         }
     });
 };
+
+function selectOnlyTechnoExecutives(CLIENT_EXECUTIVES){
+    var clExecutivesUserIds = [];
+    $.each(CLIENT_EXECUTIVES, function(k, uId) {
+        $.each(ALL_USER_INFO, function(key, value) {
+            if(uId == value["user_id"] && value["user_category_id"] == TE_USER_CATEGORY){
+                clExecutivesUserIds.push(uId)
+            }
+        })
+    })
+    console.log(clExecutivesUserIds)
+    return clExecutivesUserIds;
+}
 
 // Form Initalize
 $(function() {

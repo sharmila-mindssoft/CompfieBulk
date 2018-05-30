@@ -55,6 +55,7 @@ var AC_DOMAIN = $('#ac_domain')
 var CSV_INFO = null;
 var DOC_NAMES = [];
 var CSV_ID = null;
+var ACTUAL_CSV_NAME = '';
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -143,10 +144,11 @@ BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
         $.each(list_data, function(idx, data) {
             balance = data.no_of_documents - data.uploaded_documents ;
             cloneRow = LIST_ROW_TEMPLATE.clone();
+
             cname_split = data.csv_name.split("_");
             cname_split.pop();
             cname = cname_split.join("_");
-            
+
             $('.sno', cloneRow).text(j);
             $('.csv-name', cloneRow).text(cname);
             $('.uploaded-on', cloneRow).text(data.uploaded_on);
@@ -154,8 +156,7 @@ BulkUploadStatutoryMapping.prototype.renderList = function(list_data) {
             $('.expec-docs', cloneRow).text(data.no_of_documents);
             $('.uploaded-docs', cloneRow).text(data.uploaded_documents);
             $('.remaining-docs', cloneRow).text(balance);
-            CSV_ID = data.csv_id;
-            DOC_NAMES = data.doc_names;
+
             $('.upload i', cloneRow).on('click', function(){
                 t_this.showEdit(data);
             });
@@ -204,6 +205,7 @@ BulkUploadStatutoryMapping.prototype.fetchDropDownData = function() {
 };
 BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
     $('#myModal').modal('show');
+    console.log("CSV_INFO -> "+ JSON.stringify(CSV_INFO));
     var t_this = this;
     var args = {
         "c_id": parseInt(COUNTRY_VAL.val()),
@@ -364,10 +366,13 @@ BulkUploadStatutoryMapping.prototype.changeTxttoLabel = function(
     this._ActionMode = "upload";
 };
 BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
+    CSV_ID = data.csv_id;
+    DOC_NAMES = data.doc_names;
+    ACTUAL_CSV_NAME = data.csv_name;
     var uploadedCsvName = data.csv_name;
     var csv_split_name = uploadedCsvName.substring(
         0, uploadedCsvName.lastIndexOf("_") );
-    this.showAddScreen();    
+    this.showAddScreen();
     COUNTRY_AC.val(data.c_name);
     COUNTRY_VAL.val(data.c_id);
     DOMAIN_AC.val(data.d_name);
@@ -381,6 +386,9 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     DOCUMENT_REMAINING.text(
         parseInt(data.no_of_documents) - parseInt(data.uploaded_documents)
     );
+    TEMPLATE_DIV.hide();
+    totalfileUploadSuccess = 0;
+    queueCount = 0;
 };
 
 function key_search(mainList) {
@@ -409,6 +417,8 @@ function PageControls() {
 
     CANCEL_BUTTON.click(function() {
         BU_SMPAGE.showList();
+        $(".dropzone > .dz-preview").remove();
+        addedfiles = [];
     });
 
     COUNTRY_AC.keyup(function(e){
@@ -496,7 +506,8 @@ function PageControls() {
         }
         else{
             displayMessage(message.document_required);
-            return false;        }
+            return false;
+        }
     }
   });
 
@@ -544,6 +555,9 @@ var myDropzone = new Dropzone("div#myDrop", {
     },
     init: function() {
         this.on("addedfile", function(file) {
+            console.log("Added file-> " + file.name);
+            console.log("addedfiles-> " + addedfiles);
+            console.log("DOC_NAMES-> " + DOC_NAMES);
             if (jQuery.inArray(file.name, addedfiles) > -1) {
                 myDropzone.removeFile(file);
             }
@@ -554,12 +568,15 @@ var myDropzone = new Dropzone("div#myDrop", {
                 addedfiles.push(file.name);
                 queueCount += 1;
             }
-
+            console.log("addedfiles> " + addedfiles);
         });
         this.on("removedfile", function(file) {
             console.log(file.name);
             if (jQuery.inArray(file.name, addedfiles) > -1) {
-                addedfiles.pop(file.name);
+                // addedfiles.pop(file.name);
+                var indOfAddedFiles = addedfiles.indexOf(file.name);
+                console.log("indOfAddedFiles -> "+ indOfAddedFiles);
+                addedfiles.splice(indOfAddedFiles, 1);
                 queueCount -= 1;
             }
         })
@@ -579,9 +596,28 @@ var myDropzone = new Dropzone("div#myDrop", {
                 perQueueUploadSuccess = 0;
                 myDropzone.processQueue();
             }
+            console.log("totalfileUploadSuccess-> "+ totalfileUploadSuccess);
+            console.log("queueCount->> "+ queueCount);
             if (totalfileUploadSuccess == queueCount) {
                 myDropzone.removeAllFiles(true);
-                hideLoader()
+                console.log("DOC_NAMES.length->> "+ DOC_NAMES.length);
+                console.log("totalfileUploadSuccess->> "+ totalfileUploadSuccess);
+                if(DOC_NAMES.length == totalfileUploadSuccess){
+                    var args = {
+                        "c_name": COUNTRY_AC.val(),
+                        "d_name": DOMAIN_AC.val(),
+                        "csv_name": ACTUAL_CSV_NAME
+                    };
+                    bu.saveExecutiveMessage(args, function (error, response) {
+                        console.log("response-> "+ response);
+
+                    });
+
+                    console.log("Send request to send message to manager");
+                }else{
+                    console.log("Files not yet uploaded fully");
+                }
+                hideLoader();
                 displaySuccessMessage(message.document_upload_success)
                 BU_SMPAGE.showList();
             }

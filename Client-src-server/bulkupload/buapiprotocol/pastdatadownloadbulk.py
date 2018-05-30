@@ -10,15 +10,13 @@ from server.constants import (
     KNOWLEDGE_DB_HOST,
     KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
     KNOWLEDGE_DATABASE_NAME)
-from bulkupload.client_bulkconstants import (CSV_DOWNLOAD_URL, ROOT_PATH)
+from bulkupload.client_bulkconstants import CSV_DOWNLOAD_URL
 
 from server.clientdatabase.general import (
     calculate_due_date, filter_out_due_dates)
-from clientprotocol import (
-    clienttransactions, clientcore
-)
+from clientprotocol import clientcore
 
-from  clientprotocol.clienttransactions import (
+from clientprotocol.clienttransactions import(
     STATUTORY_WISE_COMPLIANCES,
     UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS
 )
@@ -38,12 +36,11 @@ class PastDataJsonToCSV(object):
             CSV_DOWNLOAD_URL, file_name)
         self.FILE_PATH = "%s/%s" % (CSV_PATH, file_name)
         self.documents_list = []
+        self.data_available_status = True
         if not os.path.exists(CSV_PATH):
             os.makedirs(CSV_PATH)
-        with io.FileIO(self.FILE_PATH, "wb+") as f:
+        with open(self.FILE_PATH, "wb+") as f:
             self.writer = csv.writer(f)
-            # self.header, quoting=csv.QUOTE_ALL)
-            # self.convert_json_to_csv(jsonObj)
             if report_type == "DownloadPastData":
                 self.download_past_data(
                     db, request, session_user)
@@ -51,7 +48,7 @@ class PastDataJsonToCSV(object):
     def to_string(self, s):
         try:
             return str(s)
-        except:
+        except Exception:
             return s.encode('utf-8')
 
     def write_csv(self, header, values=None):
@@ -64,8 +61,6 @@ class PastDataJsonToCSV(object):
         is_header = False
         le_id = request.legal_entity_id
         cnx_pool = connectClientDB(le_id)
-        # cnx = Database(cnx_pool)
-        # cnx.begin()
         unit_id = request.unit_id
         domain_id = request.domain_id
         compliance_frequency = request.compliance_frequency
@@ -74,35 +69,27 @@ class PastDataJsonToCSV(object):
         unit_name = request.u_name
         unit_code = request.u_code
         unit_name = re.sub(unit_code+'-', '', unit_name)
-        # country_id = request.country_id
         start_count = request.start_count
         statutory_wise_compliances = []
-        # To Do - Loop for complaince frequency
-        statutory_wise_compliances = get_download_bulk_compliance_data(
-                cnx_pool, unit_id, domain_id, "", compliance_frequency, session_user,
+        (
+            statutory_wise_compliances, total_count
+        ) = get_download_bulk_compliance_data(
+                cnx_pool, unit_id, domain_id, "", compliance_frequency,
+                session_user,
                 start_count, 100
         )
-        # sno = 0
-        if not is_header:
-            # csv_headers = [
-            #     "SNO", "Legal_Entity", "Domain", "Unit_Code",
-            #     "Unit_Name", "Primary_Legislation",
-            #     "Secondary_Legislation", "Compliance_Task",
-            #     "Compliance_Description", "Compliance_Frequency",
-            #     "Statutory_Date", "Due_Date", "Assignee",
-            #     "Completion_Date*", "Document_Name"
-            # ]
-            csv_headers = [
-                "Legal_Entity", "Domain", "Unit_Code",
-                "Unit_Name", "Primary_Legislation",
-                "Secondary_Legislation", "Compliance_Task",
-                "Compliance_Description", "Compliance_Frequency",
-                "Statutory_Date", "Due_Date", "Assignee",
-                "Completion_Date*", "Document_Name"
-            ]
+        if total_count > 0:
+            if not is_header:
+                csv_headers = [
+                    "Legal_Entity", "Domain", "Unit_Code",
+                    "Unit_Name", "Primary_Legislation",
+                    "Secondary_Legislation", "Compliance_Task",
+                    "Compliance_Description", "Compliance_Frequency",
+                    "Statutory_Date", "Due_Date", "Assignee",
+                    "Completion_Date*", "Document_Name"
+                ]
             self.write_csv(csv_headers, None)
-        if len(statutory_wise_compliances) > 0:
-            for swc in statutory_wise_compliances[0]:
+            for swc in statutory_wise_compliances:
                 level_statu_name = swc.level_1_statutory_name
                 compliances = swc.compliances
                 for comp in compliances:
@@ -122,6 +109,7 @@ class PastDataJsonToCSV(object):
                     ]
                     self.write_csv(None, csv_values)
         else:
+            self.data_available_status = False
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
@@ -139,14 +127,22 @@ def return_past_due_dates(
         condition += " AND statutory_mapping like %s"
         condition_val.append("%" + str(level_1_statutory_name + "%"))
 
-    query = "SELECT ac.compliance_id, ac.statutory_dates, ac.due_date, " + \
+    query = "SELECT ac.compliance_id, ac.statutory_dates, " + \
+        " ac.due_date, " + \
         " assignee, employee_code, employee_name, " + \
-        " SUBSTRING_INDEX(substring(substring(statutory_mapping,3),1, " + \
-        " char_length(statutory_mapping) -4), '>>', 1) as statutory_mapping, " + \
+        " SUBSTRING_INDEX(substring(substring( " + \
+        " statutory_mapping,3),1, " + \
+        " char_length(statutory_mapping) -4), '>>', 1) as " + \
+        " statutory_mapping, " + \
         " document_name, compliance_task, compliance_description, " + \
-        " c.repeats_type_id, rt.repeat_type, c.repeats_every, frequency, c.frequency_id, " + \
-        "date(subdate(ifnull((select min(due_date) from tbl_compliance_history ch where ch.unit_id = ac.unit_id and " +\
-        " ac.compliance_id = ch.compliance_id and ch.start_date < ch.due_date), ac.due_date), 1)) as start_date" +\
+        " c.repeats_type_id, rt.repeat_type, c.repeats_every, " + \
+        " frequency, c.frequency_id, " + \
+        "date(subdate(ifnull((select min(due_date) " + \
+        " from tbl_compliance_history ch " + \
+        " where ch.unit_id = ac.unit_id and " +\
+        " ac.compliance_id = ch.compliance_id and " + \
+        " ch.start_date < ch.due_date), ac.due_date), 1)) " + \
+        " as start_date" +\
         " FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_users u ON (ac.assignee = u.user_id) " + \
         " INNER JOIN tbl_compliances c ON " + \
@@ -168,7 +164,7 @@ def return_past_due_dates(
 
 
 def calculate_final_due_dates(db, data, domain_id, unit_id):
-    final_due_dates = None
+    final_due_dates = []
     due_dates = []
     summary = ""
     for compliance in data:
@@ -201,10 +197,11 @@ def calculate_final_due_dates(db, data, domain_id, unit_id):
                 domain_id=domain_id,
                 start_date=compliance["start_date"]
             )
-        final_due_dates = filter_out_due_dates(
+        final_due_dates += filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
         )
     return final_due_dates, summary
+
 
 def get_download_bulk_compliance_data(
     db, unit_id, domain_id, level_1_statutory_name, frequency_name,
@@ -214,7 +211,6 @@ def get_download_bulk_compliance_data(
         db, domain_id, unit_id, level_1_statutory_name)
     level_1_statutory_wise_compliances = {}
     total_count = 0
-    compliance_count = 0
     for compliance in rows:
         s_maps = compliance["statutory_mapping"]
         statutories = s_maps
@@ -244,8 +240,6 @@ def get_download_bulk_compliance_data(
             day = due_date_parts[2]
             due_date = datetime.date(int(year), int(month), int(day))
 
-            statutories_strip = statutories[0].strip()
-
             level_1_statutory_wise_compliances[level_1].append(
                 UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                     compliance["compliance_id"], compliance_name,
@@ -256,7 +250,9 @@ def get_download_bulk_compliance_data(
                 )
             )
     statutory_wise_compliances = []
-    for (level_1_statutory_name, compliances) in level_1_statutory_wise_compliances.iteritems():
+    for (
+            level_1_statutory_name, compliances
+            ) in level_1_statutory_wise_compliances.iteritems():
         print "len(compliances)-->", len(compliances)
         if len(compliances) > 0:
             statutory_wise_compliances.append(
@@ -264,8 +260,6 @@ def get_download_bulk_compliance_data(
                     level_1_statutory_name, compliances
                 )
             )
-    # print [STATUTORY_WISE_COMPLIANCES.level_1_statutory_name for STATUTORY_WISE_COMPLIANCES in statutory_wise_compliances]
-    # print [STATUTORY_WISE_COMPLIANCES.compliances for STATUTORY_WISE_COMPLIANCES in statutory_wise_compliances]
     print statutory_wise_compliances
     print "Total-> ", total_count
     return statutory_wise_compliances, total_count
@@ -282,7 +276,15 @@ def connectClientDB(le_id):
             autocommit=False,
         )
 
-        query = "select t1.client_database_id, t1.database_name, t1.database_username, t1.database_password, t3.database_ip, database_port from tbl_client_database_info as t1 inner join tbl_client_database as t2 on t2.client_database_id = t1.client_database_id inner join tbl_database_server as t3 on t3.database_server_id = t2.database_server_id where t1.db_owner_id = %s and t1.is_group = 0;"
+        query = "select t1.client_database_id, t1.database_name, " + \
+            " t1.database_username, t1.database_password, " + \
+            " t3.database_ip, database_port from " + \
+            " tbl_client_database_info as t1 " + \
+            " inner join tbl_client_database as t2 on " + \
+            " t2.client_database_id = t1.client_database_id " + \
+            " inner join tbl_database_server as t3 on " + \
+            " t3.database_server_id = t2.database_server_id " + \
+            " where t1.db_owner_id = %s and t1.is_group = 0;"
         param = [le_id]
         _source_knowledge_db = Database(_source_knowledge_db_con)
         _source_knowledge_db.begin()

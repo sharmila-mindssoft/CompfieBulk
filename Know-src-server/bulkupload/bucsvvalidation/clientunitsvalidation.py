@@ -44,6 +44,7 @@ class SourceDB(object):
 
         self._source_db = None
         self._source_db_con = None
+        self._country = {}
         self._legal_entity = {}
         self._division = {}
         self._category = {}
@@ -74,9 +75,10 @@ class SourceDB(object):
     def _csv_column_fields(self):
 
         self._csv_column_name = [
-            "Legal_Entity", "Division", "Category", "Geography_Level",
-            "Unit_Location", "Unit_Code", "Unit_Name", "Unit_Address",
-            "City", "State", "Postal_Code", "Domain", "Organization"
+            "Country", "Legal_Entity", "Division", "Category",
+            "Geography_Level", "Unit_Location", "Unit_Code", "Unit_Name",
+            "Unit_Address", "City", "State", "Postal_Code", "Domain",
+            "Organization"
         ]
 
     ###########################################################################
@@ -120,6 +122,7 @@ class SourceDB(object):
 
     def init_values(self, user_id, client_id):
 
+        self.get_countries(user_id)
         self.get_legal_entities(user_id, client_id)
         self.get_divisions(client_id)
         self.get_categories(client_id)
@@ -127,6 +130,19 @@ class SourceDB(object):
         self.get_unit_location()
         self.get_unit_code(client_id)
         self.get_domains_organizations(client_id)
+
+    ###########################################################################
+    '''
+        get_countries: This class methods contains user id
+        as parameter to fetch the master db countries list under a user
+    '''
+    ##########################################################################
+
+    def get_countries(self, user_id):
+
+        data = self._source_db.call_proc("sp_bu_countries", [user_id])
+        for d in data:
+            self._country[d["country_name"]] = d
 
     ###########################################################################
     '''
@@ -141,7 +157,8 @@ class SourceDB(object):
             "sp_bu_legal_entities", [client_id, user_id], 2
         )
         for d in data[1]:
-            self._legal_entity[d["legal_entity_name"]] = d
+            self._legal_entity[
+                str(d["country_id"]) + "-" + d["legal_entity_name"]] = d
 
     ###########################################################################
     '''
@@ -273,6 +290,23 @@ class SourceDB(object):
 
     ###########################################################################
     '''
+        check_country: This class methods contains country name
+        to check whether the country is available for transaction
+
+    '''
+    ###########################################################################
+
+    def check_country(self, country_name):
+        store = self._country
+        data = store.get(country_name)
+        if data is not None:
+            self._country_id = data.get("country_id")
+            return self.check_base(False, store, country_name, None)
+        else:
+            return "Not found"
+
+    ###########################################################################
+    '''
         check_legal_entity: This class methods contains legal entity name
         to check whether the legal entity is available for transaction
 
@@ -282,7 +316,7 @@ class SourceDB(object):
     def check_legal_entity(self, legal_entity_name):
 
         store = self._legal_entity
-        data = store.get(legal_entity_name)
+        data = store.get(str(self._country_id) + "-" + legal_entity_name)
         if (
             data is not None and
             data.get("is_closed") == 0 and
@@ -293,7 +327,6 @@ class SourceDB(object):
             )
         ):
             self._legal_entity_id = data.get("legal_entity_id")
-            self._country_id = data.get("country_id")
             self._business_group_id = data.get("business_group_id")
             return self.check_base(False, store, legal_entity_name, None)
         else:
@@ -423,7 +456,7 @@ class SourceDB(object):
                         unit_code, None
                     )
                 else:
-                    return "Unit_Code - " + unit_code + \
+                    return unit_code + \
                         " Duplication in Main DB"
             else:
                 return True
@@ -530,8 +563,6 @@ class SourceDB(object):
             splittedOrg = newOrgnName.split(CSV_DELIMITER)
             for d in splittedOrg:
                 data = store.get(str(self._legal_entity_id) + "-" + d.strip())
-                print data
-                print len(data)
                 if data is not None:
                     status = self.check_base(
                         True, self._organization,
@@ -553,13 +584,9 @@ class SourceDB(object):
                             ):
                                 csv_units = int(split_val[2])
                                 break
-                        print "csv_units"
-                        print csv_units
 
                         main_db_units = int(data.get("created_units")) +\
                             int(csv_units)
-                        print "main_db_units"
-                        print main_db_units
                         if (
                             int(main_db_units) >
                             int(data.get("total_unit_count"))
@@ -572,11 +599,9 @@ class SourceDB(object):
                     errDesc.append(d.strip() + " Not Found")
 
         else:
-            print "no csv delimiter"
             data = store.get(
                 str(self._legal_entity_id) + "-" + newOrgnName.strip()
             )
-            print data
             if data is not None:
                 self.save_main_domain_orgn_units(
                     self._legal_entity_id, newOrgnName.strip()
@@ -590,13 +615,9 @@ class SourceDB(object):
                     ):
                         csv_units = int(split_val[2])
                         break
-                print "csv_units"
-                print csv_units
 
                 main_db_units = int(data.get("created_units")) +\
                     int(csv_units)
-                print "main_db_units"
-                print main_db_units
                 if (
                     int(main_db_units) >
                     int(data.get("total_unit_count"))
@@ -636,8 +657,6 @@ class SourceDB(object):
                     occur += 1
                     save_unit = int(
                         split_val[2].strip()) + 1
-                    print "main save unit"
-                    print save_unit
                     self._main_domain_org.pop(i)
                     self._main_domain_org.append(
                         str(le_id).strip() +
@@ -651,10 +670,9 @@ class SourceDB(object):
                     "-" +
                     domain_org.strip() + "-" + "1")
 
-        print self._main_domain_org
-
     def _status_check_methods(self):
         self._validation_method_maps = {
+            "Country": self.check_country,
             "Legal_Entity": self.check_legal_entity,
             "Division": self.check_division,
             "Category": self.check_category,
@@ -880,8 +898,8 @@ class SourceDB(object):
                                         str(le_id) + "-" + domain
                                     ).get("domain_id")) + "-" +
                                 str(self._organization.get(
-                                        str(le_id) + "-" + neworgn
-                                    ).get("organisation_id")))
+                                    str(le_id) + "-" + neworgn
+                                ).get("organisation_id")))
                     if int(d["action"]) == 0 or int(d["action"]) == 1:
                         action_val = 1
                         remarks_text = None
@@ -1305,48 +1323,48 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
             s["Legal_Entity"], s["Unit_Code"]
         )):
             grouped_list = list(v)
-            print "len of unit code groups"
-            print len(grouped_list)
-            print grouped_list[0].get("Unit_Code")
-            if grouped_list[0].get("Unit_Code").find("_") < 0:
-                if not grouped_list[0].get("Unit_Code").isalnum():
-                    if len(grouped_list) >= 1:
-                        unit_code_invalid += len(grouped_list)
-                        unit_codes.append(grouped_list[0].get("Unit_Code"))
-                else:
-                    letter_cnt = 0
-                    num_cnt = 0
-                    for i in grouped_list[0].get("Unit_Code"):
-                        if i.isalpha():
-                            letter_cnt += 1
-                        if i.isdigit():
-                            num_cnt += 1
-                    if letter_cnt == 0 or num_cnt == 0:
-                        unit_code_invalid += len(grouped_list)
-                        unit_codes.append(grouped_list[0].get("Unit_Code"))
-            else:
-                up_cnt = 0
-                if not grouped_list[0].get("Unit_Code").isalnum():
-                    for i in grouped_list[0].get("Unit_Code"):
-                        if i.isupper():
-                            up_cnt += 1
-                        print "upper cnt"
-                        print up_cnt
-                    if up_cnt > 0:
+            if (
+                grouped_list[0].get("Unit_Code") != '' and
+                grouped_list[0].get("Unit_Code") is not None
+            ):
+                if grouped_list[0].get("Unit_Code").find("_") < 0:
+                    if not grouped_list[0].get("Unit_Code").isalnum():
                         if len(grouped_list) >= 1:
                             unit_code_invalid += len(grouped_list)
                             unit_codes.append(grouped_list[0].get("Unit_Code"))
                     else:
-                        if grouped_list[0].get("Unit_Code") != "auto_gen":
+                        letter_cnt = 0
+                        num_cnt = 0
+                        for i in grouped_list[0].get("Unit_Code"):
+                            if i.isalpha():
+                                letter_cnt += 1
+                            if i.isdigit():
+                                num_cnt += 1
+                        if letter_cnt == 0 or num_cnt == 0:
+                            unit_code_invalid += len(grouped_list)
+                            unit_codes.append(grouped_list[0].get("Unit_Code"))
+                else:
+                    up_cnt = 0
+                    if not grouped_list[0].get("Unit_Code").isalnum():
+                        for i in grouped_list[0].get("Unit_Code"):
+                            if i.isupper():
+                                up_cnt += 1
+                        if up_cnt > 0:
                             if len(grouped_list) >= 1:
                                 unit_code_invalid += len(grouped_list)
                                 unit_codes.append(
-                                    grouped_list[0].get("Unit_Code"))
-                else:
-                    if len(grouped_list) >= 1:
-                        print "B"
-                        unit_code_invalid += len(grouped_list)
-                        unit_codes.append(grouped_list[0].get("Unit_Code"))
+                                    grouped_list[0].get("Unit_Code")
+                                )
+                        else:
+                            if grouped_list[0].get("Unit_Code") != "auto_gen":
+                                if len(grouped_list) >= 1:
+                                    unit_code_invalid += len(grouped_list)
+                                    unit_codes.append(
+                                        grouped_list[0].get("Unit_Code"))
+                    else:
+                        if len(grouped_list) >= 1:
+                            unit_code_invalid += len(grouped_list)
+                            unit_codes.append(grouped_list[0].get("Unit_Code"))
         return unit_code_invalid, unit_codes
 
     def check_duplicate_unit_code_in_csv(self):
@@ -1599,8 +1617,6 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                     occur += 1
                     save_unit = int(
                         split_val[2].strip()) + 1
-                    print "csv save unit"
-                    print save_unit
                     self._csv_domain_orgn.pop(i)
                     self._csv_domain_orgn.append(
                         le_name.strip() +
@@ -1614,9 +1630,6 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                     "-" +
                     domain_org.strip() + "-" + "1")
 
-        print "after function"
-        print self._csv_domain_orgn
-
     '''
         looped csv data to perform corresponding validation
         returns: valid and invalid return format
@@ -1627,20 +1640,23 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         csv_column_compare = None
         csv_column_compare = self.compare_csv_columns()
         if csv_column_compare == "Csv Column Mismatched":
-            return "Csv Column Mismatched"
-        csv_unitcode_invalid = self.check_valid_unit_code_in_csv()
-        self._error_summary["invalid_data_error"] += csv_unitcode_invalid[0]
-        csv_unitcode_duplicate = self.check_duplicate_unit_code_in_csv()
-        self._error_summary["duplicate_error"] += csv_unitcode_duplicate[0]
-        csv_domain_duplicate = self.check_duplicate_domain_in_csv_row()
-        csv_orgn_duplicate = self.check_duplicate_organization_in_csv_row()
-        self.get_tempDB_data()
-        self._uploaded_by = self._session_user_obj.user_id()
-        self.init_values(self._session_user_obj.user_id(), self._client_id)
-        return (
-            csv_unitcode_invalid, csv_unitcode_duplicate,
-            csv_domain_duplicate, csv_orgn_duplicate
-        )
+            return csv_column_compare, None, None, None, None
+        else:
+            csv_unitcode_invalid = self.check_valid_unit_code_in_csv()
+            self._error_summary["invalid_data_error"] += \
+                csv_unitcode_invalid[0]
+            csv_unitcode_duplicate = self.check_duplicate_unit_code_in_csv()
+            self._error_summary["duplicate_error"] += csv_unitcode_duplicate[0]
+            csv_domain_duplicate = self.check_duplicate_domain_in_csv_row()
+            csv_orgn_duplicate = self.check_duplicate_organization_in_csv_row()
+            self.get_tempDB_data()
+            self._uploaded_by = self._session_user_obj.user_id()
+            self.init_values(self._session_user_obj.user_id(), self._client_id)
+            return (
+                csv_column_compare, csv_unitcode_invalid,
+                csv_unitcode_duplicate,
+                csv_domain_duplicate, csv_orgn_duplicate
+            )
 
     def bind_unit_code_errors(
         self, csv_unitcode_invalid, csv_unitcode_duplicate, unitCodeErr, v,
@@ -1656,7 +1672,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                         res.append(msg)
                     else:
                         res = [msg]
-        if csv_unitcode_invalid[0] > 0:
+        if csv_unitcode_duplicate[0] > 0:
             for u in csv_unitcode_duplicate[1]:
                 if u == v:
                     msg = "%s - %s" % (
@@ -1792,9 +1808,11 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         mapped_error_dict, mapped_header_dict = {}, {}
         invalid, i = 0, 0
         csv_domain_name = None
-        csv_unitcode_invalid, csv_unitcode_duplicate, \
+        csv_column_compare, csv_unitcode_invalid, csv_unitcode_duplicate, \
             csv_domain_duplicate, csv_orgn_duplicate = \
             self.perform_csv_temp_validation()
+        if csv_column_compare is not None:
+            return "Csv Column Mismatched"
         print "length validation of file--------------------------------"
         print len(self._source_data), CSV_MAX_LINES
         if len(self._source_data) > 0 and \
@@ -1841,7 +1859,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
                         elif key == "Organization" and\
                                 orgn_row_last != i:
                             orgn_row_last = i
-                            self.bind_organization_errors(
+                            res = self.bind_organization_errors(
                                 orgn_row_last, csv_orgn_duplicate, res, key,
                                 unitCountErr, value, csv_domain_name
                             )
@@ -2113,7 +2131,6 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
         self._declined_bulk_unit_id_err = []
         manual_rejection_count = 0
         self.init_values(self._session_user_obj.user_id(), self._client_id)
-
         for row_idx, data in enumerate(self._temp_data):
             res = True
             if row_idx == 0:
@@ -2161,8 +2178,6 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
                 self._declined_bulk_unit_id.append(data.get("bulk_unit_id"))
                 self._declined_bulk_unit_id_err.append(res)
                 res = True
-        print "rejection count"
-        print self._declined_bulk_unit_id, manual_rejection_count
         return self._declined_bulk_unit_id, \
             self._declined_bulk_unit_id_err, \
             manual_rejection_count
@@ -2176,14 +2191,12 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
 
     def process_data_to_main_db_insert(self, system_declined_units):
         self._temp_data.sort(key=lambda x: (
-             x["Legal_Entity"], x["Division"], x["Category"]
+            x["Legal_Entity"], x["Division"], x["Category"]
         ))
         for k, v in groupby(self._temp_data, key=lambda s: (
             s["Legal_Entity"], s["Division"], s["Category"]
         )):
             grouped_list = list(v)
-            print "group lengtjh"
-            print len(grouped_list)
             if len(grouped_list) == 0:
                 continue
             value = grouped_list[0]
@@ -2197,8 +2210,9 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
             main_category_id = 0
 
             # fetch legal_entity_id
-            if self._legal_entity.get(value.get("Legal_Entity")) is not None:
-                le_id = self._legal_entity.get(
+
+            if self._legal_entity.get(str(c_id) + "-" + value.get("Legal_Entity")) is not None:
+                le_id = self._legal_entity.get(str(c_id) + "-" +
                     value.get("Legal_Entity")
                 ).get("legal_entity_id")
 

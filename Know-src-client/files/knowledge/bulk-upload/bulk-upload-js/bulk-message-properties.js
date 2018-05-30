@@ -20,7 +20,7 @@ var bulkMessage = {
     'un_saved_compliance': 'All compliance should be selected before submit',
     'clientgroup_required': 'Client Group Name Required',
     "no_compliance_assign_statutory": "No Compliance Available for Assign Statutory",
-    "upload_limit": "CSV Rejected files limit exceeded",
+    "upload_limit": "Rejected CSV files limit exceeded",
     "csv_max_lines_exceeded": "CSV file exceeded max \"MAX_LINES\" lines",
     "document_upload_success": "Document uploaded successfully",
 
@@ -28,15 +28,17 @@ var bulkMessage = {
     "client_unit_upload_failed": "Client Units not uploaded successfully",
     "upload_failed": "CSV file upload failed",
     "confirm_success": "Action taken successfully",
-    "client_unit_file_max": "Rejected CSV File Reached the Max Limit for uploading CSV File",
+    // "client_unit_file_max": "Rejected CSV File Reached the Max Limit for uploading CSV File",
+    "client_unit_file_max": "Rejected CSV files limit exceeded",
     "cg_required": "Client Group Required",
     "csv_file_blank": "CSV File Cannot be Blank",
     "csv_file_lines_max": "CSV File Lines Reached the Max Limit",
     "invalid_csv_file": "Invalid Csv File",
-    "rejection_max_count_reached": "Already reached the maximum count of rejected files",
+    "rejection_max_count_reached": "Rejected CSV files limit exceeded",
     "reason_invalid": "Reason should accept only 0-9, A-Z, a-z, dot, comma, hyphen.",
     "units_not_assigned_to_user": "Some Units not assigned to you",
     "document_required": "Document Required",
+    "approve_reject_submit_success": "Selected Action submitted successfully",
     "uploaded_record_count_invalid": "Downloaded and uploaded records are not same for unit \"UNITS\"",
 }
 
