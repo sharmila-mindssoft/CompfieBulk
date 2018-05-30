@@ -266,7 +266,6 @@ def parse_csv_dictionary_values(key, val):
 
     if(key == 'Statutory'):
         statu_single_level = val.split('>>')
-        print "statu_single_level-> ", statu_single_level
         for i in range(0, len(statu_single_level)):
             if (
                 _maxlength is not None and
