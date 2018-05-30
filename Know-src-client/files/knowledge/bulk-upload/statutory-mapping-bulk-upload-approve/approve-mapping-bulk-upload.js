@@ -87,6 +87,18 @@ var TOTAL_VIEW_ITEMS = 0;
 var TOTAL_VIEW_APPROVE_ITEMS = 0;
 var TOTAL_VIEW_REJECT_ITEMS = 0;
 
+var FREEZER_TABLE = $("#multi_col_freezer .table-responsive table");
+var FREEZER_TBODY = $("#multi_col_freezer .table-responsive tbody");
+var FREEZER_THEAD = $('#multi_col_freezer .table-responsive thead');
+var FREEZER_TH = $('#multi_col_freezer .table-responsive thead tr th');
+
+var FREEZER_TH_CHILD_1 = $('#multi_col_freezer .table-responsive thead th:nth-child(1)');
+var FREEZER_TH_CHILD_2 = $('#multi_col_freezer .table-responsive thead th:nth-child(2)');
+var FREEZER_TH_CHILD_3 = $('#multi_col_freezer .table-responsive thead th:nth-child(3)');
+var FREEZER_TH_CHILD_4 = $('#multi_col_freezer .table-responsive thead th:nth-child(4)');
+var FREEZER_TH_CHILD_5 = $('#multi_col_freezer .table-responsive thead th:nth-child(5)');
+var FREEZER_TH_CHILD_6 = $('#multi_col_freezer .table-responsive thead th:nth-child(6)');
+
 function displayLoader() {
   $('.loading-indicator-spin').show();
 }
@@ -280,7 +292,14 @@ function ApproveBulkMapping() {
     this.totRecords = null;
 }
 ApproveBulkMapping.prototype.possibleFailures = function(error) {
-    displayMessage(error);
+
+    if (error == 'InvalidPassword') {
+        displayMessage(message.invalid_password);
+    }
+    else{
+        displayMessage(error);    
+    }
+    
     hideLoader();
 };
 ApproveBulkMapping.prototype.showList = function() {
@@ -563,8 +582,6 @@ ApproveBulkMapping.prototype.actionFromList = function(
                                     }
                                     else {
                                         hideLoader();
-                                        error = (error == "InvalidPassword")
-                                        ? "Invalid Password" : error;
                                         tThis.possibleFailures(error);
                                     }
                                 }
@@ -727,6 +744,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
     showFrom = tThis.showMapCount;
     showFrom += 1;
     VIEW_LIST_CONTAINER.find('tr').remove();
+    
     if(viewData.length == 0) {
         VIEW_LIST_CONTAINER.empty();
         tr = $('#no_record_templates .table-no-content .table-row-no-content');
@@ -902,13 +920,6 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
 };
 
 ApproveBulkMapping.prototype.approveRejectAllCheck = function(){
- console.log("TOTAL_VIEW_ITEMS");
- console.log(TOTAL_VIEW_ITEMS);
- console.log("TOTAL_VIEW_APPROVE_ITEMS");
- console.log(TOTAL_VIEW_APPROVE_ITEMS);
- console.log("TOTAL_VIEW_REJECT_ITEMS");
- console.log(TOTAL_VIEW_REJECT_ITEMS);
- console.log(onCurrentPage);
  if(parseInt(TOTAL_VIEW_APPROVE_ITEMS) == parseInt(TOTAL_VIEW_ITEMS) &&
             parseInt(TOTAL_VIEW_REJECT_ITEMS) == 0){
             $('.approve-all').prop("checked", true);
@@ -918,6 +929,11 @@ ApproveBulkMapping.prototype.approveRejectAllCheck = function(){
         TOTAL_VIEW_APPROVE_ITEMS == 0){
         $('.reject-all').prop("checked", true);
         $('.approve-all').prop("checked", false);
+    }
+    else{
+        $('.reject-all').prop("checked", false);
+        $('.approve-all').prop("checked", false);
+
     }
 };
 
@@ -1526,7 +1542,8 @@ function PageControls() {
         var filtered = '';
         FILTERED_DATA.empty();
         CLEAR_FILTERED.hide();
-        
+        $('.approve-all').prop("checked", false);
+        $('.reject-all').prop("checked", false);
         appendFilter = function(val) {
             if (filtered == '') {
                 filtered += val;
@@ -1717,8 +1734,6 @@ function PageControls() {
 
     REJECT_SELECT_ALL.on("change", function(e) {
         CURRENT_PAGE_SMID = [];
-
-
         console.log(BU_APPROVE_PAGE.viewDataList.length > 0);
         console.log(REJECT_SELECT_ALL.prop('checked') == true);
         if (BU_APPROVE_PAGE.viewDataList.length > 0 && REJECT_SELECT_ALL.prop('checked') == true) {
@@ -1736,15 +1751,15 @@ function PageControls() {
                     function(index, el) {
                     var data = BU_APPROVE_PAGE.viewDataList[index];
                     var csvId = 0;
-
+                    var sno;
+                    sno = $(this).attr("data-sno");
                     if (e.target.checked) {
                         $(this).prop("checked", true);
-                        $(".tbody-sm-approve-view th.reject-reason")
-                        .find("*").removeClass("default-display-none");
+                        $('#fa-info-circle-'+sno).removeClass(
+                            "default-display-none");
+                        $('#fa-info-circle-'+sno).attr(
+                            "data-original-title", viewReason);
 
-                        $(".tbody-sm-approve-view th.reject-reason")
-                        .find("*").attr("data-original-title", viewReason);
-                        //$(".reject-reason").find(*)
                         if (data) {
                             csvId = $('#view_csv_id').val();
                             bu.updateActionFromView(
@@ -1757,12 +1772,16 @@ function PageControls() {
                         }
                     }
                     else {
-                        $(this).find("*").prop("checked", false);
-                        $(".tbody-sm-approve-view th.reject-reason")
-                        .find("*").addClass("default-display-none");
+                        console.log('#fa-info-circle-'+sno);
+                        $('#fa-info-circle-'+sno).addClass(
+                            "default-display-none");
+                        $('#fa-info-circle-'+sno).attr(
+                            "data-original-title", "");
 
-                        $(".tbody-sm-approve-view th.reject-reason")
-                        .find("*").attr("data-original-title","");
+                        $(this).find("*").prop("checked", false);
+                        /*$('.reject-reason .fa-info-circle').addClass("default-display-none");
+
+                        $('.reject-reason .fa-info-circle').attr("data-original-title","");*/
 
                         $('.tbody-sm-approve-view .view-reject-check').each(
                             function() {
@@ -1778,13 +1797,15 @@ function PageControls() {
             $(this).find("*").prop("checked", false);
             $('.tbody-sm-approve-view .view-reject-check').each(
             function(index, el) {
+                var sno;
                 var data = BU_APPROVE_PAGE.viewDataList[index];
+                sno = $(this).attr("data-sno");
                 $(this).prop("checked", false);
-                $(".tbody-sm-approve-view th.reject-reason")
-                .find("*").addClass("default-display-none");
-
-                $(".tbody-sm-approve-view th.reject-reason")
-                .find("*").attr("data-original-title","");
+                        console.log('#fa-info-circle-'+sno);
+                $('#fa-info-circle-'+sno).addClass(
+                    "default-display-none");
+                $('#fa-info-circle-'+sno).attr(
+                    "data-original-title", "");
                 
                 if (data) {
                     csvId = $('#view_csv_id').val();
@@ -1804,6 +1825,36 @@ function PageControls() {
     ITEMS_PER_PAGE.on("change", function(e) {
         pageLimit = parseInt(ITEMS_PER_PAGE.val());
         tThis.showViewScreen(tThis.CSVID, 0, pageLimit);
+    });
+
+    FREEZER_TABLE.scroll(function(e) {
+        FREEZER_THEAD.css("left", -FREEZER_TBODY.scrollLeft());
+        FREEZER_TH_CHILD_1.css("left", FREEZER_TABLE.scrollLeft() -0 ); 
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(1)'
+            ).css("left", FREEZER_TABLE.scrollLeft());
+
+        FREEZER_TH_CHILD_2.css("left", FREEZER_TABLE.scrollLeft() -0 );
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(2)'
+            ).css("left", FREEZER_TABLE.scrollLeft());
+
+        FREEZER_TH_CHILD_3.css("left", FREEZER_TABLE.scrollLeft() -0 );
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(3)'
+            ).css("left", FREEZER_TABLE.scrollLeft());
+
+        FREEZER_TH_CHILD_4.css("left", FREEZER_TABLE.scrollLeft() -0 );
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(4)'
+            ).css("left", FREEZER_TABLE.scrollLeft());
+
+        FREEZER_TH_CHILD_5.css("left", FREEZER_TABLE.scrollLeft() -0 );
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(5)'
+            ).css("left", FREEZER_TABLE.scrollLeft());
+
+        FREEZER_TH_CHILD_6.css("left", FREEZER_TABLE.scrollLeft() -0 );
+/*        $('#multi_col_freezer .table-responsive tbody td:nth-child(6)'
+            ).css("left", FREEZER_TABLE.scrollLeft());*/
+
+        FREEZER_THEAD.css("top", -FREEZER_TBODY.scrollTop());
+        FREEZER_TH.css("top", FREEZER_TABLE.scrollTop());
     });
 }
 

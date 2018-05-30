@@ -245,7 +245,6 @@ class SourceDB(object):
     def check_due_date(
         self, due_date, domain_name, unit_name, level_1_statutory_name
     ):
-        
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_name)
         if unit_id is None:
@@ -260,9 +259,11 @@ class SourceDB(object):
         )
         if due_dates[0] is None:
             return "Not Found"
-        due_date = datetime.strptime(due_date, "%d-%b-%Y")
-        due_date = due_date.date().strftime("%Y-%m-%d")
-
+        try:
+            due_date = datetime.strptime(due_date, "%d-%b-%Y")
+            due_date = due_date.date().strftime("%Y-%m-%d")
+        except ValueError:
+            return
         if due_date in due_dates[0]:
             return True
         else:
@@ -271,9 +272,17 @@ class SourceDB(object):
     def check_completion_date(
         self, completion_date, statutory_date, due_date
     ):
+        print "statutory dataeeeeeeeeeeeeeeeeeeeeeeeee============>"
+        print "==================================================>"
+        print statutory_date
+        if statutory_date is None or statutory_date == "":
+            return
         statu_array = statutory_date.split()
-        trigger_before_days_string = statu_array[len(statu_array) - 1]
-        due_date = datetime.strptime(due_date, "%d-%b-%Y")
+        trigger_before_days_string = statu_array[len(statu_array)-1]
+        try:
+            due_date = datetime.strptime(due_date, "%d-%b-%Y")
+        except ValueError:
+            return
         start_date = due_date.date()
         trigger_before_days = trigger_before_days_string.replace("(", "")
         trigger_before_days = trigger_before_days.replace(")", "")
@@ -327,6 +336,13 @@ class SourceDB(object):
         rows = _source_db.select_all(query)
         return bool(rows[0]["two_levels_of_approval"])
 
+    def get_compliance_task_name(self, compliance_task_name_data):
+        compliance_task_name_check = compliance_task_name_data.split("-")
+        compliance_task_name = compliance_task_name_check[0]
+        if len(compliance_task_name_check) > 1:
+            compliance_task_name = compliance_task_name_check[1]
+        return compliance_task_name
+
     def save_completed_task_data(self, data, legal_entity_id, session_user):
         is_two_level = False
         compliance_id = ""
@@ -345,16 +361,19 @@ class SourceDB(object):
             ]
 
             # Compliance ID
+            compliance_task_name = self.get_compliance_task_name(
+                d["compliance_task_name"])
             cName = [
-                d["compliance_task_name"], d["compliance_description"],
+                compliance_task_name,
+                d["compliance_description"],
                 d["compliance_frequency"]
             ]
             q = "SELECT compliance_id FROM tbl_compliances where " + \
                 "compliance_task = TRIM(%s) and compliance_description = " + \
                 "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
                 " tbl_compliance_frequency WHERE frequency=TRIM(%s))"
-
             compliance_id = self._source_db.select_all(q, cName)
+            # if len(compliance_id) > 0:
             compliance_id = compliance_id[0]["compliance_id"]
 
             completion_date = d["completion_date"]
@@ -553,7 +572,9 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                             isFound = unboundMethod(v)
                     if isFound is False:
                         return isFound
-                    if isFound is not True and isFound != "":
+                    elif isFound is None:
+                        pass
+                    elif isFound is not True and isFound != "":
                         msg = "%s - %s" % (key, isFound)
                         print "msg: %s" % msg
                         if res is not True:
@@ -633,6 +654,35 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         return (
             mapped_error_dict, mapped_header_dict, invalid, error_count
         )
+
+    def check_if_already_saved_compliance(self, legal_entity_id):
+        for row_idx, data in enumerate(self._source_data):
+            compliance_task_name = data.get("Compliance_Task")
+            due_date = data.get("Due_Date")
+            compliance_name = self.get_compliance_task_name(
+                compliance_task_name)
+            description = data.get("Compliance_Description")
+            frequency = data.get("Compliance_Frequency")
+            q = "SELECT compliance_history_id " + \
+                " from tbl_compliance_history " + \
+                " where compliance_id = (" + \
+                " SELECT compliance_id FROM tbl_compliances where " + \
+                "compliance_task = TRIM(%s) and compliance_description = " + \
+                "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
+                " tbl_compliance_frequency WHERE frequency=TRIM(%s)))" + \
+                " and date(due_date) = %s"
+            try:
+                due_date = datetime.strptime(due_date, "%d-%b-%Y")
+            except ValueError:
+                pass
+            params = [
+                compliance_name, description, frequency,
+                due_date
+            ]
+            self.connect_source_db(legal_entity_id)
+            rows = self._source_db.select_all(q, params)
+            if len(rows) > 0:
+                return False
 
     def perform_validation(self, legal_entity_id):
         mapped_error_dict = {}

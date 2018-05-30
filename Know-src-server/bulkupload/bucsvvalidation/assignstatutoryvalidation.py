@@ -86,7 +86,7 @@ class SourceDB(object):
         self.get_countries(user_id, legal_entity_id)
         self.get_legal_entities(user_id, client_id, country_id)
         self.get_domains(user_id)
-        self.get_unit_location()
+        self.get_unit_location(legal_entity_id)
         self.get_unit_code(legal_entity_id)
         self.get_unit_name(legal_entity_id)
         self.get_statutories()
@@ -124,10 +124,12 @@ class SourceDB(object):
         for d in data:
             self._domain[d["domain_name"]] = d
 
-    def get_unit_location(self):
-        data = self._source_db.call_proc("sp_bu_client_unit_geographies")
+    def get_unit_location(self, legal_entity_id):
+        data = self._source_db.call_proc(
+            "sp_bu_unit_location", [legal_entity_id]
+        )
         for d in data:
-            self._unit_location[d["geography_name"]] = d
+            self._unit_location[d["unit_code"]+'-'+d["geography_name"]] = d
 
     def get_unit_code(self, legal_entity_id):
         data = self._source_db.call_proc(
@@ -762,35 +764,17 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     res.append(msg)
             return res
 
-    def is_le_under_client_group(self, client_group_name, legal_entity_name):
-        data = self._source_db.call_proc(
-                    "sp_bu_is_valid_le",
-                    [legal_entity_name, client_group_name]
-                )
-        count = data[0]["cnt"]
-        if count > 0:
-            return True
-        return False
-
     # check uploaded csv validation process
 
     def check_validation(
         self, res, row_idx, data, duplicate_compliance_row, error_count,
         mapped_header_dict
     ):
-        i=0
         for key in self._csv_column_name:
-            i = i+1
             value = data.get(key)
             isFound = ""
             values = value.strip().split(CSV_DELIMITER)
             csvParam = csv_params_as.get(key)
-            if key == "Legal_Entity":
-                client_group_name = data.get("Client_Group")
-                legal_entity_name = value
-                if not self.is_le_under_client_group(client_group_name, legal_entity_name):
-                    self._error_summary["invalid_data_error"] += 1
-                    res = self.make_error_desc(res, "Legal Entity - Not Found")
             for v in [v.strip() for v in values]:
                 if (
                     key == 'Statutory_remarks' and
@@ -846,6 +830,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                             if key == "Organization":
                                 org_val = v+'-'+data.get('Domain')
                                 isFound = unboundMethod(org_val)
+                            elif key == "Unit_Location":
+                                loc_val = data.get('Unit_Code')+'-'+v
+                                isFound = unboundMethod(loc_val)
                             else:
                                 isFound = unboundMethod(v)
                         if isFound is not True and isFound != "":
@@ -1081,6 +1068,9 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                                 if key == "Organization":
                                     org_val = v+'-'+data.get('Domain')
                                     isFound = unboundMethod(org_val)
+                                elif key == "Unit_Location":
+                                    loc_val = data.get('Unit_Code')+'-'+v
+                                    isFound = unboundMethod(loc_val)
                                 else:
                                     isFound = unboundMethod(v)
 

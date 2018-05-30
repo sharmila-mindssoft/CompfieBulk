@@ -152,7 +152,7 @@ class GetRejectedAssignSMData(Request):
 
     def to_inner_structure(self):
         return {
-            "client_id": self.c_id,
+            "client_id": self.client_id,
             "le_id": self.le_id,
             "d_id": self.d_id,
             "asm_unit_code": self.asm_unit_code
@@ -605,9 +605,10 @@ class BulkUploadConstant(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_category_id"])
+        data = parse_dictionary(data, ["user_category_id", "user_category_name"])
         return BulkUploadConstant(
-            data.get("user_category_id")
+            data.get("user_category_id"),
+            data.get("user_category_name")
         )
 
     def to_structure(self):
@@ -1439,7 +1440,7 @@ class GetBulkUploadConstantSuccess(Response):
         self.bu_rejected_download_count = bu_rejected_download_count
 
     @staticmethod
-    def parse_inner_strucure(data):
+    def parse_inner_structure(data):
         data = parse_dictionary(data,
                                 ["bu_constants", "bu_system_rejected_by",
                                  "bu_rejected_download_count"

@@ -98,11 +98,14 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
     header, completed_task_data = read_data_from_csv(csv_name)
     # csv data validation
     cObj = ValidateCompletedTaskCurrentYearCsvData(
-        db, completed_task_data, session_user, request_frame.csv_name, header)
+        db, completed_task_data, session_user,
+        request_frame.csv_name, header)
     res_data = cObj.perform_validation(request_frame.legal_entity_id)
-
     if res_data is False:
         return bu_ct.InvalidCsvFile()
+    elif cObj.check_if_already_saved_compliance(
+            request_frame.legal_entity_id) is False:
+        return bu_ct.DataAlreadyExists()
     elif res_data["return_status"] is True:
         current_date_time = get_date_time_in_date()
         str_current_date_time = datetime_to_string(current_date_time)

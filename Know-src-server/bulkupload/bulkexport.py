@@ -191,7 +191,7 @@ class ConvertJsonToCSV(object):
                         ac["approved_on"], '%d-%b-%Y %H:%M')
                     approved_rejected_by = approved_by_name
                 approve_status = ac["total_approve_records"]
-                approve_reject_task = "%s / %s" % (int(approve_status),
+                approve_reject_task = "'%s / %s" % (int(approve_status),
                                                    int(total_rejected_records))
                 reason_for_rejection = ""
                 if ac["is_fully_rejected"] == 1:
@@ -324,7 +324,7 @@ class ConvertJsonToCSV(object):
                         cu["approved_on"], '%d-%b-%Y %H:%M')
                     approved_rejected_by = approved_by_name
                 approve_status = cu["total_approve_records"]
-                approve_reject_task = "%s / %s" % (int(approve_status),
+                approve_reject_task = "'%s / %s" % (int(approve_status),
                                                    int(total_rejected_records))
                 reason_for_rejection = ""
                 if cu["is_fully_rejected"] == 1:
@@ -449,7 +449,7 @@ class ConvertJsonToCSV(object):
                         asr["approved_on"], '%d-%b-%Y %H:%M')
                     approved_rejected_by = approved_by_name
                 approve_status = asr["total_approve_records"]
-                approve_reject_task = "%s / %s" % (int(approve_status),
+                approve_reject_task = "'%s / %s" % (int(approve_status),
                                                    int(total_rejected_records))
                 reason_for_rejection = ""
                 if asr["is_fully_rejected"] == 1:
