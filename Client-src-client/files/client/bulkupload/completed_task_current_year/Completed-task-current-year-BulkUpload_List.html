@@ -29,7 +29,7 @@
                         <div class="col-sm-12">
                             <div class="card-box table-responsive">
                                 <div class="col-sm-12 no-padding">
-                                    <table class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                    <table class="table table-striped dt-responsive nowrap highlight">
                                         <thead>
                                             <tr>
                                                 <th class="width-2">#</th>
@@ -61,10 +61,7 @@
                                                 </td>
                                                 <td></td>
                                                 <td></td>
-                                                <td>
-                                                    
-                                                </td>
-                                                
+                                                <td></td>
                                                 <td></td>
                                                 <td></td>
                                             </tr>
@@ -158,13 +155,9 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <center>
-                                                                <a >
-                                                                    <button class="btn btn-primary waves-effect waves-light" type="button" id="btnDownloadFile">
-                                                                            Download File </button>
-                                                                </a>
-                                                            </center>
+                                                        <div class="text-center form-group">
+                                                            <button class="btn btn-primary waves-effect waves-light" type="button" id="btnDownloadFile">
+                                                                    Download File </button>
                                                         </div>
                                                     </div>
                                                     <!-- <div download Section Ends> -->
@@ -217,12 +210,12 @@
                                                             <div class="form-group has-feedback field_label" style="display: none;" id="divSuccessFile">
                                                                 <label class="col-sm-4 control-label">Uploaded File: </label>
                                                                 <div class="col-sm-6">
-                                                                    <table class="tablenopadd" width="100%">
+                                                                    <table class="tablenopadd">
                                                                         <tbody>
                                                                             <tr class="bg-lightdark border-1">
-                                                                                <td width="60%" class="p-5-px"> </td>
+                                                                                <td class="p-5-px width-60"> </td>
 
-                                                                                <td width="10%" class="p-5-px">
+                                                                                <td class="p-5-px width-10">
                                                                                     <span class="successFileName"> </span>
                                                                                     <i class="fa fa-download fa-1-2x c-pointer" data-toggle="tooltip" title="" data-original-title="Download Document"></i>
                                                                                 </td>
@@ -370,10 +363,9 @@
             </span>
             <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
             <div class="custom-modal-text">
-                <img src="">
                 <form>
                     <div class="form-group">
-                        <label for="exampleInputPassword" class="pull-left">Password
+                        <label class="pull-left">Password
                                 <span class="mandatory">*</span>
                             </label>
                         <input type="password" class="form-control input-sm" id="exampleInputPassword" placeholder="Password">
@@ -394,7 +386,7 @@
 <div id="templates">
     <table class="table-ct-csv-info">
         <tr class="table-row">
-            <td class="sno" align="center"></td>
+            <td class="sno text-center"></td>
             <td class="legal-entity"></td>
             <td class="csv-name"></td>
             <td class="uploaded-on"></td>
@@ -413,8 +405,8 @@
 
 <div id="no_record_templates" class="default-display-none">
     <table class="table-no-content">
-        <tr align="left" class="table-row-no-content">
-            <td align="center" colspan="10" class="no-records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        <tr class="table-row-no-content">
+            <td colspan="10" class="no_records text-center no-content-style"></td>
         </tr>
     </table>
 </div>
@@ -428,7 +420,7 @@
                 <h4 class="modal-title">Upload</h4>
             </div>
             <div class="modal-body">
-                <img src="/images/progress_loading.gif">
+                <img alt="processing" src="/images/progress_loading.gif">
             </div>
         </div>
     </div>

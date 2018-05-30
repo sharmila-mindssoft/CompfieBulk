@@ -247,8 +247,6 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     DOCUMENT_TOTAL.text(response.doc_count);
                     UPL_DOC_TXT.hide();
                     UPL_DOC_REM.hide();
-                    // DOCUMENT_UPLOADED.text("0");
-                    // DOCUMENT_REMAINING.text("0");
 
                     DOCUMENT_SUMMARY.hide();
                     t_this.changeTxttoLabel(COUNTRY_AC.val(), DOMAIN_AC.val(),
@@ -263,6 +261,7 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
             }
             else {
                 displayMessage(message.upload_failed);
+                FILE_UPLOAD_CSV.val("");
                 DATA_SUMMARY.removeClass("col-sm-12");
                 DATA_SUMMARY.addClass("col-sm-6");
                 DATA_SUMMARY.show();
@@ -304,11 +303,14 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
             else if (error == "CsvFileExeededMaxLines") {
                 displayMessage(message.csv_max_lines_exceeded.replace(
                     'MAX_LINES', response.csv_max_lines));
+                FILE_UPLOAD_CSV.val("");
             }else if(error == "CsvFileCannotBeBlank") {
                 displayMessage(message.csv_file_blank);
+                FILE_UPLOAD_CSV.val("");
             }
             else{
                 BU_SMPAGE.possibleFailures(error);
+                FILE_UPLOAD_CSV.val("");
             }
         }
     })
