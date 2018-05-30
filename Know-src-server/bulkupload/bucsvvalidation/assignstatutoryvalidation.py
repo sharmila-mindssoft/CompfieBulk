@@ -724,6 +724,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     self._unit_ids.append(self._unit_code.get(
                         grouped_list[0].get("Unit_Code")).get("unit_id")
                     )
+        self._unit_ids = list(set(self._unit_ids))
 
     # check invalid compliance in csv while upload
     def check_invalid_compliance_in_csv(self, data):
@@ -1031,6 +1032,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                     self._unit_ids.append(self._unit_code.get(
                         grouped_list[0].get("Unit_Code")).get("unit_id")
                     )
+        self._unit_ids = list(set(self._unit_ids))
 
         for row_idx, data in enumerate(self._source_data):
             res = True
