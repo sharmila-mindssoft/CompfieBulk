@@ -266,7 +266,7 @@ function validateUpload() {
                     $('#hdn_csv_id').val(data.new_csv_id);
                     CSV_ID = data.new_csv_id;
                     $('.successFileName').text(csvSplitName);
-                    // csvPath = "../../../../../uploaded_file/csv/" + 
+                    // csvPath = "../../../../../uploaded_file/csv/" +
                     //                 data.csv_name;
                     $('.uploaded-data').attr("id", CSV_ID);
                     $('.uploaded-data .text-primary').attr(
@@ -292,8 +292,13 @@ function validateUpload() {
                     $('#divSuccessFile').show();
                     $(".bu-doc-summary").show();
                     $('#bu_doc_total').text(data.doc_count);
+                    $('#up-doc-title').hide();
+                    $('#remaining-doc-title').hide();
                     $('#bu_upload_total').text('0');
                     $('#bu_remain_total').text('0');
+                    if (data.doc_count < 2){
+                        myDropzone.parallelUploads = data.doc_count;    
+                    }
                     displaySuccessMessage(
                         "Records uploaded successfully");
                     hideLoader();
@@ -327,13 +332,13 @@ function validateUpload() {
                     $('.divSuccessDocument').hide();
                     $('#divSuccessbutton').hide();
                     base_path = "../download/invalid"
-                    csvPath = base_path + "/csv/" + 
+                    csvPath = base_path + "/csv/" +
                                 INVALID_FILE_NAME[0] + '.csv';
-                    xls_path = base_path + "/xlsx/" 
+                    xls_path = base_path + "/xlsx/"
                                 + INVALID_FILE_NAME[0] + '.xlsx';
-                    ods_path = base_path + "/ods/" 
+                    ods_path = base_path + "/ods/"
                                 + INVALID_FILE_NAME[0] + '.ods';
-                    txt_path = base_path + "/txt/" 
+                    txt_path = base_path + "/txt/"
                                 + INVALID_FILE_NAME[0] + '.txt';
                     $('#csv').attr("href", csvPath);
                     $('#excel').attr("href", xls_path);
@@ -345,6 +350,17 @@ function validateUpload() {
         } else {
             $('#myModal').modal('hide');
             displayLoader();
+            // $('#bu_doc_total').text(data.doc_count);
+            $('#up-doc-title').show();
+            $('#remaining-doc-title').show();
+            $('#bu_upload_total').text(
+                parseInt($('#bu_upload_total').text()
+                    ) + queueCount
+            );
+            $('#bu_remain_total').text(
+                parseInt($('#bu_doc_total').text()) -
+                parseInt($('#bu_upload_total').text())
+            );
             myDropzone.processQueue();
         }
     }
@@ -364,7 +380,7 @@ document.getElementById("txt").addEventListener("click", function() {
 
 function download(filename, mime_type, text) {
     var element = document.createElement('a');
-    var href = 'data:' + mime_type + ';charset=utf-8,' 
+    var href = 'data:' + mime_type + ';charset=utf-8,'
                 + encodeURIComponent(text);
     element.setAttribute('href', href);
     element.setAttribute('download', filename);
@@ -541,7 +557,7 @@ BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(
 function downloadUploadedData(
     legal_entity_id, CSV_ID){
     res = buClient.downloadUploadedData(
-        legal_entity_id, CSV_ID, 
+        legal_entity_id, CSV_ID,
         function(error, data) {
             if (error == null) {
                     downloadUrl = data.link;
@@ -600,9 +616,9 @@ function downloadData() {
                 }
             } else {
                 if (error == "ExportToCSVEmpty"){
-                    displayMessage(message.no_compliance_available);    
+                    displayMessage(message.no_compliance_available);
                 }
-                
+
                 hideLoader();
             }
         }
@@ -672,12 +688,12 @@ key_search = function(mainList) {
         uploaded_on = mainList[entity].legal_entity_name;
         if (
             (~uploaded_on.toString().toLowerCase().indexOf(
-                key_one)) && 
+                key_one)) &&
             (~uploaded_file.toString().toLowerCase().indexOf(
                 key_two))
         ) {
             fList.push(mainList[entity]);
-            
+
         }
     }
     return fList
@@ -771,8 +787,9 @@ var myDropzone = new Dropzone("div#myDrop", {
                 myDropzone.removeFile(file);
             } else {
                 addedfiles.push(file.name);
-                queueCount += 1;
+                queueCount += 1;                
             }
+            
         });
         this.on("removedfile", function(file) {
             if (jQuery.inArray(file.name, addedfiles) > -1) {
