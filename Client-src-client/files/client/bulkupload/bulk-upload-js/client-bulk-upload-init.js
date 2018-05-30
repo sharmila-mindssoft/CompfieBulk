@@ -10,7 +10,8 @@ function initMethods() {
         GetCompletedTaskCsvUploadedList: GetCompletedTaskCsvUploadedList,
         uploadFile : uploadFile,
         getUnits : getUnits,
-        downloadUploadedData: downloadUploadedData
+        downloadUploadedData: downloadUploadedData,
+        updateDocumentCount: updateDocumentCount
     };
 }
 

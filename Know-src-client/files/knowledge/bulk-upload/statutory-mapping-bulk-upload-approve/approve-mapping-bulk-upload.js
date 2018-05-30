@@ -1827,17 +1827,8 @@ function PageControls() {
         tThis.showViewScreen(tThis.CSVID, 0, pageLimit);
     });
 
+    
     FREEZER_TABLE.scroll(function(e) {
-
-        FREEZER_THEAD.css("left", 0);
-        FREEZER_TH_CHILD_1.css("left", 0);
-        FREEZER_TH_CHILD_2.css("left", 0);
-        FREEZER_TH_CHILD_3.css("left", 0);
-        FREEZER_TH_CHILD_4.css("left", 0);
-        FREEZER_TH_CHILD_5.css("left", 0);
-        FREEZER_TH_CHILD_6.css("left", 0);
-        FREEZER_THEAD.css("top", 0);
-        FREEZER_TH.css("top", 0);
 
         FREEZER_THEAD.css("left", -FREEZER_TBODY.scrollLeft());
         FREEZER_TH_CHILD_1.css("left", FREEZER_TABLE.scrollLeft() -0 );
@@ -1859,12 +1850,8 @@ function PageControls() {
         $('#multi_col_freezer .table-responsive tbody td:nth-child(5)'
             ).css("left", FREEZER_TABLE.scrollLeft());
 
-
         FREEZER_THEAD.css("top", -FREEZER_TBODY.scrollTop());
         FREEZER_TH.css("top", FREEZER_TABLE.scrollTop());
-        
-        console.log("FREEZER_THEAD >>>"+FREEZER_TBODY.scrollTop());
-        console.log("FREEZER_TH >>>"+ FREEZER_TH.scrollTop());
     });
 }
 
