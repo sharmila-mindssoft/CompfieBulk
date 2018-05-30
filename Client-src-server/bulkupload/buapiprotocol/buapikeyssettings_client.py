@@ -111,6 +111,7 @@ bu_api_params = {
     'new_csv_id': make_int_field(),
     'csv_id': make_int_field(),
     'doc_count': make_int_field(),
+    'count': make_int_field(),
     'csv_list': make_vector_type_field(
             module=completed_task, klass_name="CsvList"),
     'csv_past_id': make_int_field(),

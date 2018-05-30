@@ -19,7 +19,8 @@ __all__ = [
     "get_completed_task_CSV_list",
     "get_client_id_by_le",
     "get_units_for_user",
-    "get_files_as_zip"
+    "get_files_as_zip",
+    "update_document_count"
 ]
 
 
@@ -335,3 +336,12 @@ def get_files_as_zip(db, csv_id):
     zfw.close()
     download_link = "%s/%s" % ("/uploaded_file/csv/", zip_file_name)
     return download_link
+
+
+def update_document_count(db, csv_id, count):
+    q = " update tbl_bulk_past_data_csv set " + \
+        " uploaded_documents = uploaded_documents + %s " + \
+        " where csv_past_id = %s"
+    param = [count, csv_id]
+    rows = db.execute(q, param)
+    return rows
