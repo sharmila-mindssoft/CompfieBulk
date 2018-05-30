@@ -111,7 +111,7 @@ BTN_UPLOADED_FILELIST.click(function() {
 		GroupName = SEARCH_GROUP_NAME.val().trim();
 		displayLoader();
 		function onSuccess(data) {
-		    CLIENTUNITCSVFILESLIST = data.bu_cu_csvFilesList;
+		    CLIENTUNITCSVFILESLIST = data.bu_cu_csv_files_list;
 		    loadClientUnitCSVFilesList(CLIENTUNITCSVFILESLIST);
 		}
 
