@@ -616,7 +616,7 @@ td.task-id {
     overflow: hidden;
     height: 490px;
 }
-.table-striped>tbody>tr:nth-of-type(odd) td {
+#multi_col_freezer .table-responsive tbody tr:nth-of-type(odd) td {
     background: #E6F2F7!important;
 }
 tr.thead-tr-3-tr .columnfixed {

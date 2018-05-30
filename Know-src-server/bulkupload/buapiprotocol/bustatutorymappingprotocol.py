@@ -110,6 +110,7 @@ class UploadStatutoryMappingCSV(Request):
             "csv_size": self.csv_size,
         }
 
+
 class SaveExecutiveMessageAfterDocUpload(Request):
     def __init__(
         self, c_name, d_name, csv_name
@@ -135,6 +136,7 @@ class SaveExecutiveMessageAfterDocUpload(Request):
             "d_name": self.d_name,
             "csv_name": self.csv_name
         }
+
 
 class GetSMBulkReportData(Request):
     def __init__(self, c_ids, d_ids, from_date, to_date, r_count, p_count,
@@ -910,7 +912,7 @@ class RejectedList(object):
             "no_of_records", "rej_by", "rej_on", "rej_count", "rej_file",
             "rej_reason", "remove"
         ])
-        return CsvList(
+        return RejectedList(
             data.get("c_id"), data.get("c_name"), data.get("d_id"),
             data.get("d_name"), data.get("csv_id"), data.get("csv_name"),
             data.get("no_of_records"), data.get("rej_by"), data.get("rej_on"),
@@ -962,11 +964,10 @@ class PendingCsvList(object):
         ])
         return PendingCsvList(
             data.get("csv_id"), data.get("csv_name"),
-            data.get("csv_id"), data.get("csv_name"), data.get("uploaded_by"),
-            data.get("uploaded_on"), data.get("no_of_records"),
-            data.get("approve_count"),
-            data.get("rej_count"),
-            data.get("download_file"), data.get("declined_count")
+            data.get("uploaded_by"), data.get("uploaded_on"),
+            data.get("no_of_records"), data.get("approve_count"),
+            data.get("rej_count"), data.get("download_file"),
+            data.get("declined_count")
         )
 
     def to_structure(self):
@@ -1607,8 +1608,10 @@ class DownloadActionSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["xlsx_link", "csv_link", "ods_link",
                                        "txt_link"])
-        return ValidationSuccess(data.get("xlsx_link"), data.get("csv_link"),
-                                 data.get("ods_link"), data.get("txt_link"))
+        return DownloadActionSuccess(
+            data.get("xlsx_link"), data.get("csv_link"),
+            data.get("ods_link"), data.get("txt_link")
+        )
 
     def to_inner_structure(self):
         return {
@@ -1680,7 +1683,7 @@ class GetKExecutiveDetailsSuccess(Response):
         self.k_executive_info = k_executive_info
 
     @staticmethod
-    def parse_inner_strucure(data):
+    def parse_inner_structure(data):
         data = parse_dictionary(data, ["k_executive_info"])
         return GetKExecutiveDetailsSuccess(
             data.get("k_executive_info")
@@ -1703,7 +1706,6 @@ class SendExecutiveMessageSuccess(Response):
 
     def to_inner_structure(self):
         return {}
-
 
 
 def _init_Response_class_map():

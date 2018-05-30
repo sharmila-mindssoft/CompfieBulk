@@ -142,8 +142,8 @@ class DeleteRejectedUnitDataByCsvID(Request):
 
     def to_inner_structure(self):
         return {
-            "csv_id": self.c_id,
-            "bu_client_id": self.d_id
+            "csv_id": self.csv_id,
+            "bu_client_id": self.bu_client_id
         }
 
 
@@ -1017,22 +1017,22 @@ class GetClientUnitReportDataSuccess(Response):
 
 class ClientUnitsUploadedCSVFilesListSuccess(Response):
 
-    def __init__(self, bu_cu_csvFilesList):
+    def __init__(self, bu_cu_csv_files_list):
 
-        self.bu_cu_csvFilesList = bu_cu_csvFilesList
+        self.bu_cu_csv_files_list = bu_cu_csv_files_list
 
     @staticmethod
     def parse_inner_structure(data):
 
-        data = parse_dictionary(data, ["bu_cu_csvFilesList"])
+        data = parse_dictionary(data, ["bu_cu_csv_files_list"])
         return ClientUnitsUploadedCSVFilesListSuccess(
-            data.get("bu_cu_csvFilesList")
+            data.get("bu_cu_csv_files_list")
         )
 
     def to_inner_structure(self):
 
         return {
-            "bu_cu_csvFilesList": self.bu_cu_csvFilesList,
+            "bu_cu_csv_files_list": self.bu_cu_csv_files_list,
         }
 
 

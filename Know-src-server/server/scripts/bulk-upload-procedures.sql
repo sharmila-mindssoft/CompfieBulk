@@ -1779,7 +1779,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_statu_mapping`;
 DELIMITER //
 CREATE PROCEDURE `sp_check_duplicate_statu_mapping`(
-    IN countryid INT(11), IN domainid INT(11), IN statutory VARCHAR(500),
+    IN countryid INT(11), IN domainid INT(11), IN statutory TEXT,
     IN statutory_provision VARCHAR(500), IN compliance_task VARCHAR(100)
 )
 BEGIN

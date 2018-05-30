@@ -504,7 +504,7 @@ bu_api_params = {
         'type': 'INT', 'length': None,
         'validation_method': None, 'is_optional': False
     },
-    'bu_cu_csvFilesList': {
+    'bu_cu_csv_files_list': {
         'type': 'VECTOR_TYPE', 'length': None,
         'validation_method': None, 'is_optional': False,
         'module_name': client_units, "class_name": "ClientUnitCSVList"

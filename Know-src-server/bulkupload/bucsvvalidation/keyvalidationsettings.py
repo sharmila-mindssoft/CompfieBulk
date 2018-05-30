@@ -270,7 +270,7 @@ def parse_csv_dictionary_values(key, val):
         for i in range(0, len(statu_single_level)):
             if (
                 _maxlength is not None and
-                len(statu_single_level[i]) > _maxlength
+                len(statu_single_level[i].strip()) > _maxlength
             ):
                 msg.append(
                     key + " - " + statu_single_level[i].strip() +
