@@ -187,16 +187,16 @@ CLIENT_TEMPLATE_PATHS = [
 
 TEMPLATE_PATHS = [
     # Removed
-    (
-        "/",
-        "files/knowledge/login/login.html",
-        None, {}
-    ),
-    (
-        "/knowledge",
-        "files/knowledge/login/login.html",
-        None, {}
-    ),
+    # (
+    #     "/",
+    #     "files/knowledge/login/login.html",
+    #     None, {}
+    # ),
+    # (
+    #     "/knowledge",
+    #     "files/knowledge/login/login.html",
+    #     None, {}
+    # ),
     (
         "/knowledge/login",
         "files/knowledge/login/login.html",
