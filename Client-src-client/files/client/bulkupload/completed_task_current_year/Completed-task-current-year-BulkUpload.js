@@ -206,7 +206,8 @@ function validateUpload() {
     var args = null;
     $('#myModal').modal('show');
     if(
-        $('#txt_legal_entity_name_upload').val() == ""
+        $('#txt_legal_entity_name_upload').val() == "" && 
+        LEGALENTITY_NAME_LABEL_UPLOAD.text() == ""
     ){
         displayMessage(message.legalentity_required);
         $('#myModal').modal('hide');
@@ -243,6 +244,7 @@ function validateUpload() {
                     hideLoader();
                 }
                 else if (error == null) {
+                    console.log("inside else if error null======>")
                     csvSplitName = data.csv_name.substring(
                         0, data.csv_name.lastIndexOf("_"));
                     $('#myModal').modal('hide');
@@ -288,7 +290,10 @@ function validateUpload() {
                     $('.view-summary').hide();
                     $('#divFileUpload').hide();
                     $('#divSuccessFile').show();
-
+                    $(".bu-doc-summary").show();
+                    $('#bu_doc_total').text(data.doc_count);
+                    $('#bu_upload_total').text('0');
+                    $('#bu_remain_total').text('0');
                     displaySuccessMessage(
                         "Records uploaded successfully");
                     hideLoader();
@@ -699,6 +704,7 @@ function resetAdd() {
     $('#divFileUpload').show();
     $('#divSuccessFile').hide();
     $('.bu-doc-summary').hide();
+    BTN_UPLOAD.show();
 
     BUCT_PAGE._ActionMode = "add";
     UPLOAD_FILE.val("");
@@ -731,6 +737,7 @@ function resetEdit() {
     TXT_UNIT.val("");
     LEGALENTITY_NAME_UPLOAD.val("");
     myDropzone.removeAllFiles();
+    BTN_UPLOAD.show();
 }
 
 Dropzone.autoDiscover = false;
