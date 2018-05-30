@@ -163,3 +163,15 @@ function uploadFileFormat(size, name, content) {
     };
     return result;
 }
+
+function downloadUploadedData(
+    legal_entity_id, csv_id, callback){
+    request =[
+        "DownloadUploadedData",
+        {   
+            "legal_entity_id": legal_entity_id,
+            "csv_id": csv_id
+        }
+    ]
+    return clientApiRequest('bu/completed_task', request, callback);
+}

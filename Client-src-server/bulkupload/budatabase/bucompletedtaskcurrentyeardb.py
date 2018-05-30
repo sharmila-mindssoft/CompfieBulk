@@ -1,6 +1,8 @@
+import os
 import mysql
 from ..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
 import datetime
+import zipfile
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
@@ -16,7 +18,8 @@ __all__ = [
     "get_past_record_data",
     "get_completed_task_CSV_list",
     "get_client_id_by_le",
-    "get_units_for_user"
+    "get_units_for_user",
+    "get_files_as_zip"
 ]
 
 
@@ -296,3 +299,39 @@ def return_units(units):
                 bool(unit["is_closed"])
             ))
         return results
+
+
+def get_files_as_zip(db, csv_id):
+    csv_name = None
+    ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..", "..")
+    BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadcsv")
+    CSV_PATH = os.path.join(BULK_CSV_PATH, "csv")
+
+    CLIENT_DOCUMENT_UPLOAD_PATH = os.path.join(
+        ROOT_PATH, "Temp-filer-server")
+    CLIENT_DOCUMENT_UPLOAD_PATH = os.path.join(
+        CLIENT_DOCUMENT_UPLOAD_PATH, "bulkuploadclientdocuments")
+    CLIENT_DOCUMENT_UPLOAD_PATH = os.path.join(
+        CLIENT_DOCUMENT_UPLOAD_PATH, str(csv_id))
+
+    q = "select csv_name from tbl_bulk_past_data_csv " + \
+        " where csv_past_id = %s"
+    row = db.select_one(q, [csv_id])
+    if row:
+        csv_name = row["csv_name"]
+    zip_file_name = csv_name + "_zip" + '.zip'
+    zip_path = os.path.join(CSV_PATH, zip_file_name)
+    zfw = zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED)
+    csv_absname = os.path.join(CSV_PATH, csv_name)
+    csv_arcname = csv_absname[len(CSV_PATH) + 0:]
+    zfw.write(csv_absname, csv_arcname)
+    for dirname, subdirs, files in os.walk(CLIENT_DOCUMENT_UPLOAD_PATH):
+        for file in files:
+            absname = os.path.join(dirname, file)
+            arcname = absname[
+                len(CLIENT_DOCUMENT_UPLOAD_PATH) + 0:
+            ]
+            zfw.write(absname, arcname)
+    zfw.close()
+    download_link = "%s/%s" % ("/uploaded_file/csv/", zip_file_name)
+    return download_link

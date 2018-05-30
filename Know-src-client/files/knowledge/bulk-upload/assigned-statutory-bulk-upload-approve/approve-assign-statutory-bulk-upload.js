@@ -903,7 +903,7 @@ displayMsg = function(action) {
 goToDetailsPage = function(id) {
     FILTERED_DATA.empty();
     CLEAR_FILTERED.hide();
-    $(".all-data").trigger('click');
+    $("#all_data").trigger('click');
     DOMAIN.find("option").remove();
     UNIT.find("option").remove();
     PRIMARY_LEGISLATION.find("option").remove();

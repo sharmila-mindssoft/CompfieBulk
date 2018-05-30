@@ -6,7 +6,8 @@ var bulkMessage = {
     "upload_failed": "CSV file upload failed",
     "document_upload_success": "Document uploaded successfully",
     'invalid_csv_file': 'Invalid CSV file',
-    'data_already_exists': 'Task already exists'
+    'data_already_exists': 'Task already exists',
+    "no_compliance_available": "No compliance available for selected unit"
 };
 
 $.extend(message, bulkMessage);

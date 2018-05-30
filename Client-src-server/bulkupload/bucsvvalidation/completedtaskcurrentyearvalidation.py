@@ -272,9 +272,6 @@ class SourceDB(object):
     def check_completion_date(
         self, completion_date, statutory_date, due_date
     ):
-        print "statutory dataeeeeeeeeeeeeeeeeeeeeeeeee============>"
-        print "==================================================>"
-        print statutory_date
         if statutory_date is None or statutory_date == "":
             return
         statu_array = statutory_date.split()
@@ -669,7 +666,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 " SELECT compliance_id FROM tbl_compliances where " + \
                 "compliance_task = TRIM(%s) and compliance_description = " + \
                 "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
-                " tbl_compliance_frequency WHERE frequency=TRIM(%s)))" + \
+                " tbl_compliance_frequency WHERE " + \
+                " frequency=TRIM(%s)) Limit 1)" + \
                 " and date(due_date) = %s"
             try:
                 due_date = datetime.strptime(due_date, "%d-%b-%Y")
