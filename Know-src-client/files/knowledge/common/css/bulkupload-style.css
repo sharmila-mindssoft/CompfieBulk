@@ -631,3 +631,51 @@ tr.thead-tr-3-tr .columnfixed {
 .js-filter-sm.sfilter-sticky-header{
     width: 160px;
 }
+
+
+
+@supports (-moz-appearance:none) {
+
+
+#multi_col_freezer .table-responsive tbody tr td:nth-child(1),
+#multi_col_freezer .table-responsive tbody tr td:nth-child(2),
+#multi_col_freezer .table-responsive tbody tr td:nth-child(3),
+#multi_col_freezer .table-responsive tbody tr td:nth-child(4),
+#multi_col_freezer .table-responsive tbody tr td:nth-child(5) {
+  position: relative;
+  height: 40px;
+  background: #fff;
+  width: 300px;
+    transition-delay: 0.5s;
+    animation: leftScroll 2s 2;
+    animation-direction: normal;
+}
+
+@keyframes leftScroll{
+    0% { left:0px; top:0px; }
+    25% { left:0px; top:0px; }
+}
+
+@keyframes topScroll{
+    from{top:0px;opacity:1} to{top:0;opacity:1}
+}
+
+.datatable-inline {
+    width: 3000px !important;
+    overflow-x: auto;
+    margin: 0;
+}
+#multi_col_freezer .table-responsive  thead {
+  position: relative;
+  overflow: visible;
+    transition-delay: 0.1s;
+    animation: topScroll 5s 2;
+    animation-direction: normal;
+}
+#multi_col_freezer .table-responsive  thead th {
+  position: relative; 
+    transition-delay: 0.1s;
+    animation: topScroll 5s 2;
+    animation-direction: normal;
+}
+}
