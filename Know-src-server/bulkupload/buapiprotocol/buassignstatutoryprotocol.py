@@ -565,7 +565,7 @@ class SubmitAssignStatutory(Request):
         return {
             "csv_id": self.csv_id,
             "cl_id": self.cl_id,
-            "le_id": self.d_id,
+            "le_id": self.le_id,
             "password": self.password
         }
 

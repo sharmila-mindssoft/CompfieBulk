@@ -288,7 +288,7 @@ def get_clientunits_uploaded_csvFiles(db, request_frame, session_user):
     groupName = request_frame.bu_group_name
     csvFilesList = get_clientunits_uploaded_csvList(db, clientId, groupName)
     return bu_cu.ClientUnitsUploadedCSVFilesListSuccess(
-        bu_cu_csvFilesList=csvFilesList
+        bu_cu_csv_files_list=csvFilesList
     )
 
 
