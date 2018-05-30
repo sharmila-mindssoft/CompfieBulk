@@ -380,6 +380,8 @@ function displayPopUp(TYPE, csv_id, b_u_id, evt){
                                 displayMessage(err);
                             }
                             else {
+                                console.log("jhgh")
+                                $('.view-approve-check-' + b_u_id).prop("checked", false);
                                 loadRemarksOnView(
                                     b_u_id, $('.view-reason').val()
                                 );
@@ -899,7 +901,7 @@ function bindClientUnitList(data){
                         'view-reject', parseInt(csvid), value.bulk_unit_id, e
                     );
                     console.log($('.view-approve-check-'+value.bulk_unit_id));
-                    $('.view-approve-check-' + value.bulk_unit_id).removeAttr("checked");
+
                 }
                 else {
                     csvid = $('#view_csv_unit_id').val();
