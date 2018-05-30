@@ -2053,6 +2053,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
 
         srow = 1
         for i, col in enumerate(headers[:-1]):
+
             value = 0
             col = col.replace('*', '')
             error_count = header_dict.get(col)
@@ -2191,10 +2192,10 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
 
     def process_data_to_main_db_insert(self, system_declined_units):
         self._temp_data.sort(key=lambda x: (
-            x["Legal_Entity"], x["Division"], x["Category"]
+            x["Country"], x["Legal_Entity"], x["Division"], x["Category"]
         ))
         for k, v in groupby(self._temp_data, key=lambda s: (
-            s["Legal_Entity"], s["Division"], s["Category"]
+            s["Country"], s["Legal_Entity"], s["Division"], s["Category"]
         )):
             grouped_list = list(v)
             if len(grouped_list) == 0:
@@ -2203,7 +2204,8 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
             le_id = None
             cl_id = self._client_id
             bg_id = self._business_group_id
-            c_id = self._country_id
+            # c_id = self._country_id
+            c_id = self._country.get(value.get("Country")).get("country_id")
             groupName = value.get("client_group")
             created_by = value.get("uploaded_by")
             main_division_id = 0
@@ -2211,9 +2213,11 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
 
             # fetch legal_entity_id
 
-            if self._legal_entity.get(str(c_id) + "-" + value.get("Legal_Entity")) is not None:
-                le_id = self._legal_entity.get(str(c_id) + "-" +
-                    value.get("Legal_Entity")
+            if self._legal_entity.get(
+                str(c_id) + "-" + value.get("Legal_Entity")
+            ) is not None:
+                le_id = self._legal_entity.get(
+                    str(c_id) + "-" + value.get("Legal_Entity")
                 ).get("legal_entity_id")
 
                 # fetch division id

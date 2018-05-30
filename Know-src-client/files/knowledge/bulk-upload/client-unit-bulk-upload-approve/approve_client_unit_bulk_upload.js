@@ -378,7 +378,13 @@ function displayPopUp(TYPE, csv_id, b_u_id){
 function displayViewRejectAllPopUp(callback){
     targetid = "#custom-modal-remarks";
     CURRENT_PASSWORD = null;
-    $('.view-reason').val('');
+    REJECT_REASON = $('.view-reason');
+    REJECT_REASON.focus();
+    REJECT_REASON.val('');
+    REJECT_REASON.keyup(function(e){
+        if (e.keyCode == 13)
+            validateAuthentication();
+    });
 
     Custombox.open({
         target: targetid,
@@ -388,8 +394,8 @@ function displayViewRejectAllPopUp(callback){
                 CURRENT_PASSWORD.focus();
                 CURRENT_PASSWORD.val('');
             }
-            else if ($('.view-reason') != null) {
-                $('.view-reason').val('');
+            else if (REJECT_REASON != null) {
+                REJECT_REASON.val('');
             }
             IS_AUTHENTICATE = false;
         },
@@ -397,8 +403,9 @@ function displayViewRejectAllPopUp(callback){
             if (IS_AUTHENTICATE) {
                 displayLoader();
                 setTimeout(function() {
-                    if ($('.view-reason').val() == '') {
-                        displayMessage(message.reason_required)
+                    if (REJECT_REASON.val() == '') {
+                        displayMessage(message.reason_required);
+                        hideLoader();
                     }
                     else {
                         callback($('.view-reason').val());
@@ -680,7 +687,7 @@ function loadRemarksOnView(b_u_id, remarksText) {
             if(remarksText != null){
                 RejectTool = (
                     '<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
-                    "text-primary c-pointer" +
+                    "text-primary c-pointer " +
                     'data-original-title="' + remarksText + '" ' +
                     'data-toggle="tooltip"></i>'
                 );
@@ -706,7 +713,7 @@ function loadRemarksOnViewRejectAll(remarksText) {
             if(remarksText != null){
                 RejectTool = (
                     '<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
-                    "text-primary c-pointer" +
+                    "text-primary c-pointer " +
                     'data-original-title="' + remarksText + '" ' +
                     'data-toggle="tooltip"></i>'
                 );
