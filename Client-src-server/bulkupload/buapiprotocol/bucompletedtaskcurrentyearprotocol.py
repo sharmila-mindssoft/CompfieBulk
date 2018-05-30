@@ -234,12 +234,35 @@ class GetDownloadData(Request):
         }
 
 
+class DownloadUploadedData(Request):
+    def __init__(self, legal_entity_id, csv_id):
+        self.legal_entity_id = legal_entity_id
+        self.csv_id = csv_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+                data, ["legal_entity_id", "csv_id"]
+        )
+        return DownloadUploadedData(
+            data.get("legal_entity_id"),
+            data.get("csv_id")
+        )
+
+    def to_inner_structure(self):
+        return{
+            "legal_entity_id": self.legal_entity_id,
+            "csv_id": self.csv_id
+        }
+
+
 def _init_Request_class_map():
     classes = [
         UploadCompletedTaskCurrentYearCSV,
         SaveBulkRecords,
         GetCompletedTaskCsvUploadedList,
-        GetDownloadData, GetUnits
+        GetDownloadData, GetUnits,
+        DownloadUploadedData
     ]
     class_map = {}
     for c in classes:
@@ -523,13 +546,34 @@ class DownloadBulkPastDataSuccess(Response):
         }
 
 
+class DownloadUploadedDataSuccess(Response):
+    def __init__(self, link):
+        self.link = link
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["link"])
+        link = data.get("link")
+
+        return DownloadUploadedDataSuccess(
+            link
+        )
+
+    def to_inner_structure(self):
+        return {
+            "link": self.link
+        }
+
+
 def _init_Response_class_map():
     classes = [
         UploadCompletedTaskCurrentYearCSVSuccess,
         UploadCompletedTaskCurrentYearCSVFailed,
         saveBulkRecordSuccess, InvalidCsvFile,
         GetCompletedTaskCsvUploadedListSuccess, ExportToCSVEmpty,
-        DownloadBulkPastDataSuccess, GetUnitsSuccess
+        DownloadBulkPastDataSuccess, GetUnitsSuccess,
+        DownloadUploadedDataSuccess
     ]
     class_map = {}
     for c in classes:

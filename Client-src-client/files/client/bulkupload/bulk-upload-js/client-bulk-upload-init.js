@@ -9,7 +9,8 @@ function initMethods() {
         saveBulkRecords: saveBulkRecords,
         GetCompletedTaskCsvUploadedList: GetCompletedTaskCsvUploadedList,
         uploadFile : uploadFile,
-        getUnits : getUnits
+        getUnits : getUnits,
+        downloadUploadedData: downloadUploadedData
     };
 }
 
