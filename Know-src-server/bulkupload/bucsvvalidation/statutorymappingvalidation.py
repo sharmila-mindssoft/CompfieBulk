@@ -399,6 +399,16 @@ class StatutorySource(object):
                 ):
                     msg.append("Statutory_Date - Invalid data")
 
+                if (
+                    d["Repeats_By (DOM/EOM)"] == "DOM" and
+                    d["Statutory_Date"] != "" and
+                    d["Statutory_Month"] != ""
+                ):
+                    invalid_date_msg = self.check_date_validation(
+                        int(d["Statutory_Date"]), int(d["Statutory_Month"])
+                    )
+                    msg.extend(invalid_date_msg)
+
             elif d["Repeats_Type"] == "Day(s)":
                 if d["Multiple_Input_Selection"] != "":
                     msg.append("Multiple_Input_Selection - Invalid data")
@@ -502,6 +512,16 @@ class StatutorySource(object):
                     d["Statutory_Date"] != ""
                 ):
                     msg.append("Statutory_Date - Invalid data")
+
+                if (
+                    d["Repeats_By (DOM/EOM)"] == "DOM" and
+                    d["Statutory_Date"] != "" and
+                    d["Statutory_Month"] != ""
+                ):
+                    invalid_date_msg = self.check_date_validation(
+                        int(d["Statutory_Date"]), int(d["Statutory_Month"])
+                    )
+                    msg.extend(invalid_date_msg)
 
             elif d["Repeats_Type"] == "Day(s)":
                 if d["Multiple_Input_Selection"] != "":
