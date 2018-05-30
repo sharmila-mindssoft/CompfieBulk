@@ -713,8 +713,8 @@ function loadRemarksOnView(b_u_id, remarksText) {
         if (ReasonIconCtrl.className.indexOf(b_u_id) != -1) {
             if(remarksText != null){
                 RejectTool = (
-                    '<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
-                    "text-primary c-pointer " +
+                    '<i class="fa fa-info-circle fa-1-2x l-h-51 ' +
+                    'text-primary c-pointer "' +
                     'data-original-title="' + remarksText + '" ' +
                     'data-toggle="tooltip"></i>'
                 );
@@ -739,8 +739,8 @@ function loadRemarksOnViewRejectAll(remarksText) {
         if (ReasonIconCtrl.className.indexOf(b_u_id) != -1) {
             if(remarksText != null){
                 RejectTool = (
-                    '<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
-                    "text-primary c-pointer " +
+                    '<i class="fa fa-info-circle fa-1-2x l-h-51 ' +
+                    'text-primary c-pointer "'+
                     'data-original-title="' + remarksText + '" ' +
                     'data-toggle="tooltip"></i>'
                 );
@@ -773,19 +773,19 @@ function bindClientUnitList(data){
             $('.view-reject-check', CloneRow).addClass("-"+value.bulk_unit_id);
             if(value.bu_remarks != null && value.bu_remarks != ''){
                 $('.reject-reason', CloneRow).append(
-                    '<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
-                    "text-primary c-pointer " +
+                    '<i class="fa fa-info-circle fa-1-2x l-h-51 ' +
+                    'text-primary c-pointer "' +
                     'data-original-title="' + value.bu_remarks + '" ' +
                     'data-toggle="tooltip"></i>'
                 );
                 $('[data-toggle="tooltip"]').tooltip();
             }
-            $('.legal-entity-name', CloneRow).text(value.bu_le_name);
+            // $('.legal-entity-name', CloneRow).text(value.bu_le_name);
             $('.legal-entity-name', CloneRow).append(
-                '&nbsp;&nbsp;<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
-                "text-primary c-pointer " +
+                '&nbsp;&nbsp;<i class="fa fa-info-circle fa-1-2x l-h-51 ' +
+                'text-primary c-pointer "' +
                 'data-original-title="Country : ' + value.country_name + '" ' +
-                'data-toggle="tooltip"></i>'
+                'data-toggle="tooltip"></i>' + value.bu_le_name
             );
             $('[data-toggle="tooltip"]').tooltip();
             $('.division-name', CloneRow).text(value.bu_division_name);
