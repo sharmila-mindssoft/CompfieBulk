@@ -416,6 +416,7 @@ function pageControls() {
                         $('.download-options').hide();
                     }
                     $('#myModal').modal('hide');
+                    UPLOADFILE.val('');
                 }
             });   
         }
