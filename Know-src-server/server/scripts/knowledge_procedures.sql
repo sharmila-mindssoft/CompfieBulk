@@ -7626,7 +7626,7 @@ BEGIN
     (select c.country_name, g.level_id from
     tbl_countries c inner join tbl_geography_levels g on
     c.country_id = g.country_id) as C ON A.level_id  = C.level_id
-    set A.parent_names = concat(C.country_name, '>>', map_name)
+    set A.parent_names = concat(C.country_name, ' >> ', map_name)
     where A.geography_id = _g_id AND C.level_id = _l_id;
 END //
 
