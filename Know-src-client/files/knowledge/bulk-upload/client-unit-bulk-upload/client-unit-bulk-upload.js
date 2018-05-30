@@ -81,6 +81,7 @@ CSVFILENAME.change(function(e){
 		bu.uploadCSVFile(e, function result_data(status, data) {
             if (status == false){
                 displayMessage(data);
+                CSVFILENAME.val('');
             }else{
             	CSVUPLOADEDFILE = data;
             }
@@ -112,12 +113,15 @@ CSVUPLOADBUTTON.click(function () {
 			{
 				if(error == "EmptyCSVUploaded") {
 					displayMessage(message.csv_file_blank);
+					CSVFILENAME.val('');
 				}
 				else if(error == "InvalidCSVUploaded") {
 					displayMessage(message.invalid_csv_file);
+					CSVFILENAME.val('');
 				}
 				else if(error == "CSVColumnMisMatched") {
 					displayMessage(message.invalid_csv_file);
+					CSVFILENAME.val('');
 				}
 				else if(error == "ClientUnitUploadMaxReached"){
 					displayMessage(message.client_unit_file_max);
@@ -126,11 +130,14 @@ CSVUPLOADBUTTON.click(function () {
 					displayMessage(
 						"CSV File exceeded max " +
 						response.csv_max_lines + " lines");
+					CSVFILENAME.val('');
 				}
 				else if (response.invalid_file != "" && response.invalid_file != null) {
 				    $('.invaliddata').show();
 					$('.view-summary').show();
 					$('.download-file').hide();
+					CSVFILENAME.val('');
+					CSVUPLOADEDFILE = ''
 					displayMessage(message.upload_failed);
 					INVALIDFILENAME = response.invalid_file;
 				    TOTALRECORDSCOUNT.text(response.total);
@@ -168,6 +175,9 @@ CSVUPLOADBUTTON.click(function () {
 			displayMessage(message.cg_required);
 			return false;
 		} else if(CSVUPLOADEDFILE == '') {
+			displayMessage(message.upload_csv);
+			return false;
+		} else if(CSVFILENAME.val() == ''){
 			displayMessage(message.upload_csv);
 			return false;
 		}

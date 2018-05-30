@@ -241,3 +241,21 @@
 .bu-doc-summary li {
     list-style: inside;
 }
+
+.tablenopadd {
+    width: 100%;
+}
+
+.width-60 {
+    width: 60%;
+}
+
+.width-10 {
+    width: 10%;
+}
+
+.no-content-style {
+    padding: 40px;
+    font-size: 1.2em;
+    font-weight: bold;
+}

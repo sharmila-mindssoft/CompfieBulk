@@ -946,6 +946,8 @@ class SourceDB(object):
                     unit_address = unit_data.get("Unit_Address") + "," + \
                         unit_data.get("City") + "," + unit_data.get("State")
                     post_code = unit_data.get("Postal_Code")
+                    print "self._auto_unit_code"
+                    print self._auto_unit_code
                     if self._auto_unit_code is None:
                         unit_code = self.generate_unit_code(
                             cl_id, groupName, le_id, None)
@@ -2197,6 +2199,7 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
         for k, v in groupby(self._temp_data, key=lambda s: (
             s["Country"], s["Legal_Entity"], s["Division"], s["Category"]
         )):
+            self._auto_unit_code = None
             grouped_list = list(v)
             if len(grouped_list) == 0:
                 continue
@@ -2204,8 +2207,8 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
             le_id = None
             cl_id = self._client_id
             bg_id = self._business_group_id
-            # c_id = self._country_id
             c_id = self._country.get(value.get("Country")).get("country_id")
+            self._country_id = c_id
             groupName = value.get("client_group")
             created_by = value.get("uploaded_by")
             main_division_id = 0
