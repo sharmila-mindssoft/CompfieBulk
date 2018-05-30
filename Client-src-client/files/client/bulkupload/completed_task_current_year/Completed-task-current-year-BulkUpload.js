@@ -642,10 +642,8 @@ key_search = function(mainList) {
     key_two = UPLOADED_FILE_FILTER.val().toLowerCase();
     var fList = [];
     for (var entity in mainList) {
-        uploaded_file = mainList[entity].bu_uploaded_documents;
+        uploaded_file = mainList[entity].csv_name;
         uploaded_on = mainList[entity].uploaded_on;
-        console.log("uploaded_file:"+uploaded_file);
-        console.log("uploaded_on:"+uploaded_on);
         if (
             (~uploaded_on.toString().toLowerCase().indexOf(
                 key_one)) && 
