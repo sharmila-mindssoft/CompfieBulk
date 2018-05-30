@@ -664,7 +664,7 @@ key_search = function(mainList) {
     var fList = [];
     for (var entity in mainList) {
         uploaded_file = mainList[entity].csv_name;
-        uploaded_on = mainList[entity].uploaded_on;
+        uploaded_on = mainList[entity].legal_entity_name;
         if (
             (~uploaded_on.toString().toLowerCase().indexOf(
                 key_one)) && 
