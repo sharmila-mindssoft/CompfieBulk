@@ -1410,6 +1410,7 @@ $(document).ready(function() {
     });
     UNIT.multiselect({
         enableFiltering: true,
+        enableCaseInsensitiveFiltering: true,
         includeSelectAllOption: true
     });
     PRIMARY_LEGISLATION.multiselect({

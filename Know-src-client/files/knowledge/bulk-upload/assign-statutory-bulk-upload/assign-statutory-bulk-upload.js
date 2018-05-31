@@ -461,6 +461,7 @@ $(function() {
     $('.download-options').hide();
     MULTISELECTUNIT.multiselect({
         enableFiltering: true,
+        enableCaseInsensitiveFiltering: true,
         includeSelectAllOption: true
     });
     MULTISELECTDOMAIN.multiselect({
