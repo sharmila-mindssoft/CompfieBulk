@@ -163,15 +163,22 @@ class StatutorySource(object):
         for d in data:
             self.geographies[d["parent_names"]] = d
 
+    def get_statu_maps(self, statu_maps):
+        statu_maps = statu_maps.lstrip()
+        statu_maps = statu_maps.rstrip()
+        if statu_maps.find(">>") > 0:
+            statu_maps = ">>".join(e.strip() for e in statu_maps.split(">>"))
+        return statu_maps
+        
     def get_statutories(self, country_id, domain_id):
         data = self._source_db.call_proc("sp_bu_statutories", [
             country_id, domain_id
         ])
         for d in data:
             if d["parent_names"] != "":
-                self.statutories[
-                    d["parent_names"] + '>>' + d["statutory_name"]
-                ] = d
+                parent_names = d["parent_names"] + '>>' + d["statutory_name"]
+                parent_names = self.get_statu_maps(parent_names)
+                self.statutories[parent_names] = d
             else:
                 self.statutories[d["statutory_name"]] = d
 
@@ -307,11 +314,12 @@ class StatutorySource(object):
             "Duration", "Duration_Type", "Multiple_Input_Selection"
         ]
         invalid = self.check_empty_for_compliance_frequency(d, keys)
-        invalid_date = self.check_date_validation(
-            d["Statutory_Date"], d["Statutory_Month"]
-        )
         msg.extend(invalid)
-        msg.extend(invalid_date)
+        if (d["Statutory_Date"] != "" and d["Statutory_Month"]):
+            invalid_date = self.check_date_validation(
+                int(d["Statutory_Date"]), int(d["Statutory_Month"])
+            )
+            msg.extend(invalid_date)
         return msg
 
     def check_on_occurrence(self, d):
@@ -379,7 +387,7 @@ class StatutorySource(object):
                     msg.append("Statutory_Date - Invalid data")
                 if (d["Statutory_Date"] != "" and d["Statutory_Month"] != ""):
                     invalid_date_msg = self.check_date_validation(
-                        d["Statutory_Date"], d["Statutory_Month"]
+                        int(d["Statutory_Date"]), int(d["Statutory_Month"])
                     )
                     msg.extend(invalid_date_msg)
 
@@ -397,6 +405,16 @@ class StatutorySource(object):
                     d["Statutory_Date"] != ""
                 ):
                     msg.append("Statutory_Date - Invalid data")
+
+                if (
+                    d["Repeats_By (DOM/EOM)"] == "DOM" and
+                    d["Statutory_Date"] != "" and
+                    d["Statutory_Month"] != ""
+                ):
+                    invalid_date_msg = self.check_date_validation(
+                        int(d["Statutory_Date"]), int(d["Statutory_Month"])
+                    )
+                    msg.extend(invalid_date_msg)
 
             elif d["Repeats_Type"] == "Day(s)":
                 if d["Multiple_Input_Selection"] != "":
@@ -438,7 +456,7 @@ class StatutorySource(object):
                     mon_list = d["Statutory_Month"].split(CSV_DELIMITER)
                     for s_date, s_month in zip(date_list, mon_list):
                         invalid_date_msg = self.check_date_validation(
-                            s_date, s_month
+                            int(s_date), int(s_month)
                         )
                         msg.extend(invalid_date_msg)
 
@@ -486,7 +504,7 @@ class StatutorySource(object):
 
                 if (d["Statutory_Date"] != "" and d["Statutory_Month"] != ""):
                     invalid_date_msg = self.check_date_validation(
-                        d["Statutory_Date"], d["Statutory_Month"]
+                        int(d["Statutory_Date"]), int(d["Statutory_Month"])
                     )
                     msg.extend(invalid_date_msg)
 
@@ -501,6 +519,16 @@ class StatutorySource(object):
                     d["Statutory_Date"] != ""
                 ):
                     msg.append("Statutory_Date - Invalid data")
+
+                if (
+                    d["Repeats_By (DOM/EOM)"] == "DOM" and
+                    d["Statutory_Date"] != "" and
+                    d["Statutory_Month"] != ""
+                ):
+                    invalid_date_msg = self.check_date_validation(
+                        int(d["Statutory_Date"]), int(d["Statutory_Month"])
+                    )
+                    msg.extend(invalid_date_msg)
 
             elif d["Repeats_Type"] == "Day(s)":
                 if d["Multiple_Input_Selection"] != "":
@@ -556,7 +584,7 @@ class StatutorySource(object):
                     mon_list = d["Statutory_Month"].split(CSV_DELIMITER)
                     for s_date, s_month in zip(date_list, mon_list):
                         invalid_date_msg = self.check_date_validation(
-                            s_date, s_month
+                            int(s_date), int(s_month)
                         )
                         msg.extend(invalid_date_msg)
 
@@ -656,10 +684,14 @@ class StatutorySource(object):
         created_on = get_date_time()
         mapping = mapping.replace("u'", '"')
         mapping = mapping.replace("'", '"')
+                
+        if mapping.find("|;|") > 0:
+            mapping = '", "'.join(e.strip() for e in mapping.split("|;|"))
+        mapping = ''.join(('["', mapping, '"]'))
         mapping_value = [
             int(c_id), int(d_id),
             int(n_id), 1, 2,
-            int(uploadedby), str(created_on), mapping
+            int(uploadedby), str(created_on), str(mapping)
         ]
         q = "INSERT INTO tbl_statutory_mappings (country_id, domain_id, " + \
             " statutory_nature_id, is_active, is_approved, created_by, " + \
@@ -1545,6 +1577,13 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             statu_maps = ">>".join(e.strip() for e in statu_maps.split(">>"))
         return statu_maps
 
+    def get_statu_map_ws(self, statu_maps):
+        statu_maps = statu_maps.lstrip()
+        statu_maps = statu_maps.rstrip()
+        if statu_maps.find(">>") > 0:
+            statu_maps = " >> ".join(e.strip() for e in statu_maps.split(">>"))
+        return statu_maps
+
     def frame_data_for_main_db_insert(self):
         try:
             self.get_source_data()
@@ -1592,8 +1631,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     msg.append(grouped_list[0].get("Compliance_Task"))
                 uploaded_by = grouped_list[0].get("uploaded_by")
 
-                statu_mapping = value.get("Statutory").split(CSV_DELIMITER)
-                for statu_m in statu_mapping:
+                statu_mapping = value.get("Statutory");
+                statu_mapping_formated = self.get_statu_map_ws(statu_mapping)
+                statu_mapping_strips = self.get_statu_maps(statu_mapping)
+                statu_mapping_strips = statu_mapping_strips.split(CSV_DELIMITER)
+                for statu_m in statu_mapping_strips:
                     parent_id = ''
                     parent_names = ''
                     statu_limit = [i for i in self.statu_level]
@@ -1620,13 +1662,14 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                 level_id = statu_position.get(statu_level)
                                 if(self.t_statu.get(strip_data) is not None):
                                     parent_id += str(self.t_statu.get(strip_data)) + ","
-                                    parent_names = str(strip_data)
+                                    parent_names = self.get_statu_map_ws(str(strip_data))
+
                                 if(
                                    self.statutories.get(strip_data) is not None
                                    ):
                                     parent_id += str(self.statutories.get(
                                         strip_data).get("statutory_id")) + ","
-                                    parent_names = str(strip_data)
+                                    parent_names = self.get_statu_map_ws(str(strip_data))
 
                                 if (int(statu_level) == 1 and
                                    self.statutories.get(strip_data) is None):
@@ -1635,13 +1678,15 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                             str(legis_name), level_id,
                                             parent_id, parent_names,
                                             uploaded_by)
+                                        self.get_statutories(self._country_id, 
+                                            self._domain_id)
                                         if(len(legis_data) == 1):
                                             if statu_id not in statu_ids:
                                                 statu_ids.append(statu_id)
                                         statu_exists_id.append(strip_data)
                                         self.t_statu[strip_data] = statu_id
                                         parent_id += str(statu_id) + ","
-                                        parent_names = str(strip_data)
+                                        parent_names = self.get_statu_map_ws(str(strip_data))
                                 else:
                                     if(
                                         int(statu_level) > 1 and
@@ -1652,13 +1697,15 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                                 str(legis_name), level_id,
                                                 parent_id, parent_names,
                                                 uploaded_by)
+                                            self.get_statutories(self._country_id, 
+                                            self._domain_id)
                                             if len(legis_data) == statu_level:
                                                 if statu_id not in statu_ids:
                                                     statu_ids.append(statu_id)
                                                     statu_exists_id.append(strip_data)
                                             self.t_statu[strip_data] = statu_id
                                             parent_id += str(statu_id) + ","
-                                            parent_names = str(strip_data)
+                                            parent_names = self.get_statu_map_ws(str(strip_data))
                                         # if(self.T_Statu.get(strip_data)
                                         #     is not None and
                                         #    strip_data not in statu_exists_id
@@ -1670,7 +1717,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                         #         self.T_Statu[strip_data] = stat_id
                 self.save_statutories_data(
                     self._country_id, self._domain_id, nature_id, uploaded_by,
-                    str(statu_mapping), grouped_list, org_ids, statu_ids,
+                    str(statu_mapping_formated), grouped_list, org_ids, statu_ids,
                     geo_ids)
         except Exception, e:
             print str(traceback.format_exc())

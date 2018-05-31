@@ -76,7 +76,7 @@ function uploadCSVFile(fileListener, callback) {
     var file_size = file.size;
     var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
     if (file_name.length > 50)
-        callback(status, 'File Name length exceeded 50');
+        callback(status, 'File Name length exceeded 50 characters');
 
     var format = /^[a-zA-Z0-9-_.-//@#() ]*$/;
     if(!format.test(file_name))

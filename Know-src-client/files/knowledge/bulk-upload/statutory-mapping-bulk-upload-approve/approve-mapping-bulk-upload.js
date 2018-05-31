@@ -891,8 +891,8 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                     });
                 }
                 $(".zmdi-close").click(function(){
-                    $('#view-approve-'+currentElement).prop("checked", false);
-                    $('#view-reject-'+currentElement).prop("checked", false);
+                    //$('#view-approve-'+currentElement).prop("checked", false);
+                    //$('#view-reject-'+currentElement).prop("checked", false);
                 });
 
             });
@@ -1827,31 +1827,28 @@ function PageControls() {
         tThis.showViewScreen(tThis.CSVID, 0, pageLimit);
     });
 
+    
     FREEZER_TABLE.scroll(function(e) {
+
         FREEZER_THEAD.css("left", -FREEZER_TBODY.scrollLeft());
-        FREEZER_TH_CHILD_1.css("left", FREEZER_TABLE.scrollLeft() -0 ); 
-        $('#multi_col_freezer .table-responsive tbody td:nth-child(1)'
-            ).css("left", FREEZER_TABLE.scrollLeft());
-
+        FREEZER_TH_CHILD_1.css("left", FREEZER_TABLE.scrollLeft() -0 );
         FREEZER_TH_CHILD_2.css("left", FREEZER_TABLE.scrollLeft() -0 );
-        $('#multi_col_freezer .table-responsive tbody td:nth-child(2)'
-            ).css("left", FREEZER_TABLE.scrollLeft());
-
         FREEZER_TH_CHILD_3.css("left", FREEZER_TABLE.scrollLeft() -0 );
-        $('#multi_col_freezer .table-responsive tbody td:nth-child(3)'
-            ).css("left", FREEZER_TABLE.scrollLeft());
-
         FREEZER_TH_CHILD_4.css("left", FREEZER_TABLE.scrollLeft() -0 );
-        $('#multi_col_freezer .table-responsive tbody td:nth-child(4)'
-            ).css("left", FREEZER_TABLE.scrollLeft());
-
         FREEZER_TH_CHILD_5.css("left", FREEZER_TABLE.scrollLeft() -0 );
+        FREEZER_TH_CHILD_6.css("left", FREEZER_TABLE.scrollLeft() -0 );
+
+
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(1)'
+            ).css("left", FREEZER_TABLE.scrollLeft());        
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(2)'
+            ).css("left", FREEZER_TABLE.scrollLeft());        
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(3)'
+            ).css("left", FREEZER_TABLE.scrollLeft());        
+        $('#multi_col_freezer .table-responsive tbody td:nth-child(4)'
+            ).css("left", FREEZER_TABLE.scrollLeft());        
         $('#multi_col_freezer .table-responsive tbody td:nth-child(5)'
             ).css("left", FREEZER_TABLE.scrollLeft());
-
-        FREEZER_TH_CHILD_6.css("left", FREEZER_TABLE.scrollLeft() -0 );
-/*        $('#multi_col_freezer .table-responsive tbody td:nth-child(6)'
-            ).css("left", FREEZER_TABLE.scrollLeft());*/
 
         FREEZER_THEAD.css("top", -FREEZER_TBODY.scrollTop());
         FREEZER_TH.css("top", FREEZER_TABLE.scrollTop());

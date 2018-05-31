@@ -272,9 +272,6 @@ class SourceDB(object):
     def check_completion_date(
         self, completion_date, statutory_date, due_date
     ):
-        print "statutory dataeeeeeeeeeeeeeeeeeeeeeeeee============>"
-        print "==================================================>"
-        print statutory_date
         if statutory_date is None or statutory_date == "":
             return
         statu_array = statutory_date.split()
@@ -289,7 +286,11 @@ class SourceDB(object):
         if trigger_before_days.isalpha() is False:
             start_date = due_date.date() - timedelta(
                 days=int(trigger_before_days))
-        completion_date = datetime.strptime(completion_date, "%d-%b-%Y")
+        try:
+            completion_date = datetime.strptime(completion_date, "%d-%b-%Y")
+        except ValueError:
+            return "Invalid date format"
+
         if completion_date.date() < start_date:
             return "Should be greater than Start Date"
         else:
@@ -620,8 +621,10 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                     if data["Document_Name"] != "":
                         file_extension = os.path.splitext(
                             data["Document_Name"])
-                        allowed_file_formats = [".pdf", ".doc", ".docx",
-                                                ".xls", ".xlsx"]
+                        allowed_file_formats = [
+                            ".pdf", ".doc", ".docx", ".xls", ".xlsx",
+                            ".png", ".jpeg"
+                        ]
                         if file_extension[1] not in allowed_file_formats:
                             msg.append("Document Name - Invalid File Format")
                             self._error_summary["invalid_file_format"] += 1
@@ -669,7 +672,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 " SELECT compliance_id FROM tbl_compliances where " + \
                 "compliance_task = TRIM(%s) and compliance_description = " + \
                 "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
-                " tbl_compliance_frequency WHERE frequency=TRIM(%s)))" + \
+                " tbl_compliance_frequency WHERE " + \
+                " frequency=TRIM(%s)) Limit 1)" + \
                 " and date(due_date) = %s"
             try:
                 due_date = datetime.strptime(due_date, "%d-%b-%Y")

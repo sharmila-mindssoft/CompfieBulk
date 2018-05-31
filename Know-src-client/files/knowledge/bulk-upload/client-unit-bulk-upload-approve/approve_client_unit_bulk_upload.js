@@ -111,8 +111,8 @@ BTN_UPLOADED_FILELIST.click(function() {
 		GroupName = SEARCH_GROUP_NAME.val().trim();
 		displayLoader();
 		function onSuccess(data) {
-		    CLIENTUNITCSVFILESLIST = data.bu_cu_csvFilesList;
-		    loadClientUnitCSVFilesList();
+		    CLIENTUNITCSVFILESLIST = data.bu_cu_csv_files_list;
+		    loadClientUnitCSVFilesList(CLIENTUNITCSVFILESLIST);
 		}
 
 		function onFailure(error) {
@@ -135,8 +135,7 @@ BTN_UPLOADED_FILELIST.click(function() {
 
 
 // To display the uploaded CSV files list
-function loadClientUnitCSVFilesList() {
-	var data = CLIENTUNITCSVFILESLIST;
+function loadClientUnitCSVFilesList(data) {
 	var sno = 0;
     var TableRow = null, clone = null, SplitFileName = null;
     var App_Rej = 0;
@@ -205,14 +204,14 @@ function loadClientUnitCSVFilesList() {
 			//approve all
 			$('.approve-checkbox', clone).on('change', function(e){
                 if (e.target.checked){
-                    displayPopUp('approve_all', value.csv_id, null);
+                    displayPopUp('approve_all', value.csv_id, null, e);
                 }
             });
 
 			//reject all
 			$('.reject-checkbox', clone).on('change', function(e){
                 if(e.target.checked){
-                    displayPopUp('reject_all', value.csv_id, null);
+                    displayPopUp('reject_all', value.csv_id, null, e);
                 }
             });
 
@@ -249,9 +248,9 @@ function loadClientUnitCSVFilesList() {
         clone = NoRecordRow.clone();
         TBL_CLIENTUNIT_BULK_UPLOADED_LIST.append(clone);
 	}
-	$('.js-filtertable-view').each(function() {
+	/*$('.js-filtertable-view').each(function() {
         $(this).filtertable().addFilter('.js-filter-main');
-    });
+    });*/
 	hideLoader();
 }
 
@@ -287,7 +286,30 @@ function showFormats(arg) {
 	document.getElementById("myDropdown-"+arg).classList.toggle("show");
 }
 
-function displayPopUp(TYPE, csv_id, b_u_id){
+function keySearchUnitsFilesList(data) {
+    keyFileName = $('#uploaded_file_name').val().toLowerCase();
+    keyUplOn = $('#uploaded_on').val().toLowerCase();
+    keyUplBy = $('#uploaded_by').val().toLowerCase();
+    keyTotalUnits = $('#total_units').val().toLowerCase();
+    var mList = [];
+    var d;
+    for (d in data) {
+        var valueFileName = data[d].csv_name.toLowerCase();
+        var valueUplOn = data[d].uploaded_on.toLowerCase();
+        var valueUplBy = fetchTechnoManager(data[d].uploaded_by).toString().toLowerCase();
+        var valueTotalUnits = data[d].no_of_records.toString();
+        if ((~valueFileName.indexOf(keyFileName)) &&
+            (~valueUplOn.indexOf(keyUplOn)) &&
+            (~valueUplBy.indexOf(keyUplBy)) &&
+            (~valueTotalUnits.indexOf(keyTotalUnits))
+        ) {
+            mList.push(data[d]);
+        }
+    }
+    return mList;
+}
+
+function displayPopUp(TYPE, csv_id, b_u_id, evt){
     if (TYPE == "reject_all") {
         targetid = "#custom-modal";
         CURRENT_PASSWORD = $('#current_password_reject');
@@ -370,6 +392,9 @@ function displayPopUp(TYPE, csv_id, b_u_id){
                     }
                 }, 500);
             }
+            else {
+                evt.target.checked = false;
+            }
         },
     });
 }
@@ -378,7 +403,13 @@ function displayPopUp(TYPE, csv_id, b_u_id){
 function displayViewRejectAllPopUp(callback){
     targetid = "#custom-modal-remarks";
     CURRENT_PASSWORD = null;
-    $('.view-reason').val('');
+    REJECT_REASON = $('.view-reason');
+    REJECT_REASON.focus();
+    REJECT_REASON.val('');
+    REJECT_REASON.keyup(function(e){
+        if (e.keyCode == 13)
+            validateAuthentication();
+    });
 
     Custombox.open({
         target: targetid,
@@ -388,8 +419,8 @@ function displayViewRejectAllPopUp(callback){
                 CURRENT_PASSWORD.focus();
                 CURRENT_PASSWORD.val('');
             }
-            else if ($('.view-reason') != null) {
-                $('.view-reason').val('');
+            else if (REJECT_REASON != null) {
+                REJECT_REASON.val('');
             }
             IS_AUTHENTICATE = false;
         },
@@ -397,15 +428,18 @@ function displayViewRejectAllPopUp(callback){
             if (IS_AUTHENTICATE) {
                 displayLoader();
                 setTimeout(function() {
-                    if ($('.view-reason').val() == '') {
-                        displayMessage(message.reason_required)
+                    if (REJECT_REASON.val() == '') {
+                        displayMessage(message.reason_required);
+                        hideLoader();
                     }
                     else {
                         callback($('.view-reason').val());
                     }
                 }, 500);
             } else {
-                callback($('.view-reason').val());
+                REJECT_ALL_UNITS.prop("checked", false);
+                hideLoader();
+                //callback($('.view-reason').val());
             }
         },
     });
@@ -502,7 +536,7 @@ function performApproveRejectDeclination(
 // To handle submit action of total view
 BTN_SUBMIT.click(function(){
     csvid = $('#view_csv_unit_id').val();
-    displayPopUp('submit', parseInt(csvid), 0);
+    displayPopUp('submit', parseInt(csvid), 0, null);
 });
 
 function submitAction(csv_id, actionType, pwd, remarksText) {
@@ -679,8 +713,8 @@ function loadRemarksOnView(b_u_id, remarksText) {
         if (ReasonIconCtrl.className.indexOf(b_u_id) != -1) {
             if(remarksText != null){
                 RejectTool = (
-                    '<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
-                    "text-primary c-pointer" +
+                    '<i class="fa fa-info-circle fa-1-2x l-h-51 ' +
+                    'text-primary c-pointer "' +
                     'data-original-title="' + remarksText + '" ' +
                     'data-toggle="tooltip"></i>'
                 );
@@ -705,8 +739,8 @@ function loadRemarksOnViewRejectAll(remarksText) {
         if (ReasonIconCtrl.className.indexOf(b_u_id) != -1) {
             if(remarksText != null){
                 RejectTool = (
-                    '<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
-                    "text-primary c-pointer" +
+                    '<i class="fa fa-info-circle fa-1-2x l-h-51 ' +
+                    'text-primary c-pointer "'+
                     'data-original-title="' + remarksText + '" ' +
                     'data-toggle="tooltip"></i>'
                 );
@@ -735,21 +769,23 @@ function bindClientUnitList(data){
 
             $('.sno', CloneRow).text(sno);
             $('.reject-reason', CloneRow).addClass("-"+value.bulk_unit_id);
+            $('.view-approve-check', CloneRow).addClass("-"+value.bulk_unit_id);
+            $('.view-reject-check', CloneRow).addClass("-"+value.bulk_unit_id);
             if(value.bu_remarks != null && value.bu_remarks != ''){
                 $('.reject-reason', CloneRow).append(
-                    '<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
-                    "text-primary c-pointer " +
+                    '<i class="fa fa-info-circle fa-1-2x l-h-51 ' +
+                    'text-primary c-pointer "' +
                     'data-original-title="' + value.bu_remarks + '" ' +
                     'data-toggle="tooltip"></i>'
                 );
                 $('[data-toggle="tooltip"]').tooltip();
             }
-            $('.legal-entity-name', CloneRow).text(value.bu_le_name);
+            // $('.legal-entity-name', CloneRow).text(value.bu_le_name);
             $('.legal-entity-name', CloneRow).append(
-                '&nbsp;&nbsp;<i class="fa fa-info-circle fa-1-2x l-h-51 " ' +
-                "text-primary c-pointer " +
+                '&nbsp;&nbsp;<i class="fa fa-info-circle fa-1-2x l-h-51 ' +
+                'text-primary c-pointer "' +
                 'data-original-title="Country : ' + value.country_name + '" ' +
-                'data-toggle="tooltip"></i>'
+                'data-toggle="tooltip"></i>' + value.bu_le_name
             );
             $('[data-toggle="tooltip"]').tooltip();
             $('.division-name', CloneRow).text(value.bu_division_name);
@@ -806,16 +842,16 @@ function bindClientUnitList(data){
             );
 
             if (parseInt(value.bu_action) == 1) {
-                $('.view-approve-check',CloneRow).attr("checked", true);
-                $('.view-reject-check',CloneRow).attr("checked", false);
+                $('.view-approve-check-'+value.bulk_unit_id,CloneRow).attr("checked", true);
+                $('.view-reject-check-'+value.bulk_unit_id,CloneRow).attr("checked", false);
             }
             else if (parseInt(value.bu_action) == 2){
-                $('.view-approve-check',CloneRow).attr("checked", false);
-                $('.view-reject-check',CloneRow).attr("checked", true);
+                $('.view-approve-check-'+value.bulk_unit_id,CloneRow).attr("checked", false);
+                $('.view-reject-check-'+value.bulk_unit_id,CloneRow).attr("checked", true);
             }
             else if (parseInt(value.bu_action) == 0){
-                $('.view-approve-check',CloneRow).attr("checked", false);
-                $('.view-reject-check',CloneRow).attr("checked", false);
+                $('.view-approve-check-'+value.bulk_unit_id,CloneRow).attr("checked", false);
+                $('.view-reject-check-'+value.bulk_unit_id,CloneRow).attr("checked", false);
             }
 
             $('.view-approve-check', CloneRow).on('change', function(e){
@@ -832,7 +868,7 @@ function bindClientUnitList(data){
                             TBL_CLIENTUNIT_BULK_UPLOADED_APPROVAL_LIST.find(
                                 'td.reject-reason.-'+value.bulk_unit_id
                             ).html('');
-                            $('.view-reject-check',CloneRow).attr("checked", false);
+                            $('.view-reject-check-'+value.bulk_unit_id,CloneRow).attr("checked", false);
                         }
                     });
                 }
@@ -849,7 +885,7 @@ function bindClientUnitList(data){
                             TBL_CLIENTUNIT_BULK_UPLOADED_APPROVAL_LIST.find(
                                 'td.reject-reason.-'+value.bulk_unit_id
                             ).html('');
-                            $('.view-reject-check',CloneRow).attr(
+                            $('.view-reject-check-'+value.bulk_unit_id,CloneRow).attr(
                                 "checked", false
                             );
                         }
@@ -860,9 +896,10 @@ function bindClientUnitList(data){
                 if(e.target.checked){
                     csvid = $('#view_csv_unit_id').val();
                     displayPopUp(
-                        'view-reject', parseInt(csvid), value.bulk_unit_id
+                        'view-reject', parseInt(csvid), value.bulk_unit_id, e
                     );
-                    $('.view-approve-check',CloneRow).attr("checked", false);
+                    console.log($('.view-approve-check-'+value.bulk_unit_id));
+                    $('.view-approve-check-' + value.bulk_unit_id).removeAttr("checked");
                 }
                 else {
                     csvid = $('#view_csv_unit_id').val();
@@ -877,7 +914,7 @@ function bindClientUnitList(data){
                             TBL_CLIENTUNIT_BULK_UPLOADED_APPROVAL_LIST.find(
                                 'td.reject-reason.-'+value.bulk_unit_id
                             ).html('');
-                            $('.view-approve-check',CloneRow).attr(
+                            $('.view-approve-check-'+value.bulk_unit_id,CloneRow).attr(
                                 "checked", false
                             );
                         }
@@ -1467,6 +1504,22 @@ REJECT_ALL_UNITS.on("change", function(e) {
     }
 });
 
+$('#uploaded_file_name').keyup(function() {
+    mList = keySearchUnitsFilesList(CLIENTUNITCSVFILESLIST);
+    loadClientUnitCSVFilesList(mList);
+});
+$('#uploaded_on').keyup(function() {
+    mList = keySearchUnitsFilesList(CLIENTUNITCSVFILESLIST);
+    loadClientUnitCSVFilesList(mList);
+});
+$('#uploaded_by').keyup(function() {
+    mList = keySearchUnitsFilesList(CLIENTUNITCSVFILESLIST);
+    loadClientUnitCSVFilesList(mList);
+});
+$('#total_units').keyup(function() {
+    mList = keySearchUnitsFilesList(CLIENTUNITCSVFILESLIST);
+    loadClientUnitCSVFilesList(mList);
+});
 $('#filter_legal_entity').keyup(function() {
     fList = keySearchUnitsDetailsList(VIEWCLIENTUNITLIST);
     bindClientUnitList(fList);

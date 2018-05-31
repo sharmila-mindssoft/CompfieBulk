@@ -17,7 +17,7 @@
         <div class="col-sm-10">
             <div class="card-box table-responsive"> <!-- table-responsive -->
                 <div class="col-sm-12 no-padding">
-                    <table id="datatable_responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                    <table id="datatable_responsive" class="table table-striped dt-responsive nowrap highlight m-b-0">
                         <thead>
                             <tr>
                                 <th>#<span class="none-sort-sno"></span></th>
@@ -27,7 +27,7 @@
                                 <th class="text-center">Required Documents</th>
                                 <th class="text-center">Uploaded Documents</th>
                                 <th class="text-center">Remaining Documents</th>
-                                <th>Upload Documents</th>
+                                <th class="text-center">Upload Documents</th>
                             </tr>
                         </thead>
                         <tbody class="tbody-sm-csv-list1"></tbody>
@@ -120,7 +120,7 @@
                             </div>
 
                             <div class="form-group has-feedback" id="bu_upload_docs">
-                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">
                                 Select Documents:
                                 <span class="mandatory">*</span></label>
                                     <div class="dropzone dz-clickable" id="myDrop">
@@ -134,10 +134,11 @@
                                         <li>Required Documents:
                                             <b><span id="bu_doc_total"></span></b>
                                         </li>
-                                        <li class="view-summary">Uploaded Documents:
+
+                                        <li class="view-summary" id="bu_upl_txt">Uploaded Documents:
                                             <b><span id="bu_upload_total"></span></b>
                                         </li>
-                                        <li class="text-danger view-summary">Remaining Documents:
+                                        <li class="text-danger view-summary" id="bu_upl_rem">Remaining Documents:
                                             <b><span id="bu_remain_total"></span></b>
                                         </li>
                                     </ul>
@@ -222,7 +223,7 @@
 <div id="templates">
     <table class="table-sm-csv-info">
         <tr class="table-row">
-            <td class="sno" align="center"></td>
+            <td class="sno" class="text-center"></td>
             <td class="csv-name"></td>
             <td class="uploaded-on"></td>
             <td class="text-center tot-records"></td>
@@ -257,8 +258,8 @@
 </div>
 <div id="no_record_templates" class="default-display-none">
     <table class="table-no-content">
-        <tr align="left" class="table-row-no-content">
-            <td align="center" colspan="10" class="no-records smb-inline-no-records"></td>
+        <tr class="table-row-no-content">
+            <td colspan="8" class="no-records text-center smb-inline-no-records"></td>
         </tr>
     </table>
 </div>
@@ -271,7 +272,7 @@
                 <h4 class="modal-title">Upload</h4>
             </div>
             <div class="modal-body">
-                    <img src="/images/progress_loading.gif">
+                    <img alt="progressing" src="/images/progress_loading.gif">
             </div>
         </div>
     </div>
