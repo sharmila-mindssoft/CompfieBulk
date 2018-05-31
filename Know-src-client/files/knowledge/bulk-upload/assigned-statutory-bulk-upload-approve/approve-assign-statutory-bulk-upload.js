@@ -1409,6 +1409,7 @@ $(document).ready(function() {
         includeSelectAllOption: true
     });
     UNIT.multiselect({
+        enableFiltering: true,
         includeSelectAllOption: true
     });
     PRIMARY_LEGISLATION.multiselect({

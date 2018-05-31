@@ -460,6 +460,7 @@ function initialize() {
 $(function() {
     $('.download-options').hide();
     MULTISELECTUNIT.multiselect({
+        enableFiltering: true,
         includeSelectAllOption: true
     });
     MULTISELECTDOMAIN.multiselect({
