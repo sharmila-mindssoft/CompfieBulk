@@ -1111,7 +1111,7 @@ class SourceDB(object):
             )
         link = "/knowledge/approve_client_unit_bu"
 
-        q = "select t1.user_id from tbl_user_login_details as t1 " + \
+        q = "select distinct(t1.user_id) from tbl_user_login_details as t1 " + \
             " inner join tbl_user_mapping as t2 on t2.parent_" + \
             "user_id = t1.user_id " + \
             " where t1.is_active = 1 and t2.child_user_id = %s "
