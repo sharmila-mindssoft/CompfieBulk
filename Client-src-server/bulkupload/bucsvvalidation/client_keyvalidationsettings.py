@@ -134,16 +134,19 @@ def is_alpha_numeric(value):
 
 def is_date(string):
     string_in_date = string
+    result = datetime.datetime.strptime(
+                    string_in_date, "%d-%b-%Y"
+                    ).strftime('%d-%b-%Y')
     try:
         if string is not None:
-            if string_in_date != datetime.datetime.strptime(
+            if string != datetime.datetime.strptime(
                     string_in_date, "%d-%b-%Y"
                     ).strftime('%d-%b-%Y'):
                 raise ValueError
-            return True
+            else:
+                return True
     except ValueError:
         return False
-
 
 def is_url(value):
     r = re.compile("^[a-zA-Z0-9=/:.-]*$")  # a-z with special char
