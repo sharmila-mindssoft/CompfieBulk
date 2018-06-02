@@ -10,7 +10,7 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME)
 from bulkupload.client_bulkconstants import (
     CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, TEMP_FILE_SERVER,
-    FILE_SERVER, BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
+    BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DATABASE_NAME, BULK_UPLOAD_DB_PORT)
 from ..buapiprotocol.pastdatadownloadbulk import (
     calculate_final_due_dates, return_past_due_dates)
@@ -868,7 +868,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def file_server_approve_call(
         self, csvid, country_id, legal_id, domain_id, unit_id
     ):
-        caller_name = "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s" % (TEMP_FILE_SERVER, csvid, country_id, legal_id, domain_id, unit_id)
+        caller_name = "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s" % (
+            TEMP_FILE_SERVER, csvid, country_id, legal_id, domain_id, unit_id)
         response = requests.post(caller_name)
         print "Temp server Caller name->", caller_name
         print "response-> ", response
@@ -877,9 +878,23 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def call_file_server(
         self, csvid, country_id, legal_id, domain_id, unit_id, session_token
     ):
+        file_server_ip = None
+        file_server_port = None
+        query = "select ip, port from tbl_file_server where " + \
+            " find_in_set(%s, cast(legal_entity_ids as char)) > 0;"
+        param = [legal_id]
+        self.connect_source_db(legal_id)
+        docRows = self._knowledge_db.select_all(query, param)
+        if docRows > 0:
+            file_server_ip = docRows[0]["ip"]
+            file_server_port = docRows[0]["port"]
+        else:
+            return "File server not available"
+
         current_date = datetime.now().strftime('%d-%b-%Y')
         client_id = str(session_token).split('-')[0]
-        caller = "%sclientfile?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s&start_date=%s&client_id=%s" % (FILE_SERVER, csvid, country_id, legal_id, domain_id, unit_id, current_date, client_id)
+        caller = "http://%s:%s/clientfile?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s&start_date=%s&client_id=%s" % (
+            file_server_ip, file_server_port, csvid, country_id, legal_id, domain_id, unit_id, current_date, client_id)
         print "caller Fileserver->", caller
         response = requests.post(caller)
         print "Response from file server", response

@@ -231,7 +231,14 @@ function validateUpload() {
 
             buClient.UploadCompletedTaskCurrentYearCSV(
                 args, function(error, data) {
-                if (error == "InvalidCsvFile" ){
+                if (error == "CsvFileExeededMaxLines"){
+                    displayMessage(message.csv_max_lines_exceeded.replace(
+                    'MAX_LINES', data.csv_max_lines));
+                    UPLOAD_FILE.val("");
+                    $('#myModal').modal('hide');
+                    hideLoader();
+                }
+                else if (error == "InvalidCsvFile" ){
                     $('#myModal').modal('hide');
                     displayMessage(message.invalid_csv_file);
                 }else if(error == 'DataAlreadyExists'){

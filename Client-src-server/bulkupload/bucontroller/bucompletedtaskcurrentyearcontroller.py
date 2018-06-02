@@ -3,10 +3,11 @@ from server.common import (
     get_date_time_in_date,
     datetime_to_string
 )
-from bulkupload.client_bulkconstants import BULKUPLOAD_CSV_PATH
+from bulkupload.client_bulkconstants import (
+    BULKUPLOAD_CSV_PATH, CSV_MAX_LINE_ITEM)
 from ..client_bulkuploadcommon import (
     convert_base64_to_file,
-    read_data_from_csv,
+    read_data_from_csv, remove_uploaded_file
 )
 from ..bucsvvalidation.completedtaskcurrentyearvalidation import (
     ValidateCompletedTaskCurrentYearCsvData,
@@ -106,6 +107,10 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
     )
     # read data from csv file
     header, completed_task_data = read_data_from_csv(csv_name)
+    if len(completed_task_data) > CSV_MAX_LINE_ITEM:
+        file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
+        remove_uploaded_file(file_path)
+        return bu_ct.CsvFileExeededMaxLines(CSV_MAX_LINE_ITEM)
     # csv data validation
     cObj = ValidateCompletedTaskCurrentYearCsvData(
         db, completed_task_data, session_user,
