@@ -219,14 +219,3 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_past_data` (
   `document_file_size` FLOAT DEFAULT '0',
 PRIMARY KEY (`bulk_past_data_id`),
 CONSTRAINT `fk_csv_past_id` FOREIGN KEY (`csv_past_id`) REFERENCES `tbl_bulk_past_data_csv` (`csv_past_id`));
-
-
-ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data`
-ADD COLUMN `document_upload_status` TINYINT NULL AFTER `document_name`,
-ADD COLUMN `document_file_size` FLOAT DEFAULT '0' AFTER `document_upload_status`;
-
-
-ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv`
-ADD COLUMN `file_download_status` VARCHAR(50) NULL AFTER `upload_status`;
-
-
