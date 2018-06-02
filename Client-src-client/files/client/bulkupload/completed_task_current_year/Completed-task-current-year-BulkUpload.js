@@ -292,8 +292,13 @@ function validateUpload() {
                     $('#divSuccessFile').show();
                     $(".bu-doc-summary").show();
                     $('#bu_doc_total').text(data.doc_count);
+                    $('#up-doc-title').hide();
+                    $('#remaining-doc-title').hide();
                     $('#bu_upload_total').text('0');
                     $('#bu_remain_total').text('0');
+                    if (data.doc_count < 2){
+                        myDropzone.parallelUploads = data.doc_count;    
+                    }
                     displaySuccessMessage(
                         "Records uploaded successfully");
                     hideLoader();
@@ -345,6 +350,17 @@ function validateUpload() {
         } else {
             $('#myModal').modal('hide');
             displayLoader();
+            // $('#bu_doc_total').text(data.doc_count);
+            $('#up-doc-title').show();
+            $('#remaining-doc-title').show();
+            $('#bu_upload_total').text(
+                parseInt($('#bu_upload_total').text()
+                    ) + queueCount
+            );
+            $('#bu_remain_total').text(
+                parseInt($('#bu_doc_total').text()) -
+                parseInt($('#bu_upload_total').text())
+            );
             myDropzone.processQueue();
         }
     }
@@ -771,8 +787,9 @@ var myDropzone = new Dropzone("div#myDrop", {
                 myDropzone.removeFile(file);
             } else {
                 addedfiles.push(file.name);
-                queueCount += 1;
+                queueCount += 1;                
             }
+            
         });
         this.on("removedfile", function(file) {
             if (jQuery.inArray(file.name, addedfiles) > -1) {
