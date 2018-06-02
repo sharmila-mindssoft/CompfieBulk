@@ -235,6 +235,14 @@ def is_postal_code(value):
         return False
 
 
+def is_unit_code(value):
+    r = re.compile("^[a-zA-Z0-9_ ]*$")
+    if r.match(value):
+        return True
+    else:
+        return False
+
+
 def parse_csv_dictionary_values(key, val):
 
     error_count = {
@@ -256,22 +264,29 @@ def parse_csv_dictionary_values(key, val):
         msg.append(key + " - Field is blank")
         error_count["mandatory"] = 1
 
-    if _maxlength is not None and len(val) > _maxlength:
-        if key == "Domain" or key == "Organization":
+    if(key == 'Statutory'):
+        statu_single_level = val.split('>>')
+        for i in range(0, len(statu_single_level)):
+            if (
+                _maxlength is not None and
+                len(statu_single_level[i].strip()) > _maxlength
+            ):
+                msg.append(
+                    key + " - " + statu_single_level[i].strip() +
+                    " Cannot exceed max length"
+                )
+                error_count["max_length"] = 1
+    else:
+        if _maxlength is not None and len(val) > _maxlength:
             msg.append(key + " - " + val + " Cannot exceed max length")
-        else:
-            msg.append(key + " - " + val + " Cannot exceed max length")
-        error_count["max_length"] = 1
+            error_count["max_length"] = 1
 
     if val != "":
         if _validation_method is not None:
             _result = _validation_method(val)
 
             if _result is False:
-                if key == "Domain" or key == "Organization":
-                    msg.append(key + " - " + val + " Invalid character")
-                else:
-                    msg.append(key + " - " + val + " Invalid character")
+                msg.append(key + " - " + val + " Invalid character")
                 error_count["invalid_char"] = 1
 
             elif _result is not True:
@@ -402,7 +417,7 @@ csv_params = {
     'Applicable_Location': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
         validation_method=is_applicable_location, isFoundCheck=True,
-        isActiveCheck=True, maxLengthCheck=500
+        isActiveCheck=True, maxLengthCheck=600
     ),
     'Statutory_Nature': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
@@ -493,7 +508,7 @@ csv_params = {
         validation_method=duration_and_repeats_type,
         isFoundCheck=True
     ),
-    'Multiple_Input_Section': make_required_validation(
+    'Multiple_Input_Selection': make_required_validation(
         keyType='STRING', isValidCharCheck=True,
         validation_method=multiple_input_selection,
         isFoundCheck=True
@@ -523,13 +538,13 @@ csv_params = {
         isActiveCheck=True
     ),
     'Unit_Location': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=600,
         isValidCharCheck=True, validation_method=is_statutory,
         isFoundCheck=True, isActiveCheck=True
     ),
     'Unit_Code': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=20,
-        isValidCharCheck=True, validation_method=is_alpha_numeric,
+        isValidCharCheck=True, validation_method=is_unit_code,
         isFoundCheck=True
     ),
     'Unit_Name': make_required_validation(
@@ -578,7 +593,8 @@ csv_params = {
     ),
     'Secondary_Legislaion': make_required_validation(
         keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        validation_method=is_alpha_numeric, isFoundCheck=True,
+        isActiveCheck=True
     ),
     'Client_Group': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
@@ -687,6 +703,12 @@ csv_params = {
     'Client_Group_Column': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
+    'Country': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
+        isValidCharCheck=True,
+        validation_method=is_alpha_numeric, isFoundCheck=True,
+        isActiveCheck=True
+    ),
 }
 
 
@@ -750,6 +772,9 @@ csv_params_as = {
         isActiveCheck=True
     ),
     'Client_Group': make_required_validation(
+        keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
+    ),
+    'Country': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isFoundCheck=True
     ),
 }

@@ -1,198 +1,157 @@
-{% extends "files/knowledge/common/html/container.html" %} 
-{% block content %}
-  
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="container">
-<div class="row">
-<div class="container">
-  <div class="row" id="animationSandbox">
-    <div class="col-sm-3"> </div>
-    <div class="col-sm-6">
-      <div class="portlet">
-          <div class="portlet-heading bg-info">
-            <h3 class="portlet-title">
-                Assign Statutory - Bulk Upload
-            </h3>
-            <div class="clearfix"></div>
-        </div>
-        <div id="bg-primary1" class="panel-collapse collapse in">
-            <div class="portlet-body">
-            <div class="form-horizontal group-border-dashed">
-        <div style="border:1px solid #F5F5F5" class="col-sm-12">
-          <div class="form-group bg-muted">
-              <div class="col-sm-12">
-                  <h4 class="header-title">Download File</h4>
-              </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-4 control-label">Client Group:
-            <span class="mandatory">*</span></label>
-            <div class="col-sm-6 has-feedback">
-              <input class="form-control input-sm" type="text" 
-              placeholder="Enter Client Group" value="" id="group_name" 
-              tabindex="1">
-              <i class="form-control-feedback fa fa-search"></i>
-              <input type="hidden" id="group_id" value="">
-              <div id="ac-group" class="ac-textbox default-display-none">
-                  <ul class="width85Percent"></ul>
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-4 control-label">Legal Entity:
-            <span class="mandatory">*</span></label>
-            <div class="col-sm-6 has-feedback">
-            <input class="form-control input-sm" type="text" 
-            placeholder="Enter Legal Entity" value="" id="legal_entity_name" 
-            tabindex="2">
-            <i class="form-control-feedback fa fa-search"></i>
-            <input type="hidden" id="legal_entity_id" value="">
-            <div id="ac-entity" class="ac-textbox default-display-none">
-                <ul class="width85Percent"></ul>
-            </div> 
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-4 control-label">Domain:
-            <span class="mandatory">*</span></label>
-            <div class="col-sm-6">
-                  <select  id="domains" class="form-control input-sm" 
-                  multiple="multiple" tabindex="3"></select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-4 control-label">Unit:</label>
-           <div class="col-sm-6">
-               <select  id="units" class="form-control input-sm" 
-               multiple="multiple" tabindex="4"></select>
-            </div>
-          </div>
-          <div class="form-group text-center">
-             <button class="btn btn-primary waves-effect waves-light 
-             btn-download-file" type="button"> Download File </button>
-          </div>
-          <div class="form-group bg-muted">
-            <div class="col-sm-12">
-                <h4 class="header-title">Upload Bulk Assign Statutory</h4>
-            </div>
-          </div>
-          <div class="form-group has-feedback">
-              <label class="col-sm-4 control-label">Select File: 
-              <span class="mandatory">*</span></label>
-               <div class="col-sm-6">
-                  <input class="form-control input-sm" id="upload_file" 
-                  type="file" />
-                  <small class="text-left">[ Accepted file format 
-                  <span class="mandatory">.csv</span> ]</small>
-              </div>
-          </div>
-
-          <div class="form-group text-center m-b-0">
-              <button class="btn btn-primary waves-effect waves-light m-b-5 btn-upload-file" type="button" data-toggle="modal"> Upload </button>
-              <div class="download-options">
-              <button class="btn btn-primary m-b-5 btn-trans dropbtn" onclick="showDownloadList()"><i class="fa fa-download text-primary"></i> Valid / Invalid Data</button>
-              <div id="myDropdown" class="dropdown-content" >
-                <a id="xls-type">Download Excel</a>
-                <a id="csv-type">Download CSV</a>
-                <a id="ods-type">Download ODS</a>
-                <a id="txt-type">Download Text</a>
-              </div>
-              </div>
-          </div>
-
-         <!--  <div class="form-group col-sm-12 text-center">
-
-            <div class="col-sm-12 col-sm-offset-1">
-             <button class="btn btn-primary waves-effect waves-light 
-             animateprogress m-b-5 btn-upload-file" type="button" data-toggle="modal" 
-             data-target="#myModal" id="showtoast"> Upload </button>
-             <div class="download-options">
-               <button class="btn btn-primary btn-trans dropbtn m-b-5" onclick="showDownloadList()" autocomplete="off"><i class="fa fa-download text-primary"></i> Valid / Invalid Data</button>
-                <div id="myDropdown" class="dropdown-content">
-                  <a id="excel">Download Excel</a>
-                  <a id="csv">Download CSV</a>
-                  <a id="ods">Download ODS</a>
-                  <a id="txt">Download Text</a>
-                </div>
-              </div>
-            </div>
-          </div> -->
-          <div class="clear"></div>
-          <div class="view-summary default-display-none">
-            <div class="col-sm-6 no-padding">
-              <div class="form-group bg-muted">
-               <h5 class="col-sm-12 header-title">Uploaded Data - Summary</h5>
-              </div>
-              <ul class="p-l-20">
-                <li>Total No. Of Records: <b><span class="totalRecords">
-                </span></b> </li>
-                <li>Valid Records: <b> <span class="validRecords">
-                  
-                </span> </b> </li>
-                <li>Invalid Records: <b> <span class="invalidRecords">
-                  
-                </span></b></li>
-              </ul>
-            </div>
-            <div class="col-sm-6 text-danger no-padding">
-              <div class="form-group bg-muted">
-                <h5 class="col-sm-12 text-danger header-title">
-                Invalid Data Summary</h5>
-              </div>
-              <ul class="p-l-20">
-                <li>Mandatory field validation:
-                  <b><span class="mandatoryErrors"></span></b>
-                </li>
-                <li>Duplicate Data validation:
-                  <b><span class="duplicateErrors"></span></b>
-                </li>
-                <li>Status validation:
-                  <b><span class="statusErrors"></span></b>
-                </li>
-                <li>Max. length validation:
-                  <b><span class="lengthErrors"></span></b>
-                </li>
-                <li>Invalid Data validation:
-                  <b><span class="invalidErrors"></span></b>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="clear"></div>
-          </div>
-          <div class="clear"></div>
-      </div>
-      </div>
-      </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- Modal -->
-    <div class="modal fade" id="myModal" role="dialog" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-          <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Upload</h4>
-                </div>
-                <div class="modal-body">
-                        <img src="/images/progress_loading.gif">
-                    <!-- <div class="progress skill-bar ">
-                        <img src="/images/progress_loading.gif"> -->
-                        <!-- <div class="progress-bar progress-bar-success" role="progressbar"
-                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                            <span class="skill">Uploading <i class="val">100%</i></span>
-                        </div> -->
-                    <!-- </div> -->
+    <div class="row">
+        <div class="container">
+            <div class="row" id="animationSandbox">
+                <div class="col-sm-3"> </div>
+                <div class="col-sm-6">
+                    <div class="portlet">
+                        <div class="portlet-heading bg-info">
+                            <h3 class="portlet-title">
+                              Assign Statutory - Bulk Upload
+                            </h3>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-collapse collapse in">
+                            <div class="portlet-body">
+                                <div class="form-horizontal group-border-dashed">
+                                    <div class="col-sm-12 col-sm-12-1">
+                                        <div class="form-group bg-muted">
+                                            <div class="col-sm-12">
+                                                <h4 class="header-title">Download File</h4>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Client Group:
+                                                <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input class="form-control input-sm" type="text" placeholder="Enter Client Group" value="" id="group_name" tabindex="1">
+                                                <i class="form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="group_id" value="">
+                                                <div id="ac_group" class="ac-textbox default-display-none">
+                                                    <ul class="width85Percent"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Legal Entity:
+                                                <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input class="form-control input-sm" type="text" placeholder="Enter Legal Entity" value="" id="legal_entity_name" tabindex="2">
+                                                <i class="form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="legal_entity_id" value="">
+                                                <div id="ac_entity" class="ac-textbox default-display-none">
+                                                    <ul class="width85Percent"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Domain:
+                                                <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6">
+                                                <select id="domains" class="form-control input-sm" multiple="multiple" tabindex="3"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Unit:
+                                            <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6">
+                                                <select id="units" class="form-control input-sm" multiple="multiple" tabindex="4"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center">
+                                            <button class="btn btn-primary waves-effect waves-light
+                                            btn-download-file" type="button"> Download File </button>
+                                        </div>
+                                        <div class="form-group bg-muted">
+                                            <div class="col-sm-12">
+                                                <h4 class="header-title">Upload Bulk Assign Statutory</h4>
+                                            </div>
+                                        </div>
+                                        <div class="form-group has-feedback">
+                                            <label class="col-sm-4 control-label">Select File:
+                                                <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control input-sm" id="upload_file" type="file" />
+                                                <small class="text-left">[ Accepted file format
+                                                <span class="mandatory">.csv</span> ]</small>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center m-b-0">
+                                            <button class="btn btn-primary waves-effect waves-light m-b-5 btn-upload-file" type="button" data-toggle="modal"> Upload </button>
+                                            <div class="download-options">
+                                                <button class="btn btn-primary m-b-5 btn-trans dropbtn" onclick="showDownloadList()"><i class="fa fa-download text-primary"></i> Valid / Invalid Data</button>
+                                                <div id="myDropdown" class="dropdown-content">
+                                                    <a id="xls_type">Download Excel</a>
+                                                    <a id="csv_type">Download CSV</a>
+                                                    <a id="ods_type">Download ODS</a>
+                                                    <a id="txt_type">Download Text</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                        <div class="view-summary default-display-none">
+                                            <div class="col-sm-6 no-padding">
+                                                <div class="form-group bg-muted">
+                                                    <h5 class="col-sm-12 header-title">Uploaded Data - Summary</h5>
+                                                </div>
+                                                <ul class="p-l-20">
+                                                    <li>Total No. Of Records: <b><span class="totalRecords">
+                                                    </span></b> </li>
+                                                    <li>Valid Records: <b> <span class="validRecords">
+                                                    </span> </b> </li>
+                                                    <li>Invalid Records: <b> <span class="invalidRecords">
+                                                    </span></b></li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-sm-6 text-danger no-padding">
+                                                <div class="form-group bg-muted">
+                                                    <h5 class="col-sm-12 text-danger header-title">
+                                                    Invalid Data Summary</h5>
+                                                </div>
+                                                <ul class="p-l-20">
+                                                    <li>Mandatory Field Blank:
+                                                        <b><span class="mandatoryErrors"></span></b>
+                                                    </li>
+                                                    <li>Duplicate Compliance:
+                                                        <b><span class="duplicateErrors"></span></b>
+                                                    </li>
+                                                    <li>Master Data Inactive:
+                                                        <b><span class="statusErrors"></span></b>
+                                                    </li>
+                                                    <li>Max Length Exceeded:
+                                                        <b><span class="lengthErrors"></span></b>
+                                                    </li>
+                                                    <li>Invalid Data:
+                                                        <b><span class="invalidErrors"></span></b>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-{% endblock %}
-{% block contentscript %}
-    <script type="text/javascript" src="/script/bulk-upload/assign-statutory-bulk-upload/assign-statutory-bulk-upload.js"></script>
+</div>
+<div class="modal fade" id="myModal" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Upload</h4>
+            </div>
+            <div class="modal-body">
+                <img alt="processing" src="/images/progress_loading.gif">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block contentscript %}
+<script type="text/javascript" src="/script/bulk-upload/assign-statutory-bulk-upload/assign-statutory-bulk-upload.js"></script>
 {% endblock %}

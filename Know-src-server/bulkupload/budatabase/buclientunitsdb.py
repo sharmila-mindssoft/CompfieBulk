@@ -107,7 +107,7 @@ def save_mapping_client_unit_data(db, csv_id, csv_data):
 
     try:
         columns = [
-            "csv_unit_id", "legal_entity", "division", "category",
+            "csv_unit_id", "country", "legal_entity", "division", "category",
             "geography_level", "unit_location", "unit_code",
             "unit_name", "address", "city", "state", "postalcode",
             "domain", "organization", "action"
@@ -116,7 +116,7 @@ def save_mapping_client_unit_data(db, csv_id, csv_data):
 
         for idx, d in enumerate(csv_data):
             values.append((
-                csv_id, d["Legal_Entity"], d["Division"],
+                csv_id, d["Country"], d["Legal_Entity"], d["Division"],
                 d["Category"], d["Geography_Level"], d["Unit_Location"],
                 d["Unit_Code"], d["Unit_Name"], d["Unit_Address"], d["City"],
                 d["State"], d["Postal_Code"], d["Domain"], d["Organization"],
@@ -153,8 +153,6 @@ def get_clientunits_uploaded_csvList(db, clientId, groupName):
 
     csv_list = []
     result = db.call_proc("sp_client_units_csv_list", [clientId, groupName])
-    print "uploaded data"
-    print result
     for row in result:
         csv_list.append(bu_cu.ClientUnitCSVList(
             row["csv_unit_id"], row["csv_name"], row["uploaded_by"],
@@ -191,21 +189,14 @@ def fetch_rejected_client_unit_report(db, session_user, user_id,
         uploaded_on = ''
         approved_on = ''
         rejected_on = ''
-
         if(d["uploaded_on"] is not None):
-            uploaded_on = datetime.datetime.strptime(
-                str(d["uploaded_on"]),
-                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+            uploaded_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
 
         if(d["approved_on"] is not None):
-            approved_on = datetime.datetime.strptime(
-                str(d["approved_on"]),
-                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+            approved_on = d["approved_on"].strftime("%d-%b-%Y %H:%M")
 
         if(d["rejected_on"] is not None):
-            rejected_on = datetime.datetime.strptime(
-                str(d["rejected_on"]),
-                '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+            rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
 
         if (d["rejected_file_download_count"] is None):
             download_count = 0
@@ -278,21 +269,16 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
             approved_on = ""
             rejected_on = ""
             uploaded_on = ""
+
             if(d["uploaded_on"] is not None):
-                uploaded_on = d["uploaded_on"].strptime(
-                    str(d["uploaded_on"]),
-                    '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+                uploaded_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
 
             if(d["approved_on"] is not None):
-                approved_on = d["approved_on"].strptime(
-                    str(d["approved_on"]),
-                    '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
+                approved_on = d["approved_on"].strftime("%d-%b-%Y %H:%M")
 
             if(d["rejected_on"] is not None):
-                rejected_on = d["rejected_on"].strptime(
-                    str(d["rejected_on"]),
-                    '%Y-%m-%d %H:%M:%S').strftime('%d-%b-%Y %H:%M')
-
+                rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
+            
             client_list.append(bu_cu.ClientReportData(
                 int(d["uploaded_by"]),
                 str(uploaded_on),
@@ -362,7 +348,6 @@ def update_bulk_client_unit_approve_reject_list(
             csv_unit_id, action, remarks,
             session_user.user_id(), declined_count
         ]
-        print args
         data = db.call_proc("sp_bulk_client_unit_update_action", args)
         print "here"
         print data
@@ -403,8 +388,6 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
     unit_list = db.call_proc("sp_bulk_client_unit_view_by_csvid", [
         csv_id, f_count, f_range
     ])
-    print "unit list"
-    print unit_list
     group_name = None
     csv_name = None
     upload_by = session_user.user_full_name()
@@ -415,25 +398,20 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
             if idx == 0:
                 group_name = d["client_group"]
                 csv_name = d["csv_name"]
-                upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+                upload_on = d["uploaded_on"].strftime("%s-%b-%Y %H:%M")
                 upload_by = d["uploaded_by"]
                 total_records = d["total_records"]
-
             client_unit_data.append(bu_cu.BulkClientUnitList(
-                int(d["bulk_unit_id"]), d["legal_entity"], d["division"],
-                d["category"], d["geography_level"], d["unit_location"],
-                d["unit_code"], d["unit_name"], d["address"], d["city"],
-                d["state"], str(d["postalcode"]), d["domain"],
-                d["organization"],
-                d["action"], d["remarks"]
+                int(d["bulk_unit_id"]), d["country"], d["legal_entity"],
+                d["division"], d["category"], d["geography_level"],
+                d["unit_location"], d["unit_code"], d["unit_name"],
+                d["address"], d["city"], d["state"], str(d["postalcode"]),
+                d["domain"], d["organization"], d["action"], d["remarks"]
             ))
-
         # fetch data for filter
         filter_data = db.call_proc_with_multiresult_set(
             "sp_bulk_client_unit_filter_data", [csv_id], 7
         )
-        print "filtered data"
-        print filter_data
         le_names = []
         div_names = []
         cg_names = []
@@ -441,39 +419,40 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
         u_codes = []
         domain_names = []
         orga_names = []
-
         if len(filter_data) > 0:
             if len(filter_data[0]) > 0:
                 for d in filter_data[0]:
-                    le_names.append(d["legal_entity"])
-
+                    le_names.append(d["legal_entity"].strip())
             if len(filter_data[1]) > 0:
                 for d in filter_data[1]:
-                    div_names.append(d["division"])
-
+                    div_names.append(d["division"].strip())
             if len(filter_data[2]) > 0:
                 for d in filter_data[2]:
-                    cg_names.append(d["category"])
-
+                    cg_names.append(d["category"].strip())
             if len(filter_data[3]) > 0:
                 for d in filter_data[3]:
-                    u_locations.append(d["unit_location"])
-
+                    u_locations.append(d["unit_location"].strip())
             if len(filter_data[4]) > 0:
                 for d in filter_data[4]:
-                    u_codes.append(d["unit_code"])
-
+                    if d["unit_code"].strip() == "auto_gen":
+                        occur = 0
+                        for uc in u_codes:
+                            if uc == "auto_gen":
+                                occur += 1
+                        if occur == 0:
+                            u_codes.append(d["unit_code"].strip())
+                    elif d["unit_code"].strip() != "auto_gen":
+                        u_codes.append(d["unit_code"].strip())
             if len(filter_data[5]) > 0:
                 for d in filter_data[5]:
                     if d["domain"].find('|;|') >= 0:
                         dom = d["domain"].split('|;|')
                         for domain in dom:
                             if domain not in domain_names:
-                                domain_names.append(domain)
+                                domain_names.append(domain.strip())
                     else:
                         if d["domain"] not in domain_names:
-                            domain_names.append(d["domain"])
-
+                            domain_names.append(d["domain"].strip())
             if len(filter_data[6]) > 0:
                 for d in filter_data[6]:
                     if d["organization"].find('|;|') >= 0:
@@ -490,7 +469,6 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
                         else:
                             if d["organization"].strip() not in orga_names:
                                 orga_names.append(d["organization"].strip())
-
         return bu_cu.GetBulkClientUnitViewAndFilterDataSuccess(
             group_name, csv_name, upload_by, upload_on, csv_id, total_records,
             le_names, div_names, cg_names, u_locations, u_codes,
@@ -575,11 +553,11 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user):
                     if idx == 0:
                         group_name = d["client_group"]
                         csv_name = d["csv_name"]
-                        upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
+                        upload_on = d["uploaded_on"].strftime("%s-%b-%Y %H:%M")
                         upload_by = d["uploaded_by"]
 
                     client_unit_data.append(bu_cu.BulkClientUnitList(
-                        d["bulk_unit_id"], d["legal_entity"],
+                        d["bulk_unit_id"], d["country"], d["legal_entity"],
                         d["division"], d["category"], d["geography_level"],
                         d["unit_location"], d["unit_code"], d["unit_name"],
                         d["address"], d["city"], d["state"],

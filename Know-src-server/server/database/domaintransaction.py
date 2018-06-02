@@ -136,9 +136,8 @@ def get_statutories_units(db, request, user_id):
     result = db.call_proc('sp_clientstatutories_units', [
         user_id, client_id, b_id, legal_entity_id, div_id, cat_id, domain_id
     ])
-
     data_list = []
-    for r in result :
+    for r in result:
         data_list.append(domaintransactionprotocol.StatutoryUnits(
             r["unit_id"], r["unit_code"], r["unit_name"],
             r["address"], r["geography_name"], r["client_statutory_id"]

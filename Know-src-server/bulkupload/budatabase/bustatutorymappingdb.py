@@ -46,8 +46,8 @@ __all__ = [
 #############################################################################
 
 
-def get_domains_for_user_bu(db, user_id):
-    _source_db_con = connectKnowledgeDB()
+def get_domains_for_user_bu(user_id):
+    _source_db_con = connect_knowledge_db()
     _source_db = Database(_source_db_con)
     _source_db.begin()
     result = _source_db.call_proc_with_multiresult_set(
@@ -57,11 +57,11 @@ def get_domains_for_user_bu(db, user_id):
     return return_domains_bu(result)
 
 
-###############################################################################
+############################################################################
 # To convert the data fetched from database into List of object of Domain
 # Parameter(s) : Data fetched from database
 # Return Type : List of Object of Domain
-###############################################################################
+############################################################################
 def return_country_list_of_domain_bu(domain_id, countries):
     c_ids = []
     c_names = []
@@ -89,14 +89,13 @@ def return_domains_bu(data):
 # Parameter(s) : Object of database, user id
 # Return Type : List of Object of Countries
 #############################################################################
-def get_countries_for_user_bu(db, user_id):
-    _source_db_con = connectKnowledgeDB()
+def get_countries_for_user_bu(user_id):
+    _source_db_con = connect_knowledge_db()
     _source_db = Database(_source_db_con)
     _source_db.begin()
     result = _source_db.call_proc_with_multiresult_set(
         "sp_countries_for_user", [user_id], 2
     )
-    print "Result->> ", result
     if len(result) > 1:
         result = result[1]
     return return_countries_bu(result)
@@ -116,8 +115,8 @@ def return_countries_bu(data):
     return results
 
 
-def get_knowledge_executive_bu(db, manager_id):
-    _source_db_con = connectKnowledgeDB()
+def get_knowledge_executive_bu(manager_id):
+    _source_db_con = connect_knowledge_db()
     _source_db = Database(_source_db_con)
     _source_db.begin()
     result = _source_db.call_proc("sp_know_executive_info", [manager_id])
@@ -163,16 +162,11 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
     data = db.call_proc_with_multiresult_set(
         "sp_statutory_mapping_csv_list", [session_user], 3
     )
-    print "DATA in DB file", data
-
-    print "Len DATA in DB file", len(data)
-    print "MAX_REJECTED_COUNT->> ", MAX_REJECTED_COUNT
     if len(data) == 3:
         if data[0][0]["max_count"] >= MAX_REJECTED_COUNT:
             upload_more = False
         else:
             upload_more = True
-        print "upload_more--->> ", upload_more
 
         for d in data[2]:
             csv_id = d.get("csv_id")
@@ -258,7 +252,6 @@ def save_mapping_data(db, csv_id, csv_data):
         values = []
 
         for idx, d in enumerate(csv_data):
-
             values.append((
                 csv_id, idx + 1, d["Organization"], d["Applicable_Location"],
                 d["Statutory_Nature"], d["Statutory"],
@@ -273,7 +266,7 @@ def save_mapping_data(db, csv_id, csv_data):
                 None if d["Repeats_By (DOM/EOM)"] == '' else
                 d["Repeats_By (DOM/EOM)"],
                 None if d["Duration"] == '' else d["Duration"],
-                d["Duration_Type"], d["Multiple_Input_Section"],
+                d["Duration_Type"], d["Multiple_Input_Selection"],
                 d["Format"], d["Task_ID"], d["Task_Type"],
             ))
 
@@ -285,6 +278,12 @@ def save_mapping_data(db, csv_id, csv_data):
     except Exception, e:
         print str(e)
         raise ValueError("Transaction failed")
+
+
+def remove_white_spaces(v):
+    if v.find("|;|") > 0:
+        v = "|;|".join(e.strip() for e in v.split("|;|"))
+    return v
 
 ########################################################
 '''
@@ -305,21 +304,17 @@ def save_mapping_data(db, csv_id, csv_data):
 
 def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
     csv_data = []
-    _source_db_con = connectKnowledgeDB()
+    _source_db_con = connect_knowledge_db()
     _source_db = Database(_source_db_con)
     _source_db.begin()
     result = _source_db.call_proc(
         "sp_bu_get_mapped_knowledge_executives",
         [session_user.user_id(), cid, did]
     )
-    print "result >>"
-    print result
-    print len(result)
     _source_db_con.close()
     mapped_executives = ''
     if len(result) != 0:
         mapped_executives = ",".join(str(r["child_user_id"]) for r in result)
-    print "mapped_executives-> ", mapped_executives
 
     if uploaded_by is None:
         uploaded_by = mapped_executives
@@ -375,7 +370,8 @@ def get_filters_for_approve(db, csv_id):
     if len(data) > 0:
         if len(data[0]) > 0:
             for d in data[0]:
-                org_names.extend(d["organization"].strip().split('|;|'))
+                organization = remove_white_spaces(d["organization"])
+                org_names.extend(organization.strip().split('|;|'))
                 org_names = list(set(org_names))
 
         if len(data[1]) > 0:
@@ -384,7 +380,8 @@ def get_filters_for_approve(db, csv_id):
 
         if len(data[2]) > 0:
             for d in data[2]:
-                statutories.extend(d["statutory"].strip().split('|;|'))
+                statutory = remove_white_spaces(d["statutory"])
+                statutories.extend(statutory.strip().split('|;|'))
                 statutories = list(set(statutories))
 
         compliance_frequency = get_all_compliance_frequency()
@@ -394,8 +391,9 @@ def get_filters_for_approve(db, csv_id):
 
         if len(data[4]) > 0:
             for d in data[4]:
+                geography_loc = remove_white_spaces(d["geography_location"])
                 geo_locations.extend(
-                    d["geography_location"].strip().split('|;|')
+                    geography_loc.strip().split('|;|')
                 )
                 geo_locations = list(set(geo_locations))
 
@@ -426,7 +424,7 @@ def get_filters_for_approve(db, csv_id):
     )
 
 
-def get_statutory_mapping_by_filter(db, request_frame, session_user):
+def get_statutory_mapping_by_filter(db, request_frame):
     csv_id = request_frame.csv_id
     organization = request_frame.orga_name
     s_nature = request_frame.s_nature
@@ -483,15 +481,6 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     if c_doc is None or c_doc == "":
         c_doc = '%'
 
-    print "csv_id, organization, s_nature, frequency"
-    print csv_id, organization, s_nature, frequency
-
-    print "statutory, geo_location, c_task, c_desc, c_doc"
-    print statutory, geo_location, c_task, c_desc, c_doc
-
-    print "f_count, f_range, task_id, task_type, view_data"
-    print f_count, f_range, task_id, task_type, view_data
-
     data = db.call_proc_with_multiresult_set(
         "sp_statutory_mapping_view_by_filter",
         [
@@ -507,7 +496,6 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     upload_on = None
     total = 0
     mapping_data = []
-    print data
     if len(data) > 0:
         if len(data[1]) > 0:
             total = data[1][0]["total"]
@@ -544,7 +532,7 @@ def get_statutory_mapping_by_filter(db, request_frame, session_user):
     )
 
 
-def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
+def get_statutory_mapping_by_csv_id(db, request_frame):
     csv_id = request_frame.csv_id
     f_count = request_frame.f_count
     f_range = request_frame.r_range
@@ -587,15 +575,13 @@ def get_statutory_mapping_by_csv_id(db, request_frame, session_user):
     )
 
 
-def update_approve_action_from_list(db, csv_id, action, remarks, session_user,
-                                    type):
+def update_approve_action_from_list(
+        db, csv_id, action, remarks, session_user, action_type
+):
     try:
-        print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
-        print "type-> ", type
-        if type == "all":
+        if action_type == "all":
             args = [csv_id, action, remarks, session_user.user_id()]
-            data = db.call_proc("sp_statutory_mapping_update_all_action", args)
-            print data
+            db.call_proc("sp_statutory_mapping_update_all_action", args)
             return True
         else:
             args = [csv_id, session_user.user_id()]
@@ -624,11 +610,10 @@ def delete_action_after_approval(db, csv_id):
         raise fetch_error()
 
 
-def save_action_from_view(db, csv_id, sm_id, action, remarks, session_user):
+def save_action_from_view(db, csv_id, sm_id, action, remarks):
     try:
         args = [csv_id, sm_id, action, remarks]
-        data = db.call_proc("sp_approve_mapping_action_save", args)
-        print data
+        db.call_proc("sp_approve_mapping_action_save", args)
         return True
 
     except Exception, e:
@@ -641,7 +626,6 @@ def save_action_from_view(db, csv_id, sm_id, action, remarks, session_user):
 
 def get_pending_action(db, csv_id):
     data = db.call_proc("sp_statutory_action_pending_count", [csv_id])
-    print data
     if data[0].get("pending_count") > 0:
         return True
     else:
@@ -654,15 +638,15 @@ def get_pending_action(db, csv_id):
 # Retrieved Statutory Mapping Report Data
 #########################################
 
-def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
-                                domain_ids, from_date, to_date, record_count,
-                                page_count, dependent_users, user_category_id):
+def fetch_statutory_bulk_report(
+        db, user_id, country_ids, domain_ids, from_date, to_date,
+        record_count, page_count, dependent_users):
     report_data = []
     expected_result = 2
     domain_id_list = ",".join(map(str, domain_ids))
     country_id_list = ",".join(map(str, country_ids))
 
-    if(len(dependent_users) >= 1):
+    if len(dependent_users) >= 1:
         user_ids = ",".join(map(str, dependent_users))
     else:
         user_ids = user_id
@@ -672,7 +656,7 @@ def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
     data = db.call_proc_with_multiresult_set(
         'sp_statutory_mappings_bulk_reportdata', args, expected_result)
 
-    if(data):
+    if data:
         response_report_data = data[0]
         total_record = data[1][0]["total"]
         for d in response_report_data:
@@ -680,13 +664,13 @@ def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
             approved_on = None
             rejected_on = None
 
-            if(d["uploaded_on"] is not None):
+            if d["uploaded_on"] is not None:
                 uploaded_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
 
-            if(d["approved_on"] is not None):
+            if d["approved_on"] is not None:
                 approved_on = d["approved_on"].strftime("%d-%b-%Y %H:%M")
 
-            if(d["rejected_on"] is not None):
+            if d["rejected_on"] is not None:
                 rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
 
             report_data.append(bu_sm.ReportData(
@@ -707,40 +691,38 @@ def fetch_statutory_bulk_report(db, session_user, user_id, country_ids,
 #    Retreived only rejected statutory mapping report data
 ###########################################################
 
-def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
-                                                 country_id, domain_id):
+def fetch_rejected_statutory_mapping_bulk_report(
+    db, user_id, country_id, domain_id
+):
 
     rejected_list = []
     args = [country_id, domain_id, user_id]
     data = db.call_proc('sp_rejected_statutory_mapping_reportdata', args)
 
-    responseFormat = '%Y-%m-%d %H:%M:%S'
+    response_format = '%Y-%m-%d %H:%M:%S'
     # requestFormat = '%Y-%m-%d %H:%M:%S'
-    requestFormat = '%d-%b-%Y %H:%M'
+    request_format = '%d-%b-%Y %H:%M'
     date_time = datetime.datetime
     for d in data:
         approved_on = ''
         uploaded_on = ''
         rejected_on = ''
-        if(d["uploaded_on"] is not None):
+        if d["uploaded_on"] is not None:
             uploaded_on = date_time.strptime(str(
-                d["uploaded_on"]), responseFormat).strftime(requestFormat)
+                d["uploaded_on"]), response_format).strftime(request_format)
 
-        if(d["approved_on"] is not None):
+        if d["approved_on"] is not None:
             approved_on = date_time.strptime(str(
-                d["approved_on"]), responseFormat).strftime(requestFormat)
+                d["approved_on"]), response_format).strftime(request_format)
 
-        if(d["rejected_on"] is not None):
+        if d["rejected_on"] is not None:
             rejected_on = approved_on = date_time.strptime(str(
-                d["rejected_on"]), responseFormat).strftime(requestFormat)
+                d["rejected_on"]), response_format).strftime(request_format)
 
-        if (d["rejected_file_download_count"] is None):
+        if d["rejected_file_download_count"] is None:
             download_count = 0
         else:
             download_count = d["rejected_file_download_count"]
-
-        print "rejected_on >>>>>>"
-        print rejected_on
 
         rejected_list.append(bu_sm.StatutoryMappingRejectData(
             int(d["csv_id"]), int(d["uploaded_by"]), str(uploaded_on),
@@ -758,8 +740,9 @@ def fetch_rejected_statutory_mapping_bulk_report(db, session_user, user_id,
 # retreiving rejected statutory mapping data for download action
 ################################################################
 
-def fetch_rejected_sm_download_csv_report(db, session_user, user_id,
-                                          country_id, domain_id, csv_id):
+def fetch_rejected_sm_download_csv_report(
+        db, user_id, country_id, domain_id, csv_id
+):
     args = [country_id, domain_id, user_id, csv_id]
     data = db.call_proc('sp_rejected_sm_csv_report', args)
     return data
@@ -768,16 +751,17 @@ def fetch_rejected_sm_download_csv_report(db, session_user, user_id,
 ########################################################################
 # Deleting rejected statutory mapping for request csv id
 # Change Approve Status is 4 when deleting csv record
-# And retreiving rejected statutory mapping data for data refresh action
+# And retrieving rejected statutory mapping data for data refresh action
 #########################################################################
 
-def process_delete_rejected_sm_csv_id(db, session_user, user_id, country_id,
-                                      domain_id, csv_id):
+def process_delete_rejected_sm_csv_id(
+    db, user_id, country_id, domain_id, csv_id
+):
     args = [csv_id]
-    rejected_list = ''
     db.call_proc('sp_delete_reject_sm_by_csvid', args)
     rejected_list = fetch_rejected_statutory_mapping_bulk_report(
-        db, session_user, user_id, country_id, domain_id)
+        db, user_id, country_id, domain_id
+    )
     return rejected_list
 
 
@@ -785,7 +769,7 @@ def process_delete_rejected_sm_csv_id(db, session_user, user_id, country_id,
 # Update download count for request csv id
 ###########################################
 
-def update_download_count_by_csvid(db, session_user, csv_id):
+def update_download_count_by_csvid(db, csv_id):
     updated_count = []
     args = [csv_id]
     data = db.call_proc('sp_update_download_count_by_csvid', args)
@@ -800,7 +784,7 @@ def update_download_count_by_csvid(db, session_user, csv_id):
 ################################################################
 
 
-def get_sm_csv_file_name_by_id(db, session_user, user_id, csv_id):
+def get_sm_csv_file_name_by_id(db, csv_id):
     args = [csv_id]
     data = db.call_proc('sp_get_sm_csv_file_name_by_id', args)
     return data[0]["csv_name"]
@@ -820,15 +804,14 @@ def get_rejected_sm_file_count(db, session_user):
 
 
 def get_all_compliance_frequency():
-    _source_db_con = connectKnowledgeDB()
+    _source_db_con = connect_knowledge_db()
     _source_db = Database(_source_db_con)
     _source_db.begin()
     result = _source_db.call_proc('sp_bu_compliance_frequency')
-    result.pop(0)
     return result
 
 
-def connectKnowledgeDB():
+def connect_knowledge_db():
     try:
         _source_db_con = mysql.connector.connect(
             user=KNOWLEDGE_DB_USERNAME,

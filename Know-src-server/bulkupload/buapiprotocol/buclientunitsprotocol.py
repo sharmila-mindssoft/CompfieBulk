@@ -142,8 +142,8 @@ class DeleteRejectedUnitDataByCsvID(Request):
 
     def to_inner_structure(self):
         return {
-            "csv_id": self.c_id,
-            "bu_client_id": self.d_id
+            "csv_id": self.csv_id,
+            "bu_client_id": self.bu_client_id
         }
 
 
@@ -851,12 +851,13 @@ class UpdateUnitDownloadCount(object):
 class BulkClientUnitList(object):
 
     def __init__(
-        self, bulk_unit_id, bu_le_name, bu_division_name, bu_category_name,
-        bu_geography_level, bu_unit_location, bu_unit_code,
+        self, bulk_unit_id, country_name, bu_le_name, bu_division_name,
+        bu_category_name, bu_geography_level, bu_unit_location, bu_unit_code,
         bu_unit_name, bu_address, bu_city, bu_state, bu_postal_code,
         bu_domain, bu_orgn, bu_action, bu_remarks
     ):
         self.bulk_unit_id = bulk_unit_id
+        self.country_name = country_name
         self.bu_le_name = bu_le_name
         self.bu_division_name = bu_division_name
         self.bu_category_name = bu_category_name
@@ -877,7 +878,7 @@ class BulkClientUnitList(object):
     def parse_structure(data):
 
         data = parse_dictionary(data, [
-            "bulk_unit_id", "bu_le_name", "bu_division_name",
+            "bulk_unit_id", "country_name", "bu_le_name", "bu_division_name",
             "bu_category_name", "bu_geography_level", "bu_unit_location",
             "bu_unit_code", "bu_unit_name",
             "bu_address", "bu_city", "bu_state", "bu_postal_code", "bu_domain",
@@ -885,20 +886,21 @@ class BulkClientUnitList(object):
         ])
 
         return BulkClientUnitList(
-            data.get("bulk_unit_id"), data.get("bu_le_name"),
-            data.get("bu_division_name"), data.get("bu_category_name"),
-            data.get("bu_geography_level"), data.get("bu_unit_location"),
-            data.get("bu_unit_code"), data.get("bu_unit_name"),
-            data.get("bu_address"), data.get("bu_city"),
-            data.get("bu_state"), data.get("bu_postal_code"),
-            data.get("bu_domain"), data.get("bu_orgn"),
-            data.get("bu_action"), data.get("bu_remarks")
+            data.get("bulk_unit_id"), data.get("country_name"),
+            data.get("bu_le_name"), data.get("bu_division_name"),
+            data.get("bu_category_name"), data.get("bu_geography_level"),
+            data.get("bu_unit_location"), data.get("bu_unit_code"),
+            data.get("bu_unit_name"), data.get("bu_address"),
+            data.get("bu_city"), data.get("bu_state"),
+            data.get("bu_postal_code"), data.get("bu_domain"),
+            data.get("bu_orgn"), data.get("bu_action"), data.get("bu_remarks")
         )
 
     def to_structure(self):
 
         return {
             "bulk_unit_id": self.bulk_unit_id,
+            "country_name": self.country_name,
             "bu_le_name": self.bu_le_name,
             "bu_division_name": self.bu_division_name,
             "bu_category_name": self.bu_category_name,
@@ -1015,22 +1017,22 @@ class GetClientUnitReportDataSuccess(Response):
 
 class ClientUnitsUploadedCSVFilesListSuccess(Response):
 
-    def __init__(self, bu_cu_csvFilesList):
+    def __init__(self, bu_cu_csv_files_list):
 
-        self.bu_cu_csvFilesList = bu_cu_csvFilesList
+        self.bu_cu_csv_files_list = bu_cu_csv_files_list
 
     @staticmethod
     def parse_inner_structure(data):
 
-        data = parse_dictionary(data, ["bu_cu_csvFilesList"])
+        data = parse_dictionary(data, ["bu_cu_csv_files_list"])
         return ClientUnitsUploadedCSVFilesListSuccess(
-            data.get("bu_cu_csvFilesList")
+            data.get("bu_cu_csv_files_list")
         )
 
     def to_inner_structure(self):
 
         return {
-            "bu_cu_csvFilesList": self.bu_cu_csvFilesList,
+            "bu_cu_csv_files_list": self.bu_cu_csv_files_list,
         }
 
 

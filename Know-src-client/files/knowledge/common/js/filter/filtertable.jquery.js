@@ -44,7 +44,7 @@
             
             filtertableCore.getRows().each(function () {
                 if(true !== regex.test(filtertableCore.getValue(index, $(this)))) {
-                    $(this).hide();
+                    $(this).show();
                 }
             });
           

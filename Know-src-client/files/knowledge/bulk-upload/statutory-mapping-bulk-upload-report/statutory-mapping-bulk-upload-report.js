@@ -19,11 +19,12 @@ var FROM_DATE = $("#from_date");
 var DOMAIN_IDS = [];
 var KNOWLEDGE_EXECUTIVES = [];
 var ALLUSERS = [];
-var EMP_CODE;
-var EMP_NAME;
 var USER_CATEGORY_ID = 0;
 var CSV = false;
-var ALL_USER_INFO;
+var ALL_USER_INFO = '';
+var EMP_CODE = '';
+var EMP_NAME = '';
+
 var USER_DETAILS;
 /**** User Level Category ***********/
 // Creating StatutoryMappingBulkReport Class
@@ -67,6 +68,8 @@ StatutoryMappingBulkReport.prototype.validateMandatory = function() {
 function getStatutoryMappings() {
     console.log("KE_USER_CATEGORY"+ KE_USER_CATEGORY)
     function onSuccess(data) {
+        var c = '';
+        var option = '';
         COUNTRY_LIST = data.countries;
         DOMAIN_LIST = data.domains;
         ALL_USER_INFO = data.user_details;
@@ -75,8 +78,8 @@ function getStatutoryMappings() {
         EMP_CODE = USER_DETAILS.employee_code;
         EMP_NAME = USER_DETAILS.employee_name;
         //Load Countries MultiSelectBox
-        for (var c in COUNTRY_LIST) {
-            var option = $('<option></option>');
+        for (c in COUNTRY_LIST) {
+            option = $('<option></option>');
             option.val(COUNTRY_LIST[c].country_id);
             option.text(COUNTRY_LIST[c].country_name);
             COUNTRY.append(option);
@@ -102,18 +105,18 @@ function getStatutoryMappings() {
 //display statutory mapping details according to count
 function loadCountwiseResult(data) {
     $('.tbody-compliance').empty();
-    var countryName, domainName, csvName, totalTasks, uploadedBy;
-    var uploadedOn, totalRejectedRecords, rejectedOn, rejectedBy;
-    var approvedOn, approvedBy, isFullyRejected, totalApproveRecords;
-    var rejReason, approvedRejectedOn, approvedRejectedBy;
-    var approvedRejectedTasks, reasonForRejection, declinedCount;
-    var isNull = true;
-    var entity;
-    var tableRow;
+    var countryName = '', domainName = '', csvName = '', totalTasks = '';
+    var uploadedBy = '', uploadedOn = '', totalRejectedRecords = '';
+    var rejectedOn = '', rejectedBy = '', approvedOn = '', approvedBy = '';
+    var isFullyRejected = '', totalApproveRecords = '';
+    var rejReason = '', approvedRejectedOn = '', approvedRejectedBy = '';
+    var approvedRejectedTasks = '', reasonForRejection = '';
+    var declinedCount = '', isNull = true, entity  = '', tableRow = '';
+    var approvedByName = '', rejectedByName = '', uploadedByName = '';
+    var trClone = '';
     var showFrom = SNO + 1;
-    var approvedByName, rejectedByName, uploadedByName;
 
-    for (var entity in data) {
+    for (entity in data) {
         isNull = false;
         SNO = parseInt(SNO) + 1;
         countryName = data[entity].country_name;
@@ -186,7 +189,7 @@ function loadCountwiseResult(data) {
         }
 
         tableRow = $('#act_templates .table-act-list .table-row-act-list');
-        var trClone = tableRow.clone();
+        trClone = tableRow.clone();
         $('.tbl-sno', trClone).text(SNO);
         $('.tbl-country', trClone).text(countryName);
         $('.tbl-domain', trClone).text(domainName);
@@ -218,7 +221,8 @@ function processSubmit() {
     var selectedKe = [];
     var selectedCountryId = [];
     var selectedDomainId = [];
-    var splitDomainName;
+    var splitDomainName = '';
+    var pageLimit = '';
     /* multiple COUNTRY selection */
     $.each(country, function(key, value) {
         selectedCountryId.push(parseInt(value));
@@ -230,16 +234,18 @@ function processSubmit() {
     });
     if ($('#kename_kmanager').val() == null) {
         selectedKe = KNOWLEDGE_EXECUTIVES;
-    } else {
+    }
+    else {
         $('#kename_kmanager > option:selected').each(function() {
             selectedKe.push(parseInt(this.value));
         });
     }
 
-    var pageLimit = parseInt(ITEMS_PER_PAGE.val());
+    pageLimit = parseInt(ITEMS_PER_PAGE.val());
     if (ON_CURRENT_PAGE == 1) {
         SNO = 0
-    } else {
+    }
+    else {
         SNO = (ON_CURRENT_PAGE - 1) * pageLimit;
     }
     filterdata = {
@@ -254,14 +260,15 @@ function processSubmit() {
     };
     /******** API Response Data Sucess process *****/
     function onSuccess(data) {
-        var tr;
-        var div_class = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd';
-        div_class += 'oanimationend animationend';
+        var tr = '', tr_row = '';
         var table = '#nocompliance_templates .table-nocompliances-list';
         table += " .table-row";
+        var animateClass = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd';
+        animateClass += 'oanimationend animationend';
+
         $('.details').show();
         $('#mapping_animation').removeClass().addClass('bounceInLeft animated')
-            .one(div_class, function() {
+            .one(animateClass, function() {
                 $(this).removeClass();
                 $(this).show();
             });
@@ -271,8 +278,9 @@ function processSubmit() {
         hideLoader();
         if (TOTAL_RECORD == 0) {
             $('.tbody-compliance').empty();
-            var tr = $('#nocompliance_templates .table-nocompliances-list .table-row');
-            var tr_row = tr.clone();
+            tr = $('#nocompliance_templates .table-nocompliances-list'+
+                ' .table-row');
+            tr_row = tr.clone();
             $('.tbl-norecords', tr_row).text('No Records Found');
             $('.tbody-compliance').append(tr_row);
             PAGINATION_VIEW.hide();
@@ -305,25 +313,27 @@ function processSubmit() {
 
 /******** Load Domain Lists *********/
 function loadDomains() {
+    var selectCountries = '', str = '';
+    var cId = '', flag = '', sText = '', dVal = '';
     DOMAIN.empty();
     if (COUNTRY.val() != null) {
-        var selectCountries = COUNTRY.val().map(Number);
-        var str = '';
+        selectCountries = COUNTRY.val().map(Number);
+        str = '';
         $.each(COUNTRY_LIST, function(key, value) {
-            var cId = value.country_id;
+            cId = value.country_id;
             if ($.inArray(cId, selectCountries) >= 0) {
-                var flag = true;
+                flag = true;
                 $.each(DOMAIN_LIST, function(key1, v) {
                     if (v.is_active == false) {
                         return;
                     }
                     if ($.inArray(cId, v.country_ids) >= 0) {
-                        var sText = '';
+                        sText = '';
                         if (flag) {
                             str += '<optgroup label="' + value.country_name;
                             str += '">';
                         }
-                        var dVal = cId + '-' + v.domain_id;
+                        dVal = cId + '-' + v.domain_id;
                         str += '<option value="' + dVal + '" ' + sText + '>';
                         str += v.domain_name + '</option>';
                         flag = false;
@@ -413,7 +423,7 @@ function pageControls() {
 function loadCurrentUserDetails() {
     var user = mirror.getUserInfo();
     var loggedUserId = 0;
-    var knowledgeName;
+    var knowledgeName = '';
     var knowledgeUserDetails = {};
     $.each(ALL_USER_INFO, function(key, value) {
         if (user.user_id == value["user_id"]) {
@@ -426,10 +436,10 @@ function loadCurrentUserDetails() {
     console.log("USER_CATEGORY_ID "+ USER_CATEGORY_ID);
     console.log("KE_USER_CATEGORY "+ KE_USER_CATEGORY);
     if (USER_CATEGORY_ID == KE_USER_CATEGORY) {
-        alert("QWEETERTETR")
         console.log("USER_CATEGORY_ID" +"=="+ "KE_USER_CATEGORY");
 
         console.log(USER_CATEGORY_ID +"=="+ KE_USER_CATEGORY);
+
         // KE-Name  : Knowledge-Executive
         knowledgeName = user.employee_code + " - " + user.employee_name;
         console.log("IN REMOVE CLASS DEFAULT DISPLAY NONE");
@@ -459,9 +469,8 @@ function getUserMappingsList(loggedUserId) {
     function onSuccess(loggedUserId, data) {
         console.log("loggedUserId->" + loggedUserId);
         var userMappingData = data;
-        var d;
-        var childUserId;
-        console.log(userMappingData);
+        var d = '';
+        var childUserId = '';
 
         $.each(userMappingData.user_mappings, function(key, value) {
             if (loggedUserId == value.parent_user_id) {
@@ -478,9 +487,10 @@ function getUserMappingsList(loggedUserId) {
 
     function childUsersDetails(ALL_USER_INFO, parentUserId, childUsrId) {
         var knowledgeUserDetails = {};
+        var option = '';
         $.each(ALL_USER_INFO, function(key, value) {
             if (childUsrId == value["user_id"] && value["is_active"] == true) {
-                var option = $('<option></option>');
+                option = $('<option></option>');
                 option.val(value["user_id"]);
                 option.text(value["employee_code"] + " - "
                     + value["employee_name"]);
@@ -519,26 +529,28 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
     var toDate = TO_DATE.val();
     var selectedCountryId = [];
     var selectedDomainId = [];
-    var splitDomainName;
+    var splitDomainName = '';
     var downloadCSV = true;
     var selectedKe = [];
+    var countryNames = '', domainNames = '';
+
     // multiple COUNTRY selection in to generate array
     $.each(country, function(key, value) {
         selectedCountryId.push(parseInt(value));
     });
-    var countryNames = $("#country option:selected").map(function() {
+    countryNames = $("#country option:selected").map(function() {
         return $(this).text();
     }).get().join(',');
-    console.log("countryNames-> " + countryNames);
+
     // multiple DOMAIN selection generate as a array
     $.each(domain, function(key, value) {
         splitDomainName = value.split("-");
         selectedDomainId.push(parseInt(splitDomainName[1]));
     });
-    var domainNames = $("#domain option:selected").map(function() {
+    domainNames = $("#domain option:selected").map(function() {
         return $(this).text();
     }).get().join(',');
-    console.log("domainNames-> " + domainNames);
+
     if ($('#kename_kmanager').val() == null) {
         selectedKe = KNOWLEDGE_EXECUTIVES;
     } else {
@@ -556,8 +568,8 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
         "from_date": fromDate,
         "to_date": toDate,
         "csv": downloadCSV,
-        "user_category_id": USER_CATEGORY_ID
-        /*"dependent_users":ALLUSERS*/
+        "user_category_id": USER_CATEGORY_ID,
+        "c_d_ids": domain
     };
     displayLoader();
     bu.exportSMBulkReportData(filterdata,
@@ -587,7 +599,6 @@ $(function() {
     pageControls();
     loadItemsPerPage();
     getStatutoryMappings();
-
     COUNTRY.focus();
 });
 $(document).ready(function() {

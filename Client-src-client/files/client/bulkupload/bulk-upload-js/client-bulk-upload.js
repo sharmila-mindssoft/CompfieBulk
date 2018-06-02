@@ -7,6 +7,16 @@ function getDomains(le_id, callback) {
     clientApiRequest('bu/completed_task', request, callback);
 }
 
+function getUnits(le_id, domain_id, callback) {
+    var request = [
+        'GetUnits', {
+            'legal_entity_id': le_id,
+            'domain_id': domain_id
+        }
+    ];
+    clientApiRequest('bu/completed_task', request, callback);
+}
+
 function UploadCompletedTaskCurrentYearCSV(args, callback) {
     var request = [
         'UploadCompletedTaskCurrentYearCSV', args
@@ -16,7 +26,7 @@ function UploadCompletedTaskCurrentYearCSV(args, callback) {
 
 function saveBulkRecords(args, callback) {
     var request = [
-        'saveBulkRecords', args
+        'SaveBulkRecords', args
     ];
     clientApiRequest("bu/completed_task", request, callback);
 }
@@ -33,7 +43,6 @@ function convert_to_base64(file, callback) {
     reader.onload = function(readerEvt) {
         var binaryString = readerEvt.target.result;
         file_content = btoa(binaryString);
-        console.log("file_content>> " + file_content);
         callback(file_content);
     };
     reader.readAsBinaryString(file);
@@ -97,7 +106,7 @@ function getDownloadData(legalEntityId, domainId, unitId, complianceFrequency, s
 
 function uploadFile(file, callback) {
     console.log(JSON.stringify(file))
-        // var evt = fileListener;
+    // var evt = fileListener;
     max_limit = 1024 * 1024 * 50;
     // file max limit 50MB
     // var files = evt.target.files;
@@ -123,7 +132,6 @@ function uploadFile(file, callback) {
         if (file) {
             convert_to_base64(file,
                 function(file_content) {
-                    console.log("File content inside >> " + file_content);
                     if (file_content == null) {
                         callback(message.file_content_empty);
                     }
@@ -154,4 +162,29 @@ function uploadFileFormat(size, name, content) {
         'file_content': content
     };
     return result;
+}
+
+function downloadUploadedData(
+    legal_entity_id, csv_id, callback){
+    request =[
+        "DownloadUploadedData",
+        {   
+            "legal_entity_id": legal_entity_id,
+            "csv_id": csv_id
+        }
+    ]
+    return clientApiRequest('bu/completed_task', request, callback);
+}
+
+function updateDocumentCount(
+    legal_entity_id, csv_id, count, callback){
+    request =[
+        "UpdateDocumentCount",
+        {   
+            "legal_entity_id": legal_entity_id,
+            "csv_id": csv_id,
+            "count": count
+        }
+    ]
+    return clientApiRequest('bu/completed_task', request, callback);
 }

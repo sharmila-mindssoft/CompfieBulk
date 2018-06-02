@@ -1,7 +1,6 @@
-{% extends "files/knowledge/common/html/container.html" %}
-{% block content %}
+{% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="container">
-    <div class="row" id="animationSandbox">
+    <div class="row">
         <div class="col-sm-12">
             <div class="portlet">
                 <div class="portlet-heading bg-info">
@@ -10,7 +9,7 @@
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <div id="bg-primary1" class="panel-collapse collapse in">
+                <div class="panel-collapse collapse in">
                     <div class="portlet-body">
                         <div class="form-horizontal group-border-dashed">
                             <div class="col-sm-6">
@@ -20,8 +19,8 @@
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="2" placeholder="Enter Group">
                                         <input type="hidden" id="group_id">
-                                        <div id="ac-group" class="ac-textbox default-display-none">
-                                          <ul class="width-85"></ul>
+                                        <div id="ac_group" class="ac-textbox default-display-none">
+                                            <ul class="width-85"></ul>
                                         </div>
                                         <i class="form-control-feedback fa fa-search"></i>
                                     </div>
@@ -29,40 +28,15 @@
                                 <!---   Domain -->
                                 <div class="form-group">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">
-                                    Domain: <span class="mandatory">*</span>
+                                        Domain: <span class="mandatory">*</span>
                                     </label>
                                     <div class="col-sm-6 has-feedback">
                                         <select multiple="multiple" class="form-control input-sm" id="domain">
                                         </select>
                                     </div>
                                 </div>
-                                 <!---   Domain -->
-<!--                                 <div class="form-group has-feedback">
-                                    <label class="col-sm-4 control-label">Domain:</label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="domainval" value="" tabindex="7"
-                                        placeholder="Enter Domain">
-                                        <input type="hidden" id="domainid">
-                                        <div id="ac-domain" class="ac-textbox default-display-none">
-                                          <ul class="width-85"></ul>
-                                        </div>
-                                        <i class="form-control-feedback fa fa-search"></i>
-                                    </div>
-                                </div>
-
-                                  <div class="form-group has-feedback">
-                                        <label class=" col-sm-offset-1 col-sm-3 control-label">
-                                            To Date: <span class="mandatory">*</span>
-                                        </label>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to_date" tabindex="10">
-                                            <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
-                                        </div>
-                                 </div> -->
-
-
                                 <!---   From -->
-                                 <div class="form-group has-feedback">
+                                <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">
                                         From: <span class="mandatory">*</span>
                                     </label>
@@ -71,33 +45,7 @@
                                         <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
-                                 <!---DE Name -->
-                                 <!-- <div class="form-group active-domain-executive default-display-none">
-                                     <label class=" col-sm-offset-1 col-sm-3 control-label">DE Name: </label>
-                                    <div  class="col-sm-6 has-feedback filter-multiselect">
-                                        <p id="domain-name" class="form-control-static"></p>
-                                    </div>
-                                </div>
-                                <div class="form-group form-group-dename-dmanager default-display-none">
-                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
-                                        DE Name:
-                                    </label>
-                                    <div class="col-sm-6 has-feedback filter-multiselect">
-                                        <select class="form-control input-sm" id="de_name" multiple="multiple">
-                                        </select>
-                                    </div>
-                                </div> -->
-                                 <!---   DE Name -->
-
-                                <!--  <div class="form-group has-feedback">
-                                        <label class=" col-sm-offset-1 col-sm-3 control-label">
-                                            To Date: <span class="mandatory">*</span>
-                                        </label>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to_date" tabindex="10">
-                                            <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
-                                        </div>
-                                 </div> -->
+                                <!---DE Name -->
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group has-feedback">
@@ -105,39 +53,17 @@
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm" id="legalentityval" value="" tabindex="4" placeholder="Enter Legal Entity">
                                         <input type="hidden" id="legalentityid">
-                                        <div id="ac-legalentity" class="ac-textbox default-display-none">
-                                          <ul class="width-85"></ul>
+                                        <div id="ac_legalentity" class="ac-textbox default-display-none">
+                                            <ul class="width-85"></ul>
                                         </div>
                                         <i class="form-control-feedback fa fa-search"></i>
                                     </div>
                                 </div>
-                                  <!---   Unit
-                                <div class="form-group has-feedback">
-                                    <label class="col-sm-4 control-label">Unit:</label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="7"
-                                        placeholder="Enter Unit">
-                                        <input type="hidden" id="unitid">
-                                        <div id="ac-unit" class="ac-textbox default-display-none">
-                                          <ul class="width-85"></ul>
-                                        </div>
-                                        <i class="form-control-feedback fa fa-search"></i>
-                                    </div>
-                                </div>-->
-<!--                            <div class="form-group has-feedback">
-                                        <label class=" col-sm-offset-1 col-sm-3 control-label">
-                                            To Date: <span class="mandatory">*</span>
-                                        </label>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to_date" tabindex="10">
-                                            <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
-                                        </div>
-                                 </div> -->
-
-                                 <div class="form-group active-domain-executive default-display-none">
-                                     <label class=" col-sm-offset-1 col-sm-3 control-label">DE Name: </label>
-                                    <div  class="col-sm-6 has-feedback filter-multiselect">
-                                        <p id="domain-name" class="form-control-static"></p>
+                                <!---   Unit   -->
+                                <div class="form-group active-domain-executive default-display-none">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">DE Name: </label>
+                                    <div class="col-sm-6 has-feedback filter-multiselect">
+                                        <p id="domain_name" class="form-control-static"></p>
                                     </div>
                                 </div>
                                 <div class="form-group form-group-dename-dmanager default-display-none">
@@ -149,23 +75,21 @@
                                         </select>
                                     </div>
                                 </div>
-
-
-                                 <div class="form-group has-feedback">
-                                        <label class=" col-sm-offset-1 col-sm-3 control-label">
-                                            To Date: <span class="mandatory">*</span>
-                                        </label>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to_date" tabindex="10">
-                                            <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
-                                        </div>
-                                 </div>
+                                <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">
+                                        To Date: <span class="mandatory">*</span>
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm to-date" placeholder="DD-MMM-YYYY" readonly="readonly" id="to_date" tabindex="10">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-sm-12">
-                                    <div class="form-group m-t-5 m-b-0 text-center">
-                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="8"> Show </button>
-                                        <button id="export" class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
-                                    </div>
+                                <div class="form-group m-t-5 m-b-0 text-center">
+                                    <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="8"> Show </button>
+                                    <button id="export" class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                </div>
                             </div>
                             <div class="clear"></div>
                         </div>
@@ -176,12 +100,11 @@
                 <div class="card-box details">
                     <div class="table-responsive">
                         <div class="col-sm-12">
-                            <div class="col-sm-12 text-center"><h4>Assigned Statutory - Bulk Upload Report</h4></div>
-                            <div class="col-sm-6 text-center"><h6 class="country"></h6></div>
-                            <div class="col-sm-6 text-center"><h6 class="domain"></h6></div>
+                            <div class="col-sm-12 text-center">
+                                <h4>Assigned Statutory - Bulk Upload Report</h4></div>
                         </div>
                         <div class="clearfix"></div>
-                        <table id="datatable-responsive" class="table dt-responsive nowrap">
+                        <table id="datatable_responsive" class="table dt-responsive nowrap">
                             <thead>
                                 <tr>
                                     <th class="width-2">#</th>
@@ -199,22 +122,22 @@
                             <tbody class="tbody-compliance"></tbody>
                         </table>
                         <table class="pagination-view default-display-none">
-                          <tr>
-                            <td>
-                              <span class="assigned-statu-count"> </span>
-                              <span class="divider-view"> | </span>
-                              <span class="items-per-page">
+                            <tr>
+                                <td>
+                                    <span class="assigned-statu-count"> </span>
+                                    <span class="divider-view"> | </span>
+                                    <span class="items-per-page">
                               Show
                               <select id="items_per_page">
                               </select>
                               entries
                               </span>
-                            </td>
-                            <td class="pagination-space"></td>
-                            <td class="pagination-right-side">
-                              <ul id="pagination-rpt"></ul>
-                            </td>
-                          </tr>
+                                </td>
+                                <td class="pagination-space"></td>
+                                <td class="pagination-right-side">
+                                    <ul id="pagination_rpt"></ul>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -223,23 +146,23 @@
         <!-- end col -->
     </div>
 </div>
-<div id="act-templates" class="default-display-none">
+<div id="act_templates" class="default-display-none">
     <table class="font1 table-act-list">
-            <tr class="table-row-act-list">
-                <td class="tbl_sno"></td>
-                <td class="tbl_domain"></td>
-                <td class="tbl_uploaded_by"></td>
-                <td class="tbl_uploaded_on"></td>
-                <td class="tbl_uploaded_file_name"></td>
-                <td class="tbl_no_of_tasks"></td>
-                <td class="tbl_approved_rejected_tasks"></td>
-                <td class="tbl_approved_rejected_on"></td>
-                <td class="tbl_approved_rejected_by"></td>
-                <td class="tbl_reason_for_rejection"></td>
+        <tr class="table-row-act-list">
+            <td class="tbl-sno"></td>
+            <td class="tbl-domain"></td>
+            <td class="tbl-uploaded-by"></td>
+            <td class="tbl-uploaded-on"></td>
+            <td class="tbl-uploaded-file-name"></td>
+            <td class="tbl-no-of-tasks"></td>
+            <td class="tbl-approved-rejected-tasks"></td>
+            <td class="tbl-approved-rejected-on"></td>
+            <td class="tbl-approved-rejected-by"></td>
+            <td class="tbl-reason-for-rejection"></td>
         </tr>
     </table>
 </div>
-<div id="head-templates">
+<div id="head_templates">
     <table class="table-compliance-frequency-list">
         <tr class="table-row-com-frequency">
             <!-- <td colspan="100%"> -->
@@ -252,16 +175,15 @@
     </table>
     <div class="clearfix"></div>
 </div>
-<div id="nocompliance-templates" class="default-display-none">
+<div id="nocompliance_templates" class="default-display-none">
     <table class="table-nocompliances-list">
-        <tr class="table-row" >
+        <tr class="table-row">
             <td colspan="10" class="tbl-norecords text-center"></td>
         </tr>
     </table>
 </div>
-{% endblock %}
-{% block contentscript %}
-    <script src="/script/bulk-upload/assigned-statutory-bulk-report/assigned-statutory-bulk-report.js"></script>
-    <script src="/js/multiselect/bootstrap-multiselect.js"></script>
-    <script src="/script/bulk-upload/bulk-upload-js/datepicker.js"></script>
+{% endblock %} {% block contentscript %}
+<script src="/script/bulk-upload/assigned-statutory-bulk-report/assigned-statutory-bulk-report.js"></script>
+<script src="/js/multiselect/bootstrap-multiselect.js"></script>
+<script src="/script/bulk-upload/bulk-upload-js/datepicker.js"></script>
 {% endblock %}

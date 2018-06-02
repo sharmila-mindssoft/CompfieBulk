@@ -435,6 +435,7 @@ var message = {
     'repeats_every_less_equal_old_repeats_every': 'Repeats Every value should be less than or equal to old Repeats Every value',
     'repeatevery_iszero': 'Repeats Every Value should not accept 0 Values',
     'empty_export': 'No records to export!',
+    'no_compliance_available': "No compliance available for selected unit",
     'mobile_length': 'Mobile Number only 10 characters are allowed ',
     "unit_close": "You want to Close?",
     "unit_activate": "You want to Activate?",
@@ -487,7 +488,7 @@ var message = {
     "current_start_date": "Compliance can not be started for past date. Enter Current Date",
     'duedatelessthantoday': 'Due date must be greater than or equal to current date',
     'reminder_expire': 'Legal entity contract is about to expire',
-    'sp_contract_to': 'Contract To Date must be Greater than Current Date',
+    'sp_contract_to': 'Contract To Date must be Greater than Current Date'
 };
 
 function clearMessage() {

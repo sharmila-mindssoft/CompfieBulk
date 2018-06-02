@@ -2,7 +2,7 @@ import traceback
 from ..bucsvvalidation.assignstatutoryvalidation import (
     ValidateAssignStatutoryCsvData, ValidateAssignStatutoryForApprove
 )
-from ..bucsvvalidation.rejectedstatutorymapping import (
+from ..bucsvvalidation.rejecteddownloadvalidation import (
     ValidateRejectedDownloadBulkData
 )
 from ..buapiprotocol import buassignstatutoryprotocol as bu_as
@@ -47,11 +47,12 @@ __all__ = [
 
 def process_bu_assign_statutory_request(request, db, session_user):
     request_frame = request.request
+    result = None
     if type(request_frame) is bu_as.GetClientInfo:
-        result = get_client_info(db, request_frame, session_user)
+        result = get_client_info(db, session_user)
 
     if type(request_frame) is bu_as.DownloadAssignStatutory:
-        result = get_download_assing_statutory(db, request_frame, session_user)
+        result = get_download_assign_statutory(db, request_frame, session_user)
 
     if type(request_frame) is bu_as.UploadAssignStatutoryCSV:
         result = upload_assign_statutory_csv(db, request_frame, session_user)
@@ -61,8 +62,7 @@ def process_bu_assign_statutory_request(request, db, session_user):
             db, request_frame, session_user
         )
     if type(request_frame) is bu_as.GetAssignStatutoryFilters:
-        result = get_assign_statutory_filter_for_approve_page(
-            db, request_frame, session_user)
+        result = get_assign_statutory_filter_for_approve_page(db, request_frame)
     if type(request_frame) is bu_as.ViewAssignStatutoryData:
         result = get_assign_statutory_data_by_csvid(
             db, request_frame, session_user
@@ -107,7 +107,7 @@ def process_bu_assign_statutory_request(request, db, session_user):
             db, request_frame, session_user
         )
     if type(request_frame) is bu_as.AssignStatutoryValidate:
-        result = validate_assign_statutory(db, request_frame, session_user)
+        result = validate_assign_statutory(db, request_frame)
 
     if type(request_frame) is bu_as.GetBulkUploadConstants:
         result = process_get_bulk_upload_constants(db, session_user)
@@ -122,11 +122,9 @@ def process_bu_assign_statutory_request(request, db, session_user):
     returns client info list
     :param
         db: database object
-        request_frame: api request GetClientInfo class object
         session_user: logged in user id
     :type
         db: Object
-        request_frame: Object
         session_user: String
     :returns
         result: returns processed api response GetClientInfoSucces class Object
@@ -136,7 +134,7 @@ def process_bu_assign_statutory_request(request, db, session_user):
 ########################################################
 
 
-def get_client_info(db, request_frame, session_user):
+def get_client_info(db, session_user):
 
     clients_data, entitys_data, units_data, a_units_data = get_client_list(
         db, session_user
@@ -166,7 +164,7 @@ def get_client_info(db, request_frame, session_user):
 ########################################################
 
 
-def get_download_assing_statutory(db, request_frame, session_user):
+def get_download_assign_statutory(db, request_frame, session_user):
 
     cl_id = request_frame.cl_id
     le_id = request_frame.le_id
@@ -237,31 +235,35 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
             return bu_as.CsvFileExeededMaxLines(CSV_MAX_LINES)
 
         # csv data validation
-        cObj = ValidateAssignStatutoryCsvData(
+        c_obj = ValidateAssignStatutoryCsvData(
             db, assign_statutory_data, session_user, request_frame.csv_name,
             header
         )
 
-        if(cObj.compare_csv_columns() is False):
+        if c_obj.compare_csv_columns() is False:
             return bu_as.InvalidCsvFile()
 
-        res_data = cObj.perform_validation()
+        res_data = c_obj.perform_validation()
 
         assigned_units = verify_user_units(
-            db, session_user, ",".join(map(str, cObj._unit_ids))
+            db, session_user, ",".join(map(str, c_obj._unit_ids))
         )
-        if assigned_units < len(cObj._unit_ids):
+        if assigned_units < len(c_obj._unit_ids):
             return bu_as.UnitsNotAssignedToUser()
 
         if res_data["return_status"] is True:
+            invalid_units = c_obj.check_uploaded_count_in_csv()
+            if len(invalid_units) > 0:
+                return bu_as.UploadedRecordsCountNotMatch(invalid_units)
+
             generate_valid_file(csv_name)
-            d_ids = ",".join(map(str, cObj._domain_ids))
-            d_names = ",".join(cObj._domain_names)
+            d_ids = ",".join(map(str, c_obj._domain_ids))
+            d_names = ",".join(c_obj._domain_names)
             csv_args = [
                 session_user.user_id(),
-                cObj._client_id, cObj._legal_entity_id,
-                d_ids, cObj._legal_entity, d_names,
-                csv_name,
+                c_obj._client_id, c_obj._legal_entity_id,
+                d_ids, c_obj._legal_entity, d_names,
+                csv_name, c_obj._country,
                 res_data["total"]
             ]
             new_csv_id = save_assign_statutory_csv(db, csv_args)
@@ -271,13 +273,13 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
                         db, new_csv_id, res_data["data"]
                     ) is True
                 ):
-                    u_ids = ",".join(map(str, cObj._unit_ids))
-                    cObj.save_manager_message(
-                        csv_name, cObj._client_group,
-                        cObj._legal_entity, session_user.user_id(),
+                    u_ids = ",".join(map(str, c_obj._unit_ids))
+                    c_obj.save_manager_message(
+                        csv_name, c_obj._client_group,
+                        c_obj._legal_entity, session_user.user_id(),
                         u_ids
                     )
-                    cObj.source_commit()
+                    c_obj.source_commit()
                     result = bu_as.UploadAssignStatutoryCSVSuccess(
                         res_data["total"], res_data["valid"],
                         res_data["invalid"]
@@ -329,24 +331,35 @@ def get_assign_statutory_pending_list(db, request_frame, session_user):
     return result
 
 
-def get_assign_statutory_filter_for_approve_page(
-    db, request_frame, session_user
-):
+###################################################################
+# get master details for filter process in approve assign statutory
+###################################################################
+
+def get_assign_statutory_filter_for_approve_page(db, request_frame):
     csv_id = request_frame.csv_id
     response = get_assign_statutory_filters_for_approve(db, csv_id)
     return response
 
 
+################################
+# get filtered result by csv_id
+################################
 def get_assign_statutory_data_by_csvid(db, request_frame, session_user):
     response = get_assign_statutory_by_csv_id(db, request_frame, session_user)
     return response
 
 
+#####################################
+# get filtered result by filter page
+#####################################
 def get_assign_statutory_data_by_filter(db, request_frame, session_user):
     response = get_assign_statutory_by_filter(db, request_frame, session_user)
     return response
 
 
+#################################################################
+# To update records in table by approve all / reject all function
+#################################################################
 def update_assign_statutory_action_in_list(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     action = request_frame.bu_action
@@ -355,64 +368,49 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
     legal_entity_id = request_frame.le_id
     user_id = session_user.user_id()
     try:
-        cObj = ValidateAssignStatutoryForApprove(
+        c_obj = ValidateAssignStatutoryForApprove(
             db, csv_id, client_id, legal_entity_id, session_user
         )
-        is_declined = cObj.perform_validation_before_submit()
+        is_declined = c_obj.perform_validation_before_submit()
         if action == 1:
             if len(is_declined.keys()) > 0:
-                cObj.update_child(csv_id)
+                c_obj.update_child(csv_id)
                 return bu_as.ValidationSuccess(len(is_declined.keys()))
             else:
                 if(update_approve_action_from_list(
                     db, csv_id, action, remarks, session_user, "all"
                 )
                 ):
-                    cObj.frame_data_for_main_db_insert(user_id)
-                    u_ids = ",".join(map(str, cObj._unit_ids))
-                    cObj.save_executive_message(
-                        action, cObj._csv_name, cObj._client_group,
-                        cObj._legal_entity, session_user.user_id(),
-                        u_ids, None
+                    c_obj.frame_data_for_main_db_insert(user_id)
+                    u_ids = ",".join(map(str, c_obj._unit_ids))
+                    c_obj.save_executive_message(
+                        action, c_obj._csv_name, c_obj._client_group,
+                        c_obj._legal_entity, session_user.user_id(),
+                        u_ids, None, 0
                     )
-                    cObj.source_commit()
+                    c_obj.source_commit()
                     delete_action_after_approval(db, csv_id)
                     return bu_as.AssignStatutoryApproveActionInListSuccess()
         else:
             if(update_approve_action_from_list(
                 db, csv_id, action, remarks, session_user, "all"
             )):
-                u_ids = ",".join(map(str, cObj._unit_ids))
-                cObj.save_executive_message(
-                    action, cObj._csv_name, cObj._client_group,
-                    cObj._legal_entity, session_user.user_id(),
-                    u_ids, remarks
+                u_ids = ",".join(map(str, c_obj._unit_ids))
+                c_obj.save_executive_message(
+                    action, c_obj._csv_name, c_obj._client_group,
+                    c_obj._legal_entity, session_user.user_id(),
+                    u_ids, remarks, 0
                 )
-                cObj.source_commit()
+                c_obj.source_commit()
                 return bu_as.AssignStatutoryApproveActionInListSuccess()
 
     except Exception, e:
         raise e
 
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+#############################################################
+# To update rejected asm download count by csvid in db table.
+#############################################################
 
 def update_rejected_asm_download_count(db, request_frame, session_user):
 
@@ -422,25 +420,11 @@ def update_rejected_asm_download_count(db, request_frame, session_user):
                                                            csv_id)
     result = bu_as.RejecteASMUpdatedDownloadCountSuccess(asm_updated_count)
     return result
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+
+###################################
+# To delete rejected asm by csvid.
+###################################
 
 def delete_rejected_asm_data(db, request_frame, session_user):
     client_id = request_frame.client_id
@@ -456,25 +440,10 @@ def delete_rejected_asm_data(db, request_frame, session_user):
     result = bu_as.GetRejectedASMDataSuccess(rejected_data)
     return result
 
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetRejectedASMBulkUploadDataSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+##################################
+# To get all rejected asm by user
+##################################
 
 def get_rejected_assign_sm_data(db, request_frame, session_user):
 
@@ -485,29 +454,14 @@ def get_rejected_assign_sm_data(db, request_frame, session_user):
     user_id = session_user.user_id()
 
     asm_rejected_data = fetch_rejected_assign_sm_data(
-        db, session_user, user_id, client_id, le_id, d_id, unit_code)
+        db, user_id, client_id, le_id, d_id, unit_code)
     result = bu_as.GetRejectedASMBulkUploadDataSuccess(asm_rejected_data)
     return result
 
-########################################################
-'''
-    returns statutory mapping list for approve
-    :param
-        db: database object
-        request_frame: api request GetApproveStatutoryMappingList class object
-        session_user: logged in user details
-    :type
-        db: Object
-        request_frame: Object
-        session_user: Object
-    :returns
-        result: returns processed api response
-        GetApproveStatutoryMappingListSuccess class Object
-    rtype:
-        result: Object
-'''
-########################################################
 
+###################################################
+# To get all asm report data by user
+###################################################
 
 def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
 
@@ -533,10 +487,10 @@ def get_assigned_statutory_bulk_report_data(db, request_frame, session_user):
                                                          total_record)
     return result
 
+
 ########################################################
 # To Export the Assign statu Report Data
 ########################################################
-
 
 def export_assigned_statutory_bulk_report_data(db, request, session_user):
     if request.csv:
@@ -551,6 +505,10 @@ def export_assigned_statutory_bulk_report_data(db, request, session_user):
             )
 
 
+###################################################
+# To download rejected asm data
+###################################################
+
 def download_rejected_asm_report(db, request_frame, session_user):
     client_id = request_frame.client_id
     le_id = request_frame.le_id
@@ -560,9 +518,11 @@ def download_rejected_asm_report(db, request_frame, session_user):
     download_format = request_frame.download_format
     user_id = session_user.user_id()
 
+    if asm_unit_code == '':
+        asm_unit_code = 0
     sheet_name = "Rejected Assign Statutory"
 
-    csv_header_key = ["client_group", "legal_entity", "domain",
+    csv_header_key = ["client_group", "legal_entity", "country", "domain",
                       "organization", "unit_code", "unit_name",
                       "unit_location", "perimary_legislation",
                       "secondary_legislation", "statutory_provision",
@@ -572,7 +532,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
                       "rejected_reason", "is_fully_rejected"
                       ]
 
-    csv_column_name = ["Client_Group", "Legal_Entity",
+    csv_column_name = ["Client_Group", "Legal_Entity", "Country",
                        "Domain", "Organisation",
                        "Unit_Code", "Unit_Name",
                        "Unit_Location",
@@ -581,29 +541,23 @@ def download_rejected_asm_report(db, request_frame, session_user):
                        "Compliance_Description",
                        "Statutory_Applicable_Status*", "Statutory_remarks",
                        "Compliance_Applicable_Status*", "Error_Description"]
-
-    # csv_name = "RejectedData.xlsx"
     csv_name = get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id)
-
     source_data = fetch_rejected_asm_download_csv_report(
         db, session_user, user_id, client_id, le_id, d_id, asm_unit_code,
         csv_id)
-
-    # cObj = ValidateRejectedDownloadBulkData(
-    #     db, source_data, session_user, download_format, csv_name, csv_header
-    # )
     cObj = ValidateRejectedDownloadBulkData(
         db, source_data, session_user, download_format, csv_name,
         csv_header_key, csv_column_name, sheet_name)
-
     result = cObj.perform_validation()
-
     return bu_sm.DownloadActionSuccess(result["xlsx_link"],
                                        result["csv_link"],
                                        result["ods_link"],
                                        result["txt_link"])
 
 
+####################################################
+# save record in table by user using individual row
+#####################################################
 def save_action(db, request_frame, session_user):
     try:
         save_action_from_view(
@@ -617,6 +571,9 @@ def save_action(db, request_frame, session_user):
         raise e
 
 
+#########################################################
+# submit record by user after select all individual rpw
+#########################################################
 def submit_assign_statutory(db, request_frame, session_user):
     try:
         csv_id = request_frame.csv_id
@@ -629,24 +586,24 @@ def submit_assign_statutory(db, request_frame, session_user):
         if un_saved_count > 0:
             return bu_as.CompleteActionBeforeSubmit()
 
-        cObj = ValidateAssignStatutoryForApprove(
+        c_obj = ValidateAssignStatutoryForApprove(
             db, csv_id, client_id, legal_entity_id, session_user
         )
-        is_declined = cObj.perform_validation_before_submit()
+        is_declined = c_obj.perform_validation_before_submit()
         if len(is_declined.keys()) > 0:
             return bu_as.ValidationSuccess(len(is_declined.keys()))
         else:
             update_approve_action_from_list(
                 db, csv_id, 1, None, session_user, "single"
             )
-            u_ids = ",".join(map(str, cObj._unit_ids))
-            cObj.save_executive_message(
-                1, cObj._csv_name, cObj._client_group,
-                cObj._legal_entity, session_user.user_id(),
-                u_ids, None
+            u_ids = ",".join(map(str, c_obj._unit_ids))
+            c_obj.save_executive_message(
+                1, c_obj._csv_name, c_obj._client_group,
+                c_obj._legal_entity, session_user.user_id(),
+                u_ids, None, 0
             )
-            cObj.frame_data_for_main_db_insert(user_id)
-            cObj.source_commit()
+            c_obj.frame_data_for_main_db_insert(user_id)
+            c_obj.source_commit()
             delete_action_after_approval(db, csv_id)
 
             return bu_as.SubmitAssignStatutorySuccess()
@@ -656,31 +613,37 @@ def submit_assign_statutory(db, request_frame, session_user):
         raise e
 
 
+############################################################
+# submit record bu user with system declined information
+#############################################################
 def confirm_submit_assign_statutory(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     client_id = request_frame.cl_id
     legal_entity_id = request_frame.le_id
     user_id = session_user.user_id()
     # csv data validation
-    cObj = ValidateAssignStatutoryForApprove(
+    c_obj = ValidateAssignStatutoryForApprove(
         db, csv_id, client_id, legal_entity_id, session_user
     )
-    is_declined = cObj.perform_validation_before_submit()
+    is_declined = c_obj.perform_validation_before_submit()
     if len(is_declined.keys()) > 0:
-        cObj.make_rejection(is_declined, user_id)
-        u_ids = ",".join(map(str, cObj._unit_ids))
-        cObj.save_executive_message(
-            1, cObj._csv_name, cObj._client_group,
-            cObj._legal_entity, session_user.user_id(),
-            u_ids, None
+        c_obj.make_rejection(is_declined, user_id)
+        u_ids = ",".join(map(str, c_obj._unit_ids))
+        c_obj.save_executive_message(
+            1, c_obj._csv_name, c_obj._client_group,
+            c_obj._legal_entity, session_user.user_id(),
+            u_ids, None, len(is_declined.keys())
         )
-        cObj.frame_data_for_main_db_insert(user_id)
-        cObj.source_commit()
+        c_obj.frame_data_for_main_db_insert(user_id)
+        c_obj.source_commit()
         delete_action_after_approval(db, csv_id)
         return bu_as.SubmitAssignStatutorySuccess()
 
 
-def validate_assign_statutory(db, request_frame, session_user):
+#####################################################
+# validate pending record count while submit process
+#####################################################
+def validate_assign_statutory(db, request_frame):
     csv_id = request_frame.csv_id
     approved_count, un_saved_count = get_validation_info(db, csv_id)
 
@@ -694,10 +657,10 @@ def validate_assign_statutory(db, request_frame, session_user):
 # To get list of user_category_id and constants
 ########################################################
 def process_get_bulk_upload_constants(db, session_user):
-    userCategoryList = []
-    userCategoryList = get_form_categories(db, session_user)
+
+    user_category_list = get_form_categories(db, session_user)
     success = bu_as.GetBulkUploadConstantSuccess(
-        userCategoryList, SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT)
+        user_category_list, SYSTEM_REJECTED_BY, REJECTED_FILE_DOWNLOADCOUNT)
     return success
 
 

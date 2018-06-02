@@ -111,6 +111,33 @@ class UploadStatutoryMappingCSV(Request):
         }
 
 
+class SaveExecutiveMessageAfterDocUpload(Request):
+    def __init__(
+        self, c_name, d_name, csv_name
+    ):
+        self.c_name = c_name
+        self.d_name = d_name
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "c_name", "d_name", "csv_name"
+        ])
+        return SaveExecutiveMessageAfterDocUpload(
+            data.get("c_name"),
+            data.get("d_name"),
+            data.get("csv_name")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "c_name": self.c_name,
+            "d_name": self.d_name,
+            "csv_name": self.csv_name
+        }
+
+
 class GetSMBulkReportData(Request):
     def __init__(self, c_ids, d_ids, from_date, to_date, r_count, p_count,
                  child_ids, user_category_id):
@@ -151,7 +178,7 @@ class GetSMBulkReportData(Request):
 
 class ExportSMBulkReportData(Request):
     def __init__(self, c_ids, c_names, d_ids, d_names, from_date, to_date,
-                 child_ids, user_category_id, csv):
+                 child_ids, user_category_id, csv, c_d_ids):
         self.c_ids = c_ids
         self.c_names = c_names
         self.d_ids = d_ids
@@ -161,12 +188,13 @@ class ExportSMBulkReportData(Request):
         self.child_ids = child_ids
         self.user_category_id = user_category_id
         self.csv = csv
+        self.c_d_ids = c_d_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["c_ids", "c_names", "d_ids", "d_names",
                                        "from_date", "to_date", "child_ids",
-                                       "user_category_id", "csv"])
+                                       "user_category_id", "csv", "c_d_ids"])
         return ExportSMBulkReportData(
             data.get("c_ids"),
             data.get("c_names"),
@@ -176,7 +204,8 @@ class ExportSMBulkReportData(Request):
             data.get("to_date"),
             data.get("child_ids"),
             data.get("user_category_id"),
-            data.get("csv")
+            data.get("csv"),
+            data.get("c_d_ids")
         )
 
     def to_inner_structure(self):
@@ -188,7 +217,8 @@ class ExportSMBulkReportData(Request):
             "from_date": self.from_date, "to_date": self.to_date,
             "child_ids": self.child_ids,
             "user_category_id": self.user_category_id,
-            "csv": self.csv
+            "csv": self.csv,
+            "c_d_ids": self.c_d_ids
         }
 
 
@@ -546,7 +576,8 @@ def _init_Request_class_map():
         ExportSMBulkReportData,
         DownloadRejectedSMReportData,
         SaveAction,
-        GetDomains, GetKExecutiveDetails
+        GetDomains, GetKExecutiveDetails,
+        SaveExecutiveMessageAfterDocUpload
     ]
     class_map = {}
     for c in classes:
@@ -881,7 +912,7 @@ class RejectedList(object):
             "no_of_records", "rej_by", "rej_on", "rej_count", "rej_file",
             "rej_reason", "remove"
         ])
-        return CsvList(
+        return RejectedList(
             data.get("c_id"), data.get("c_name"), data.get("d_id"),
             data.get("d_name"), data.get("csv_id"), data.get("csv_name"),
             data.get("no_of_records"), data.get("rej_by"), data.get("rej_on"),
@@ -933,11 +964,10 @@ class PendingCsvList(object):
         ])
         return PendingCsvList(
             data.get("csv_id"), data.get("csv_name"),
-            data.get("csv_id"), data.get("csv_name"), data.get("uploaded_by"),
-            data.get("uploaded_on"), data.get("no_of_records"),
-            data.get("approve_count"),
-            data.get("rej_count"),
-            data.get("download_file"), data.get("declined_count")
+            data.get("uploaded_by"), data.get("uploaded_on"),
+            data.get("no_of_records"), data.get("approve_count"),
+            data.get("rej_count"), data.get("download_file"),
+            data.get("declined_count")
         )
 
     def to_structure(self):
@@ -1002,7 +1032,7 @@ class MappingData(object):
             "c_doc",
             "c_desc",
             "p_cons",
-            "refer",
+            "refer_bu",
             "frequency",
             "statu_month",
             "statu_date",
@@ -1030,7 +1060,7 @@ class MappingData(object):
             data.get("c_doc"),
             data.get("c_desc"),
             data.get("p_cons"),
-            data.get("refer"),
+            data.get("refer_bu"),
             data.get("frequency"),
             data.get("statu_month"),
             data.get("statu_date"),
@@ -1059,7 +1089,7 @@ class MappingData(object):
             "c_doc": self.c_doc,
             "c_desc": self.c_desc,
             "p_cons": self.p_cons,
-            "refer": self.refer,
+            "refer_bu": self.refer,
             "frequency": self.frequency,
             "statu_month": self.statu_month,
             "statu_date": self.statu_date,
@@ -1578,8 +1608,10 @@ class DownloadActionSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["xlsx_link", "csv_link", "ods_link",
                                        "txt_link"])
-        return ValidationSuccess(data.get("xlsx_link"), data.get("csv_link"),
-                                 data.get("ods_link"), data.get("txt_link"))
+        return DownloadActionSuccess(
+            data.get("xlsx_link"), data.get("csv_link"),
+            data.get("ods_link"), data.get("txt_link")
+        )
 
     def to_inner_structure(self):
         return {
@@ -1651,7 +1683,7 @@ class GetKExecutiveDetailsSuccess(Response):
         self.k_executive_info = k_executive_info
 
     @staticmethod
-    def parse_inner_strucure(data):
+    def parse_inner_structure(data):
         data = parse_dictionary(data, ["k_executive_info"])
         return GetKExecutiveDetailsSuccess(
             data.get("k_executive_info")
@@ -1661,6 +1693,19 @@ class GetKExecutiveDetailsSuccess(Response):
         return {
             "k_executive_info": self.k_executive_info
         }
+
+
+class SendExecutiveMessageSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SendExecutiveMessageSuccess()
+
+    def to_inner_structure(self):
+        return {}
 
 
 def _init_Response_class_map():
@@ -1686,7 +1731,8 @@ def _init_Response_class_map():
         InvalidCsvFile,
         CsvFileCannotBeBlank,
         RejectionMaxCountReached,
-        GetDomainsSuccess, GetKExecutiveDetailsSuccess
+        GetDomainsSuccess, GetKExecutiveDetailsSuccess,
+        SendExecutiveMessageSuccess
     ]
     class_map = {}
     for c in classes:
@@ -1752,4 +1798,23 @@ class KExecutiveInfo(object):
             "d_ids": self.d_ids,
             "emp_code_name": self.emp_code_name,
             "user_id": self.user_id
+        }
+
+
+class CountryDomainIds(object):
+    def __init__(self, c_d_ids):
+        self.c_d_ids = c_d_ids
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "c_d_ids"
+        ])
+        return CountryDomainIds(
+            data.get("c_d_ids")
+        )
+
+    def to_structure(self):
+        return {
+            "c_d_ids": self.c_d_ids
         }

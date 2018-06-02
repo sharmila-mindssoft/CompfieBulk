@@ -1,11 +1,8 @@
 
 
 class Database(object):
-    def __init__(
-        self,
-        mysqlConnection
-    ):
-        self._connection = mysqlConnection
+    def __init__(self, mysql_connection):
+        self._connection = mysql_connection
         self._cursor = None
 
     ########################################################
@@ -23,7 +20,7 @@ class Database(object):
     ########################################################
     def close(self):
         assert self._connection is not None
-        if self._cursor is not None :
+        if self._cursor is not None:
             self._cursor.close()
         self._connection.close()
         self._connection = None
@@ -64,7 +61,6 @@ class Database(object):
             " WHERE  session_token=%s"
         param = [session_token]
         row = self.select_one(query, param)
-        print row
         user_id = None
         if row:
             user_id = row["user_id"]
@@ -104,8 +100,6 @@ class Database(object):
         cursor = self.cursor()
         assert cursor is not None
         try:
-
-            print "type(param)", type(param)
             if param is None:
                 cursor.execute(query)
             else:
@@ -119,7 +113,6 @@ class Database(object):
                     cursor.execute(query)
             cursor.nextset()
             res = cursor.fetchall()
-            print "RES in select all>> ", res
             cursor.nextset()
             return res
 
@@ -162,40 +155,46 @@ class Database(object):
         return True
 
     def update_file_status(self, old_file_name, csv_id, file_name, file_size):
-        print "file_size in dbase", file_size
-        print "FileName-> ", file_name
-        print "csv id", csv_id
         param = [old_file_name, csv_id, file_name, file_size]
         return self.call_update_proc(
             "sp_sm_format_file_status_update", param
         )
 
     def update_format_file_status(self, csv_id, status):
-        print "In update format file status"
-        print "status ", status
-        print "csv_id", csv_id
         res_update_stats = self.call_update_proc(
             "sp_sm_file_download_status_update", [csv_id, status]
         )
-
-        print "res_update_stats->>>>> ", res_update_stats
         return res_update_stats
 
-    def update_file_status_client(self, csv_id, file_name):
+    def update_file_status_client(
+            self, old_file_name, csv_id, file_name, file_size
+    ):
+        param = [old_file_name, csv_id, file_name, file_size]
         return self.call_update_proc(
-            "sp_ct_format_file_status_update", [csv_id, file_name]
+            "sp_ct_format_file_status_update", param
         )
+
+    def update_past_data_document_status(
+        self, csv_id, status
+    ):
+        res_update_stats = self.call_update_proc(
+            "sp_pastdata_doc_download_status_update", [csv_id, status]
+        )
+        return res_update_stats
 
     def get_declined_docs(self, csv_id):
         print "csv_id-in get_declined_docs >>>>> ", csv_id
-        query = "SELECT format_file FROM tbl_bulk_statutory_mapping WHERE csv_id = %s and action = 3"
+
+        # query = "SELECT format_file FROM tbl_bulk_statutory_mapping as t1 " \
+        #         "inner join tbl_bulk_statutory_mapping_csv AS t2 on " \
+        #         "t1.csv_id  = t2.csv_id WHERE t1.csv_id = %s and "\
+        #         "(t1.action=3 or t2.is_fully_rejected = 1)"
+
+        query = "SELECT format_file FROM tbl_bulk_statutory_mapping WHERE " \
+                "csv_id = %s and action = 3"
         param = [int(csv_id)]
-        print "Query---> ", query
-        print "Param -> ", param
-        
         row = self.select_all(query, param)
         dec_doc_list = []
         for r in row:
             dec_doc_list.append(r["format_file"].encode('ascii', 'ignore'))
-        print "dec_doc_list--->>>> ", dec_doc_list
         return dec_doc_list

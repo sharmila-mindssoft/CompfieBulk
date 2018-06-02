@@ -4,7 +4,7 @@ from ..bucsvvalidation.clientunitsvalidation import (
     ValidateClientUnitsBulkDataForApprove
 )
 
-from ..bucsvvalidation.rejectedstatutorymapping import (
+from ..bucsvvalidation.rejecteddownloadvalidation import (
     ValidateRejectedDownloadBulkData)
 
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
@@ -168,19 +168,17 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             BULKUPLOAD_CSV_PATH, request_frame.csv_name,
             request_frame.csv_data
         )
-
         # read data from csv file
         header, client_units_bulk_data = read_data_from_csv(csv_name)
         # csv data validation
         clientUnitObj = ValidateClientUnitsBulkCsvData(
             db, client_units_bulk_data, session_user,
             request_frame.bu_client_id,
-            request_frame.csv_name, header
+            csv_name, header
         )
         validationResult = clientUnitObj.perform_validation()
         print "err--------------------------------------------"
         print validationResult
-        print "ordinal not in range(128)" in validationResult
         if (
             "No such file or directory" not in validationResult and
             validationResult != "Empty CSV File Uploaded" and
@@ -193,8 +191,7 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             generate_valid_file(csv_name)
             csv_args = [
                 request_frame.bu_client_id, request_frame.bu_group_name,
-                csv_name, session_user.user_id(),
-                validationResult["total"]
+                csv_name, session_user.user_id(), validationResult["total"]
             ]
             new_csv_id = save_client_units_mapping_csv(db, csv_args)
             if new_csv_id:
@@ -206,7 +203,6 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
                         session_user.user_id()
                     )
                     clientUnitObj.source_commit()
-                    print "saved activity"
                     result = bu_cu.UploadClientUnitBulkCSVSuccess(
                         validationResult["total"], validationResult["valid"],
                         validationResult["invalid"]
@@ -292,7 +288,7 @@ def get_clientunits_uploaded_csvFiles(db, request_frame, session_user):
     groupName = request_frame.bu_group_name
     csvFilesList = get_clientunits_uploaded_csvList(db, clientId, groupName)
     return bu_cu.ClientUnitsUploadedCSVFilesListSuccess(
-        bu_cu_csvFilesList=csvFilesList
+        bu_cu_csv_files_list=csvFilesList
     )
 
 
@@ -482,14 +478,14 @@ def download_rejected_cu_report(db, request_frame, session_user):
     user_id = session_user.user_id()
     sheet_name = "Rejected Client Unit"
 
-    csv_header_key = ["legal_entity", "division", "category",
+    csv_header_key = ["country", "legal_entity", "division", "category",
                       "geography_level", "unit_location", "unit_code",
                       "unit_name", "address",
                       "city", "state",
                       "postalcode", "domain", "organization",
                       "remarks", "rejected_reason", "is_fully_rejected"]
 
-    csv_column_name = ["Legal_Entity*", "Division*",
+    csv_column_name = ["Country", "Legal_Entity*", "Division*",
                        "Category*", "Geography_Level*",
                        "Unit_Location*", "Unit_Code*",
                        "Unit_Name*  ",

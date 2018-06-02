@@ -74,10 +74,14 @@ CSVFILENAME.change(function(e){
         displayMessage("CSV file name should not exceed 100 characters");
         return false;
     }
-	if(CSVFILENAME.val() != '' && e.target.files != undefined && e.target.files.length > 0){
+	if(
+		CSVFILENAME.val() != '' && e.target.files != undefined
+		&& e.target.files.length > 0
+	){
 		bu.uploadCSVFile(e, function result_data(status, data) {
             if (status == false){
                 displayMessage(data);
+                CSVFILENAME.val('');
             }else{
             	CSVUPLOADEDFILE = data;
             }
@@ -91,73 +95,89 @@ CSVUPLOADBUTTON.click(function () {
 	$('.view-summary').hide();
 	var clientId = GROUPID.val().trim();
 	var groupName = GROUPNAME.val().trim();
+	var f_size = null, f_name = null, f_data = null;
+	var getValidCount = 0;
 	if (clientId != '' && CSVFILENAME.val() != '') {
-		$('#myModal').modal('show');
-		var f_size = CSVUPLOADEDFILE.file_size;
-		var f_name = CSVUPLOADEDFILE.file_name;
-		var f_data = CSVUPLOADEDFILE.file_content;
-		function onSuccess(response) {
-			GROUPNAME.val('');
-			GROUPID.val('');
-			CSVFILENAME.val('');
-			displaySuccessMessage(message.upload_success);
+		if (CSVUPLOADEDFILE != '') {
+			$('#myModal').modal('show');
+			f_size = CSVUPLOADEDFILE.file_size;
+			f_name = CSVUPLOADEDFILE.file_name;
+			f_data = CSVUPLOADEDFILE.file_content;
+			function onSuccess(response) {
+				GROUPNAME.val('');
+				GROUPID.val('');
+				CSVFILENAME.val('');
+				displaySuccessMessage(message.upload_success);
+			}
+			function onFailure(error, response)
+			{
+				if(error == "EmptyCSVUploaded") {
+					displayMessage(message.csv_file_blank);
+					CSVFILENAME.val('');
+				}
+				else if(error == "InvalidCSVUploaded") {
+					displayMessage(message.invalid_csv_file);
+					CSVFILENAME.val('');
+				}
+				else if(error == "CSVColumnMisMatched") {
+					displayMessage(message.invalid_csv_file);
+					CSVFILENAME.val('');
+				}
+				else if(error == "ClientUnitUploadMaxReached"){
+					displayMessage(message.client_unit_file_max);
+				}
+				else if(error == "CSVFileLinesMaxREached") {
+					displayMessage(
+						"CSV File exceeded max " +
+						response.csv_max_lines + " lines");
+					CSVFILENAME.val('');
+				}
+				else if (response.invalid_file != "" && response.invalid_file != null) {
+				    $('.invaliddata').show();
+					$('.view-summary').show();
+					$('.download-file').hide();
+					CSVFILENAME.val('');
+					CSVUPLOADEDFILE = ''
+					displayMessage(message.upload_failed);
+					INVALIDFILENAME = response.invalid_file;
+				    TOTALRECORDSCOUNT.text(response.total);
+					getValidCount = parseInt(response.total) - parseInt(response.invalid);
+					VALIDRECORDSCOUNT.text(getValidCount);
+					INVALIDRECORDSCOUNT.text(response.invalid);
+					MANDATORYERRORSCOUNT.text(response.mandatory_error);
+					DUPLICATEERRORSCOUNT.text(response.duplicate_error);
+					STATUSERRORCOUNT.text(response.inactive_error);
+					LENGTHERRORSCOUNT.text(response.max_length_error);
+					getInvaliddataCount = parseInt(response.invalid_char_error) +
+						parseInt(response.invalid_data_error);
+					INVALIDERRORSCOUNT.text(getInvaliddataCount)
+					UNITCOUNTERRORSCOUNT.text(response.max_unit_count_error)
+					download_file();
+				}
+				else {
+					displayMessage(error);
+				}
+			}
+			bu.uploadClientUnitsBulkCSV(
+				parseInt(clientId), groupName, f_name, f_data,
+				f_size, function(error, response)
+			{
+		    	$('#myModal').modal('hide');
+			    if (error == null) {
+			        onSuccess(response);
+			    } else {
+			        onFailure(error, response);
+			    }
+			});
 		}
-		function onFailure(error, response)
-		{
-			if(error == "EmptyCSVUploaded") {
-				displayMessage(message.csv_file_blank);
-			}
-			else if(error == "InvalidCSVUploaded") {
-				displayMessage(message.invalid_csv_file);
-			}
-			else if(error == "CSVColumnMisMatched") {
-				displayMessage(message.invalid_csv_file);
-			}
-			else if(error == "ClientUnitUploadMaxReached"){
-				displayMessage(message.client_unit_file_max);
-			}
-			else if(error == "CSVFileLinesMaxREached") {
-				displayMessage("CSV File exceeded max " + response.csv_max_lines + " lines");
-			}
-			else if (response.invalid_file != "" && response.invalid_file != null) {
-			    $('.invaliddata').show();
-				$('.view-summary').show();
-				$('.download-file').hide();
-				displayMessage(message.upload_failed);
-				INVALIDFILENAME = response.invalid_file;
-			    TOTALRECORDSCOUNT.text(response.total);
-				var getValidCount = parseInt(response.total) - parseInt(response.invalid);
-				VALIDRECORDSCOUNT.text(getValidCount);
-				INVALIDRECORDSCOUNT.text(response.invalid);
-				MANDATORYERRORSCOUNT.text(response.mandatory_error);
-				DUPLICATEERRORSCOUNT.text(response.duplicate_error);
-				STATUSERRORCOUNT.text(response.inactive_error);
-				LENGTHERRORSCOUNT.text(response.max_length_error);
-				getInvaliddataCount = parseInt(response.invalid_char_error) +
-					parseInt(response.invalid_data_error);
-				INVALIDERRORSCOUNT.text(getInvaliddataCount)
-				UNITCOUNTERRORSCOUNT.text(response.max_unit_count_error)
-				download_file();
-			}
-			else {
-				displayMessage(error);
-			}
-		}
-		bu.uploadClientUnitsBulkCSV(
-			parseInt(clientId), groupName, f_name, f_data, f_size, function(error, response)
-		{
-	    	$('#myModal').modal('hide');
-		    if (error == null) {
-		        onSuccess(response);
-		    } else {
-		        onFailure(error, response);
-		    }
-		});
 	} else {
 		if (clientId == '') {
 			displayMessage(message.cg_required);
 			return false;
 		} else if(CSVUPLOADEDFILE == '') {
+			displayMessage(message.upload_csv);
+			return false;
+		} else if(CSVFILENAME.val() == ''){
 			displayMessage(message.upload_csv);
 			return false;
 		}
@@ -166,13 +186,11 @@ CSVUPLOADBUTTON.click(function () {
 
 // Start format file download for entering the client units
 document.getElementById("dwn_format").addEventListener("click", function(){
-    // Generate download of file with some content
     var fileName = "Client_Units.csv";
-
     download(
     	fileName,
     	'text/csv',
-    	'Legal_Entity*,Division,Category,Geography_Level*,Unit_Location*,' +
+    	'Country*,Legal_Entity*,Division,Category,Geography_Level*,Unit_Location*,' +
     	'Unit_Code*,Unit_Name*,Unit_Address*,City*,State*,Postal_Code*,' +
     	'Domain*,Organization*'
     );
@@ -180,7 +198,8 @@ document.getElementById("dwn_format").addEventListener("click", function(){
 
 function download(filename, mime_type, text) {
     var element = document.createElement('a');
-    var href = 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(text);
+    var href = 'data:' + mime_type + ';' +
+    	'charset=utf-8,' + encodeURIComponent(text);
     element.setAttribute('href', href);
     element.setAttribute('download', filename);
 
@@ -188,12 +207,10 @@ function download(filename, mime_type, text) {
     document.body.appendChild(element);
 
     element.click();
-
     document.body.removeChild(element);
 }
 
 // To download the invalid files returned from validation
-
 function download_file() {
 	if(INVALIDFILENAME != null) {
 		var splitFileName = INVALIDFILENAME.split(".")[0];
@@ -208,10 +225,6 @@ function download_file() {
 			}
 			else if(downloadTag[i].innerText == "Download ODS") {
 				$("#ods").attr("href", "/invalid_file/ods/" + splitFileName+".ods");
-			}
-			else if(downloadTag[i].innerText == "Download Text") {
-				//$("#text").attr({target: '_blank', href: "/invalid_file/txt/" + splitFileName+".txt"});
-				//$("#text").attr("onclick", getTextData(splitFileName));
 			}
 		}
 	}

@@ -82,7 +82,7 @@ __all__ = [
     "legal_entity_logo_url",
     "verify_username_forgotpassword",
     "update_task_status_in_chart",
-    "get_reassign_client_users"
+    "get_reassign_client_users",
     ]
 
 
@@ -653,7 +653,7 @@ def is_in_contract(db):
 
 def verify_username(db, username):
     columns = "count(0) as result, user_id"
-    condition = "username=%s and is_active = 1"
+    condition = "username=%s and is_active = 1 group by user_id"
     condition_val = [username]
     rows = db.get_data(
         tblUserLoginDetails, columns, condition, condition_val

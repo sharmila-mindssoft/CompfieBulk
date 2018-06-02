@@ -1,23 +1,23 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
 <link href="/css/dropzone.css" rel="stylesheet" type="text/css" />
-<div class="container" id="sm-csv-view">
+<div class="container" id="sm_csv_view">
     <div class="row">
         <div class="col-sm-1"></div>
         <div class="col-sm-10">
             <div class="btn-group pull-right m-t-5 m-b-20">
-                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" id="btn-csv-add"><span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add</button>
+                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" id="btn_csv_add"><span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add</button>
             </div>
             <h4 class="page-title">Statutory Mapping List - Bulk Upload</h4>
         </div>
         <div class="col-sm-3"></div>
     </div>
-    <div class="row" id="animationSandbox">
+    <div class="row">
         <div class="col-sm-1"></div>
         <div class="col-sm-10">
             <div class="card-box table-responsive"> <!-- table-responsive -->
                 <div class="col-sm-12 no-padding">
-                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                    <table id="datatable_responsive" class="table table-striped dt-responsive nowrap highlight m-b-0">
                         <thead>
                             <tr>
                                 <th>#<span class="none-sort-sno"></span></th>
@@ -27,24 +27,8 @@
                                 <th class="text-center">Required Documents</th>
                                 <th class="text-center">Uploaded Documents</th>
                                 <th class="text-center">Remaining Documents</th>
-                                <th>Upload Documents</th>
+                                <th class="text-center">Upload Documents</th>
                             </tr>
-                            <!-- <tr>
-                              <td></td>
-                              <td>
-                                <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                    <input type="text" class="form-control input-sm" placeholder="Uploaded File Name"
-                                    id="search-csv-name">
-                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                  </div>
-                              </td>
-
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                            </tr> -->
                         </thead>
                         <tbody class="tbody-sm-csv-list1"></tbody>
                     </table>
@@ -56,8 +40,8 @@
     </div>
 </div>
 
-<div class="container default-display-none" id="sm-csv-add">
-    <div class="row" id="animationSandbox">
+<div class="container default-display-none" id="sm_csv_add">
+    <div class="row">
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
             <div class="portlet">
@@ -67,16 +51,15 @@
                         Statutory Mapping - Bulk Upload
                     </h3>
                     <div class="portlet-widgets">
-                        <a id="btn-sm-csv-cancel">
+                        <a id="btn_sm_csv_cancel">
                         <i class="zmdi zmdi-close zmdi-hc-2x"></i>
                         </a>
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <div id="bg-primary1" class="panel-collapse collapse in">
+                <div class="panel-collapse collapse in">
                     <div class="portlet-body">
                         <div class="form-horizontal group-border-dashed">
-
                             <div class="form-group m-t-10">
                                 <label class="col-sm-4 control-label">Country:<span class="mandatory">*</span></label>
                                 <div class="col-sm-6 has-feedback">
@@ -85,7 +68,7 @@
                                         <input type="text" id="countryname" class="form-control input-sm" placeholder="Country name" tabindex="1" >
                                         <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                         <input id="countryid" type="hidden">
-                                        <div id="ac-country" class="ac-textbox auto-text-box default-display-none">
+                                        <div id="ac_country" class="ac-textbox auto-text-box default-display-none">
                                             <ul></ul>
                                         </div>
                                     </div>
@@ -99,8 +82,8 @@
                                         <input type="text" id="domainname" class="form-control input-sm" placeholder="Domain name" tabindex="2">
                                         <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                         <input id="domainid" type="hidden">
-                                        <div id="ac-domain" class="ac-textbox default-display-none">
-                                            <ul style="width:94%;"></ul>
+                                        <div id="ac_domain" class="ac-textbox default-display-none">
+                                            <ul class="ac-domain-ul"></ul>
                                         </div>
                                     </div>
                                 </div>
@@ -112,20 +95,20 @@
 
                                 <div class="col-sm-6">
                                     <div class="inp-file">
-                                        <input class="form-control input-sm" accept=".csv" type="file" tabindex="3" id="bu-upload-csv">
-                                        <small class="" style="text-align: left;">[ Accepted file format <span style="color: #E64C3D !important;">.csv</span> ]
+                                        <input class="form-control input-sm" accept=".csv" type="file" tabindex="3" id="bu_upload_csv">
+                                        <small class="bu_upload_csv_small">[ Accepted file format <span class="smb_csv_extenstion">.csv</span> ]
                                         </small>
                                     </div>
-                                    <table class="tablenopadd disp-file default-display-none" width="100%">
+                                    <table class="tablenopadd disp-file default-display-none">
                                         <tbody>
                                           <tr class="bg-lightdark border-1">
-                                              <td width="80%" class="p-5-px csv-file-name">Ind-LL-Maternity Act1990.csv </td>
-                                              <td width="10%" class="p-5-px">
+                                              <td  class="p-5-px csv-file-name smb-csv-file-name">Ind-LL-Maternity Act1990.csv </td>
+                                              <td class="p-5-px smb-uploaded-csv-view">
                                                 <a class="csv-file-view" id="uploaded_csv_view">
                                                   <i class="fa fa-search fa-1-2x c-pointer" data-toggle="tooltip" title="View Document"></i>
                                                 </a>
                                               </td>
-                                              <td width="10%" class="p-5-px">
+                                              <td class="p-5-px download-document-td">
                                                 <a class="csv-file-download" id="uploaded_csv_dwnl">
                                                   <i class="fa fa-download fa-1-2x c-pointer" data-toggle="tooltip" title="Download Document"></i>
                                                 </a>
@@ -136,8 +119,8 @@
                                 </div>
                             </div>
 
-                            <div class="form-group has-feedback" id="bu-upload-docs">
-                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">
+                            <div class="form-group has-feedback" id="bu_upload_docs">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">
                                 Select Documents:
                                 <span class="mandatory">*</span></label>
                                     <div class="dropzone dz-clickable" id="myDrop">
@@ -149,74 +132,75 @@
                                     <!-- <input class="form-control input-sm" type="file"> -->
                                     <ul class="p-l-20 p-t-5 bu-doc-summary">
                                         <li>Required Documents:
-                                            <b><span id="bu-doc-total"></span></b>
+                                            <b><span id="bu_doc_total"></span></b>
                                         </li>
-                                        <li class="view-summary">Uploaded Documents:
-                                            <b><span id="bu-upload-total"></span></b>
+
+                                        <li class="view-summary" id="bu_upl_txt">Uploaded Documents:
+                                            <b><span id="bu_upload_total"></span></b>
                                         </li>
-                                        <li class="text-danger view-summary">Remaining Documents:
-                                            <b><span id="bu-remain-total"></span></b>
+                                        <li class="text-danger view-summary" id="bu_upl_rem">Remaining Documents:
+                                            <b><span id="bu_remain_total"></span></b>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="form-group text-center m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light m-b-5" type="submit" id="btn-submit" tabindex="4" data-toggle="modal"> Upload </button>
+                                <button class="btn btn-primary waves-effect waves-light m-b-5" type="submit" id="btn_submit" tabindex="4" data-toggle="modal"> Upload </button>
                                 <div class="download-options">
                                 <button class="btn btn-primary m-b-5 default-display-none btn-trans dropbtn" onclick="showDownloadList()"><i class="fa fa-download text-primary"></i> Valid / Invalid Data</button>
                                 <div id="myDropdown" class="dropdown-content" >
-                                  <a id="xls-type">Download Excel</a>
-                                  <a id="csv-type">Download CSV</a>
-                                  <a id="ods-type">Download ODS</a>
-                                  <a id="txt-type">Download Text</a>
+                                  <a id="xls_type">Download Excel</a>
+                                  <a id="csv_type">Download CSV</a>
+                                  <a id="ods_type">Download ODS</a>
+                                  <a id="txt_type">Download Text</a>
                                 </div>
                                 </div>
                             </div>
                             <div class="clear"></div>
                             <div class="view-summary">
                                 <div class="col-sm-6 no-padding"
-                                id="bu-data-summary">
+                                id="bu_data_summary">
                                     <div class="form-group bg-muted">
                                         <h5 class="col-sm-12 header-title">Uploaded Data - Summary</h5>
                                     </div>
                                     <ul class="p-l-20" >
                                       <li>Total No. Of Records:
-                                        <b><span id="bu-summary-total"></span></b>
+                                        <b><span id="bu_summary_total"></span></b>
                                       </li>
                                       <li>Valid Records:
-                                        <b><span id="bu-summary-valid"></span></b>
+                                        <b><span id="bu_summary_valid"></span></b>
                                       </li>
                                       <li>Invalid Records:
-                                        <b><span id="bu-summary-invalid"></span></b>
+                                        <b><span id="bu_summary_invalid"></span></b>
                                       </li>
                                     </ul>
                                 </div>
-                                <div class="col-sm-6 text-danger no-padding" id="bu-error-summary">
+                                <div class="col-sm-6 text-danger no-padding" id="bu_error_summary">
                                     <div class="form-group bg-muted">
                                         <h5 class="col-sm-12 text-danger header-title">Invalid Data - Summary</h5>
                                     </div>
                                     <ul class="p-l-20" >
                                         <li>Mandatory Field Blank:
-                                        <b><span id="bu-summary-mandatory"></span></b>
+                                        <b><span id="bu_summary_mandatory"></span></b>
                                         </li>
                                         <li>Duplicate Compliance:
-                                        <b><span id="bu-summary-duplicate"></span></b>
+                                        <b><span id="bu_summary_duplicate"></span></b>
                                         </li>
                                         <li>Master Data Inactive:
-                                        <b><span id="bu-summary-inactive"></span></b>
+                                        <b><span id="bu_summary_inactive"></span></b>
                                         </li>
                                         <li>Frequency Data Invalid:
-                                        <b><span id="bu-frequency-invalid"></span></b>
+                                        <b><span id="bu_frequency_invalid"></span></b>
                                         </li>
                                         <li>Max Length Exceeded:
-                                        <b><span id="bu-summary-maxlength"></span></b>
+                                        <b><span id="bu_summary_maxlength"></span></b>
                                         </li>
 
                                         <li>Invalid Char Validation:
-                                        <b><span id="bu-summary-invalidchar"></span></b>
+                                        <b><span id="bu_summary_invalidchar"></span></b>
                                         </li>
                                         <li>Invaid Data validation:
-                                        <b><span id="bu-summary-invaliddata"></span></b>
+                                        <b><span id="bu_summary_invaliddata"></span></b>
                                         </li>
 
                                     </ul>
@@ -239,14 +223,13 @@
 <div id="templates">
     <table class="table-sm-csv-info">
         <tr class="table-row">
-            <td class="sno" align="center"></td>
+            <td class="sno" class="text-center"></td>
             <td class="csv-name"></td>
             <td class="uploaded-on"></td>
             <td class="text-center tot-records"></td>
             <td class="text-center expec-docs"></td>
             <td class="text-center uploaded-docs"></td>
             <td class="text-center remaining-docs"></td>
-
             <td class="icon-3x text-center upload">
                 <i class="fa fa-upload text-primary c-pointer" data-toggle="tooltip" title="Click here to upload docs"></i>
             </td>
@@ -255,7 +238,7 @@
     </table>
 </div>
 <!-- Modal -->
-<div id="custom-modal" class="modal-demo box-width-400">
+<div id="custom_modal" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
     <i class="zmdi zmdi-close zmdi-hc-2x"></i>
     </span>
@@ -263,45 +246,37 @@
     <div class="custom-modal-text p-t-0">
         <div role="form">
             <div class="form-group">
-                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <label for="current_password" class="pull-left">Password <span class="mandatory">*</span></label>
             </div>
             <div class="clearfix"></div>
             <div class="form-group">
-                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+                <input type="password" class="form-control input-sm" id="current_password" placeholder="Password" maxlength="20">
             </div>
-            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password_submit">Submit</button>
         </div>
     </div>
 </div>
-<div id="no-record-templates" class="default-display-none">
+<div id="no_record_templates" class="default-display-none">
     <table class="table-no-content">
-        <tr align="left" class="table-row-no-content">
-            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        <tr class="table-row-no-content">
+            <td colspan="8" class="no-records text-center smb-inline-no-records"></td>
         </tr>
     </table>
 </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" role="dialog" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-          <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Upload</h4>
-                </div>
-                <div class="modal-body">
-                        <img src="/images/progress_loading.gif">
-                    <!-- <div class="progress skill-bar ">
-                        <img src="/images/progress_loading.gif"> -->
-                        <!-- <div class="progress-bar progress-bar-success" role="progressbar"
-                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                            <span class="skill">Uploading <i class="val">100%</i></span>
-                        </div> -->
-                    <!-- </div> -->
-                </div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Upload</h4>
+            </div>
+            <div class="modal-body">
+                    <img alt="progressing" src="/images/progress_loading.gif">
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block contentscript %}

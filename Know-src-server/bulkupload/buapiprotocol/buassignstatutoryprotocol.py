@@ -152,7 +152,7 @@ class GetRejectedAssignSMData(Request):
 
     def to_inner_structure(self):
         return {
-            "client_id": self.c_id,
+            "client_id": self.client_id,
             "le_id": self.le_id,
             "d_id": self.d_id,
             "asm_unit_code": self.asm_unit_code
@@ -565,7 +565,7 @@ class SubmitAssignStatutory(Request):
         return {
             "csv_id": self.csv_id,
             "cl_id": self.cl_id,
-            "le_id": self.d_id,
+            "le_id": self.le_id,
             "password": self.password
         }
 
@@ -605,9 +605,10 @@ class BulkUploadConstant(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_category_id"])
+        data = parse_dictionary(data, ["user_category_id", "user_category_name"])
         return BulkUploadConstant(
-            data.get("user_category_id")
+            data.get("user_category_id"),
+            data.get("user_category_name")
         )
 
     def to_structure(self):
@@ -734,7 +735,7 @@ class Domains(object):
         data = parse_dictionary(data, [
             "d_id", "d_name"
         ])
-        return Units(
+        return Domains(
             data.get("d_id"), data.get("d_name")
         )
 
@@ -1103,12 +1104,13 @@ class GetAssignStatutoryFiltersSuccess(Response):
 
 class ViewAssignStatutoryDataSuccess(Response):
     def __init__(
-        self, csv_id, csv_name, cl_name, le_name, uploaded_by,
+        self, csv_id, csv_name, cl_name, c_name, le_name, uploaded_by,
         uploaded_on, assign_statutory_data_list, count
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
         self.cl_name = cl_name
+        self.c_name = c_name
         self.le_name = le_name
         self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
@@ -1118,13 +1120,15 @@ class ViewAssignStatutoryDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "csv_id", "csv_name", "cl_name", "le_name", "uploaded_by",
-            "uploaded_on", "assign_statutory_data_list", "count"
+            "csv_id", "csv_name", "cl_name", "c_name", "le_name",
+            "uploaded_by", "uploaded_on", "assign_statutory_data_list",
+            "count"
         ])
         return ViewAssignStatutoryDataSuccess(
             data.get("csv_id"),
             data.get("csv_name"),
             data.get("cl_name"),
+            data.get("c_name"),
             data.get("le_name"),
             data.get("uploaded_by"),
             data.get("uploaded_on"),
@@ -1137,6 +1141,7 @@ class ViewAssignStatutoryDataSuccess(Response):
             "csv_id": self.csv_id,
             "csv_name": self.csv_name,
             "cl_name": self.cl_name,
+            "c_name": self.c_name,
             "le_name": self.le_name,
             "uploaded_by": self.uploaded_by,
             "uploaded_on": self.uploaded_on,
@@ -1392,12 +1397,29 @@ class CsvFileExeededMaxLines(Response):
         }
 
 
+class UploadedRecordsCountNotMatch(Response):
+    def __init__(self, u_names):
+        self.u_names = u_names
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["u_names"])
+        return UploadedRecordsCountNotMatch(
+            data.get("u_names")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "u_names": self.u_names
+        }
+
+
 class GetDomainExecutiveDetailsSuccess(Response):
     def __init__(self, domain_executive_info):
         self.domain_executive_info = domain_executive_info
 
     @staticmethod
-    def parse_inner_strucure(data):
+    def parse_inner_structure(data):
         data = parse_dictionary(data, ["domain_executive_info"])
         return GetDomainExecutiveDetailsSuccess(
             data.get("domain_executive_info")
@@ -1418,7 +1440,7 @@ class GetBulkUploadConstantSuccess(Response):
         self.bu_rejected_download_count = bu_rejected_download_count
 
     @staticmethod
-    def parse_inner_strucure(data):
+    def parse_inner_structure(data):
         data = parse_dictionary(data,
                                 ["bu_constants", "bu_system_rejected_by",
                                  "bu_rejected_download_count"

@@ -1,7 +1,7 @@
 from buapikeyvalidation import (
     is_alphabet_withdot, is_file_name, is_alphabet, is_alpha_numeric,
     is_alphabet_wtih_bracket, is_numeric, is_url, is_address,
-    is_alphabet_csv_delimeter
+    is_alphabet_csv_delimeter, is_unit_code
 )
 __all__ = [
     'bu_api_params'
@@ -243,7 +243,7 @@ bu_api_params = {
         'type': 'INT', 'length': None, 'validation_method': None,
         'is_optional': False
     },
-    'refer': {
+    'refer_bu': {
         'type': 'STRING', 'length': 500, 'validation_method': is_url,
         'is_optional': True
     },
@@ -281,7 +281,7 @@ bu_api_params = {
         'validation_method': is_alphabet, 'is_optional': True
     },
     'format_file': {
-        'type': 'STRING', 'length': 100,
+        'type': 'STRING', 'length': 150,
         'validation_method': is_file_name, 'is_optional': True
     },
     'bu_remarks': {
@@ -488,7 +488,7 @@ bu_api_params = {
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
     'tsk_type': {
-        'type': 'STRING', 'length': 25,
+        'type': 'STRING', 'length': 150,
         'validation_method': is_alphabet, 'is_optional': True
     },
 
@@ -504,7 +504,7 @@ bu_api_params = {
         'type': 'INT', 'length': None,
         'validation_method': None, 'is_optional': False
     },
-    'bu_cu_csvFilesList': {
+    'bu_cu_csv_files_list': {
         'type': 'VECTOR_TYPE', 'length': None,
         'validation_method': None, 'is_optional': False,
         'module_name': client_units, "class_name": "ClientUnitCSVList"
@@ -740,7 +740,7 @@ bu_api_params = {
     },
     'bu_unit_code': {
         'type': 'STRING', 'length': 50,
-        'validation_method': is_alpha_numeric, 'is_optional': True
+        'validation_method': is_unit_code, 'is_optional': True
     },
     'bu_unit_name': {
         'type': 'TEXT', 'length': 50,
@@ -787,7 +787,7 @@ bu_api_params = {
         'validation_method': is_alphabet, 'is_optional': True
     },
     'unit_locations': {
-        'type': 'VECTOR_TYPE_STRING', 'length': 50,
+        'type': 'VECTOR_TYPE_STRING', 'length': 600,
         'validation_method': is_alphabet, 'is_optional': True
     },
     'unit_codes': {
@@ -921,5 +921,8 @@ bu_api_params = {
         'module_name': statutory_mapping,
         "class_name": "KExecutiveInfo"
     },
-
+    "c_d_ids": {
+        'type': 'VECTOR_TYPE_STRING', 'length': 100000,
+        'validation_method': is_alpha_numeric, 'is_optional': True
+    }
 }
