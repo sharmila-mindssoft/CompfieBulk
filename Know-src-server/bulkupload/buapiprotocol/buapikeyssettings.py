@@ -243,7 +243,7 @@ bu_api_params = {
         'type': 'INT', 'length': None, 'validation_method': None,
         'is_optional': False
     },
-    'refer': {
+    'refer_bu': {
         'type': 'STRING', 'length': 500, 'validation_method': is_url,
         'is_optional': True
     },
