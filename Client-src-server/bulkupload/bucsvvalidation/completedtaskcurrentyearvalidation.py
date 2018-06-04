@@ -227,7 +227,7 @@ class SourceDB(object):
 
         return True
 
-    def return_unit_domain_id(self, domain_name, unit_name):
+    def return_unit_domain_id(self, domain_name, unit_code):
         query = "SELECT domain_id from tbl_domains " + \
                 "where domain_name  = '%s'" % domain_name
         rows = self._source_db.select_all(query)
@@ -235,7 +235,7 @@ class SourceDB(object):
         if len(rows) > 0:
             domain_id = rows[0]["domain_id"]
         query = "SELECT unit_id from tbl_units " + \
-                "where unit_name  = '%s'" % unit_name
+                "where unit_code  = '%s'" % unit_code
         rows = self._source_db.select_all(query)
         unit_id = None
         if len(rows) > 0:
@@ -243,10 +243,10 @@ class SourceDB(object):
         return unit_id, domain_id
 
     def check_due_date(
-        self, due_date, domain_name, unit_name, level_1_statutory_name
+        self, due_date, domain_name, unit_code, level_1_statutory_name
     ):
         (unit_id, domain_id) = self.return_unit_domain_id(
-            domain_name, unit_name)
+            domain_name, unit_code)
         if unit_id is None:
             return "Unit not exists"
         if domain_id is None:
@@ -561,7 +561,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                         if key == "Due_Date":
                             isFound = unboundMethod(
                                 v, data.get("Domain"),
-                                data.get("Unit_Name"),
+                                data.get("Unit_Code"),
                                 data.get("Primary_Legislation")
                             )
                         elif key == "Completion_Date":
