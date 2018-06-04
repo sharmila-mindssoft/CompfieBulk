@@ -661,6 +661,9 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
     def check_if_already_saved_compliance(self, legal_entity_id):
         for row_idx, data in enumerate(self._source_data):
             compliance_task_name = data.get("Compliance_Task")
+            primary_legislation = data.get("Primary_Legislation")
+            secondary_legislation = data.get("Secondary_Legislation")
+            unit_code = data.get("Unit_Code")
             due_date = data.get("Due_Date")
             compliance_name = self.get_compliance_task_name(
                 compliance_task_name)
@@ -671,17 +674,21 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 " where compliance_id = (" + \
                 " SELECT compliance_id FROM tbl_compliances where " + \
                 "compliance_task = TRIM(%s) and compliance_description = " + \
-                "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
+                " TRIM(%s) and statutory_mapping like %s and " + \
+                " frequency_id = (SELECT frequency_id from " + \
                 " tbl_compliance_frequency WHERE " + \
-                " frequency=TRIM(%s)) Limit 1)" + \
+                " frequency=TRIM(%s)) Limit 1) and unit_id =( select " + \
+                " unit_id from tbl_units where unit_code = %s and " + \
+                " legal_entity_id = %s ) " + \
                 " and date(due_date) = %s"
             try:
                 due_date = datetime.strptime(due_date, "%d-%b-%Y")
             except ValueError:
                 pass
+            legis_cond = "[" + primary_legislation + " >>" + secondary_legislation + "%"
             params = [
-                compliance_name, description, frequency,
-                due_date
+                compliance_name, description, legis_cond, 
+                frequency, unit_code, legal_entity_id, due_date
             ]
             self.connect_source_db(legal_entity_id)
             rows = self._source_db.select_all(q, params)
