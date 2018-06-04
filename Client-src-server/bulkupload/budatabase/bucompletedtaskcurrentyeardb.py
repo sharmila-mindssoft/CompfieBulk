@@ -245,7 +245,6 @@ def connect_le_db(le_id):
 def get_client_id_by_le(db, legal_entity_id):
     db = connect_le_db(legal_entity_id)
     query = "SELECT client_id, group_name from tbl_client_groups "
-    query = query % legal_entity_id
     rows = db.select_all(query)
     client_id = rows[0]["client_id"]
     client_name = rows[0]["group_name"]
