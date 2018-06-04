@@ -197,31 +197,61 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
     return csv_list
 
 
-def connectKnowledgeDB(le_id):
+def connectLeDB(le_id):
     try:
-        _source_knowledge_db_con = mysql.connector.connect(
+        _knowledge_db_con = mysql.connector.connect(
             user=KNOWLEDGE_DB_USERNAME,
             password=KNOWLEDGE_DB_PASSWORD,
             host=KNOWLEDGE_DB_HOST,
             database=KNOWLEDGE_DATABASE_NAME,
             port=KNOWLEDGE_DB_PORT,
-            autocommit=False,
+            autocommit=False
         )
+        _knowledge_db = Database(_knowledge_db_con)
+        _knowledge_db.begin()
 
-        _source_knowledge_db = Database(_source_knowledge_db_con)
-        _source_knowledge_db.begin()
-        return _source_knowledge_db
+        query = "select t1.client_database_id, t1.database_name, " + \
+            "t1.database_username, t1.database_password, " + \
+            "t3.database_ip, database_port " + \
+            " from tbl_client_database_info as t1 " + \
+            " inner join tbl_client_database as t2 on " + \
+            " t2.client_database_id = t1.client_database_id " + \
+            " inner join tbl_database_server as t3 on " + \
+            " t3.database_server_id = t2.database_server_id " + \
+            " where t1.db_owner_id = %s and t1.is_group = 0;"
+        param = [le_id]
+
+        result = _knowledge_db.select_all(query, param)
+        print result
+        if len(result) > 0:
+            for row in result:
+                dhost = row["database_ip"]
+                uname = row["database_username"]
+                pwd = row["database_password"]
+                port = row["database_port"]
+                db_name = row["database_name"]
+
+                _source_db_con = mysql.connector.connect(
+                    user=uname,
+                    password=pwd,
+                    host=dhost,
+                    database=db_name,
+                    port=port,
+                    autocommit=False,
+                )
+        _source_db = Database(_source_db_con)
+        print "source db : %s" % _source_db
+        _source_db.begin()
+        print "returning : %s" % _source_db
+        return _source_db
     except Exception, e:
         print "Connection Exception Caught"
         print e
 
 
 def get_client_id_by_le(db, legal_entity_id):
-    db = connectKnowledgeDB(legal_entity_id)
-    query = "SELECT client_id, group_name from tbl_client_groups " + \
-            " where client_id = ( select client_id from " + \
-            " tbl_legal_entities where " + \
-            "legal_entity_id='%s')"
+    db = connectLeDB(legal_entity_id)
+    query = "SELECT client_id, group_name from tbl_client_groups "
     query = query % legal_entity_id
     rows = db.select_all(query)
     client_id = rows[0]["client_id"]
@@ -239,7 +269,7 @@ def get_user_category(db, user_id):
 
 
 def get_units_for_user(db, le_id, domain_id, user_id):
-    db = connectKnowledgeDB(le_id)
+    db = connectLeDB(le_id)
     user_category_id = get_user_category(db, user_id)
     if user_category_id > 3:
         query = "SELECT t2.unit_id, t2.legal_entity_id, " + \
