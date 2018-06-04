@@ -75,12 +75,12 @@ def save_completed_task_current_year_csv(
 def save_completed_task_data(db, csv_id, csv_data, client_id):
     try:
         columns = [
-            "csv_past_id",  "Legal_Entity", "Domain",
+            "csv_past_id", "Legal_Entity", "Domain",
             "Unit_Code", "Unit_Name", "perimary_legislation",
             "Secondary_Legislation", "compliance_task_name",
             "Compliance_Description", "Compliance_Frequency", "Statutory_Date",
             "Due_Date", "Assignee", "Completion_Date", "document_name"
-            ]
+        ]
 
         values = []
         for idx, d in enumerate(csv_data):
@@ -118,8 +118,6 @@ def get_past_record_data(db, csvID):
 
     param = [csvID]
     rows = db.select_all(query, param)
-    # print "get_past_record_data>rows>>", rows
-
     return rows
 
 
@@ -155,7 +153,6 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
     param = [session_user, legal_entity_list]
 
     rows = db.select_all(query, param)
-    print "get_completed_task_CSV_list>rows>>", rows
 
     param1 = [session_user]
     docQuery = "select t1.csv_past_id, document_name " + \
@@ -166,7 +163,6 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
                " and document_name != '' " + \
                " and t2.uploaded_by = %s "
     docRows = db.select_all(docQuery, param1)
-    print "docRows-> ", docRows
     if docRows is not None:
         for d in docRows:
             csv_id = d.get("csv_past_id")
@@ -178,7 +174,6 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
                 doc_list.append(docname)
             doc_names[csv_id] = doc_list
 
-    print "doc Names-> ", doc_names
     csv_list = []
     if rows is not None:
         for row in rows:
@@ -197,7 +192,7 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
     return csv_list
 
 
-def connectLeDB(le_id):
+def connect_le_db(le_id):
     try:
         _knowledge_db_con = mysql.connector.connect(
             user=KNOWLEDGE_DB_USERNAME,
@@ -222,7 +217,6 @@ def connectLeDB(le_id):
         param = [le_id]
 
         result = _knowledge_db.select_all(query, param)
-        print result
         if len(result) > 0:
             for row in result:
                 dhost = row["database_ip"]
@@ -240,7 +234,6 @@ def connectLeDB(le_id):
                     autocommit=False,
                 )
         _source_db = Database(_source_db_con)
-        print "source db : %s" % _source_db
         _source_db.begin()
         print "returning : %s" % _source_db
         return _source_db
@@ -250,7 +243,7 @@ def connectLeDB(le_id):
 
 
 def get_client_id_by_le(db, legal_entity_id):
-    db = connectLeDB(legal_entity_id)
+    db = connect_le_db(legal_entity_id)
     query = "SELECT client_id, group_name from tbl_client_groups "
     rows = db.select_all(query)
     client_id = rows[0]["client_id"]
@@ -268,7 +261,7 @@ def get_user_category(db, user_id):
 
 
 def get_units_for_user(db, le_id, domain_id, user_id):
-    db = connectLeDB(le_id)
+    db = connect_le_db(le_id)
     user_category_id = get_user_category(db, user_id)
     if user_category_id > 3:
         query = "SELECT t2.unit_id, t2.legal_entity_id, " + \
