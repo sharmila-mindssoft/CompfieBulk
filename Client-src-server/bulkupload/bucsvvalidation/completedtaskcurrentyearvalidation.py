@@ -289,7 +289,7 @@ class SourceDB(object):
         try:
             completion_date = datetime.strptime(completion_date, "%d-%b-%Y")
         except ValueError:
-            return "Invalid date format"
+            return
 
         if completion_date.date() < start_date:
             return "Should be greater than Start Date"
@@ -577,7 +577,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                         pass
                     elif isFound is not True and isFound != "":
                         msg = "%s - %s" % (key, isFound)
-                        print "msg: %s" % msg
                         if res is not True:
                             res.append(msg)
                         else:
@@ -685,7 +684,11 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 due_date = datetime.strptime(due_date, "%d-%b-%Y")
             except ValueError:
                 pass
-            legis_cond = "[" + primary_legislation + " >>" + secondary_legislation + "%"
+            legis_cond = '["' + primary_legislation 
+            if secondary_legislation != "":
+                legis_cond +=  ">>" + secondary_legislation + "%"
+            else:
+                legis_cond += "%"
             params = [
                 compliance_name, description, legis_cond, 
                 frequency, unit_code, legal_entity_id, due_date

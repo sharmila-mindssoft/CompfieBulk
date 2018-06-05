@@ -8,7 +8,7 @@ from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
-from server.common import string_to_datetime
+from server.common import string_to_datetime, string_to_datetime_with_time
 from clientprotocol import clientcore
 
 __all__ = [
@@ -62,7 +62,7 @@ def save_completed_task_current_year_csv(
         completed_task[0], completed_task[1],
         completed_task[2], completed_task[3],
         completed_task[4], completed_task[5],
-        completed_task[6], string_to_datetime(completed_task[7]),
+        completed_task[6], string_to_datetime_with_time(completed_task[7]),
         completed_task[8], completed_task[9],
         completed_task[10], completed_task[11]
     ]
@@ -115,7 +115,6 @@ def get_past_record_data(db, csvID):
         " statutory_date, due_date, assignee, completion_date, " + \
         " document_name" + \
         "  FROM tbl_bulk_past_data where csv_past_id = %s; "
-
     param = [csvID]
     rows = db.select_all(query, param)
     return rows
@@ -149,7 +148,8 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
             " INNER JOIN tbl_bulk_past_data AS T02 " + \
             " ON T01.csv_past_id = T02.csv_past_id " + \
             " where (T01.total_documents - T01.uploaded_documents) >= 1 " + \
-            " and uploaded_by = %s AND FIND_IN_SET(T01.legal_entity_id, %s)"
+            " and uploaded_by = %s AND FIND_IN_SET(T01.legal_entity_id, %s) " + \
+            " order by T01.uploaded_on DESC"
     param = [session_user, legal_entity_list]
 
     rows = db.select_all(query, param)
@@ -235,7 +235,6 @@ def connect_le_db(le_id):
                 )
         _source_db = Database(_source_db_con)
         _source_db.begin()
-        print "returning : %s" % _source_db
         return _source_db
     except Exception, e:
         print "Connection Exception Caught"

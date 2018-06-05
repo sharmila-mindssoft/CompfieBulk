@@ -134,10 +134,10 @@ def is_alpha_numeric(value):
 
 def is_date(string):
     string_in_date = string
-    result = datetime.datetime.strptime(
+    try:
+        result = datetime.datetime.strptime(
                     string_in_date, "%d-%b-%Y"
                     ).strftime('%d-%b-%Y')
-    try:
         if string is not None:
             if string != datetime.datetime.strptime(
                     string_in_date, "%d-%b-%Y"
