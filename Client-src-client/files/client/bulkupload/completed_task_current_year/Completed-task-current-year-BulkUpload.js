@@ -206,7 +206,7 @@ function validateUpload() {
     var args = null;
     $('#myModal').modal('show');
     if(
-        $('#txt_legal_entity_name_upload').val() == "" && 
+        $('#txt_legal_entity_name_upload').val() == "" &&
         LEGALENTITY_NAME_LABEL_UPLOAD.text() == ""
     ){
         displayMessage(message.legalentity_required);
@@ -304,7 +304,7 @@ function validateUpload() {
                     $('#bu_upload_total').text('0');
                     $('#bu_remain_total').text('0');
                     if (data.doc_count < 2){
-                        myDropzone.parallelUploads = data.doc_count;    
+                        myDropzone.parallelUploads = data.doc_count;
                     }
                     displaySuccessMessage(
                         "Records uploaded successfully");
@@ -662,8 +662,8 @@ function submitUpload() {
                         parseInt(
                             $(".uploaded-data .text-primary").attr("id")
                         ), parseInt(
-                        $(".uploaded-data").attr("id")), 
-                        totalfileUploadSuccess, 
+                        $(".uploaded-data").attr("id")),
+                        totalfileUploadSuccess,
                     function(error, data){
                         resetAdd();
                         resetEdit();
@@ -673,7 +673,7 @@ function submitUpload() {
                         ADD_SCREEN.hide();
                     }
                 )
-            }            
+            }
         } else {
             $('#myModal').modal('hide');
         }
@@ -794,9 +794,9 @@ var myDropzone = new Dropzone("div#myDrop", {
                 myDropzone.removeFile(file);
             } else {
                 addedfiles.push(file.name);
-                queueCount += 1;                
+                queueCount += 1;
             }
-            
+
         });
         this.on("removedfile", function(file) {
             if (jQuery.inArray(file.name, addedfiles) > -1) {
