@@ -1,7 +1,7 @@
 from ..buapiprotocol.pastdatadownloadbulk import PastDataJsonToCSV
 from server.common import (
     get_date_time_in_date,
-    datetime_to_string
+    datetime_to_string_time
 )
 from bulkupload.client_bulkconstants import (
     BULKUPLOAD_CSV_PATH, CSV_MAX_LINE_ITEM)
@@ -123,7 +123,7 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
         return bu_ct.DataAlreadyExists()
     elif res_data["return_status"] is True:
         current_date_time = get_date_time_in_date()
-        str_current_date_time = datetime_to_string(current_date_time)
+        str_current_date_time = datetime_to_string_time(current_date_time)
         unit_id = res_data["unit_id"]
         domain_id = res_data["domain_id"]
         client_id, client_group_name = get_client_id_by_le(
@@ -197,9 +197,6 @@ def process_save_bulk_records(db, request_frame, session_user, session_token):
 def process_get_bulk_download_data(
         db, request_frame, session_user
 ):
-    # print "Process get Bulk download"
-    # print "request_frame>> ", request_frame
-    # print "leid->>>> ", request_frame.legal_entity_id
     converter = PastDataJsonToCSV(
         db, request_frame, session_user, "DownloadPastData"
     )
@@ -233,5 +230,4 @@ def process_update_document_count(
 ):
     csv_id = request_frame.csv_id
     count = request_frame.count
-    print update_document_count(db, csv_id, count)
     return bu_ct.UpdateDocumentCountSuccess()

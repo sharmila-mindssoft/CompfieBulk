@@ -60,6 +60,10 @@ var INVALID_FILE_FORMAT_ERROR = $('.invalidfileformat');
 var UNIT_LISTMAP = {};
 var LEGALENTITYUSR = [];
 
+var TOTAL_DOCUMENTS = 0;
+var UPLOADED_DOCUMENTS = 0;
+var REMAINING_DOCUMENTS = 0;
+
 function displayLoader() {
   $('.loading-indicator-spin').show();
 }
@@ -214,12 +218,18 @@ function validateUpload() {
         return false;
     }
     else if (
-        $('#fileInput').val() == "" && BUCT_PAGE._ActionMode != 'upload'
+        UPLOAD_FILE.val() == "" && BUCT_PAGE._ActionMode == "add"
     ) {
         displayMessage(message.upload_csv);
         $('#myModal').modal('hide');
         return false;
-    } else {
+    }else if (
+        addedfiles.length <=0 && BUCT_PAGE._ActionMode == 'upload'
+    ) {
+        displayMessage(message.upload_docs);
+        $('#myModal').modal('hide');
+        return false;
+    }  else {
         $('#myModal').modal('show');
         if (BUCT_PAGE._ActionMode == "add") {
             args = {
@@ -240,18 +250,18 @@ function validateUpload() {
                 }
                 else if (error == "InvalidCsvFile" ){
                     $('#myModal').modal('hide');
+                    UPLOAD_FILE.val("");
                     displayMessage(message.invalid_csv_file);
                 }else if(error == 'DataAlreadyExists'){
                     $('#myModal').modal('hide');
+                    UPLOAD_FILE.val("");
                     displayMessage(message.data_already_exists);
                 }else if(data == "Bad Request"){
                     displayMessage(message.upload_failed);
-                    // displayMessage(data + "\n" +error);
                     $('#myModal').modal('hide');
                     hideLoader();
                 }
                 else if (error == null) {
-                    console.log("inside else if error null======>")
                     csvSplitName = data.csv_name.substring(
                         0, data.csv_name.lastIndexOf("_"));
                     $('#myModal').modal('hide');
@@ -298,6 +308,7 @@ function validateUpload() {
                     $('#divFileUpload').hide();
                     $('#divSuccessFile').show();
                     $(".bu-doc-summary").show();
+                    TOTAL_DOCUMENTS = data.doc_count;
                     $('#bu_doc_total').text(data.doc_count);
                     $('#up-doc-title').hide();
                     $('#remaining-doc-title').hide();
@@ -307,7 +318,7 @@ function validateUpload() {
                         myDropzone.parallelUploads = data.doc_count;
                     }
                     displaySuccessMessage(
-                        "Records uploaded successfully");
+                        "Compliance uploaded successfully");
                     hideLoader();
 
                 } else {
@@ -331,7 +342,7 @@ function validateUpload() {
                         data.invalid_file_format);
                     $('.dropbtn').show();
                     $('.view-summary').show();
-
+                    UPLOAD_FILE.val("");
                     $('.invaliddata').show();
                     $('.view-summary').show();
                     $('#divFileUpload').show();
@@ -357,16 +368,11 @@ function validateUpload() {
         } else {
             $('#myModal').modal('hide');
             displayLoader();
-            // $('#bu_doc_total').text(data.doc_count);
             $('#up-doc-title').show();
             $('#remaining-doc-title').show();
-            $('#bu_upload_total').text(
-                parseInt($('#bu_upload_total').text()
-                    ) + queueCount
-            );
+            $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
             $('#bu_remain_total').text(
-                parseInt($('#bu_doc_total').text()) -
-                parseInt($('#bu_upload_total').text())
+                TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS
             );
             myDropzone.processQueue();
         }
@@ -530,8 +536,20 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(
 
 BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     var uploadedCsvName = data.csv_name;
+    var legal_entity_name = data.legal_entity_name;
     var csvSplitName = null;
     resetEdit();
+    LEGALENTITY_NAME_LABEL.show();
+    LEGALENTITY_NAME_LABEL_UPLOAD.show();
+    LEGALENTITY_NAME_AC.hide();
+    LEGALENTITY_NAME_AC_UPLOAD.hide();
+    LEGALENTITY_NAME_LABEL_UPLOAD.text(legal_entity_name);
+
+
+    TOTAL_DOCUMENTS = data.total_documents;
+    UPLOADED_DOCUMENTS = data.bu_uploaded_documents;
+    REMAINING_DOCUMENTS = data.remaining_documents;
+
     $("#dom_id_hdn").val(data.domain_id);
     $("#unit_id_hdn").val(data.unit_id);
     $("#start_date_hdn").val(data.start_date);
@@ -575,6 +593,7 @@ function downloadUploadedData(
 }
 
 function downloadData() {
+    $('#myModal').modal('show');
     var legalEntityName;
     var domainName = TXT_DOMAIN.val();
     var unitName = TXT_UNIT.val();
@@ -589,16 +608,19 @@ function downloadData() {
     if (LEGALENTITY_ID.val().trim() == "") {
         displayMessage(message.legalentity_required);
         LEGALENTITY_NAME.focus();
+        $('#myModal').modal('hide');
         return false;
     }
     if (HDN_DOMAIN.val().trim() == "") {
         displayMessage(message.domain_required);
         TXT_DOMAIN.focus();
+        $('#myModal').modal('hide');
         return false;
     }
     if (HDN_UNIT.val().trim() == "") {
         displayMessage(message.unit_required);
         TXT_UNIT.focus();
+        $('#myModal').modal('hide');
         return false;
     }
     if (LEGALENTITY_NAME_LABEL.text() == "") {
@@ -616,16 +638,18 @@ function downloadData() {
                 downloadUrl = data.link;
                 if (downloadUrl != null) {
                     window.open(downloadUrl, '_blank');
+                    $('#myModal').modal('hide');
                     hideLoader();
                 } else {
                     displayMessage(message.no_compliance_available);
+                    $('#myModal').modal('hide');
                     hideLoader();
                 }
             } else {
                 if (error == "ExportToCSVEmpty"){
                     displayMessage(message.no_compliance_available);
                 }
-
+                $('#myModal').modal('hide');
                 hideLoader();
             }
         }
@@ -667,13 +691,20 @@ function submitUpload() {
                     function(error, data){
                         resetAdd();
                         resetEdit();
-                        displaySuccessMessage("Record Submitted successfully");
+                        displaySuccessMessage("Compliance Submitted successfully");
                         $('#myModal').modal('hide');
                         VIEW_SCREEN.show();
                         ADD_SCREEN.hide();
                     }
                 )
-            }
+            }else{
+                resetAdd();
+                resetEdit();
+                displaySuccessMessage("Compliance Submitted successfully");
+                $('#myModal').modal('hide');
+                VIEW_SCREEN.show();
+                ADD_SCREEN.hide();
+            }           
         } else {
             $('#myModal').modal('hide');
         }
@@ -717,6 +748,12 @@ function file_upload_rul() {
 }
 
 function resetAdd() {
+    LEGALENTITY_NAME_LABEL.hide();
+    LEGALENTITY_NAME_LABEL_UPLOAD.hide();
+    LEGALENTITY_NAME_AC.show();
+    LEGALENTITY_NAME_AC_UPLOAD.show();
+    LEGALENTITY_NAME_LABEL_UPLOAD.text("");
+
     $('#divDownloadSection').show();
     $('#divUploadSection').show();
 
@@ -728,7 +765,7 @@ function resetAdd() {
     $('#divSuccessFile').hide();
     $('.bu-doc-summary').hide();
     BTN_UPLOAD.show();
-
+   
     BUCT_PAGE._ActionMode = "add";
     UPLOAD_FILE.val("");
     LEGALENTITY_NAME.val("");
@@ -792,6 +829,9 @@ var myDropzone = new Dropzone("div#myDrop", {
             }
             if (jQuery.inArray(file.name, DOC_NAMES) == -1) {
                 myDropzone.removeFile(file);
+            }else if(REMAINING_DOCUMENTS == 0){
+                myDropzone.removeFile(file);
+                displayMessage("Required files were already added");
             } else {
                 addedfiles.push(file.name);
                 queueCount += 1;
@@ -814,20 +854,29 @@ var myDropzone = new Dropzone("div#myDrop", {
             if (totalfileUploadSuccess < queueCount) {
                 totalfileUploadSuccess += 1;
                 perQueueUploadSuccess += 1;
+                UPLOADED_DOCUMENTS += 1;
+                REMAINING_DOCUMENTS = TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS;
             }
 
             if (perQueueUploadSuccess == maxParallelCount) {
                 perQueueUploadSuccess = 0;
                 myDropzone.processQueue();
             }
-            if (totalfileUploadSuccess == queueCount) {
+            if (totalfileUploadSuccess == DOC_NAMES.length || 
+                REMAINING_DOCUMENTS == 0
+            ) {
                 displaySuccessMessage(message.document_upload_success);
                 $('#divSuccessbutton').show();
                 hideLoader();
                 BTN_UPLOAD.hide();
                 BUCT_PAGE.showList();
-                // myDropzone.removeAllFiles(true);
             }
+            $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
+            $('#bu_remain_total').text(
+                TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS
+            );
+            myDropzone.removeAllFiles(true);
+            hideLoader();
         });
 
         this.on("error", function(file, errorMessage) {
