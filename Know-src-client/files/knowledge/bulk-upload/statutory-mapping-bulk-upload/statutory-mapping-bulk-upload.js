@@ -429,6 +429,7 @@ function PageControls() {
     CANCEL_BUTTON.click(function() {
         BU_SMPAGE.showList();
         $(".dropzone > .dz-preview").remove();
+        $(".dropzone").removeClass("dz-started");
         addedfiles = [];
     });
 

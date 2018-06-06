@@ -13,6 +13,8 @@ import socket
 import mysql.connector
 import random
 import string
+import logger
+import traceback
 
 
 from constants import (
@@ -68,7 +70,14 @@ def validate_session(session_id):
         if _db.validate_session_token(session_id) is None:
             response_data = False
         _db.commit()
-    except Exception:
+    except Exception, e:
+        logger.logTempFiler(
+            "error", "run_tempfile_server > validate_session()", str(e)
+        )
+        logger.logTempFiler(
+            "error", "run_tempfile_server > validate_session()",
+            str(traceback.format_exc())
+        )
         _db.rollback()
 
     finally:
@@ -91,13 +100,19 @@ def update_file_status(old_file_name, new_file_name, file_size, csv_id):
     _db = Database(_db_con)
     try:
         _db.begin()
-        print "update file status"
         if _db.update_file_status(
             old_file_name, csv_id, new_file_name, file_size
         ) is None:
             response_data = False
         _db.commit()
-    except Exception:
+    except Exception, e:
+        logger.logTempFiler(
+            "error", "run_tempfile_server > update_file_status()", str(e)
+        )
+        logger.logTempFiler(
+            "error", "run_tempfile_server > update_file_status()",
+            str(traceback.format_exc())
+        )
         _db.rollback()
 
     finally:
@@ -119,7 +134,15 @@ def update_file_status_client(old_file_name, new_file_name, file_size, csv_id):
         ) is None:
             response_data = False
         _db.commit()
-    except Exception:
+    except Exception, e:
+        logger.logTempFiler(
+            "error", "run_tempfile_server > update_file_status_client()",
+            str(e)
+        )
+        logger.logTempFiler(
+            "error", "run_tempfile_server > update_file_status_client()",
+            str(traceback.format_exc())
+        )
         _db.rollback()
 
     finally:
@@ -139,8 +162,15 @@ def update_file_download_status(csv_id, status):
         if db_stat is None:
             response_data = False
         _db.commit()
-    except Exception:
-        print "In Exception"
+    except Exception, e:
+        logger.logTempFiler(
+            "error", "run_tempfile_server > update_file_download_status()",
+            str(e)
+        )
+        logger.logTempFiler(
+            "error", "run_tempfile_server > update_file_download_status()",
+            str(traceback.format_exc())
+        )
         _db.rollback()
 
     finally:
@@ -160,7 +190,14 @@ def update_document_download_status(csv_id, status):
             response_data = False
         _db.commit()
     except Exception, e:
-        print "In Exception", e
+        logger.logTempFiler(
+            "error", "run_tempfile_server > update_document_download_status",
+            str(e)
+        )
+        logger.logTempFiler(
+            "error", "run_tempfile_server > update_document_download_status",
+            str(traceback.format_exc())
+        )
         _db.rollback()
 
     finally:
@@ -180,11 +217,18 @@ def delete_declined_docs(csv_id):
         db_stat = _db.get_declined_docs(csv_id)
         if db_stat is not None:
             response_data = db_stat
-        # _db.commit()
+        _db.commit()
     except Exception, e:
         print "In Exception"
+        logger.logTempFiler(
+            "error", "run_tempfile_server > delete_declined_docs", str(e)
+        )
+        logger.logTempFiler(
+            "error", "run_tempfile_server > delete_declined_docs",
+            str(traceback.format_exc())
+        )
+        _db.rollback()
         raise RuntimeError(str(e))
-        # _db.rollback()
 
     finally:
         _db.close()
@@ -195,7 +239,9 @@ def delete_declined_docs(csv_id):
 
 @app.route('/temp/upload', methods=['POST'])
 def upload():
-    print request
+    logger.logTempFiler(
+        "info", "run_tempfile_server > /temp/upload > Request", request
+    )
     if request.method == 'POST':
         f = request.files['file']
 
@@ -227,6 +273,10 @@ def upload():
             if update_file_status(
                 f.filename, random_file_name, renamed_file_size, csvid
             ) is False:
+                logger.logTempFiler(
+                    "info", "run_tempfile_server > /temp/upload",
+                    "update file status failed"
+                )
                 return "update failed"
 
         return "success"
@@ -234,7 +284,9 @@ def upload():
 
 @app.route('/client/temp/upload', methods=['POST'])
 def upload_client():
-    print request
+    logger.logTempFiler(
+        "info", "run_tempfile_server > /client/temp/upload > Request", request
+    )
     if request.method == 'POST':
         f = request.files['file']
         random_string = generate_random(5)
@@ -262,6 +314,10 @@ def upload_client():
         if update_file_status_client(
             f.filename, random_file_name, renamed_file_size, csvid
         ) is False:
+            logger.logTempFiler(
+                    "info", "run_tempfile_server > /client/temp/upload",
+                    "update file status failed"
+            )
             return "update failed"
 
         return "success"
@@ -286,6 +342,10 @@ def zip_folder(folder_name, folder_path):
             arcname = f[len(folder_path) + 0:]
             newzip.write(f, arcname)
     if update_file_download_status(folder_name, "completed") is False:
+        logger.logTempFiler(
+            "info", "run_tempfile_server > zip_folder",
+            "download status update failed"
+        )
         return "download status update failed"
     zipping_in_process.remove(folder_name)
     file_status[folder_name] = "Zipping Completed"
@@ -293,6 +353,9 @@ def zip_folder(folder_name, folder_path):
 
 @app.route('/temp/approve', methods=['POST'])
 def approve():
+    logger.logTempFiler(
+        "info", "run_tempfile_server > /temp/approve > Request", request
+    )
     csv_id = request.args.get('csvid')
     dec_docs = delete_declined_docs(csv_id)
     folder_name = request.args.get('csvid')
@@ -300,13 +363,25 @@ def approve():
     folder_path = os.path.join(app.config['UPLOAD_PATH'], folder_name)
     for dd in dec_docs:
         if not os.path.isfile(folder_path + '/' + dd):
+            logger.logTempFiler(
+                "info", "run_tempfile_server > /temp/approve",
+                "Declined File not exists"
+            )
             return "File not exists"
         else:
             os.remove(folder_path + '/' + dd)
 
     if not os.path.exists(folder_path):
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/approve",
+            "folder_path not exists"
+        )
         return "Error"
     if folder_name in zipping_in_process:
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/approve",
+            "Already Started for zipping"
+        )
         return "Already Started"
     thread.start_new_thread(zip_folder, (folder_name, folder_path))
     # if update_file_download_status(folder_name, "inprogress") is False:
@@ -316,13 +391,24 @@ def approve():
 
 @app.route('/temp/downloadfile', methods=['GET'])
 def downloadfile():
+    logger.logTempFiler(
+        "info", "run_tempfile_server > /temp/downloadfile > Request", request
+    )
     folder_name = request.args.get('csvid')
     assert folder_name is not None
     folder_path = os.path.join(app.config['UPLOAD_PATH'], folder_name)
     zip_f_name = get_zip_file(folder_name)
     if not os.path.exists(folder_path):
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/downloadfile",
+            "Path not exists for downloading file"
+        )
         return "Error"
     if not os.path.isfile(zip_f_name):
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/downloadfile",
+            "File not found for downloading"
+        )
         return "file not found"
     return send_from_directory(
         directory=app.config['UPLOAD_PATH'],
@@ -332,13 +418,24 @@ def downloadfile():
 
 @app.route('/temp/removefile', methods=['POST'])
 def removefile():
+    logger.logTempFiler(
+        "info", "run_tempfile_server > /temp/removefile > Request", request
+    )
     folder_name = request.args.get('csvid')
     assert folder_name is not None
     folder_path = os.path.join(app.config['UPLOAD_PATH'], folder_name)
     zip_f_name = get_zip_file(folder_name)
     if not os.path.exists(folder_path):
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/removefile",
+            "Path not exists for removing file"
+        )
         return "Error"
     if not os.path.isfile(zip_f_name):
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/removefile",
+            "File not found for removing file"
+        )
         return "file not found"
     os.remove(zip_f_name)
     rmtree(folder_path)
@@ -347,13 +444,27 @@ def removefile():
 
 @app.route('/temp/removeclientfile', methods=['POST'])
 def removeclientfile():
+    logger.logTempFiler(
+        "info", "run_tempfile_server > /temp/removeclientfile > Request",
+        request
+    )
     folder_name = request.args.get('csvid')
     assert folder_name is not None
-    folder_path = os.path.join(app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], folder_name)
+    folder_path = os.path.join(
+        app.config['CLIENT_DOCUMENT_UPLOAD_PATH'],
+        folder_name)
     zip_f_name = get_client_zip_file(folder_name)
     if not os.path.exists(folder_path):
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/removeclientfile",
+            "Path not exists for removing client file"
+        )
         return "Error"
     if not os.path.isfile(zip_f_name):
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/removeclientfile",
+            "File not found for removing client file"
+        )
         return "file not found"
     os.remove(zip_f_name)
     rmtree(folder_path)
@@ -363,6 +474,9 @@ def removeclientfile():
 @app.route('/uploadedformat/<csvid>/<filename>', methods=['GET'])
 def download_format_file(csvid, filename):
     # folder_name = request.args.get('folder_name')
+    logger.logTempFiler(
+        "info", "run_tempfile_server > download_format_file > Request", request
+    )
     assert csvid is not None
     assert filename is not None
     folder_path = os.path.join(app.config['UPLOAD_PATH'], csvid)
@@ -375,6 +489,9 @@ def download_format_file(csvid, filename):
 
 @app.route('/temp/docsubmit', methods=['POST'])
 def approve_client():
+    logger.logTempFiler(
+        "info", "run_tempfile_server > approve_client > Request", request
+    )
     folder_name = request.args.get('csvid')
     assert folder_name is not None
     folder_path = os.path.join(
@@ -382,8 +499,16 @@ def approve_client():
     )
 
     if not os.path.exists(folder_path):
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/docsubmit",
+            "Path not exists for docsubmit client"
+        )
         return "Error"
     if folder_name in zipping_in_process:
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/docsubmit",
+            "Already Started Zipping docsubmit"
+        )
         return "Already Started"
     thread.start_new_thread(client_zip_folder, (folder_name, folder_path))
     return "started zipping"
@@ -401,6 +526,11 @@ def client_zip_folder(folder_name, folder_path):
             arcname = f[len(folder_path) + 0:]
             newzip.write(f, arcname)
     if update_document_download_status(folder_name, "completed") is False:
+        logger.logTempFiler(
+            "info", "run_tempfile_server > client_zip_folder",
+            "download status update failed"
+        )
+
         return "download status update failed"
     zipping_in_process.remove(folder_name)
     file_status[folder_name] = "Zipping Completed"
@@ -415,6 +545,9 @@ def get_client_zip_file(folder_name):
 
 @app.route('/temp/downloadclientfile', methods=['GET'])
 def download_client_file():
+    logger.logTempFiler(
+        "info", "run_tempfile_server > download_client_file > Request", request
+    )
     folder_name = request.args.get('csvid')
     assert folder_name is not None
     folder_path = os.path.join(
@@ -422,8 +555,16 @@ def download_client_file():
     zip_f_name = get_client_zip_file(folder_name)
 
     if not os.path.exists(folder_path):
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/downloadclientfile",
+            "Path not exists for downloadclientfile client"
+        )
         return "Error"
     if not os.path.isfile(zip_f_name):
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/downloadclientfile",
+            "File not exists for downloadclientfile client"
+        )
         return "file not found"
     return send_from_directory(
         directory=app.config['CLIENT_DOCUMENT_UPLOAD_PATH'],
@@ -443,7 +584,10 @@ def parse_port(port):
         port = int(port)
         assert (port > 0) and (port <= 65535)
         return port
-    except Exception:
+    except Exception, e:
+        logger.logTempFiler(
+            "error", "run_tempfile_server > parse_port()", str(e)
+        )
         return None
 
 
@@ -457,7 +601,10 @@ def parse_ip_address(ip_address):
         if port is None:
             return None
 
-    except Exception:
+    except Exception, e:
+        logger.logTempFiler(
+            "error", "run_tempfile_server > parse_ip_address()", str(e)
+        )
         return None
 
     assert ip is not None
@@ -472,6 +619,9 @@ def main():
     if port is None:
         msg = "error: port is not in PORT format: %s"
         print msg % (args.port,)
+        logger.logTempFiler(
+            "error", "run_tempfile_server > main()", msg % (args.port,)
+        )
         return
 
     settings = {
