@@ -249,9 +249,9 @@ class SourceDB(object):
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_code)
         if unit_id is None:
-            return "Unit not exists"
+            return 
         if domain_id is None:
-            return "Domain not exists"
+            return 
         rows = return_past_due_dates(
             self._source_db, domain_id, unit_id, None
         )
@@ -635,9 +635,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                     "check_due_date"
                 ) is True or csvParam.get(
                     "check_completion_date"
-                ) is True or csvParam.get(
-                    "check_is_valid_frequency"
-                )is True:
+                ) is True:
                     unboundMethod = self._validation_method_maps.get(
                         key)
                     if unboundMethod is not None:
@@ -700,62 +698,65 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         error_count
     ):
         for key in _csv_column_name:
-                value = data.get(key)
-                isFound = ""
-                values = value.strip().split(CSV_DELIMITER)
-                csvParam = csv_params.get(key)
-                if (key == "Document_Name" and value != ''):
-                    self._doc_names.append(value)
-                result = self.validate_csv_values(
-                    row_idx, res, values, key, csvParam, data,
-                    mapped_error_dict, mapped_header_dict, invalid,
-                    isFound, error_count
-                )
-                if result is not False:
-                    (
-                        mapped_error_dict, mapped_header_dict,
-                        invalid, error_count, res
-                    ) = result
+            value = data.get(key)
+            isFound = ""
+            if key == "Compliance_Frequency":
+                value = ''.join(e for e in value if e.isalnum())
+            values = value.strip().split(CSV_DELIMITER)
+            csvParam = csv_params.get(key)
+            if (key == "Document_Name" and value != ''):
+                self._doc_names.append(value)
+            
+            result = self.validate_csv_values(
+                row_idx, res, values, key, csvParam, data,
+                mapped_error_dict, mapped_header_dict, invalid,
+                isFound, error_count
+            )
+            if result is not False:
+                (
+                    mapped_error_dict, mapped_header_dict,
+                    invalid, error_count, res
+                ) = result
+            else:
+                return False
+            if key is "Document_Name":
+                msg = []
+                if data["Document_Name"] != "":
+                    file_extension = os.path.splitext(
+                        data["Document_Name"])
+                    allowed_file_formats = [
+                        ".pdf", ".doc", ".docx", ".xls", ".xlsx",
+                        ".png", ".jpeg"
+                    ]
+                    if file_extension[1] not in allowed_file_formats:
+                        msg.append("Document Name - Invalid File Format")
+                        self._error_summary["invalid_file_format"] += 1
+                        res = self.make_error_desc(res, msg)
+            if res is not True:
+                error_list = mapped_error_dict.get(row_idx)
+                if error_list is None:
+                    error_list = res
                 else:
-                    return False
-                if key is "Document_Name":
-                    msg = []
-                    if data["Document_Name"] != "":
-                        file_extension = os.path.splitext(
-                            data["Document_Name"])
-                        allowed_file_formats = [
-                            ".pdf", ".doc", ".docx", ".xls", ".xlsx",
-                            ".png", ".jpeg"
-                        ]
-                        if file_extension[1] not in allowed_file_formats:
-                            msg.append("Document Name - Invalid File Format")
-                            self._error_summary["invalid_file_format"] += 1
-                            res = self.make_error_desc(res, msg)
-                if res is not True:
-                    error_list = mapped_error_dict.get(row_idx)
-                    if error_list is None:
-                        error_list = res
-                    else:
-                        error_list.extend(res)
-                    res = True
+                    error_list.extend(res)
+                res = True
 
-                    mapped_error_dict[row_idx] = error_list
-                    head_idx = mapped_header_dict.get(key)
-                    if head_idx is None:
-                        head_idx = [row_idx]
-                    else:
-                        head_idx.append(row_idx)
+                mapped_error_dict[row_idx] = error_list
+                head_idx = mapped_header_dict.get(key)
+                if head_idx is None:
+                    head_idx = [row_idx]
+                else:
+                    head_idx.append(row_idx)
 
-                    mapped_header_dict[key] = head_idx
-                    invalid += 1
-                    self._error_summary["mandatory_error"] += error_count[
-                        "mandatory"]
-                    self._error_summary["max_length_error"] += error_count[
-                        "max_length"]
-                    self._error_summary["invalid_char_error"] += error_count[
-                        "invalid_char"]
-                    self._error_summary["invalid_date"] += error_count[
-                        "invalid_date"]
+                mapped_header_dict[key] = head_idx
+                invalid += 1
+                self._error_summary["mandatory_error"] += error_count[
+                    "mandatory"]
+                self._error_summary["max_length_error"] += error_count[
+                    "max_length"]
+                self._error_summary["invalid_char_error"] += error_count[
+                    "invalid_char"]
+                self._error_summary["invalid_date"] += error_count[
+                    "invalid_date"]
         return (
             mapped_error_dict, mapped_header_dict, invalid, error_count
         )
