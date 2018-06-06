@@ -1,4 +1,5 @@
 import os
+import json
 import collections
 import mysql.connector
 import requests
@@ -227,7 +228,7 @@ class SourceDB(object):
 
         return True
 
-    def return_unit_domain_id(self, domain_name, unit_name):
+    def return_unit_domain_id(self, domain_name, unit_code):
         query = "SELECT domain_id from tbl_domains " + \
                 "where domain_name  = '%s'" % domain_name
         rows = self._source_db.select_all(query)
@@ -235,7 +236,7 @@ class SourceDB(object):
         if len(rows) > 0:
             domain_id = rows[0]["domain_id"]
         query = "SELECT unit_id from tbl_units " + \
-                "where unit_name  = '%s'" % unit_name
+                "where unit_code  = '%s'" % unit_code
         rows = self._source_db.select_all(query)
         unit_id = None
         if len(rows) > 0:
@@ -243,10 +244,10 @@ class SourceDB(object):
         return unit_id, domain_id
 
     def check_due_date(
-        self, due_date, domain_name, unit_name, level_1_statutory_name
+        self, due_date, domain_name, unit_code, level_1_statutory_name
     ):
         (unit_id, domain_id) = self.return_unit_domain_id(
-            domain_name, unit_name)
+            domain_name, unit_code)
         if unit_id is None:
             return "Unit not exists"
         if domain_id is None:
@@ -270,28 +271,48 @@ class SourceDB(object):
             return "Not Found"
 
     def check_completion_date(
-        self, completion_date, statutory_date, due_date
+        self, unit_code, due_date, legal_entity, compliance_task,
+        compliance_description, primary_legislation, secondary_legislation,
+        domain_name, completion_date
     ):
-        if statutory_date is None or statutory_date == "":
-            return
-        statu_array = statutory_date.split()
-        trigger_before_days_string = statu_array[len(statu_array)-1]
+        (unit_id, domain_id) = self.return_unit_domain_id(
+            domain_name, unit_code)
+
+        q1 = " SELECT compliance_id FROM tbl_compliances where " + \
+                "compliance_task = TRIM(%s) and compliance_description = " + \
+                " TRIM(%s) and statutory_mapping like %s" 
+
+        legis_cond = '["' + primary_legislation 
+        if secondary_legislation != "":
+            legis_cond +=  ">>" + secondary_legislation + "%"
+        else:
+            legis_cond += "%"
+        params = [
+            compliance_task, compliance_description, legis_cond
+        ]
+        rows = self._source_db.select_all(q1, params)
+        compliance_id = None
+        if rows:
+            compliance_id = rows[0]["compliance_id"]
+
+        q = "SELECT statutory_dates from tbl_assign_compliances " + \
+            " where unit_id = %s  and domain_id = %s" + \
+            " and compliance_id = %s"
+        params = [unit_id, domain_id, compliance_id]
+        rows = self._source_db.select_all(q, params)
+        statutory_dates = None
+        trigger_before_days = 0
+        if rows:
+            statutory_dates = rows[0]["statutory_dates"] 
+            statutory_dates_array = json.loads(statutory_dates)
+            trigger_before_days = int(statutory_dates_array[0]["trigger_before_days"])
         try:
             due_date = datetime.strptime(due_date, "%d-%b-%Y")
+            completion_date = datetime.strptime(completion_date, "%d-%b-%Y").date()
         except ValueError:
             return
-        start_date = due_date.date()
-        trigger_before_days = trigger_before_days_string.replace("(", "")
-        trigger_before_days = trigger_before_days.replace(")", "")
-        if trigger_before_days.isalpha() is False:
-            start_date = due_date.date() - timedelta(
-                days=int(trigger_before_days))
-        try:
-            completion_date = datetime.strptime(completion_date, "%d-%b-%Y")
-        except ValueError:
-            return "Invalid date format"
-
-        if completion_date.date() < start_date:
+        start_date = due_date.date() - timedelta(days=trigger_before_days) 
+        if completion_date < start_date:
             return "Should be greater than Start Date"
         else:
             return True
@@ -561,13 +582,20 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                         if key == "Due_Date":
                             isFound = unboundMethod(
                                 v, data.get("Domain"),
-                                data.get("Unit_Name"),
+                                data.get("Unit_Code"),
                                 data.get("Primary_Legislation")
                             )
                         elif key == "Completion_Date":
                             isFound = unboundMethod(
-                                v, data.get("Statutory_Date"),
-                                data.get("Due_Date")
+                                data.get("Unit_Code"),
+                                data.get("Due_Date"),
+                                data.get("Legal_Entity"),
+                                data.get("Compliance_Task"),
+                                data.get("Compliance_Description"),
+                                data.get("Primary_Legislation"),
+                                data.get("Secondary_Legislation"),
+                                data.get("Domain"),
+                                data.get("Completion_Date")
                             )
                         else:
                             isFound = unboundMethod(v)
@@ -577,7 +605,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                         pass
                     elif isFound is not True and isFound != "":
                         msg = "%s - %s" % (key, isFound)
-                        print "msg: %s" % msg
                         if res is not True:
                             res.append(msg)
                         else:
@@ -685,7 +712,11 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 due_date = datetime.strptime(due_date, "%d-%b-%Y")
             except ValueError:
                 pass
-            legis_cond = "[" + primary_legislation + " >>" + secondary_legislation + "%"
+            legis_cond = '["' + primary_legislation 
+            if secondary_legislation != "":
+                legis_cond +=  ">>" + secondary_legislation + "%"
+            else:
+                legis_cond += "%"
             params = [
                 compliance_name, description, legis_cond, 
                 frequency, unit_code, legal_entity_id, due_date

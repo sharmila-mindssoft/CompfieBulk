@@ -253,7 +253,6 @@ def get_download_bulk_compliance_data(
     for (
             level_1_statutory_name, compliances
             ) in level_1_statutory_wise_compliances.iteritems():
-        print "len(compliances)-->", len(compliances)
         if len(compliances) > 0:
             statutory_wise_compliances.append(
                 STATUTORY_WISE_COMPLIANCES(
