@@ -183,18 +183,22 @@ class Database(object):
         return res_update_stats
 
     def get_declined_docs(self, csv_id):
-        print "csv_id-in get_declined_docs >>>>> ", csv_id
-
+        print "csv id-?> ", csv_id
         # query = "SELECT format_file FROM tbl_bulk_statutory_mapping as t1 " \
         #         "inner join tbl_bulk_statutory_mapping_csv AS t2 on " \
         #         "t1.csv_id  = t2.csv_id WHERE t1.csv_id = %s and "\
         #         "(t1.action=3 or t2.is_fully_rejected = 1)"
 
         query = "SELECT format_file FROM tbl_bulk_statutory_mapping WHERE " \
-                "csv_id = %s and action = 3"
-        param = [int(csv_id)]
+                "csv_id = %s and action = 3 and format_file not in " \
+                "(SELECT  format_file FROM tbl_bulk_statutory_mapping " \
+                "WHERE csv_id =%s and action <>3)"
+        print "query-> ", query
+        param = [int(csv_id), int(csv_id)]
         row = self.select_all(query, param)
+        print "rows>>> ", row
         dec_doc_list = []
         for r in row:
             dec_doc_list.append(r["format_file"].encode('ascii', 'ignore'))
+        print "dec_doc_list-> ", dec_doc_list
         return dec_doc_list
