@@ -377,7 +377,7 @@ function validateUpload() {
                     $('#csv').attr("href", csvPath);
                     $('#excel').attr("href", xls_path);
                     $('#ods').attr("href", ods_path);
-                    $('#txt').attr("href", txt_path);
+                    // $('#txt').attr("href", txt_path);
                     hideLoader();
                 }
             });
