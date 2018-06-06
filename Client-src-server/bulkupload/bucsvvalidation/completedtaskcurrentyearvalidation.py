@@ -270,14 +270,33 @@ class SourceDB(object):
         else:
             return "Not Found"
 
-    def check_completion_date(
-        self, unit_code, due_date, legal_entity, compliance_task,
-        compliance_description, primary_legislation, secondary_legislation,
-        domain_name, completion_date
-    ):
-        (unit_id, domain_id) = self.return_unit_domain_id(
-            domain_name, unit_code)
 
+    def check_is_valid_frequency(
+        self, compliance_task, compliance_description, primary_legislation,
+        secondary_legislation, domain_name, frequency
+    ):
+        compliance_id = self.get_compliance_id_from_name(
+            compliance_task, compliance_description, primary_legislation, 
+            secondary_legislation
+        )
+        q = "select frequency from tbl_compliance_frequency where " + \
+            " frequency_id = (select frequency_id from tbl_compliances " + \
+            " where compliance_id = %s) "
+        params = [compliance_id]
+        rows  = self._source_db.select_all(q, params)
+        orig_freq = None
+        if rows:
+            orig_freq = rows[0]["frequency"]
+        if frequency != orig_freq:
+            return "Invalid"
+        else:
+            return True
+
+
+    def get_compliance_id_from_name(
+        self, compliance_task, compliance_description, primary_legislation, 
+        secondary_legislation
+    ):
         q1 = " SELECT compliance_id FROM tbl_compliances where " + \
                 "compliance_task = TRIM(%s) and compliance_description = " + \
                 " TRIM(%s) and statutory_mapping like %s" 
@@ -294,6 +313,20 @@ class SourceDB(object):
         compliance_id = None
         if rows:
             compliance_id = rows[0]["compliance_id"]
+        return compliance_id
+
+    def check_completion_date(
+        self, unit_code, due_date, legal_entity, compliance_task,
+        compliance_description, primary_legislation, secondary_legislation,
+        domain_name, completion_date
+    ):
+        (unit_id, domain_id) = self.return_unit_domain_id(
+            domain_name, unit_code)
+
+        compliance_id = self.get_compliance_id_from_name(
+            compliance_task, compliance_description, primary_legislation, 
+            secondary_legislation
+        )
 
         q = "SELECT statutory_dates from tbl_assign_compliances " + \
             " where unit_id = %s  and domain_id = %s" + \
@@ -325,8 +358,25 @@ class SourceDB(object):
     def check_domain(self, domain_name):
         return self.check_base(True, self.domain, domain_name, None)
 
-    def check_unit_code(self, unit_code):
-        return self.check_base(True, self.unit_code, unit_code, None)
+    def check_valid_unit_code(self, unit_code, unit_name):
+        q = "select unit_name from tbl_units where unit_code = %s" 
+        params = [unit_code]
+        rows = self._source_db.select_all(q, params)
+        org_unit_name = None
+        if rows:
+            org_unit_name = rows[0]["unit_name"]
+        if org_unit_name == unit_name:
+            return True
+        else:
+            return "Invalid"
+
+    def check_unit_code(self, unit_code, unit_name):
+        status1 = self.check_valid_unit_code(unit_code, unit_name)
+        status2 = self.check_base(True, self.unit_code, unit_code, None)
+        if status1 is True:
+            return status2
+        else:
+            return status1
 
     def check_unit_name(self, unit_name):
         return self.check_base(True, self.unit_name, unit_name, None)
@@ -346,9 +396,19 @@ class SourceDB(object):
             True, self.compliance_description, compliance_description, None)
 
     def check_frequency(
-            self, frequency):
-        return self.check_base(
+        self, compliance_task, compliance_description, primary_legislation,
+        secondary_legislation, domain_name, frequency
+    ):
+        status1 =self.check_is_valid_frequency(
+            compliance_task, compliance_description, primary_legislation,
+            secondary_legislation, domain_name, frequency
+        )
+        status2 = self.check_base(
             False, self.compliance_frequency, frequency, None)
+        if status1 is True:
+            return status2
+        else:
+            return status1
 
     def check_assignee(self, assignee):
         return self.check_base(False, self.assignee, assignee, None)
@@ -575,7 +635,9 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                     "check_due_date"
                 ) is True or csvParam.get(
                     "check_completion_date"
-                ) is True:
+                ) is True or csvParam.get(
+                    "check_is_valid_frequency"
+                )is True:
                     unboundMethod = self._validation_method_maps.get(
                         key)
                     if unboundMethod is not None:
@@ -596,6 +658,19 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                 data.get("Secondary_Legislation"),
                                 data.get("Domain"),
                                 data.get("Completion_Date")
+                            )
+                        elif key == "Compliance_Frequency":
+                            isFound = unboundMethod(
+                                data.get("Compliance_Task"),
+                                data.get("Compliance_Description"),
+                                data.get("Primary_Legislation"),
+                                data.get("Secondary_Legislation"),
+                                data.get("Domain"),
+                                data.get("Compliance_Frequency")
+                            )
+                        elif key == "Unit_Code":
+                            isFound = unboundMethod(
+                                v, data.get("Unit_Name")
                             )
                         else:
                             isFound = unboundMethod(v)
