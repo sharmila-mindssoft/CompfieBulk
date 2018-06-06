@@ -297,8 +297,10 @@ function validateUpload() {
                     $('#hdn_csv_id').val(data.new_csv_id);
                     CSV_ID = data.new_csv_id;
                     $('.successFileName').text(csvSplitName);
-                    // csvPath = "../../../../../uploaded_file/csv/" +
-                    //                 data.csv_name;
+                    csvPath = "../../../../../uploaded_file/csv/" +
+                                    data.csv_name;
+                    $("#success_file_download").attr("href", csvPath);
+                    $('#success_file_download').attr("download", data.csv_name);
                     $('.uploaded-data').attr("id", CSV_ID);
                     $('.uploaded-data .text-primary').attr(
                         "id", data.legal_entity_id);
@@ -323,6 +325,7 @@ function validateUpload() {
                     $('#divSuccessFile').show();
                     $(".bu-doc-summary").show();
                     TOTAL_DOCUMENTS = data.doc_count;
+                    REMAINING_DOCUMENTS = data.doc_count;
                     $('#bu_doc_total').text(data.doc_count);
                     $('#up-doc-title').hide();
                     $('#remaining-doc-title').hide();
@@ -606,7 +609,7 @@ function downloadUploadedData(
 }
 
 function downloadData() {
-    $('#myModal').modal('show');
+    displayLoader();
     var legalEntityName;
     var domainName = TXT_DOMAIN.val();
     var unitName = TXT_UNIT.val();
@@ -621,19 +624,19 @@ function downloadData() {
     if (LEGALENTITY_ID.val().trim() == "") {
         displayMessage(message.legalentity_required);
         LEGALENTITY_NAME.focus();
-        $('#myModal').modal('hide');
+        hideLoader();
         return false;
     }
     if (HDN_DOMAIN.val().trim() == "") {
         displayMessage(message.domain_required);
         TXT_DOMAIN.focus();
-        $('#myModal').modal('hide');
+        hideLoader();
         return false;
     }
     if (HDN_UNIT.val().trim() == "") {
         displayMessage(message.unit_required);
         TXT_UNIT.focus();
-        $('#myModal').modal('hide');
+        hideLoader();
         return false;
     }
     if (LEGALENTITY_NAME_LABEL.text() == "") {
@@ -651,18 +654,15 @@ function downloadData() {
                 downloadUrl = data.link;
                 if (downloadUrl != null) {
                     window.open(downloadUrl, '_blank');
-                    $('#myModal').modal('hide');
                     hideLoader();
                 } else {
                     displayMessage(message.no_compliance_available);
-                    $('#myModal').modal('hide');
                     hideLoader();
                 }
             } else {
                 if (error == "ExportToCSVEmpty"){
                     displayMessage(message.no_compliance_available);
                 }
-                $('#myModal').modal('hide');
                 hideLoader();
             }
         }
