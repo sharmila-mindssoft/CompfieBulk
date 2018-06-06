@@ -994,7 +994,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         file_server_ip = None
         file_server_port = None
         query = "select ip, port from tbl_file_server where " + \
-            " find_in_set(%s, cast(legal_entity_ids as char)) > 0;"
+            "file_server_id = (select file_server_id from tbl_client_database " + \
+            "where legal_entity_id = %s )"
         param = [legal_id]
         self.connect_source_db(legal_id)
         docRows = self._knowledge_db.select_all(query, param)
