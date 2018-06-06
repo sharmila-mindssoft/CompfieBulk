@@ -1,3 +1,5 @@
+import traceback
+import logger
 
 
 class Database(object):
@@ -61,6 +63,10 @@ class Database(object):
             " WHERE  session_token=%s"
         param = [session_token]
         row = self.select_one(query, param)
+        logger.logTempFiler(
+            "query", "validate_session_token",
+            "query:%s, param:%s" % (query, param)
+        )
         user_id = None
         if row:
             user_id = row["user_id"]
@@ -70,8 +76,11 @@ class Database(object):
     def update_session_time(self, session_token):
         q = "update tbl_user_sessions set last_accessed_time = current_ist_datetime() " + \
             "where session_token = %s "
-
         self.execute(q, [str(session_token)])
+        logger.logTempFiler(
+            "query", "update_session_time",
+            "query:%s, param:%s" % (q, [str(session_token)])
+        )
 
     def select_one(self, query, param=None):
         cursor = self.cursor()
@@ -94,6 +103,13 @@ class Database(object):
             return res
 
         except Exception, e:
+            logger.logTempFiler(
+                "error", "database.py > select_one()", str(e)
+            )
+            logger.logTempFiler(
+                "error", "database.py > select_one()",
+                str(traceback.format_exc())
+            )
             raise RuntimeError(str(e))
 
     def select_all(self, query, param=None):
@@ -117,6 +133,13 @@ class Database(object):
             return res
 
         except Exception, e:
+            logger.logTempFiler(
+                "error", "database.py > select_all()", str(e)
+            )
+            logger.logTempFiler(
+                "error", "database.py > select_all()",
+                str(traceback.format_exc())
+            )
             raise RuntimeError(str(e))
 
     def execute(self, query, param=None):
@@ -136,7 +159,13 @@ class Database(object):
             return True
 
         except Exception, e:
-            print e
+            logger.logTempFiler(
+                "error", "database.py > execute()", str(e)
+            )
+            logger.logTempFiler(
+                "error", "database.py > execute()",
+                str(traceback.format_exc())
+            )
             raise RuntimeError(str(e))
 
     def call_update_proc(self, procedure_name, args):
@@ -150,7 +179,13 @@ class Database(object):
 
             cursor.nextset()
         except Exception, e:
-            print e
+            logger.logTempFiler(
+                "error", "database.py > call_update_proc()", str(e)
+            )
+            logger.logTempFiler(
+                "error", "database.py > call_update_proc()",
+                str(traceback.format_exc())
+            )
             raise RuntimeError(str(e))
         return True
 
@@ -183,24 +218,23 @@ class Database(object):
         return res_update_stats
 
     def get_declined_docs(self, csv_id):
-        print "csv id-> ", csv_id
         # query = "SELECT format_file FROM tbl_bulk_statutory_mapping as t1 " \
         #         "inner join tbl_bulk_statutory_mapping_csv AS t2 on " \
         #         "t1.csv_id  = t2.csv_id WHERE t1.csv_id = %s and "\
         #         "(t1.action=3 or t2.is_fully_rejected = 1)"
 
-        query = "SELECT distinct format_file FROM tbl_bulk_statutory_mapping " \
-                "WHERE csv_id=%s and action = 3 and format_file not in " \
-                "(SELECT format_file FROM tbl_bulk_statutory_mapping " \
-                "WHERE csv_id=%s and " \
-                "(action !=3 or action IS NULL or action =''))"
+        query = "SELECT distinct format_file FROM tbl_bulk_statutory_mapping" \
+                " WHERE csv_id=%s and action = 3 and format_file not in" \
+                " (SELECT format_file FROM tbl_bulk_statutory_mapping" \
+                " WHERE csv_id=%s and" \
+                " (action !=3 or action IS NULL or action =''))"
 
-        print "query-> ", query
         param = [int(csv_id), int(csv_id)]
         row = self.select_all(query, param)
-        print "rows>>> ", row
+        logger.logTempFiler(
+            "query", "get_declined_docs",
+            "query:%s, param:%s" % (query, param))
         dec_doc_list = []
         for r in row:
             dec_doc_list.append(r["format_file"].encode('ascii', 'ignore'))
-        print "dec_doc_list-> ", dec_doc_list
         return dec_doc_list
