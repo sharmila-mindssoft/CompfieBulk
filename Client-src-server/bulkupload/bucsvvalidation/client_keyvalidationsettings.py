@@ -131,6 +131,11 @@ def is_alpha_numeric(value):
     else:
         return False
 
+def is_alpha_numeric_with_brace(value):
+    val = value.replace("(", "")
+    val1 = val.replace(")", "")
+    return is_alpha_numeric(val1)
+
 
 def is_date(string):
     string_in_date = string
@@ -353,7 +358,8 @@ csv_params = {
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
     'Statutory_Date': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False
+        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
+        validation_method=is_alpha_numeric_with_brace
     ),
     'Due_Date': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
