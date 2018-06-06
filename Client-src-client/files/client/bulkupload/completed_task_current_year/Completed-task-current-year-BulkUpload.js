@@ -56,6 +56,8 @@ var MANDATORY_ERROR = $('.mandatoryfieldblank');
 var LENGTH_ERROR = $('.lengthErrors');
 var INACTIVE_ERROR = $('.masterdatainactive');
 var INVALID_FILE_FORMAT_ERROR = $('.invalidfileformat');
+var INVALID_DATA_VALIDATION = $('.invaliddatavaidation');
+var INVALID_CHAR_VALIDATION = $('.invalidchar');
 
 var UNIT_LISTMAP = {};
 var LEGALENTITYUSR = [];
@@ -139,6 +141,16 @@ LEGALENTITY_NAME_UPLOAD.keyup(function(e) {
             );
         });
 });
+
+function get_legal_entity_id(le_name){
+     for (i = 0; i < LEGAL_ENTITIES.length; i++) {
+        console.log(LEGAL_ENTITIES[i]["le_name"])
+        if (LEGAL_ENTITIES[i]["le_name"] == le_name){
+            console.log("inside if")
+            return LEGAL_ENTITIES[i]["le_id"]
+        }
+    }
+}
 
 function onAutoCompleteSuccess(valueElement, idElement, val) {
     valueElement.val(val[1]);
@@ -276,6 +288,8 @@ function validateUpload() {
                     LENGTH_ERROR.text("0");
                     INACTIVE_ERROR.text("0");
                     INVALID_FILE_FORMAT_ERROR.text(0);
+                    INVALID_DATA_VALIDATION.text("0");
+                    INVALID_CHAR_VALIDATION.text("0");
                     $("#dom_id_hdn").val(data.domain_id);
                     $("#unit_id_hdn").val(data.unit_id);
                     $('.view-summary').hide();
@@ -340,6 +354,8 @@ function validateUpload() {
                     INACTIVE_ERROR.text(data.inactive_error);
                     INVALID_FILE_FORMAT_ERROR.text(
                         data.invalid_file_format);
+                    INVALID_DATA_VALIDATION.text(data.invalid_data_error);
+                    INVALID_CHAR_VALIDATION.text(data.invalid_char_error);
                     $('.dropbtn').show();
                     $('.view-summary').show();
                     UPLOAD_FILE.val("");
@@ -361,7 +377,7 @@ function validateUpload() {
                     $('#csv').attr("href", csvPath);
                     $('#excel').attr("href", xls_path);
                     $('#ods').attr("href", ods_path);
-                    $('#txt').attr("href", txt_path);
+                    // $('#txt').attr("href", txt_path);
                     hideLoader();
                 }
             });
@@ -539,6 +555,7 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     var legal_entity_name = data.legal_entity_name;
     var csvSplitName = null;
     resetEdit();
+    LEGALENTITY_ID_UPLOAD.val(get_legal_entity_id(legal_entity_name));
     LEGALENTITY_NAME_LABEL.show();
     LEGALENTITY_NAME_LABEL_UPLOAD.show();
     LEGALENTITY_NAME_AC.hide();
@@ -560,12 +577,8 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     csvSplitName = uploadedCsvName.substring(
         0, uploadedCsvName.lastIndexOf("_"));
     $('.successFileName').text(csvSplitName);
-    // csvPath = "../../../../../uploaded_file/csv/" + uploadedCsvName;
-    // $('.uploaded-data').attr("href", csvPath);
-    $('.uploaded-data .text-primary').attr("id", data.legal_entity_id);
+    $('.uploaded-data .text-primary').attr("id", get_legal_entity_id(legal_entity_name));
     $('.uploaded-data').attr("id", CSV_ID);
-    // $('.uploaded-data').attr("download", uploadedCsvName);
-    // $('.uploaded-data').attr("download", csvPath);
 
     $('#bu_doc_total').text(data.total_documents);
     $('#bu_upload_total').text(data.bu_uploaded_documents);

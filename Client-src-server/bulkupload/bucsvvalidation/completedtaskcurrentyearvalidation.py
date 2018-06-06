@@ -249,9 +249,9 @@ class SourceDB(object):
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_code)
         if unit_id is None:
-            return "Unit not exists"
+            return 
         if domain_id is None:
-            return "Domain not exists"
+            return 
         rows = return_past_due_dates(
             self._source_db, domain_id, unit_id, None
         )
@@ -270,14 +270,33 @@ class SourceDB(object):
         else:
             return "Not Found"
 
-    def check_completion_date(
-        self, unit_code, due_date, legal_entity, compliance_task,
-        compliance_description, primary_legislation, secondary_legislation,
-        domain_name, completion_date
-    ):
-        (unit_id, domain_id) = self.return_unit_domain_id(
-            domain_name, unit_code)
 
+    def check_is_valid_frequency(
+        self, compliance_task, compliance_description, primary_legislation,
+        secondary_legislation, domain_name, frequency
+    ):
+        compliance_id = self.get_compliance_id_from_name(
+            compliance_task, compliance_description, primary_legislation, 
+            secondary_legislation
+        )
+        q = "select frequency from tbl_compliance_frequency where " + \
+            " frequency_id = (select frequency_id from tbl_compliances " + \
+            " where compliance_id = %s) "
+        params = [compliance_id]
+        rows  = self._source_db.select_all(q, params)
+        orig_freq = None
+        if rows:
+            orig_freq = rows[0]["frequency"]
+        if frequency != orig_freq:
+            return "Invalid"
+        else:
+            return True
+
+
+    def get_compliance_id_from_name(
+        self, compliance_task, compliance_description, primary_legislation, 
+        secondary_legislation
+    ):
         q1 = " SELECT compliance_id FROM tbl_compliances where " + \
                 "compliance_task = TRIM(%s) and compliance_description = " + \
                 " TRIM(%s) and statutory_mapping like %s" 
@@ -294,6 +313,20 @@ class SourceDB(object):
         compliance_id = None
         if rows:
             compliance_id = rows[0]["compliance_id"]
+        return compliance_id
+
+    def check_completion_date(
+        self, unit_code, due_date, legal_entity, compliance_task,
+        compliance_description, primary_legislation, secondary_legislation,
+        domain_name, completion_date
+    ):
+        (unit_id, domain_id) = self.return_unit_domain_id(
+            domain_name, unit_code)
+
+        compliance_id = self.get_compliance_id_from_name(
+            compliance_task, compliance_description, primary_legislation, 
+            secondary_legislation
+        )
 
         q = "SELECT statutory_dates from tbl_assign_compliances " + \
             " where unit_id = %s  and domain_id = %s" + \
@@ -325,8 +358,25 @@ class SourceDB(object):
     def check_domain(self, domain_name):
         return self.check_base(True, self.domain, domain_name, None)
 
-    def check_unit_code(self, unit_code):
-        return self.check_base(True, self.unit_code, unit_code, None)
+    def check_valid_unit_code(self, unit_code, unit_name):
+        q = "select unit_name from tbl_units where unit_code = %s" 
+        params = [unit_code]
+        rows = self._source_db.select_all(q, params)
+        org_unit_name = None
+        if rows:
+            org_unit_name = rows[0]["unit_name"]
+        if org_unit_name == unit_name:
+            return True
+        else:
+            return "Invalid"
+
+    def check_unit_code(self, unit_code, unit_name):
+        status1 = self.check_valid_unit_code(unit_code, unit_name)
+        status2 = self.check_base(True, self.unit_code, unit_code, None)
+        if status1 is True:
+            return status2
+        else:
+            return status1
 
     def check_unit_name(self, unit_name):
         return self.check_base(True, self.unit_name, unit_name, None)
@@ -346,9 +396,19 @@ class SourceDB(object):
             True, self.compliance_description, compliance_description, None)
 
     def check_frequency(
-            self, frequency):
-        return self.check_base(
+        self, compliance_task, compliance_description, primary_legislation,
+        secondary_legislation, domain_name, frequency
+    ):
+        status1 =self.check_is_valid_frequency(
+            compliance_task, compliance_description, primary_legislation,
+            secondary_legislation, domain_name, frequency
+        )
+        status2 = self.check_base(
             False, self.compliance_frequency, frequency, None)
+        if status1 is True:
+            return status2
+        else:
+            return status1
 
     def check_assignee(self, assignee):
         return self.check_base(False, self.assignee, assignee, None)
@@ -597,6 +657,19 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                 data.get("Domain"),
                                 data.get("Completion_Date")
                             )
+                        elif key == "Compliance_Frequency":
+                            isFound = unboundMethod(
+                                data.get("Compliance_Task"),
+                                data.get("Compliance_Description"),
+                                data.get("Primary_Legislation"),
+                                data.get("Secondary_Legislation"),
+                                data.get("Domain"),
+                                data.get("Compliance_Frequency")
+                            )
+                        elif key == "Unit_Code":
+                            isFound = unboundMethod(
+                                v, data.get("Unit_Name")
+                            )
                         else:
                             isFound = unboundMethod(v)
                     if isFound is False:
@@ -625,62 +698,65 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         error_count
     ):
         for key in _csv_column_name:
-                value = data.get(key)
-                isFound = ""
-                values = value.strip().split(CSV_DELIMITER)
-                csvParam = csv_params.get(key)
-                if (key == "Document_Name" and value != ''):
-                    self._doc_names.append(value)
-                result = self.validate_csv_values(
-                    row_idx, res, values, key, csvParam, data,
-                    mapped_error_dict, mapped_header_dict, invalid,
-                    isFound, error_count
-                )
-                if result is not False:
-                    (
-                        mapped_error_dict, mapped_header_dict,
-                        invalid, error_count, res
-                    ) = result
+            value = data.get(key)
+            isFound = ""
+            if key == "Compliance_Frequency":
+                value = ''.join(e for e in value if e.isalnum())
+            values = value.strip().split(CSV_DELIMITER)
+            csvParam = csv_params.get(key)
+            if (key == "Document_Name" and value != ''):
+                self._doc_names.append(value)
+            
+            result = self.validate_csv_values(
+                row_idx, res, values, key, csvParam, data,
+                mapped_error_dict, mapped_header_dict, invalid,
+                isFound, error_count
+            )
+            if result is not False:
+                (
+                    mapped_error_dict, mapped_header_dict,
+                    invalid, error_count, res
+                ) = result
+            else:
+                return False
+            if key is "Document_Name":
+                msg = []
+                if data["Document_Name"] != "":
+                    file_extension = os.path.splitext(
+                        data["Document_Name"])
+                    allowed_file_formats = [
+                        ".pdf", ".doc", ".docx", ".xls", ".xlsx",
+                        ".png", ".jpeg"
+                    ]
+                    if file_extension[1] not in allowed_file_formats:
+                        msg.append("Document Name - Invalid File Format")
+                        self._error_summary["invalid_file_format"] += 1
+                        res = self.make_error_desc(res, msg)
+            if res is not True:
+                error_list = mapped_error_dict.get(row_idx)
+                if error_list is None:
+                    error_list = res
                 else:
-                    return False
-                if key is "Document_Name":
-                    msg = []
-                    if data["Document_Name"] != "":
-                        file_extension = os.path.splitext(
-                            data["Document_Name"])
-                        allowed_file_formats = [
-                            ".pdf", ".doc", ".docx", ".xls", ".xlsx",
-                            ".png", ".jpeg"
-                        ]
-                        if file_extension[1] not in allowed_file_formats:
-                            msg.append("Document Name - Invalid File Format")
-                            self._error_summary["invalid_file_format"] += 1
-                            res = self.make_error_desc(res, msg)
-                if res is not True:
-                    error_list = mapped_error_dict.get(row_idx)
-                    if error_list is None:
-                        error_list = res
-                    else:
-                        error_list.extend(res)
-                    res = True
+                    error_list.extend(res)
+                res = True
 
-                    mapped_error_dict[row_idx] = error_list
-                    head_idx = mapped_header_dict.get(key)
-                    if head_idx is None:
-                        head_idx = [row_idx]
-                    else:
-                        head_idx.append(row_idx)
+                mapped_error_dict[row_idx] = error_list
+                head_idx = mapped_header_dict.get(key)
+                if head_idx is None:
+                    head_idx = [row_idx]
+                else:
+                    head_idx.append(row_idx)
 
-                    mapped_header_dict[key] = head_idx
-                    invalid += 1
-                    self._error_summary["mandatory_error"] += error_count[
-                        "mandatory"]
-                    self._error_summary["max_length_error"] += error_count[
-                        "max_length"]
-                    self._error_summary["invalid_char_error"] += error_count[
-                        "invalid_char"]
-                    self._error_summary["invalid_date"] += error_count[
-                        "invalid_date"]
+                mapped_header_dict[key] = head_idx
+                invalid += 1
+                self._error_summary["mandatory_error"] += error_count[
+                    "mandatory"]
+                self._error_summary["max_length_error"] += error_count[
+                    "max_length"]
+                self._error_summary["invalid_char_error"] += error_count[
+                    "invalid_char"]
+                self._error_summary["invalid_date"] += error_count[
+                    "invalid_date"]
         return (
             mapped_error_dict, mapped_header_dict, invalid, error_count
         )
@@ -919,7 +995,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         file_server_ip = None
         file_server_port = None
         query = "select ip, port from tbl_file_server where " + \
-            " find_in_set(%s, cast(legal_entity_ids as char)) > 0;"
+            "file_server_id = (select file_server_id from tbl_client_database " + \
+            "where legal_entity_id = %s )"
         param = [legal_id]
         self.connect_source_db(legal_id)
         docRows = self._knowledge_db.select_all(query, param)
