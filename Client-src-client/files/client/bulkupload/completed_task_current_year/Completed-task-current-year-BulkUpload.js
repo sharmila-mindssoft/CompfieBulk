@@ -540,7 +540,6 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(
             $('.remaining-docs', cloneRow).text(
                 data.remaining_documents);
             CSV_ID = data.csv_id;
-            DOC_NAMES = data.doc_names;
             $('.upload i', cloneRow).on('click', function() {
                 tThis.showEdit(data);
             });
@@ -563,7 +562,7 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     LEGALENTITY_NAME_AC_UPLOAD.hide();
     LEGALENTITY_NAME_LABEL_UPLOAD.text(legal_entity_name);
 
-
+    DOC_NAMES = data.doc_names;
     TOTAL_DOCUMENTS = data.total_documents;
     UPLOADED_DOCUMENTS = data.bu_uploaded_documents;
     REMAINING_DOCUMENTS = data.remaining_documents;
@@ -571,6 +570,11 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     $("#dom_id_hdn").val(data.domain_id);
     $("#unit_id_hdn").val(data.unit_id);
     $("#start_date_hdn").val(data.start_date);
+
+    csvPath = "../../../../../uploaded_file/csv/" +
+                                    data.csv_name;
+    $("#success_file_download").attr("href", csvPath);
+    $('#success_file_download').attr("download", data.csv_name);
 
     $('#hdn_csv_id').val(data.csv_past_id);
     CSV_ID = data.csv_past_id;
