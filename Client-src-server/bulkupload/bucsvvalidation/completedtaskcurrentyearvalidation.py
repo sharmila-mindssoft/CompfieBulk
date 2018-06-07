@@ -605,6 +605,17 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                     res.append(msg)
             return res
 
+    def check_doc_names(self):
+        doc_names = []
+        for row_idx, data in enumerate(self._source_data):
+            doc_name = data.get("Document_Name")
+            if doc_name in doc_names:
+                return False
+            else:
+                doc_names.append(doc_name)
+        return True
+
+
     def validate_csv_values(
         self, row_idx, res, values, key, csvParam, data,
         mapped_error_dict, mapped_header_dict, invalid,

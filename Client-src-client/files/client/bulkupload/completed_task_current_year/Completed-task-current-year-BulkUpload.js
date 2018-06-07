@@ -220,7 +220,6 @@ function validateUpload() {
     var csvSplitName = null;
     var getValidCount = null;
     var args = null;
-    $('#myModal').modal('show');
     if(
         $('#txt_legal_entity_name_upload').val() == "" &&
         LEGALENTITY_NAME_LABEL_UPLOAD.text() == ""
@@ -331,9 +330,6 @@ function validateUpload() {
                     $('#remaining-doc-title').hide();
                     $('#bu_upload_total').text('0');
                     $('#bu_remain_total').text('0');
-                    if (data.doc_count < 2){
-                        myDropzone.parallelUploads = data.doc_count;
-                    }
                     displaySuccessMessage(
                         "Compliance uploaded successfully");
                     hideLoader();
@@ -468,7 +464,9 @@ function pageControls() {
 
     //Upload Button Click Event
     BTN_UPLOAD.click(function() {
+        this.disabled = true;
         validateUpload();
+        this.disabled = false;
     });
 
     BTN_UPLOADED_DATA.click(function(){
@@ -888,7 +886,7 @@ var myDropzone = new Dropzone("div#myDrop", {
             $('#bu_remain_total').text(
                 TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS
             );
-            myDropzone.removeAllFiles(true);
+            // myDropzone.removeAllFiles(true);
             hideLoader();
         });
 
