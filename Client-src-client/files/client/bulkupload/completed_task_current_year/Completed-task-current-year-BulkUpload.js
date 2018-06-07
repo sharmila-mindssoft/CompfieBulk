@@ -56,6 +56,8 @@ var MANDATORY_ERROR = $('.mandatoryfieldblank');
 var LENGTH_ERROR = $('.lengthErrors');
 var INACTIVE_ERROR = $('.masterdatainactive');
 var INVALID_FILE_FORMAT_ERROR = $('.invalidfileformat');
+var INVALID_DATA_VALIDATION = $('.invaliddatavaidation');
+var INVALID_CHAR_VALIDATION = $('.invalidchar');
 
 var UNIT_LISTMAP = {};
 var LEGALENTITYUSR = [];
@@ -139,6 +141,16 @@ LEGALENTITY_NAME_UPLOAD.keyup(function(e) {
             );
         });
 });
+
+function get_legal_entity_id(le_name){
+     for (i = 0; i < LEGAL_ENTITIES.length; i++) {
+        console.log(LEGAL_ENTITIES[i]["le_name"])
+        if (LEGAL_ENTITIES[i]["le_name"] == le_name){
+            console.log("inside if")
+            return LEGAL_ENTITIES[i]["le_id"]
+        }
+    }
+}
 
 function onAutoCompleteSuccess(valueElement, idElement, val) {
     valueElement.val(val[1]);
@@ -276,6 +288,8 @@ function validateUpload() {
                     LENGTH_ERROR.text("0");
                     INACTIVE_ERROR.text("0");
                     INVALID_FILE_FORMAT_ERROR.text(0);
+                    INVALID_DATA_VALIDATION.text("0");
+                    INVALID_CHAR_VALIDATION.text("0");
                     $("#dom_id_hdn").val(data.domain_id);
                     $("#unit_id_hdn").val(data.unit_id);
                     $('.view-summary').hide();
@@ -283,8 +297,10 @@ function validateUpload() {
                     $('#hdn_csv_id').val(data.new_csv_id);
                     CSV_ID = data.new_csv_id;
                     $('.successFileName').text(csvSplitName);
-                    // csvPath = "../../../../../uploaded_file/csv/" +
-                    //                 data.csv_name;
+                    csvPath = "../../../../../uploaded_file/csv/" +
+                                    data.csv_name;
+                    $("#success_file_download").attr("href", csvPath);
+                    $('#success_file_download').attr("download", data.csv_name);
                     $('.uploaded-data').attr("id", CSV_ID);
                     $('.uploaded-data .text-primary').attr(
                         "id", data.legal_entity_id);
@@ -309,6 +325,7 @@ function validateUpload() {
                     $('#divSuccessFile').show();
                     $(".bu-doc-summary").show();
                     TOTAL_DOCUMENTS = data.doc_count;
+                    REMAINING_DOCUMENTS = data.doc_count;
                     $('#bu_doc_total').text(data.doc_count);
                     $('#up-doc-title').hide();
                     $('#remaining-doc-title').hide();
@@ -340,6 +357,8 @@ function validateUpload() {
                     INACTIVE_ERROR.text(data.inactive_error);
                     INVALID_FILE_FORMAT_ERROR.text(
                         data.invalid_file_format);
+                    INVALID_DATA_VALIDATION.text(data.invalid_data_error);
+                    INVALID_CHAR_VALIDATION.text(data.invalid_char_error);
                     $('.dropbtn').show();
                     $('.view-summary').show();
                     UPLOAD_FILE.val("");
@@ -361,7 +380,7 @@ function validateUpload() {
                     $('#csv').attr("href", csvPath);
                     $('#excel').attr("href", xls_path);
                     $('#ods').attr("href", ods_path);
-                    $('#txt').attr("href", txt_path);
+                    // $('#txt').attr("href", txt_path);
                     hideLoader();
                 }
             });
@@ -539,6 +558,7 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     var legal_entity_name = data.legal_entity_name;
     var csvSplitName = null;
     resetEdit();
+    LEGALENTITY_ID_UPLOAD.val(get_legal_entity_id(legal_entity_name));
     LEGALENTITY_NAME_LABEL.show();
     LEGALENTITY_NAME_LABEL_UPLOAD.show();
     LEGALENTITY_NAME_AC.hide();
@@ -560,12 +580,8 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     csvSplitName = uploadedCsvName.substring(
         0, uploadedCsvName.lastIndexOf("_"));
     $('.successFileName').text(csvSplitName);
-    // csvPath = "../../../../../uploaded_file/csv/" + uploadedCsvName;
-    // $('.uploaded-data').attr("href", csvPath);
-    $('.uploaded-data .text-primary').attr("id", data.legal_entity_id);
+    $('.uploaded-data .text-primary').attr("id", get_legal_entity_id(legal_entity_name));
     $('.uploaded-data').attr("id", CSV_ID);
-    // $('.uploaded-data').attr("download", uploadedCsvName);
-    // $('.uploaded-data').attr("download", csvPath);
 
     $('#bu_doc_total').text(data.total_documents);
     $('#bu_upload_total').text(data.bu_uploaded_documents);
@@ -593,7 +609,7 @@ function downloadUploadedData(
 }
 
 function downloadData() {
-    $('#myModal').modal('show');
+    displayLoader();
     var legalEntityName;
     var domainName = TXT_DOMAIN.val();
     var unitName = TXT_UNIT.val();
@@ -608,19 +624,19 @@ function downloadData() {
     if (LEGALENTITY_ID.val().trim() == "") {
         displayMessage(message.legalentity_required);
         LEGALENTITY_NAME.focus();
-        $('#myModal').modal('hide');
+        hideLoader();
         return false;
     }
     if (HDN_DOMAIN.val().trim() == "") {
         displayMessage(message.domain_required);
         TXT_DOMAIN.focus();
-        $('#myModal').modal('hide');
+        hideLoader();
         return false;
     }
     if (HDN_UNIT.val().trim() == "") {
         displayMessage(message.unit_required);
         TXT_UNIT.focus();
-        $('#myModal').modal('hide');
+        hideLoader();
         return false;
     }
     if (LEGALENTITY_NAME_LABEL.text() == "") {
@@ -638,18 +654,15 @@ function downloadData() {
                 downloadUrl = data.link;
                 if (downloadUrl != null) {
                     window.open(downloadUrl, '_blank');
-                    $('#myModal').modal('hide');
                     hideLoader();
                 } else {
                     displayMessage(message.no_compliance_available);
-                    $('#myModal').modal('hide');
                     hideLoader();
                 }
             } else {
                 if (error == "ExportToCSVEmpty"){
                     displayMessage(message.no_compliance_available);
                 }
-                $('#myModal').modal('hide');
                 hideLoader();
             }
         }
