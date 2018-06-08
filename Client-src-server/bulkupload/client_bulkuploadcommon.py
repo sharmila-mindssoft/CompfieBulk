@@ -1,12 +1,12 @@
 import os
-import io
 import uuid
 import csv
 import xlsxwriter
 import pyexcel
 
 from bulkupload.client_bulkconstants import (
-    BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH
+    BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH, REJECTED_DOWNLOAD_PATH,
+    REJECTED_DOWNLOAD_BASE_PATH
 )
 
 
@@ -59,6 +59,7 @@ def convert_base64_to_file(src_path, file_name, file_content):
         fn.write(file_content.decode('base64'))
 
     return framed_file_name
+
 
 ########################################################
 '''
@@ -224,5 +225,6 @@ def rename_download_file_type(src_file_name, des_file_type):
     pyexcel.save_as(file_name=src_file, dest_file_name=new_dst_file_name)
 
     download_path_link = os.path.join(
-         REJECTED_DOWNLOAD_BASE_PATH, des_file_type, new_file)
+        REJECTED_DOWNLOAD_BASE_PATH, des_file_type, new_file
+    )
     return download_path_link

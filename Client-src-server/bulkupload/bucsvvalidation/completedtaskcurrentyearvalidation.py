@@ -249,9 +249,9 @@ class SourceDB(object):
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_code)
         if unit_id is None:
-            return 
+            return
         if domain_id is None:
-            return 
+            return
         rows = return_past_due_dates(
             self._source_db, domain_id, unit_id, None
         )
@@ -270,20 +270,19 @@ class SourceDB(object):
         else:
             return "Not Found"
 
-
     def check_is_valid_frequency(
         self, compliance_task, compliance_description, primary_legislation,
         secondary_legislation, domain_name, frequency
     ):
         compliance_id = self.get_compliance_id_from_name(
-            compliance_task, compliance_description, primary_legislation, 
+            compliance_task, compliance_description, primary_legislation,
             secondary_legislation
         )
         q = "select frequency from tbl_compliance_frequency where " + \
             " frequency_id = (select frequency_id from tbl_compliances " + \
             " where compliance_id = %s) "
         params = [compliance_id]
-        rows  = self._source_db.select_all(q, params)
+        rows = self._source_db.select_all(q, params)
         orig_freq = None
         if rows:
             orig_freq = rows[0]["frequency"]
@@ -292,18 +291,17 @@ class SourceDB(object):
         else:
             return True
 
-
     def get_compliance_id_from_name(
-        self, compliance_task, compliance_description, primary_legislation, 
+        self, compliance_task, compliance_description, primary_legislation,
         secondary_legislation
     ):
         q1 = " SELECT compliance_id FROM tbl_compliances where " + \
-                "compliance_task = TRIM(%s) and compliance_description = " + \
-                " TRIM(%s) and statutory_mapping like %s" 
+            "compliance_task = TRIM(%s) and compliance_description = " + \
+            " TRIM(%s) and statutory_mapping like %s"
 
-        legis_cond = '["' + primary_legislation 
+        legis_cond = '["' + primary_legislation
         if secondary_legislation != "":
-            legis_cond +=  ">>" + secondary_legislation + "%"
+            legis_cond += ">>" + secondary_legislation + "%"
         else:
             legis_cond += "%"
         params = [
@@ -324,7 +322,7 @@ class SourceDB(object):
             domain_name, unit_code)
 
         compliance_id = self.get_compliance_id_from_name(
-            compliance_task, compliance_description, primary_legislation, 
+            compliance_task, compliance_description, primary_legislation,
             secondary_legislation
         )
 
@@ -336,7 +334,7 @@ class SourceDB(object):
         statutory_dates = None
         trigger_before_days = 0
         if rows:
-            statutory_dates = rows[0]["statutory_dates"] 
+            statutory_dates = rows[0]["statutory_dates"]
             statutory_dates_array = json.loads(statutory_dates)
             trigger_before_days = int(
                 statutory_dates_array[0]["trigger_before_days"])
@@ -346,7 +344,7 @@ class SourceDB(object):
                 completion_date, "%d-%b-%Y").date()
         except ValueError:
             return
-        start_date = due_date.date() - timedelta(days=trigger_before_days) 
+        start_date = due_date.date() - timedelta(days=trigger_before_days)
         if completion_date < start_date:
             return "Should be greater than Start Date"
         else:
@@ -361,7 +359,7 @@ class SourceDB(object):
         return self.check_base(True, self.domain, domain_name, None)
 
     def check_valid_unit_code(self, unit_code, unit_name):
-        q = "select unit_name from tbl_units where unit_code = %s" 
+        q = "select unit_name from tbl_units where unit_code = %s"
         params = [unit_code]
         rows = self._source_db.select_all(q, params)
         org_unit_name = None
@@ -401,7 +399,7 @@ class SourceDB(object):
         self, compliance_task, compliance_description, primary_legislation,
         secondary_legislation, domain_name, frequency
     ):
-        status1 =self.check_is_valid_frequency(
+        status1 = self.check_is_valid_frequency(
             compliance_task, compliance_description, primary_legislation,
             secondary_legislation, domain_name, frequency
         )
@@ -617,7 +615,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 doc_names.append(doc_name)
         return True
 
-
     def validate_csv_values(
         self, row_idx, res, values, key, csvParam, data,
         mapped_error_dict, mapped_header_dict, invalid,
@@ -719,7 +716,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             csvParam = csv_params.get(key)
             if (key == "Document_Name" and value != ''):
                 self._doc_names.append(value)
-            
             result = self.validate_csv_values(
                 row_idx, res, values, key, csvParam, data,
                 mapped_error_dict, mapped_header_dict, invalid,
@@ -801,13 +797,13 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 due_date = datetime.strptime(due_date, "%d-%b-%Y")
             except ValueError:
                 pass
-            legis_cond = '["' + primary_legislation 
+            legis_cond = '["' + primary_legislation
             if secondary_legislation != "":
-                legis_cond +=  ">>" + secondary_legislation + "%"
+                legis_cond += ">>" + secondary_legislation + "%"
             else:
                 legis_cond += "%"
             params = [
-                compliance_name, description, legis_cond, 
+                compliance_name, description, legis_cond,
                 frequency, unit_code, legal_entity_id, due_date
             ]
             self.connect_source_db(legal_entity_id)
@@ -995,9 +991,12 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def file_server_approve_call(
         self, csvid, country_id, legal_id, domain_id, unit_id
     ):
-        caller_name = ("%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s"
-            ) % (TEMP_FILE_SERVER, csvid, country_id, legal_id,
-            domain_id, unit_id)
+        caller_name = (
+            "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s"
+        ) % (
+            TEMP_FILE_SERVER, csvid, country_id, legal_id,
+            domain_id, unit_id
+        )
         response = requests.post(caller_name)
         print "Temp server Caller name->", caller_name
         print "response-> ", response
@@ -1009,7 +1008,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         file_server_ip = None
         file_server_port = None
         query = "select ip, port from tbl_file_server where " + \
-            "file_server_id = (select file_server_id from "+ \
+            "file_server_id = (select file_server_id from " + \
             " tbl_client_database where legal_entity_id = %s )"
         param = [legal_id]
         self.connect_source_db(legal_id)
@@ -1022,9 +1021,10 @@ class ValidateCompletedTaskForSubmit(SourceDB):
 
         current_date = datetime.now().strftime('%d-%b-%Y')
         client_id = str(session_token).split('-')[0]
-        caller = ("http://%s:%s/clientfile?csvid=%s&c_id=%s&le_id=%s"
+        caller = (
+            "http://%s:%s/clientfile?csvid=%s&c_id=%s&le_id=%s"
             "&d_id=%s&u_id=%s&start_date=%s&client_id=%s") % (
-            file_server_ip, file_server_port, csvid, country_id, legal_id, 
+            file_server_ip, file_server_port, csvid, country_id, legal_id,
             domain_id, unit_id, current_date, client_id
         )
         print "caller Fileserver->", caller

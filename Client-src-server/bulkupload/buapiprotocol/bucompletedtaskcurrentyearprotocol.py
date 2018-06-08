@@ -242,7 +242,7 @@ class DownloadUploadedData(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
-                data, ["legal_entity_id", "csv_id"]
+            data, ["legal_entity_id", "csv_id"]
         )
         return DownloadUploadedData(
             data.get("legal_entity_id"),
@@ -265,7 +265,7 @@ class UpdateDocumentCount(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
-                data, ["legal_entity_id", "csv_id", "count"]
+            data, ["legal_entity_id", "csv_id", "count"]
         )
         return UpdateDocumentCount(
             data.get("legal_entity_id"),
@@ -280,6 +280,7 @@ class UpdateDocumentCount(Request):
             "count": self.count
         }
 
+
 def _init_Request_class_map():
     classes = [
         UploadCompletedTaskCurrentYearCSV,
@@ -293,6 +294,7 @@ def _init_Request_class_map():
     for c in classes:
         class_map[c.__name__] = c
     return class_map
+
 
 _Request_class_map = _init_Request_class_map()
 
@@ -386,11 +388,11 @@ class UploadCompletedTaskCurrentYearCSVSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
-                data, [
-                    "total", "valid", "invalid",
-                    "new_csv_id", "csv_name", "doc_count",
-                    "doc_names", "unit_id", "domain_id"]
-            )
+            data, [
+                "total", "valid", "invalid",
+                "new_csv_id", "csv_name", "doc_count",
+                "doc_names", "unit_id", "domain_id"]
+        )
         return UploadCompletedTaskCurrentYearCSVSuccess(
             data.get("total"), data.get("valid"), data.get("invalid"),
             data.get("new_csv_id"), data.get("csv_name"),
@@ -590,6 +592,7 @@ class DownloadUploadedDataSuccess(Response):
             "link": self.link
         }
 
+
 class UpdateDocumentCountSuccess(Response):
     def __init__(self):
         pass
@@ -635,6 +638,7 @@ def _init_Response_class_map():
     for c in classes:
         class_map[c.__name__] = c
     return class_map
+
 
 _Response_class_map = _init_Response_class_map()
 

@@ -131,6 +131,7 @@ def is_alpha_numeric(value):
     else:
         return False
 
+
 def is_alpha_numeric_with_brace(value):
     val = value.replace("(", "")
     val1 = val.replace(")", "")
@@ -140,18 +141,16 @@ def is_alpha_numeric_with_brace(value):
 def is_date(string):
     string_in_date = string
     try:
-        result = datetime.datetime.strptime(
-                    string_in_date, "%d-%b-%Y"
-                    ).strftime('%d-%b-%Y')
         if string is not None:
             if string != datetime.datetime.strptime(
-                    string_in_date, "%d-%b-%Y"
-                    ).strftime('%d-%b-%Y'):
+                string_in_date, "%d-%b-%Y"
+            ).strftime('%d-%b-%Y'):
                 raise ValueError
             else:
                 return True
     except ValueError:
         return False
+
 
 def is_url(value):
     r = re.compile("^[a-zA-Z0-9=/:.-]*$")  # a-z with special char
@@ -233,6 +232,7 @@ def parse_csv_dictionary_values(key, val):
         return True, error_count
     else:
         return msg, error_count
+
 
 ########################################################
 '''

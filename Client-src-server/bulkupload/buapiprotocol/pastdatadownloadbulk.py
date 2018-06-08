@@ -1,5 +1,4 @@
 import os
-import io
 import re
 import csv
 import uuid
@@ -16,7 +15,7 @@ from server.clientdatabase.general import (
     calculate_due_date, filter_out_due_dates)
 from clientprotocol import clientcore
 
-from clientprotocol.clienttransactions import(
+from clientprotocol.clienttransactions import (
     STATUTORY_WISE_COMPLIANCES,
     UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS
 )
@@ -68,15 +67,14 @@ class PastDataJsonToCSV(object):
         domain_name = request.d_name
         unit_name = request.u_name
         unit_code = request.u_code
-        unit_name = re.sub(unit_code+'-', '', unit_name)
+        unit_name = re.sub(unit_code + '-', '', unit_name)
         start_count = request.start_count
         statutory_wise_compliances = []
         (
             statutory_wise_compliances, total_count
         ) = get_download_bulk_compliance_data(
-                cnx_pool, unit_id, domain_id, "", compliance_frequency,
-                session_user,
-                start_count, 100
+            cnx_pool, unit_id, domain_id, "", compliance_frequency,
+            session_user, start_count, 100
         )
         if total_count > 0:
             if not is_header:
@@ -251,8 +249,8 @@ def get_download_bulk_compliance_data(
             )
     statutory_wise_compliances = []
     for (
-            level_1_statutory_name, compliances
-            ) in level_1_statutory_wise_compliances.iteritems():
+        level_1_statutory_name, compliances
+    ) in level_1_statutory_wise_compliances.iteritems():
         if len(compliances) > 0:
             statutory_wise_compliances.append(
                 STATUTORY_WISE_COMPLIANCES(
