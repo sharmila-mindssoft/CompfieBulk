@@ -572,6 +572,23 @@ def download_client_file():
     )
 
 
+@app.route('/temp/removefolders', methods=['POST'])
+def remove_rejected_folders():
+    logger.logTempFiler(
+        "info", "run_tempfile_server > /temp/removefolders > Request", request
+    )
+    folder_name = request.args.get('csvid')
+    assert folder_name is not None
+    folder_path = os.path.join(app.config['UPLOAD_PATH'], folder_name)
+    if not os.path.exists(folder_path):
+        logger.logTempFiler(
+            "info", "run_tempfile_server > /temp/removefolders",
+            "Path not exists for removing file"
+        )
+        return "Error"
+    rmtree(folder_path)
+    return "removed rejected folders"
+
 args_parser = argparse.ArgumentParser()
 args_parser.add_argument(
     "port",

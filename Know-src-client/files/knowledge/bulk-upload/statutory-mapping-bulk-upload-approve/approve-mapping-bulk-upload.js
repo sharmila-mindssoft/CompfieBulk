@@ -373,7 +373,7 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             $('.approve-reject', cloneRow).text(
                 data.approve_count + ' / ' + data.rej_count
             );
-            $('.approve-checkbox', cloneRow).on('change', function(e) {
+            $('.approve-checkbox', cloneRow).on('click', function(e) {
                 if (e.target.checked) {
                     if(data.rej_count > 0) {
                         approveRejCount['approve_count'] = data.approve_count;
@@ -386,7 +386,7 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
                     }
                 }
             });
-            $('.reject-checkbox', cloneRow).on('change', function(e) {
+            $('.reject-checkbox', cloneRow).on('click', function(e) {
                 if(e.target.checked) {
                     displayPopUp('reject', data.csv_id, null);
                 }
@@ -467,21 +467,9 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             j += 1;
         });
     }
-    $(".zmdi-close").click(function(){
-        BU_APPROVE_PAGE.unCheckBoxAndClosePopup();
-    });
-    $(document).keyup(function(e) {
-        if(e.which == 27){
-            BU_APPROVE_PAGE.unCheckBoxAndClosePopup();
-        }
-    });
     $('[data-toggle="tooltip"]').tooltip();
 };
 
-ApproveBulkMapping.prototype.unCheckBoxAndClosePopup = function() {
-    $('.approve-checkbox').prop("checked", false);
-    $('.reject-checkbox').prop("checked", false);
-};
 ApproveBulkMapping.prototype.fetchDropDownData = function() {
     tThis = this;
     displayLoader();
@@ -1136,6 +1124,9 @@ ApproveBulkMapping.prototype.finalSubmit = function(csvId, pwd) {
                 confirm_alert(msg, function(isConfirm) {
                     if (isConfirm) {
                         tThis.confirmAction();
+                    }
+                    else{
+                        hideLoader();
                     }
                 });
             }else {

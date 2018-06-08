@@ -1834,6 +1834,12 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         response = requests.post(caller_name)
         print "response in remove file", response.text
 
+    ## Delete Rejected CSV Documents.
+    def temp_server_folder_remove_call(self, csvid):
+        caller_name = "%sremovefolders?csvid=%s" % (TEMP_FILE_SERVER, csvid)
+        response = requests.post(caller_name)
+        print "response in remove file", response.text
+
 
 def bulkupload_db_connect():
     cnx_pool = mysql.connector.connect(
