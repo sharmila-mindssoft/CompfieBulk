@@ -338,10 +338,12 @@ class SourceDB(object):
         if rows:
             statutory_dates = rows[0]["statutory_dates"] 
             statutory_dates_array = json.loads(statutory_dates)
-            trigger_before_days = int(statutory_dates_array[0]["trigger_before_days"])
+            trigger_before_days = int(
+                statutory_dates_array[0]["trigger_before_days"])
         try:
             due_date = datetime.strptime(due_date, "%d-%b-%Y")
-            completion_date = datetime.strptime(completion_date, "%d-%b-%Y").date()
+            completion_date = datetime.strptime(
+                completion_date, "%d-%b-%Y").date()
         except ValueError:
             return
         start_date = due_date.date() - timedelta(days=trigger_before_days) 
@@ -993,8 +995,9 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def file_server_approve_call(
         self, csvid, country_id, legal_id, domain_id, unit_id
     ):
-        caller_name = "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s" % (
-            TEMP_FILE_SERVER, csvid, country_id, legal_id, domain_id, unit_id)
+        caller_name = ("%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s"
+            ) % (TEMP_FILE_SERVER, csvid, country_id, legal_id,
+            domain_id, unit_id)
         response = requests.post(caller_name)
         print "Temp server Caller name->", caller_name
         print "response-> ", response
@@ -1006,8 +1009,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         file_server_ip = None
         file_server_port = None
         query = "select ip, port from tbl_file_server where " + \
-            "file_server_id = (select file_server_id from tbl_client_database " + \
-            "where legal_entity_id = %s )"
+            "file_server_id = (select file_server_id from "+ \
+            " tbl_client_database where legal_entity_id = %s )"
         param = [legal_id]
         self.connect_source_db(legal_id)
         docRows = self._knowledge_db.select_all(query, param)
@@ -1019,8 +1022,11 @@ class ValidateCompletedTaskForSubmit(SourceDB):
 
         current_date = datetime.now().strftime('%d-%b-%Y')
         client_id = str(session_token).split('-')[0]
-        caller = "http://%s:%s/clientfile?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s&start_date=%s&client_id=%s" % (
-            file_server_ip, file_server_port, csvid, country_id, legal_id, domain_id, unit_id, current_date, client_id)
+        caller = ("http://%s:%s/clientfile?csvid=%s&c_id=%s&le_id=%s"
+            "&d_id=%s&u_id=%s&start_date=%s&client_id=%s") % (
+            file_server_ip, file_server_port, csvid, country_id, legal_id, 
+            domain_id, unit_id, current_date, client_id
+        )
         print "caller Fileserver->", caller
         response = requests.post(caller)
         print "Response from file server", response

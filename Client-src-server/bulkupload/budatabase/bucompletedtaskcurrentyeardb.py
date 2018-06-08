@@ -148,8 +148,8 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
             " INNER JOIN tbl_bulk_past_data AS T02 " + \
             " ON T01.csv_past_id = T02.csv_past_id " + \
             " where (T01.total_documents - T01.uploaded_documents) >= 1 " + \
-            " and uploaded_by = %s AND FIND_IN_SET(T01.legal_entity_id, %s) " + \
-            " order by T01.uploaded_on DESC"
+            " and uploaded_by = %s AND FIND_IN_SET " + \
+            " (T01.legal_entity_id, %s)  order by T01.uploaded_on DESC"
     param = [session_user, legal_entity_list]
 
     rows = db.select_all(query, param)
