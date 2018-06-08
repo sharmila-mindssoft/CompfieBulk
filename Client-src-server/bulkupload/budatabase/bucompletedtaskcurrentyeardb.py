@@ -178,7 +178,7 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
     if rows is not None:
         for row in rows:
             uploaded_on = row["uploaded_on"].strftime("%d-%b-%Y %H:%M")
-            curr_date = datetime.datetime.now().strftime('%d-%b-%Y')
+            curr_date = datetime.datetime.now().strftime("%d-%b-%Y")
             csv_list.append(
                 bu_ct.CsvList(
                     row["csv_past_id"], row["csv_name"],
@@ -341,7 +341,7 @@ def get_files_as_zip(db, csv_id):
     row = db.select_one(q, [csv_id])
     if row:
         csv_name = row["csv_name"]
-    zip_file_name = csv_name + "_zip" + '.zip'
+    zip_file_name = csv_name + "_zip" + ".zip"
     zip_path = os.path.join(CSV_PATH, zip_file_name)
     zfw = zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED)
     csv_absname = os.path.join(CSV_PATH, csv_name)

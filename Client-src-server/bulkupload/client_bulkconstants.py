@@ -22,5 +22,5 @@ TEMP_FILE_SERVER = "http://localhost:8083/temp/"
 # FILE_SERVER = "http://localhost:8084/"
 
 
-CSV_DELIMITER = '|;|'
+CSV_DELIMITER = "|;|"
 CSV_MAX_LINE_ITEM = 100

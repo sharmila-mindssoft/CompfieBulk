@@ -711,10 +711,10 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             value = data.get(key)
             isFound = ""
             if key == "Compliance_Frequency":
-                value = ''.join(e for e in value if e.isalnum())
+                value = "".join(e for e in value if e.isalnum())
             values = value.strip().split(CSV_DELIMITER)
             csvParam = csv_params.get(key)
-            if (key == "Document_Name" and value != ''):
+            if (key == "Document_Name" and value != ""):
                 self._doc_names.append(value)
             result = self.validate_csv_values(
                 row_idx, res, values, key, csvParam, data,
@@ -848,7 +848,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 mapped_error_dict, mapped_header_dict, legal_entity_id)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
-        fileString = self._csv_name.split('.')
+        fileString = self._csv_name.split(".")
         file_name = "%s_%s.%s" % (
             fileString[0], "invalid", "xlsx"
         )
@@ -1019,8 +1019,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         else:
             return "File server not available"
 
-        current_date = datetime.now().strftime('%d-%b-%Y')
-        client_id = str(session_token).split('-')[0]
+        current_date = datetime.now().strftime("%d-%b-%Y")
+        client_id = str(session_token).split("-")[0]
         caller = (
             "http://%s:%s/clientfile?csvid=%s&c_id=%s&le_id=%s"
             "&d_id=%s&u_id=%s&start_date=%s&client_id=%s") % (

@@ -46,7 +46,7 @@ class PastDataJsonToCSV(object):
         try:
             return str(s)
         except Exception:
-            return s.encode('utf-8')
+            return s.encode("utf-8")
 
     def write_csv(self, header, values=None):
         if header:
@@ -65,7 +65,7 @@ class PastDataJsonToCSV(object):
         domain_name = request.d_name
         unit_name = request.u_name
         unit_code = request.u_code
-        unit_name = re.sub(unit_code + '-', '', unit_name)
+        unit_name = re.sub(unit_code + "-", "", unit_name)
         start_count = request.start_count
         statutory_wise_compliances = []
         (
