@@ -5,21 +5,19 @@ import uuid
 import datetime
 import mysql.connector
 from server.dbase import Database
+from clientprotocol import clientcore
+from server.common import datetime_to_string
+from bulkupload.client_bulkconstants import CSV_DOWNLOAD_URL
 from server.constants import (
     KNOWLEDGE_DB_HOST,
     KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
     KNOWLEDGE_DATABASE_NAME)
-from bulkupload.client_bulkconstants import CSV_DOWNLOAD_URL
-
 from server.clientdatabase.general import (
     calculate_due_date, filter_out_due_dates)
-from clientprotocol import clientcore
-
 from clientprotocol.clienttransactions import (
     STATUTORY_WISE_COMPLIANCES,
-    UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS
-)
-from server.common import datetime_to_string
+    UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS)
+
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..", "..")
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")

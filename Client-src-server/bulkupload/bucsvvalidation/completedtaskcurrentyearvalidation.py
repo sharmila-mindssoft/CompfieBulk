@@ -6,6 +6,7 @@ import requests
 import threading
 from datetime import datetime, timedelta
 from server.dbase import Database
+from server.common import get_date_time
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME)
@@ -19,7 +20,6 @@ from client_keyvalidationsettings import (
     csv_params, parse_csv_dictionary_values)
 from ..client_bulkuploadcommon import (
     write_data_to_excel, rename_file_type)
-from server.common import get_date_time
 
 
 __all__ = [

@@ -5,6 +5,7 @@ from clientprotocol.api_key_validation_client import (
 __all__ = [
     'bu_api_params'
 ]
+
 completed_task = "bulkupload.buapiprotocol.bucompletedtaskcurrentyearprotocol"
 
 
@@ -41,7 +42,7 @@ def make_vector_type_string(
     return {
         'type': 'VECTOR_TYPE_STRING', 'length': length,
         'is_optional': is_optional, 'validation_method': validfun
-        }
+    }
 
 
 def make_vector_type_text(
@@ -95,6 +96,7 @@ def make_record_type(module, klass_name):
         'class_name': klass_name
     }
 
+
 bu_api_params = {
     'csv_name': make_text_field(length=250),
     'csv_data': make_text_field(length=None),
@@ -113,7 +115,7 @@ bu_api_params = {
     'doc_count': make_int_field(),
     'count': make_int_field(),
     'csv_list': make_vector_type_field(
-            module=completed_task, klass_name="CsvList"),
+        module=completed_task, klass_name="CsvList"),
     'csv_past_id': make_int_field(),
     'uploaded_by': make_int_field(),
     'uploaded_on': make_text_field(is_optional=True),
@@ -124,6 +126,6 @@ bu_api_params = {
     'doc_names': make_vector_type_string(length=250, is_optional=True),
     'invalid_file_format': make_int_field(),
     'legal_entity_list': make_vector_type_int(),
-    "invalid_date":make_int_field(is_optional=True),
+    "invalid_date": make_int_field(is_optional=True),
     'csv_max_lines': make_int_field(is_optional=False)
 }
