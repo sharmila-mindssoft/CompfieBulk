@@ -169,7 +169,7 @@ class StatutorySource(object):
         if statu_maps.find(">>") > 0:
             statu_maps = ">>".join(e.strip() for e in statu_maps.split(">>"))
         return statu_maps
-        
+
     def get_statutories(self, country_id, domain_id):
         data = self._source_db.call_proc("sp_bu_statutories", [
             country_id, domain_id
@@ -416,6 +416,9 @@ class StatutorySource(object):
                     )
                     msg.extend(invalid_date_msg)
 
+                if (d["Multiple_Input_Selection"] != ""):
+                    msg.append("Multiple_Input_Selection - Invalid data")
+
             elif d["Repeats_Type"] == "Day(s)":
                 if d["Multiple_Input_Selection"] != "":
                     msg.append("Multiple_Input_Selection - Invalid data")
@@ -529,6 +532,8 @@ class StatutorySource(object):
                         int(d["Statutory_Date"]), int(d["Statutory_Month"])
                     )
                     msg.extend(invalid_date_msg)
+                if (d["Multiple_Input_Selection"] != ""):
+                    msg.append("Multiple_Input_Selection - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)":
                 if d["Multiple_Input_Selection"] != "":
@@ -684,7 +689,7 @@ class StatutorySource(object):
         created_on = get_date_time()
         mapping = mapping.replace("u'", '"')
         mapping = mapping.replace("'", '"')
-                
+
         if mapping.find("|;|") > 0:
             mapping = '", "'.join(e.strip() for e in mapping.split("|;|"))
         mapping = ''.join(('["', mapping, '"]'))
@@ -1678,7 +1683,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                             str(legis_name), level_id,
                                             parent_id, parent_names,
                                             uploaded_by)
-                                        self.get_statutories(self._country_id, 
+                                        self.get_statutories(self._country_id,
                                             self._domain_id)
                                         if(len(legis_data) == 1):
                                             if statu_id not in statu_ids:
@@ -1697,7 +1702,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                                 str(legis_name), level_id,
                                                 parent_id, parent_names,
                                                 uploaded_by)
-                                            self.get_statutories(self._country_id, 
+                                            self.get_statutories(self._country_id,
                                             self._domain_id)
                                             if len(legis_data) == statu_level:
                                                 if statu_id not in statu_ids:
