@@ -116,9 +116,6 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
     cObj = ValidateCompletedTaskCurrentYearCsvData(
         db, completed_task_data, session_user,
         request_frame.csv_name, header)
-    doc_check = cObj.check_doc_names()
-    if doc_check is False:
-        return bu_ct.InvalidCsvFile()
     res_data = cObj.perform_validation(request_frame.legal_entity_id)
     if res_data is False:
         return bu_ct.InvalidCsvFile()

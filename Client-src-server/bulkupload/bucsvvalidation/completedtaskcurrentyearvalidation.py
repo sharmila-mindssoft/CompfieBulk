@@ -605,16 +605,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                     res.append(msg)
             return res
 
-    def check_doc_names(self):
-        doc_names = []
-        for row_idx, data in enumerate(self._source_data):
-            doc_name = data.get("Document_Name")
-            if doc_name in doc_names and doc_name != "":
-                return False
-            else:
-                doc_names.append(doc_name)
-        return True
-
     def validate_csv_values(
         self, row_idx, res, values, key, csvParam, data,
         mapped_error_dict, mapped_header_dict, invalid,
@@ -730,7 +720,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 return False
             if key is "Document_Name":
                 msg = []
-                if data["Document_Name"] != "":
+                doc_name = data["Document_Name"]
+                if doc_name != "":
                     file_extension = os.path.splitext(
                         data["Document_Name"])
                     allowed_file_formats = [
@@ -741,6 +732,11 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                         msg.append("Document Name - Invalid File Format")
                         self._error_summary["invalid_file_format"] += 1
                         res = self.make_error_desc(res, msg)
+                    if doc_name in self._doc_names:
+                        msg.append("Document Name - Duplicate document name")
+                        res = self.make_error_desc(res, msg)
+                    else:
+                        self._doc_names.append(doc_name)
             if res is not True:
                 error_list = mapped_error_dict.get(row_idx)
                 if error_list is None:

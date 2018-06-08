@@ -1,6 +1,8 @@
 import os
 from functools import wraps
-import bucontroller
+from bucontroller.bucompletedtaskcurrentyearcontroller import (
+    process_bu_completed_task_current_year_request
+)
 from buapiprotocol import (
     bucompletedtaskcurrentyearprotocol
 )
@@ -46,5 +48,5 @@ class BulkAPI(object):
     def handle_completed_task(
         self, request, db, session_user, session_category
     ):
-        return bucontroller.process_bu_completed_task_current_year_request(
+        return process_bu_completed_task_current_year_request(
             request, db, session_user)
