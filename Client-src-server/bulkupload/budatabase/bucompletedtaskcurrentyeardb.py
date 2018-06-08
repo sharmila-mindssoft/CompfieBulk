@@ -185,7 +185,7 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
                     uploaded_on, row["uploaded_by"], row["total_records"],
                     row["total_documents"], row["uploaded_documents"],
                     row["remaining_documents"],
-                    doc_names.get(d.get("csv_past_id")), row["legal_entity"],
+                    doc_names.get(row["csv_past_id"]), row["legal_entity"],
                     row["domain_id"], row["unit_id"], curr_date
                 )
             )

@@ -609,7 +609,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         doc_names = []
         for row_idx, data in enumerate(self._source_data):
             doc_name = data.get("Document_Name")
-            if doc_name in doc_names:
+            if doc_name in doc_names and doc_name != "":
                 return False
             else:
                 doc_names.append(doc_name)
