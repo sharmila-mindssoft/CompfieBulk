@@ -1,1 +1,3 @@
-from bucompletedtaskcurrentyearcontroller import *
+from bucompletedtaskcurrentyearcontroller import (
+	process_bu_completed_task_current_year_request
+)

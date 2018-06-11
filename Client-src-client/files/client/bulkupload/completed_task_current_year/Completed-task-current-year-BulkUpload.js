@@ -331,7 +331,7 @@ function validateUpload() {
                     $('#bu_upload_total').text('0');
                     $('#bu_remain_total').text('0');
                     displaySuccessMessage(
-                        "Compliance uploaded successfully");
+                        "Csv file uploaded successfully");
                     hideLoader();
 
                 } else {

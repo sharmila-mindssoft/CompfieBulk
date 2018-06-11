@@ -6,6 +6,7 @@ import requests
 import threading
 from datetime import datetime, timedelta
 from server.dbase import Database
+from server.common import get_date_time
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME)
@@ -19,7 +20,6 @@ from client_keyvalidationsettings import (
     csv_params, parse_csv_dictionary_values)
 from ..client_bulkuploadcommon import (
     write_data_to_excel, rename_file_type)
-from server.common import get_date_time
 
 
 __all__ = [
@@ -249,9 +249,9 @@ class SourceDB(object):
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_code)
         if unit_id is None:
-            return 
+            return
         if domain_id is None:
-            return 
+            return
         rows = return_past_due_dates(
             self._source_db, domain_id, unit_id, None
         )
@@ -270,20 +270,19 @@ class SourceDB(object):
         else:
             return "Not Found"
 
-
     def check_is_valid_frequency(
         self, compliance_task, compliance_description, primary_legislation,
         secondary_legislation, domain_name, frequency
     ):
         compliance_id = self.get_compliance_id_from_name(
-            compliance_task, compliance_description, primary_legislation, 
+            compliance_task, compliance_description, primary_legislation,
             secondary_legislation
         )
         q = "select frequency from tbl_compliance_frequency where " + \
             " frequency_id = (select frequency_id from tbl_compliances " + \
             " where compliance_id = %s) "
         params = [compliance_id]
-        rows  = self._source_db.select_all(q, params)
+        rows = self._source_db.select_all(q, params)
         orig_freq = None
         if rows:
             orig_freq = rows[0]["frequency"]
@@ -292,18 +291,17 @@ class SourceDB(object):
         else:
             return True
 
-
     def get_compliance_id_from_name(
-        self, compliance_task, compliance_description, primary_legislation, 
+        self, compliance_task, compliance_description, primary_legislation,
         secondary_legislation
     ):
         q1 = " SELECT compliance_id FROM tbl_compliances where " + \
-                "compliance_task = TRIM(%s) and compliance_description = " + \
-                " TRIM(%s) and statutory_mapping like %s" 
+            "compliance_task = TRIM(%s) and compliance_description = " + \
+            " TRIM(%s) and statutory_mapping like %s"
 
-        legis_cond = '["' + primary_legislation 
+        legis_cond = '["' + primary_legislation
         if secondary_legislation != "":
-            legis_cond +=  ">>" + secondary_legislation + "%"
+            legis_cond += ">>" + secondary_legislation + "%"
         else:
             legis_cond += "%"
         params = [
@@ -324,7 +322,7 @@ class SourceDB(object):
             domain_name, unit_code)
 
         compliance_id = self.get_compliance_id_from_name(
-            compliance_task, compliance_description, primary_legislation, 
+            compliance_task, compliance_description, primary_legislation,
             secondary_legislation
         )
 
@@ -336,15 +334,17 @@ class SourceDB(object):
         statutory_dates = None
         trigger_before_days = 0
         if rows:
-            statutory_dates = rows[0]["statutory_dates"] 
+            statutory_dates = rows[0]["statutory_dates"]
             statutory_dates_array = json.loads(statutory_dates)
-            trigger_before_days = int(statutory_dates_array[0]["trigger_before_days"])
+            trigger_before_days = int(
+                statutory_dates_array[0]["trigger_before_days"])
         try:
             due_date = datetime.strptime(due_date, "%d-%b-%Y")
-            completion_date = datetime.strptime(completion_date, "%d-%b-%Y").date()
+            completion_date = datetime.strptime(
+                completion_date, "%d-%b-%Y").date()
         except ValueError:
             return
-        start_date = due_date.date() - timedelta(days=trigger_before_days) 
+        start_date = due_date.date() - timedelta(days=trigger_before_days)
         if completion_date < start_date:
             return "Should be greater than Start Date"
         else:
@@ -359,7 +359,7 @@ class SourceDB(object):
         return self.check_base(True, self.domain, domain_name, None)
 
     def check_valid_unit_code(self, unit_code, unit_name):
-        q = "select unit_name from tbl_units where unit_code = %s" 
+        q = "select unit_name from tbl_units where unit_code = %s"
         params = [unit_code]
         rows = self._source_db.select_all(q, params)
         org_unit_name = None
@@ -399,7 +399,7 @@ class SourceDB(object):
         self, compliance_task, compliance_description, primary_legislation,
         secondary_legislation, domain_name, frequency
     ):
-        status1 =self.check_is_valid_frequency(
+        status1 = self.check_is_valid_frequency(
             compliance_task, compliance_description, primary_legislation,
             secondary_legislation, domain_name, frequency
         )
@@ -605,17 +605,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                     res.append(msg)
             return res
 
-    def check_doc_names(self):
-        doc_names = []
-        for row_idx, data in enumerate(self._source_data):
-            doc_name = data.get("Document_Name")
-            if doc_name in doc_names and doc_name != "":
-                return False
-            else:
-                doc_names.append(doc_name)
-        return True
-
-
     def validate_csv_values(
         self, row_idx, res, values, key, csvParam, data,
         mapped_error_dict, mapped_header_dict, invalid,
@@ -712,12 +701,11 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             value = data.get(key)
             isFound = ""
             if key == "Compliance_Frequency":
-                value = ''.join(e for e in value if e.isalnum())
+                value = "".join(e for e in value if e.isalnum())
             values = value.strip().split(CSV_DELIMITER)
             csvParam = csv_params.get(key)
-            if (key == "Document_Name" and value != ''):
+            if (key == "Document_Name" and value != ""):
                 self._doc_names.append(value)
-            
             result = self.validate_csv_values(
                 row_idx, res, values, key, csvParam, data,
                 mapped_error_dict, mapped_header_dict, invalid,
@@ -732,7 +720,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 return False
             if key is "Document_Name":
                 msg = []
-                if data["Document_Name"] != "":
+                doc_name = data["Document_Name"]
+                if doc_name != "":
                     file_extension = os.path.splitext(
                         data["Document_Name"])
                     allowed_file_formats = [
@@ -743,6 +732,11 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                         msg.append("Document Name - Invalid File Format")
                         self._error_summary["invalid_file_format"] += 1
                         res = self.make_error_desc(res, msg)
+                    if doc_name in self._doc_names:
+                        msg.append("Document Name - Duplicate document name")
+                        res = self.make_error_desc(res, msg)
+                    else:
+                        self._doc_names.append(doc_name)
             if res is not True:
                 error_list = mapped_error_dict.get(row_idx)
                 if error_list is None:
@@ -799,13 +793,13 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 due_date = datetime.strptime(due_date, "%d-%b-%Y")
             except ValueError:
                 pass
-            legis_cond = '["' + primary_legislation 
+            legis_cond = '["' + primary_legislation
             if secondary_legislation != "":
-                legis_cond +=  ">>" + secondary_legislation + "%"
+                legis_cond += ">>" + secondary_legislation + "%"
             else:
                 legis_cond += "%"
             params = [
-                compliance_name, description, legis_cond, 
+                compliance_name, description, legis_cond,
                 frequency, unit_code, legal_entity_id, due_date
             ]
             self.connect_source_db(legal_entity_id)
@@ -850,7 +844,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 mapped_error_dict, mapped_header_dict, legal_entity_id)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
-        fileString = self._csv_name.split('.')
+        fileString = self._csv_name.split(".")
         file_name = "%s_%s.%s" % (
             fileString[0], "invalid", "xlsx"
         )
@@ -993,8 +987,12 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def file_server_approve_call(
         self, csvid, country_id, legal_id, domain_id, unit_id
     ):
-        caller_name = "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s" % (
-            TEMP_FILE_SERVER, csvid, country_id, legal_id, domain_id, unit_id)
+        caller_name = (
+            "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s"
+        ) % (
+            TEMP_FILE_SERVER, csvid, country_id, legal_id,
+            domain_id, unit_id
+        )
         response = requests.post(caller_name)
         print "Temp server Caller name->", caller_name
         print "response-> ", response
@@ -1006,8 +1004,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         file_server_ip = None
         file_server_port = None
         query = "select ip, port from tbl_file_server where " + \
-            "file_server_id = (select file_server_id from tbl_client_database " + \
-            "where legal_entity_id = %s )"
+            "file_server_id = (select file_server_id from " + \
+            " tbl_client_database where legal_entity_id = %s )"
         param = [legal_id]
         self.connect_source_db(legal_id)
         docRows = self._knowledge_db.select_all(query, param)
@@ -1017,10 +1015,14 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         else:
             return "File server not available"
 
-        current_date = datetime.now().strftime('%d-%b-%Y')
-        client_id = str(session_token).split('-')[0]
-        caller = "http://%s:%s/clientfile?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s&start_date=%s&client_id=%s" % (
-            file_server_ip, file_server_port, csvid, country_id, legal_id, domain_id, unit_id, current_date, client_id)
+        current_date = datetime.now().strftime("%d-%b-%Y")
+        client_id = str(session_token).split("-")[0]
+        caller = (
+            "http://%s:%s/clientfile?csvid=%s&c_id=%s&le_id=%s"
+            "&d_id=%s&u_id=%s&start_date=%s&client_id=%s") % (
+            file_server_ip, file_server_port, csvid, country_id, legal_id,
+            domain_id, unit_id, current_date, client_id
+        )
         print "caller Fileserver->", caller
         response = requests.post(caller)
         print "Response from file server", response
