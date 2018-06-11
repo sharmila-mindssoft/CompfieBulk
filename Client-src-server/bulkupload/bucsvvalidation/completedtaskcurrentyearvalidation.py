@@ -56,6 +56,9 @@ class SourceDB(object):
         self._csv_column_name = []
         self.csv_column_fields()
         self._doc_names = []
+        self._past_due_dates = {}
+        self.trigger_before_days = {}
+        self.frequency_id_name_map = {}
         # self.get_doc_names()
 
     def connect_source_db(self, legal_entity_id):
@@ -140,6 +143,11 @@ class SourceDB(object):
         for d in rows:
             self.unit_code[d["unit_code"]] = d
 
+    def return_unit_domain_id(self, domain_name, unit_code):
+        domain_id = self.domain[domain_name]["domain_id"]
+        unit_id = self.unit_code[unit_code]["unit_id"]
+        return unit_id, domain_id
+
     def get_unit_name(self):
         query = "SELECT unit_id, client_id, legal_entity_id, " + \
             "unit_code, unit_name, is_closed FROM tbl_units"
@@ -181,7 +189,7 @@ class SourceDB(object):
             "trim(compliance_task) else trim(Concat_ws( " + \
             "' - ',document_name, compliance_task)) end AS " + \
             " compliance_task, compliance_description, " + \
-            "is_active from tbl_compliances"
+            "is_active, frequency_id from tbl_compliances t1"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.compliance_task[d["compliance_task"]] = d
@@ -201,6 +209,7 @@ class SourceDB(object):
         rows = self._source_db.select_all(query)
         for d in rows:
             self.compliance_frequency[d["frequency"]] = d
+            self.frequency_id_name_map[d["frequency_id"]] = d["frequency"]
 
     def get_assignee(self):
         query = "SELECT Distinct assignee as ID, employee_code," + \
@@ -228,20 +237,70 @@ class SourceDB(object):
 
         return True
 
-    def return_unit_domain_id(self, domain_name, unit_code):
-        query = "SELECT domain_id from tbl_domains " + \
-                "where domain_name  = '%s'" % domain_name
-        rows = self._source_db.select_all(query)
-        domain_id = None
-        if len(rows) > 0:
-            domain_id = rows[0]["domain_id"]
-        query = "SELECT unit_id from tbl_units " + \
-                "where unit_code  = '%s'" % unit_code
-        rows = self._source_db.select_all(query)
-        unit_id = None
-        if len(rows) > 0:
-            unit_id = rows[0]["unit_id"]
-        return unit_id, domain_id
+    def get_past_due_dates(self, domain_id, unit_id):
+        def generate_past_due_dates(domain_id, unit_id):
+            rows = return_past_due_dates(
+                self._source_db, domain_id, unit_id, None
+            )
+            result = calculate_final_due_dates(
+                self._source_db, rows, domain_id, unit_id
+            )
+            if domain_id not in self._past_due_dates:
+                self._past_due_dates[domain_id] = {}
+            elif unit_id not in self._past_due_dates[domain_id]:
+                self._past_due_dates[domain_id][unit_id] = result
+            return result
+        if domain_id in self._past_due_dates:
+            if unit_id in self._past_due_dates[domain_id]:
+                return self._past_due_dates[domain_id][unit_id]
+            else:
+                return generate_past_due_dates(domain_id, unit_id)
+        else:
+            return generate_past_due_dates(domain_id, unit_id)
+
+    def get_trigger_before_days(self, unit_id, domain_id, compliance_id):
+        def generate_trigger_before_days(unit_id, domain_id, compliance_id):
+            q = "SELECT statutory_dates from tbl_assign_compliances " + \
+                " where unit_id = %s  and domain_id = %s" + \
+                " and compliance_id = %s"
+            params = [unit_id, domain_id, compliance_id]
+            rows = self._source_db.select_all(q, params)
+            statutory_dates = None
+            trigger_before_days = 0
+            if rows:
+                statutory_dates = rows[0]["statutory_dates"]
+                statutory_dates_array = json.loads(statutory_dates)
+                trigger_before_days = int(
+                    statutory_dates_array[0]["trigger_before_days"])
+                if domain_id not in self.trigger_before_days:
+                    self.trigger_before_days[domain_id] = {}
+                elif unit_id not in self.trigger_before_days[domain_id]:
+                    self.trigger_before_days[domain_id][unit_id] = {}
+                elif (compliance_id not in
+                        self.trigger_before_days[domain_id][unit_id]):
+                    self.trigger_before_days[
+                        domain_id][unit_id][
+                        compliance_id] = trigger_before_days
+                else:
+                    self.trigger_before_days[
+                        domain_id][unit_id][
+                        compliance_id] = trigger_before_days
+            return trigger_before_days
+        if domain_id in self.trigger_before_days:
+            if unit_id in self.trigger_before_days[domain_id]:
+                if compliance_id in self.trigger_before_days[
+                        domain_id][unit_id]:
+                        return self.trigger_before_days[domain_id][unit_id][
+                            compliance_id]
+                else:
+                    return generate_trigger_before_days(
+                        unit_id, domain_id, compliance_id)
+            else:
+                return generate_trigger_before_days(
+                    unit_id, domain_id, compliance_id)
+        else:
+            return generate_trigger_before_days(
+                unit_id, domain_id, compliance_id)
 
     def check_due_date(
         self, due_date, domain_name, unit_code, level_1_statutory_name
@@ -252,12 +311,7 @@ class SourceDB(object):
             return
         if domain_id is None:
             return
-        rows = return_past_due_dates(
-            self._source_db, domain_id, unit_id, None
-        )
-        due_dates = calculate_final_due_dates(
-            self._source_db, rows, domain_id, unit_id
-        )
+        due_dates = self.get_past_due_dates(domain_id, unit_id)
         if due_dates[0] is None:
             return "Not Found"
         try:
@@ -274,44 +328,12 @@ class SourceDB(object):
         self, compliance_task, compliance_description, primary_legislation,
         secondary_legislation, domain_name, frequency
     ):
-        compliance_id = self.get_compliance_id_from_name(
-            compliance_task, compliance_description, primary_legislation,
-            secondary_legislation
-        )
-        q = "select frequency from tbl_compliance_frequency where " + \
-            " frequency_id = (select frequency_id from tbl_compliances " + \
-            " where compliance_id = %s) "
-        params = [compliance_id]
-        rows = self._source_db.select_all(q, params)
-        orig_freq = None
-        if rows:
-            orig_freq = rows[0]["frequency"]
+        frequency_id = self.compliance_task[compliance_task]["frequency_id"]
+        orig_freq = self.frequency_id_name_map[frequency_id]
         if frequency != orig_freq:
             return "Invalid"
         else:
             return True
-
-    def get_compliance_id_from_name(
-        self, compliance_task, compliance_description, primary_legislation,
-        secondary_legislation
-    ):
-        q1 = " SELECT compliance_id FROM tbl_compliances where " + \
-            "compliance_task = TRIM(%s) and compliance_description = " + \
-            " TRIM(%s) and statutory_mapping like %s"
-
-        legis_cond = '["' + primary_legislation
-        if secondary_legislation != "":
-            legis_cond += ">>" + secondary_legislation + "%"
-        else:
-            legis_cond += "%"
-        params = [
-            compliance_task, compliance_description, legis_cond
-        ]
-        rows = self._source_db.select_all(q1, params)
-        compliance_id = None
-        if rows:
-            compliance_id = rows[0]["compliance_id"]
-        return compliance_id
 
     def check_completion_date(
         self, unit_code, due_date, legal_entity, compliance_task,
@@ -320,24 +342,10 @@ class SourceDB(object):
     ):
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_code)
-
-        compliance_id = self.get_compliance_id_from_name(
-            compliance_task, compliance_description, primary_legislation,
-            secondary_legislation
+        compliance_id = self.compliance_task[compliance_task]["compliance_id"]
+        trigger_before_days = self.get_trigger_before_days(
+            unit_id, domain_id, compliance_id
         )
-
-        q = "SELECT statutory_dates from tbl_assign_compliances " + \
-            " where unit_id = %s  and domain_id = %s" + \
-            " and compliance_id = %s"
-        params = [unit_id, domain_id, compliance_id]
-        rows = self._source_db.select_all(q, params)
-        statutory_dates = None
-        trigger_before_days = 0
-        if rows:
-            statutory_dates = rows[0]["statutory_dates"]
-            statutory_dates_array = json.loads(statutory_dates)
-            trigger_before_days = int(
-                statutory_dates_array[0]["trigger_before_days"])
         try:
             due_date = datetime.strptime(due_date, "%d-%b-%Y")
             completion_date = datetime.strptime(
@@ -359,12 +367,7 @@ class SourceDB(object):
         return self.check_base(True, self.domain, domain_name, None)
 
     def check_valid_unit_code(self, unit_code, unit_name):
-        q = "select unit_name from tbl_units where unit_code = %s"
-        params = [unit_code]
-        rows = self._source_db.select_all(q, params)
-        org_unit_name = None
-        if rows:
-            org_unit_name = rows[0]["unit_name"]
+        org_unit_name = self.unit_code[unit_code]["unit_name"]
         if org_unit_name == unit_name:
             return True
         else:
@@ -704,8 +707,6 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 value = "".join(e for e in value if e.isalnum())
             values = value.strip().split(CSV_DELIMITER)
             csvParam = csv_params.get(key)
-            if (key == "Document_Name" and value != ""):
-                self._doc_names.append(value)
             result = self.validate_csv_values(
                 row_idx, res, values, key, csvParam, data,
                 mapped_error_dict, mapped_header_dict, invalid,

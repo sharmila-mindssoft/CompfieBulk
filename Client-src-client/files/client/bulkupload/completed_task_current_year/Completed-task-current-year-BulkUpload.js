@@ -787,6 +787,8 @@ function resetAdd() {
     TXT_DOMAIN.val("");
     TXT_UNIT.val("");
     LEGALENTITY_NAME_UPLOAD.val("");
+    addedfiles = [];
+    uploadedfiles = [];
 }
 
 function resetEdit() {
@@ -813,11 +815,14 @@ function resetEdit() {
     LEGALENTITY_NAME_UPLOAD.val("");
     myDropzone.removeAllFiles();
     BTN_UPLOAD.show();
+    addedfiles = [];
+    uploadedfiles = [];
 }
 
 Dropzone.autoDiscover = false;
 Dropzone.autoProcessQueue = false;
 var addedfiles = [];
+var uploadedfiles = [];
 var totalfileUploadSuccess = 0;
 var perQueueUploadSuccess = 0;
 var queueCount = 0;
@@ -839,18 +844,20 @@ var myDropzone = new Dropzone("div#myDrop", {
     },
     init: function() {
         this.on("addedfile", function(file) {
-            if (jQuery.inArray(file.name, addedfiles) > -1) {
+            if (
+                jQuery.inArray(file.name, addedfiles) > -1 ||
+                jQuery.inArray(file.name, DOC_NAMES) == -1 ||
+                jQuery.inArray(file.name, uploadedfiles) > -1 ||
+                REMAINING_DOCUMENTS <= 0
+            ){
                 myDropzone.removeFile(file);
-            }
-            if (jQuery.inArray(file.name, DOC_NAMES) == -1) {
-                myDropzone.removeFile(file);
-            }else if(REMAINING_DOCUMENTS == 0){
-                myDropzone.removeFile(file);
-                displayMessage("Required files were already added");
-            } else {
+            }else {
                 addedfiles.push(file.name);
                 queueCount += 1;
             }
+            if(REMAINING_DOCUMENTS <= 0){
+                displayMessage("Required files were already added");
+            } 
 
         });
         this.on("removedfile", function(file) {
@@ -866,6 +873,7 @@ var myDropzone = new Dropzone("div#myDrop", {
 
         this.on("success", function(file, response) {
             addedfiles.pop(file.name);
+            uploadedfiles.push(file.name);
             if (totalfileUploadSuccess < queueCount) {
                 totalfileUploadSuccess += 1;
                 perQueueUploadSuccess += 1;
