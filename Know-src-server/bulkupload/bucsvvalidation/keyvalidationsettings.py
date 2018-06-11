@@ -466,7 +466,7 @@ csv_params = {
         validation_method=is_alphabet, isFoundCheck=True
     ),
     'Reference_Link': make_required_validation(
-        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
+        keyType='STRING', maxLengthCheck=100, isValidCharCheck=True,
         validation_method=is_url
     ),
     'Compliance_Frequency': make_required_validation(
