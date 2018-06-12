@@ -61,7 +61,8 @@ def convert_base64_to_file(src_path, file_name, file_content):
         os.makedirs(file_folder_path)
     with open(file_path, "wb") as fn:
         fn.write(file_content.decode("base64"))
-    return response, framed_file_name
+    header, completed_task_data = read_data_from_csv(file_path)
+    return header, completed_task_data, framed_file_name
 
 
 ########################################################
