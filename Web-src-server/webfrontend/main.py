@@ -348,23 +348,11 @@ def run_web_front_end(port, knowledge_server_address):
         )
 
         web_server.low_level_url(
-            r"/uploaded_file/csv/<path:filename>",
-            StaticFileHandler,
-            dict(path=BULK_CSV_UPLOAD_PATH_CSV)
-        )
-
-
-        web_server.low_level_url(
             r"/client/compliance_format/(.*)",
             StaticFileHandler,
             dict(path=format_path)
         )
 
-        web_server.low_level_url(
-            r"/download/csv/(.*)",
-            StaticFileHandler,
-            dict(path=reports_path)
-        )
         web_server.low_level_url(
             r"/download/invalid/(.*)",
             StaticFileHandler,
