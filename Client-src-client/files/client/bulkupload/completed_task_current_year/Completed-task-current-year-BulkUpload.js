@@ -65,6 +65,7 @@ var LEGALENTITYUSR = [];
 var TOTAL_DOCUMENTS = 0;
 var UPLOADED_DOCUMENTS = 0;
 var REMAINING_DOCUMENTS = 0;
+var BASE_PATH = null;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -364,14 +365,14 @@ function validateUpload() {
                     $('#divSuccessFile').hide();
                     $('.divSuccessDocument').hide();
                     $('#divSuccessbutton').hide();
-                    base_path = "../download/invalid"
-                    csvPath = base_path + "/csv/" +
+                    BASE_PATH = data.base_path;
+                    csvPath = BASE_PATH + "csv/" +
                                 INVALID_FILE_NAME[0] + '.csv';
-                    xls_path = base_path + "/xlsx/"
+                    xls_path = BASE_PATH + "xlsx/"
                                 + INVALID_FILE_NAME[0] + '.xlsx';
-                    ods_path = base_path + "/ods/"
+                    ods_path = BASE_PATH + "ods/"
                                 + INVALID_FILE_NAME[0] + '.ods';
-                    txt_path = base_path + "/txt/"
+                    txt_path = BASE_PATH + "txt/"
                                 + INVALID_FILE_NAME[0] + '.txt';
                     $('#csv').attr("href", csvPath);
                     $('#excel').attr("href", xls_path);
@@ -387,7 +388,7 @@ function validateUpload() {
             $('#remaining-doc-title').show();
             $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
             $('#bu_remain_total').text(
-                TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS
+                REMAINING_DOCUMENTS
             );
             myDropzone.processQueue();
         }
@@ -397,7 +398,7 @@ function validateUpload() {
 document.getElementById("txt").addEventListener("click", function() {
     if (INVALID_FILE_NAME != null) {
         $.get(
-            "../download/invalid/txt/" + INVALID_FILE_NAME[0] + ".txt",
+            BASE_PATH+"txt/" + INVALID_FILE_NAME[0] + ".txt",
             function(data) {
                 download(
                     INVALID_FILE_NAME[0] + ".txt", "text/plain", data);
@@ -471,7 +472,8 @@ function pageControls() {
 
     BTN_UPLOADED_DATA.click(function(){
         downloadUploadedData(
-            parseInt($(".uploaded-data .text-primary").attr("id")),
+            // parseInt($(".uploaded-data .text-primary").attr("id")),
+            parseInt(LEGALENTITY_ID_UPLOAD.val()),
             parseInt($(".uploaded-data").attr("id"))
         );
     });
@@ -756,7 +758,7 @@ function file_upload_rul() {
     // console.log("inside file upload rul");
     var sessionId = client_mirror.getSessionToken();
     var fileBaseUrl = "/client/temp/upload?session_id=" +
-        sessionId + "&csvid=" + CSV_ID;
+        sessionId + "&csvid="  +CSV_ID;
     // var fileBaseUrl = "../api/bu/completed_task?session_id=" +
     //     sessionId + "&csvid=" + CSV_ID;
     return fileBaseUrl;
@@ -789,6 +791,7 @@ function resetAdd() {
     LEGALENTITY_NAME_UPLOAD.val("");
     addedfiles = [];
     uploadedfiles = [];
+    loadEntityDetails();
 }
 
 function resetEdit() {
@@ -817,6 +820,7 @@ function resetEdit() {
     BTN_UPLOAD.show();
     addedfiles = [];
     uploadedfiles = [];
+    loadEntityDetails();
 }
 
 Dropzone.autoDiscover = false;

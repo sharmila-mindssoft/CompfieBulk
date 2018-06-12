@@ -5,7 +5,7 @@ import threading
 import datetime
 # import mysql.connector.pooling
 import mysql.connector
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_from_directory
 
 from functools import wraps
 
@@ -918,6 +918,10 @@ class API(BulkAPI):
 def handle_isalive():
     return Response("Application is alive", status=200, mimetype="application/json")
 
+
+def staticTemplate(pathname, filename):
+    return send_from_directory(pathname, filename)
+
 #
 # run_server
 #
@@ -955,6 +959,30 @@ def run_server(address, knowledge_server_address):
 
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])
+
+        EXP_BASE_PATH = os.path.join(ROOT_PATH, "exported_reports")
+        BULK_CSV_UPLOAD_PATH_CSV = os.path.join(
+            ROOT_PATH, "bulkuploadcsv/csv"
+        )
+        INVALID_PATH = os.path.join(ROOT_PATH, "bulkuploadinvalid")
+        XLSX_PATH = os.path.join(INVALID_PATH, "xlsx")
+        CSV_PATH = os.path.join(INVALID_PATH, "csv")
+        TXT_PATH = os.path.join(INVALID_PATH, "txt")
+        ODS_PATH = os.path.join(INVALID_PATH, "ods")
+        STATIC_PATHS = [
+            ("/download/csv/<path:filename>", EXP_BASE_PATH),
+            ("/uploaded_file/csv/<path:filename>", BULK_CSV_UPLOAD_PATH_CSV),
+            ("/download/invalid/csv/<path:filename>", CSV_PATH),
+            ("/download/invalid/xlsx/<path:filename>", XLSX_PATH),
+            ("/download/invalid/txt/<path:filename>", TXT_PATH),
+            ("/download/invalid/ods/<path:filename>", ODS_PATH),
+        ]
+        
+        for path in STATIC_PATHS :
+            app.add_url_rule(
+                path[0], view_func=staticTemplate, methods=['GET'],
+                defaults={'pathname': path[1]}
+            )
 
         print "Listening at: %s:%s" % (ip, port)
 
