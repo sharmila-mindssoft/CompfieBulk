@@ -387,7 +387,7 @@ function validateUpload() {
             $('#remaining-doc-title').show();
             $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
             $('#bu_remain_total').text(
-                REMAINING_DOCUMENTS
+                TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS
             );
             myDropzone.processQueue();
         }
@@ -471,8 +471,7 @@ function pageControls() {
 
     BTN_UPLOADED_DATA.click(function(){
         downloadUploadedData(
-            // parseInt($(".uploaded-data .text-primary").attr("id")),
-            parseInt(LEGALENTITY_ID_UPLOAD.val()),
+            parseInt($(".uploaded-data .text-primary").attr("id")),
             parseInt($(".uploaded-data").attr("id"))
         );
     });
@@ -790,7 +789,6 @@ function resetAdd() {
     LEGALENTITY_NAME_UPLOAD.val("");
     addedfiles = [];
     uploadedfiles = [];
-    loadEntityDetails();
 }
 
 function resetEdit() {
@@ -819,7 +817,6 @@ function resetEdit() {
     BTN_UPLOAD.show();
     addedfiles = [];
     uploadedfiles = [];
-    loadEntityDetails();
 }
 
 Dropzone.autoDiscover = false;

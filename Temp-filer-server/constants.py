@@ -1,10 +1,9 @@
 import os
 
-
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
-KNOWLEDGE_DB_PASSWORD = "123456"
+KNOWLEDGE_DB_PASSWORD = "root"
 KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new"
 ROOT_PATH = os.path.join(os.path.split(__file__)[0])
 
@@ -17,12 +16,9 @@ CLIENT_DOCUMENT_UPLOAD_PATH = os.path.join(
 BULK_UPLOAD_DB_HOST = "localhost"
 BULK_UPLOAD_DB_PORT = 3306
 BULK_UPLOAD_DB_USERNAME = "root"
-BULK_UPLOAD_DB_PASSWORD = "123456"
+BULK_UPLOAD_DB_PASSWORD = "root"
 BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload"
 
 ENABLE_API_LOG = False
 ENABLE_QUERY_LOG = True
 ENABLE_DEBUG_LOG = True
-
-TEMP_FILE_SERVER = "http://localhost:9010/temp/"
-TEMP_FILE_SERVER_WITHOUT_TEMP = "http://localhost:9010/"
