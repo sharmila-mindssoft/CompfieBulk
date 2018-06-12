@@ -602,37 +602,36 @@ def upload_csv():
         os.makedirs(CSV_PATH)
     with open(file_path, "wb") as fn:
         fn.write(file_content.decode("base64"))
-    # headerrow, mapped_data = read_data_from_csv(file_path)
-    # return_data = {
-    #     "headerrow": headerrow,
-    #     "mapped_data": mapped_data
-    # }
-    # return str(json.dumps(return_data))
-    return "success"
+    headerrow, mapped_data = read_data_from_csv(file_path)
+    return_data = {
+        "headerrow": headerrow,
+        "mapped_data": mapped_data
+    }
+    return str(json.dumps(return_data))
 
 
-# def read_data_from_csv(file_path):
-#     print "reading data from csv"
-#     mapped_data = []
-#     headerrow = []
-#     if os.path.exists(file_path):
-#         with open(file_path, "rb") as fn:
-#             rows = csv.reader(
-#                 fn, quotechar='"', delimiter=",",
-#                 quoting=csv.QUOTE_ALL, skipinitialspace=True
-#             )
-#             for idx, r in enumerate(rows):
-#                 if idx == 0:
-#                     for c in r:
-#                         c = c.replace("*", "")
-#                         headerrow.append(c.strip())
-#                 else:
-#                     data = {}
-#                     for cdx, c in enumerate(r):
-#                         val = c.strip()
-#                         data[headerrow[cdx]] = val
-#                     mapped_data.append(data)
-#     return headerrow, mapped_data
+def read_data_from_csv(file_path):
+    print "reading data from csv"
+    mapped_data = []
+    headerrow = []
+    if os.path.exists(file_path):
+        with open(file_path, "rb") as fn:
+            rows = csv.reader(
+                fn, quotechar='"', delimiter=",",
+                quoting=csv.QUOTE_ALL, skipinitialspace=True
+            )
+            for idx, r in enumerate(rows):
+                if idx == 0:
+                    for c in r:
+                        c = c.replace("*", "")
+                        headerrow.append(c.strip())
+                else:
+                    data = {}
+                    for cdx, c in enumerate(r):
+                        val = c.strip()
+                        data[headerrow[cdx]] = val
+                    mapped_data.append(data)
+    return headerrow, mapped_data
 
 
 @app.route('/temp/downloadclientfile', methods=['GET'])

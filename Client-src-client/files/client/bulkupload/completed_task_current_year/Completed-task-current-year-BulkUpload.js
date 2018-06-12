@@ -65,7 +65,6 @@ var LEGALENTITYUSR = [];
 var TOTAL_DOCUMENTS = 0;
 var UPLOADED_DOCUMENTS = 0;
 var REMAINING_DOCUMENTS = 0;
-var BASE_PATH = null;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -365,14 +364,14 @@ function validateUpload() {
                     $('#divSuccessFile').hide();
                     $('.divSuccessDocument').hide();
                     $('#divSuccessbutton').hide();
-                    BASE_PATH = data.base_path;
-                    csvPath = BASE_PATH + "csv/" +
+                    base_path = "../download/invalid"
+                    csvPath = base_path + "/csv/" +
                                 INVALID_FILE_NAME[0] + '.csv';
-                    xls_path = BASE_PATH + "xlsx/"
+                    xls_path = base_path + "/xlsx/"
                                 + INVALID_FILE_NAME[0] + '.xlsx';
-                    ods_path = BASE_PATH + "ods/"
+                    ods_path = base_path + "/ods/"
                                 + INVALID_FILE_NAME[0] + '.ods';
-                    txt_path = BASE_PATH + "txt/"
+                    txt_path = base_path + "/txt/"
                                 + INVALID_FILE_NAME[0] + '.txt';
                     $('#csv').attr("href", csvPath);
                     $('#excel').attr("href", xls_path);
@@ -398,7 +397,7 @@ function validateUpload() {
 document.getElementById("txt").addEventListener("click", function() {
     if (INVALID_FILE_NAME != null) {
         $.get(
-            BASE_PATH+"txt/" + INVALID_FILE_NAME[0] + ".txt",
+            "../download/invalid/txt/" + INVALID_FILE_NAME[0] + ".txt",
             function(data) {
                 download(
                     INVALID_FILE_NAME[0] + ".txt", "text/plain", data);
@@ -758,7 +757,7 @@ function file_upload_rul() {
     // console.log("inside file upload rul");
     var sessionId = client_mirror.getSessionToken();
     var fileBaseUrl = "/client/temp/upload?session_id=" +
-        sessionId + "&csvid="  +CSV_ID;
+        sessionId + "&csvid=" + CSV_ID;
     // var fileBaseUrl = "../api/bu/completed_task?session_id=" +
     //     sessionId + "&csvid=" + CSV_ID;
     return fileBaseUrl;

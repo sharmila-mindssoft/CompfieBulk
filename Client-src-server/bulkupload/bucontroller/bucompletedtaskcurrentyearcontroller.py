@@ -16,7 +16,7 @@ from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
 from..budatabase.bucompletedtaskcurrentyeardb import (
     get_units_for_user, get_completed_task_CSV_list, get_client_id_by_le,
     save_completed_task_current_year_csv, save_completed_task_data,
-    get_past_record_data, update_document_count, get_base_path_of_client
+    get_past_record_data, update_document_count
 )
 
 
@@ -103,10 +103,13 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
 
     if request_frame.csv_size > 0:
         pass
-    header, completed_task_data, csv_name = convert_base64_to_file(
+    response, csv_name = convert_base64_to_file(
         BULKUPLOAD_CSV_PATH, request_frame.csv_name,
         request_frame.csv_data
     )
+    data = json.loads(response.text)
+    header = data["headerrow"]
+    completed_task_data = data["mapped_data"]
     if len(completed_task_data) > CSV_MAX_LINE_ITEM:
         # file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
         # remove_uploaded_file(file_path)
@@ -150,14 +153,12 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
                 )
         # csv data save to temp db
     else:
-        base_path = get_base_path_of_client(request_frame.legal_entity_id)
         result = bu_ct.UploadCompletedTaskCurrentYearCSVFailed(
             res_data["invalid_file"], res_data["mandatory_error"],
             res_data["max_length_error"], res_data["duplicate_error"],
             res_data["invalid_char_error"], res_data["invalid_data_error"],
             res_data["inactive_error"], res_data["total"], res_data["invalid"],
-            res_data["invalid_file_format"], res_data["invalid_date"],
-            base_path
+            res_data["invalid_file_format"], res_data["invalid_date"]
         )
 
     return result
@@ -201,7 +202,7 @@ def process_get_bulk_download_data(
     converter = PastDataJsonToCSV(
         db, request_frame, session_user, "DownloadPastData"
     )
-    print request_frame.to_inner_structure()
+
     if(
         converter.FILE_DOWNLOAD_PATH is None or
         converter.data_available_status is False

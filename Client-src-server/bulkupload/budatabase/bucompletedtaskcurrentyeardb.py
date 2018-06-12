@@ -19,7 +19,7 @@ __all__ = [
     "get_completed_task_CSV_list",
     "get_client_id_by_le",
     "get_units_for_user",
-    "get_base_path_of_client",
+    # "get_files_as_zip",
     "update_document_count"
 ]
 
@@ -378,19 +378,6 @@ def return_units(units):
 #     else:
 #         return
 
-
-def get_base_path_of_client(legal_entity_id):
-    _knowledge_db = connect_know_db()
-    query = "SELECT ip, port from tbl_application_server where " + \
-        " machine_id = (select machine_id from tbl_client_database " + \
-        " where  legal_entity_id = %s)"
-    params = [legal_entity_id]
-    rows = _knowledge_db.select_all(query, params)
-    if rows:
-        ip = rows[0]["ip"]
-        port = rows[0]["port"]
-        url = "http://%s:%s/%s" % (ip, port, "download/invalid/")
-        return url
 
 def update_document_count(db, csv_id, count):
     q = " update tbl_bulk_past_data_csv set " + \

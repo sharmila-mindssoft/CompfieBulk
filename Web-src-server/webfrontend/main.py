@@ -337,6 +337,7 @@ def run_web_front_end(port, knowledge_server_address):
         server_path = os.path.join(src_server_path, "server")
         format_path = os.path.join(server_path, "knowledgeformat")
         reports_path = os.path.join(ROOT_PATH, "exported_reports")
+        invalid_path = os.path.join(ROOT_PATH, "bulkuploadinvalid")
         client_docs_path = os.path.join(server_path, "clientdocuments")
         expiry_download = os.path.join(src_server_path, "expired")
         seven_year_data_download = os.path.join(
@@ -352,6 +353,11 @@ def run_web_front_end(port, knowledge_server_address):
             dict(path=format_path)
         )
 
+        web_server.low_level_url(
+            r"/download/invalid/(.*)",
+            StaticFileHandler,
+            dict(path=invalid_path)
+        )
         web_server.low_level_url(
             r"/client/client_documents/(.*)",
             StaticFileHandler,
