@@ -624,9 +624,16 @@ def delete_rejected_sm_csv_id(db, request_frame, session_user):
     domain_id = request_frame.d_id
     csv_id = request_frame.csv_id
     user_id = session_user.user_id()
+
+    # Remove Rejected Documents
+    c_obj = ValidateStatutoryMappingForApprove(
+            db, csv_id, country_id, domain_id, session_user)
+    is_document_deleted = c_obj.temp_server_folder_remove_call(csv_id)
+
     rejected_data = process_delete_rejected_sm_csv_id(
         db, user_id, country_id, domain_id, csv_id
     )
+
     result = bu_sm.RejectedSMBulkDataSuccess(rejected_data)
     return result
 
