@@ -964,10 +964,20 @@ def run_server(address, knowledge_server_address):
         BULK_CSV_UPLOAD_PATH_CSV = os.path.join(
             ROOT_PATH, "bulkuploadcsv/csv"
         )
+        INVALID_PATH = os.path.join(ROOT_PATH, "bulkuploadinvalid")
+        XLSX_PATH = os.path.join(INVALID_PATH, "xlsx")
+        CSV_PATH = os.path.join(INVALID_PATH, "csv")
+        TXT_PATH = os.path.join(INVALID_PATH, "txt")
+        ODS_PATH = os.path.join(INVALID_PATH, "ods")
         STATIC_PATHS = [
             ("/download/csv/<path:filename>", EXP_BASE_PATH),
-            ("/uploaded_file/csv/<path:filename>", BULK_CSV_UPLOAD_PATH_CSV)
+            ("/uploaded_file/csv/<path:filename>", BULK_CSV_UPLOAD_PATH_CSV),
+            ("/download/invalid/csv/<path:filename>", CSV_PATH),
+            ("/download/invalid/xlsx/<path:filename>", XLSX_PATH),
+            ("/download/invalid/txt/<path:filename>", TXT_PATH),
+            ("/download/invalid/ods/<path:filename>", ODS_PATH),
         ]
+        
         for path in STATIC_PATHS :
             app.add_url_rule(
                 path[0], view_func=staticTemplate, methods=['GET'],

@@ -418,7 +418,7 @@ class UploadCompletedTaskCurrentYearCSVFailed(Response):
     def __init__(
         self, invalid_file, mandatory_error, max_length_error, duplicate_error,
         invalid_char_error, invalid_data_error, inactive_error, total, invalid,
-        invalid_file_format, invalid_date
+        invalid_file_format, invalid_date, base_path
     ):
         # total, invalid
         self.invalid_file = invalid_file
@@ -432,6 +432,7 @@ class UploadCompletedTaskCurrentYearCSVFailed(Response):
         self.invalid = invalid
         self.invalid_file_format = invalid_file_format
         self.invalid_date = invalid_date
+        self.base_path = base_path
 
     @staticmethod
     def parse_inner_structure(data):
@@ -439,7 +440,7 @@ class UploadCompletedTaskCurrentYearCSVFailed(Response):
             "invalid_file", "mandatory_error", "max_length_error",
             "duplicate_error", "invalid_char_error", "invalid_data_error",
             "inactive_error", "total", "invalid", "invalid_file_format",
-            "invalid_date"
+            "invalid_date", "base_path"
         ])
 
         return UploadCompletedTaskCurrentYearCSVFailed(
@@ -448,7 +449,7 @@ class UploadCompletedTaskCurrentYearCSVFailed(Response):
             data.get("invalid_char_error"), data.get("invalid_data_error"),
             data.get("inactive_error"), data.get("total"), data.get("invalid"),
             data.get("invalid_file_format"),
-            data.get("invalid_date")
+            data.get("invalid_date"), data.get("base_path")
         )
 
     def to_inner_structure(self):
@@ -464,7 +465,8 @@ class UploadCompletedTaskCurrentYearCSVFailed(Response):
             "total": self.total,
             "invalid": self.invalid,
             "invalid_file_format": self.invalid_file_format,
-            "invalid_date": self.invalid_date
+            "invalid_date": self.invalid_date,
+            "base_path": self.base_path
         }
 
 
