@@ -3,10 +3,11 @@ import uuid
 import csv
 import xlsxwriter
 import pyexcel
+import requests
 
 from bulkupload.client_bulkconstants import (
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH, REJECTED_DOWNLOAD_PATH,
-    REJECTED_DOWNLOAD_BASE_PATH
+    REJECTED_DOWNLOAD_BASE_PATH, TEMP_FILE_SERVER
 )
 
 
@@ -50,15 +51,17 @@ def frame_file_name(file_name):
 def convert_base64_to_file(src_path, file_name, file_content):
     fileSplitString = file_name.split(".")
     framed_file_name = frame_file_name(fileSplitString[0])
+    caller_name = (
+        "%suploadcsv?framed_file_name=%s&file_content=%s"
+    ) % (TEMP_FILE_SERVER, framed_file_name, file_content)
+    response = requests.post(caller_name)
     file_folder_path = "%s/csv/" % (src_path)
     file_path = "%s/csv/%s" % (src_path, framed_file_name)
-
     if not os.path.exists(file_folder_path):
         os.makedirs(file_folder_path)
     with open(file_path, "wb") as fn:
         fn.write(file_content.decode("base64"))
-
-    return framed_file_name
+    return response, framed_file_name
 
 
 ########################################################
