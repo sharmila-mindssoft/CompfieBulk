@@ -165,15 +165,12 @@ function uploadFileFormat(size, name, content) {
 }
 
 function downloadUploadedData(
-    legal_entity_id, csv_id, country_id, domain_id, unit_id, callback){
+    legal_entity_id, csv_id, callback){
     request =[
         "DownloadUploadedData",
         {   
             "legal_entity_id": legal_entity_id,
-            "csv_id": csv_id,
-            "country_id": country_id,
-            "domain_id": domain_id,
-            "unit_id": unit_id
+            "csv_id": csv_id
         }
     ]
     return clientApiRequest('bu/completed_task', request, callback);

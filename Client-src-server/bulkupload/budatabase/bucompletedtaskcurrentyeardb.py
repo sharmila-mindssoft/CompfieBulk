@@ -328,58 +328,14 @@ def return_units(units):
         return results
 
 
-def get_files_as_zip(
-    db, csv_id, legal_entity_id, client_id,
-    country_id, unit_id, domain_id, start_date
-):
-    if " " in start_date:
-        start_date = string_to_datetime(start_date.split(" ")[0]).date()
-    else:
-        start_date = string_to_datetime(start_date).date()
-    year = start_date.year
-    month = "%s%s" % (string_months.get(start_date.month), str(year))
+def get_files_as_zip(db, csv_id):
     caller_name = (
-        "%sdownloadzip?csv_id=%s&legal_entity_id=%s"
-        "&client_id=%s&country_id=%s&unit_id=%s&domain_id=%s&"
-        "year=%s&month=%s"
+        "%sdownloadzip?csv_id=%s"
     ) % (
-        TEMP_FILE_SERVER, csv_id, legal_entity_id, client_id, country_id,
-        unit_id, domain_id, year, month
+        TEMP_FILE_SERVER, csv_id
     )
     response = requests.post(caller_name)
-    return response.text
-    # csv_name = None
-    # ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..", "..")
-    # BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadcsv")
-    # CSV_PATH = os.path.join(BULK_CSV_PATH, "csv")
-
-    # CLIENT_DOCUMENT_UPLOAD_PATH = os.path.join(
-    #     ROOT_PATH, "Temp-filer-server")
-    # CLIENT_DOCUMENT_UPLOAD_PATH = os.path.join(
-    #     CLIENT_DOCUMENT_UPLOAD_PATH, "bulkuploadclientdocuments")
-    # CLIENT_DOCUMENT_UPLOAD_PATH = os.path.join(
-    #     CLIENT_DOCUMENT_UPLOAD_PATH, str(csv_id))
-
-    # q = "select csv_name from tbl_bulk_past_data_csv " + \
-    #     " where csv_past_id = %s"
-    # row = db.select_one(q, [csv_id])
-    # if row:
-    #     csv_name = row["csv_name"]
-    # zip_file_name = csv_name + "_zip" + ".zip"
-    # zip_path = os.path.join(CLIENT_DOCUMENT_UPLOAD_PATH, zip_file_name)
-    # zfw = zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED)
-    # csv_absname = os.path.join(CLIENT_DOCUMENT_UPLOAD_PATH, csv_name)
-    # csv_arcname = csv_absname[len(CLIENT_DOCUMENT_UPLOAD_PATH) + 0:]
-    # zfw.write(csv_absname, csv_arcname)
-    # for dirname, subdirs, files in os.walk(CLIENT_DOCUMENT_UPLOAD_PATH):
-    #     for file in files:
-    #         absname = os.path.join(dirname, file)
-    #         arcname = absname[
-    #             len(CLIENT_DOCUMENT_UPLOAD_PATH) + 0:
-    #         ]
-    #         zfw.write(absname, arcname)
-    # zfw.close()
-    # download_link = "%s/%s" % ("/uploaded_file/csv/", zip_file_name)
+    download_link = response.text
     return download_link
 
 
