@@ -87,7 +87,7 @@ def save_file_in_client_docs(
     src_path, file_name, file_content
 ):
     caller_name = (
-        "%suploadcsv?framed_file_name=%s&file_content=%s"
+        "%sclient/copycsv?framed_file_name=%s&file_content=%s"
     ) % (
         TEMP_FILE_SERVER, file_name, file_content
     )

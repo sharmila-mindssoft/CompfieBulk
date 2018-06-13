@@ -239,30 +239,6 @@ def delete_declined_docs(csv_id):
     return response_data
 
 
-@app.route('/temp/uploadcsv', methods=['POST'])
-def upload_csv():
-    framed_file_name = request.args.get("framed_file_name")
-    file_content = request.args.get("file_content")
-
-    ROOT_PATH = os.path.join(os.path.split(__file__)[0])
-    BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadclientdocuments")
-    file_path = "%s/csv" % (
-        BULK_CSV_PATH
-    )
-    if not os.path.exists(file_path):
-        print "path created ", file_path
-        os.makedirs(file_path)
-
-    create_path = "%s/%s" % (file_path, framed_file_name)
-    try:
-        with io.FileIO(create_path, "wb") as fn:
-            fn.write(file_content.decode('base64'))
-        return True
-    except IOError, e:
-        print e
-    return "success"
-
-
 @app.route('/temp/upload', methods=['POST'])
 def upload():
     logger.logTempFiler(
@@ -658,6 +634,29 @@ def remove_rejected_folders():
         return "Error"
     rmtree(folder_path)
     return "removed rejected folders"
+
+@app.route('/temp/client/copycsv', methods=['POST'])
+def upload_csv():
+    framed_file_name = request.args.get("framed_file_name")
+    file_content = request.args.get("file_content")
+
+    ROOT_PATH = os.path.join(os.path.split(__file__)[0])
+    BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadclientdocuments")
+    file_path = "%s/csv" % (
+        BULK_CSV_PATH
+    )
+    if not os.path.exists(file_path):
+        print "path created ", file_path
+        os.makedirs(file_path)
+
+    create_path = "%s/%s" % (file_path, framed_file_name)
+    try:
+        with io.FileIO(create_path, "wb") as fn:
+            fn.write(file_content.decode('base64'))
+        return "True"
+    except IOError, e:
+        print e
+    return "success"
 
 args_parser = argparse.ArgumentParser()
 args_parser.add_argument(
