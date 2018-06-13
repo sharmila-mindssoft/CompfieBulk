@@ -84,22 +84,12 @@ def convert_base64_to_file(
 
 
 def save_file_in_client_docs(
-    src_path, file_name, file_content, legal_entity_id, country_id, domain_id,
-    unit_id, start_date, client_id
+    src_path, file_name, file_content
 ):
-    if " " in start_date:
-        start_date = string_to_datetime(start_date.split(" ")[0]).date()
-    else:
-        start_date = string_to_datetime(start_date).date()
-    year = start_date.year
-    month = "%s%s" % (string_months.get(start_date.month), str(year))
     caller_name = (
-        "%suploadcsv?framed_file_name=%s&file_content=%s&"
-        "&client_id=%s&country_id=%s&le_id=%s&unit_id=%s&domain_id=%s&"
-        "year=%s&month=%s"
+        "%suploadcsv?framed_file_name=%s&file_content=%s"
     ) % (
-        TEMP_FILE_SERVER, file_name, file_content, client_id,
-        country_id, legal_entity_id, unit_id, domain_id, year, month
+        TEMP_FILE_SERVER, file_name, file_content
     )
     response = requests.post(caller_name)
     return response

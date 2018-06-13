@@ -247,8 +247,7 @@ function validateUpload() {
                 "csv_name": CSV_INFO["file_name"],
                 "csv_data": CSV_INFO["file_content"],
                 "csv_size": CSV_INFO["file_size"],
-                "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val()),
-                "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val())
+                "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val())
             };
             buClient.UploadCompletedTaskCurrentYearCSV(
                 args, function(error, data) {
@@ -605,16 +604,11 @@ function downloadUploadedData(legal_entity_id, CSV_ID){
     var unitId = $("#unit_id_hdn").val();
     args = {
         "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val()),
-        "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val()),
-        "domain_id": parseInt(domId),
-        "unit_id": parseInt(unitId),
-        "csv_id": CSV_ID
+        "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val())
     }
 
     res = buClient.downloadUploadedData(
         parseInt(LEGALENTITY_ID_UPLOAD.val()), CSV_ID, 
-        getCountryId(LEGALENTITY_ID_UPLOAD.val()),
-        parseInt(domId), parseInt(unitId),
         function(error, data) {
             if (error == null) {
                     downloadUrl = data.link;

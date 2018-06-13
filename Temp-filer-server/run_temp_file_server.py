@@ -51,6 +51,7 @@ def knowledge_db_connect():
 
 
 def bulkupload_db_connect():
+    print "BULK_UPLOAD_DB_PASSWORD:============> %s" % BULK_UPLOAD_DB_PASSWORD
     cnx_pool = mysql.connector.connect(
         user=BULK_UPLOAD_DB_USERNAME,
         password=BULK_UPLOAD_DB_PASSWORD,
@@ -242,19 +243,11 @@ def delete_declined_docs(csv_id):
 def upload_csv():
     framed_file_name = request.args.get("framed_file_name")
     file_content = request.args.get("file_content")
-    client_id = request.args.get("client_id")
-    domain_id = request.args.get("domain_id")
-    country_id = request.args.get("country_id")
-    legal_entity_id = request.args.get("legal_entity_id")
-    unit_id = request.args.get("unit_id")
-    year = request.args.get("year")
-    month = request.args.get("month")
 
     ROOT_PATH = os.path.join(os.path.split(__file__)[0])
     BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadclientdocuments")
-    file_path = "%s/%s/%s/%s/%s/%s/%s/%s" % (
-        BULK_CSV_PATH, client_id, country_id, legal_entity_id,
-        unit_id, domain_id, year, month
+    file_path = "%s/csv" % (
+        BULK_CSV_PATH
     )
     if not os.path.exists(file_path):
         print "path created ", file_path
@@ -387,20 +380,20 @@ def zip_folder(folder_name, folder_path):
 @app.route('/temp/downloadzip', methods=['POST'])
 def get_files_as_zip():
     csv_id = request.args.get("csv_id")
-    legal_entity_id = request.args.get("legal_entity_id")
-    client_id = request.args.get("client_id")
-    domain_id = request.args.get("domain_id")
-    country_id = request.args.get("country_id")
-    legal_entity_id = request.args.get("legal_entity_id")
-    unit_id = request.args.get("unit_id")
-    year = request.args.get("year")
-    month = request.args.get("month")
+    # legal_entity_id = request.args.get("legal_entity_id")
+    # client_id = request.args.get("client_id")
+    # domain_id = request.args.get("domain_id")
+    # country_id = request.args.get("country_id")
+    # legal_entity_id = request.args.get("legal_entity_id")
+    # unit_id = request.args.get("unit_id")
+    # year = request.args.get("year")
+    # month = request.args.get("month")
     csv_name = None
     ROOT_PATH = os.path.join(os.path.split(__file__)[0])
     BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadclientdocuments")
-    file_path = "%s/%s/%s/%s/%s/%s/%s/%s" % (
-        BULK_CSV_PATH, client_id, country_id, legal_entity_id,
-        unit_id, domain_id, year, month
+    CSV_PATH = os.path.join(BULK_CSV_PATH, "csv")
+    file_path = "%s/%s" % (
+        BULK_CSV_PATH, csv_id
     )
     _bulk_db_con = bulkupload_db_connect()
     _bulk_db = Database(_bulk_db_con)
@@ -413,8 +406,8 @@ def get_files_as_zip():
     zip_file_name = csv_name + "_zip" + ".zip"
     zip_path = os.path.join(BULK_CSV_PATH, zip_file_name)
     zfw = zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED)
-    csv_absname = os.path.join(file_path, csv_name)
-    csv_arcname = csv_absname[len(file_path) + 0:]
+    csv_absname = os.path.join(CSV_PATH, csv_name)
+    csv_arcname = csv_absname[len(CSV_PATH) + 0:]
     zfw.write(csv_absname, csv_arcname)
     for dirname, subdirs, files in os.walk(file_path):
         for file in files:
@@ -445,7 +438,7 @@ def approve():
                 "Declined File not exists"
             )
             return "File not exists"
-        else:
+        else: 
             os.remove(folder_path + '/' + dd)
 
     if not os.path.exists(folder_path):

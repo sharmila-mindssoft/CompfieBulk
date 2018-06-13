@@ -34,27 +34,23 @@ class Request(object):
 
 class UploadCompletedTaskCurrentYearCSV(Request):
     def __init__(
-        self, csv_name, csv_data, csv_size, legal_entity_id,
-        country_id
+        self, csv_name, csv_data, csv_size, legal_entity_id
     ):
         self.csv_name = csv_name
         self.csv_data = csv_data
         self.csv_size = csv_size
         self.legal_entity_id = legal_entity_id
-        self.country_id = country_id
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data,
             [
-                "csv_name", "csv_data", "csv_size", "legal_entity_id",
-                "country_id"
+                "csv_name", "csv_data", "csv_size", "legal_entity_id"
             ])
         return UploadCompletedTaskCurrentYearCSV(
             data.get("csv_name"), data.get("csv_data"),
-            data.get("csv_size"), data.get("legal_entity_id"),
-            data.get("country_id")
+            data.get("csv_size"), data.get("legal_entity_id")
         )
 
     def to_inner_structure(self):
@@ -62,8 +58,7 @@ class UploadCompletedTaskCurrentYearCSV(Request):
             "csv_name": self.csv_name,
             "csv_data": self.csv_data,
             "csv_size": self.csv_size,
-            "legal_entity_id": self.legal_entity_id,
-            "country_id": self.country_id
+            "legal_entity_id": self.legal_entity_id
         }
 
 
@@ -245,41 +240,27 @@ class GetDownloadData(Request):
 
 class DownloadUploadedData(Request):
     def __init__(
-        self, legal_entity_id, csv_id, country_id,
-        domain_id, unit_id
+        self, legal_entity_id, csv_id
     ):
         self.legal_entity_id = legal_entity_id
         self.csv_id = csv_id
-        self.country_id = country_id
-        self.domain_id = domain_id
-        self.unit_id = unit_id
 
     @staticmethod
     def parse_inner_structure(data):
-        print "inside parse inner parse_structure"
-        print data
         data = parse_dictionary(
             data, [
-                "legal_entity_id", "csv_id", "country_id",
-                "domain_id", "unit_id"
+                "legal_entity_id", "csv_id"
             ]
         )
         return DownloadUploadedData(
             data.get("legal_entity_id"),
-            data.get("csv_id"),
-            data.get("country_id"),
-            data.get("domain_id"),
-            data.get("unit_id")
+            data.get("csv_id")
         )
 
     def to_inner_structure(self):
         return{
             "legal_entity_id": self.legal_entity_id,
-            "csv_id": self.csv_id,
-            "country_id": self.country_id,
-            "domain_id": self.domain_id,
-            "unit_id": self.unit_id
-
+            "csv_id": self.csv_id
         }
 
 

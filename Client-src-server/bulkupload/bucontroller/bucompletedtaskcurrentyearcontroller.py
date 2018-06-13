@@ -101,9 +101,6 @@ def get_completed_task_csv_list(db, request_frame, session_user):
 def upload_completed_task_current_year_csv(
     db, request_frame, session_user, session_token
 ):
-    country_id = request_frame.country_id
-    legal_id = request_frame.legal_entity_id
-    current_date = datetime.now().strftime("%d-%b-%Y")
     client_id = str(session_token).split("-")[0]
     if request_frame.csv_size > 0:
         pass
@@ -152,8 +149,7 @@ def upload_completed_task_current_year_csv(
             ) is True:
                 save_file_in_client_docs(
                     CLIENT_DOCS_BASE_PATH, csv_name,
-                    request_frame.csv_data, legal_id, country_id,
-                    domain_id, unit_id, current_date, client_id
+                    request_frame.csv_data
                 )
                 result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
                     res_data["total"], res_data["valid"],
@@ -229,15 +225,8 @@ def process_download_uploaded_data(
     db, request_frame, session_user, session_token
 ):
     csv_id = request_frame.csv_id
-    country_id = request_frame.country_id
-    legal_entity_id = request_frame.legal_entity_id
-    current_date = datetime.now().strftime("%d-%b-%Y")
-    client_id = str(session_token).split("-")[0]
-    domain_id = request_frame.domain_id
-    unit_id = request_frame.unit_id
     file_download_path = get_files_as_zip(
-        db, csv_id, legal_entity_id, client_id,
-        country_id, unit_id, domain_id, current_date
+        db, csv_id
     )
     return bu_ct.DownloadUploadedDataSuccess(
         file_download_path
