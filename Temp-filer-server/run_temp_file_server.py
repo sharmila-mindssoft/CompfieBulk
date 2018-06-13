@@ -1,3 +1,4 @@
+import io
 import os
 import glob
 from flask import (
@@ -16,12 +17,12 @@ import string
 import logger
 import traceback
 
-
 from constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
-    BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME
+    BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME,
+    TEMP_FILE_SERVER_WITHOUT_TEMP
     # FORMAT_UPLOAD_PATH
 )
 from database import Database
@@ -237,6 +238,38 @@ def delete_declined_docs(csv_id):
     return response_data
 
 
+@app.route('/temp/uploadcsv', methods=['POST'])
+def upload_csv():
+    framed_file_name = request.args.get("framed_file_name")
+    file_content = request.args.get("file_content")
+    client_id = request.args.get("client_id")
+    domain_id = request.args.get("domain_id")
+    country_id = request.args.get("country_id")
+    legal_entity_id = request.args.get("legal_entity_id")
+    unit_id = request.args.get("unit_id")
+    year = request.args.get("year")
+    month = request.args.get("month")
+
+    ROOT_PATH = os.path.join(os.path.split(__file__)[0])
+    BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadclientdocuments")
+    file_path = "%s/%s/%s/%s/%s/%s/%s/%s" % (
+        BULK_CSV_PATH, client_id, country_id, legal_entity_id,
+        unit_id, domain_id, year, month
+    )
+    if not os.path.exists(file_path):
+        print "path created ", file_path
+        os.makedirs(file_path)
+
+    create_path = "%s/%s" % (file_path, framed_file_name)
+    try:
+        with io.FileIO(create_path, "wb") as fn:
+            fn.write(file_content.decode('base64'))
+        return True
+    except IOError, e:
+        print e
+    return "success"
+
+
 @app.route('/temp/upload', methods=['POST'])
 def upload():
     logger.logTempFiler(
@@ -350,6 +383,50 @@ def zip_folder(folder_name, folder_path):
     zipping_in_process.remove(folder_name)
     file_status[folder_name] = "Zipping Completed"
 
+
+@app.route('/temp/downloadzip', methods=['POST'])
+def get_files_as_zip():
+    csv_id = request.args.get("csv_id")
+    legal_entity_id = request.args.get("legal_entity_id")
+    client_id = request.args.get("client_id")
+    domain_id = request.args.get("domain_id")
+    country_id = request.args.get("country_id")
+    legal_entity_id = request.args.get("legal_entity_id")
+    unit_id = request.args.get("unit_id")
+    year = request.args.get("year")
+    month = request.args.get("month")
+    csv_name = None
+    ROOT_PATH = os.path.join(os.path.split(__file__)[0])
+    BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadclientdocuments")
+    file_path = "%s/%s/%s/%s/%s/%s/%s/%s" % (
+        BULK_CSV_PATH, client_id, country_id, legal_entity_id,
+        unit_id, domain_id, year, month
+    )
+    _bulk_db_con = bulkupload_db_connect()
+    _bulk_db = Database(_bulk_db_con)
+    _bulk_db.begin()
+    q = "select csv_name from tbl_bulk_past_data_csv " + \
+        " where csv_past_id = %s"
+    row = _bulk_db.select_one(q, [csv_id])
+    if row:
+        csv_name = row["csv_name"]
+    zip_file_name = csv_name + "_zip" + ".zip"
+    zip_path = os.path.join(BULK_CSV_PATH, zip_file_name)
+    zfw = zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED)
+    csv_absname = os.path.join(file_path, csv_name)
+    csv_arcname = csv_absname[len(file_path) + 0:]
+    zfw.write(csv_absname, csv_arcname)
+    for dirname, subdirs, files in os.walk(file_path):
+        for file in files:
+            absname = os.path.join(dirname, file)
+            arcname = absname[
+                len(file_path) + 0:
+            ]
+            zfw.write(absname, arcname)
+    zfw.close()
+    download_link = "%s/%s" % ("download/zip", zip_file_name)
+    url = "%s%s" % (TEMP_FILE_SERVER_WITHOUT_TEMP, download_link)
+    return url
 
 @app.route('/temp/approve', methods=['POST'])
 def approve():
@@ -629,6 +706,10 @@ def parse_ip_address(ip_address):
     return ip, port
 
 
+def staticTemplate(pathname, filename):
+    return send_from_directory(pathname, filename)
+
+
 def main():
     args = args_parser.parse_args()
 
@@ -640,6 +721,18 @@ def main():
             "error", "run_tempfile_server > main()", msg % (args.port,)
         )
         return
+    ROOT_PATH = os.path.join(os.path.split(__file__)[0])
+    BULK_CSV_UPLOAD_PATH_CSV = os.path.join(
+        ROOT_PATH, "bulkuploadclientdocuments"
+    )
+    STATIC_PATHS = [
+        ("/download/zip/<path:filename>", BULK_CSV_UPLOAD_PATH_CSV)
+    ]
+    for path in STATIC_PATHS:
+        app.add_url_rule(
+            path[0], view_func=staticTemplate, methods=['GET'],
+            defaults={'pathname': path[1]}
+        )
 
     settings = {
         "threaded": True

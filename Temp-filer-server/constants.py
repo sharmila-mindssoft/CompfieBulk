@@ -22,3 +22,6 @@ BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload"
 ENABLE_API_LOG = False
 ENABLE_QUERY_LOG = True
 ENABLE_DEBUG_LOG = True
+
+TEMP_FILE_SERVER = "http://localhost:8083/temp/"
+TEMP_FILE_SERVER_WITHOUT_TEMP = "http://localhost:8083/"

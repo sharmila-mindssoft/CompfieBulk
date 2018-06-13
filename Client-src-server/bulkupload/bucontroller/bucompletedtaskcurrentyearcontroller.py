@@ -1,11 +1,12 @@
+from datetime import datetime
 from ..buapiprotocol.pastdatadownloadbulk import PastDataJsonToCSV
 from server.common import (
     get_date_time_in_date,
     datetime_to_string_time)
 from bulkupload.client_bulkconstants import (
-    BULKUPLOAD_CSV_PATH, CSV_MAX_LINE_ITEM)
+    BULKUPLOAD_CSV_PATH, CSV_MAX_LINE_ITEM, CLIENT_DOCS_BASE_PATH)
 from ..client_bulkuploadcommon import (
-    convert_base64_to_file,
+    convert_base64_to_file, save_file_in_client_docs,
     read_data_from_csv, remove_uploaded_file)
 from ..bucsvvalidation.completedtaskcurrentyearvalidation import (
     ValidateCompletedTaskCurrentYearCsvData,
@@ -48,7 +49,7 @@ def process_bu_completed_task_current_year_request(
 
     if type(request_frame) is bu_ct.UploadCompletedTaskCurrentYearCSV:
         result = upload_completed_task_current_year_csv(
-            db, request_frame, session_user)
+            db, request_frame, session_user, request.session_token)
 
     if type(request_frame) is bu_ct.SaveBulkRecords:
         result = process_save_bulk_records(
@@ -67,7 +68,7 @@ def process_bu_completed_task_current_year_request(
 
     if type(request_frame) is bu_ct.DownloadUploadedData:
         result = process_download_uploaded_data(
-            db, request_frame, session_user
+            db, request_frame, session_user, request.session_token
         )
 
     if type(request_frame) is bu_ct.UpdateDocumentCount:
@@ -97,8 +98,13 @@ def get_completed_task_csv_list(db, request_frame, session_user):
     return result
 
 
-def upload_completed_task_current_year_csv(db, request_frame, session_user):
-
+def upload_completed_task_current_year_csv(
+    db, request_frame, session_user, session_token
+):
+    country_id = request_frame.country_id
+    legal_id = request_frame.legal_entity_id
+    current_date = datetime.now().strftime("%d-%b-%Y")
+    client_id = str(session_token).split("-")[0]
     if request_frame.csv_size > 0:
         pass
     # save csv file
@@ -144,6 +150,11 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
             if save_completed_task_data(
                     db, new_csv_id, res_data["data"], client_id
             ) is True:
+                save_file_in_client_docs(
+                    CLIENT_DOCS_BASE_PATH, csv_name,
+                    request_frame.csv_data, legal_id, country_id,
+                    domain_id, unit_id, current_date, client_id
+                )
                 result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
                     res_data["total"], res_data["valid"],
                     res_data["invalid"],
@@ -215,11 +226,18 @@ def process_get_bulk_download_data(
 
 
 def process_download_uploaded_data(
-    db, request_frame, session_user
+    db, request_frame, session_user, session_token
 ):
     csv_id = request_frame.csv_id
+    country_id = request_frame.country_id
+    legal_entity_id = request_frame.legal_entity_id
+    current_date = datetime.now().strftime("%d-%b-%Y")
+    client_id = str(session_token).split("-")[0]
+    domain_id = request_frame.domain_id
+    unit_id = request_frame.unit_id
     file_download_path = get_files_as_zip(
-        db, csv_id
+        db, csv_id, legal_entity_id, client_id,
+        country_id, unit_id, domain_id, current_date
     )
     return bu_ct.DownloadUploadedDataSuccess(
         file_download_path

@@ -247,9 +247,9 @@ function validateUpload() {
                 "csv_name": CSV_INFO["file_name"],
                 "csv_data": CSV_INFO["file_content"],
                 "csv_size": CSV_INFO["file_size"],
-                "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val())
+                "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val()),
+                "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val())
             };
-
             buClient.UploadCompletedTaskCurrentYearCSV(
                 args, function(error, data) {
                 if (error == "CsvFileExeededMaxLines"){
@@ -386,8 +386,11 @@ function validateUpload() {
             $('#up-doc-title').show();
             $('#remaining-doc-title').show();
             $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
+            if (REMAINING_DOCUMENTS < 0){
+                REMAINING_DOCUMENTS = 0;
+            }
             $('#bu_remain_total').text(
-                TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS
+                REMAINING_DOCUMENTS
             );
             myDropzone.processQueue();
         }
@@ -597,10 +600,21 @@ BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(
     displayMessage(error);
 };
 
-function downloadUploadedData(
-    legal_entity_id, CSV_ID){
+function downloadUploadedData(legal_entity_id, CSV_ID){
+    var domId = $("#dom_id_hdn").val();
+    var unitId = $("#unit_id_hdn").val();
+    args = {
+        "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val()),
+        "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val()),
+        "domain_id": parseInt(domId),
+        "unit_id": parseInt(unitId),
+        "csv_id": CSV_ID
+    }
+
     res = buClient.downloadUploadedData(
-        legal_entity_id, CSV_ID,
+        parseInt(LEGALENTITY_ID_UPLOAD.val()), CSV_ID, 
+        getCountryId(LEGALENTITY_ID_UPLOAD.val()),
+        parseInt(domId), parseInt(unitId),
         function(error, data) {
             if (error == null) {
                     downloadUrl = data.link;
@@ -789,6 +803,7 @@ function resetAdd() {
     LEGALENTITY_NAME_UPLOAD.val("");
     addedfiles = [];
     uploadedfiles = [];
+    loadEntityDetails();
 }
 
 function resetEdit() {
@@ -817,6 +832,7 @@ function resetEdit() {
     BTN_UPLOAD.show();
     addedfiles = [];
     uploadedfiles = [];
+    loadEntityDetails();
 }
 
 Dropzone.autoDiscover = false;
