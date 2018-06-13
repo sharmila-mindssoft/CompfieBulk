@@ -127,6 +127,5 @@ bu_api_params = {
     "invalid_file_format": make_int_field(),
     "legal_entity_list": make_vector_type_int(),
     "invalid_date": make_int_field(is_optional=True),
-    "csv_max_lines": make_int_field(is_optional=False),
-    "base_path": make_text_field(length=5000, is_optional=False)
+    "csv_max_lines": make_int_field(is_optional=False)
 }

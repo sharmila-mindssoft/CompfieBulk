@@ -65,7 +65,6 @@ var LEGALENTITYUSR = [];
 var TOTAL_DOCUMENTS = 0;
 var UPLOADED_DOCUMENTS = 0;
 var REMAINING_DOCUMENTS = 0;
-var BASE_PATH = null;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -248,9 +247,9 @@ function validateUpload() {
                 "csv_name": CSV_INFO["file_name"],
                 "csv_data": CSV_INFO["file_content"],
                 "csv_size": CSV_INFO["file_size"],
-                "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val())
+                "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val()),
+                "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val())
             };
-
             buClient.UploadCompletedTaskCurrentYearCSV(
                 args, function(error, data) {
                 if (error == "CsvFileExeededMaxLines"){
@@ -365,14 +364,14 @@ function validateUpload() {
                     $('#divSuccessFile').hide();
                     $('.divSuccessDocument').hide();
                     $('#divSuccessbutton').hide();
-                    BASE_PATH = data.base_path;
-                    csvPath = BASE_PATH + "csv/" +
+                    base_path = "../download/invalid"
+                    csvPath = base_path + "/csv/" +
                                 INVALID_FILE_NAME[0] + '.csv';
-                    xls_path = BASE_PATH + "xlsx/"
+                    xls_path = base_path + "/xlsx/"
                                 + INVALID_FILE_NAME[0] + '.xlsx';
-                    ods_path = BASE_PATH + "ods/"
+                    ods_path = base_path + "/ods/"
                                 + INVALID_FILE_NAME[0] + '.ods';
-                    txt_path = BASE_PATH + "txt/"
+                    txt_path = base_path + "/txt/"
                                 + INVALID_FILE_NAME[0] + '.txt';
                     $('#csv').attr("href", csvPath);
                     $('#excel').attr("href", xls_path);
@@ -387,6 +386,9 @@ function validateUpload() {
             $('#up-doc-title').show();
             $('#remaining-doc-title').show();
             $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
+            if (REMAINING_DOCUMENTS < 0){
+                REMAINING_DOCUMENTS = 0;
+            }
             $('#bu_remain_total').text(
                 REMAINING_DOCUMENTS
             );
@@ -398,7 +400,7 @@ function validateUpload() {
 document.getElementById("txt").addEventListener("click", function() {
     if (INVALID_FILE_NAME != null) {
         $.get(
-            BASE_PATH+"txt/" + INVALID_FILE_NAME[0] + ".txt",
+            "../download/invalid/txt/" + INVALID_FILE_NAME[0] + ".txt",
             function(data) {
                 download(
                     INVALID_FILE_NAME[0] + ".txt", "text/plain", data);
@@ -472,8 +474,7 @@ function pageControls() {
 
     BTN_UPLOADED_DATA.click(function(){
         downloadUploadedData(
-            // parseInt($(".uploaded-data .text-primary").attr("id")),
-            parseInt(LEGALENTITY_ID_UPLOAD.val()),
+            parseInt($(".uploaded-data .text-primary").attr("id")),
             parseInt($(".uploaded-data").attr("id"))
         );
     });
@@ -599,10 +600,21 @@ BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(
     displayMessage(error);
 };
 
-function downloadUploadedData(
-    legal_entity_id, CSV_ID){
+function downloadUploadedData(legal_entity_id, CSV_ID){
+    var domId = $("#dom_id_hdn").val();
+    var unitId = $("#unit_id_hdn").val();
+    args = {
+        "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val()),
+        "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val()),
+        "domain_id": parseInt(domId),
+        "unit_id": parseInt(unitId),
+        "csv_id": CSV_ID
+    }
+
     res = buClient.downloadUploadedData(
-        legal_entity_id, CSV_ID,
+        parseInt(LEGALENTITY_ID_UPLOAD.val()), CSV_ID, 
+        getCountryId(LEGALENTITY_ID_UPLOAD.val()),
+        parseInt(domId), parseInt(unitId),
         function(error, data) {
             if (error == null) {
                     downloadUrl = data.link;
@@ -758,7 +770,7 @@ function file_upload_rul() {
     // console.log("inside file upload rul");
     var sessionId = client_mirror.getSessionToken();
     var fileBaseUrl = "/client/temp/upload?session_id=" +
-        sessionId + "&csvid="  +CSV_ID;
+        sessionId + "&csvid=" + CSV_ID;
     // var fileBaseUrl = "../api/bu/completed_task?session_id=" +
     //     sessionId + "&csvid=" + CSV_ID;
     return fileBaseUrl;
