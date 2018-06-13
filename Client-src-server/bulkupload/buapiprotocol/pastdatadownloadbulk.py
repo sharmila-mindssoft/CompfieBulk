@@ -57,7 +57,7 @@ class PastDataJsonToCSV(object):
     def download_past_data(self, db, request, session_user):
         is_header = False
         le_id = request.legal_entity_id
-        cnx_pool, know = connectClientDB(le_id)
+        cnx_pool = connectClientDB(le_id)
         unit_id = request.unit_id
         domain_id = request.domain_id
         compliance_frequency = request.compliance_frequency
@@ -109,21 +109,6 @@ class PastDataJsonToCSV(object):
             if os.path.exists(self.FILE_PATH):
                 os.remove(self.FILE_PATH)
                 self.FILE_DOWNLOAD_PATH = None
-
-    def get_file_download_path(self, request):
-        client_db, know_db = connectClientDB(request.legal_entity_id)
-        query = "SELECT ip, port from tbl_application_server where " + \
-            " machine_id = (select machine_id from tbl_client_database " + \
-            " where  legal_entity_id = %s)"
-        params = [request.legal_entity_id]
-        rows = know_db.select_all(query, params)
-        if rows:
-            ip = rows[0]["ip"]
-            port = rows[0]["port"]
-            url = "http://%s:%s%s" % (ip, port, self.FILE_DOWNLOAD_PATH)
-            return url
-        else:
-            return
 
 
 def return_past_due_dates(
@@ -322,7 +307,7 @@ def connectClientDB(le_id):
         _source_client_db = Database(_source_db_con)
         _source_client_db.begin()
 
-        return _source_client_db, _source_knowledge_db
+        return _source_client_db
     except Exception, e:
         print "Connection Exception Caught"
         print e

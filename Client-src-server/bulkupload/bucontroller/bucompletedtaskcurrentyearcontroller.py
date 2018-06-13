@@ -1,13 +1,12 @@
-import requests
-import json
+from datetime import datetime
 from ..buapiprotocol.pastdatadownloadbulk import PastDataJsonToCSV
 from server.common import (
     get_date_time_in_date,
     datetime_to_string_time)
 from bulkupload.client_bulkconstants import (
-    BULKUPLOAD_CSV_PATH, CSV_MAX_LINE_ITEM, TEMP_FILE_SERVER)
+    BULKUPLOAD_CSV_PATH, CSV_MAX_LINE_ITEM, CLIENT_DOCS_BASE_PATH)
 from ..client_bulkuploadcommon import (
-    convert_base64_to_file,
+    convert_base64_to_file, save_file_in_client_docs,
     read_data_from_csv, remove_uploaded_file)
 from ..bucsvvalidation.completedtaskcurrentyearvalidation import (
     ValidateCompletedTaskCurrentYearCsvData,
@@ -16,7 +15,7 @@ from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
 from..budatabase.bucompletedtaskcurrentyeardb import (
     get_units_for_user, get_completed_task_CSV_list, get_client_id_by_le,
     save_completed_task_current_year_csv, save_completed_task_data,
-    get_past_record_data, update_document_count, get_base_path_of_client
+    get_past_record_data, get_files_as_zip, update_document_count
 )
 
 
@@ -50,7 +49,7 @@ def process_bu_completed_task_current_year_request(
 
     if type(request_frame) is bu_ct.UploadCompletedTaskCurrentYearCSV:
         result = upload_completed_task_current_year_csv(
-            db, request_frame, session_user)
+            db, request_frame, session_user, request.session_token)
 
     if type(request_frame) is bu_ct.SaveBulkRecords:
         result = process_save_bulk_records(
@@ -69,7 +68,7 @@ def process_bu_completed_task_current_year_request(
 
     if type(request_frame) is bu_ct.DownloadUploadedData:
         result = process_download_uploaded_data(
-            db, request_frame, session_user
+            db, request_frame, session_user, request.session_token
         )
 
     if type(request_frame) is bu_ct.UpdateDocumentCount:
@@ -99,18 +98,27 @@ def get_completed_task_csv_list(db, request_frame, session_user):
     return result
 
 
-def upload_completed_task_current_year_csv(db, request_frame, session_user):
-
+def upload_completed_task_current_year_csv(
+    db, request_frame, session_user, session_token
+):
+    country_id = request_frame.country_id
+    legal_id = request_frame.legal_entity_id
+    current_date = datetime.now().strftime("%d-%b-%Y")
+    client_id = str(session_token).split("-")[0]
     if request_frame.csv_size > 0:
         pass
-    header, completed_task_data, csv_name = convert_base64_to_file(
+    # save csv file
+    csv_name = convert_base64_to_file(
         BULKUPLOAD_CSV_PATH, request_frame.csv_name,
         request_frame.csv_data
     )
+    # read data from csv file
+    header, completed_task_data = read_data_from_csv(csv_name)
     if len(completed_task_data) > CSV_MAX_LINE_ITEM:
-        # file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
-        # remove_uploaded_file(file_path)
+        file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
+        remove_uploaded_file(file_path)
         return bu_ct.CsvFileExeededMaxLines(CSV_MAX_LINE_ITEM)
+    # csv data validation
     cObj = ValidateCompletedTaskCurrentYearCsvData(
         db, completed_task_data, session_user,
         request_frame.csv_name, header)
@@ -142,6 +150,11 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
             if save_completed_task_data(
                     db, new_csv_id, res_data["data"], client_id
             ) is True:
+                save_file_in_client_docs(
+                    CLIENT_DOCS_BASE_PATH, csv_name,
+                    request_frame.csv_data, legal_id, country_id,
+                    domain_id, unit_id, current_date, client_id
+                )
                 result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
                     res_data["total"], res_data["valid"],
                     res_data["invalid"],
@@ -150,14 +163,12 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
                 )
         # csv data save to temp db
     else:
-        base_path = get_base_path_of_client(request_frame.legal_entity_id)
         result = bu_ct.UploadCompletedTaskCurrentYearCSVFailed(
             res_data["invalid_file"], res_data["mandatory_error"],
             res_data["max_length_error"], res_data["duplicate_error"],
             res_data["invalid_char_error"], res_data["invalid_data_error"],
             res_data["inactive_error"], res_data["total"], res_data["invalid"],
-            res_data["invalid_file_format"], res_data["invalid_date"],
-            base_path
+            res_data["invalid_file_format"], res_data["invalid_date"]
         )
 
     return result
@@ -201,33 +212,33 @@ def process_get_bulk_download_data(
     converter = PastDataJsonToCSV(
         db, request_frame, session_user, "DownloadPastData"
     )
-    print request_frame.to_inner_structure()
+
     if(
         converter.FILE_DOWNLOAD_PATH is None or
         converter.data_available_status is False
     ):
             return bu_ct.ExportToCSVEmpty()
     else:
-        download_url = converter.get_file_download_path(request_frame)
         result = bu_ct.DownloadBulkPastDataSuccess(
-            download_url
+            converter.FILE_DOWNLOAD_PATH
         )
     return result
 
 
 def process_download_uploaded_data(
-    db, request_frame, session_user
+    db, request_frame, session_user, session_token
 ):
     csv_id = request_frame.csv_id
-    caller_name = (
-        "%sdownloadzip?csv_id=%s&legal_entity_id=%s"
-    ) % (
-        TEMP_FILE_SERVER, request_frame.csv_id, request_frame.legal_entity_id
+    country_id = request_frame.country_id
+    legal_entity_id = request_frame.legal_entity_id
+    current_date = datetime.now().strftime("%d-%b-%Y")
+    client_id = str(session_token).split("-")[0]
+    domain_id = request_frame.domain_id
+    unit_id = request_frame.unit_id
+    file_download_path = get_files_as_zip(
+        db, csv_id, legal_entity_id, client_id,
+        country_id, unit_id, domain_id, current_date
     )
-    response = requests.post(caller_name)
-    print "Temp server Caller name->", caller_name
-    file_download_path = response.text
-    print "response-> ", file_download_path
     return bu_ct.DownloadUploadedDataSuccess(
         file_download_path
     )

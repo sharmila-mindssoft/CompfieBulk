@@ -1,13 +1,16 @@
+import io
 import os
 import uuid
 import csv
+import requests
 import xlsxwriter
 import pyexcel
-import requests
+from datetime import datetime
 
 from bulkupload.client_bulkconstants import (
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH, REJECTED_DOWNLOAD_PATH,
-    REJECTED_DOWNLOAD_BASE_PATH, TEMP_FILE_SERVER
+    REJECTED_DOWNLOAD_BASE_PATH, CLIENT_DOCS_BASE_PATH, LOCAL_TIMEZONE,
+    string_months, TEMP_FILE_SERVER
 )
 
 
@@ -29,6 +32,23 @@ def frame_file_name(file_name):
     )
 
 
+def localize(time_stamp):
+    local_dt = LOCAL_TIMEZONE.localize(
+        time_stamp
+    )
+    tzoffseet = local_dt.utcoffset()
+    local_dt = local_dt.replace(tzinfo=None)
+    local_dt = local_dt + tzoffseet
+    return local_dt
+
+
+def string_to_datetime(string):
+    string_in_date = string
+    if string is not None:
+        string_in_date = datetime.strptime(string, "%d-%b-%Y")
+    return localize(string_in_date)
+
+
 ########################################################
 '''
    convert base64 data into csv file
@@ -48,22 +68,41 @@ def frame_file_name(file_name):
 ########################################################
 
 
-def convert_base64_to_file(src_path, file_name, file_content):
+def convert_base64_to_file(
+    src_path, file_name, file_content
+):
     fileSplitString = file_name.split(".")
     framed_file_name = frame_file_name(fileSplitString[0])
-    caller_name = (
-        "%suploadcsv?framed_file_name=%s&file_content=%s"
-    ) % (TEMP_FILE_SERVER, framed_file_name, file_content)
-    response = requests.post(caller_name)
     file_folder_path = "%s/csv/" % (src_path)
     file_path = "%s/csv/%s" % (src_path, framed_file_name)
+
     if not os.path.exists(file_folder_path):
         os.makedirs(file_folder_path)
     with open(file_path, "wb") as fn:
         fn.write(file_content.decode("base64"))
-    header, completed_task_data = read_data_from_csv(file_path)
-    return header, completed_task_data, framed_file_name
+    return framed_file_name
 
+
+def save_file_in_client_docs(
+    src_path, file_name, file_content, legal_entity_id, country_id, domain_id,
+    unit_id, start_date, client_id
+):
+    if " " in start_date:
+        start_date = string_to_datetime(start_date.split(" ")[0]).date()
+    else:
+        start_date = string_to_datetime(start_date).date()
+    year = start_date.year
+    month = "%s%s" % (string_months.get(start_date.month), str(year))
+    caller_name = (
+        "%suploadcsv?framed_file_name=%s&file_content=%s&"
+        "&client_id=%s&country_id=%s&le_id=%s&unit_id=%s&domain_id=%s&"
+        "year=%s&month=%s"
+    ) % (
+        TEMP_FILE_SERVER, file_name, file_content, client_id,
+        country_id, legal_entity_id, unit_id, domain_id, year, month
+    )
+    response = requests.post(caller_name)
+    return response
 
 ########################################################
 '''

@@ -40,17 +40,17 @@ CAPTCHA_LENGTH = 6
 NO_OF_FAILURE_ATTEMPTS = 3
 FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js"]
 FILE_MAX_LIMIT = 1024 * 1024 * 50  # 50 MB
-SESSION_CUTOFF = 15   # minutes
+SESSION_CUTOFF = 150   # minutes
 REGISTRATION_EXPIRY = 72  # Hours
 DOWNLOAD_EXPIRY = 48  # Hours
 
 KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
-KNOWLEDGE_DB_PASSWORD = "123456"
+KNOWLEDGE_DB_PASSWORD = "root"
 KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new"
 
-URL = "http://202.21.34.173:9000/"
+URL = "http://localhost:8080/"
 CLIENT_URL = URL
 KNOWLEDGE_URL = URL + "knowledge"
 
