@@ -238,6 +238,7 @@ def delete_declined_docs(csv_id):
 
     return response_data
 
+
 @app.route('/ktemp/upload', methods=['POST'])
 def upload():
     logger.logTempFiler(
@@ -405,7 +406,7 @@ def approve():
                 "Declined File not exists"
             )
             return "File not exists"
-        else: 
+        else:
             os.remove(folder_path + '/' + dd)
 
     if not os.path.exists(folder_path):
