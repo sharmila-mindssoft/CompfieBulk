@@ -190,6 +190,55 @@ class CsvList(object):
         }
 
 
+class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
+    def __init__(
+        self, compliance_id, compliance_name, description, frequency,
+        statutory_date, due_date, assignee_name, assignee_id,
+        primary_legislation, secondary_legislation
+    ):
+        self.compliance_id = compliance_id
+        self.compliance_name = compliance_name
+        self.description = description
+        self.frequency = frequency
+        self.statutory_date = statutory_date
+        self.due_date = due_date
+        self.assignee_name = assignee_name
+        self.assignee_id = assignee_id
+        self.primary_legislation = primary_legislation
+        self.secondary_legislation = secondary_legislation
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "compliance_id", "compliance_name", "description",
+            "compliance_task_frequency", "pr_statutory_date", "due_date",
+            "assignee_name", "assignee_id", "primary_legislation",
+            "secondary_legislation"
+        ])
+        return UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
+            data.get("compliance_id"), data.get("compliance_name"),
+            data.get("description"), data.get("compliance_task_frequency"),
+            data.get("pr_statutory_date"), data.get("due_date"),
+            data.get("assignee_name"), data.get("assignee_id"),
+            data.get("primary_legislation"), data.get("secondary_legislation")
+        )
+
+    def to_structure(self):
+        return {
+            "compliance_id": self.compliance_id,
+            "compliance_name": self.compliance_name,
+            "description": self.description,
+            "compliance_task_frequency": self.frequency,
+            "pr_statutory_date": self.statutory_date,
+            "due_date": self.due_date,
+            "assignee_name": self.assignee_name,
+            "assignee_id": self.assignee_id,
+            "primary_legislation": self.primary_legislation,
+            "secondary_legislation": self.secondary_legislation
+        }
+
+
+
 ####################################################
 # Get Completed Task Current Year - Bulk (Past Data)
 ####################################################
@@ -659,8 +708,6 @@ completed_task = "bulkupload.buapiprotocol.bucompletedtaskcurrentyearprotocol"
 
 class RequestFormat(object):
     def __init__(self, session_token, request):
-        print"session_token>>>", session_token
-        print "request>>>", request
         self.session_token = session_token
         self.request = request
 

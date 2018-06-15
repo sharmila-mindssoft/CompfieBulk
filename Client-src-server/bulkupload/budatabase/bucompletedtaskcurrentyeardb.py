@@ -1,19 +1,17 @@
-import os
 import mysql
 import requests
 from ..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
 import datetime
-import zipfile
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME, 
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
 )
 from server.common import (
-    string_to_datetime, string_to_datetime_with_time, string_months
+    string_to_datetime, string_to_datetime_with_time
 )
 from clientprotocol import clientcore
-from bulkupload.client_bulkconstants import ( TEMP_FILE_SERVER)
+from bulkupload.client_bulkconstants import (TEMP_FILE_SERVER)
 
 
 __all__ = [
@@ -106,8 +104,6 @@ def save_completed_task_data(db, csv_id, csv_data, client_id):
         else:
             return False
     except Exception, e:
-        print "e>>", str(e)
-        print "Exception>>", Exception
         raise ValueError("Transaction failed")
 
 
@@ -119,7 +115,7 @@ def get_past_record_data(db, csvID):
         " compliance_description, compliance_frequency, " + \
         " statutory_date, due_date, assignee, completion_date, " + \
         " document_name" + \
-        "  FROM tbl_bulk_past_data where csv_past_id = %s; "
+        " FROM tbl_bulk_past_data where csv_past_id = %s; "
     param = [csvID]
     rows = db.select_all(query, param)
     return rows
