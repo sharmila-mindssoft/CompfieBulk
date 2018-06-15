@@ -28,7 +28,7 @@ __all__ = [
 
 
 def get_legal_entity_domains(
-    db, user_id, session_user, le_id
+    db, le_id
 ):
     query = "SELECT T02. domain_name, T01.le_domain_id, " + \
             "T01.legal_entity_id, " + \
@@ -52,7 +52,7 @@ def get_legal_entity_domains(
 
 
 def save_completed_task_current_year_csv(
-    db, completed_task, session_user
+    db, completed_task
 ):
 
     columns = [
@@ -75,7 +75,7 @@ def save_completed_task_current_year_csv(
     return completed_task_id
 
 
-def save_completed_task_data(db, csv_id, csv_data, client_id):
+def save_completed_task_data(db, csv_id, csv_data):
     try:
         columns = [
             "csv_past_id", "Legal_Entity", "Domain",
@@ -324,7 +324,7 @@ def return_units(units):
         return results
 
 
-def get_files_as_zip(db, csv_id):
+def get_files_as_zip(csv_id):
     caller_name = (
         "%sdownloadzip?csv_id=%s"
     ) % (
