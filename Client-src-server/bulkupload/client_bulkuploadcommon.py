@@ -1,4 +1,3 @@
-import io
 import os
 import uuid
 import csv
@@ -9,8 +8,8 @@ from datetime import datetime
 
 from bulkupload.client_bulkconstants import (
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH, REJECTED_DOWNLOAD_PATH,
-    REJECTED_DOWNLOAD_BASE_PATH, CLIENT_DOCS_BASE_PATH, LOCAL_TIMEZONE,
-    string_months, TEMP_FILE_SERVER
+    REJECTED_DOWNLOAD_BASE_PATH, LOCAL_TIMEZONE,
+    TEMP_FILE_SERVER
 )
 
 
