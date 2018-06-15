@@ -218,7 +218,6 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
         "csv_name": CSV_INFO["file_name"],
         "csv_data": CSV_INFO["file_content"],
         "csv_size": CSV_INFO["file_size"]
-
     };
     bu.uploadStatutoryMappingCSV(args, function (error, response) {
         var csv_path;
@@ -242,7 +241,6 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     SUMMARY_VALID.text(response.valid);
                     SUMMARY_INVALID.text(response.invalid);
                     DOC_NAMES = response.doc_names;
-
                     UPLOAD_DOCUMENT.show();
                     DOCUMENT_TOTAL.text(response.doc_count);
                     UPL_DOC_TXT.hide();
@@ -294,9 +292,9 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                 $('#xls_type').attr("href", xls_path);
                 $('#ods_type').attr("href", ods_path);
             }
-
         }
         else {
+            $('#myModal').modal('hide');
             if(error == "RejectionMaxCountReached"){
                 displayMessage(message.upload_limit);
             }
@@ -635,6 +633,7 @@ var myDropzone = new Dropzone("div#myDrop", {
             }
         });
         this.on("error", function(file, errorMessage) {
+            hideLoader();
             displayMessage(errorMessage);
             addedfiles = []
             myDropzone.removeAllFiles(true);
