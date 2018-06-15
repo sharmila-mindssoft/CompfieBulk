@@ -171,7 +171,6 @@ def upload_completed_task_current_year_csv(
 
 
 def process_save_bulk_records(db, request_frame, session_user, session_token):
-    print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", session_token
     csv_id = request_frame.new_csv_id
     country_id = request_frame.country_id
     legal_id = request_frame.legal_entity_id
@@ -180,7 +179,8 @@ def process_save_bulk_records(db, request_frame, session_user, session_token):
     dataResult = get_past_record_data(db, csv_id)
     cObj = ValidateCompletedTaskForSubmit(
         db, csv_id, dataResult, session_user)
-
+    if cObj.check_for_duplicate_records(legal_id) is False:
+        return bu_ct.DataAlreadyExists()
     if cObj._doc_count > 0:
         cObj.document_download_process_initiate(
             csv_id, country_id, legal_id, domain_id, unit_id, session_token

@@ -138,6 +138,12 @@ def is_alpha_numeric_with_brace(value):
     return is_alpha_numeric(val1)
 
 
+def check_document_name(value):
+    # alphanumeric with space, hyphen, dot and underscore
+    val = value.replace("-", "").replace(".", "").replace("_", "")
+    return is_alpha_numeric(val)
+
+
 def is_date(string):
     string_in_date = string
     try:
@@ -163,7 +169,7 @@ def is_url(value):
 def is_address(value):
     # a-z0-9 with special char and space
     r = re.compile("^[a-zA-Z0-9_.,-@# ]*$")
-    if r.match(value):
+    if r.match(value): 
         return True
     else:
         return False
@@ -374,6 +380,7 @@ csv_params = {
         validation_method=is_date, isValidCompletionDate=True
     ),
     "Document_Name": make_required_validation(
-        keyType="STRING", isValidCharCheck=False
+        keyType="STRING", isValidCharCheck=True,
+        validation_method=check_document_name
     )
 }
