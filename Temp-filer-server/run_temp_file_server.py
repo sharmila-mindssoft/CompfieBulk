@@ -250,14 +250,13 @@ def upload_csv():
         BULK_CSV_PATH
     )
     if not os.path.exists(file_path):
-        print "path created ", file_path
         os.makedirs(file_path)
 
     create_path = "%s/%s" % (file_path, framed_file_name)
     try:
         with io.FileIO(create_path, "wb") as fn:
             fn.write(file_content.decode('base64'))
-        return True
+        return "success"
     except IOError, e:
         print e
     return "success"
@@ -380,14 +379,6 @@ def zip_folder(folder_name, folder_path):
 @app.route('/temp/downloadzip', methods=['POST'])
 def get_files_as_zip():
     csv_id = request.args.get("csv_id")
-    # legal_entity_id = request.args.get("legal_entity_id")
-    # client_id = request.args.get("client_id")
-    # domain_id = request.args.get("domain_id")
-    # country_id = request.args.get("country_id")
-    # legal_entity_id = request.args.get("legal_entity_id")
-    # unit_id = request.args.get("unit_id")
-    # year = request.args.get("year")
-    # month = request.args.get("month")
     csv_name = None
     ROOT_PATH = os.path.join(os.path.split(__file__)[0])
     BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadclientdocuments")

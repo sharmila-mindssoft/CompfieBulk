@@ -15,9 +15,9 @@ from server.constants import (
 from server.clientdatabase.general import (
     calculate_due_date, filter_out_due_dates)
 from clientprotocol.clienttransactions import (
-    STATUTORY_WISE_COMPLIANCES,
+    STATUTORY_WISE_COMPLIANCES)
+from bucompletedtaskcurrentyearprotocol import (
     UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS)
-
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..", "..")
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
@@ -41,6 +41,12 @@ class PastDataJsonToCSV(object):
             if report_type == "DownloadPastData":
                 self.download_past_data(
                     db, request, session_user)
+        if (
+            self.data_available_status is False and
+            os.path.exists(self.FILE_PATH)
+        ):
+            os.remove(self.FILE_PATH)
+            self.FILE_DOWNLOAD_PATH = None
 
     def to_string(self, s):
         try:
@@ -86,7 +92,6 @@ class PastDataJsonToCSV(object):
                 ]
             self.write_csv(csv_headers, None)
             for swc in statutory_wise_compliances:
-                level_statu_name = swc.level_1_statutory_name
                 compliances = swc.compliances
                 for comp in compliances:
                     description = comp.description
@@ -96,9 +101,11 @@ class PastDataJsonToCSV(object):
                     statutory_date = comp.statutory_date
                     assignee_name = comp.assignee_name
                     is_header = True
+                    primary_legislation = comp.primary_legislation
+                    secondary_legislation = comp.secondary_legislation
                     csv_values = [
                         le_name, domain_name, unit_code, unit_name,
-                        level_statu_name, "",
+                        primary_legislation, secondary_legislation,
                         compliance_name, description,
                         compliance_task_frequency, statutory_date,
                         due_date, assignee_name, "", ""
@@ -106,13 +113,10 @@ class PastDataJsonToCSV(object):
                     self.write_csv(None, csv_values)
         else:
             self.data_available_status = False
-            if os.path.exists(self.FILE_PATH):
-                os.remove(self.FILE_PATH)
-                self.FILE_DOWNLOAD_PATH = None
 
 
 def return_past_due_dates(
-    db, domain_id, unit_id, level_1_statutory_name
+    db, domain_id, unit_id, level_1_statutory_name, compliance_id=None
 ):
     condition = ""
     condition_val = []
@@ -122,6 +126,9 @@ def return_past_due_dates(
     if level_1_statutory_name is not None:
         condition += " AND statutory_mapping like %s"
         condition_val.append("%" + str(level_1_statutory_name + "%"))
+    if compliance_id is not None:
+        condition += " AND ac.compliance_id = %s"
+        condition_val.append(compliance_id)
 
     query = "SELECT ac.compliance_id, ac.statutory_dates, " + \
         " ac.due_date, " + \
@@ -138,7 +145,15 @@ def return_past_due_dates(
         " where ch.unit_id = ac.unit_id and " +\
         " ac.compliance_id = ch.compliance_id and " + \
         " ch.start_date < ch.due_date), ac.due_date), 1)) " + \
-        " as start_date" +\
+        " as start_date, SUBSTRING_INDEX(SUBSTRING_INDEX(" + \
+        " SUBSTRING(SUBSTRING(statutory_mapping,3),1, CHAR_LENGTH( " + \
+        " statutory_mapping) -4), '>>', 1),'\",',1) " + \
+        " AS primary_legislation, TRIM(SUBSTRING_INDEX(SUBSTRING( " + \
+        " SUBSTRING( SUBSTRING_INDEX(SUBSTRING(SUBSTRING( " + \
+        " statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4) " + \
+        ",'>>',2), CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING( " + \
+        " statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4" + \
+        " ), '>>', 1))+1),3),'\",',1)) AS secondary_legislation" +\
         " FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_users u ON (ac.assignee = u.user_id) " + \
         " INNER JOIN tbl_compliances c ON " + \
@@ -209,6 +224,8 @@ def get_download_bulk_compliance_data(
     total_count = 0
     for compliance in rows:
         s_maps = compliance["statutory_mapping"]
+        primary_legislation = compliance["primary_legislation"]
+        secondary_legislation = compliance["secondary_legislation"]
         statutories = s_maps
         level_1 = statutories
         if level_1 not in level_1_statutory_wise_compliances:
@@ -242,7 +259,8 @@ def get_download_bulk_compliance_data(
                     compliance["compliance_description"],
                     clientcore.COMPLIANCE_FREQUENCY(compliance["frequency"]),
                     summary, datetime_to_string(due_date),
-                    assingee_name, compliance["assignee"]
+                    assingee_name, compliance["assignee"],
+                    primary_legislation, secondary_legislation
                 )
             )
     statutory_wise_compliances = []
@@ -255,8 +273,6 @@ def get_download_bulk_compliance_data(
                     level_1_statutory_name, compliances
                 )
             )
-    print statutory_wise_compliances
-    print "Total-> ", total_count
     return statutory_wise_compliances, total_count
 
 
@@ -285,7 +301,6 @@ def connectClientDB(le_id):
         _source_knowledge_db.begin()
 
         result = _source_knowledge_db.select_all(query, param)
-        print "Result---->>> ", result
         if len(result) > 0:
             for row in result:
                 dhost = row["database_ip"]
@@ -303,7 +318,6 @@ def connectClientDB(le_id):
                     autocommit=False,
                 )
 
-        print "source db con >>>>> ", _source_db_con
         _source_client_db = Database(_source_db_con)
         _source_client_db.begin()
 

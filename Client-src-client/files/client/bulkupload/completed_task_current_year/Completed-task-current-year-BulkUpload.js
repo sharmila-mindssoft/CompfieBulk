@@ -80,8 +80,10 @@ TXT_DOMAIN.keyup(function(e) {
     commonAutoComplete(e, DIV_DOMAIN, HDN_DOMAIN, textVal, DOMAIN_LIST,
         "d_name", "d_id",
         function(val) {
+            displayLoader();
             loadUnits(parseInt(LEGALENTITY_ID.val()), parseInt(val));
             onAutoCompleteSuccess(TXT_DOMAIN, HDN_DOMAIN, val);
+            hideLoader();
         }, conditionFields, conditionValues);
 });
 
@@ -118,6 +120,8 @@ function loadUnits(leId, domainId) {
                 UNIT_LISTMAP[parseInt(u["unit_id"])] = u["unit_code"];
                 u["unit_name"] = u["unit_code"]+"-"+u["unit_name"];
             });
+        }else{
+            hideLoader();
         }
     });
 }
@@ -144,9 +148,7 @@ LEGALENTITY_NAME_UPLOAD.keyup(function(e) {
 
 function get_legal_entity_id(le_name){
      for (i = 0; i < LEGAL_ENTITIES.length; i++) {
-        console.log(LEGAL_ENTITIES[i]["le_name"])
         if (LEGAL_ENTITIES[i]["le_name"] == le_name){
-            console.log("inside if")
             return LEGAL_ENTITIES[i]["le_id"]
         }
     }
@@ -385,12 +387,7 @@ function validateUpload() {
             $('#up-doc-title').show();
             $('#remaining-doc-title').show();
             $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
-            if (REMAINING_DOCUMENTS < 0){
-                REMAINING_DOCUMENTS = 0;
-            }
-            $('#bu_remain_total').text(
-                REMAINING_DOCUMENTS
-            );
+            $('#bu_remain_total').text(REMAINING_DOCUMENTS);
             myDropzone.processQueue();
         }
     }
@@ -494,7 +491,6 @@ BulkCompletedTaskCurrentYear.prototype.showList = function() {
     buClient.GetCompletedTaskCsvUploadedList(args,
         function(error, data) {
             if (error == null) {
-                // alert(data);
                 tThis._ListDataForView = data.csv_list;
                 tThis.renderList(tThis._ListDataForView);
                 hideLoader();
@@ -606,15 +602,18 @@ function downloadUploadedData(legal_entity_id, CSV_ID){
         "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val()),
         "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val())
     }
-
+    displayLoader();
     res = buClient.downloadUploadedData(
         parseInt(LEGALENTITY_ID_UPLOAD.val()), CSV_ID, 
         function(error, data) {
             if (error == null) {
-                    downloadUrl = data.link;
-                    window.open(downloadUrl, '_blank');
-                    hideLoader();
-                }
+                downloadUrl = data.link;
+                window.open(downloadUrl, '_blank');
+                hideLoader();
+            }else{
+                hideLoader();
+            }
+
             });
 }
 
@@ -664,11 +663,10 @@ function downloadData() {
                 downloadUrl = data.link;
                 if (downloadUrl != null) {
                     window.open(downloadUrl, '_blank');
-                    hideLoader();
                 } else {
                     displayMessage(message.no_compliance_available);
-                    hideLoader();
                 }
+                hideLoader();
             } else {
                 if (error == "ExportToCSVEmpty"){
                     displayMessage(message.no_compliance_available);
@@ -703,7 +701,15 @@ function submitUpload() {
     };
     $('#myModal').modal('show');
     buClient.saveBulkRecords(args, function(error, data) {
-        if (error == null) {
+        if(error == 'DataAlreadyExists'){
+            resetAdd();
+            resetEdit();
+            displayMessage(message.data_already_exists);
+            $('#myModal').modal('hide');
+            VIEW_SCREEN.show();
+            ADD_SCREEN.hide();
+        }
+        else if (error == null) {
             if (totalfileUploadSuccess > 0){
                 buClient.updateDocumentCount(
                         parseInt(
@@ -720,6 +726,7 @@ function submitUpload() {
                         ADD_SCREEN.hide();
                     }
                 )
+                $('#myModal').modal('hide');
             }else{
                 resetAdd();
                 resetEdit();
@@ -761,12 +768,9 @@ key_search = function(mainList) {
 }
 
 function file_upload_rul() {
-    // console.log("inside file upload rul");
     var sessionId = client_mirror.getSessionToken();
     var fileBaseUrl = "/client/temp/upload?session_id=" +
         sessionId + "&csvid=" + CSV_ID;
-    // var fileBaseUrl = "../api/bu/completed_task?session_id=" +
-    //     sessionId + "&csvid=" + CSV_ID;
     return fileBaseUrl;
 }
 
@@ -900,7 +904,6 @@ var myDropzone = new Dropzone("div#myDrop", {
             ) {
                 displaySuccessMessage(message.document_upload_success);
                 $('#divSuccessbutton').show();
-                hideLoader();
                 BTN_UPLOAD.hide();
                 BUCT_PAGE.showList();
             }
@@ -916,6 +919,7 @@ var myDropzone = new Dropzone("div#myDrop", {
             displayMessage(errorMessage);
             addedfiles = [];
             myDropzone.removeAllFiles(true);
+            hideLoader();
         });
     }
 });
