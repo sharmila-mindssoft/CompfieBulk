@@ -274,9 +274,9 @@ class SourceDB(object):
             )
             if domain_id not in self._past_due_dates:
                 self._past_due_dates[domain_id] = {}
-            elif unit_id not in self._past_due_dates[domain_id]:
-                self._past_due_dates[domain_id][unit_id] = result
-            elif compliance_id not in self._past_due_dates[domain_id][unit_id]:
+            if unit_id not in self._past_due_dates[domain_id]:
+                self._past_due_dates[domain_id][unit_id] = {}
+            if compliance_id not in self._past_due_dates[domain_id][unit_id]:
                 self._past_due_dates[
                     domain_id][unit_id][compliance_id] = result
             return result
