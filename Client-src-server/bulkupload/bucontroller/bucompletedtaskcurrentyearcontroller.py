@@ -1,4 +1,3 @@
-from datetime import datetime
 from ..buapiprotocol.pastdatadownloadbulk import PastDataJsonToCSV
 from server.common import (
     get_date_time_in_date,
@@ -68,12 +67,12 @@ def process_bu_completed_task_current_year_request(
 
     if type(request_frame) is bu_ct.DownloadUploadedData:
         result = process_download_uploaded_data(
-            db, request_frame, session_user, request.session_token
+            db, request_frame
         )
 
     if type(request_frame) is bu_ct.UpdateDocumentCount:
         result = process_update_document_count(
-            db, request_frame, session_user
+            db, request_frame
         )
 
     return result
@@ -141,11 +140,11 @@ def upload_completed_task_current_year_csv(
         ]
 
         new_csv_id = save_completed_task_current_year_csv(
-            db, csv_args, session_user
+            db, csv_args
         )
         if new_csv_id:
             if save_completed_task_data(
-                    db, new_csv_id, res_data["data"], client_id
+                    db, new_csv_id, res_data["data"]
             ) is True:
                 save_file_in_client_docs(
                     CLIENT_DOCS_BASE_PATH, csv_name,
@@ -222,11 +221,11 @@ def process_get_bulk_download_data(
 
 
 def process_download_uploaded_data(
-    db, request_frame, session_user, session_token
+    db, request_frame
 ):
     csv_id = request_frame.csv_id
     file_download_path = get_files_as_zip(
-        db, csv_id
+        csv_id
     )
     return bu_ct.DownloadUploadedDataSuccess(
         file_download_path
@@ -234,7 +233,7 @@ def process_download_uploaded_data(
 
 
 def process_update_document_count(
-    db, request_frame, session_user
+    db, request_frame
 ):
     csv_id = request_frame.csv_id
     count = request_frame.count

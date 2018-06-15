@@ -239,7 +239,7 @@ def delete_declined_docs(csv_id):
     return response_data
 
 
-@app.route('/temp/upload', methods=['POST'])
+@app.route('/ktemp/upload', methods=['POST'])
 def upload():
     logger.logTempFiler(
         "info", "run_tempfile_server > /temp/upload > Request", request

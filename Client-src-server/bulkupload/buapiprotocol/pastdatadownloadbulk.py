@@ -40,7 +40,7 @@ class PastDataJsonToCSV(object):
             self.writer = csv.writer(f)
             if report_type == "DownloadPastData":
                 self.download_past_data(
-                    db, request, session_user)
+                    request, session_user)
         if (
             self.data_available_status is False and
             os.path.exists(self.FILE_PATH)
@@ -60,7 +60,7 @@ class PastDataJsonToCSV(object):
         if values:
             self.writer.writerow(values)
 
-    def download_past_data(self, db, request, session_user):
+    def download_past_data(self, request, session_user):
         is_header = False
         le_id = request.legal_entity_id
         cnx_pool = connectClientDB(le_id)
@@ -77,8 +77,7 @@ class PastDataJsonToCSV(object):
         (
             statutory_wise_compliances, total_count
         ) = get_download_bulk_compliance_data(
-            cnx_pool, unit_id, domain_id, "", compliance_frequency,
-            session_user, start_count, 100
+            cnx_pool, unit_id, domain_id, ""
         )
         if total_count > 0:
             if not is_header:
@@ -215,9 +214,7 @@ def calculate_final_due_dates(db, data, domain_id, unit_id):
 
 
 def get_download_bulk_compliance_data(
-    db, unit_id, domain_id, level_1_statutory_name, frequency_name,
-    session_user, start_count, to_count
-):
+    db, unit_id, domain_id, level_1_statutory_name):
     rows = return_past_due_dates(
         db, domain_id, unit_id, level_1_statutory_name)
     level_1_statutory_wise_compliances = {}
