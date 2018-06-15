@@ -531,7 +531,7 @@ function PageControls() {
 
 function file_upload_rul() {
     var session_id = mirror.getSessionToken();
-    var file_base_url = "/ktemp/upload?session_id=" +
+    var file_base_url = "/knowledgetemp/upload?session_id=" +
         session_id + "&csvid=" + CSV_ID
     console.log(file_base_url);
     return file_base_url;
