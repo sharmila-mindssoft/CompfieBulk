@@ -455,10 +455,10 @@ class SourceDB(object):
 
     def check_compliance_task(self, compliance_task, primary, secondary):
         status1 = True
-        compliance_task = self.get_compliance_task_name(compliance_task)
+        compliance_task_name = self.get_compliance_task_name(compliance_task)
         try:
             if (
-                compliance_task not in self.hierarchy_checker[
+                compliance_task_name not in self.hierarchy_checker[
                     primary][secondary]):
                 status1 = "Not Found"
         except KeyError:
