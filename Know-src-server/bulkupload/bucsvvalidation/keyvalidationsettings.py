@@ -14,8 +14,15 @@ def expectation_error(expected, received):
 
 
 def allow_specialchar(value):
-
     r = re.compile("^[0-9a-zA-Z- _& ,.;:/+=$%@#&*()<>?:\n]*$")
+    if r.match(value):
+        return True
+    else:
+        return False
+
+
+def is_alpha_numeric_allow_spl(value):
+    r = re.compile("^[0-9A-Za-z_.,-@#&*() ]*$")
     if r.match(value):
         return True
     else:
@@ -440,7 +447,7 @@ csv_params = {
     'Compliance_Task': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100,
         isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        validation_method=is_alpha_numeric_allow_spl
     ),
     'Compliance_Document': make_required_validation(
         keyType='STRING', maxLengthCheck=100, isValidCharCheck=True,
@@ -454,7 +461,7 @@ csv_params = {
     'Compliance_Description': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500,
         isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        validation_method=is_alpha_numeric_allow_spl
     ),
     'Penal_Consequences': make_required_validation(
         keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
