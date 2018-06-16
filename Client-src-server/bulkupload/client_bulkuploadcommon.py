@@ -70,9 +70,9 @@ def string_to_datetime(string):
 def convert_base64_to_file(
     src_path, file_name, file_content
 ):
-    fileSplitString = file_name.split(".")
-    framed_file_name = frame_file_name(fileSplitString[0])
-    file_folder_path = "%s/csv/" % (src_path)
+    file_split_string = file_name.split(".")
+    framed_file_name = frame_file_name(file_split_string[0])
+    file_folder_path = "%s/csv/" % src_path
     file_path = "%s/csv/%s" % (src_path, framed_file_name)
 
     if not os.path.exists(file_folder_path):
@@ -82,9 +82,7 @@ def convert_base64_to_file(
     return framed_file_name
 
 
-def save_file_in_client_docs(
-    src_path, file_name, file_content
-):
+def save_file_in_client_docs(file_name, file_content):
     caller_name = (
         "%sclient/copycsv?framed_file_name=%s&file_content=%s"
     ) % (
@@ -187,10 +185,10 @@ def write_data_to_excel(
         row += 1
 
     # summary sheet
-    summarySheet = workbook.add_worksheet("summary")
+    summary_sheet = workbook.add_worksheet("summary")
     for idx, h in enumerate(["Field Name", "Count"]):
         c = "%s%s" % (cells[idx], 1)
-        summarySheet.write(c, h, bold)
+        summary_sheet.write(c, h, bold)
 
     srow = 1
     for i, col in enumerate(headers):
@@ -198,8 +196,8 @@ def write_data_to_excel(
         error_count = header_dict.get(col)
         if error_count is not None:
             value = len(error_count)
-        summarySheet.write_string(srow, 0, col)
-        summarySheet.write_string(srow, 1, str(value))
+        summary_sheet.write_string(srow, 0, col)
+        summary_sheet.write_string(srow, 1, str(value))
         srow += 1
 
     # workbook.close()

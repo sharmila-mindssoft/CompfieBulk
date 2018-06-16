@@ -31,7 +31,7 @@ app = Flask(__name__)
 app.config['UPLOAD_PATH'] = 'bulkuploadcomplianceformat'
 app.config['CLIENT_DOCUMENT_UPLOAD_PATH'] = 'bulkuploadclientdocuments'
 
-print app.config['UPLOAD_PATH']
+app.config['UPLOAD_PATH']
 zipping_in_process = []
 
 # In DB
@@ -51,7 +51,6 @@ def knowledge_db_connect():
 
 
 def bulkupload_db_connect():
-    print "BULK_UPLOAD_DB_PASSWORD:============> %s" % BULK_UPLOAD_DB_PASSWORD
     cnx_pool = mysql.connector.connect(
         user=BULK_UPLOAD_DB_USERNAME,
         password=BULK_UPLOAD_DB_PASSWORD,
@@ -221,7 +220,6 @@ def delete_declined_docs(csv_id):
             response_data = db_stat
         _db.commit()
     except Exception, e:
-        print "In Exception"
         logger.logTempFiler(
             "error", "run_tempfile_server > delete_declined_docs", str(e)
         )
@@ -240,27 +238,27 @@ def delete_declined_docs(csv_id):
 
 
 
-@app.route('/temp/uploadcsv', methods=['POST'])
-def upload_csv():
-    framed_file_name = request.args.get("framed_file_name")
-    file_content = request.args.get("file_content")
+# @app.route('/temp/uploadcsv', methods=['POST'])
+# def upload_csv():
+#     framed_file_name = request.args.get("framed_file_name")
+#     file_content = request.args.get("file_content")
 
-    ROOT_PATH = os.path.join(os.path.split(__file__)[0])
-    BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadclientdocuments")
-    file_path = "%s/csv" % (
-        BULK_CSV_PATH
-    )
-    if not os.path.exists(file_path):
-        os.makedirs(file_path)
+#     ROOT_PATH = os.path.join(os.path.split(__file__)[0])
+#     BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadclientdocuments")
+#     file_path = "%s/csv" % (
+#         BULK_CSV_PATH
+#     )
+#     if not os.path.exists(file_path):
+#         os.makedirs(file_path)
 
-    create_path = "%s/%s" % (file_path, framed_file_name)
-    try:
-        with io.FileIO(create_path, "wb") as fn:
-            fn.write(file_content.decode('base64'))
-        return "success"
-    except IOError, e:
-        print e
-    return "success"
+#     create_path = "%s/%s" % (file_path, framed_file_name)
+#     try:
+#         with io.FileIO(create_path, "wb") as fn:
+#             fn.write(file_content.decode('base64'))
+#         return "success"
+#     except IOError, e:
+#         print e
+#     return "success"
 
 
 @app.route('/temp/upload', methods=['POST'])
@@ -662,7 +660,6 @@ def upload_csv():
         BULK_CSV_PATH
     )
     if not os.path.exists(file_path):
-        print "path created ", file_path
         os.makedirs(file_path)
 
     create_path = "%s/%s" % (file_path, framed_file_name)
@@ -724,7 +721,6 @@ def main():
     port = parse_port(args.port)
     if port is None:
         msg = "error: port is not in PORT format: %s"
-        print msg % (args.port,)
         logger.logTempFiler(
             "error", "run_tempfile_server > main()", msg % (args.port,)
         )
