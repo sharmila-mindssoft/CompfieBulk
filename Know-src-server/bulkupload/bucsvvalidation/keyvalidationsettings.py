@@ -169,6 +169,14 @@ def is_alpha_numeric(value):
         return False
 
 
+def is_alpha_numeric_allow_spl(value):
+    r = re.compile("^[0-9A-Za-z_.,-@#&*() ]*$")
+    if r.match(value):
+        return True
+    else:
+        return False
+
+
 def is_url(value):
 
     regex = re.compile(
@@ -434,13 +442,13 @@ csv_params = {
     'Statutory_Provision': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500,
         isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        validation_method=is_alpha_numeric_allow_spl
     ),
 
     'Compliance_Task': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100,
         isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        validation_method=is_alpha_numeric_allow_spl
     ),
     'Compliance_Document': make_required_validation(
         keyType='STRING', maxLengthCheck=100, isValidCharCheck=True,
@@ -454,11 +462,11 @@ csv_params = {
     'Compliance_Description': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500,
         isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        validation_method=is_alpha_numeric_allow_spl
     ),
     'Penal_Consequences': make_required_validation(
         keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
-        validation_method=is_alpha_numeric
+        validation_method=is_alpha_numeric_allow_spl
     ),
     'Task_Type': make_required_validation(
         keyType='STRING', isMandatoryCheck=True, maxLengthCheck=150,
@@ -466,7 +474,7 @@ csv_params = {
         validation_method=is_alphabet, isFoundCheck=True
     ),
     'Reference_Link': make_required_validation(
-        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
+        keyType='STRING', maxLengthCheck=100, isValidCharCheck=True,
         validation_method=is_url
     ),
     'Compliance_Frequency': make_required_validation(

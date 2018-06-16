@@ -208,7 +208,9 @@
                                                             <input type="hidden" id="unit_id_hdn">
                                                             <input type="hidden" id="start_date_hdn">
                                                             <div class="form-group has-feedback field_label" style="display: none;" id="divSuccessFile">
-                                                                <label class="col-sm-4 control-label">Uploaded File: </label>
+                                                                <label class="col-sm-4 control-label">Uploaded File:
+                                                                <span class="mandatory">*</span>
+                                                                </label>
                                                                 <div class="col-sm-6">
                                                                     <table class="tablenopadd">
                                                                         <tbody>
@@ -216,8 +218,9 @@
                                                                                 <td class="p-5-px width-60"> </td>
 
                                                                                 <td class="p-5-px width-10">
-                                                                                    <span class="successFileName"> </span>
-                                                                                    <i class="fa fa-download fa-1-2x c-pointer" data-toggle="tooltip" title="" data-original-title="Download Document"></i>
+                                                                                    <span class="successFileName"> </span><a id="success_file_download">
+                                                                                    <i class="fa fa-download fa-1-2x c-pointer" data-toggle="tooltip"  title="" data-original-title="Download Document"></i>
+                                                                                </a>
                                                                                 </td>
                                                                             </tr>
                                                                         </tbody>
@@ -234,9 +237,9 @@
                                                                         <span>Upload or drag your files here</span>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-sm-6 controls bu-doc-summary text-center">
-                                                                    <ul class="p-l-20 p-t-5 text-center">
-                                                                        <li class="doc-view-summary text-center" id="req-doc-title">Required Documents:
+                                                                <div class="col-sm-6 controls">
+                                                                    <ul class="p-l-20 p-t-5">
+                                                                        <li class="doc-view-summary " id="req-doc-title">Required Documents:
                                                                             <b><span id="bu_doc_total"></span></b>
                                                                         </li>
                                                                         <li class="doc-view-summary" id="up-doc-title">Uploaded Documents:
@@ -260,7 +263,7 @@
                                                                         <a id="excel">Download Excel</a>
                                                                         <a id="csv">Download CSV</a>
                                                                         <a id="ods">Download ODS</a>
-                                                                        <a id="txt">Download Text</a>
+                                                                        <a id="txt" onmouseover="" style="cursor: pointer;">Download Text</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -309,6 +312,12 @@
                                                                         </li>
                                                                         <li>Master data inactive:
                                                                             <b><span class="masterdatainactive"></span></b>
+                                                                        </li>
+                                                                        <li>Invalid Data validation:
+                                                                            <b><span class="invaliddatavaidation"></span></b>
+                                                                        </li>
+                                                                        <li>Invalid Char validation:
+                                                                            <b><span class="invalidchar"></span></b>
                                                                         </li>
                                                                     </ul>
                                                                     <!-- <ul class="p-l-20">

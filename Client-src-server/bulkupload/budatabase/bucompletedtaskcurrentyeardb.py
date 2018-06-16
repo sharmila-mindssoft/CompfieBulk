@@ -1,15 +1,18 @@
-import os
 import mysql
+import requests
 from ..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
 import datetime
-import zipfile
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
 )
-from server.common import string_to_datetime
+from server.common import (
+    string_to_datetime, string_to_datetime_with_time
+)
 from clientprotocol import clientcore
+from bulkupload.client_bulkconstants import (TEMP_FILE_SERVER)
+
 
 __all__ = [
     "get_legal_entity_domains",
@@ -25,7 +28,7 @@ __all__ = [
 
 
 def get_legal_entity_domains(
-    db, user_id, session_user, le_id
+    db, le_id
 ):
     query = "SELECT T02. domain_name, T01.le_domain_id, " + \
             "T01.legal_entity_id, " + \
@@ -49,7 +52,7 @@ def get_legal_entity_domains(
 
 
 def save_completed_task_current_year_csv(
-    db, completed_task, session_user
+    db, completed_task
 ):
 
     columns = [
@@ -62,7 +65,7 @@ def save_completed_task_current_year_csv(
         completed_task[0], completed_task[1],
         completed_task[2], completed_task[3],
         completed_task[4], completed_task[5],
-        completed_task[6], string_to_datetime(completed_task[7]),
+        completed_task[6], string_to_datetime_with_time(completed_task[7]),
         completed_task[8], completed_task[9],
         completed_task[10], completed_task[11]
     ]
@@ -72,15 +75,15 @@ def save_completed_task_current_year_csv(
     return completed_task_id
 
 
-def save_completed_task_data(db, csv_id, csv_data, client_id):
+def save_completed_task_data(db, csv_id, csv_data):
     try:
         columns = [
-            "csv_past_id",  "Legal_Entity", "Domain",
+            "csv_past_id", "Legal_Entity", "Domain",
             "Unit_Code", "Unit_Name", "perimary_legislation",
             "Secondary_Legislation", "compliance_task_name",
             "Compliance_Description", "Compliance_Frequency", "Statutory_Date",
             "Due_Date", "Assignee", "Completion_Date", "document_name"
-            ]
+        ]
 
         values = []
         for idx, d in enumerate(csv_data):
@@ -101,8 +104,6 @@ def save_completed_task_data(db, csv_id, csv_data, client_id):
         else:
             return False
     except Exception, e:
-        print "e>>", str(e)
-        print "Exception>>", Exception
         raise ValueError("Transaction failed")
 
 
@@ -114,12 +115,9 @@ def get_past_record_data(db, csvID):
         " compliance_description, compliance_frequency, " + \
         " statutory_date, due_date, assignee, completion_date, " + \
         " document_name" + \
-        "  FROM tbl_bulk_past_data where csv_past_id = %s; "
-
+        " FROM tbl_bulk_past_data where csv_past_id = %s; "
     param = [csvID]
     rows = db.select_all(query, param)
-    # print "get_past_record_data>rows>>", rows
-
     return rows
 
 
@@ -151,11 +149,11 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
             " INNER JOIN tbl_bulk_past_data AS T02 " + \
             " ON T01.csv_past_id = T02.csv_past_id " + \
             " where (T01.total_documents - T01.uploaded_documents) >= 1 " + \
-            " and uploaded_by = %s AND FIND_IN_SET(T01.legal_entity_id, %s)"
+            " and uploaded_by = %s AND FIND_IN_SET " + \
+            " (T01.legal_entity_id, %s)  order by T01.uploaded_on DESC"
     param = [session_user, legal_entity_list]
 
     rows = db.select_all(query, param)
-    print "get_completed_task_CSV_list>rows>>", rows
 
     param1 = [session_user]
     docQuery = "select t1.csv_past_id, document_name " + \
@@ -166,7 +164,6 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
                " and document_name != '' " + \
                " and t2.uploaded_by = %s "
     docRows = db.select_all(docQuery, param1)
-    print "docRows-> ", docRows
     if docRows is not None:
         for d in docRows:
             csv_id = d.get("csv_past_id")
@@ -178,51 +175,76 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
                 doc_list.append(docname)
             doc_names[csv_id] = doc_list
 
-    print "doc Names-> ", doc_names
     csv_list = []
     if rows is not None:
         for row in rows:
             uploaded_on = row["uploaded_on"].strftime("%d-%b-%Y %H:%M")
-            curr_date = datetime.datetime.now().strftime('%d-%b-%Y')
+            curr_date = datetime.datetime.now().strftime("%d-%b-%Y")
             csv_list.append(
                 bu_ct.CsvList(
                     row["csv_past_id"], row["csv_name"],
                     uploaded_on, row["uploaded_by"], row["total_records"],
                     row["total_documents"], row["uploaded_documents"],
                     row["remaining_documents"],
-                    doc_names.get(d.get("csv_past_id")), row["legal_entity"],
+                    doc_names.get(row["csv_past_id"]), row["legal_entity"],
                     row["domain_id"], row["unit_id"], curr_date
                 )
             )
     return csv_list
 
 
-def connectKnowledgeDB(le_id):
+def connect_le_db(le_id):
     try:
-        _source_knowledge_db_con = mysql.connector.connect(
+        _knowledge_db_con = mysql.connector.connect(
             user=KNOWLEDGE_DB_USERNAME,
             password=KNOWLEDGE_DB_PASSWORD,
             host=KNOWLEDGE_DB_HOST,
             database=KNOWLEDGE_DATABASE_NAME,
             port=KNOWLEDGE_DB_PORT,
-            autocommit=False,
+            autocommit=False
         )
+        _knowledge_db = Database(_knowledge_db_con)
+        _knowledge_db.begin()
 
-        _source_knowledge_db = Database(_source_knowledge_db_con)
-        _source_knowledge_db.begin()
-        return _source_knowledge_db
+        query = "select t1.client_database_id, t1.database_name, " + \
+            "t1.database_username, t1.database_password, " + \
+            "t3.database_ip, database_port " + \
+            " from tbl_client_database_info as t1 " + \
+            " inner join tbl_client_database as t2 on " + \
+            " t2.client_database_id = t1.client_database_id " + \
+            " inner join tbl_database_server as t3 on " + \
+            " t3.database_server_id = t2.database_server_id " + \
+            " where t1.db_owner_id = %s and t1.is_group = 0;"
+        param = [le_id]
+
+        result = _knowledge_db.select_all(query, param)
+        if len(result) > 0:
+            for row in result:
+                dhost = row["database_ip"]
+                uname = row["database_username"]
+                pwd = row["database_password"]
+                port = row["database_port"]
+                db_name = row["database_name"]
+
+                _source_db_con = mysql.connector.connect(
+                    user=uname,
+                    password=pwd,
+                    host=dhost,
+                    database=db_name,
+                    port=port,
+                    autocommit=False,
+                )
+        _source_db = Database(_source_db_con)
+        _source_db.begin()
+        return _source_db
     except Exception, e:
         print "Connection Exception Caught"
         print e
 
 
 def get_client_id_by_le(db, legal_entity_id):
-    db = connectKnowledgeDB(legal_entity_id)
-    query = "SELECT client_id, group_name from tbl_client_groups " + \
-            " where client_id = ( select client_id from " + \
-            " tbl_legal_entities where " + \
-            "legal_entity_id='%s')"
-    query = query % legal_entity_id
+    db = connect_le_db(legal_entity_id)
+    query = "SELECT client_id, group_name from tbl_client_groups "
     rows = db.select_all(query)
     client_id = rows[0]["client_id"]
     client_name = rows[0]["group_name"]
@@ -239,7 +261,7 @@ def get_user_category(db, user_id):
 
 
 def get_units_for_user(db, le_id, domain_id, user_id):
-    db = connectKnowledgeDB(le_id)
+    db = connect_le_db(le_id)
     user_category_id = get_user_category(db, user_id)
     if user_category_id > 3:
         query = "SELECT t2.unit_id, t2.legal_entity_id, " + \
@@ -302,39 +324,14 @@ def return_units(units):
         return results
 
 
-def get_files_as_zip(db, csv_id):
-    csv_name = None
-    ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..", "..")
-    BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadcsv")
-    CSV_PATH = os.path.join(BULK_CSV_PATH, "csv")
-
-    CLIENT_DOCUMENT_UPLOAD_PATH = os.path.join(
-        ROOT_PATH, "Temp-filer-server")
-    CLIENT_DOCUMENT_UPLOAD_PATH = os.path.join(
-        CLIENT_DOCUMENT_UPLOAD_PATH, "bulkuploadclientdocuments")
-    CLIENT_DOCUMENT_UPLOAD_PATH = os.path.join(
-        CLIENT_DOCUMENT_UPLOAD_PATH, str(csv_id))
-
-    q = "select csv_name from tbl_bulk_past_data_csv " + \
-        " where csv_past_id = %s"
-    row = db.select_one(q, [csv_id])
-    if row:
-        csv_name = row["csv_name"]
-    zip_file_name = csv_name + "_zip" + '.zip'
-    zip_path = os.path.join(CSV_PATH, zip_file_name)
-    zfw = zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED)
-    csv_absname = os.path.join(CSV_PATH, csv_name)
-    csv_arcname = csv_absname[len(CSV_PATH) + 0:]
-    zfw.write(csv_absname, csv_arcname)
-    for dirname, subdirs, files in os.walk(CLIENT_DOCUMENT_UPLOAD_PATH):
-        for file in files:
-            absname = os.path.join(dirname, file)
-            arcname = absname[
-                len(CLIENT_DOCUMENT_UPLOAD_PATH) + 0:
-            ]
-            zfw.write(absname, arcname)
-    zfw.close()
-    download_link = "%s/%s" % ("/uploaded_file/csv/", zip_file_name)
+def get_files_as_zip(csv_id):
+    caller_name = (
+        "%sdownloadzip?csv_id=%s"
+    ) % (
+        TEMP_FILE_SERVER, csv_id
+    )
+    response = requests.post(caller_name)
+    download_link = response.text
     return download_link
 
 

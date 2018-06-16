@@ -132,15 +132,28 @@ def is_alpha_numeric(value):
         return False
 
 
+def is_alpha_numeric_with_brace(value):
+    val = value.replace("(", "")
+    val1 = val.replace(")", "")
+    return is_alpha_numeric(val1)
+
+
+def check_document_name(value):
+    # alphanumeric with space, hyphen, dot and underscore
+    val = value.replace("-", "").replace(".", "").replace("_", "")
+    return is_alpha_numeric(val)
+
+
 def is_date(string):
     string_in_date = string
     try:
         if string is not None:
-            if string_in_date != datetime.datetime.strptime(
-                    string_in_date, "%d-%b-%Y"
-                    ).strftime('%d-%b-%Y'):
+            if string != datetime.datetime.strptime(
+                string_in_date, "%d-%b-%Y"
+            ).strftime("%d-%b-%Y"):
                 raise ValueError
-            return True
+            else:
+                return True
     except ValueError:
         return False
 
@@ -156,7 +169,7 @@ def is_url(value):
 def is_address(value):
     # a-z0-9 with special char and space
     r = re.compile("^[a-zA-Z0-9_.,-@# ]*$")
-    if r.match(value):
+    if r.match(value): 
         return True
     else:
         return False
@@ -198,14 +211,14 @@ def parse_csv_dictionary_values(key, val):
     csvparam = csv_params.get(key)
 
     if csvparam is None:
-        raise ValueError('%s is not configured in csv parameter' % (key))
+        raise ValueError("%s is not configured in csv parameter" % (key))
 
     _mandatory = csvparam.get("check_mandatory")
     _maxlength = csvparam.get("max_length")
     _validation_method = csvparam.get("validation_method")
 
     msg = []
-    if _mandatory is True and (len(val) == 0 or val == ''):
+    if _mandatory is True and (len(val) == 0 or val == ""):
         msg.append(key + " - Field is blank")
         error_count["mandatory"] = 1
 
@@ -225,6 +238,7 @@ def parse_csv_dictionary_values(key, val):
         return True, error_count
     else:
         return msg, error_count
+
 
 ########################################################
 '''
@@ -275,7 +289,7 @@ def make_required_validation(
     isValidDueDate=False, isValidCompletionDate=False
 ):
     constraints = {
-        'key_type': keyType
+        "key_type": keyType
     }
 
     if isMandatoryCheck is True:
@@ -304,67 +318,69 @@ def make_required_validation(
 # key name should be as it is in csv file
 
 csv_params = {
-    'Legal_Entity': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
+    "Legal_Entity": make_required_validation(
+        keyType="STRING", isMandatoryCheck=True, maxLengthCheck=50,
         isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True,
         isActiveCheck=True
     ),
-    'Domain': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=30,
+    "Domain": make_required_validation(
+        keyType="STRING", isMandatoryCheck=True, maxLengthCheck=30,
         isValidCharCheck=True,
         validation_method=is_domain, isFoundCheck=True, isActiveCheck=True
     ),
-    'Unit_Code': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=20,
+    "Unit_Code": make_required_validation(
+        keyType="STRING", isMandatoryCheck=True, maxLengthCheck=20,
         isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
-    'Unit_Name': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=50,
+    "Unit_Name": make_required_validation(
+        keyType="STRING", isMandatoryCheck=True, maxLengthCheck=50,
         isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
-    'Compliance_Frequency': make_required_validation(
-        keyType='STRING', isValidCharCheck=True, isMandatoryCheck=True,
+    "Compliance_Frequency": make_required_validation(
+        keyType="STRING", isValidCharCheck=True, isMandatoryCheck=True,
         validation_method=is_alphabet, isFoundCheck=True
     ),
-    'Primary_Legislation': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500,
+    "Primary_Legislation": make_required_validation(
+        keyType="STRING", isMandatoryCheck=True, maxLengthCheck=500,
         isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
-    'Secondary_Legislation': make_required_validation(
-        keyType='STRING', maxLengthCheck=500, isValidCharCheck=True,
+    "Secondary_Legislation": make_required_validation(
+        keyType="STRING", maxLengthCheck=500, isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True,
         isActiveCheck=True
     ),
-    'Compliance_Task': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=100,
+    "Compliance_Task": make_required_validation(
+        keyType="STRING", isMandatoryCheck=True, maxLengthCheck=100,
         isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
-    'Compliance_Description': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, maxLengthCheck=500,
+    "Compliance_Description": make_required_validation(
+        keyType="STRING", isMandatoryCheck=True, maxLengthCheck=500,
         isValidCharCheck=True,
         validation_method=is_alpha_numeric, isFoundCheck=True
     ),
-    'Statutory_Date': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False
+    "Statutory_Date": make_required_validation(
+        keyType="STRING", isMandatoryCheck=True, isValidCharCheck=True,
+        validation_method=is_alpha_numeric_with_brace
     ),
-    'Due_Date': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
+    "Due_Date": make_required_validation(
+        keyType="STRING", isMandatoryCheck=True, isValidCharCheck=True,
         validation_method=is_date, isValidDueDate=True
     ),
-    'Assignee': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=False,
+    "Assignee": make_required_validation(
+        keyType="STRING", isMandatoryCheck=True, isValidCharCheck=False,
         isFoundCheck=True
     ),
-    'Completion_Date': make_required_validation(
-        keyType='STRING', isMandatoryCheck=True, isValidCharCheck=True,
+    "Completion_Date": make_required_validation(
+        keyType="STRING", isMandatoryCheck=True, isValidCharCheck=True,
         validation_method=is_date, isValidCompletionDate=True
     ),
-    'Document_Name': make_required_validation(
-        keyType='STRING', isValidCharCheck=False
+    "Document_Name": make_required_validation(
+        keyType="STRING", isValidCharCheck=True,
+        validation_method=check_document_name
     )
 }

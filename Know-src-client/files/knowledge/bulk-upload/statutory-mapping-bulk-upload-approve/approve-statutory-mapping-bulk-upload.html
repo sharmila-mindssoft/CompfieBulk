@@ -65,7 +65,7 @@
                                             <!-- end col -->
                                         </form>
                                     </div>
-                                    <table id="datatable_responsive" class="table table-fixed table-striped dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+                                    <table class="table table-fixed table-striped dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -206,7 +206,7 @@
                                         <span class="pull-left p-r-5 clear-filtered default-display-none"> &nbsp;
                     <i class="fa fa-times fa-1-3x text-primary text-muted c-pointer" data-toggle="tooltip" title="" data-original-title="Click here to clear filter"></i>
                 </span>
-                                    </div> 
+                                    </div>
                                     <div class="clearfix"></div>
                                     <div id="multi_col_freezer">
                                         <div class="table-responsive vertical-scroll">
@@ -387,7 +387,7 @@
                         </span>
                                                 </td>
                                                 <td class="td-inline-one"></td>
-                                                <td class="td-inline-two" class="pull-right">
+                                                <td class="td-inline-two pull-right">
                                                     <ul id="pagination_rpt" class="pagination-rpt">
                                                         <li class="first disabled"><a href="#">First</a></li>
                                                         <li class="prev disabled"><a href="#">Previous</a></li>
@@ -420,7 +420,7 @@
     <div id="templates">
         <table class="table-sm-csv-info">
             <tr class="table-row">
-                <td class="sno" align="center"></td>
+                <td class="sno text-center"></td>
                 <td class="csv-name"></td>
                 <td class="uploaded-on"></td>
                 <td class="uploaded-by"></td>
@@ -442,17 +442,17 @@
                 </td>
                 <td class="text-center">
                     <div class="checkbox checkbox-primary checkbox-single m-b-0">
-                        <!-- <a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove"> -->
-                            <input value="option2" type="checkbox" class="approve-checkbox" title="Click here to approve">
-                        <!-- </a> -->
+                         <a href="#custom_modal_approve" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove" class="approve-checkbox"> 
+                            <input value="option2" type="checkbox"  title="Click here to approve">
+                        </a>
                         <label></label>
                     </div>
                 </td>
                 <td class="text-center">
                     <div class="checkbox checkbox-danger checkbox-single m-b-0">
-                        <!-- <a href="#custom_modal_approve" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove"> -->
-                            <input value="option2" type="checkbox" class="reject-checkbox" title="Click here to reject">
-                        <!-- </a> -->
+                        <a href="#custom_modal_reject" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove" class="reject-checkbox"> 
+                            <input value="option2" type="checkbox"  title="Click here to reject">
+                        </a>
                         <label></label>
                     </div>
                 </td>
@@ -506,9 +506,8 @@
     </div>
     <div id="no_record_templates" class="default-display-none">
         <table class="table-no-content">
-            <tr align="left" class="table-row-no-content">
-                <td align="center" colspan="13" class="no-records">No Records Found</td>
-                <td align="center" colspan="14"></td>
+            <tr class="table-row-no-content">
+                <td colspan="13" class="text-center no-records">No Records Found</td>
             </tr>
         </table>
     </div>
@@ -522,11 +521,11 @@
     <div class="custom-modal-text">
         <div>
             <div class="form-group">
-                <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-                <input type="password" - class="form-control input-sm inp-password" id="current_password_reject" placeholder="Password">
+                <label class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm inp-password" id="current_password_reject" placeholder="Password">
             </div>
             <div class="form-group">
-                <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
+                <label class="pull-left">Reason <span class="mandatory">*</span></label>
                 <textarea class="form-control input-sm inp-reason reject-reason-txt" rows="2" maxlength="500" placeholder="Enter Reason"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit">Submit</button>
@@ -541,7 +540,7 @@
     <div class="custom-modal-text">
         <div>
             <div class="form-group">
-                <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
+                <label class="pull-left">Password <span class="mandatory">*</span></label>
                 <input type="password" class="form-control input-sm inp-password-approve" id="current_password" placeholder="Password">
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit">Submit</button>
@@ -556,7 +555,7 @@
     <div class="custom-modal-text">
         <div>
             <div class="form-group">
-                <label for="exampleInputReason" class="pull-left">Reason <span class="mandatory">*</span></label>
+                <label class="pull-left">Reason <span class="mandatory">*</span></label>
                 <textarea id="view_reason_id" class="form-control input-sm view-reason" rows="2" placeholder="Enter Reason" maxlength="500" tabindex="1"></textarea>
             </div>
             <button type="button" class="btn btn-primary waves-effect waves-light password-submit">Submit</button>

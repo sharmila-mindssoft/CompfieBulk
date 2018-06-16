@@ -1,10 +1,12 @@
 import os
 from functools import wraps
+from bucontroller.bucompletedtaskcurrentyearcontroller import (
+    process_bu_completed_task_current_year_request
+)
 from buapiprotocol import (
     bucompletedtaskcurrentyearprotocol
 )
-import bucontroller
-# from server.main import api_request
+
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 
@@ -46,5 +48,5 @@ class BulkAPI(object):
     def handle_completed_task(
         self, request, db, session_user, session_category
     ):
-        return bucontroller.process_bu_completed_task_current_year_request(
+        return process_bu_completed_task_current_year_request(
             request, db, session_user)
