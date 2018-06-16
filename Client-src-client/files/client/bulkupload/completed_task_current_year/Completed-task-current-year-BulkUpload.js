@@ -81,9 +81,11 @@ TXT_DOMAIN.keyup(function(e) {
         "d_name", "d_id",
         function(val) {
             displayLoader();
-            loadUnits(parseInt(LEGALENTITY_ID.val()), parseInt(val));
-            onAutoCompleteSuccess(TXT_DOMAIN, HDN_DOMAIN, val);
-            hideLoader();
+            loadUnits(parseInt(LEGALENTITY_ID.val()), parseInt(val), function(){
+                onAutoCompleteSuccess(TXT_DOMAIN, HDN_DOMAIN, val);
+                hideLoader();                
+            });
+            
         }, conditionFields, conditionValues);
 });
 
@@ -112,7 +114,7 @@ UPLOADED_FILE_FILTER.keyup(function() {
     BUCT_PAGE.renderList(fList);
 });
 
-function loadUnits(leId, domainId) {
+function loadUnits(leId, domainId, callback) {
     buClient.getUnits(leId, domainId, function(error, response) {
         if (error == null) {
             UNIT_LIST = response.user_units;
@@ -124,6 +126,7 @@ function loadUnits(leId, domainId) {
             hideLoader();
         }
     });
+    callback();
 }
 LEGALENTITY_NAME.keyup(function(e) {
     var textVal = $(this).val();
