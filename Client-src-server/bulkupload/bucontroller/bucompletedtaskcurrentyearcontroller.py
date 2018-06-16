@@ -74,6 +74,12 @@ def process_bu_completed_task_current_year_request(
         result = process_update_document_count(
             db, request_frame
         )
+
+    if type(request_frame) is bu_ct.ProcessQueuedTasks:
+        result = process_queued_tasks(
+            db, request_frame, session_user, request.session_token
+        )
+
     return result
 
 
@@ -227,3 +233,34 @@ def process_update_document_count(
     count = request_frame.count
     update_document_count(db, csv_id, count)
     return bu_ct.UpdateDocumentCountSuccess()
+
+
+def process_queued_tasks(db, request_frame, session_user, session_token):
+    file_submit_status = request_frame.file_submit_status
+    data_submit_status = request_frame.data_submit_status
+    csv_id = request_frame.new_csv_id
+    country_id = request_frame.country_id
+    legal_id = request_frame.legal_entity_id
+    domain_id = request_frame.domain_id
+    unit_id = request_frame.unit_id
+    result = None
+
+    dataResult = get_past_record_data(db, csv_id)
+    cObj = ValidateCompletedTaskForSubmit(
+        db, csv_id, dataResult, session_user)
+    if cObj.check_for_duplicate_records(legal_id) is False:
+        return bu_ct.DataAlreadyExists()
+
+    if(file_submit_status == 2):
+        cObj.document_download_process_initiate(
+            csv_id, country_id, legal_id, domain_id, unit_id, session_token
+        )
+        result = bu_ct.ProcessDocumentSubmitQueued()
+    elif(data_submit_status == 2):
+        if cObj.frame_data_for_main_db_insert(
+            db, dataResult, request_frame.legal_entity_id, session_user
+        ) is True:
+            result = bu_ct.ProcessQueuedTasksSuccess()
+    else:
+        result = []
+    return result

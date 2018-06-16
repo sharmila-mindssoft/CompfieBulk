@@ -144,13 +144,17 @@ def get_completed_task_csv_list_from_db(db, session_user, legal_entity_list):
             " (T01.total_documents - T01.uploaded_documents) " + \
             " AS remaining_documents, " + \
             " T01.domain_id, T01.unit_id_id as unit_id, " + \
-            " NOW() as start_date" + \
+            " NOW() as start_date," + \
+            " T01.file_submit_status, T01.data_submit_status " + \
             " From tbl_bulk_past_data_csv  AS T01 " + \
             " INNER JOIN tbl_bulk_past_data AS T02 " + \
             " ON T01.csv_past_id = T02.csv_past_id " + \
             " where (T01.total_documents - T01.uploaded_documents) >= 1 " + \
             " and uploaded_by = %s AND FIND_IN_SET " + \
-            " (T01.legal_entity_id, %s)  order by T01.uploaded_on DESC"
+            " (T01.legal_entity_id, %s)  " + \
+            " OR (T01.file_submit_status in (0,2) or " + \
+            " T01.data_submit_status in (0,2) )" + \
+            " order by T01.uploaded_on DESC"
     param = [session_user, legal_entity_list]
 
     rows = db.select_all(query, param)
@@ -187,7 +191,8 @@ def get_completed_task_csv_list_from_db(db, session_user, legal_entity_list):
                     row["total_documents"], row["uploaded_documents"],
                     row["remaining_documents"],
                     doc_names.get(row["csv_past_id"]), row["legal_entity"],
-                    row["domain_id"], row["unit_id"], curr_date
+                    row["domain_id"], row["unit_id"], curr_date,
+                    row["file_submit_status"], row["data_submit_status"]
                 )
             )
     return csv_list
