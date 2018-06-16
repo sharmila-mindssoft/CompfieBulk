@@ -17,7 +17,7 @@ from server.clientdatabase.general import (
 from clientprotocol.clienttransactions import (
     STATUTORY_WISE_COMPLIANCES)
 from bucompletedtaskcurrentyearprotocol import (
-    UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS)
+    UnitWiseStatutoriesForPastRecords)
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..", "..")
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
@@ -26,7 +26,7 @@ FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 
 
 class PastDataJsonToCSV(object):
-    def __init__(self, db, request, session_user, report_type):
+    def __init__(self, request, report_type):
         s = str(uuid.uuid4())
         file_name = "%s.csv" % s.replace("-", "")
         self.FILE_DOWNLOAD_PATH = "%s/%s" % (
@@ -39,8 +39,7 @@ class PastDataJsonToCSV(object):
         with open(self.FILE_PATH, "wb+") as f:
             self.writer = csv.writer(f)
             if report_type == "DownloadPastData":
-                self.download_past_data(
-                    request, session_user)
+                self.download_past_data(request)
         if (
             self.data_available_status is False and
             os.path.exists(self.FILE_PATH)
@@ -60,26 +59,24 @@ class PastDataJsonToCSV(object):
         if values:
             self.writer.writerow(values)
 
-    def download_past_data(self, request, session_user):
+    def download_past_data(self, request):
         is_header = False
         le_id = request.legal_entity_id
-        cnx_pool = connectClientDB(le_id)
+        cnx_pool = connect_client_db(le_id)
         unit_id = request.unit_id
         domain_id = request.domain_id
-        compliance_frequency = request.compliance_frequency
         le_name = request.le_name
         domain_name = request.d_name
         unit_name = request.u_name
         unit_code = request.u_code
         unit_name = re.sub(unit_code + "-", "", unit_name)
-        start_count = request.start_count
-        statutory_wise_compliances = []
         (
             statutory_wise_compliances, total_count
         ) = get_download_bulk_compliance_data(
             cnx_pool, unit_id, domain_id, ""
         )
         if total_count > 0:
+            csv_headers = []
             if not is_header:
                 csv_headers = [
                     "Legal_Entity", "Domain", "Unit_Code",
@@ -99,7 +96,6 @@ class PastDataJsonToCSV(object):
                     compliance_task_frequency = comp.frequency.to_structure()
                     statutory_date = comp.statutory_date
                     assignee_name = comp.assignee_name
-                    is_header = True
                     primary_legislation = comp.primary_legislation
                     secondary_legislation = comp.secondary_legislation
                     csv_values = [
@@ -214,7 +210,7 @@ def calculate_final_due_dates(db, data, domain_id, unit_id):
 
 
 def get_download_bulk_compliance_data(
-    db, unit_id, domain_id, level_1_statutory_name):
+        db, unit_id, domain_id, level_1_statutory_name):
     rows = return_past_due_dates(
         db, domain_id, unit_id, level_1_statutory_name)
     level_1_statutory_wise_compliances = {}
@@ -251,7 +247,7 @@ def get_download_bulk_compliance_data(
             due_date = datetime.date(int(year), int(month), int(day))
 
             level_1_statutory_wise_compliances[level_1].append(
-                UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
+                UnitWiseStatutoriesForPastRecords(
                     compliance["compliance_id"], compliance_name,
                     compliance["compliance_description"],
                     clientcore.COMPLIANCE_FREQUENCY(compliance["frequency"]),
@@ -273,7 +269,7 @@ def get_download_bulk_compliance_data(
     return statutory_wise_compliances, total_count
 
 
-def connectClientDB(le_id):
+def connect_client_db(le_id):
     try:
         _source_knowledge_db_con = mysql.connector.connect(
             user=KNOWLEDGE_DB_USERNAME,
@@ -296,7 +292,7 @@ def connectClientDB(le_id):
         param = [le_id]
         _source_knowledge_db = Database(_source_knowledge_db_con)
         _source_knowledge_db.begin()
-
+        _source_db_con = None
         result = _source_knowledge_db.select_all(query, param)
         if len(result) > 0:
             for row in result:

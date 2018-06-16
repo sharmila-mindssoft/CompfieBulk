@@ -12,7 +12,7 @@ from ..bucsvvalidation.completedtaskcurrentyearvalidation import (
     ValidateCompletedTaskForSubmit)
 from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
 from..budatabase.bucompletedtaskcurrentyeardb import (
-    get_units_for_user, get_completed_task_CSV_list, get_client_id_by_le,
+    get_units_for_user, get_completed_task_csv_list, get_client_id_by_le,
     save_completed_task_current_year_csv, save_completed_task_data,
     get_past_record_data, get_files_as_zip, update_document_count
 )
@@ -43,12 +43,12 @@ __all__ = [
 def process_bu_completed_task_current_year_request(
         request, db, session_user):
     request_frame = request.request
+    result = None
     if type(request_frame) is bu_ct.GetCompletedTaskCsvUploadedList:
         result = get_completed_task_csv_list(db, request_frame, session_user)
 
     if type(request_frame) is bu_ct.UploadCompletedTaskCurrentYearCSV:
-        result = upload_completed_task_current_year_csv(
-            db, request_frame, session_user, request.session_token)
+        result = upload_completed_task_current_year_csv(db, request_frame, session_user)
 
     if type(request_frame) is bu_ct.SaveBulkRecords:
         result = process_save_bulk_records(
@@ -67,14 +67,13 @@ def process_bu_completed_task_current_year_request(
 
     if type(request_frame) is bu_ct.DownloadUploadedData:
         result = process_download_uploaded_data(
-            db, request_frame
+            request_frame
         )
 
     if type(request_frame) is bu_ct.UpdateDocumentCount:
         result = process_update_document_count(
             db, request_frame
         )
-
     return result
 
 
@@ -83,24 +82,21 @@ def process_get_units(
 ):
     le_id = request.legal_entity_id
     domain_id = request.domain_id
-    user_units = get_units_for_user(db, le_id, domain_id, session_user)
+    user_units = get_units_for_user(le_id, domain_id, session_user)
 
     return bu_ct.GetUnitsSuccess(user_units=user_units)
 
 
 def get_completed_task_csv_list(db, request_frame, session_user):
 
-    csv_data = get_completed_task_CSV_list(
+    csv_data = get_completed_task_csv_list(
         db, session_user, request_frame.legal_entity_list
     )
     result = bu_ct.GetCompletedTaskCsvUploadedListSuccess(csv_data)
     return result
 
 
-def upload_completed_task_current_year_csv(
-    db, request_frame, session_user, session_token
-):
-    client_id = str(session_token).split("-")[0]
+def upload_completed_task_current_year_csv(db, request_frame, session_user):
     if request_frame.csv_size > 0:
         pass
     # save csv file
@@ -115,13 +111,14 @@ def upload_completed_task_current_year_csv(
         remove_uploaded_file(file_path)
         return bu_ct.CsvFileExeededMaxLines(CSV_MAX_LINE_ITEM)
     # csv data validation
-    cObj = ValidateCompletedTaskCurrentYearCsvData(
+    c_obj = ValidateCompletedTaskCurrentYearCsvData(
         db, completed_task_data, session_user,
         request_frame.csv_name, header)
-    res_data = cObj.perform_validation(request_frame.legal_entity_id)
+    res_data = c_obj.perform_validation(request_frame.legal_entity_id)
+    result = None
     if res_data is False:
         return bu_ct.InvalidCsvFile()
-    elif cObj.check_if_already_saved_compliance(
+    elif c_obj.check_if_already_saved_compliance(
             request_frame.legal_entity_id) is False:
         return bu_ct.DataAlreadyExists()
     elif res_data["return_status"] is True:
@@ -129,9 +126,7 @@ def upload_completed_task_current_year_csv(
         str_current_date_time = datetime_to_string_time(current_date_time)
         unit_id = res_data["unit_id"]
         domain_id = res_data["domain_id"]
-        client_id, client_group_name = get_client_id_by_le(
-            db, request_frame.legal_entity_id
-        )
+        client_id, client_group_name = get_client_id_by_le(request_frame.legal_entity_id)
         csv_args = [
             client_id, request_frame.legal_entity_id, domain_id,
             unit_id, client_group_name, csv_name, session_user,
@@ -146,10 +141,7 @@ def upload_completed_task_current_year_csv(
             if save_completed_task_data(
                     db, new_csv_id, res_data["data"]
             ) is True:
-                save_file_in_client_docs(
-                    CLIENT_DOCS_BASE_PATH, csv_name,
-                    request_frame.csv_data
-                )
+                save_file_in_client_docs(csv_name, request_frame.csv_data)
                 result = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
                     res_data["total"], res_data["valid"],
                     res_data["invalid"],
@@ -165,7 +157,6 @@ def upload_completed_task_current_year_csv(
             res_data["inactive_error"], res_data["total"], res_data["invalid"],
             res_data["invalid_file_format"], res_data["invalid_date"]
         )
-
     return result
 
 
@@ -175,20 +166,20 @@ def process_save_bulk_records(db, request_frame, session_user, session_token):
     legal_id = request_frame.legal_entity_id
     domain_id = request_frame.domain_id
     unit_id = request_frame.unit_id
-    dataResult = get_past_record_data(db, csv_id)
-    cObj = ValidateCompletedTaskForSubmit(
-        db, csv_id, dataResult, session_user)
-    if cObj.check_for_duplicate_records(legal_id) is False:
+    data_result = get_past_record_data(db, csv_id)
+    c_obj = ValidateCompletedTaskForSubmit(
+        db, csv_id, data_result, session_user)
+    if c_obj.check_for_duplicate_records(legal_id) is False:
         return bu_ct.DataAlreadyExists()
-    if cObj._doc_count > 0:
-        cObj.document_download_process_initiate(
+    if c_obj.doc_count > 0:
+        c_obj.document_download_process_initiate(
             csv_id, country_id, legal_id, domain_id, unit_id, session_token
         )
 
-    if cObj.frame_data_for_main_db_insert(
-        db, dataResult, request_frame.legal_entity_id, session_user
+    if c_obj.frame_data_for_main_db_insert(
+        db, data_result, request_frame.legal_entity_id, session_user
     ) is True:
-        result = bu_ct.saveBulkRecordSuccess()
+        result = bu_ct.SaveBulkRecordSuccess()
     else:
         result = []
 
@@ -204,9 +195,7 @@ def process_save_bulk_records(db, request_frame, session_user, session_token):
 def process_get_bulk_download_data(
         db, request_frame, session_user
 ):
-    converter = PastDataJsonToCSV(
-        db, request_frame, session_user, "DownloadPastData"
-    )
+    converter = PastDataJsonToCSV(request_frame, "DownloadPastData")
 
     if(
         converter.FILE_DOWNLOAD_PATH is None or
@@ -221,7 +210,7 @@ def process_get_bulk_download_data(
 
 
 def process_download_uploaded_data(
-    db, request_frame
+        request_frame
 ):
     csv_id = request_frame.csv_id
     file_download_path = get_files_as_zip(

@@ -389,6 +389,7 @@ function validateUpload() {
             $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
             $('#bu_remain_total').text(REMAINING_DOCUMENTS);
             myDropzone.processQueue();
+            setTimeout(hideLoader(), 5000);
         }
     }
 }
