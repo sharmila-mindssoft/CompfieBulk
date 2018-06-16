@@ -20,6 +20,13 @@ def allow_specialchar(value):
         return False
 
 
+def is_alpha_numeric_allow_spl(value):
+    r = re.compile("^[0-9A-Za-z_.,-@#&*() ]*$")
+    if r.match(value):
+        return True
+    else:
+        return False
+
 def is_alphabet(value):
     r = re.compile("^[a-zA-Z ]*$")  # a-z with space
     if r.match(value):
@@ -356,12 +363,12 @@ csv_params = {
     "Compliance_Task": make_required_validation(
         key_type="STRING", is_mandatory_check=True, max_length_check=100,
         is_valid_char_check=True,
-        validation_method=is_alpha_numeric, is_found_check=True
+        validation_method=is_alpha_numeric_allow_spl, is_found_check=True
     ),
     "Compliance_Description": make_required_validation(
         key_type="STRING", is_mandatory_check=True, max_length_check=500,
         is_valid_char_check=True,
-        validation_method=is_alpha_numeric, is_found_check=True
+        validation_method=is_alpha_numeric_allow_spl, is_found_check=True
     ),
     "Statutory_Date": make_required_validation(
         key_type="STRING", is_mandatory_check=True, is_valid_char_check=True,
