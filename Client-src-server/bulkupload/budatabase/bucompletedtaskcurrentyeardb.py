@@ -131,7 +131,7 @@ def get_compliance_id(db, compliance_task_name):
     return compliance_id
 
 
-def get_completed_task_csv_list(db, session_user, legal_entity_list):
+def get_completed_task_csv_list_from_db(db, session_user, legal_entity_list):
 
     doc_names = {}
     legal_entity_list = ",".join([str(x) for x in legal_entity_list])

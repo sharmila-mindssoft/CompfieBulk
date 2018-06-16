@@ -12,7 +12,7 @@ from ..bucsvvalidation.completedtaskcurrentyearvalidation import (
     ValidateCompletedTaskForSubmit)
 from..buapiprotocol import bucompletedtaskcurrentyearprotocol as bu_ct
 from..budatabase.bucompletedtaskcurrentyeardb import (
-    get_units_for_user, get_completed_task_csv_list, get_client_id_by_le,
+    get_units_for_user, get_completed_task_csv_list_from_db, get_client_id_by_le,
     save_completed_task_current_year_csv, save_completed_task_data,
     get_past_record_data, get_files_as_zip, update_document_count
 )
@@ -88,8 +88,7 @@ def process_get_units(
 
 
 def get_completed_task_csv_list(db, request_frame, session_user):
-
-    csv_data = get_completed_task_csv_list(
+    csv_data = get_completed_task_csv_list_from_db(
         db, session_user, request_frame.legal_entity_list
     )
     result = bu_ct.GetCompletedTaskCsvUploadedListSuccess(csv_data)
