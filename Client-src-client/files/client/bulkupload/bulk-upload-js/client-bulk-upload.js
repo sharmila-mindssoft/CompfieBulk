@@ -59,7 +59,6 @@ function uploadCSVFile(fileListener, callback) {
     file_size = file.size;
     var file_extension = file_name.substring(file_name.lastIndexOf('.') + 1);
     if (file_name.indexOf('.') !== -1) {
-        console.log("file_extension--" + file_extension);
         if (file_size > max_limit) {
             callback(status, 'File max limit exceeded');
         } else if ($.inArray(file_extension, ['csv']) == -1) {
@@ -87,7 +86,6 @@ function uploadCSVFile(fileListener, callback) {
 function getDownloadData(legalEntityId, domainId, unitId, complianceFrequency, startCount,
     LegalEntityName, domainName, unitName, unitCode,
     callback) {
-    console.log("legalEntityId>>> " + legalEntityId);
     var request = [
         'GetDownloadData', {
             'legal_entity_id': legalEntityId,
@@ -105,7 +103,7 @@ function getDownloadData(legalEntityId, domainId, unitId, complianceFrequency, s
 }
 
 function uploadFile(file, callback) {
-    console.log(JSON.stringify(file))
+
     // var evt = fileListener;
     max_limit = 1024 * 1024 * 50;
     // file max limit 50MB
@@ -142,9 +140,7 @@ function uploadFile(file, callback) {
                     var f_Name = fN + '.' + fE;
 
                     result = uploadFileFormat(file_size, f_Name, file_content);
-                    console.log("RESULT ->" + result)
                     results.push(result);
-                    console.log("results ->" + results)
                         // if (results.length == files.length) {
                     callback(results);
                     // }
