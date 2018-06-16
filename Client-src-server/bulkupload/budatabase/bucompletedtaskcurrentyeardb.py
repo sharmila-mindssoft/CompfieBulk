@@ -19,7 +19,7 @@ __all__ = [
     "save_completed_task_current_year_csv",
     "save_completed_task_data",
     "get_past_record_data",
-    "get_completed_task_CSV_list",
+    "get_completed_task_csv_list",
     "get_client_id_by_le",
     "get_units_for_user",
     "get_files_as_zip",
@@ -43,10 +43,10 @@ def get_legal_entity_domains(
     rows = db.select_all(query, param)
     results = []
     for domains in rows:
-        domainObj = bu_ct.Domains(
+        domain_obj = bu_ct.Domains(
             domains["legal_entity_id"], domains["le_domain_id"],
             domains["domain_name"])
-        results.append(domainObj)
+        results.append(domain_obj)
 
     return results
 
@@ -103,11 +103,11 @@ def save_completed_task_data(db, csv_id, csv_data):
             return True
         else:
             return False
-    except Exception, e:
+    except Exception:
         raise ValueError("Transaction failed")
 
 
-def get_past_record_data(db, csvID):
+def get_past_record_data(db, csv_id):
     query = " SELECT bulk_past_data_id, csv_past_id, " + \
         " legal_entity, " + \
         " domain, unit_code, unit_name, perimary_legislation, " + \
@@ -116,7 +116,7 @@ def get_past_record_data(db, csvID):
         " statutory_date, due_date, assignee, completion_date, " + \
         " document_name" + \
         " FROM tbl_bulk_past_data where csv_past_id = %s; "
-    param = [csvID]
+    param = [csv_id]
     rows = db.select_all(query, param)
     return rows
 
@@ -126,12 +126,12 @@ def get_compliance_id(db, compliance_task_name):
         "where compliance_task = '%s' limit 1"
 
     param = [compliance_task_name]
-    complianceID = db.select_all(query, param)
+    compliance_id = db.select_all(query, param)
 
-    return complianceID
+    return compliance_id
 
 
-def get_completed_task_CSV_list(db, session_user, legal_entity_list):
+def get_completed_task_csv_list_from_db(db, session_user, legal_entity_list):
 
     doc_names = {}
     legal_entity_list = ",".join([str(x) for x in legal_entity_list])
@@ -160,16 +160,16 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
     rows = db.select_all(query, param)
 
     param1 = [session_user]
-    docQuery = "select t1.csv_past_id, document_name " + \
-               " from tbl_bulk_past_data as t1 " + \
-               " INNER JOIN tbl_bulk_past_data_csv as t2 " + \
-               " ON t2.csv_past_id = t1.csv_past_id " + \
-               " where ifnull(t2.upload_status, 0) = 0 " + \
-               " and document_name != '' " + \
-               " and t2.uploaded_by = %s "
-    docRows = db.select_all(docQuery, param1)
-    if docRows is not None:
-        for d in docRows:
+    doc_query = "select t1.csv_past_id, document_name " + \
+                   " from tbl_bulk_past_data as t1 " + \
+                   " INNER JOIN tbl_bulk_past_data_csv as t2 " + \
+                   " ON t2.csv_past_id = t1.csv_past_id " + \
+                   " where ifnull(t2.upload_status, 0) = 0 " + \
+                   " and document_name != '' " + \
+                   " and t2.uploaded_by = %s "
+    doc_rows = db.select_all(doc_query, param1)
+    if doc_rows is not None:
+        for d in doc_rows:
             csv_id = d.get("csv_past_id")
             docname = d.get("document_name")
             doc_list = doc_names.get(csv_id)
@@ -210,7 +210,7 @@ def connect_le_db(le_id):
         )
         _knowledge_db = Database(_knowledge_db_con)
         _knowledge_db.begin()
-
+        _source_db_con = None
         query = "select t1.client_database_id, t1.database_name, " + \
             "t1.database_username, t1.database_password, " + \
             "t3.database_ip, database_port " + \
@@ -247,7 +247,7 @@ def connect_le_db(le_id):
         print e
 
 
-def get_client_id_by_le(db, legal_entity_id):
+def get_client_id_by_le(legal_entity_id):
     db = connect_le_db(legal_entity_id)
     query = "SELECT client_id, group_name from tbl_client_groups "
     rows = db.select_all(query)
@@ -265,7 +265,7 @@ def get_user_category(db, user_id):
         return None
 
 
-def get_units_for_user(db, le_id, domain_id, user_id):
+def get_units_for_user(le_id, domain_id, user_id):
     db = connect_le_db(le_id)
     user_category_id = get_user_category(db, user_id)
     if user_category_id > 3:
