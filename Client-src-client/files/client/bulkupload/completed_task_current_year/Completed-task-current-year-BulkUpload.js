@@ -1,3 +1,4 @@
+var MY_MODAL = $("#myModal");
 var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
 
 var CANCEL_BUTTON = $("#cancel_button");
@@ -84,7 +85,6 @@ TXT_DOMAIN.keyup(function(e) {
             loadUnits(parseInt(LEGALENTITY_ID.val()), parseInt(val), function(){
                 onAutoCompleteSuccess(TXT_DOMAIN, HDN_DOMAIN, val);
             });
-            
         }, conditionFields, conditionValues);
 });
 
@@ -221,6 +221,16 @@ function getPastRecords(legalEntity) {
     );
 }
 
+function setDocumentCount(){
+    $('#bu_doc_total').text(TOTAL_DOCUMENTS);
+    if (UPLOADED_DOCUMENTS > TOTAL_DOCUMENTS) {
+        UPLOADED_DOCUMENTS = TOTAL_DOCUMENTS;
+        REMAINING_DOCUMENTS = TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS;
+    }
+    $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
+    $('#bu_remain_total').text(REMAINING_DOCUMENTS);
+}
+
 function validateUpload() {
     var csvSplitName = null;
     var getValidCount = null;
@@ -230,23 +240,23 @@ function validateUpload() {
         LEGALENTITY_NAME_LABEL_UPLOAD.text() == ""
     ){
         displayMessage(message.legalentity_required);
-        $("#myModal").modal("hide");
+        MY_MODAL.modal("hide");
         return false;
     }
     else if (
         UPLOAD_FILE.val() == "" && BUCT_PAGE._ActionMode == "add"
     ) {
         displayMessage(message.upload_csv);
-        $("#myModal").modal("hide");
+        MY_MODAL.modal("hide");
         return false;
     }else if (
         addedfiles.length <=0 && BUCT_PAGE._ActionMode == "upload"
     ) {
         displayMessage(message.upload_docs);
-        $("#myModal").modal("hide");
+        MY_MODAL.modal("hide");
         return false;
     }  else {
-        $("#myModal").modal("show");
+        MY_MODAL.modal("show");
         if (BUCT_PAGE._ActionMode == "add") {
             args = {
                 "csv_name": CSV_INFO["file_name"],
@@ -260,14 +270,14 @@ function validateUpload() {
                     displayMessage(message.csv_max_lines_exceeded.replace(
                     "MAX_LINES", data.csv_max_lines));
                     UPLOAD_FILE.val("");
-                    $("#myModal").modal("hide");
+                    MY_MODAL.modal("hide");
                     hideLoader();
                 }
                 else if (error == "InvalidCsvFile" ){
-                    $('#myModal').modal('hide');
+                    MY_MODAL.modal("hide");
                     UPLOAD_FILE.val("");
                     displayMessage(message.invalid_csv_file);
-                }else if(error == 'DataAlreadyExists'){
+                }else if(error == "DataAlreadyExists"){
                     $('#myModal').modal('hide');
                     UPLOAD_FILE.val("");
                     displayMessage(message.data_already_exists);
@@ -328,18 +338,17 @@ function validateUpload() {
                     $('#divSuccessFile').show();
                     $(".bu-doc-summary").show();
                     TOTAL_DOCUMENTS = data.doc_count;
+                    UPLOADED_DOCUMENTS = 0;
                     REMAINING_DOCUMENTS = data.doc_count;
-                    $('#bu_doc_total').text(data.doc_count);
+                    setDocumentCount();
                     $('#up-doc-title').hide();
                     $('#remaining-doc-title').hide();
-                    $('#bu_upload_total').text('0');
-                    $('#bu_remain_total').text('0');
                     displaySuccessMessage(
                         "Csv file uploaded successfully");
                     hideLoader();
 
                 } else {
-                    $('#myModal').modal('hide');
+                    MY_MODAL.modal('hide');
                     displayMessage(message.upload_failed);
                     INVALID_FILE_NAME = data.invalid_file.split('.');
                     TOTAL_RECORD.text(data.total);
@@ -389,8 +398,7 @@ function validateUpload() {
             displayLoader();
             $('#up-doc-title').show();
             $('#remaining-doc-title').show();
-            $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
-            $('#bu_remain_total').text(REMAINING_DOCUMENTS);
+            setDocumentCount();
             myDropzone.processQueue();
             setTimeout(hideLoader(), 5000);
         }
@@ -566,6 +574,7 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     TOTAL_DOCUMENTS = data.total_documents;
     UPLOADED_DOCUMENTS = data.bu_uploaded_documents;
     REMAINING_DOCUMENTS = data.remaining_documents;
+    setDocumentCount();
 
     $("#dom_id_hdn").val(data.domain_id);
     $("#unit_id_hdn").val(data.unit_id);
@@ -584,11 +593,6 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     $('.successFileName').text(csvSplitName);
     $('.uploaded-data .text-primary').attr("id", get_legal_entity_id(legal_entity_name));
     $('.uploaded-data').attr("id", CSV_ID);
-
-    $('#bu_doc_total').text(data.total_documents);
-    $('#bu_upload_total').text(data.bu_uploaded_documents);
-    $('#bu_remain_total').text(data.remaining_documents);
-
 };
 
 
@@ -768,7 +772,7 @@ key_search = function(mainList) {
 
 function file_upload_rul() {
     var sessionId = client_mirror.getSessionToken();
-    var fileBaseUrl = "/client/temp/upload?session_id=" +
+    var fileBaseUrl = "/clienttemp/upload?session_id=" +
         sessionId + "&csvid=" + CSV_ID;
     return fileBaseUrl;
 }
@@ -892,6 +896,7 @@ var myDropzone = new Dropzone("div#myDrop", {
                 perQueueUploadSuccess += 1;
                 UPLOADED_DOCUMENTS += 1;
                 REMAINING_DOCUMENTS = TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS;
+                setDocumentCount();
             }
 
             if (perQueueUploadSuccess == maxParallelCount) {
@@ -906,10 +911,6 @@ var myDropzone = new Dropzone("div#myDrop", {
                 BTN_UPLOAD.hide();
                 BUCT_PAGE.showList();
             }
-            $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
-            $('#bu_remain_total').text(
-                TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS
-            );
             // myDropzone.removeAllFiles(true);
             hideLoader();
         });

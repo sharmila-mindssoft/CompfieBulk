@@ -7,7 +7,8 @@ import json
 import requests
 import urllib
 from zipfile import ZipFile
-from constants import CLIENT_DOCS_BASE_PATH, TEMP_FILE_SERVER
+from constants import (
+    CLIENT_DOCS_BASE_PATH, TEMP_FILE_SERVER, CLIENT_TEMP_FILE_SERVER)
 from flask import Flask, Response, request, send_from_directory
 from functools import wraps
 import fileprotocol
@@ -64,7 +65,8 @@ def move_client_files():
         file_path, str(csv_id) + ".zip"
     )
     print "actual_zip_file > ", actual_zip_file
-    caller_name = "%sdownloadclientfile?csvid=%s" % (TEMP_FILE_SERVER, csv_id)
+    caller_name = "%sdownloadclientfile?csvid=%s" % (
+        CLIENT_TEMP_FILE_SERVER, csv_id)
     print "download file Cller nameeeeee in file server main ", caller_name
     a, b = urllib.urlretrieve(caller_name, actual_zip_file)
     print "A ", a
@@ -79,7 +81,8 @@ def move_client_files():
 
 
 def temp_file_server_remove_call(csv_id):
-    caller_name = "%sremoveclientfile?csvid=%s" % (TEMP_FILE_SERVER, csv_id)
+    caller_name = "%sremoveclientfile?csvid=%s" % (
+        CLIENT_TEMP_FILE_SERVER, csv_id)
     response = requests.post(caller_name)
     print response.text
 

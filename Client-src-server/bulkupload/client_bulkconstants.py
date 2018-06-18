@@ -20,8 +20,7 @@ BULK_UPLOAD_DB_USERNAME = "root"
 BULK_UPLOAD_DB_PASSWORD = "root"
 BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload"
 
-TEMP_FILE_SERVER = "http://localhost:8083/temp/"
-# FILE_SERVER = "http://localhost:8084/"
+CLIENT_TEMP_FILE_SERVER = "http://localhost:8086/clienttemp/"
 LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 
 

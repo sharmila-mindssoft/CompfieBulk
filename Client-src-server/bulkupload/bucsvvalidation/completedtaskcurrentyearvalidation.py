@@ -11,7 +11,7 @@ from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME)
 from bulkupload.client_bulkconstants import (
-    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, TEMP_FILE_SERVER,
+    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, CLIENT_TEMP_FILE_SERVER,
     BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DATABASE_NAME, BULK_UPLOAD_DB_PORT)
 from ..buapiprotocol.pastdatadownloadbulk import (
@@ -1178,7 +1178,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         caller_name = (
             "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s"
         ) % (
-            TEMP_FILE_SERVER, csvid, country_id, legal_id,
+            CLIENT_TEMP_FILE_SERVER, csvid, country_id, legal_id,
             domain_id, unit_id
         )
         response = requests.post(caller_name)
