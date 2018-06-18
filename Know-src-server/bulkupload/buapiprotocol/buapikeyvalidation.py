@@ -116,3 +116,11 @@ def is_unit_code(value):
         return value
     else:
         raise expectation_error('valid unit code', value)
+
+
+def is_alpha_numeric_allow_spl(value):
+    r = re.compile("^[0-9A-Za-z_.,-@#&*() ]*$")
+    if r.match(value):
+        return value
+    else:
+        raise expectation_error('Invalid Special Character', value)

@@ -1,7 +1,7 @@
 from buapikeyvalidation import (
     is_alphabet_withdot, is_file_name, is_alphabet, is_alpha_numeric,
     is_alphabet_wtih_bracket, is_numeric, is_url, is_address,
-    is_alphabet_csv_delimeter, is_unit_code
+    is_alphabet_csv_delimeter, is_unit_code, is_alpha_numeric_allow_spl
 )
 __all__ = [
     'bu_api_params'
@@ -228,12 +228,12 @@ bu_api_params = {
         'is_optional': True
     },
     'c_task_name': {
-        'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric,
-        'is_optional': True
+        'type': 'STRING', 'length': 100,
+        'validation_method': is_alpha_numeric_allow_spl, 'is_optional': True
     },
     'c_desc': {
-        'type': 'STRING', 'length': 500, 'validation_method': is_alpha_numeric,
-        'is_optional': True
+        'type': 'STRING', 'length': 500,
+        'validation_method': is_alpha_numeric_allow_spl, 'is_optional': True
     },
     'c_doc': {
         'type': 'STRING', 'length': 100, 'validation_method': is_alpha_numeric,
@@ -619,7 +619,7 @@ bu_api_params = {
     },
     's_prov': {
         'type': 'STRING', 'length': 500,
-        'validation_method': is_alpha_numeric, 'is_optional': True
+        'validation_method': is_alpha_numeric_allow_spl, 'is_optional': True
     },
     's_remarks': {
         'type': 'STRING', 'length': 500,

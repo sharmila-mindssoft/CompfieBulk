@@ -31,7 +31,7 @@ app = Flask(__name__)
 app.config['UPLOAD_PATH'] = 'bulkuploadcomplianceformat'
 app.config['CLIENT_DOCUMENT_UPLOAD_PATH'] = 'bulkuploadclientdocuments'
 
-app.config['UPLOAD_PATH']
+# app.config['UPLOAD_PATH']
 zipping_in_process = []
 
 # In DB
@@ -260,8 +260,7 @@ def delete_declined_docs(csv_id):
 #         print e
 #     return "success"
 
-
-@app.route('/temp/upload', methods=['POST'])
+@app.route('/knowledgetemp/upload', methods=['POST'])
 def upload():
     logger.logTempFiler(
         "info", "run_tempfile_server > /temp/upload > Request", request
@@ -428,7 +427,7 @@ def approve():
                 "Declined File not exists"
             )
             return "File not exists"
-        else: 
+        else:
             os.remove(folder_path + '/' + dd)
 
     if not os.path.exists(folder_path):
