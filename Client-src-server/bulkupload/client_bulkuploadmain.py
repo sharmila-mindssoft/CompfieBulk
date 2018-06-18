@@ -45,6 +45,7 @@ class BulkAPI(object):
     @bulk_upload_api_request(
         bucompletedtaskcurrentyearprotocol.RequestFormat,
         is_group=False, need_category=True)
-    def handle_completed_task(self, request, db, session_user):
+    def handle_completed_task(
+        self, request, db, session_user, session_category):
         return process_bu_completed_task_current_year_request(
             request, db, session_user)
