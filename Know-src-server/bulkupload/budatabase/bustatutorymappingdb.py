@@ -7,10 +7,10 @@ import mysql.connector
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
 )
 from ..bulkconstants import (
-    MAX_REJECTED_COUNT
+    MAX_REJECTED_COUNT, CSV_DELIMITER
 )
 
 __all__ = [
@@ -546,15 +546,34 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
     upload_on = None
     total = None
     mapping_data = []
+    months = ['Jan','Feb','Mar','Apr','May',
+    'Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     if len(data) > 0:
         for idx, d in enumerate(data):
             if idx == 0:
+                mon = None
                 country_name = d["country_name"]
                 domain_name = d["domain_name"]
                 csv_name = d["csv_name"]
                 upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
                 upload_by = d["uploaded_by"]
                 total = d["total_records"]
+                statu_month = d["statutory_month"]
+
+                smonth_list = statu_month.split(CSV_DELIMITER)
+                smonth_list = ','.join(str(x) for x in smonth_list)
+                smonth_list = smonth_list.split(",")
+
+                statu_months = []
+                i = 0
+                for index, mon in enumerate(months):
+                    i = i + 1
+                    for smon in smonth_list:
+                        if(i == int(smon)):
+                            statu_months.append(mon)
+                statu_months = ', '.join(str(x) for x in statu_months)
+                statutory_date = d["statutory_date"].replace(CSV_DELIMITER, ", ")
+                trigger_before = d["trigger_before"].replace(CSV_DELIMITER, ", ")
 
             mapping_data.append(bu_sm.MappingData(
                 d["bulk_statutory_mapping_id"],
@@ -563,8 +582,8 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
                 d["statutory_provision"], d["compliance_task"],
                 d["compliance_document"], d["compliance_description"],
                 d["penal_consequences"], d["reference_link"],
-                d["compliance_frequency"], d["statutory_month"],
-                d["statutory_date"], d["trigger_before"], d["repeats_every"],
+                d["compliance_frequency"], statu_months,
+                statutory_date, trigger_before, d["repeats_every"],
                 d["repeats_type"], d["repeat_by"], d["duration"],
                 d["duration_type"], d["multiple_input"], d["format_file"],
                 d["action"], d["remarks"], d["task_id"], d["task_type"],
