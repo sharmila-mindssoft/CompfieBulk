@@ -671,12 +671,15 @@ class SourceDB(object):
                 "where csv_past_id= %s and compliance_task_name=%s " + \
                 " and perimary_legislation = %s and " + \
                 " secondary_legislation = %s and " \
-                "compliance_description = %s"
+                "compliance_description = %s and due_date= %s and " + \
+                "unit_code = %s"
             params = [
                 csv_id, d["compliance_task_name"],
                 d["perimary_legislation"], d["secondary_legislation"],
-                d["compliance_description"]
+                d["compliance_description"], d["due_date"],
+                d["unit_code"]
             ]
+            print q % tuple(params)
             rows = db.select_all(q, params)
             if rows:
                 document_size = rows[0]["document_file_size"]
