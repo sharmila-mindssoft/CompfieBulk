@@ -399,6 +399,20 @@ CREATE PROCEDURE `sp_get_assign_statutory_compliance`(
 )
 BEGIN
     SET SESSION group_concat_max_len = 1000000;
+
+    -- mapped statu names
+    SELECT t2.statutory_name, t1.statutory_id, IFNULL(t2.parent_ids, 0) AS parent_ids,
+    t2.parent_names, t1.statutory_mapping_id
+    FROM tbl_mapped_statutories AS t1
+    INNER JOIN tbl_statutories AS t2 ON t1.statutory_id = t2.statutory_id
+    INNER JOIN tbl_statutory_mappings AS t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
+    INNER JOIN tbl_mapped_locations AS t4 ON t1.statutory_mapping_id = t4.statutory_mapping_id
+    INNER JOIN (SELECT a.geography_id,b.parent_ids,a.unit_id FROM tbl_units a
+      INNER JOIN tbl_geographies b ON a.geography_id = b.geography_id
+      WHERE find_in_set(a.unit_id, unitid)) t7 ON
+      (t4.geography_id = t7.geography_id OR find_in_set(t4.geography_id,t7.parent_ids))
+    ORDER BY TRIM(LEADING '[' FROM t3.statutory_mapping);
+
     -- get compliances
     SELECT  DISTINCT t1.statutory_mapping_id, t1.compliance_id,
       (SELECT domain_name FROM tbl_domains WHERE domain_id = t1.domain_id) AS domain_name,
@@ -407,18 +421,15 @@ BEGIN
       t4.unit_code,
       t4.unit_name,
       (SELECT geography_name FROM tbl_geographies WHERE geography_id = t4.geography_id) AS location,
-      SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(t.statutory_mapping,3),1, CHAR_LENGTH(t.statutory_mapping) -4), '>>', 1),'",',1) AS primary_legislation,
-      TRIM(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(
-    SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4),'>>',2),
-    CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,
-        CHAR_LENGTH(statutory_mapping) -4), '>>', 1))+1),3),'",',1)) AS secondary_legislation,
+      SUBSTRING_INDEX(SUBSTRING_INDEX((TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping))),'>>',1),'>>',- 1) AS primary_legislation,
+      SUBSTRING_INDEX(SUBSTRING_INDEX(CONCAT(TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM t.statutory_mapping)),'>>'),'>>',2),'>>',- 1) AS secondary_legislation,
       t1.statutory_provision,
       t1.compliance_task AS compliance_task_name,
       t1.compliance_description,
       t6.unit_id,
       t6.domain_id,
       t4.unit_id AS c_unit_id,
-      t1.domain_id, t.statutory_mapping
+      t1.domain_id
     FROM    tbl_compliances AS t1
       INNER JOIN
           tbl_statutory_mappings AS t ON t1.statutory_mapping_id = t.statutory_mapping_id
@@ -448,8 +459,8 @@ BEGIN
       AND FIND_IN_SET(t4.unit_id, unitid)
       AND FIND_IN_SET(t1.domain_id, domainid)
       AND t6.unit_id IS NULL
-    GROUP BY   t1.statutory_mapping_id , t1.compliance_id , t4.unit_id,
-        t1.domain_id, t4.unit_code, t4.unit_name,
+    GROUP BY   t1.statutory_mapping_id , t1.compliance_id , t4.unit_id, 
+        t1.domain_id, t4.unit_code, t4.unit_name, 
         t4.geography_id, t.statutory_mapping,
         t1.statutory_provision,
         t1.compliance_task ,
@@ -598,21 +609,16 @@ DROP PROCEDURE IF EXISTS `sp_bu_get_compliance_id_by_name`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_get_compliance_id_by_name`(
   IN c_task text, c_desc text, s_provision text, country_id_ INT(11),
-  domain_id_ INT(11), p_legislation text, s_legislation text
+  domain_id_ INT(11), p_legislation INT(11), s_legislation text
 )
 BEGIN
-  SELECT compliance_id from tbl_compliances as t1
-  INNER JOIN tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-  WHERE
-  t1.domain_id = domain_id_ and t1.country_id = country_id_
-  and SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4), '>>', 1),'",',1) = p_legislation
-  and TRIM(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(
-    SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4),'>>',2),
-    CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING(statutory_mapping,3),1,
-        CHAR_LENGTH(statutory_mapping) -4), '>>', 1))+1),3),'",',1)) = s_legislation
-  and statutory_provision = s_provision
-  and compliance_task = c_task
-  and compliance_description = c_desc;
+  SELECT compliance_id from tbl_compliances as t1 
+  INNER JOIN tbl_mapped_statutories as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+  INNER JOIN tbl_statutories as t4 on t3.statutory_id = t4.statutory_id
+  WHERE t1.domain_id = domain_id_ and t1.country_id = country_id_
+  and (t4.statutory_id = p_legislation and t4.parent_ids = '') and 
+  if (s_legislation != '',(t4.statutory_id = s_legislation and find_in_set(p_legislation,t4.parent_ids)),1) and
+  statutory_provision = s_provision and compliance_task = c_task and compliance_description = c_desc;
 END //
 DELIMITER ;
 
