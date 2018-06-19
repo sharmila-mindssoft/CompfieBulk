@@ -11,7 +11,8 @@ from server.common import (
     string_to_datetime, string_to_datetime_with_time
 )
 from clientprotocol import clientcore
-from bulkupload.client_bulkconstants import (TEMP_FILE_SERVER)
+from bulkupload.client_bulkconstants import (
+    CLIENT_TEMP_FILE_SERVER)
 
 
 __all__ = [
@@ -328,7 +329,7 @@ def get_files_as_zip(csv_id):
     caller_name = (
         "%sdownloadzip?csv_id=%s"
     ) % (
-        TEMP_FILE_SERVER, csv_id
+        CLIENT_TEMP_FILE_SERVER, csv_id
     )
     response = requests.post(caller_name)
     download_link = response.text

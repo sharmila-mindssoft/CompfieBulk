@@ -176,7 +176,7 @@ def process_save_bulk_records(db, request_frame, session_user, session_token):
         )
 
     if c_obj.frame_data_for_main_db_insert(
-        db, data_result, request_frame.legal_entity_id, session_user
+        db, data_result, request_frame.legal_entity_id, csv_id
     ) is True:
         result = bu_ct.SaveBulkRecordSuccess()
     else:
