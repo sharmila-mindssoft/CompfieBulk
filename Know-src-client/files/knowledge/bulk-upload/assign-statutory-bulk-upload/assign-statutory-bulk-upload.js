@@ -55,7 +55,7 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
         fetchDomainMultiselect()
         MULTISELECTDOMAIN.multiselect('rebuild');
         fetchUnitMultiselect()
-        MULTISELECTUNIT.multiselect('rebuild');
+        // MULTISELECTUNIT.multiselect('rebuild');
     } else if (currentId == 'legal_entity_id') {
         UNITNAMES = [];
         UNITIDS = [];
@@ -64,7 +64,7 @@ function onAutoCompleteSuccess(valueElement, idElement, val) {
         fetchDomainMultiselect()
         MULTISELECTDOMAIN.multiselect('rebuild');
         fetchUnitMultiselect()
-        MULTISELECTUNIT.multiselect('rebuild');
+        // MULTISELECTUNIT.multiselect('rebuild');
     }
 }
 
@@ -240,10 +240,14 @@ function pageControls() {
 
     //domain multiselect box change process
     MULTISELECTDOMAIN.change(function(e) {
-        UNITNAMES = [];
-        UNITIDS = [];
-        fetchUnitMultiselect()
-        MULTISELECTUNIT.multiselect('rebuild');
+        displayLoader();
+        setTimeout(function() {
+            UNITNAMES = [];
+            UNITIDS = [];
+            fetchUnitMultiselect();
+            hideLoader();
+        }, 500);
+        // MULTISELECTUNIT.multiselect('rebuild');
     });
 
     //unit multiselect box change process
@@ -258,7 +262,7 @@ function pageControls() {
             displayMessage(message.maximum_units);
         } else {
             PREVIOUSVAL = $(this).val();
-            $("#units").multiselect('rebuild');
+            // $("#units").multiselect('rebuild');
         }
     });
 
@@ -354,7 +358,7 @@ function pageControls() {
                     fetchDomainMultiselect()
                     MULTISELECTDOMAIN.multiselect('rebuild');
                     fetchUnitMultiselect()
-                    MULTISELECTUNIT.multiselect('rebuild');
+                    // MULTISELECTUNIT.multiselect('rebuild');
                     UPLOADFILE.val('');
                     $('#myModal').modal('hide');
                 } else {
