@@ -358,19 +358,18 @@ class SourceDB(object):
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_code)
         compliance_id = None
-        compliance_task = self.get_compliance_task_name(compliance_task)
+        compliance_task_name = self.get_compliance_task_name(compliance_task)
+        if secondary_legislation == "":
+            secondary_legislation = "empty"
         try:
-            if secondary_legislation == "":
-                secondary_legislation = "empty"
             data = self.hierarchy_checker[primary_legislation][
-                secondary_legislation][compliance_task]
+                secondary_legislation][compliance_task_name]
             if data["desc"] == description:
                 compliance_id = data["compliance_id"]
         except KeyError:
             return
         if unit_id is None or domain_id is None or compliance_id is None:
             return
-
         due_dates = self.get_past_due_dates(domain_id, unit_id, compliance_id)
         if due_dates is None:
             return "Not Found"
@@ -379,6 +378,23 @@ class SourceDB(object):
             due_date = due_date.date().strftime("%Y-%m-%d")
         except ValueError:
             return
+        q = "SELECT count(bulk_past_data_id) FROM tbl_bulk_past_data " + \
+            "WHERE unit_code=%s and perimary_legislation=%s and " + \
+            "secondary_legislation=%s and compliance_task_name=%s and " + \
+            "compliance_description=%s and due_date=%s"
+        params = [
+            unit_code, primary_legislation, secondary_legislation,
+            compliance_task, description, due_date
+        ]
+        db = bulkupload_db_connect()
+        _db_check = Database(db)
+        try:
+            _db_check.begin()
+            rows = _db_check.select_all(q, params)
+            if rows:
+                return "Duplicate due date"
+        except Exception:
+            _db_check.rollback()
         if due_date in due_dates:
             return True
         else:
@@ -679,7 +695,6 @@ class SourceDB(object):
                 d["compliance_description"], d["due_date"],
                 d["unit_code"]
             ]
-            print q % tuple(params)
             rows = db.select_all(q, params)
             if rows:
                 document_size = rows[0]["document_file_size"]
@@ -1064,6 +1079,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
     ):
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
+        if total <= 0:
+            return False
         unit_code = self._source_data[0]["Unit_Code"]
         domain_name = self._source_data[0]["Domain"]
 

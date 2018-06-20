@@ -124,10 +124,13 @@ def read_data_from_csv(file_name):
                         headerrow.append(c.strip())
                 else:
                     data = {}
+                    data_text = ""
                     for cdx, c in enumerate(r):
                         val = c.strip()
+                        data_text += val
                         data[headerrow[cdx]] = val
-                    mapped_data.append(data)
+                    if data_text.strip() != "":
+                        mapped_data.append(data)
     return headerrow, mapped_data
 
 
