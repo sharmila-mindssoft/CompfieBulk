@@ -332,23 +332,34 @@ class SourceDB(object):
             else:
                 approval_status = 4
 
-            statu_id = self._statutories.get(d["Primary_Legislation"]).get(
+            p_legislation_id = self._statutories.get(
+                d["Primary_Legislation"]).get(
                 "statutory_id"
             )
+
+            s_legislation_id = ''
+            if(
+                d["Secondary_Legislation"] is not None and
+                d["Secondary_Legislation"] != ''
+            ):
+                s_legislation_id = self._child_statutories.get(
+                    d["Secondary_Legislation"]
+                ).get("statutory_id")
+
             comp_id = None
             c_ids = self._source_db.call_proc(
                 "sp_bu_get_compliance_id_by_name",
                 [
                     d["Compliance_Task"], d["Compliance_Description"],
                     d["Statutory_Provision"], client_id_, d_id,
-                    d["Primary_Legislation"], d["Secondary_Legislation"]
+                    p_legislation_id, s_legislation_id
                 ])
 
             for c_id in c_ids:
                 comp_id = c_id["compliance_id"]
 
             values.append((
-                int(cs_id), cl_id, le_id, u_id, d_id, statu_id,
+                int(cs_id), cl_id, le_id, u_id, d_id, p_legislation_id,
                 d["Statutory_Applicable_Status"],
                 d["Statutory_remarks"], comp_id,
                 d["Compliance_Applicable_Status"],
@@ -437,11 +448,25 @@ class SourceDB(object):
         s_legislation = data.get("Secondary_Legislation")
         unit_id = self._unit_code.get(unit_code).get("unit_id")
         domain_id = self._domain.get(domain_name).get("domain_id")
+
+        p_legislation_id = self._statutories.get(p_legislation).get(
+            "statutory_id"
+        )
+
+        s_legislation_id = ''
+        if(
+            s_legislation is not None and
+            s_legislation != ''
+        ):
+            s_legislation_id = self._child_statutories.get(
+                s_legislation
+            ).get("statutory_id")
+
         c_ids = self._source_db.call_proc(
             "sp_bu_get_compliance_id_by_name",
             [
                 task_name, compliance_description, statutory_provision,
-                country_id, domain_id, p_legislation, s_legislation
+                country_id, domain_id, p_legislation_id, s_legislation_id
             ]
         )
         comp_id = c_ids[0]["compliance_id"]

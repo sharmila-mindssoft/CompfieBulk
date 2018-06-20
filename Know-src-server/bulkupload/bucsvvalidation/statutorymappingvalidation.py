@@ -1672,9 +1672,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                 if(
                                    self.statutories.get(strip_data) is not None
                                    ):
-                                    parent_id += str(self.statutories.get(
-                                        strip_data).get("statutory_id")) + ","
+                                    # Removed For adding duplicate parent id
+                                    # parent_id += str(self.statutories.get(
+                                    #     strip_data).get("statutory_id")) + ","
                                     parent_names = self.get_statu_map_ws(str(strip_data))
+                                    
 
                                 if (int(statu_level) == 1 and
                                    self.statutories.get(strip_data) is None):
@@ -1711,15 +1713,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                             self.t_statu[strip_data] = statu_id
                                             parent_id += str(statu_id) + ","
                                             parent_names = self.get_statu_map_ws(str(strip_data))
-                                        # if(self.T_Statu.get(strip_data)
-                                        #     is not None and
-                                        #    strip_data not in statu_exists_id
-                                        #    ):
-                                        #     stat_id = self.T_Statu.get(strip_data)
-                                        #     if stat_id not in statu_ids:
-                                        #         statu_ids.append(stat_id)
-                                        #         statu_exists_id.append(strip_data)
-                                        #         self.T_Statu[strip_data] = stat_id
                 self.save_statutories_data(
                     self._country_id, self._domain_id, nature_id, uploaded_by,
                     str(statu_mapping_formated), grouped_list, org_ids, statu_ids,

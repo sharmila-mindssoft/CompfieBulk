@@ -1974,6 +1974,17 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_get_document_count`;
+DELIMITER //
+CREATE PROCEDURE `sp_get_document_count`(
+    IN _csvid INT(11)
+)
+BEGIN
+  SELECT COUNT(format_file) AS document_count FROM tbl_bulk_statutory_mapping
+  WHERE csv_id = _csvid and format_file != '';
+END //
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS `sp_pastdata_get_file_download_status`;
 DROP PROCEDURE IF EXISTS `sp_sm_get_declined_docs`;
 
