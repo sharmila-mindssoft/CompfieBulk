@@ -378,7 +378,7 @@ class SourceDB(object):
             due_date = due_date.date().strftime("%Y-%m-%d")
         except ValueError:
             return
-        q = "SELECT count(bulk_past_data_id) FROM tbl_bulk_past_data " + \
+        q = "SELECT bulk_past_data_id FROM tbl_bulk_past_data " + \
             "WHERE unit_code=%s and perimary_legislation=%s and " + \
             "secondary_legislation=%s and compliance_task_name=%s and " + \
             "compliance_description=%s and due_date=%s"
