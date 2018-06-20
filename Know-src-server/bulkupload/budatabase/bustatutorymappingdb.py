@@ -550,30 +550,37 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
     'Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     if len(data) > 0:
         for idx, d in enumerate(data):
+            statu_months = ''
             if idx == 0:
-                mon = None
                 country_name = d["country_name"]
                 domain_name = d["domain_name"]
                 csv_name = d["csv_name"]
                 upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
                 upload_by = d["uploaded_by"]
                 total = d["total_records"]
-                statu_month = d["statutory_month"]
+                
 
-                smonth_list = statu_month.split(CSV_DELIMITER)
-                smonth_list = ','.join(str(x) for x in smonth_list)
+            statutory_date = d["statutory_date"].replace(CSV_DELIMITER, ", ")
+            trigger_before = d["trigger_before"].replace(CSV_DELIMITER, ", ")
+            statu_month = d["statutory_month"].replace(CSV_DELIMITER, ",")
+            
+            if(statu_month != ''and len(statu_month)>=1):
+                smonth_list = statu_month.split(",")
+                smonth_list = ','.join(str(x).rstrip().lstrip() for x in smonth_list)
                 smonth_list = smonth_list.split(",")
-
-                statu_months = []
-                i = 0
-                for index, mon in enumerate(months):
-                    i = i + 1
-                    for smon in smonth_list:
+                statu_months = []                
+                mon = None
+                for smon in smonth_list:
+                    i = 0
+                    for index, mon in enumerate(months):
+                        i = i + 1
+                        smon = smon.lstrip()
+                        smon = smon.rstrip()
                         if(i == int(smon)):
-                            statu_months.append(mon)
+                            statu_months.append(str(mon))
                 statu_months = ', '.join(str(x) for x in statu_months)
-                statutory_date = d["statutory_date"].replace(CSV_DELIMITER, ", ")
-                trigger_before = d["trigger_before"].replace(CSV_DELIMITER, ", ")
+            else:
+                statu_months = ''
 
             mapping_data.append(bu_sm.MappingData(
                 d["bulk_statutory_mapping_id"],
