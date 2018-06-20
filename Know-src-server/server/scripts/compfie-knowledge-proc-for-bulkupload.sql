@@ -608,17 +608,19 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_bu_get_compliance_id_by_name`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_get_compliance_id_by_name`(
-  IN c_task text, c_desc text, s_provision text, country_id_ INT(11),
-  domain_id_ INT(11), p_legislation INT(11), s_legislation text
+  IN c_task TEXT, c_desc TEXT, s_provision TEXT, country_id_ INT(11),
+  domain_id_ INT(11), p_legislation INT(11), s_legislation TEXT
 )
 BEGIN
-  SELECT compliance_id from tbl_compliances as t1 
-  INNER JOIN tbl_mapped_statutories as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
-  INNER JOIN tbl_statutories as t4 on t3.statutory_id = t4.statutory_id
-  WHERE t1.domain_id = domain_id_ and t1.country_id = country_id_
-  and (t4.statutory_id = p_legislation and t4.parent_ids = '') and 
-  if (s_legislation != '',(t4.statutory_id = s_legislation and find_in_set(p_legislation,t4.parent_ids)),1) and
-  statutory_provision = s_provision and compliance_task = c_task and compliance_description = c_desc;
+  SELECT DISTINCT compliance_id FROM tbl_compliances AS t1 
+  INNER JOIN tbl_mapped_statutories AS t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
+  INNER JOIN tbl_statutories AS t4 ON t3.statutory_id = t4.statutory_id
+  WHERE t1.domain_id = domain_id_ AND t1.country_id = country_id_
+  AND IF(s_legislation != '',FIND_IN_SET(s_legislation,CONCAT(t4.parent_ids,t4.statutory_id)),
+    (t4.statutory_id = p_legislation AND t4.parent_ids = ''))
+  AND statutory_provision = s_provision 
+  AND compliance_task = c_task 
+  AND compliance_description = c_desc;
 END //
 DELIMITER ;
 
