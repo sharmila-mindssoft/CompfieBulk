@@ -563,7 +563,7 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
             statutory_date = d["statutory_date"].replace(CSV_DELIMITER, ", ")
             trigger_before = d["trigger_before"].replace(CSV_DELIMITER, ", ")
             statu_month = d["statutory_month"].replace(CSV_DELIMITER, ",")
-            
+
             if(statu_month != ''and len(statu_month)>=1):
                 smonth_list = statu_month.split(",")
                 smonth_list = ','.join(str(x).rstrip().lstrip() for x in smonth_list)
@@ -827,6 +827,13 @@ def get_rejected_sm_file_count(db, session_user):
     )
     rej_count = result[0]["rejected"]
     return rej_count
+
+def get_sm_document_count(db, csv_id):
+    result = db.call_proc(
+        "sp_get_document_count", [csv_id]
+    )
+    document_count = result[0]["document_count"]
+    return document_count
 
 
 def get_all_compliance_frequency():
