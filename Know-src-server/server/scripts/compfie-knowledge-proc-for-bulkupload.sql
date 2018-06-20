@@ -612,13 +612,14 @@ CREATE PROCEDURE `sp_bu_get_compliance_id_by_name`(
   domain_id_ INT(11), p_legislation INT(11), s_legislation text
 )
 BEGIN
-  SELECT compliance_id from tbl_compliances as t1 
+  SELECT distinct compliance_id from tbl_compliances as t1
   INNER JOIN tbl_mapped_statutories as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
   INNER JOIN tbl_statutories as t4 on t3.statutory_id = t4.statutory_id
-  WHERE t1.domain_id = domain_id_ and t1.country_id = country_id_
-  and (t4.statutory_id = p_legislation and t4.parent_ids = '') and 
-  if (s_legislation != '',(t4.statutory_id = s_legislation and find_in_set(p_legislation,t4.parent_ids)),1) and
-  statutory_provision = s_provision and compliance_task = c_task and compliance_description = c_desc;
+  WHERE t1.domain_id = domain_id_ and t1.country_id = country_id_ and
+  if(s_legislation != '',find_in_set(s_legislation,concat(t4.parent_ids,t4.statutory_id)),(t4.statutory_id = p_legislation and t4.parent_ids = '')) and
+  statutory_provision = s_provision and
+  compliance_task = c_task and
+  compliance_description = c_desc;
 END //
 DELIMITER ;
 
