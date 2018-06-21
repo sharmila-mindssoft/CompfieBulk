@@ -22,7 +22,7 @@ from constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
     BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME,
-    TEMP_FILE_SERVER_WITHOUT_TEMP
+    TEMP_FILE_SERVER_WITHOUT_TEMP, CLIENT_TEMP_FILE_SERVER_WITHOUT_TEMP
     # FORMAT_UPLOAD_PATH
 )
 from database import Database
@@ -384,7 +384,7 @@ def get_files_as_zip():
             zfw.write(absname, arcname)
     zfw.close()
     download_link = "%s/%s" % ("download/zip", zip_file_name)
-    url = "%s%s" % (TEMP_FILE_SERVER_WITHOUT_TEMP, download_link)
+    url = "%s%s" % (CLIENT_TEMP_FILE_SERVER_WITHOUT_TEMP, download_link)
     return url
 
 @app.route('/temp/approve', methods=['POST'])

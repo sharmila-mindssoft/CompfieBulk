@@ -1,4 +1,5 @@
 var MY_MODAL = $("#myModal");
+var STATUS = "DONE";
 var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
 
 var CANCEL_BUTTON = $("#cancel_button");
@@ -66,6 +67,8 @@ var LEGALENTITYUSR = [];
 var TOTAL_DOCUMENTS = 0;
 var UPLOADED_DOCUMENTS = 0;
 var REMAINING_DOCUMENTS = 0;
+
+BUCLIENT = buClient;
 
 function displayLoader() {
   $(".loading-indicator-spin").show();
@@ -231,6 +234,15 @@ function setDocumentCount(){
     $('#bu_remain_total').text(REMAINING_DOCUMENTS);
 }
 
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
 function validateUpload() {
     var csvSplitName = null;
     var getValidCount = null;
@@ -264,9 +276,17 @@ function validateUpload() {
                 "csv_size": CSV_INFO["file_size"],
                 "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val())
             };
-            buClient.UploadCompletedTaskCurrentYearCSV(
-                args, function(error, data) {
-                if (error == "CsvFileExeededMaxLines"){
+            var csv_name = null;
+            function apiCall(leg_id, csv_name, callback){
+                buClient.GetStatus(leg_id, csv_name, callback);
+            }
+            function call_bck_fn(error, data){
+                console.log("get status response: error"+ error + ", data:"+data)
+                if (error == "Alive"){
+                    console.log("inside if=====> going to get status again")
+                    sleep(180000);
+                    apiCall(leg_id, csv_name, call_bck_fn);
+                }else if (error == "CsvFileExeededMaxLines"){
                     displayMessage(message.csv_max_lines_exceeded.replace(
                     "MAX_LINES", data.csv_max_lines));
                     UPLOAD_FILE.val("");
@@ -346,7 +366,6 @@ function validateUpload() {
                     displaySuccessMessage(
                         "Csv file uploaded successfully");
                     hideLoader();
-
                 } else {
                     MY_MODAL.modal('hide');
                     displayMessage(message.upload_failed);
@@ -391,8 +410,18 @@ function validateUpload() {
                     $('#ods').attr("href", ods_path);
                     // $('#txt').attr("href", txt_path);
                     hideLoader();
-                }
-            });
+                }                        
+            }
+            buClient.UploadCompletedTaskCurrentYearCSV(
+                args, function(error, data){
+                    if(error == "Done" || data == "Done"){
+                        leg_id = parseInt(LEGALENTITY_ID_UPLOAD.val());
+                        csv_name = data.csv_name;
+                        console.log("got csv name: "+csv_name);
+                        apiCall(leg_id, csv_name, call_bck_fn);    
+                    }
+                    
+                });
         } else {
             $('#myModal').modal('hide');
             displayLoader();
@@ -927,6 +956,58 @@ var myDropzone = new Dropzone("div#myDrop", {
 function BulkCompletedTaskCurrentYear() {
     this._ActionMode = null;
     this._ListDataForView = [];
+}
+
+function genericWorker(worker_url, data) {
+    return new Promise(function (resolve, reject) {
+
+        if (!data.callback || !Array.isArray(data.callback))
+            return reject("Invalid data")
+
+        var callback = data.callback.pop()
+        var functions = data.callback
+        var context = data.context
+
+        if (!worker_url)
+            return reject("Worker_url is undefined")
+
+        if (!callback)
+            return reject("A callback was expected")
+
+        if (functions.length>0 && !context)
+            return reject("context is undefined")
+
+        callback = fn_string(callback) //Callback to be executed
+        functions = functions.map((fn_name)=> { return fn_string( context[fn_name] ) })
+
+        var worker = new Worker(worker_url)
+
+        worker.postMessage({ callback: callback, functions: functions })
+
+        worker.addEventListener('error', function(error){
+            return reject(error.message)
+        })
+
+        worker.addEventListener('message', function(e) {
+            resolve(e.data)
+            worker.terminate()
+
+        }, false)
+
+
+        //From function to string, with its name, arguments and its body
+        function fn_string (fn) {
+            var name = fn.name
+            fn = fn.toString()
+
+            return {
+                name: name,
+                args: fn.substring(fn.indexOf("(") + 1, fn.indexOf(")")),
+                body: fn.substring(fn.indexOf("{") + 1, fn.lastIndexOf("}"))
+            }
+        }
+
+    })
 }
 
 BUCT_PAGE = new BulkCompletedTaskCurrentYear();

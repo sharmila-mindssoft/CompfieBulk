@@ -337,6 +337,28 @@ class UpdateDocumentCount(Request):
         }
 
 
+class GetStatus(Request):
+    def __init__(self, legal_entity_id, csv_name):
+        self.legal_entity_id = legal_entity_id
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["legal_entity_id", "csv_name"]
+        )
+        return GetStatus(
+            data.get("legal_entity_id"),
+            data.get("csv_name")
+        )
+
+    def to_inner_structure(self):
+        return{
+            "legal_entity_id": self.legal_entity_id,
+            "csv_name": self.csv_name
+        }
+
+
 def _init_request_class_map():
     classes = [
         UploadCompletedTaskCurrentYearCSV,
@@ -344,7 +366,8 @@ def _init_request_class_map():
         GetCompletedTaskCsvUploadedList,
         GetDownloadData, GetUnits,
         DownloadUploadedData,
-        UpdateDocumentCount
+        UpdateDocumentCount,
+        GetStatus
     ]
     class_map = {}
     for c in classes:
@@ -410,6 +433,34 @@ class InvalidCsvFile(Response):
 
     def to_inner_structure(self):
         return {}
+
+
+class Alive(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return Alive()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class Done(Response):
+    def __init__(self, csv_name):
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_name"])
+        csv_name = data.get("csv_name")
+        return Done(csv_name)
+
+    def to_inner_structure(self):
+        return {
+            "csv_name": self.csv_name
+        }
 
 
 class DataAlreadyExists(Response):
@@ -684,7 +735,7 @@ def _init_response_class_map():
         GetCompletedTaskCsvUploadedListSuccess, ExportToCSVEmpty,
         DownloadBulkPastDataSuccess, GetUnitsSuccess,
         DownloadUploadedDataSuccess, UpdateDocumentCountSuccess,
-        CsvFileExeededMaxLines
+        CsvFileExeededMaxLines, Alive, Done
     ]
     class_map = {}
     for c in classes:

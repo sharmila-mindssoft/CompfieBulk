@@ -5,14 +5,17 @@ import datetime
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
 from server.common import (
     string_to_datetime, string_to_datetime_with_time
 )
 from clientprotocol import clientcore
 from bulkupload.client_bulkconstants import (
-    CLIENT_TEMP_FILE_SERVER)
+    CLIENT_TEMP_FILE_SERVER, BULK_UPLOAD_DB_HOST,
+    BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
+    BULK_UPLOAD_DATABASE_NAME
+)
 
 
 __all__ = [
@@ -70,9 +73,9 @@ def save_completed_task_current_year_csv(
         completed_task[8], completed_task[9],
         completed_task[10], completed_task[11]
     ]
-
+    db = connect_bulk_db()
     completed_task_id = db.insert("tbl_bulk_past_data_csv", columns, values)
-
+    db.commit()
     return completed_task_id
 
 
@@ -98,9 +101,10 @@ def save_completed_task_data(db, csv_id, csv_data):
                 string_to_datetime(d["Completion_Date"]), d["Document_Name"]
 
             ))
-
+        db = connect_bulk_db()
         if values:
             db.bulk_insert("tbl_bulk_past_data", columns, values)
+            db.commit()
             return True
         else:
             return False
@@ -192,6 +196,25 @@ def get_completed_task_csv_list_from_db(db, session_user, legal_entity_list):
                 )
             )
     return csv_list
+
+
+def connect_bulk_db():
+    _bulk_db = None
+    try:
+        _bulk_db_con = mysql.connector.connect(
+            user=BULK_UPLOAD_DB_USERNAME,
+            password=BULK_UPLOAD_DB_PASSWORD,
+            host=BULK_UPLOAD_DB_HOST,
+            database=BULK_UPLOAD_DATABASE_NAME,
+            port=BULK_UPLOAD_DB_PORT,
+            autocommit=False
+        )
+        _bulk_db = Database(_bulk_db_con)
+        _bulk_db.begin()
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
+    return _bulk_db
 
 
 def connect_le_db(le_id):
@@ -343,3 +366,4 @@ def update_document_count(db, csv_id, count):
     param = [count, csv_id]
     rows = db.execute(q, param)
     return rows
+
