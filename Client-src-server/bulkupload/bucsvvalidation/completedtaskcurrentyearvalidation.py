@@ -4,7 +4,6 @@ import collections
 import mysql.connector
 import requests
 import threading
-from requests.exceptions import ConnectionError
 from datetime import datetime, timedelta
 from server.dbase import Database
 from server.common import get_date_time
@@ -12,7 +11,7 @@ from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME)
 from bulkupload.client_bulkconstants import (
-    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, TEMP_FILE_SERVER,
+    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, CLIENT_TEMP_FILE_SERVER,
     BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DATABASE_NAME, BULK_UPLOAD_DB_PORT)
 from ..buapiprotocol.pastdatadownloadbulk import (
@@ -73,6 +72,7 @@ class SourceDB(object):
             port=KNOWLEDGE_DB_PORT,
             autocommit=False
         )
+
         self._knowledge_db = Database(self._knowledge_db_con)
         self._knowledge_db.begin()
 
@@ -88,6 +88,7 @@ class SourceDB(object):
         param = [legal_entity_id]
 
         result = self._knowledge_db.select_all(query, param)
+
         if len(result) > 0:
             for row in result:
                 dhost = row["database_ip"]
@@ -146,8 +147,13 @@ class SourceDB(object):
             self.unit_code[d["unit_code"]] = d
 
     def return_unit_domain_id(self, domain_name, unit_code):
-        domain_id = self.domain[domain_name]["domain_id"]
-        unit_id = self.unit_code[unit_code]["unit_id"]
+        domain_id = None
+        unit_id = None
+        try:
+            domain_id = self.domain[domain_name]["domain_id"]
+            unit_id = self.unit_code[unit_code]["unit_id"]
+        except KeyError:
+            pass
         return unit_id, domain_id
 
     def get_unit_name(self):
@@ -352,19 +358,19 @@ class SourceDB(object):
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_code)
         compliance_id = None
-        compliance_task = self.get_compliance_task_name(compliance_task)
+        compliance_task_name = self.get_compliance_task_name(compliance_task)
+        secondary = secondary_legislation
+        if secondary_legislation == "":
+            secondary = "empty"
         try:
-            if secondary_legislation == "":
-                secondary_legislation = "empty"
             data = self.hierarchy_checker[primary_legislation][
-                secondary_legislation][compliance_task]
+                secondary][compliance_task_name]
             if data["desc"] == description:
                 compliance_id = data["compliance_id"]
         except KeyError:
             return
         if unit_id is None or domain_id is None or compliance_id is None:
             return
-
         due_dates = self.get_past_due_dates(domain_id, unit_id, compliance_id)
         if due_dates is None:
             return "Not Found"
@@ -373,6 +379,23 @@ class SourceDB(object):
             due_date = due_date.date().strftime("%Y-%m-%d")
         except ValueError:
             return
+        q = "SELECT bulk_past_data_id FROM tbl_bulk_past_data " + \
+            "WHERE unit_code=%s and perimary_legislation=%s and " + \
+            "secondary_legislation=%s and compliance_task_name=%s and " + \
+            "compliance_description=%s and date(due_date)=%s"
+        params = [
+            unit_code, primary_legislation, secondary_legislation,
+            compliance_task, description, due_date
+        ]
+        db = bulkupload_db_connect()
+        _db_check = Database(db)
+        try:
+            _db_check.begin()
+            rows = _db_check.select_all(q, params)
+            if rows:
+                return "Duplicate due date"
+        except Exception:
+            _db_check.rollback()
         if due_date in due_dates:
             return True
         else:
@@ -429,7 +452,10 @@ class SourceDB(object):
         return self.check_base(True, self.domain, domain_name, None)
 
     def check_valid_unit_code(self, unit_code, unit_name):
-        org_unit_name = self.unit_code[unit_code]["unit_name"]
+        try:
+            org_unit_name = self.unit_code[unit_code]["unit_name"]
+        except KeyError:
+            return "invalid"
         if org_unit_name == unit_name:
             return True
         else:
@@ -449,8 +475,11 @@ class SourceDB(object):
     def check_is_valid_primary_legislation(
         self, unit_code, primary_legislation
     ):
-        unit_id = self.unit_code[unit_code]["unit_id"]
-        unit_country_id = self.unit_code[unit_code]["country_id"]
+        try:
+            unit_id = self.unit_code[unit_code]["unit_id"]
+            unit_country_id = self.unit_code[unit_code]["country_id"]
+        except KeyError:
+            return
         query = "SELECT domain_id from tbl_units_organizations " + \
             " where unit_id = %s"
         params = [unit_id]
@@ -479,7 +508,7 @@ class SourceDB(object):
             if statutories not in self.hierarchy_checker[primary]:
                 status1 = "Not Found"
         except KeyError:
-            pass
+            return
         status2 = self.check_base(False, self.statutories, statutories, None)
         if status1 is True:
             return status2
@@ -497,7 +526,7 @@ class SourceDB(object):
                     primary][secondary]):
                 status1 = "Not Found"
         except KeyError:
-            print "key error"
+            return
         status2 = self.check_base(
             True, self.compliance_task, compliance_task, None)
         if status1 is True:
@@ -509,17 +538,19 @@ class SourceDB(object):
         self, compliance_description, primary, secondary, compliance_task
     ):
         status1 = True
+        compliance_task_name = self.get_compliance_task_name(
+            compliance_task)
         try:
             if secondary == "":
                 secondary = "empty"
             if (
                 self.hierarchy_checker[
-                    primary][secondary][compliance_task]["desc"] !=
+                    primary][secondary][compliance_task_name]["desc"] !=
                 compliance_description
             ):
                 status1 = "Not Found"
         except KeyError:
-            pass
+            return
         status2 = self.check_base(
             True, self.compliance_description, compliance_description, None)
         if status1 is True:
@@ -562,8 +593,7 @@ class SourceDB(object):
                     compliance_task_name += compliance_task_name_check[i]
         return compliance_task_name
 
-    def save_completed_task_data(self, data, legal_entity_id):
-
+    def save_completed_task_data(self, db, data, legal_entity_id, csv_id):
         for idx, d in enumerate(data):
             self.connect_source_db(legal_entity_id)
             columns = [
@@ -654,6 +684,23 @@ class SourceDB(object):
                 values.append(1)
                 values.append(concurred_by)
                 values.append(completion_date)
+            q = "SELECT document_file_size FROM tbl_bulk_past_data " + \
+                "where csv_past_id= %s and compliance_task_name=%s " + \
+                " and perimary_legislation = %s and " + \
+                " secondary_legislation = %s and " \
+                "compliance_description = %s and due_date= %s and " + \
+                "unit_code = %s"
+            params = [
+                csv_id, d["compliance_task_name"],
+                d["perimary_legislation"], d["secondary_legislation"],
+                d["compliance_description"], d["due_date"],
+                d["unit_code"]
+            ]
+            rows = db.select_all(q, params)
+            if rows:
+                document_size = rows[0]["document_file_size"]
+                columns.append("document_size")
+                values.append(document_size)
             if values:
                 self._source_db.insert(
                     "tbl_compliance_history", columns, values)
@@ -1033,6 +1080,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
     ):
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
+        if total <= 0:
+            return False
         unit_code = self._source_data[0]["Unit_Code"]
         domain_name = self._source_data[0]["Domain"]
 
@@ -1177,7 +1226,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         caller_name = (
             "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s"
         ) % (
-            TEMP_FILE_SERVER, csvid, country_id, legal_id,
+            CLIENT_TEMP_FILE_SERVER, csvid, country_id, legal_id,
             domain_id, unit_id
         )
         response = requests.post(caller_name)
@@ -1206,60 +1255,15 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             file_server_ip, file_server_port, csvid, country_id, legal_id,
             domain_id, unit_id, current_date, client_id
         )
-        try:
-            response = requests.post(caller)
-        except ConnectionError as e:
-            print e
-            response = "error"
-        self.save_file_submit_status(response)
-        print "RESPONSE ->> ", response
+        response = requests.post(caller)
         return response
 
     def frame_data_for_main_db_insert(
-        self, db, data_result, legal_entity_id, session_user
+        self, db, data_result, legal_entity_id, csv_id
     ):
-        data_save_status = self.save_completed_task_data(
-            data_result, legal_entity_id
+        return self.save_completed_task_data(
+            db, data_result, legal_entity_id, csv_id
         )
-        self.save_data_submit_status(data_save_status)
-        return data_save_status
-
-    def save_data_submit_status(self, data_save_status):
-        data_submit_value = 0
-        if data_save_status is True:
-            data_submit_value = 1
-        else:
-            data_submit_value = 2
-
-        query = "UPDATE tbl_bulk_past_data_csv SET " + \
-                "data_submit_status = %s WHERE csv_past_id = %s"
-
-        self._db.execute(query, [data_submit_value, self._csv_id])
-
-    def save_file_submit_status(self, response):
-        file_submit_value = 0
-        if str(response).find("200") >= 0:
-            file_submit_value = 1
-        else:
-            file_submit_value = 2
-
-        bulk_db_con = bulkupload_db_connect()
-        bulk_db_check = Database(bulk_db_con)
-        try:
-            bulk_db_check.begin()
-            query = "UPDATE tbl_bulk_past_data_csv SET " + \
-                "file_submit_status = %s WHERE csv_past_id = %s"
-            param = [file_submit_value, self._csv_id]
-
-            bulk_db_check.execute(query, param)
-            bulk_db_check.commit()
-        except Exception, e:
-            print e
-            bulk_db_check.rollback()
-
-        finally:
-            bulk_db_check.close()
-            bulk_db_con.close()
 
 
 def bulkupload_db_connect():

@@ -11,7 +11,8 @@ from server.common import (
     string_to_datetime, string_to_datetime_with_time
 )
 from clientprotocol import clientcore
-from bulkupload.client_bulkconstants import (TEMP_FILE_SERVER)
+from bulkupload.client_bulkconstants import (
+    CLIENT_TEMP_FILE_SERVER)
 
 
 __all__ = [
@@ -19,7 +20,6 @@ __all__ = [
     "save_completed_task_current_year_csv",
     "save_completed_task_data",
     "get_past_record_data",
-    "get_completed_task_csv_list",
     "get_client_id_by_le",
     "get_units_for_user",
     "get_files_as_zip",
@@ -336,7 +336,7 @@ def get_files_as_zip(csv_id):
     caller_name = (
         "%sdownloadzip?csv_id=%s"
     ) % (
-        TEMP_FILE_SERVER, csv_id
+        CLIENT_TEMP_FILE_SERVER, csv_id
     )
     response = requests.post(caller_name)
     download_link = response.text
@@ -353,7 +353,6 @@ def update_document_count(db, csv_id, count):
 
 
 def get_current_doc_data_submit_status(db, csv_id):
-    # db = connect_le_db(legal_entity_id)
     query = "SELECT file_submit_status, data_submit_status, " + \
             "file_download_status from tbl_bulk_past_data_csv " + \
             "where csv_past_id = %s "

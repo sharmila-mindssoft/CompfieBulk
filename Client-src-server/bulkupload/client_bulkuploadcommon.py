@@ -9,7 +9,7 @@ from datetime import datetime
 from bulkupload.client_bulkconstants import (
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH, REJECTED_DOWNLOAD_PATH,
     REJECTED_DOWNLOAD_BASE_PATH, LOCAL_TIMEZONE,
-    TEMP_FILE_SERVER
+    CLIENT_TEMP_FILE_SERVER
 )
 
 
@@ -84,9 +84,9 @@ def convert_base64_to_file(
 
 def save_file_in_client_docs(file_name, file_content):
     caller_name = (
-        "%sclient/copycsv?framed_file_name=%s&file_content=%s"
+        "%scopycsv?framed_file_name=%s&file_content=%s"
     ) % (
-        TEMP_FILE_SERVER, file_name, file_content
+        CLIENT_TEMP_FILE_SERVER, file_name, file_content
     )
     response = requests.post(caller_name)
     return response
@@ -124,10 +124,13 @@ def read_data_from_csv(file_name):
                         headerrow.append(c.strip())
                 else:
                     data = {}
+                    data_text = ""
                     for cdx, c in enumerate(r):
                         val = c.strip()
+                        data_text += val
                         data[headerrow[cdx]] = val
-                    mapped_data.append(data)
+                    if data_text.strip() != "":
+                        mapped_data.append(data)
     return headerrow, mapped_data
 
 

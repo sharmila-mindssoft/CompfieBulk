@@ -237,29 +237,6 @@ def delete_declined_docs(csv_id):
     return response_data
 
 
-
-# @app.route('/temp/uploadcsv', methods=['POST'])
-# def upload_csv():
-#     framed_file_name = request.args.get("framed_file_name")
-#     file_content = request.args.get("file_content")
-
-#     ROOT_PATH = os.path.join(os.path.split(__file__)[0])
-#     BULK_CSV_PATH = os.path.join(ROOT_PATH, "bulkuploadclientdocuments")
-#     file_path = "%s/csv" % (
-#         BULK_CSV_PATH
-#     )
-#     if not os.path.exists(file_path):
-#         os.makedirs(file_path)
-
-#     create_path = "%s/%s" % (file_path, framed_file_name)
-#     try:
-#         with io.FileIO(create_path, "wb") as fn:
-#             fn.write(file_content.decode('base64'))
-#         return "success"
-#     except IOError, e:
-#         print e
-#     return "success"
-
 @app.route('/knowledgetemp/upload', methods=['POST'])
 def upload():
     logger.logTempFiler(
@@ -305,7 +282,7 @@ def upload():
         return "success"
 
 
-@app.route('/client/temp/upload', methods=['POST'])
+@app.route('/clienttemp/upload', methods=['POST'])
 def upload_client():
     logger.logTempFiler(
         "info", "run_tempfile_server > /client/temp/upload > Request", request
@@ -374,7 +351,7 @@ def zip_folder(folder_name, folder_path):
     file_status[folder_name] = "Zipping Completed"
 
 
-@app.route('/temp/downloadzip', methods=['POST'])
+@app.route('/clienttemp/downloadzip', methods=['POST'])
 def get_files_as_zip():
     csv_id = request.args.get("csv_id")
     csv_name = None
@@ -501,7 +478,7 @@ def removefile():
     return "removed zip file"
 
 
-@app.route('/temp/removeclientfile', methods=['POST'])
+@app.route('/clienttemp/removeclientfile', methods=['POST'])
 def removeclientfile():
     logger.logTempFiler(
         "info", "run_tempfile_server > /temp/removeclientfile > Request",
@@ -546,7 +523,7 @@ def download_format_file(csvid, filename):
     )
 
 
-@app.route('/temp/docsubmit', methods=['POST'])
+@app.route('/clienttemp/docsubmit', methods=['POST'])
 def approve_client():
     logger.logTempFiler(
         "info", "run_tempfile_server > approve_client > Request", request
@@ -602,7 +579,7 @@ def get_client_zip_file(folder_name):
     return zip_f_name
 
 
-@app.route('/temp/downloadclientfile', methods=['GET'])
+@app.route('/clienttemp/downloadclientfile', methods=['GET'])
 def download_client_file():
     logger.logTempFiler(
         "info", "run_tempfile_server > download_client_file > Request", request
@@ -648,7 +625,7 @@ def remove_rejected_folders():
     rmtree(folder_path)
     return "removed rejected folders"
 
-@app.route('/temp/client/copycsv', methods=['POST'])
+@app.route('/clienttemp/copycsv', methods=['POST'])
 def upload_csv():
     framed_file_name = request.args.get("framed_file_name")
     file_content = request.args.get("file_content")

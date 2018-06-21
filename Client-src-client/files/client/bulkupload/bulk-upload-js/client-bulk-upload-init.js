@@ -11,8 +11,7 @@ function initMethods() {
         uploadFile : uploadFile,
         getUnits : getUnits,
         downloadUploadedData: downloadUploadedData,
-        updateDocumentCount: updateDocumentCount,
-        processQueuedTasksRequest: processQueuedTasksRequest
+        updateDocumentCount: updateDocumentCount
     };
 }
 

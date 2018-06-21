@@ -3,7 +3,7 @@ from server.common import (
     get_date_time_in_date,
     datetime_to_string_time)
 from bulkupload.client_bulkconstants import (
-    BULKUPLOAD_CSV_PATH, CSV_MAX_LINE_ITEM, CLIENT_DOCS_BASE_PATH)
+    BULKUPLOAD_CSV_PATH, CSV_MAX_LINE_ITEM)
 from ..client_bulkuploadcommon import (
     convert_base64_to_file, save_file_in_client_docs,
     read_data_from_csv, remove_uploaded_file)
@@ -15,7 +15,8 @@ from..budatabase.bucompletedtaskcurrentyeardb import (
     get_units_for_user, get_completed_task_csv_list_from_db,
     get_client_id_by_le, save_completed_task_current_year_csv,
     save_completed_task_data, get_past_record_data,
-    get_files_as_zip, update_document_count, get_current_doc_data_submit_status
+    get_files_as_zip, update_document_count,
+    get_current_doc_data_submit_status
 )
 
 
@@ -77,12 +78,6 @@ def process_bu_completed_task_current_year_request(
         result = process_update_document_count(
             db, request_frame
         )
-
-    if type(request_frame) is bu_ct.ProcessQueuedTasks:
-        result = process_queued_tasks(
-            db, request_frame, session_user, request.session_token
-        )
-
     return result
 
 
@@ -134,7 +129,9 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
         str_current_date_time = datetime_to_string_time(current_date_time)
         unit_id = res_data["unit_id"]
         domain_id = res_data["domain_id"]
-        client_id, client_group_name = get_client_id_by_le(request_frame.legal_entity_id)
+        client_id, client_group_name = get_client_id_by_le(
+            request_frame.legal_entity_id
+        )
         csv_args = [
             client_id, request_frame.legal_entity_id, domain_id,
             unit_id, client_group_name, csv_name, session_user,
@@ -185,7 +182,7 @@ def process_save_bulk_records(db, request_frame, session_user, session_token):
         )
 
     if c_obj.frame_data_for_main_db_insert(
-        db, data_result, request_frame.legal_entity_id, session_user
+        db, data_result, request_frame.legal_entity_id, csv_id
     ) is True:
         result = bu_ct.SaveBulkRecordSuccess()
     else:
@@ -277,6 +274,4 @@ def process_queued_tasks(db, request_frame, session_user, session_token):
             result = bu_ct.ProcessQueuedTasksSuccess()
     else:
         result = bu_ct.ProcessQueuedTasksSuccess()
-    print "##########################################"
-    print result
     return result

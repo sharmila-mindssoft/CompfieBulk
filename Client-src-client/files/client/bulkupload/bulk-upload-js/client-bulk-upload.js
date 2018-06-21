@@ -168,7 +168,7 @@ function downloadUploadedData(
     legal_entity_id, csv_id, callback){
     request =[
         "DownloadUploadedData",
-        {
+        {   
             "legal_entity_id": legal_entity_id,
             "csv_id": csv_id
         }
@@ -180,19 +180,11 @@ function updateDocumentCount(
     legal_entity_id, csv_id, count, callback){
     request =[
         "UpdateDocumentCount",
-        {
+        {   
             "legal_entity_id": legal_entity_id,
             "csv_id": csv_id,
             "count": count
         }
     ]
-    return clientApiRequest('bu/completed_task', request, callback);
-}
-
-
-function processQueuedTasksRequest(args, callback){
-    request = [
-        'ProcessQueuedTasks', args
-    ];
     return clientApiRequest('bu/completed_task', request, callback);
 }
