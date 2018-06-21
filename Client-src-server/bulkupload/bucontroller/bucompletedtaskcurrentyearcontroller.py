@@ -78,6 +78,12 @@ def process_bu_completed_task_current_year_request(
         result = process_update_document_count(
             db, request_frame
         )
+
+    if type(request_frame) is bu_ct.ProcessQueuedTasks:
+        result = process_queued_tasks(
+            db, request_frame, session_user, request.session_token
+        )
+
     return result
 
 
@@ -253,11 +259,10 @@ def process_queued_tasks(db, request_frame, session_user, session_token):
     cObj = ValidateCompletedTaskForSubmit(
         db, csv_id, dataResult, session_user)
 
-    if (file_cur_stats == 1 & data_cur_stats == 1):
+    if (file_cur_stats == 1 and data_cur_stats == 1):
         return bu_ct.ProcessCompleted()
 
-    if(file_cur_stats in [0, 2]):
-        # if(file_cur_stats != 1 & file_download_stats != "completed"):
+    if(file_cur_stats in [0, 2] and file_download_stats != "completed"):
         cObj.document_download_process_initiate(
             csv_id, country_id, legal_id, domain_id, unit_id, session_token
         )

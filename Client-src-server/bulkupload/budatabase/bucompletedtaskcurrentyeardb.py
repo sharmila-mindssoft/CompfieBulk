@@ -20,6 +20,7 @@ __all__ = [
     "save_completed_task_current_year_csv",
     "save_completed_task_data",
     "get_past_record_data",
+    "get_completed_task_csv_list",
     "get_client_id_by_le",
     "get_units_for_user",
     "get_files_as_zip",
