@@ -4,6 +4,7 @@ import collections
 import mysql.connector
 import requests
 import threading
+from requests.exceptions import ConnectionError
 from datetime import datetime, timedelta
 from server.dbase import Database
 from server.common import get_date_time
@@ -1235,15 +1236,17 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def call_file_server(
         self, csvid, country_id, legal_id, domain_id, unit_id, session_token
     ):
+        file_server_ip = None
+        file_server_port = None
         query = "select ip, port from tbl_file_server where " + \
             "file_server_id = (select file_server_id from " + \
             " tbl_client_database where legal_entity_id = %s )"
         param = [legal_id]
         self.connect_source_db(legal_id)
-        doc_rows = self._knowledge_db.select_all(query, param)
-        if doc_rows > 0:
-            file_server_ip = doc_rows[0]["ip"]
-            file_server_port = doc_rows[0]["port"]
+        docRows = self._knowledge_db.select_all(query, param)
+        if docRows > 0:
+            file_server_ip = docRows[0]["ip"]
+            file_server_port = docRows[0]["port"]
         else:
             return "File server not available"
 
@@ -1255,15 +1258,60 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             file_server_ip, file_server_port, csvid, country_id, legal_id,
             domain_id, unit_id, current_date, client_id
         )
-        response = requests.post(caller)
+        try:
+            response = requests.post(caller)
+        except ConnectionError as e:
+            print e
+            response = "error"
+        self.save_file_submit_status(response)
+        print "RESPONSE ->> ", response
         return response
 
     def frame_data_for_main_db_insert(
         self, db, data_result, legal_entity_id, csv_id
     ):
-        return self.save_completed_task_data(
+        data_save_status = self.save_completed_task_data(
             db, data_result, legal_entity_id, csv_id
         )
+        self.save_data_submit_status(data_save_status)
+        return data_save_status
+
+    def save_data_submit_status(self, data_save_status):
+        data_submit_value = 0
+        if data_save_status is True:
+            data_submit_value = 1
+        else:
+            data_submit_value = 2
+
+        query = "UPDATE tbl_bulk_past_data_csv SET " + \
+                "data_submit_status = %s WHERE csv_past_id = %s"
+
+        self._db.execute(query, [data_submit_value, self._csv_id])
+
+    def save_file_submit_status(self, response):
+        file_submit_value = 0
+        if str(response).find("200") >= 0:
+            file_submit_value = 1
+        else:
+            file_submit_value = 2
+
+        bulk_db_con = bulkupload_db_connect()
+        bulk_db_check = Database(bulk_db_con)
+        try:
+            bulk_db_check.begin()
+            query = "UPDATE tbl_bulk_past_data_csv SET " + \
+                "file_submit_status = %s WHERE csv_past_id = %s"
+            param = [file_submit_value, self._csv_id]
+
+            bulk_db_check.execute(query, param)
+            bulk_db_check.commit()
+        except Exception, e:
+            print e
+            bulk_db_check.rollback()
+
+        finally:
+            bulk_db_check.close()
+            bulk_db_con.close()
 
 
 def bulkupload_db_connect():
