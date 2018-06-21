@@ -359,11 +359,12 @@ class SourceDB(object):
             domain_name, unit_code)
         compliance_id = None
         compliance_task_name = self.get_compliance_task_name(compliance_task)
+        secondary = secondary_legislation
         if secondary_legislation == "":
-            secondary_legislation = "empty"
+            secondary = "empty"
         try:
             data = self.hierarchy_checker[primary_legislation][
-                secondary_legislation][compliance_task_name]
+                secondary][compliance_task_name]
             if data["desc"] == description:
                 compliance_id = data["compliance_id"]
         except KeyError:
@@ -381,7 +382,7 @@ class SourceDB(object):
         q = "SELECT bulk_past_data_id FROM tbl_bulk_past_data " + \
             "WHERE unit_code=%s and perimary_legislation=%s and " + \
             "secondary_legislation=%s and compliance_task_name=%s and " + \
-            "compliance_description=%s and due_date=%s"
+            "compliance_description=%s and date(due_date)=%s"
         params = [
             unit_code, primary_legislation, secondary_legislation,
             compliance_task, description, due_date
