@@ -1332,9 +1332,11 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
     }
 
     displayLoader();
-    bu.validateAssignStatutory(parseInt(csvid), function(error, response) {
+    setTimeout(function() {
+        bu.validateAssignStatutory(parseInt(csvid), function(error, response) {
         if (response.un_saved_count > 0) {
             displayMessage(message.un_saved_compliance);
+            Custombox.close();
             hideLoader();
         } else {
             bu.submitAssignStatutoryAction(parseInt(csvid), parseInt(clId),
@@ -1383,6 +1385,10 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
                 });
         }
     });
+    }, 500);
+
+
+
 }
 
 function download(filename, mime_type, text) {
