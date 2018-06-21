@@ -136,7 +136,8 @@ class CsvList(object):
         self, csv_past_id, csv_name, uploaded_on, uploaded_by,
         total_records, total_documents, bu_uploaded_documents,
         remaining_documents, doc_names, legal_entity, domain_id, unit_id,
-        start_date, file_submit_status, data_submit_status
+        start_date, file_submit_status, data_submit_status,
+        file_download_status
     ):
         self.csv_past_id = csv_past_id
         self.csv_name = csv_name
@@ -153,6 +154,7 @@ class CsvList(object):
         self.start_date = start_date
         self.file_submit_status = file_submit_status
         self.data_submit_status = data_submit_status
+        self.file_download_status = file_download_status
 
     @staticmethod
     def parse_structure(data):
@@ -161,7 +163,7 @@ class CsvList(object):
             "total_records", "total_documents", "bu_uploaded_documents",
             "remaining_documents", "doc_names",
             "legal_entity", "domain_id", "unit_id", "start_date",
-            "file_submit_status", "data_submit_status"
+            "file_submit_status", "data_submit_status", "file_download_status"
         ])
         return CsvList(
             data.get("csv_past_id"), data.get("csv_name"),
@@ -173,7 +175,8 @@ class CsvList(object):
             data.get("domain_id"),
             data.get("unit_id"),
             data.get("start_date"), data.get("file_submit_status"),
-            data.get("data_submit_status")
+            data.get("data_submit_status"),
+            data.get("file_download_status")
         )
 
     def to_structure(self):
@@ -192,7 +195,8 @@ class CsvList(object):
             "unit_id": self.unit_id,
             "start_date": self.start_date,
             "file_submit_status": self.file_submit_status,
-            "data_submit_status": self.data_submit_status
+            "data_submit_status": self.data_submit_status,
+            "file_download_status": self.file_download_status
         }
 
 
@@ -606,6 +610,18 @@ class ProcessDocumentSubmitQueued(Response):
         return{}
 
 
+class ProcessCompleted(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ProcessCompleted()
+
+    def to_inner_structure(self):
+        return{}
+
 
 class CsvListSuccess(object):
     def __init__(
@@ -758,7 +774,8 @@ def _init_response_class_map():
         DownloadBulkPastDataSuccess, GetUnitsSuccess,
         DownloadUploadedDataSuccess, UpdateDocumentCountSuccess,
         CsvFileExeededMaxLines,
-        ProcessQueuedTasksSuccess, ProcessDocumentSubmitQueued
+        ProcessQueuedTasksSuccess, ProcessDocumentSubmitQueued,
+        ProcessCompleted
     ]
     class_map = {}
     for c in classes:

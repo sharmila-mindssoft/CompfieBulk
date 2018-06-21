@@ -531,6 +531,10 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(
             cnameSplit = data.csv_name.split("_");
             cnameSplit.pop();
             cname = cnameSplit.join("_");
+            var fileSubStats = data.file_submit_status;
+            var dataSubStats = data.data_submit_status;
+            var fileDownldStatus = data.file_download_status;
+
             $('.sno', cloneRow).text(j);
             $('.legal-entity', cloneRow).text(data.legal_entity_name);
             $('.csv-name', cloneRow).text(cname);
@@ -550,10 +554,23 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(
                 $('.queued-task i', cloneRow).hide();
             }else{
                 $('.upload i', cloneRow).hide();
-                $('.queued-task i', cloneRow).show();
-                $('.queued-task i', cloneRow).on('click', function() {
-                    tThis.processQueuedTasks(data);
-                });
+                // $('.queued-task i', cloneRow).hide();
+                // $('.queued-task', cloneRow).text("In Progress");
+
+                console.log(j + " - ->" + jQuery.inArray(fileSubStats, [0,2]))
+                if(jQuery.inArray(fileSubStats, [0,2]) != -1 ||
+                   jQuery.inArray(dataSubStats, [0,2]) != -1 ){
+                    console.log("IN IF")
+                    $('.queued-task i', cloneRow).show();
+                    $('.queued-task i', cloneRow).on('click', function() {
+                        tThis.processQueuedTasks(data);
+                    });
+                }
+                // else if(fileSubStats == 0 && fileDownldStatus == "completed"){
+                //     console.log("Else")
+                //     $('.queued-task i', cloneRow).hide();
+                //     $('.queued-task', cloneRow).text("In Progress");
+                // }
             }
 
             LIST_CONTAINER.append(cloneRow);
@@ -562,6 +579,12 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(
     }
     $('[data-toggle="tooltip"]').tooltip();
 };
+
+// Object.prototype.inList = function() {
+//     for(var i=0; i<arguments.length; i++)
+//        if(arguments[i] == this) return true;
+//     return false;
+// }
 
 BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     var uploadedCsvName = data.csv_name;
@@ -604,6 +627,9 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
 };
 
 BulkCompletedTaskCurrentYear.prototype.processQueuedTasks = function(data) {
+    alert("!!!@$@#$")
+    t_this = this;
+    displayLoader();
     var fileSubStats = data.file_submit_status;
     var dataSubStats = data.data_submit_status;
     var csvPastId = data.csv_past_id;
@@ -621,17 +647,26 @@ BulkCompletedTaskCurrentYear.prototype.processQueuedTasks = function(data) {
     };
     buClient.processQueuedTasksRequest(args,
         function(error, data) {
+            console.log("error-> "+ error);
+            console.log("data-> "+ JSON.stringify(data));
             if (error == null) {
                 hideLoader();
-                if (error == "ProcessQueuedTasksSuccess"){
-                    displaySuccessMessage(message.process_queued_task_success);
-                }
+                displaySuccessMessage(message.process_queued_task_success);
+                VIEW_SCREEN.show();
+                BUCT_PAGE.showList();
+            } else {
                 if (error == "ProcessDocumentSubmitQueued"){
                     displaySuccessMessage(message.process_queued_doc_success);
                 }
-            } else {
-                displaySuccessMessage(message.process_queued_doc_success);
-                hideLoader();
+                else if (error == "ProcessCompleted"){
+                    displaySuccessMessage(message.process_completed);
+                    hideLoader();
+                    VIEW_SCREEN.show();
+                    BUCT_PAGE.showList();
+                }else{
+                    t_this.possibleFailures(error);
+                    hideLoader();
+                }
             }
         });
 }
@@ -754,6 +789,7 @@ function submitUpload() {
             displayMessage(message.data_already_exists);
             $('#myModal').modal('hide');
             VIEW_SCREEN.show();
+            BUCT_PAGE.showList();
             ADD_SCREEN.hide();
         }
         else if (error == null) {
@@ -770,6 +806,7 @@ function submitUpload() {
                         displaySuccessMessage("Compliance Submitted successfully");
                         $('#myModal').modal('hide');
                         VIEW_SCREEN.show();
+                        BUCT_PAGE.showList();
                         ADD_SCREEN.hide();
                     }
                 )
@@ -780,6 +817,7 @@ function submitUpload() {
                 displaySuccessMessage("Compliance Submitted successfully");
                 $('#myModal').modal('hide');
                 VIEW_SCREEN.show();
+                BUCT_PAGE.showList();
                 ADD_SCREEN.hide();
             }
         } else {
