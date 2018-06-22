@@ -7,7 +7,7 @@ from server.common import (
     datetime_to_string_time)
 from bulkupload.client_bulkconstants import (
     BULKUPLOAD_CSV_PATH, CSV_MAX_LINE_ITEM,
-    BULKUPLOAD_INVALID_PATH)
+    BULKUPLOAD_INVALID_PATH, csv_headers)
 from ..client_bulkuploadcommon import (
     convert_base64_to_file, save_file_in_client_docs,
     read_data_from_csv, remove_uploaded_file)
@@ -120,10 +120,10 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
     res_data = c_obj.res_data
     return_data = None
     if res_data is False:
-        return_data = "InvalidCsvFile"
-    elif c_obj.check_if_already_saved_compliance(
-            request_frame.legal_entity_id) is False:
-        return_data = "DataAlreadyExists"
+        return_data = bu_ct.InvalidCsvFile().to_structure()
+    # elif c_obj.check_if_already_saved_compliance(
+    #         request_frame.legal_entity_id) is False:
+    #     return_data = bu_ct.DataAlreadyExists().to_structure()
     elif res_data["return_status"] is True:
         current_date_time = get_date_time_in_date()
         str_current_date_time = datetime_to_string_time(current_date_time)
@@ -151,7 +151,6 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
             new_csv_id, csv_name, res_data["doc_count"],
             res_data["doc_names"], unit_id, domain_id
         ).to_structure()
-        return_data = json.dumps(return_data)
     else:
         return_data = bu_ct.UploadCompletedTaskCurrentYearCSVFailed(
             res_data["invalid_file"], res_data["mandatory_error"],
@@ -160,7 +159,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
             res_data["inactive_error"], res_data["total"], res_data["invalid"],
             res_data["invalid_file_format"], res_data["invalid_date"]
         ).to_structure()
-        return_data = json.dumps(return_data)
+    return_data = json.dumps(return_data)
 
     file_string = csv_name.split(".")
     file_name = "%s_%s.%s" % (
@@ -182,6 +181,8 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
     )
     # read data from csv file
     header, completed_task_data = read_data_from_csv(csv_name)
+    if csv_headers != header:
+        return bu_ct.InvalidCsvFile()
     if len(completed_task_data) > CSV_MAX_LINE_ITEM:
         file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
         remove_uploaded_file(file_path)
@@ -282,9 +283,9 @@ def process_get_status(db, request):
             return_data += fn.read()
         result = json.loads(return_data)
         remove_uploaded_file(file_path)
-        if result == "InvalidCsvFile":
+        if str(result[0]) == "InvalidCsvFile":
             return bu_ct.InvalidCsvFile()
-        elif result == "DataAlreadyExists":
+        elif str(result[0]) == "DataAlreadyExists":
             return bu_ct.DataAlreadyExists()
         elif str(result[0]) == "UploadCompletedTaskCurrentYearCSVSuccess":
             return bu_ct.UploadCompletedTaskCurrentYearCSVSuccess.parse_inner_structure(
@@ -292,6 +293,8 @@ def process_get_status(db, request):
         elif str(result[0]) == "UploadCompletedTaskCurrentYearCSVFailed":
             return bu_ct.UploadCompletedTaskCurrentYearCSVFailed.parse_inner_structure(
                 result[1])
+        else:
+            return bu_ct.InvalidCsvFile()
 
 
 def process_queued_tasks(db, request_frame, session_user, session_token):
