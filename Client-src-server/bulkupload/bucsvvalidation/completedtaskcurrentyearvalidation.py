@@ -1311,13 +1311,18 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         else:
             file_submit_value = 2
 
+        file_down_status = "completed"
+        if file_submit_value == 2:
+            file_down_status = None
+
         bulk_db_con = bulkupload_db_connect()
         bulk_db_check = Database(bulk_db_con)
         try:
             bulk_db_check.begin()
             query = "UPDATE tbl_bulk_past_data_csv SET " + \
-                "file_submit_status = %s WHERE csv_past_id = %s"
-            param = [file_submit_value, self._csv_id]
+                " file_submit_status = %s AND file_download_status = %s" + \
+                " WHERE csv_past_id = %s"
+            param = [file_submit_value, file_down_status, self._csv_id]
 
             bulk_db_check.execute(query, param)
             bulk_db_check.commit()
@@ -1328,6 +1333,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         finally:
             bulk_db_check.close()
             bulk_db_con.close()
+
 
 
 def bulkupload_db_connect():
