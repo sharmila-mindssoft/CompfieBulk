@@ -71,12 +71,16 @@ def move_client_files():
     a, b = urllib.urlretrieve(caller_name, actual_zip_file)
     print "A ", a
     print "b ", b
-    zip_ref = ZipFile(actual_zip_file, 'r')
-    print "zip_ref>>> ", zip_ref
-    zip_ref.extractall(file_path)
-    zip_ref.close()
-    os.remove(actual_zip_file)
-    temp_file_server_remove_call(csv_id)
+    try:
+        zip_ref = ZipFile(actual_zip_file, 'r')
+        print "zip_ref>>> ", zip_ref
+        zip_ref.extractall(file_path)
+        zip_ref.close()
+        os.remove(actual_zip_file)
+        temp_file_server_remove_call(csv_id)
+    except Exception as e:
+        print e
+        raise IOError
     return "Success Response"
 
 

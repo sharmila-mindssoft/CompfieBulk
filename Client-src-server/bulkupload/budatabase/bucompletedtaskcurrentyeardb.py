@@ -27,7 +27,8 @@ __all__ = [
     "get_client_id_by_le",
     "get_units_for_user",
     "get_files_as_zip",
-    "update_document_count"
+    "update_document_count",
+    "get_current_doc_data_submit_status"
 ]
 
 
@@ -149,25 +150,35 @@ def get_completed_task_csv_list_from_db(db, session_user, legal_entity_list):
             " (T01.total_documents - T01.uploaded_documents) " + \
             " AS remaining_documents, " + \
             " T01.domain_id, T01.unit_id_id as unit_id, " + \
-            " NOW() as start_date" + \
+            " NOW() as start_date," + \
+            " T01.file_submit_status, T01.data_submit_status," + \
+            " T01.file_download_status " + \
             " From tbl_bulk_past_data_csv  AS T01 " + \
             " INNER JOIN tbl_bulk_past_data AS T02 " + \
             " ON T01.csv_past_id = T02.csv_past_id " + \
-            " where (T01.total_documents - T01.uploaded_documents) >= 1 " + \
-            " and uploaded_by = %s AND FIND_IN_SET " + \
-            " (T01.legal_entity_id, %s)  order by T01.uploaded_on DESC"
-    param = [session_user, legal_entity_list]
+            " where " + \
+            " (uploaded_by = %s AND " + \
+            " (FIND_IN_SET (T01.legal_entity_id, %s)) " + \
+            " AND " + \
+            " (T01.total_documents - T01.uploaded_documents) >= 1) " + \
+            " OR " + \
+            " (uploaded_by = %s AND " + \
+            " (FIND_IN_SET (T01.legal_entity_id,  %s)) AND " + \
+            " (T01.file_submit_status in (0,2) OR T01.data_submit_status in (0,2) )) " + \
+            " order by T01.uploaded_on DESC"
+
+    param = [session_user, legal_entity_list, session_user, legal_entity_list]
 
     rows = db.select_all(query, param)
 
     param1 = [session_user]
     doc_query = "select t1.csv_past_id, document_name " + \
-                   " from tbl_bulk_past_data as t1 " + \
-                   " INNER JOIN tbl_bulk_past_data_csv as t2 " + \
-                   " ON t2.csv_past_id = t1.csv_past_id " + \
-                   " where ifnull(t2.upload_status, 0) = 0 " + \
-                   " and document_name != '' " + \
-                   " and t2.uploaded_by = %s "
+                " from tbl_bulk_past_data as t1 " + \
+                " INNER JOIN tbl_bulk_past_data_csv as t2 " + \
+                " ON t2.csv_past_id = t1.csv_past_id " + \
+                " where ifnull(t2.upload_status, 0) = 0 " + \
+                " and document_name != '' " + \
+                " and t2.uploaded_by = %s "
     doc_rows = db.select_all(doc_query, param1)
     if doc_rows is not None:
         for d in doc_rows:
@@ -192,7 +203,9 @@ def get_completed_task_csv_list_from_db(db, session_user, legal_entity_list):
                     row["total_documents"], row["uploaded_documents"],
                     row["remaining_documents"],
                     doc_names.get(row["csv_past_id"]), row["legal_entity"],
-                    row["domain_id"], row["unit_id"], curr_date
+                    row["domain_id"], row["unit_id"], curr_date,
+                    row["file_submit_status"], row["data_submit_status"],
+                    row["file_download_status"]
                 )
             )
     return csv_list
@@ -367,3 +380,14 @@ def update_document_count(db, csv_id, count):
     rows = db.execute(q, param)
     return rows
 
+
+def get_current_doc_data_submit_status(db, csv_id):
+    query = "SELECT file_submit_status, data_submit_status, " + \
+            "file_download_status from tbl_bulk_past_data_csv " + \
+            "where csv_past_id = %s "
+    param = [csv_id]
+    rows = db.select_all(query, param)
+    file_submit_status = rows[0]["file_submit_status"]
+    data_submit_status = rows[0]["data_submit_status"]
+    file_download_stats = rows[0]["file_download_status"]
+    return file_submit_status, data_submit_status, file_download_stats
