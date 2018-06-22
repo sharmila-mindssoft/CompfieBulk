@@ -23,9 +23,8 @@ BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload"
 CLIENT_TEMP_FILE_SERVER = "http://localhost:8086/clienttemp/"
 LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 
-
 CSV_DELIMITER = "|;|"
-CSV_MAX_LINE_ITEM = 100
+CSV_MAX_LINE_ITEM = 10000
 
 string_months = {
     1: "Jan",

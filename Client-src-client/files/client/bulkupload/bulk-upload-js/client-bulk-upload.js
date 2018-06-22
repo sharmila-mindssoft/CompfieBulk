@@ -24,6 +24,15 @@ function UploadCompletedTaskCurrentYearCSV(args, callback) {
     clientApiRequest("bu/completed_task", request, callback);
 }
 
+function GetStatus(le_id, csv_name, callback){
+    var request = [
+        'GetStatus', {
+            "legal_entity_id": le_id,
+            "csv_name": csv_name
+        }
+    ];
+    clientApiRequest('bu/completed_task', request, callback);
+}
 function saveBulkRecords(args, callback) {
     var request = [
         'SaveBulkRecords', args
