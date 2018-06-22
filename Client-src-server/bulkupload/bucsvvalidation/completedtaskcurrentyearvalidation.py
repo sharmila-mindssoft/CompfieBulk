@@ -749,7 +749,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         self._domains = None
         self._error_summary = {}
         self.error_summary()
-
+        self.res_data = None
         self._sheet_name = "Completed_Task_Current_Year-Pas"
 
     # error summary mapped with initial count
@@ -1033,10 +1033,10 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                     error_count
                 ) = result
         if invalid > 0:
-            return self.make_invalid_return(
+            self.res_data = self.make_invalid_return(
                 mapped_error_dict, mapped_header_dict)
         else:
-            return self.make_valid_return(
+            self.res_data = self.make_valid_return(
                 mapped_error_dict, legal_entity_id)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
@@ -1060,6 +1060,19 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         rename_file_type(file_name, "ods")
         # make text file
         rename_file_type(file_name, "txt")
+
+        unit_code = self._source_data[0]["Unit_Code"]
+        domain_name = self._source_data[0]["Domain"]
+
+        unit_code = [unit_code]
+        q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
+        unit_id = self._source_db.select_all(q, unit_code)
+        unit_id = unit_id[0]["unit_id"]
+
+        domain_name = [domain_name]
+        q = "select domain_id from tbl_domains where domain_name = TRIM(%s)"
+        domain_id = self._source_db.select_all(q, domain_name)
+        domain_id = domain_id[0]["domain_id"]
         return {
             "return_status": False,
             "invalid_file": file_name,
@@ -1073,7 +1086,10 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "invalid": invalid,
             "doc_count": len(set(self._doc_names)),
             "invalid_file_format": self._error_summary["invalid_file_format"],
-            "invalid_date": self._error_summary["invalid_date"]
+            "invalid_date": self._error_summary["invalid_date"],
+            "unit_id": unit_id,
+            "domain_id": domain_id,
+            "data": self._source_data
         }
 
     def make_valid_return(

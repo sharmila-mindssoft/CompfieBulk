@@ -12,7 +12,8 @@ function initMethods() {
         getUnits : getUnits,
         downloadUploadedData: downloadUploadedData,
         updateDocumentCount: updateDocumentCount,
-        processQueuedTasksRequest: processQueuedTasksRequest
+        processQueuedTasksRequest: processQueuedTasksRequest,
+        GetStatus: GetStatus
     };
 }
 
