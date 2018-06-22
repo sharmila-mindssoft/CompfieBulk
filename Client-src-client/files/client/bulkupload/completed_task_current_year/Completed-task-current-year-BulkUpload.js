@@ -281,19 +281,10 @@ function validateUpload() {
                 buClient.GetStatus(leg_id, csv_name, callback);
             }
             function call_bck_fn(error, data){
-                console.log("get status response: error"+ error + ", data:"+data)
                 if (error == "Alive"){
-                    console.log("inside if=====> going to get status again")
                     sleep(180000);
                     apiCall(leg_id, csv_name, call_bck_fn);
-                }else if (error == "CsvFileExeededMaxLines"){
-                    displayMessage(message.csv_max_lines_exceeded.replace(
-                    "MAX_LINES", data.csv_max_lines));
-                    UPLOAD_FILE.val("");
-                    MY_MODAL.modal("hide");
-                    hideLoader();
-                }
-                else if (error == "InvalidCsvFile" ){
+                }else if (error == "InvalidCsvFile" ){
                     MY_MODAL.modal("hide");
                     UPLOAD_FILE.val("");
                     displayMessage(message.invalid_csv_file);
@@ -417,10 +408,22 @@ function validateUpload() {
                     if(error == "Done" || data == "Done"){
                         leg_id = parseInt(LEGALENTITY_ID_UPLOAD.val());
                         csv_name = data.csv_name;
-                        console.log("got csv name: "+csv_name);
                         apiCall(leg_id, csv_name, call_bck_fn);    
-                    }
-                    
+                    }else if (error == "InvalidCsvFile" ){
+                        MY_MODAL.modal("hide");
+                        UPLOAD_FILE.val("");
+                        displayMessage(message.invalid_csv_file);
+                    }else if (error == "CsvFileExeededMaxLines"){
+                        displayMessage(message.csv_max_lines_exceeded.replace(
+                        "MAX_LINES", data.csv_max_lines));
+                        UPLOAD_FILE.val("");
+                        MY_MODAL.modal("hide");
+                        hideLoader();
+                    }else if(data == "Bad Request"){
+                        displayMessage(message.upload_failed);
+                        $('#myModal').modal('hide');
+                        hideLoader();
+                    } 
                 });
         } else {
             $('#myModal').modal('hide');
@@ -807,33 +810,34 @@ function submitUpload() {
             ADD_SCREEN.hide();
         }
         else if (error == null) {
-            if (totalfileUploadSuccess > 0){
-                buClient.updateDocumentCount(
-                        parseInt(
-                            $(".uploaded-data .text-primary").attr("id")
-                        ), parseInt(
-                        $(".uploaded-data").attr("id")),
-                        totalfileUploadSuccess,
-                    function(error, data){
-                        resetAdd();
-                        resetEdit();
-                        displaySuccessMessage("Compliance Submitted successfully");
-                        $('#myModal').modal('hide');
-                        VIEW_SCREEN.show();
-                        BUCT_PAGE.showList();
-                        ADD_SCREEN.hide();
-                    }
-                );
-                $('#myModal').modal('hide');
-            }else{
-                resetAdd();
-                resetEdit();
-                displaySuccessMessage("Compliance Submitted successfully");
-                $('#myModal').modal('hide');
-                VIEW_SCREEN.show();
-                BUCT_PAGE.showList();
-                ADD_SCREEN.hide();
-            }
+            resetAdd();
+            resetEdit();
+            displaySuccessMessage("Compliance Submitted successfully");
+            $('#myModal').modal('hide');
+            VIEW_SCREEN.show();
+            BUCT_PAGE.showList();
+            ADD_SCREEN.hide();
+            // if (totalfileUploadSuccess > 0){
+            //     // buClient.updateDocumentCount(
+            //     //         parseInt(
+            //     //             $(".uploaded-data .text-primary").attr("id")
+            //     //         ), parseInt(
+            //     //         $(".uploaded-data").attr("id")),
+            //     //         totalfileUploadSuccess,
+            //     //     function(error, data){
+                        
+            //     //     }
+            //     // );
+                
+            // }else{
+            //     resetAdd();
+            //     resetEdit();
+            //     displaySuccessMessage("Compliance Submitted successfully");
+            //     $('#myModal').modal('hide');
+            //     VIEW_SCREEN.show();
+            //     BUCT_PAGE.showList();
+            //     ADD_SCREEN.hide();
+            // }
         } else {
             $('#myModal').modal('hide');
         }
@@ -999,9 +1003,7 @@ var myDropzone = new Dropzone("div#myDrop", {
                 perQueueUploadSuccess = 0;
                 myDropzone.processQueue();
             }
-            if (totalfileUploadSuccess == DOC_NAMES.length ||
-                REMAINING_DOCUMENTS == 0
-            ) {
+            if (REMAINING_DOCUMENTS == 0) {
                 displaySuccessMessage(message.document_upload_success);
                 $('#divSuccessbutton').show();
                 BTN_UPLOAD.hide();

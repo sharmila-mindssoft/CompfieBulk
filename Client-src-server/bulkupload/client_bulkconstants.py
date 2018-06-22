@@ -40,3 +40,10 @@ string_months = {
     11: "Nov",
     12: "Dec",
 }
+
+csv_headers = [
+    "Legal_Entity", "Domain", "Unit_Code", "Unit_Name", "Primary_Legislation",
+    "Secondary_Legislation", "Compliance_Task", "Compliance_Description",
+    "Compliance_Frequency", "Statutory_Date", "Due_Date", "Assignee",
+    "Completion_Date", "Document_Name"
+]

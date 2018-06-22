@@ -114,6 +114,7 @@ class SourceDB(object):
         self.__source_db_con.close()
 
     def init_values(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
         self.connect_source_db(legal_entity_id)
         self.get_legal_entities()
         self.get_domains()
@@ -397,6 +398,9 @@ class SourceDB(object):
                 return "Duplicate due date"
         except Exception:
             _db_check.rollback()
+        if self.check_if_already_saved_compliance(
+                self.legal_entity_id) is False:
+            return "Duplicate due date"
         if due_date in due_dates:
             return True
         else:
@@ -826,7 +830,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                 data.get("Compliance_Task"),
                                 data.get("Primary_Legislation"),
                                 data.get("Secondary_Legislation"),
-                                data.get("Compliance_Description"),
+                                data.get("Compliance_Description")
                             )
                         elif key == "Completion_Date":
                             is_found = unbound_method(
@@ -1063,16 +1067,18 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
 
         unit_code = self._source_data[0]["Unit_Code"]
         domain_name = self._source_data[0]["Domain"]
-
+        unit_id = None
         unit_code = [unit_code]
         q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
         unit_id = self._source_db.select_all(q, unit_code)
-        unit_id = unit_id[0]["unit_id"]
-
+        if len(unit_id) > 0:
+            unit_id = unit_id[0]["unit_id"]
+        domain_id = None
         domain_name = [domain_name]
         q = "select domain_id from tbl_domains where domain_name = TRIM(%s)"
         domain_id = self._source_db.select_all(q, domain_name)
-        domain_id = domain_id[0]["domain_id"]
+        if len(domain_id) > 0:
+            domain_id = domain_id[0]["domain_id"]
         return {
             "return_status": False,
             "invalid_file": file_name,
@@ -1290,7 +1296,13 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             db, data_result, legal_entity_id, csv_id
         )
         self.save_data_submit_status(data_save_status)
+        self.remove_data_from_temp_db(db, csv_id)
         return data_save_status
+
+    def remove_data_from_temp_db(self, db, csv_id):
+        query = "DELETE FROM tbl_bulk_past_data WHERE csv_past_id=%s"
+        params = [csv_id]
+        self._db.execute(query, params)
 
     def save_data_submit_status(self, data_save_status):
         data_submit_value = 0
