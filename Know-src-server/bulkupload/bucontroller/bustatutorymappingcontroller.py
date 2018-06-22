@@ -1,3 +1,7 @@
+import os
+import threading
+import time
+import json
 import traceback
 from server import logger
 from ..bucsvvalidation.statutorymappingvalidation import (
@@ -28,7 +32,8 @@ from ..budatabase.bustatutorymappingdb import (
     get_pending_action,
     delete_action_after_approval, get_rejected_sm_file_count,
     get_domains_for_user_bu,
-    get_countries_for_user_bu, get_knowledge_executive_bu
+    get_countries_for_user_bu, get_knowledge_executive_bu,
+    get_sm_document_count, get_thread_status
 )
 
 from ..bulkuploadcommon import (
@@ -38,7 +43,8 @@ from ..bulkuploadcommon import (
 from ..bulkexport import ConvertJsonToCSV
 import datetime
 from ..bulkconstants import (
-    BULKUPLOAD_CSV_PATH, CSV_MAX_LINES, MAX_REJECTED_COUNT
+    BULKUPLOAD_CSV_PATH, CSV_MAX_LINES, MAX_REJECTED_COUNT,
+    BULKUPLOAD_INVALID_PATH
 )
 
 from protocol import generalprotocol, technoreports
@@ -132,6 +138,9 @@ def process_bu_statutory_mapping_request(request, db, session_user):
             request_frame, session_user
         )
 
+    if type(request_frame) is bu_sm.GetStatus:
+        result = process_get_status(db, request_frame)
+
     return result
 
 # transaction methods begin
@@ -187,6 +196,78 @@ def get_statutory_mapping_csv_list(db, session_user):
     )
     return result
 
+
+def validate_data(db, request_frame, c_obj, session_user, csv_name):
+    res_data = c_obj.perform_validation()
+    print "Invalid CSV res_data -> ", res_data
+    return_data = None
+    if res_data == "InvalidCSV":
+        return_data = "InvalidCSV"
+
+    elif res_data is None:
+        raise RuntimeError("Invalid Csv File")
+
+    elif res_data["return_status"] is True:
+        generate_valid_file(csv_name)
+        if res_data["doc_count"] == 0:
+            upload_sts = 1
+        else:
+            upload_sts = 0
+
+        csv_args = [
+            session_user.user_id(),
+            request_frame.c_id, request_frame.c_name,
+            request_frame.d_id,
+            request_frame.d_name, csv_name,
+            res_data["total"], res_data["doc_count"], upload_sts
+        ]
+        new_csv_id = save_mapping_csv(db, csv_args)
+
+        # result = None
+
+        if new_csv_id:
+            if save_mapping_data(db, new_csv_id, res_data["data"]) is True:
+                if res_data["doc_count"] == 0:
+                    c_obj.save_executive_message(
+                        csv_name, request_frame.c_name,
+                        request_frame.d_name, session_user.user_id()
+                    )
+                    c_obj.source_commit()
+                return_data = bu_sm.UploadStatutoryMappingCSVValidSuccess(
+                    new_csv_id, res_data["csv_name"],
+                    res_data["total"], res_data["valid"],
+                    res_data["invalid"],
+                    res_data["doc_count"], res_data["doc_names"],
+                    csv_name
+                ).to_structure()
+                return_data = json.dumps(return_data)
+                print "return_data->>> ", return_data
+        # csv data save to temp db
+    else:
+        return_data = bu_sm.UploadStatutoryMappingCSVInvalidSuccess(
+            res_data["invalid_file"], res_data["mandatory_error"],
+            res_data["max_length_error"], res_data["duplicate_error"],
+            res_data["invalid_char_error"], res_data["invalid_data_error"],
+            res_data["inactive_error"], res_data["total"],
+            res_data["invalid"],
+            res_data["total"] - res_data["invalid"],
+            res_data["invalid_frequency_error"]
+        ).to_structure()
+        return_data = json.dumps(return_data)
+
+    print return_data
+    file_string = csv_name.split(".")
+    file_name = "%s_%s.%s" % (
+        file_string[0], "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    with open(file_path, "wb") as fn:
+        fn.write(return_data)
+    return
+    # return result
+
+
+
 ########################################################
 '''
    save the file in csv folder after success full csv data validation
@@ -209,6 +290,52 @@ def get_statutory_mapping_csv_list(db, session_user):
 
 
 def upload_statutory_mapping_csv(db, request_frame, session_user):
+    try:
+        if request_frame.csv_size > 0:
+            pass
+
+        if get_rejected_sm_file_count(db, session_user) >= MAX_REJECTED_COUNT:
+            return bu_sm.RejectionMaxCountReached()
+
+        # save csv file
+        csv_name = convert_base64_to_file(
+            BULKUPLOAD_CSV_PATH, request_frame.csv_name, request_frame.csv_data
+        )
+        # read data from csv file
+        header, statutory_mapping_data = read_data_from_csv(csv_name)
+
+        if len(statutory_mapping_data) == 0:
+            return bu_sm.CsvFileCannotBeBlank()
+
+        if len(statutory_mapping_data) > CSV_MAX_LINES:
+            file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
+            remove_uploaded_file(file_path)
+            return bu_sm.CsvFileExeededMaxLines(CSV_MAX_LINES)
+
+        # csv data validation
+        c_obj = ValidateStatutoryMappingCsvData(
+            db, statutory_mapping_data, session_user,
+            request_frame.c_id, request_frame.d_id,
+            request_frame.csv_name, header
+        )
+
+        t = threading.Thread(
+            target=validate_data,
+            args=(db, request_frame, c_obj, session_user, csv_name))
+        t.start()
+        print "csv_name returned"
+        return bu_sm.Done(csv_name)
+
+    except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        logger.logKnowledge(
+            "error", "upload_statutory_mapping_csv",
+            str(traceback.format_exc()))
+        raise e
+
+
+def upload_statutory_mapping_csv_old_copy(db, request_frame, session_user):
     try:
         if request_frame.csv_size > 0:
             pass
@@ -297,6 +424,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             "error", "upload_statutory_mapping_csv",
             str(traceback.format_exc()))
         raise e
+
 
 ########################################################
 # To Save Executives notification message to manager once
@@ -624,16 +752,15 @@ def delete_rejected_sm_csv_id(db, request_frame, session_user):
     domain_id = request_frame.d_id
     csv_id = request_frame.csv_id
     user_id = session_user.user_id()
-
-    # Remove Rejected Documents
-    c_obj = ValidateStatutoryMappingForApprove(
+    document_count = get_sm_document_count(db, csv_id)
+    if(document_count > 0):
+        # Remove Rejected Documents
+        c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user)
-    is_document_deleted = c_obj.temp_server_folder_remove_call(csv_id)
-
+        is_document_deleted = c_obj.temp_server_folder_remove_call(csv_id)
     rejected_data = process_delete_rejected_sm_csv_id(
         db, user_id, country_id, domain_id, csv_id
     )
-
     result = bu_sm.RejectedSMBulkDataSuccess(rejected_data)
     return result
 
@@ -713,3 +840,29 @@ def download_rejected_sm_report(db, request_frame, session_user):
         result["csv_link"],
         result["ods_link"],
         result["txt_link"])
+
+
+def process_get_status(db, request):
+    csv_name = request.csv_name
+    file_string = csv_name.split(".")
+    file_name = "%s_%s.%s" % (
+        file_string[0], "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    if os.path.exists(file_path) is False:
+        return bu_sm.Alive()
+    else:
+        return_data = ""
+        with open(file_path, "r") as fn:
+            return_data += fn.read()
+        # remove_uploaded_file(file_path)
+        if return_data == "InvalidCSV":
+            return bu_sm.InvalidCsvFile()
+        else:
+            result = json.loads(return_data)
+            if str(result[0]) == "UploadStatutoryMappingCSVValidSuccess":
+                return bu_sm.UploadStatutoryMappingCSVValidSuccess.parse_inner_structure(
+                    result[1])
+            elif str(result[0]) == "UploadStatutoryMappingCSVInvalidSuccess":
+                return bu_sm.UploadStatutoryMappingCSVInvalidSuccess.parse_inner_structure(
+                    result[1])

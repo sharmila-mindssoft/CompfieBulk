@@ -997,6 +997,11 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         self._doc_names = []
         self._sheet_name = "Statutory Mapping"
 
+    def connect_bulk_database(self):
+        c_db_con = bulkupload_db_connect()
+        self._db = Database(c_db_con)
+        self._db.begin()
+
     # error summary mapped with initial count
     def error_summary(self):
         self._error_summary = {
@@ -1110,6 +1115,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
     '''
 
     def perform_validation(self):
+        self.connect_bulk_database()
         mapped_error_dict = {}
         mapped_header_dict = {}
         invalid = 0
@@ -1672,9 +1678,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                 if(
                                    self.statutories.get(strip_data) is not None
                                    ):
-                                    parent_id += str(self.statutories.get(
-                                        strip_data).get("statutory_id")) + ","
+                                    # Removed For adding duplicate parent id
+                                    # parent_id += str(self.statutories.get(
+                                    #     strip_data).get("statutory_id")) + ","
                                     parent_names = self.get_statu_map_ws(str(strip_data))
+
 
                                 if (int(statu_level) == 1 and
                                    self.statutories.get(strip_data) is None):
@@ -1711,15 +1719,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                             self.t_statu[strip_data] = statu_id
                                             parent_id += str(statu_id) + ","
                                             parent_names = self.get_statu_map_ws(str(strip_data))
-                                        # if(self.T_Statu.get(strip_data)
-                                        #     is not None and
-                                        #    strip_data not in statu_exists_id
-                                        #    ):
-                                        #     stat_id = self.T_Statu.get(strip_data)
-                                        #     if stat_id not in statu_ids:
-                                        #         statu_ids.append(stat_id)
-                                        #         statu_exists_id.append(strip_data)
-                                        #         self.T_Statu[strip_data] = stat_id
                 self.save_statutories_data(
                     self._country_id, self._domain_id, nature_id, uploaded_by,
                     str(statu_mapping_formated), grouped_list, org_ids, statu_ids,

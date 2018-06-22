@@ -136,7 +136,8 @@ class CsvList(object):
         self, csv_past_id, csv_name, uploaded_on, uploaded_by,
         total_records, total_documents, bu_uploaded_documents,
         remaining_documents, doc_names, legal_entity, domain_id, unit_id,
-        start_date
+        start_date, file_submit_status, data_submit_status,
+        file_download_status
     ):
         self.csv_past_id = csv_past_id
         self.csv_name = csv_name
@@ -151,6 +152,9 @@ class CsvList(object):
         self.domain_id = domain_id
         self.unit_id = unit_id
         self.start_date = start_date
+        self.file_submit_status = file_submit_status
+        self.data_submit_status = data_submit_status
+        self.file_download_status = file_download_status
 
     @staticmethod
     def parse_structure(data):
@@ -158,7 +162,8 @@ class CsvList(object):
             "csv_past_id", "csv_name", "uploaded_on", "uploaded_by",
             "total_records", "total_documents", "bu_uploaded_documents",
             "remaining_documents", "doc_names",
-            "legal_entity", "domain_id", "unit_id", "start_date"
+            "legal_entity", "domain_id", "unit_id", "start_date",
+            "file_submit_status", "data_submit_status", "file_download_status"
         ])
         return CsvList(
             data.get("csv_past_id"), data.get("csv_name"),
@@ -169,7 +174,9 @@ class CsvList(object):
             data.get("legal_entity"),
             data.get("domain_id"),
             data.get("unit_id"),
-            data.get("start_date")
+            data.get("start_date"), data.get("file_submit_status"),
+            data.get("data_submit_status"),
+            data.get("file_download_status")
         )
 
     def to_structure(self):
@@ -186,11 +193,14 @@ class CsvList(object):
             "legal_entity_name": self.legal_entity,
             "domain_id": self.domain_id,
             "unit_id": self.unit_id,
-            "start_date": self.start_date
+            "start_date": self.start_date,
+            "file_submit_status": self.file_submit_status,
+            "data_submit_status": self.data_submit_status,
+            "file_download_status": self.file_download_status
         }
 
 
-class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
+class UnitWiseStatutoriesForPastRecords(object):
     def __init__(
         self, compliance_id, compliance_name, description, frequency,
         statutory_date, due_date, assignee_name, assignee_id,
@@ -215,7 +225,7 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
             "assignee_name", "assignee_id", "primary_legislation",
             "secondary_legislation"
         ])
-        return UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
+        return UnitWiseStatutoriesForPastRecords(
             data.get("compliance_id"), data.get("compliance_name"),
             data.get("description"), data.get("compliance_task_frequency"),
             data.get("pr_statutory_date"), data.get("due_date"),
@@ -236,7 +246,6 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
             "primary_legislation": self.primary_legislation,
             "secondary_legislation": self.secondary_legislation
         }
-
 
 
 ####################################################
@@ -283,7 +292,7 @@ class GetDownloadData(Request):
             "compliance_task_frequency": self.compliance_frequency,
             "start_count": self.start_count, "le_name": self.le_name,
             "d_name": self.d_name, "u_name": self.u_name,
-            "d_name": self.u_code,
+            "u_code": self.u_code,
         }
 
 
@@ -338,14 +347,78 @@ class UpdateDocumentCount(Request):
         }
 
 
-def _init_Request_class_map():
+class GetStatus(Request):
+    def __init__(self, legal_entity_id, csv_name):
+        self.legal_entity_id = legal_entity_id
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["legal_entity_id", "csv_name"]
+        )
+        return GetStatus(
+            data.get("legal_entity_id"),
+            data.get("csv_name")
+        )
+
+    def to_inner_structure(self):
+        return{
+            "legal_entity_id": self.legal_entity_id,
+            "csv_name": self.csv_name
+        }
+
+
+class ProcessQueuedTasks(Request):
+    def __init__(
+        self, file_submit_status, data_submit_status, new_csv_id,
+        country_id, legal_entity_id, domain_id, unit_id
+    ):
+        self.file_submit_status = file_submit_status
+        self.data_submit_status = data_submit_status
+        self.new_csv_id = new_csv_id
+        self.legal_entity_id = legal_entity_id
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.unit_id = unit_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["file_submit_status", "data_submit_status", "new_csv_id",
+                   "country_id", "legal_entity_id", "domain_id", "unit_id"]
+        )
+        return ProcessQueuedTasks(
+            data.get("file_submit_status"),
+            data.get("data_submit_status"),
+            data.get("new_csv_id"), data.get("country_id"),
+            data.get("legal_entity_id"),
+            data.get("domain_id"), data.get("unit_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "file_submit_status": self.file_submit_status,
+            "data_submit_status": self.data_submit_status,
+            "new_csv_id": self.new_csv_id,
+            "country_id": self.country_id,
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+            "unit_id": self.unit_id
+        }
+
+
+
+def _init_request_class_map():
     classes = [
         UploadCompletedTaskCurrentYearCSV,
         SaveBulkRecords,
         GetCompletedTaskCsvUploadedList,
         GetDownloadData, GetUnits,
         DownloadUploadedData,
-        UpdateDocumentCount
+        UpdateDocumentCount,
+        GetStatus,
+        ProcessQueuedTasks
     ]
     class_map = {}
     for c in classes:
@@ -353,7 +426,7 @@ def _init_Request_class_map():
     return class_map
 
 
-_Request_class_map = _init_Request_class_map()
+_Request_class_map = _init_request_class_map()
 
 #
 # Response
@@ -407,11 +480,38 @@ class InvalidCsvFile(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
         return InvalidCsvFile()
 
     def to_inner_structure(self):
         return {}
+
+
+class Alive(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return Alive()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class Done(Response):
+    def __init__(self, csv_name):
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_name"])
+        csv_name = data.get("csv_name")
+        return Done(csv_name)
+
+    def to_inner_structure(self):
+        return {
+            "csv_name": self.csv_name
+        }
 
 
 class DataAlreadyExists(Response):
@@ -420,7 +520,6 @@ class DataAlreadyExists(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
         return DataAlreadyExists()
 
     def to_inner_structure(self):
@@ -525,14 +624,52 @@ class UploadCompletedTaskCurrentYearCSVFailed(Response):
         }
 
 
-class saveBulkRecordSuccess(Response):
+class SaveBulkRecordSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return SaveBulkRecordSuccess()
+
+    def to_inner_structure(self):
+        return{}
+
+
+class ProcessQueuedTasksSuccess(Response):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data)
-        return saveBulkRecordSuccess()
+        return ProcessQueuedTasksSuccess()
+
+    def to_inner_structure(self):
+        return{}
+
+
+class ProcessDocumentSubmitQueued(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ProcessDocumentSubmitQueued()
+
+    def to_inner_structure(self):
+        return{}
+
+
+class ProcessCompleted(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return ProcessCompleted()
 
     def to_inner_structure(self):
         return{}
@@ -558,14 +695,16 @@ class CsvListSuccess(object):
         data = parse_dictionary(data, ["csv_past_id", "csv_name",
                                        "uploaded_by", "uploaded_on",
                                        "total_records", "total_documents",
-                                       "bu_uploaded_documents"]
+                                       "bu_uploaded_documents",
+                                       "remaining_documents"]
                                 )
         return CsvListSuccess(
             data.get("csv_past_id"), data.get("csv_name"),
             data.get("uploaded_by"),
             data.get("uploaded_on"), data.get("total_records"),
             data.get("total_documents"),
-            data.get("bu_uploaded_documents")
+            data.get("bu_uploaded_documents"),
+            data.get("remaining_documents")
         )
 
     def to_structure(self):
@@ -576,7 +715,8 @@ class CsvListSuccess(object):
             "uploaded_on": self.uploaded_on,
             "total_records": self.total_records,
             "total_documents": self.total_documents,
-            "bu_uploaded_documents": self.bu_uploaded_documents
+            "bu_uploaded_documents": self.bu_uploaded_documents,
+            "remaining_documents": self.remaining_documents
         }
 
 
@@ -586,7 +726,6 @@ class ExportToCSVEmpty(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
         return ExportToCSVEmpty()
 
     def to_inner_structure(self):
@@ -656,8 +795,6 @@ class UpdateDocumentCountSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, [])
         return UpdateDocumentCountSuccess()
 
     def to_inner_structure(self):
@@ -681,15 +818,19 @@ class CsvFileExeededMaxLines(Response):
         }
 
 
-def _init_Response_class_map():
+def _init_response_class_map():
     classes = [
         UploadCompletedTaskCurrentYearCSVSuccess,
         UploadCompletedTaskCurrentYearCSVFailed,
-        saveBulkRecordSuccess, InvalidCsvFile,
+        SaveBulkRecordSuccess, InvalidCsvFile,
         GetCompletedTaskCsvUploadedListSuccess, ExportToCSVEmpty,
         DownloadBulkPastDataSuccess, GetUnitsSuccess,
         DownloadUploadedDataSuccess, UpdateDocumentCountSuccess,
-        CsvFileExeededMaxLines
+        CsvFileExeededMaxLines,
+        Alive, Done,
+        ProcessQueuedTasksSuccess,
+        ProcessDocumentSubmitQueued,
+        ProcessCompleted
     ]
     class_map = {}
     for c in classes:
@@ -697,7 +838,7 @@ def _init_Response_class_map():
     return class_map
 
 
-_Response_class_map = _init_Response_class_map()
+_Response_class_map = _init_response_class_map()
 
 
 #

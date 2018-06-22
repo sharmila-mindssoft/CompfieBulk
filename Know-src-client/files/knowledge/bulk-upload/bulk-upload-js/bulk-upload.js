@@ -702,3 +702,13 @@ var request = [
     ];
     apiRequest("bu/statutory_mapping", request, callback);
 }
+
+function GetStatus(csv_name, callback){
+    console.log("inside get status");
+    var request = [
+        'GetStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/statutory_mapping', request, callback);
+}

@@ -22,7 +22,7 @@ from constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
     BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME,
-    TEMP_FILE_SERVER_WITHOUT_TEMP
+    TEMP_FILE_SERVER_WITHOUT_TEMP, CLIENT_TEMP_FILE_SERVER_WITHOUT_TEMP
     # FORMAT_UPLOAD_PATH
 )
 from database import Database
@@ -31,7 +31,7 @@ app = Flask(__name__)
 app.config['UPLOAD_PATH'] = 'bulkuploadcomplianceformat'
 app.config['CLIENT_DOCUMENT_UPLOAD_PATH'] = 'bulkuploadclientdocuments'
 
-print app.config['UPLOAD_PATH']
+# app.config['UPLOAD_PATH']
 zipping_in_process = []
 
 # In DB
@@ -51,7 +51,6 @@ def knowledge_db_connect():
 
 
 def bulkupload_db_connect():
-    print "BULK_UPLOAD_DB_PASSWORD:============> %s" % BULK_UPLOAD_DB_PASSWORD
     cnx_pool = mysql.connector.connect(
         user=BULK_UPLOAD_DB_USERNAME,
         password=BULK_UPLOAD_DB_PASSWORD,
@@ -221,7 +220,6 @@ def delete_declined_docs(csv_id):
             response_data = db_stat
         _db.commit()
     except Exception, e:
-        print "In Exception"
         logger.logTempFiler(
             "error", "run_tempfile_server > delete_declined_docs", str(e)
         )
@@ -284,7 +282,7 @@ def upload():
         return "success"
 
 
-@app.route('/client/temp/upload', methods=['POST'])
+@app.route('/clienttemp/upload', methods=['POST'])
 def upload_client():
     logger.logTempFiler(
         "info", "run_tempfile_server > /client/temp/upload > Request", request
@@ -353,7 +351,7 @@ def zip_folder(folder_name, folder_path):
     file_status[folder_name] = "Zipping Completed"
 
 
-@app.route('/temp/downloadzip', methods=['POST'])
+@app.route('/clienttemp/downloadzip', methods=['POST'])
 def get_files_as_zip():
     csv_id = request.args.get("csv_id")
     csv_name = None
@@ -386,7 +384,7 @@ def get_files_as_zip():
             zfw.write(absname, arcname)
     zfw.close()
     download_link = "%s/%s" % ("download/zip", zip_file_name)
-    url = "%s%s" % (TEMP_FILE_SERVER_WITHOUT_TEMP, download_link)
+    url = "%s%s" % (CLIENT_TEMP_FILE_SERVER_WITHOUT_TEMP, download_link)
     return url
 
 @app.route('/temp/approve', methods=['POST'])
@@ -480,7 +478,7 @@ def removefile():
     return "removed zip file"
 
 
-@app.route('/temp/removeclientfile', methods=['POST'])
+@app.route('/clienttemp/removeclientfile', methods=['POST'])
 def removeclientfile():
     logger.logTempFiler(
         "info", "run_tempfile_server > /temp/removeclientfile > Request",
@@ -525,7 +523,7 @@ def download_format_file(csvid, filename):
     )
 
 
-@app.route('/temp/docsubmit', methods=['POST'])
+@app.route('/clienttemp/docsubmit', methods=['POST'])
 def approve_client():
     logger.logTempFiler(
         "info", "run_tempfile_server > approve_client > Request", request
@@ -581,7 +579,7 @@ def get_client_zip_file(folder_name):
     return zip_f_name
 
 
-@app.route('/temp/downloadclientfile', methods=['GET'])
+@app.route('/clienttemp/downloadclientfile', methods=['GET'])
 def download_client_file():
     logger.logTempFiler(
         "info", "run_tempfile_server > download_client_file > Request", request
@@ -627,7 +625,7 @@ def remove_rejected_folders():
     rmtree(folder_path)
     return "removed rejected folders"
 
-@app.route('/temp/client/copycsv', methods=['POST'])
+@app.route('/clienttemp/copycsv', methods=['POST'])
 def upload_csv():
     framed_file_name = request.args.get("framed_file_name")
     file_content = request.args.get("file_content")
@@ -638,7 +636,6 @@ def upload_csv():
         BULK_CSV_PATH
     )
     if not os.path.exists(file_path):
-        print "path created ", file_path
         os.makedirs(file_path)
 
     create_path = "%s/%s" % (file_path, framed_file_name)
@@ -700,7 +697,6 @@ def main():
     port = parse_port(args.port)
     if port is None:
         msg = "error: port is not in PORT format: %s"
-        print msg % (args.port,)
         logger.logTempFiler(
             "error", "run_tempfile_server > main()", msg % (args.port,)
         )

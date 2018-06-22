@@ -24,6 +24,15 @@ function UploadCompletedTaskCurrentYearCSV(args, callback) {
     clientApiRequest("bu/completed_task", request, callback);
 }
 
+function GetStatus(le_id, csv_name, callback){
+    var request = [
+        'GetStatus', {
+            "legal_entity_id": le_id,
+            "csv_name": csv_name
+        }
+    ];
+    clientApiRequest('bu/completed_task', request, callback);
+}
 function saveBulkRecords(args, callback) {
     var request = [
         'SaveBulkRecords', args
@@ -168,7 +177,7 @@ function downloadUploadedData(
     legal_entity_id, csv_id, callback){
     request =[
         "DownloadUploadedData",
-        {   
+        {
             "legal_entity_id": legal_entity_id,
             "csv_id": csv_id
         }
@@ -180,11 +189,19 @@ function updateDocumentCount(
     legal_entity_id, csv_id, count, callback){
     request =[
         "UpdateDocumentCount",
-        {   
+        {
             "legal_entity_id": legal_entity_id,
             "csv_id": csv_id,
             "count": count
         }
     ]
+    return clientApiRequest('bu/completed_task', request, callback);
+}
+
+
+function processQueuedTasksRequest(args, callback){
+    request = [
+        'ProcessQueuedTasks', args
+    ];
     return clientApiRequest('bu/completed_task', request, callback);
 }

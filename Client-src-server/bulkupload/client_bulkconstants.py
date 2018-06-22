@@ -16,17 +16,15 @@ CSV_DOWNLOAD_URL = "/download/csv"
 BULK_UPLOAD_DB_HOST = "localhost"
 BULK_UPLOAD_DB_PORT = 3306
 BULK_UPLOAD_DB_USERNAME = "root"
-BULK_UPLOAD_DB_PASSWORD = "123456"
-# BULK_UPLOAD_DB_PASSWORD = "root"
+# BULK_UPLOAD_DB_PASSWORD = "123456"
+BULK_UPLOAD_DB_PASSWORD = "root"
 BULK_UPLOAD_DATABASE_NAME = "compfie_bulkupload"
 
-TEMP_FILE_SERVER = "http://localhost:8083/temp/"
-# FILE_SERVER = "http://localhost:8084/"
+CLIENT_TEMP_FILE_SERVER = "http://localhost:8086/clienttemp/"
 LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 
-
 CSV_DELIMITER = "|;|"
-CSV_MAX_LINE_ITEM = 100
+CSV_MAX_LINE_ITEM = 10000
 
 string_months = {
     1: "Jan",

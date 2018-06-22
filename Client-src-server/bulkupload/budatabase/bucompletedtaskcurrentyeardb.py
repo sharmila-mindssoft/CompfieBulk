@@ -5,13 +5,17 @@ import datetime
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
 from server.common import (
     string_to_datetime, string_to_datetime_with_time
 )
 from clientprotocol import clientcore
-from bulkupload.client_bulkconstants import (TEMP_FILE_SERVER)
+from bulkupload.client_bulkconstants import (
+    CLIENT_TEMP_FILE_SERVER, BULK_UPLOAD_DB_HOST,
+    BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
+    BULK_UPLOAD_DATABASE_NAME
+)
 
 
 __all__ = [
@@ -19,11 +23,12 @@ __all__ = [
     "save_completed_task_current_year_csv",
     "save_completed_task_data",
     "get_past_record_data",
-    "get_completed_task_CSV_list",
+    "get_completed_task_csv_list",
     "get_client_id_by_le",
     "get_units_for_user",
     "get_files_as_zip",
-    "update_document_count"
+    "update_document_count",
+    "get_current_doc_data_submit_status"
 ]
 
 
@@ -43,10 +48,10 @@ def get_legal_entity_domains(
     rows = db.select_all(query, param)
     results = []
     for domains in rows:
-        domainObj = bu_ct.Domains(
+        domain_obj = bu_ct.Domains(
             domains["legal_entity_id"], domains["le_domain_id"],
             domains["domain_name"])
-        results.append(domainObj)
+        results.append(domain_obj)
 
     return results
 
@@ -69,9 +74,9 @@ def save_completed_task_current_year_csv(
         completed_task[8], completed_task[9],
         completed_task[10], completed_task[11]
     ]
-
+    db = connect_bulk_db()
     completed_task_id = db.insert("tbl_bulk_past_data_csv", columns, values)
-
+    db.commit()
     return completed_task_id
 
 
@@ -97,17 +102,18 @@ def save_completed_task_data(db, csv_id, csv_data):
                 string_to_datetime(d["Completion_Date"]), d["Document_Name"]
 
             ))
-
+        db = connect_bulk_db()
         if values:
             db.bulk_insert("tbl_bulk_past_data", columns, values)
+            db.commit()
             return True
         else:
             return False
-    except Exception, e:
+    except Exception:
         raise ValueError("Transaction failed")
 
 
-def get_past_record_data(db, csvID):
+def get_past_record_data(db, csv_id):
     query = " SELECT bulk_past_data_id, csv_past_id, " + \
         " legal_entity, " + \
         " domain, unit_code, unit_name, perimary_legislation, " + \
@@ -116,7 +122,7 @@ def get_past_record_data(db, csvID):
         " statutory_date, due_date, assignee, completion_date, " + \
         " document_name" + \
         " FROM tbl_bulk_past_data where csv_past_id = %s; "
-    param = [csvID]
+    param = [csv_id]
     rows = db.select_all(query, param)
     return rows
 
@@ -126,12 +132,12 @@ def get_compliance_id(db, compliance_task_name):
         "where compliance_task = '%s' limit 1"
 
     param = [compliance_task_name]
-    complianceID = db.select_all(query, param)
+    compliance_id = db.select_all(query, param)
 
-    return complianceID
+    return compliance_id
 
 
-def get_completed_task_CSV_list(db, session_user, legal_entity_list):
+def get_completed_task_csv_list_from_db(db, session_user, legal_entity_list):
 
     doc_names = {}
     legal_entity_list = ",".join([str(x) for x in legal_entity_list])
@@ -144,28 +150,38 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
             " (T01.total_documents - T01.uploaded_documents) " + \
             " AS remaining_documents, " + \
             " T01.domain_id, T01.unit_id_id as unit_id, " + \
-            " NOW() as start_date" + \
+            " NOW() as start_date," + \
+            " T01.file_submit_status, T01.data_submit_status," + \
+            " T01.file_download_status " + \
             " From tbl_bulk_past_data_csv  AS T01 " + \
             " INNER JOIN tbl_bulk_past_data AS T02 " + \
             " ON T01.csv_past_id = T02.csv_past_id " + \
-            " where (T01.total_documents - T01.uploaded_documents) >= 1 " + \
-            " and uploaded_by = %s AND FIND_IN_SET " + \
-            " (T01.legal_entity_id, %s)  order by T01.uploaded_on DESC"
-    param = [session_user, legal_entity_list]
+            " where " + \
+            " (uploaded_by = %s AND " + \
+            " (FIND_IN_SET (T01.legal_entity_id, %s)) " + \
+            " AND " + \
+            " (T01.total_documents - T01.uploaded_documents) >= 1) " + \
+            " OR " + \
+            " (uploaded_by = %s AND " + \
+            " (FIND_IN_SET (T01.legal_entity_id,  %s)) AND " + \
+            " (T01.file_submit_status in (0,2) OR T01.data_submit_status in (0,2) )) " + \
+            " order by T01.uploaded_on DESC"
+
+    param = [session_user, legal_entity_list, session_user, legal_entity_list]
 
     rows = db.select_all(query, param)
 
     param1 = [session_user]
-    docQuery = "select t1.csv_past_id, document_name " + \
-               " from tbl_bulk_past_data as t1 " + \
-               " INNER JOIN tbl_bulk_past_data_csv as t2 " + \
-               " ON t2.csv_past_id = t1.csv_past_id " + \
-               " where ifnull(t2.upload_status, 0) = 0 " + \
-               " and document_name != '' " + \
-               " and t2.uploaded_by = %s "
-    docRows = db.select_all(docQuery, param1)
-    if docRows is not None:
-        for d in docRows:
+    doc_query = "select t1.csv_past_id, document_name " + \
+                " from tbl_bulk_past_data as t1 " + \
+                " INNER JOIN tbl_bulk_past_data_csv as t2 " + \
+                " ON t2.csv_past_id = t1.csv_past_id " + \
+                " where ifnull(t2.upload_status, 0) = 0 " + \
+                " and document_name != '' " + \
+                " and t2.uploaded_by = %s "
+    doc_rows = db.select_all(doc_query, param1)
+    if doc_rows is not None:
+        for d in doc_rows:
             csv_id = d.get("csv_past_id")
             docname = d.get("document_name")
             doc_list = doc_names.get(csv_id)
@@ -187,10 +203,31 @@ def get_completed_task_CSV_list(db, session_user, legal_entity_list):
                     row["total_documents"], row["uploaded_documents"],
                     row["remaining_documents"],
                     doc_names.get(row["csv_past_id"]), row["legal_entity"],
-                    row["domain_id"], row["unit_id"], curr_date
+                    row["domain_id"], row["unit_id"], curr_date,
+                    row["file_submit_status"], row["data_submit_status"],
+                    row["file_download_status"]
                 )
             )
     return csv_list
+
+
+def connect_bulk_db():
+    _bulk_db = None
+    try:
+        _bulk_db_con = mysql.connector.connect(
+            user=BULK_UPLOAD_DB_USERNAME,
+            password=BULK_UPLOAD_DB_PASSWORD,
+            host=BULK_UPLOAD_DB_HOST,
+            database=BULK_UPLOAD_DATABASE_NAME,
+            port=BULK_UPLOAD_DB_PORT,
+            autocommit=False
+        )
+        _bulk_db = Database(_bulk_db_con)
+        _bulk_db.begin()
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
+    return _bulk_db
 
 
 def connect_le_db(le_id):
@@ -205,7 +242,7 @@ def connect_le_db(le_id):
         )
         _knowledge_db = Database(_knowledge_db_con)
         _knowledge_db.begin()
-
+        _source_db_con = None
         query = "select t1.client_database_id, t1.database_name, " + \
             "t1.database_username, t1.database_password, " + \
             "t3.database_ip, database_port " + \
@@ -242,7 +279,7 @@ def connect_le_db(le_id):
         print e
 
 
-def get_client_id_by_le(db, legal_entity_id):
+def get_client_id_by_le(legal_entity_id):
     db = connect_le_db(legal_entity_id)
     query = "SELECT client_id, group_name from tbl_client_groups "
     rows = db.select_all(query)
@@ -260,7 +297,7 @@ def get_user_category(db, user_id):
         return None
 
 
-def get_units_for_user(db, le_id, domain_id, user_id):
+def get_units_for_user(le_id, domain_id, user_id):
     db = connect_le_db(le_id)
     user_category_id = get_user_category(db, user_id)
     if user_category_id > 3:
@@ -328,7 +365,7 @@ def get_files_as_zip(csv_id):
     caller_name = (
         "%sdownloadzip?csv_id=%s"
     ) % (
-        TEMP_FILE_SERVER, csv_id
+        CLIENT_TEMP_FILE_SERVER, csv_id
     )
     response = requests.post(caller_name)
     download_link = response.text
@@ -342,3 +379,15 @@ def update_document_count(db, csv_id, count):
     param = [count, csv_id]
     rows = db.execute(q, param)
     return rows
+
+
+def get_current_doc_data_submit_status(db, csv_id):
+    query = "SELECT file_submit_status, data_submit_status, " + \
+            "file_download_status from tbl_bulk_past_data_csv " + \
+            "where csv_past_id = %s "
+    param = [csv_id]
+    rows = db.select_all(query, param)
+    file_submit_status = rows[0]["file_submit_status"]
+    data_submit_status = rows[0]["data_submit_status"]
+    file_download_stats = rows[0]["file_download_status"]
+    return file_submit_status, data_submit_status, file_download_stats

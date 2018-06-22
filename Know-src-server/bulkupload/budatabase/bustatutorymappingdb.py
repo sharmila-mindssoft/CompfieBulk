@@ -7,11 +7,14 @@ import mysql.connector
 from server.dbase import Database
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
-    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
+    KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
 )
 from ..bulkconstants import (
-    MAX_REJECTED_COUNT
+    MAX_REJECTED_COUNT, CSV_DELIMITER, BULK_UPLOAD_DB_HOST,
+    BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
+    BULK_UPLOAD_DATABASE_NAME
 )
+
 
 __all__ = [
     "get_uploaded_statutory_mapping_csv_list",
@@ -33,7 +36,8 @@ __all__ = [
     "get_rejected_sm_file_count",
     "get_domains_for_user_bu",
     "get_countries_for_user_bu",
-    "get_knowledge_executive_bu"
+    "get_knowledge_executive_bu",
+    "get_thread_status"
 
 ]
 
@@ -213,7 +217,9 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
 
 
 def save_mapping_csv(db, args):
+    db = connect_bulk_db()
     newid = db.call_insert_proc("sp_statutory_mapping_csv_save", args)
+    db.commit()
     return newid
 
 
@@ -271,7 +277,9 @@ def save_mapping_data(db, csv_id, csv_data):
             ))
 
         if values:
+            db = connect_bulk_db()
             db.bulk_insert("tbl_bulk_statutory_mapping", columns, values)
+            db.commit()
             return True
         else:
             return False
@@ -546,8 +554,11 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
     upload_on = None
     total = None
     mapping_data = []
+    months = ['Jan','Feb','Mar','Apr','May',
+    'Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     if len(data) > 0:
         for idx, d in enumerate(data):
+            statu_months = ''
             if idx == 0:
                 country_name = d["country_name"]
                 domain_name = d["domain_name"]
@@ -556,6 +567,29 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
                 upload_by = d["uploaded_by"]
                 total = d["total_records"]
 
+
+            statutory_date = d["statutory_date"].replace(CSV_DELIMITER, ", ")
+            trigger_before = d["trigger_before"].replace(CSV_DELIMITER, ", ")
+            statu_month = d["statutory_month"].replace(CSV_DELIMITER, ",")
+
+            if(statu_month != ''and len(statu_month)>=1):
+                smonth_list = statu_month.split(",")
+                smonth_list = ','.join(str(x).rstrip().lstrip() for x in smonth_list)
+                smonth_list = smonth_list.split(",")
+                statu_months = []
+                mon = None
+                for smon in smonth_list:
+                    i = 0
+                    for index, mon in enumerate(months):
+                        i = i + 1
+                        smon = smon.lstrip()
+                        smon = smon.rstrip()
+                        if(i == int(smon)):
+                            statu_months.append(str(mon))
+                statu_months = ', '.join(str(x) for x in statu_months)
+            else:
+                statu_months = ''
+
             mapping_data.append(bu_sm.MappingData(
                 d["bulk_statutory_mapping_id"],
                 d["organization"], d["geography_location"],
@@ -563,8 +597,8 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
                 d["statutory_provision"], d["compliance_task"],
                 d["compliance_document"], d["compliance_description"],
                 d["penal_consequences"], d["reference_link"],
-                d["compliance_frequency"], d["statutory_month"],
-                d["statutory_date"], d["trigger_before"], d["repeats_every"],
+                d["compliance_frequency"], statu_months,
+                statutory_date, trigger_before, d["repeats_every"],
                 d["repeats_type"], d["repeat_by"], d["duration"],
                 d["duration_type"], d["multiple_input"], d["format_file"],
                 d["action"], d["remarks"], d["task_id"], d["task_type"],
@@ -802,6 +836,13 @@ def get_rejected_sm_file_count(db, session_user):
     rej_count = result[0]["rejected"]
     return rej_count
 
+def get_sm_document_count(db, csv_id):
+    result = db.call_proc(
+        "sp_get_document_count", [csv_id]
+    )
+    document_count = result[0]["document_count"]
+    return document_count
+
 
 def get_all_compliance_frequency():
     _source_db_con = connect_knowledge_db()
@@ -825,3 +866,32 @@ def connect_knowledge_db():
     except Exception, e:
         print "Connection Exception Caught"
         print e
+
+
+def connect_bulk_db():
+    _bulk_db = None
+    try:
+        _bulk_db_con = mysql.connector.connect(
+            user=BULK_UPLOAD_DB_USERNAME,
+            password=BULK_UPLOAD_DB_PASSWORD,
+            host=BULK_UPLOAD_DB_HOST,
+            database=BULK_UPLOAD_DATABASE_NAME,
+            port=BULK_UPLOAD_DB_PORT,
+            autocommit=False
+        )
+        _bulk_db = Database(_bulk_db_con)
+        _bulk_db.begin()
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
+    return _bulk_db
+
+
+def get_thread_status(db, csv_name):
+    q = " SELECT return_data from tbl_bulk_statutory_mapping_csv  " + \
+        " where csv_name = %s"
+    param = [csv_name]
+    rows = db.select_all(q, param)
+    if len(rows) > 0:
+        return rows[0]["return_data"]
+    return False

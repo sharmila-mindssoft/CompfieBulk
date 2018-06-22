@@ -1,3 +1,5 @@
+var MY_MODAL = $("#myModal");
+var STATUS = "DONE";
 var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
 
 var CANCEL_BUTTON = $("#cancel_button");
@@ -21,19 +23,19 @@ var LEGALENTITY_NAME_LABEL_UPLOAD = $(".legal-entity-name-upload");
 var AC_LEGALENTITY_UPLOAD = $("#ac_entity_upload");
 var LEGALENTITY_NAME_AC_UPLOAD = $(".legal-entity-name-ac-upload");
 
-var LIST_CONTAINER = $('.tbody-ct-csv-list');
-var LIST_ROW_TEMPLATE = $('#templates .table-ct-csv-info .table-row');
+var LIST_CONTAINER = $(".tbody-ct-csv-list");
+var LIST_ROW_TEMPLATE = $("#templates .table-ct-csv-info .table-row");
 
 var TXT_DOMAIN = $("#txt_domain");
 var HDN_DOMAIN = $("#hdn_domain");
 var DIV_DOMAIN = $("#div_domain");
 
-var TXT_UNIT = $('#txt_unit');
-var HDN_UNIT = $('#hdn_unit');
-var DIV_UNIT = $('#div_unit');
+var TXT_UNIT = $("#txt_unit");
+var HDN_UNIT = $("#hdn_unit");
+var DIV_UNIT = $("#div_unit");
 
-var BTN_UPLOAD = $('#btnUpload');
-var BTN_UPLOADED_DATA = $('.uploaded-data');
+var BTN_UPLOAD = $("#btnUpload");
+var BTN_UPLOADED_DATA = $(".uploaded-data");
 var INVALID_FILE_NAME = null;
 
 var UNIT_LIST = [];
@@ -47,17 +49,17 @@ var UPLOADED_ON_FILTER = $("#filter_uploaded_on");
 var UPLOADED_FILE_FILTER = $("#filter_uploaded_file");
 
 //error description variable declaration
-var TOTAL_RECORD = $('.totalRecords');
-var VALID_RECORD = $('.validRecords');
-var INVALID_RECORD = $('.invalidRecords');
-var INVALID_DATE = $('.invaliddate');
-var DUPLICATE_ERROR = $('.duplicateErrors');
-var MANDATORY_ERROR = $('.mandatoryfieldblank');
-var LENGTH_ERROR = $('.lengthErrors');
-var INACTIVE_ERROR = $('.masterdatainactive');
-var INVALID_FILE_FORMAT_ERROR = $('.invalidfileformat');
-var INVALID_DATA_VALIDATION = $('.invaliddatavaidation');
-var INVALID_CHAR_VALIDATION = $('.invalidchar');
+var TOTAL_RECORD = $(".totalRecords");
+var VALID_RECORD = $(".validRecords");
+var INVALID_RECORD = $(".invalidRecords");
+var INVALID_DATE = $(".invaliddate");
+var DUPLICATE_ERROR = $(".duplicateErrors");
+var MANDATORY_ERROR = $(".mandatoryfieldblank");
+var LENGTH_ERROR = $(".lengthErrors");
+var INACTIVE_ERROR = $(".masterdatainactive");
+var INVALID_FILE_FORMAT_ERROR = $(".invalidfileformat");
+var INVALID_DATA_VALIDATION = $(".invaliddatavaidation");
+var INVALID_CHAR_VALIDATION = $(".invalidchar");
 
 var UNIT_LISTMAP = {};
 var LEGALENTITYUSR = [];
@@ -66,11 +68,13 @@ var TOTAL_DOCUMENTS = 0;
 var UPLOADED_DOCUMENTS = 0;
 var REMAINING_DOCUMENTS = 0;
 
+BUCLIENT = buClient;
+
 function displayLoader() {
-  $('.loading-indicator-spin').show();
+  $(".loading-indicator-spin").show();
 }
 function hideLoader() {
-  $('.loading-indicator-spin').hide();
+  $(".loading-indicator-spin").hide();
 }
 
 TXT_DOMAIN.keyup(function(e) {
@@ -81,9 +85,9 @@ TXT_DOMAIN.keyup(function(e) {
         "d_name", "d_id",
         function(val) {
             displayLoader();
-            loadUnits(parseInt(LEGALENTITY_ID.val()), parseInt(val));
-            onAutoCompleteSuccess(TXT_DOMAIN, HDN_DOMAIN, val);
-            hideLoader();
+            loadUnits(parseInt(LEGALENTITY_ID.val()), parseInt(val), function(){
+                onAutoCompleteSuccess(TXT_DOMAIN, HDN_DOMAIN, val);
+            });
         }, conditionFields, conditionValues);
 });
 
@@ -112,7 +116,7 @@ UPLOADED_FILE_FILTER.keyup(function() {
     BUCT_PAGE.renderList(fList);
 });
 
-function loadUnits(leId, domainId) {
+function loadUnits(leId, domainId, callback) {
     buClient.getUnits(leId, domainId, function(error, response) {
         if (error == null) {
             UNIT_LIST = response.user_units;
@@ -120,10 +124,12 @@ function loadUnits(leId, domainId) {
                 UNIT_LISTMAP[parseInt(u["unit_id"])] = u["unit_code"];
                 u["unit_name"] = u["unit_code"]+"-"+u["unit_name"];
             });
+            hideLoader();
         }else{
             hideLoader();
         }
     });
+    callback();
 }
 LEGALENTITY_NAME.keyup(function(e) {
     var textVal = $(this).val();
@@ -157,7 +163,7 @@ function get_legal_entity_id(le_name){
 function onAutoCompleteSuccess(valueElement, idElement, val) {
     valueElement.val(val[1]);
     idElement.val(val[0]);
-    if (idElement[0].id == 'hdn_legal_entity_id') {
+    if (idElement[0].id == "hdn_legal_entity_id") {
         getPastRecords(parseInt(LEGALENTITY_ID.val()));
     }
 }
@@ -204,7 +210,7 @@ function getPastRecords(legalEntity) {
         hideLoader();
     }
 
-    function onFailure(error) {
+    function onFailure() {
         hideLoader();
     }
     client_mirror.getPastRecordsFormData(parseInt(legalEntity),
@@ -212,10 +218,29 @@ function getPastRecords(legalEntity) {
             if (error == null) {
                 onSuccess(response);
             } else {
-                onFailure(error);
+                onFailure();
             }
         }
     );
+}
+
+function setDocumentCount(){
+    $('#bu_doc_total').text(TOTAL_DOCUMENTS);
+    if (UPLOADED_DOCUMENTS > TOTAL_DOCUMENTS) {
+        UPLOADED_DOCUMENTS = TOTAL_DOCUMENTS;
+        REMAINING_DOCUMENTS = TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS;
+    }
+    $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
+    $('#bu_remain_total').text(REMAINING_DOCUMENTS);
+}
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
 }
 
 function validateUpload() {
@@ -223,27 +248,27 @@ function validateUpload() {
     var getValidCount = null;
     var args = null;
     if(
-        $('#txt_legal_entity_name_upload').val() == "" &&
+        $("#txt_legal_entity_name_upload").val() == "" &&
         LEGALENTITY_NAME_LABEL_UPLOAD.text() == ""
     ){
         displayMessage(message.legalentity_required);
-        $('#myModal').modal('hide');
+        MY_MODAL.modal("hide");
         return false;
     }
     else if (
         UPLOAD_FILE.val() == "" && BUCT_PAGE._ActionMode == "add"
     ) {
         displayMessage(message.upload_csv);
-        $('#myModal').modal('hide');
+        MY_MODAL.modal("hide");
         return false;
     }else if (
-        addedfiles.length <=0 && BUCT_PAGE._ActionMode == 'upload'
+        addedfiles.length <=0 && BUCT_PAGE._ActionMode == "upload"
     ) {
         displayMessage(message.upload_docs);
-        $('#myModal').modal('hide');
+        MY_MODAL.modal("hide");
         return false;
     }  else {
-        $('#myModal').modal('show');
+        MY_MODAL.modal("show");
         if (BUCT_PAGE._ActionMode == "add") {
             args = {
                 "csv_name": CSV_INFO["file_name"],
@@ -251,20 +276,28 @@ function validateUpload() {
                 "csv_size": CSV_INFO["file_size"],
                 "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val())
             };
-            buClient.UploadCompletedTaskCurrentYearCSV(
-                args, function(error, data) {
-                if (error == "CsvFileExeededMaxLines"){
+            var csv_name = null;
+            function apiCall(leg_id, csv_name, callback){
+                buClient.GetStatus(leg_id, csv_name, callback);
+            }
+            function call_bck_fn(error, data){
+                console.log("get status response: error"+ error + ", data:"+data)
+                if (error == "Alive"){
+                    console.log("inside if=====> going to get status again")
+                    sleep(180000);
+                    apiCall(leg_id, csv_name, call_bck_fn);
+                }else if (error == "CsvFileExeededMaxLines"){
                     displayMessage(message.csv_max_lines_exceeded.replace(
-                    'MAX_LINES', data.csv_max_lines));
+                    "MAX_LINES", data.csv_max_lines));
                     UPLOAD_FILE.val("");
-                    $('#myModal').modal('hide');
+                    MY_MODAL.modal("hide");
                     hideLoader();
                 }
                 else if (error == "InvalidCsvFile" ){
-                    $('#myModal').modal('hide');
+                    MY_MODAL.modal("hide");
                     UPLOAD_FILE.val("");
                     displayMessage(message.invalid_csv_file);
-                }else if(error == 'DataAlreadyExists'){
+                }else if(error == "DataAlreadyExists"){
                     $('#myModal').modal('hide');
                     UPLOAD_FILE.val("");
                     displayMessage(message.data_already_exists);
@@ -325,18 +358,16 @@ function validateUpload() {
                     $('#divSuccessFile').show();
                     $(".bu-doc-summary").show();
                     TOTAL_DOCUMENTS = data.doc_count;
+                    UPLOADED_DOCUMENTS = 0;
                     REMAINING_DOCUMENTS = data.doc_count;
-                    $('#bu_doc_total').text(data.doc_count);
+                    setDocumentCount();
                     $('#up-doc-title').hide();
                     $('#remaining-doc-title').hide();
-                    $('#bu_upload_total').text('0');
-                    $('#bu_remain_total').text('0');
                     displaySuccessMessage(
                         "Csv file uploaded successfully");
                     hideLoader();
-
                 } else {
-                    $('#myModal').modal('hide');
+                    MY_MODAL.modal('hide');
                     displayMessage(message.upload_failed);
                     INVALID_FILE_NAME = data.invalid_file.split('.');
                     TOTAL_RECORD.text(data.total);
@@ -365,7 +396,7 @@ function validateUpload() {
                     $('#divSuccessFile').hide();
                     $('.divSuccessDocument').hide();
                     $('#divSuccessbutton').hide();
-                    base_path = "../download/invalid"
+                    base_path = "../download/invalid";
                     csvPath = base_path + "/csv/" +
                                 INVALID_FILE_NAME[0] + '.csv';
                     xls_path = base_path + "/xlsx/"
@@ -379,16 +410,26 @@ function validateUpload() {
                     $('#ods').attr("href", ods_path);
                     // $('#txt').attr("href", txt_path);
                     hideLoader();
-                }
-            });
+                }                        
+            }
+            buClient.UploadCompletedTaskCurrentYearCSV(
+                args, function(error, data){
+                    if(error == "Done" || data == "Done"){
+                        leg_id = parseInt(LEGALENTITY_ID_UPLOAD.val());
+                        csv_name = data.csv_name;
+                        console.log("got csv name: "+csv_name);
+                        apiCall(leg_id, csv_name, call_bck_fn);    
+                    }
+                    
+                });
         } else {
             $('#myModal').modal('hide');
             displayLoader();
             $('#up-doc-title').show();
             $('#remaining-doc-title').show();
-            $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
-            $('#bu_remain_total').text(REMAINING_DOCUMENTS);
+            setDocumentCount();
             myDropzone.processQueue();
+            setTimeout(hideLoader(), 5000);
         }
     }
 }
@@ -470,7 +511,6 @@ function pageControls() {
 
     BTN_UPLOADED_DATA.click(function(){
         downloadUploadedData(
-            parseInt($(".uploaded-data .text-primary").attr("id")),
             parseInt($(".uploaded-data").attr("id"))
         );
     });
@@ -527,6 +567,10 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(
             cnameSplit = data.csv_name.split("_");
             cnameSplit.pop();
             cname = cnameSplit.join("_");
+            var fileSubStats = data.file_submit_status;
+            var dataSubStats = data.data_submit_status;
+            var fileDownldStatus = data.file_download_status;
+
             $('.sno', cloneRow).text(j);
             $('.legal-entity', cloneRow).text(data.legal_entity_name);
             $('.csv-name', cloneRow).text(cname);
@@ -538,9 +582,28 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(
             $('.remaining-docs', cloneRow).text(
                 data.remaining_documents);
             CSV_ID = data.csv_id;
-            $('.upload i', cloneRow).on('click', function() {
-                tThis.showEdit(data);
-            });
+            if(data.remaining_documents > 0){
+                $('.upload i', cloneRow).show();
+                $('.upload i', cloneRow).on('click', function() {
+                    tThis.showEdit(data);
+                });
+                $('.queued-task i', cloneRow).hide();
+            }else{
+                $('.upload i', cloneRow).hide();
+                if(jQuery.inArray(fileSubStats, [0,2]) != -1 ||
+                   jQuery.inArray(dataSubStats, [0,2]) != -1 ){
+                    $('.queued-task i', cloneRow).show();
+                    $('.queued-task i', cloneRow).on('click', function() {
+                        tThis.processQueuedTasks(data);
+                    });
+                }
+                // else if(fileSubStats == 0 && fileDownldStatus == "completed"){
+                //     console.log("Else")
+                //     $('.queued-task i', cloneRow).hide();
+                //     $('.queued-task', cloneRow).text("In Progress");
+                // }
+            }
+
             LIST_CONTAINER.append(cloneRow);
             j += 1;
         });
@@ -551,7 +614,6 @@ BulkCompletedTaskCurrentYear.prototype.renderList = function(
 BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     var uploadedCsvName = data.csv_name;
     var legal_entity_name = data.legal_entity_name;
-    var csvSplitName = null;
     resetEdit();
     LEGALENTITY_ID_UPLOAD.val(get_legal_entity_id(legal_entity_name));
     LEGALENTITY_NAME_LABEL.show();
@@ -564,6 +626,7 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     TOTAL_DOCUMENTS = data.total_documents;
     UPLOADED_DOCUMENTS = data.bu_uploaded_documents;
     REMAINING_DOCUMENTS = data.remaining_documents;
+    setDocumentCount();
 
     $("#dom_id_hdn").val(data.domain_id);
     $("#unit_id_hdn").val(data.unit_id);
@@ -582,29 +645,63 @@ BulkCompletedTaskCurrentYear.prototype.showEdit = function(data) {
     $('.successFileName').text(csvSplitName);
     $('.uploaded-data .text-primary').attr("id", get_legal_entity_id(legal_entity_name));
     $('.uploaded-data').attr("id", CSV_ID);
-
-    $('#bu_doc_total').text(data.total_documents);
-    $('#bu_upload_total').text(data.bu_uploaded_documents);
-    $('#bu_remain_total').text(data.remaining_documents);
-
 };
 
+BulkCompletedTaskCurrentYear.prototype.processQueuedTasks = function(data) {
+    t_this = this;
+    displayLoader();
+    var fileSubStats = data.file_submit_status;
+    var dataSubStats = data.data_submit_status;
+    var csvPastId = data.csv_past_id;
+
+    legId = get_legal_entity_id(data.legal_entity_name);
+    countryId = getCountryId(legId);
+    var args = {
+        "file_submit_status": fileSubStats,
+        "data_submit_status": dataSubStats,
+        "new_csv_id": csvPastId,
+        "country_id": parseInt(countryId),
+        "legal_entity_id": parseInt(legId),
+        "domain_id": parseInt(data.domain_id),
+        "unit_id": parseInt(data.unit_id)
+    };
+    buClient.processQueuedTasksRequest(args,
+        function(error, data) {
+            if (error == null) {
+                hideLoader();
+                displaySuccessMessage(message.process_queued_task_success);
+                VIEW_SCREEN.show();
+                BUCT_PAGE.showList();
+            } else {
+                if (error == "ProcessDocumentSubmitQueued"){
+                    displaySuccessMessage(message.process_queued_doc_success);
+                }
+                else if (error == "ProcessCompleted"){
+                    displaySuccessMessage(message.process_completed);
+                    hideLoader();
+                    VIEW_SCREEN.show();
+                    BUCT_PAGE.showList();
+                }else{
+                    t_this.possibleFailures(error);
+                    hideLoader();
+                }
+            }
+        });
+}
 
 BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(
     error) {
     displayMessage(error);
 };
 
-function downloadUploadedData(legal_entity_id, CSV_ID){
-    var domId = $("#dom_id_hdn").val();
-    var unitId = $("#unit_id_hdn").val();
+function downloadUploadedData(CSV_ID){
     args = {
         "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val()),
         "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val())
-    }
+    };
     displayLoader();
     res = buClient.downloadUploadedData(
-        parseInt(LEGALENTITY_ID_UPLOAD.val()), CSV_ID, 
+        parseInt(LEGALENTITY_ID_UPLOAD.val()), CSV_ID,
         function(error, data) {
             if (error == null) {
                 downloadUrl = data.link;
@@ -691,7 +788,6 @@ function getCountryId(le_id) {
 function submitUpload() {
     var domId = $("#dom_id_hdn").val();
     var unitId = $("#unit_id_hdn").val();
-    var startDate = $("#start_date_hdn").val();
     var args = {
         "new_csv_id": parseInt($('#hdn_csv_id').val()),
         "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val()),
@@ -707,6 +803,7 @@ function submitUpload() {
             displayMessage(message.data_already_exists);
             $('#myModal').modal('hide');
             VIEW_SCREEN.show();
+            BUCT_PAGE.showList();
             ADD_SCREEN.hide();
         }
         else if (error == null) {
@@ -723,9 +820,10 @@ function submitUpload() {
                         displaySuccessMessage("Compliance Submitted successfully");
                         $('#myModal').modal('hide');
                         VIEW_SCREEN.show();
+                        BUCT_PAGE.showList();
                         ADD_SCREEN.hide();
                     }
-                )
+                );
                 $('#myModal').modal('hide');
             }else{
                 resetAdd();
@@ -733,8 +831,9 @@ function submitUpload() {
                 displaySuccessMessage("Compliance Submitted successfully");
                 $('#myModal').modal('hide');
                 VIEW_SCREEN.show();
+                BUCT_PAGE.showList();
                 ADD_SCREEN.hide();
-            }           
+            }
         } else {
             $('#myModal').modal('hide');
         }
@@ -765,11 +864,11 @@ key_search = function(mainList) {
         }
     }
     return fList
-}
+};
 
 function file_upload_rul() {
     var sessionId = client_mirror.getSessionToken();
-    var fileBaseUrl = "/client/temp/upload?session_id=" +
+    var fileBaseUrl = "/clienttemp/upload?session_id=" +
         sessionId + "&csvid=" + CSV_ID;
     return fileBaseUrl;
 }
@@ -792,7 +891,7 @@ function resetAdd() {
     $('#divSuccessFile').hide();
     $('.bu-doc-summary').hide();
     BTN_UPLOAD.show();
-   
+
     BUCT_PAGE._ActionMode = "add";
     UPLOAD_FILE.val("");
     LEGALENTITY_NAME.val("");
@@ -871,7 +970,7 @@ var myDropzone = new Dropzone("div#myDrop", {
             }
             if(REMAINING_DOCUMENTS <= 0){
                 displayMessage("Required files were already added");
-            } 
+            }
 
         });
         this.on("removedfile", function(file) {
@@ -893,13 +992,14 @@ var myDropzone = new Dropzone("div#myDrop", {
                 perQueueUploadSuccess += 1;
                 UPLOADED_DOCUMENTS += 1;
                 REMAINING_DOCUMENTS = TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS;
+                setDocumentCount();
             }
 
             if (perQueueUploadSuccess == maxParallelCount) {
                 perQueueUploadSuccess = 0;
                 myDropzone.processQueue();
             }
-            if (totalfileUploadSuccess == DOC_NAMES.length || 
+            if (totalfileUploadSuccess == DOC_NAMES.length ||
                 REMAINING_DOCUMENTS == 0
             ) {
                 displaySuccessMessage(message.document_upload_success);
@@ -907,10 +1007,6 @@ var myDropzone = new Dropzone("div#myDrop", {
                 BTN_UPLOAD.hide();
                 BUCT_PAGE.showList();
             }
-            $('#bu_upload_total').text(UPLOADED_DOCUMENTS);
-            $('#bu_remain_total').text(
-                TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS
-            );
             // myDropzone.removeAllFiles(true);
             hideLoader();
         });
@@ -927,6 +1023,58 @@ var myDropzone = new Dropzone("div#myDrop", {
 function BulkCompletedTaskCurrentYear() {
     this._ActionMode = null;
     this._ListDataForView = [];
+}
+
+function genericWorker(worker_url, data) {
+    return new Promise(function (resolve, reject) {
+
+        if (!data.callback || !Array.isArray(data.callback))
+            return reject("Invalid data")
+
+        var callback = data.callback.pop()
+        var functions = data.callback
+        var context = data.context
+
+        if (!worker_url)
+            return reject("Worker_url is undefined")
+
+        if (!callback)
+            return reject("A callback was expected")
+
+        if (functions.length>0 && !context)
+            return reject("context is undefined")
+
+        callback = fn_string(callback) //Callback to be executed
+        functions = functions.map((fn_name)=> { return fn_string( context[fn_name] ) })
+
+        var worker = new Worker(worker_url)
+
+        worker.postMessage({ callback: callback, functions: functions })
+
+        worker.addEventListener('error', function(error){
+            return reject(error.message)
+        })
+
+        worker.addEventListener('message', function(e) {
+            resolve(e.data)
+            worker.terminate()
+
+        }, false)
+
+
+        //From function to string, with its name, arguments and its body
+        function fn_string (fn) {
+            var name = fn.name
+            fn = fn.toString()
+
+            return {
+                name: name,
+                args: fn.substring(fn.indexOf("(") + 1, fn.indexOf(")")),
+                body: fn.substring(fn.indexOf("{") + 1, fn.lastIndexOf("}"))
+            }
+        }
+
+    })
 }
 
 BUCT_PAGE = new BulkCompletedTaskCurrentYear();

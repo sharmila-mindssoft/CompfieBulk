@@ -4,6 +4,7 @@ import collections
 import mysql.connector
 import requests
 import threading
+from requests.exceptions import ConnectionError
 from datetime import datetime, timedelta
 from server.dbase import Database
 from server.common import get_date_time
@@ -11,7 +12,7 @@ from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME)
 from bulkupload.client_bulkconstants import (
-    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, TEMP_FILE_SERVER,
+    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, CLIENT_TEMP_FILE_SERVER,
     BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DATABASE_NAME, BULK_UPLOAD_DB_PORT)
 from ..buapiprotocol.pastdatadownloadbulk import (
@@ -60,6 +61,7 @@ class SourceDB(object):
         self.trigger_before_days = {}
         self.frequency_id_name_map = {}
         self.hierarchy_checker = {}
+        self.stop = True
         # self.get_doc_names()
 
     def connect_source_db(self, legal_entity_id):
@@ -146,8 +148,13 @@ class SourceDB(object):
             self.unit_code[d["unit_code"]] = d
 
     def return_unit_domain_id(self, domain_name, unit_code):
-        domain_id = self.domain[domain_name]["domain_id"]
-        unit_id = self.unit_code[unit_code]["unit_id"]
+        domain_id = None
+        unit_id = None
+        try:
+            domain_id = self.domain[domain_name]["domain_id"]
+            unit_id = self.unit_code[unit_code]["unit_id"]
+        except KeyError:
+            pass
         return unit_id, domain_id
 
     def get_unit_name(self):
@@ -218,11 +225,15 @@ class SourceDB(object):
             " is_active from tbl_compliances t "
         rows = self._source_db.select_all(query)
         for d in rows:
-            primary = d["primary_legislation"]
+            primary = d["primary_legislation"].strip()
             secondary = d["secondary_legislation"]
             compliance = d["compliance_task"]
             compliance_id = d["compliance_id"]
             description = d["compliance_description"]
+            if secondary == "":
+                secondary = "empty"
+            else:
+                secondary = secondary.strip()
             if primary not in self.hierarchy_checker:
                 self.hierarchy_checker[primary] = {}
             if secondary not in self.hierarchy_checker[primary]:
@@ -273,7 +284,7 @@ class SourceDB(object):
             rows = return_past_due_dates(
                 self._source_db, domain_id, unit_id, None, compliance_id
             )
-            result = calculate_final_due_dates(
+            result, summary = calculate_final_due_dates(
                 self._source_db, rows, domain_id, unit_id
             )
             if domain_id not in self._past_due_dates:
@@ -305,7 +316,6 @@ class SourceDB(object):
                 " and compliance_id = %s"
             params = [unit_id, domain_id, compliance_id]
             rows = self._source_db.select_all(q, params)
-            statutory_dates = None
             trigger_before_days = 0
             if rows:
                 statutory_dates = rows[0]["statutory_dates"]
@@ -349,25 +359,45 @@ class SourceDB(object):
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_code)
         compliance_id = None
+        compliance_task_name = self.get_compliance_task_name(compliance_task)
+        secondary = secondary_legislation
+        if secondary_legislation == "":
+            secondary = "empty"
         try:
             data = self.hierarchy_checker[primary_legislation][
-                secondary_legislation][compliance_task]
+                secondary][compliance_task_name]
             if data["desc"] == description:
                 compliance_id = data["compliance_id"]
         except KeyError:
             return
         if unit_id is None or domain_id is None or compliance_id is None:
             return
-
         due_dates = self.get_past_due_dates(domain_id, unit_id, compliance_id)
-        if due_dates[0] is None:
+        if due_dates is None:
             return "Not Found"
         try:
             due_date = datetime.strptime(due_date, "%d-%b-%Y")
             due_date = due_date.date().strftime("%Y-%m-%d")
         except ValueError:
             return
-        if due_date in due_dates[0]:
+        q = "SELECT bulk_past_data_id FROM tbl_bulk_past_data " + \
+            "WHERE unit_code=%s and perimary_legislation=%s and " + \
+            "secondary_legislation=%s and compliance_task_name=%s and " + \
+            "compliance_description=%s and date(due_date)=%s"
+        params = [
+            unit_code, primary_legislation, secondary_legislation,
+            compliance_task, description, due_date
+        ]
+        db = bulkupload_db_connect()
+        _db_check = Database(db)
+        try:
+            _db_check.begin()
+            rows = _db_check.select_all(q, params)
+            if rows:
+                return "Duplicate due date"
+        except Exception:
+            _db_check.rollback()
+        if due_date in due_dates:
             return True
         else:
             return "Not Found"
@@ -392,7 +422,6 @@ class SourceDB(object):
     ):
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_code)
-        compliance_id = None
         try:
             compliance_id = self.compliance_task[
                 compliance_task]["compliance_id"]
@@ -424,7 +453,10 @@ class SourceDB(object):
         return self.check_base(True, self.domain, domain_name, None)
 
     def check_valid_unit_code(self, unit_code, unit_name):
-        org_unit_name = self.unit_code[unit_code]["unit_name"]
+        try:
+            org_unit_name = self.unit_code[unit_code]["unit_name"]
+        except KeyError:
+            return "invalid"
         if org_unit_name == unit_name:
             return True
         else:
@@ -444,8 +476,11 @@ class SourceDB(object):
     def check_is_valid_primary_legislation(
         self, unit_code, primary_legislation
     ):
-        unit_id = self.unit_code[unit_code]["unit_id"]
-        unit_country_id = self.unit_code[unit_code]["country_id"]
+        try:
+            unit_id = self.unit_code[unit_code]["unit_id"]
+            unit_country_id = self.unit_code[unit_code]["country_id"]
+        except KeyError:
+            return
         query = "SELECT domain_id from tbl_units_organizations " + \
             " where unit_id = %s"
         params = [unit_id]
@@ -474,7 +509,7 @@ class SourceDB(object):
             if statutories not in self.hierarchy_checker[primary]:
                 status1 = "Not Found"
         except KeyError:
-            pass
+            return
         status2 = self.check_base(False, self.statutories, statutories, None)
         if status1 is True:
             return status2
@@ -485,12 +520,14 @@ class SourceDB(object):
         status1 = True
         compliance_task_name = self.get_compliance_task_name(compliance_task)
         try:
+            if secondary == "":
+                secondary = "empty"
             if (
                 compliance_task_name not in self.hierarchy_checker[
                     primary][secondary]):
                 status1 = "Not Found"
         except KeyError:
-            pass
+            return
         status2 = self.check_base(
             True, self.compliance_task, compliance_task, None)
         if status1 is True:
@@ -502,15 +539,19 @@ class SourceDB(object):
         self, compliance_description, primary, secondary, compliance_task
     ):
         status1 = True
+        compliance_task_name = self.get_compliance_task_name(
+            compliance_task)
         try:
+            if secondary == "":
+                secondary = "empty"
             if (
                 self.hierarchy_checker[
-                    primary][secondary][compliance_task]["desc"] !=
+                    primary][secondary][compliance_task_name]["desc"] !=
                 compliance_description
             ):
                 status1 = "Not Found"
         except KeyError:
-            pass
+            return
         status2 = self.check_base(
             True, self.compliance_description, compliance_description, None)
         if status1 is True:
@@ -534,7 +575,7 @@ class SourceDB(object):
     def check_assignee(self, assignee):
         return self.check_base(False, self.assignee, assignee, None)
 
-    def is_two_levels_of_approval(_source_db):
+    def is_two_levels_of_approval(self, _source_db):
         query = "SELECT two_levels_of_approval FROM tbl_reminder_settings"
         rows = _source_db.select_all(query)
         return bool(rows[0]["two_levels_of_approval"])
@@ -553,13 +594,7 @@ class SourceDB(object):
                     compliance_task_name += compliance_task_name_check[i]
         return compliance_task_name
 
-    def save_completed_task_data(self, data, legal_entity_id):
-        is_two_level = False
-        compliance_id = ""
-        unit_id = ""
-        columns = []
-
-        values = []
+    def save_completed_task_data(self, db, data, legal_entity_id, csv_id):
         for idx, d in enumerate(data):
             self.connect_source_db(legal_entity_id)
             columns = [
@@ -573,7 +608,7 @@ class SourceDB(object):
             # Compliance ID
             compliance_task_name = self.get_compliance_task_name(
                 d["compliance_task_name"])
-            cName = [
+            c_name = [
                 compliance_task_name,
                 d["compliance_description"],
                 d["compliance_frequency"]
@@ -582,16 +617,16 @@ class SourceDB(object):
                 "compliance_task = TRIM(%s) and compliance_description = " + \
                 "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
                 " tbl_compliance_frequency WHERE frequency=TRIM(%s))"
-            compliance_id = self._source_db.select_all(q, cName)
+            compliance_id = self._source_db.select_all(q, c_name)
             # if len(compliance_id) > 0:
             compliance_id = compliance_id[0]["compliance_id"]
 
             completion_date = d["completion_date"]
 
             # Unit ID
-            unitCode = [d["unit_code"]]
+            unit_code = [d["unit_code"]]
             q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
-            unit_id = self._source_db.select_all(q, unitCode)
+            unit_id = self._source_db.select_all(q, unit_code)
             unit_id = unit_id[0]["unit_id"]
 
             # assignee_id
@@ -618,9 +653,9 @@ class SourceDB(object):
             if is_two_level:
                 concur_approve_columns += ", concurrence_person"
             condition = "compliance_id = %s and unit_id = %s "
-            tblAssignCompliances = "tbl_assign_compliances"
+            tbl_assign_compliances = "tbl_assign_compliances"
             rows = self._source_db.get_data(
-                tblAssignCompliances,
+                tbl_assign_compliances,
                 concur_approve_columns,
                 condition, [compliance_id, unit_id]
             )
@@ -650,6 +685,23 @@ class SourceDB(object):
                 values.append(1)
                 values.append(concurred_by)
                 values.append(completion_date)
+            q = "SELECT document_file_size FROM tbl_bulk_past_data " + \
+                "where csv_past_id= %s and compliance_task_name=%s " + \
+                " and perimary_legislation = %s and " + \
+                " secondary_legislation = %s and " \
+                "compliance_description = %s and due_date= %s and " + \
+                "unit_code = %s"
+            params = [
+                csv_id, d["compliance_task_name"],
+                d["perimary_legislation"], d["secondary_legislation"],
+                d["compliance_description"], d["due_date"],
+                d["unit_code"]
+            ]
+            rows = db.select_all(q, params)
+            if rows:
+                document_size = rows[0]["document_file_size"]
+                columns.append("document_size")
+                values.append(document_size)
             if values:
                 self._source_db.insert(
                     "tbl_compliance_history", columns, values)
@@ -697,7 +749,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         self._domains = None
         self._error_summary = {}
         self.error_summary()
-
+        self.res_data = None
         self._sheet_name = "Completed_Task_Current_Year-Pas"
 
     # error summary mapped with initial count
@@ -734,9 +786,9 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             return res
 
     def validate_csv_values(
-        self, res, values, key, csvParam, data,
+        self, res, values, key, csv_param, data,
         mapped_error_dict, mapped_header_dict, invalid,
-        isFound, error_count
+        is_found, error_count
     ):
         for v in [v.strip() for v in values]:
             valid_failed, error_cnt = parse_csv_dictionary_values(
@@ -755,20 +807,20 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                     error_count["invalid_date"] += error_cnt[
                         "invalid_date"]
             if v != "":
-                if csvParam.get(
+                if csv_param.get(
                     "check_is_exists"
-                ) is True or csvParam.get(
+                ) is True or csv_param.get(
                     "check_is_active"
-                ) is True or csvParam.get(
+                ) is True or csv_param.get(
                     "check_due_date"
-                ) is True or csvParam.get(
+                ) is True or csv_param.get(
                     "check_completion_date"
                 ) is True:
-                    unboundMethod = self._validation_method_maps.get(
+                    unbound_method = self._validation_method_maps.get(
                         key)
-                    if unboundMethod is not None:
+                    if unbound_method is not None:
                         if key == "Due_Date":
-                            isFound = unboundMethod(
+                            is_found = unbound_method(
                                 v, data.get("Domain"),
                                 data.get("Unit_Code"),
                                 data.get("Compliance_Task"),
@@ -777,7 +829,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                 data.get("Compliance_Description"),
                             )
                         elif key == "Completion_Date":
-                            isFound = unboundMethod(
+                            is_found = unbound_method(
                                 data.get("Unit_Code"),
                                 data.get("Due_Date"),
                                 data.get("Compliance_Task"),
@@ -785,46 +837,46 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                 data.get("Completion_Date")
                             )
                         elif key == "Compliance_Frequency":
-                            isFound = unboundMethod(
+                            is_found = unbound_method(
                                 data.get("Compliance_Task"),
                                 data.get("Compliance_Frequency")
                             )
                         elif key == "Unit_Code":
-                            isFound = unboundMethod(
+                            is_found = unbound_method(
                                 v, data.get("Unit_Name")
                             )
                         elif key == "Primary_Legislation":
-                            isFound = unboundMethod(
+                            is_found = unbound_method(
                                 v, data.get("Unit_Code")
                             )
                         elif key == "Secondary_Legislation":
-                            isFound = unboundMethod(
+                            is_found = unbound_method(
                                 v, data.get("Primary_Legislation")
                             )
                         elif key == "Compliance_Task":
-                            isFound = unboundMethod(
+                            is_found = unbound_method(
                                 v, data.get("Primary_Legislation"),
                                 data.get("Secondary_Legislation")
                             )
                         elif key == "Compliance_Description":
-                            isFound = unboundMethod(
+                            is_found = unbound_method(
                                 v, data.get("Primary_Legislation"),
                                 data.get("Secondary_Legislation"),
                                 data.get("Compliance_Task")
                             )
                         else:
-                            isFound = unboundMethod(v)
-                    if isFound is False:
-                        return isFound
-                    elif isFound is None:
+                            is_found = unbound_method(v)
+                    if is_found is False:
+                        return is_found
+                    elif is_found is None:
                         pass
-                    elif isFound is not True and isFound != "":
-                        msg = "%s - %s" % (key, isFound)
+                    elif is_found is not True and is_found != "":
+                        msg = "%s - %s" % (key, is_found)
                         if res is not True:
                             res.append(msg)
                         else:
                             res = [msg]
-                        if "Status" in str(isFound):
+                        if "Status" in str(is_found):
                             self._error_summary["inactive_error"] += 1
                         else:
                             self._error_summary[
@@ -841,15 +893,15 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
     ):
         for key in _csv_column_name:
             value = data.get(key)
-            isFound = ""
+            is_found = ""
             if key == "Compliance_Frequency":
                 value = "".join(e for e in value if e.isalnum())
             values = value.strip().split(CSV_DELIMITER)
-            csvParam = csv_params.get(key)
+            csv_param = csv_params.get(key)
             result = self.validate_csv_values(
-                res, values, key, csvParam, data,
+                res, values, key, csv_param, data,
                 mapped_error_dict, mapped_header_dict, invalid,
-                isFound, error_count
+                is_found, error_count
             )
             if result is not False:
                 (
@@ -922,7 +974,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 " where compliance_id = (" + \
                 " SELECT compliance_id FROM tbl_compliances where " + \
                 "compliance_task = TRIM(%s) and compliance_description = " + \
-                " TRIM(%s) and statutory_mapping like %s and " + \
+                " TRIM(%s) and (statutory_mapping like %s || " + \
+                " statutory_mapping like %s) and " + \
                 " frequency_id = (SELECT frequency_id from " + \
                 " tbl_compliance_frequency WHERE " + \
                 " frequency=TRIM(%s)) Limit 1) and unit_id =( select " + \
@@ -933,13 +986,16 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 due_date = datetime.strptime(due_date, "%d-%b-%Y").date()
             except ValueError:
                 pass
-            legis_cond = '["' + primary_legislation
+            legis_cond = '%"' + primary_legislation
+            legis_cond1 = legis_cond
             if secondary_legislation != "":
                 legis_cond += ">>" + secondary_legislation + "%"
+                legis_cond1 += " >> " + secondary_legislation + "%"
             else:
                 legis_cond += "%"
+                legis_cond1 += "%"
             params = [
-                compliance_name, description, legis_cond,
+                compliance_name, description, legis_cond, legis_cond1,
                 frequency, unit_code, legal_entity_id, due_date
             ]
             self.connect_source_db(legal_entity_id)
@@ -977,16 +1033,16 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                     error_count
                 ) = result
         if invalid > 0:
-            return self.make_invalid_return(
+            self.res_data = self.make_invalid_return(
                 mapped_error_dict, mapped_header_dict)
         else:
-            return self.make_valid_return(
+            self.res_data = self.make_valid_return(
                 mapped_error_dict, legal_entity_id)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
-        fileString = self._csv_name.split(".")
+        file_string = self._csv_name.split(".")
         file_name = "%s_%s.%s" % (
-            fileString[0], "invalid", "xlsx"
+            file_string[0], "invalid", "xlsx"
         )
         final_hearder = self._csv_header
         final_hearder.append("Error Description")
@@ -1004,6 +1060,19 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         rename_file_type(file_name, "ods")
         # make text file
         rename_file_type(file_name, "txt")
+
+        unit_code = self._source_data[0]["Unit_Code"]
+        domain_name = self._source_data[0]["Domain"]
+
+        unit_code = [unit_code]
+        q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
+        unit_id = self._source_db.select_all(q, unit_code)
+        unit_id = unit_id[0]["unit_id"]
+
+        domain_name = [domain_name]
+        q = "select domain_id from tbl_domains where domain_name = TRIM(%s)"
+        domain_id = self._source_db.select_all(q, domain_name)
+        domain_id = domain_id[0]["domain_id"]
         return {
             "return_status": False,
             "invalid_file": file_name,
@@ -1017,7 +1086,10 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             "invalid": invalid,
             "doc_count": len(set(self._doc_names)),
             "invalid_file_format": self._error_summary["invalid_file_format"],
-            "invalid_date": self._error_summary["invalid_date"]
+            "invalid_date": self._error_summary["invalid_date"],
+            "unit_id": unit_id,
+            "domain_id": domain_id,
+            "data": self._source_data
         }
 
     def make_valid_return(
@@ -1025,19 +1097,21 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
     ):
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
-        Unit_Code = self._source_data[0]["Unit_Code"]
+        if total <= 0:
+            return False
+        unit_code = self._source_data[0]["Unit_Code"]
         domain_name = self._source_data[0]["Domain"]
 
         self.connect_source_db(legal_entity_id)
 
-        unitCode = [Unit_Code]
+        unit_code = [unit_code]
         q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
-        unit_id = self._source_db.select_all(q, unitCode)
+        unit_id = self._source_db.select_all(q, unit_code)
         unit_id = unit_id[0]["unit_id"]
 
-        domainName = [domain_name]
+        domain_name = [domain_name]
         q = "select domain_id from tbl_domains where domain_name = TRIM(%s)"
-        domain_id = self._source_db.select_all(q, domainName)
+        domain_id = self._source_db.select_all(q, domain_name)
         domain_id = domain_id[0]["domain_id"]
 
         return {
@@ -1054,25 +1128,25 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
 
 
 class ValidateCompletedTaskForSubmit(SourceDB):
-    def __init__(self, db, csv_id, dataResult, session_user):
+    def __init__(self, db, csv_id, data_result, session_user):
         SourceDB.__init__(self)
         self._db = db
         self._csv_id = csv_id
         self._session_user_obj = session_user
-        self._source_data = dataResult
-        self._doc_count = 0
+        self._source_data = data_result
+        self.doc_count = 0
         self.get_file_count(db)
 
     def get_file_count(self, db):
         query = "select total_documents from tbl_bulk_past_data_csv " + \
                 "where csv_past_id = %s"
         param = [self._csv_id]
-        docRows = db.select_all(query, param)
-
-        for d in docRows:
+        doc_rows = db.select_all(query, param)
+        doc_count = 0
+        for d in doc_rows:
             doc_count = d.get("total_documents")
 
-        self._doc_count = doc_count
+        self.doc_count = doc_count
 
     def check_for_duplicate_records(self, legal_entity_id):
         for row_idx, data in enumerate(self._source_data):
@@ -1153,7 +1227,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 data = _db_check.select_all(query, param)
                 if len(data) > 0:
                     file_status = data[0].get("file_download_status")
-            except Exception, e:
+            except Exception:
                 _db_check.rollback()
 
             finally:
@@ -1169,7 +1243,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         caller_name = (
             "%sdocsubmit?csvid=%s&c_id=%s&le_id=%s&d_id=%s&u_id=%s"
         ) % (
-            TEMP_FILE_SERVER, csvid, country_id, legal_id,
+            CLIENT_TEMP_FILE_SERVER, csvid, country_id, legal_id,
             domain_id, unit_id
         )
         response = requests.post(caller_name)
@@ -1200,15 +1274,66 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             file_server_ip, file_server_port, csvid, country_id, legal_id,
             domain_id, unit_id, current_date, client_id
         )
-        response = requests.post(caller)
+        try:
+            response = requests.post(caller)
+        except ConnectionError as e:
+            print e
+            response = "error"
+        self.save_file_submit_status(response)
+        print "RESPONSE ->> ", response
         return response
 
     def frame_data_for_main_db_insert(
-        self, db, dataResult, legal_entity_id, session_user
+        self, db, data_result, legal_entity_id, csv_id
     ):
-        return self.save_completed_task_data(
-            dataResult, legal_entity_id
+        data_save_status = self.save_completed_task_data(
+            db, data_result, legal_entity_id, csv_id
         )
+        self.save_data_submit_status(data_save_status)
+        return data_save_status
+
+    def save_data_submit_status(self, data_save_status):
+        data_submit_value = 0
+        if data_save_status is True:
+            data_submit_value = 1
+        else:
+            data_submit_value = 2
+
+        query = "UPDATE tbl_bulk_past_data_csv SET " + \
+                "data_submit_status = %s WHERE csv_past_id = %s"
+
+        self._db.execute(query, [data_submit_value, self._csv_id])
+
+    def save_file_submit_status(self, response):
+        file_submit_value = 0
+        if str(response).find("200") >= 0:
+            file_submit_value = 1
+        else:
+            file_submit_value = 2
+
+        file_down_status = "completed"
+        if file_submit_value == 2:
+            file_down_status = None
+
+        bulk_db_con = bulkupload_db_connect()
+        bulk_db_check = Database(bulk_db_con)
+        try:
+            bulk_db_check.begin()
+            query = "UPDATE tbl_bulk_past_data_csv SET " + \
+                " file_submit_status = %s AND file_download_status = %s" + \
+                " WHERE csv_past_id = %s"
+            param = [file_submit_value, file_down_status, self._csv_id]
+
+            bulk_db_check.execute(query, param)
+            bulk_db_check.commit()
+        except Exception, e:
+            print e
+            bulk_db_check.rollback()
+
+        finally:
+            bulk_db_check.close()
+            bulk_db_con.close()
+
 
 
 def bulkupload_db_connect():

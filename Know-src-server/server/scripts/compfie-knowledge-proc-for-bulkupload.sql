@@ -608,8 +608,8 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_bu_get_compliance_id_by_name`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_get_compliance_id_by_name`(
-  IN c_task text, c_desc text, s_provision text, country_id_ INT(11),
-  domain_id_ INT(11), p_legislation INT(11), s_legislation text
+  IN c_task TEXT, c_desc TEXT, s_provision TEXT, country_id_ INT(11),
+  domain_id_ INT(11), p_legislation INT(11), s_legislation TEXT
 )
 BEGIN
   SELECT distinct compliance_id from tbl_compliances as t1
