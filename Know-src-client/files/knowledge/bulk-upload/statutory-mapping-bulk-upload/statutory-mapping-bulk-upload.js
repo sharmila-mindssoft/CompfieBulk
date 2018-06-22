@@ -206,6 +206,16 @@ BulkUploadStatutoryMapping.prototype.fetchDropDownData = function() {
         }
     });
 };
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
 BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
     $('#myModal').modal('show');
     console.log("CSV_INFO -> "+ JSON.stringify(CSV_INFO));
@@ -219,6 +229,122 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
         "csv_data": CSV_INFO["file_content"],
         "csv_size": CSV_INFO["file_size"]
     };
+    var csv_name = null;
+    // var count = 0;
+    function apiCall(csv_name, callback){
+        bu.GetStatus(csv_name, callback);
+    }
+    function call_bck_fn(error, response){
+        console.log("get status response: error"+ error + ", response:"+response)
+        TEMPLATE_DIV.hide();
+        if (error == "Alive"){
+            console.log("inside if=====> going to get status again")
+            // count = count+1;
+            sleep(180000);
+            // if(count <3)
+            apiCall(csv_name, call_bck_fn);
+        }
+        else if(error == "InvalidCsvFile"){
+            $('#myModal').modal('hide');
+            displayMessage(message.invalid_csv_file);
+        }
+        else if (error == null) {
+            console.log(JSON.stringify(response));
+            $('#myModal').modal('hide');
+            if (response.invalid == 0) {
+                displaySuccessMessage(message.upload_success);
+                if (response.doc_count > 0) {
+                    CSV_ID = response.csv_id;
+                    DATA_SUMMARY.show();
+                    ERROR_SUMMARY.hide();
+                    DATA_SUMMARY.removeClass("col-sm-6");
+                    DATA_SUMMARY.addClass("col-sm-12");
+                    SUMMARY_TOTAL.text(response.total);
+                    SUMMARY_VALID.text(response.valid);
+                    SUMMARY_INVALID.text(response.invalid);
+                    DOC_NAMES = response.doc_names;
+                    UPLOAD_DOCUMENT.show();
+                    DOCUMENT_TOTAL.text(response.doc_count);
+                    UPL_DOC_TXT.hide();
+                    UPL_DOC_REM.hide();
+
+                    DOCUMENT_SUMMARY.hide();
+                    t_this.changeTxttoLabel(COUNTRY_AC.val(), DOMAIN_AC.val(),
+                                            response.csv_name,
+                                            response.new_csv_name)
+                }
+                else {
+                    DATA_SUMMARY.hide();
+                    ERROR_SUMMARY.hide();
+                    t_this.showList();
+                }
+            }
+            else {
+                displayMessage(message.upload_failed);
+                FILE_UPLOAD_CSV.val("");
+                DATA_SUMMARY.removeClass("col-sm-12");
+                DATA_SUMMARY.addClass("col-sm-6");
+                DATA_SUMMARY.show();
+                ERROR_SUMMARY.show();
+                // show error summary
+                VALIDOR_INVALID_BUTTON.show();
+
+                SUMMARY_TOTAL.text(response.total);
+                SUMMARY_VALID.text(response.valid);
+                SUMMARY_INVALID.text(response.invalid);
+                SUMMARY_MANDATORY.text(response.mandatory_error);
+                SUMMARY_MAX_LENGTH.text(response.max_length_error);
+                SUMMARY_DUPLICATE.text(response.duplicate_error);
+                SUMMARY_INVALID_CHAR.text(response.invalid_char_error);
+                SUMMARY_INVALID_DATA.text(response.invalid_data_error);
+                SUMMARY_INACTIVE.text(response.inactive_error);
+                SUMMARY_FREQUENCY_INVALID.text(
+                    response.invalid_frequency_error
+                    );
+
+                INVALID_FILE_NAME = response.invalid_file.split('.');
+                csv_path = "/invalid_file/csv/"
+                            + INVALID_FILE_NAME[0] + '.csv';
+                xls_path = "/invalid_file/xlsx/"
+                            + INVALID_FILE_NAME[0] + '.xlsx';
+                ods_path = "/invalid_file/ods/"
+                            + INVALID_FILE_NAME[0] + '.ods';
+
+                $('#csv_type').attr("href", csv_path);
+                $('#xls_type').attr("href", xls_path);
+                $('#ods_type').attr("href", ods_path);
+            }
+        }
+        else{
+            $('#myModal').modal('hide');
+            BU_SMPAGE.possibleFailures(error);
+            FILE_UPLOAD_CSV.val("");
+        }
+    }
+
+    bu.uploadStatutoryMappingCSV(
+    args, function(error, response){
+        if(error == "Done" || response == "Done"){
+            csv_name = response.csv_name;
+            console.log("got csv name: "+ csv_name);
+            apiCall(csv_name, call_bck_fn);
+        }else if(error == "RejectionMaxCountReached"){
+            $('#myModal').modal('hide');
+            displayMessage(message.upload_limit);
+        }
+        else if (error == "CsvFileExeededMaxLines") {
+            $('#myModal').modal('hide');
+            displayMessage(message.csv_max_lines_exceeded.replace(
+                'MAX_LINES', response.csv_max_lines));
+            FILE_UPLOAD_CSV.val("");
+        }else if(error == "CsvFileCannotBeBlank") {
+            $('#myModal').modal('hide');
+            displayMessage(message.csv_file_blank);
+            FILE_UPLOAD_CSV.val("");
+        }
+    });
+
+    /*
     bu.uploadStatutoryMappingCSV(args, function (error, response) {
         var csv_path;
         var xls_path;
@@ -312,6 +438,8 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
             }
         }
     })
+
+    */
 };
 
 document.getElementById("txt_type").addEventListener("click", function(){
