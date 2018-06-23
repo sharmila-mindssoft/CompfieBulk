@@ -395,7 +395,7 @@ function assignStatutoryActionInList(cl_id, le_id, csvid, action,
             "cl_id": cl_id,
             "le_id": le_id,
             "csv_id": csvid,
-            "bu_action": action,
+            "bu_action": action, 
             "remarks": remarks,
             "password": password
         }

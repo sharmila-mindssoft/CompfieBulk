@@ -69,4 +69,4 @@ function initMethods() {
     };
 }
 
-var bu = initMethods();
+var bu = initMethods(); 
