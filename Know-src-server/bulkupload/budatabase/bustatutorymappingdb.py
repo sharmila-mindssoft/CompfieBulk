@@ -10,8 +10,11 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
 )
 from ..bulkconstants import (
-    MAX_REJECTED_COUNT, CSV_DELIMITER
+    MAX_REJECTED_COUNT, CSV_DELIMITER, BULK_UPLOAD_DB_HOST,
+    BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
+    BULK_UPLOAD_DATABASE_NAME
 )
+
 
 __all__ = [
     "get_uploaded_statutory_mapping_csv_list",
@@ -33,7 +36,8 @@ __all__ = [
     "get_rejected_sm_file_count",
     "get_domains_for_user_bu",
     "get_countries_for_user_bu",
-    "get_knowledge_executive_bu"
+    "get_knowledge_executive_bu",
+    "get_thread_status"
 
 ]
 
@@ -213,7 +217,9 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
 
 
 def save_mapping_csv(db, args):
+    db = connect_bulk_db()
     newid = db.call_insert_proc("sp_statutory_mapping_csv_save", args)
+    db.commit()
     return newid
 
 
@@ -271,7 +277,9 @@ def save_mapping_data(db, csv_id, csv_data):
             ))
 
         if values:
+            db = connect_bulk_db()
             db.bulk_insert("tbl_bulk_statutory_mapping", columns, values)
+            db.commit()
             return True
         else:
             return False
@@ -558,7 +566,7 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
                 upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
                 upload_by = d["uploaded_by"]
                 total = d["total_records"]
-                
+
 
             statutory_date = d["statutory_date"].replace(CSV_DELIMITER, ", ")
             trigger_before = d["trigger_before"].replace(CSV_DELIMITER, ", ")
@@ -568,7 +576,7 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
                 smonth_list = statu_month.split(",")
                 smonth_list = ','.join(str(x).rstrip().lstrip() for x in smonth_list)
                 smonth_list = smonth_list.split(",")
-                statu_months = []                
+                statu_months = []
                 mon = None
                 for smon in smonth_list:
                     i = 0
@@ -858,3 +866,32 @@ def connect_knowledge_db():
     except Exception, e:
         print "Connection Exception Caught"
         print e
+
+
+def connect_bulk_db():
+    _bulk_db = None
+    try:
+        _bulk_db_con = mysql.connector.connect(
+            user=BULK_UPLOAD_DB_USERNAME,
+            password=BULK_UPLOAD_DB_PASSWORD,
+            host=BULK_UPLOAD_DB_HOST,
+            database=BULK_UPLOAD_DATABASE_NAME,
+            port=BULK_UPLOAD_DB_PORT,
+            autocommit=False
+        )
+        _bulk_db = Database(_bulk_db_con)
+        _bulk_db.begin()
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
+    return _bulk_db
+
+
+def get_thread_status(db, csv_name):
+    q = " SELECT return_data from tbl_bulk_statutory_mapping_csv  " + \
+        " where csv_name = %s"
+    param = [csv_name]
+    rows = db.select_all(q, param)
+    if len(rows) > 0:
+        return rows[0]["return_data"]
+    return False

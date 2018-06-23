@@ -997,6 +997,11 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         self._doc_names = []
         self._sheet_name = "Statutory Mapping"
 
+    def connect_bulk_database(self):
+        c_db_con = bulkupload_db_connect()
+        self._db = Database(c_db_con)
+        self._db.begin()
+
     # error summary mapped with initial count
     def error_summary(self):
         self._error_summary = {
@@ -1110,6 +1115,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
     '''
 
     def perform_validation(self):
+        self.connect_bulk_database()
         mapped_error_dict = {}
         mapped_header_dict = {}
         invalid = 0
@@ -1676,7 +1682,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                     # parent_id += str(self.statutories.get(
                                     #     strip_data).get("statutory_id")) + ","
                                     parent_names = self.get_statu_map_ws(str(strip_data))
-                                    
+
 
                                 if (int(statu_level) == 1 and
                                    self.statutories.get(strip_data) is None):
