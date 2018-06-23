@@ -63,7 +63,8 @@ function initMethods() {
         getKnowledgeUserInfo: getKnowledgeUserInfo,
         saveExecutiveMessage: saveExecutiveMessage,
         GetStatus: GetStatus,
-        getAssignStatutoryStatus: getAssignStatutoryStatus
+        getAssignStatutoryStatus: getAssignStatutoryStatus,
+        getApproveMappingStatus:getApproveMappingStatus,
 
     };
 }

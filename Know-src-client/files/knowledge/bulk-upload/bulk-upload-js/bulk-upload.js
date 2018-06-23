@@ -722,3 +722,12 @@ function getAssignStatutoryStatus(csv_name, callback){
     ];
     apiRequest('bu/assign_statutory', request, callback);
 }
+
+function getApproveMappingStatus(csv_name, callback){
+    var request = [
+        'GetApproveMappingStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/statutory_mapping', request, callback);
+}
