@@ -4,6 +4,7 @@ import csv
 import uuid
 import datetime
 import mysql.connector
+from server.dbase import Database
 from .budatabase.buassignstatutorydb import (
     get_country_name_by_legal_entity_id
 )
@@ -14,7 +15,9 @@ from server.constants import (
 )
 
 from bulkconstants import (
-    CSV_DELIMITER, SYSTEM_REJECTED_BY
+    CSV_DELIMITER, BULK_UPLOAD_DB_HOST,
+    BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
+    BULK_UPLOAD_DATABASE_NAME, SYSTEM_REJECTED_BY
 )
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
@@ -63,8 +66,8 @@ class ConvertJsonToCSV(object):
             self.writer.writerow(values)
 
     def generate_download_assign_statutory(self, db, request):
+        db = connect_bulk_db()
         is_header = False
-
         client_group_name = request.cl_name
         le_name = request.le_name
         domain_names = ",".join(str(e) for e in request.d_names)
@@ -80,7 +83,7 @@ class ConvertJsonToCSV(object):
                 domain_names, unit_names
             ]
         )
-
+        db.commit()
         sno = 0
         if len(download_assign_compliance_list) > 0:
             for ac in download_assign_compliance_list:
@@ -589,3 +592,22 @@ def convert_array_map(c_d_ids_list):
         dom_map[c].append(str(d))
 
     return dom_map
+
+
+def connect_bulk_db():
+    _bulk_db = None
+    try:
+        _bulk_db_con = mysql.connector.connect(
+            user=BULK_UPLOAD_DB_USERNAME,
+            password=BULK_UPLOAD_DB_PASSWORD,
+            host=BULK_UPLOAD_DB_HOST,
+            database=BULK_UPLOAD_DATABASE_NAME,
+            port=BULK_UPLOAD_DB_PORT,
+            autocommit=False
+        )
+        _bulk_db = Database(_bulk_db_con)
+        _bulk_db.begin()
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
+    return _bulk_db

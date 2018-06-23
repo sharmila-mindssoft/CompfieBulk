@@ -638,6 +638,25 @@ class GetAssignStatutoryStatus(Request):
         }
 
 
+class GetAssignStatutoryDownloadStatus(Request):
+    def __init__(self, csv_name):
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["csv_name"]
+        )
+        return GetAssignStatutoryDownloadStatus(
+            data.get("csv_name")
+        )
+
+    def to_inner_structure(self):
+        return{
+            "csv_name": self.csv_name
+        }
+
+
 def _init_Request_class_map():
     classes = [
 
@@ -652,7 +671,7 @@ def _init_Request_class_map():
         AssignStatutoryValidate, SubmitAssignStatutory,
         GetDomainExecutiveDetails,
         GetBulkUploadConstants, BulkUploadConstant,
-        GetAssignStatutoryStatus
+        GetAssignStatutoryStatus, GetAssignStatutoryDownloadStatus
     ]
 
     class_map = {}
