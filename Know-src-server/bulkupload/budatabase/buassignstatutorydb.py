@@ -8,6 +8,11 @@ from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
+from ..bulkconstants import (
+    MAX_REJECTED_COUNT, CSV_DELIMITER, BULK_UPLOAD_DB_HOST,
+    BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
+    BULK_UPLOAD_DATABASE_NAME
+)
 from server.exceptionmessage import fetch_error
 
 __all__ = [
@@ -178,6 +183,7 @@ def get_download_assing_statutory_list(
         )
         ac_list.append(ac_tuple)
 
+    db = connect_bulk_db()
     db.call_proc("sp_delete_assign_statutory_template", (
         le_name, domain_names, unit_names
         ))
@@ -185,6 +191,7 @@ def get_download_assing_statutory_list(
         db.bulk_insert(
             "tbl_download_assign_statutory_template", column, ac_list
             )
+        db.commit()
     return ac_list
 
 ########################################################
@@ -205,7 +212,9 @@ def get_download_assing_statutory_list(
 
 
 def save_assign_statutory_csv(db, args):
+    db = connect_bulk_db()
     newid = db.call_insert_proc("sp_assign_statutory_csv_save", args)
+    db.commit()
     return newid
 
 
@@ -280,7 +289,9 @@ def save_assign_statutory_data(db, csv_id, csv_data):
             ))
 
         if values:
+            db = connect_bulk_db()
             db.bulk_insert("tbl_bulk_assign_statutory", columns, values)
+            db.commit()
             return True
         else:
             return False
@@ -889,3 +900,22 @@ def connectKnowledgeDB():
     except Exception, e:
         print "Connection Exception Caught"
         print e
+
+
+def connect_bulk_db():
+    _bulk_db = None
+    try:
+        _bulk_db_con = mysql.connector.connect(
+            user=BULK_UPLOAD_DB_USERNAME,
+            password=BULK_UPLOAD_DB_PASSWORD,
+            host=BULK_UPLOAD_DB_HOST,
+            database=BULK_UPLOAD_DATABASE_NAME,
+            port=BULK_UPLOAD_DB_PORT,
+            autocommit=False
+        )
+        _bulk_db = Database(_bulk_db_con)
+        _bulk_db.begin()
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
+    return _bulk_db
