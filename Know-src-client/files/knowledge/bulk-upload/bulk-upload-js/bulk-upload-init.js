@@ -62,7 +62,8 @@ function initMethods() {
         getDomainList: getDomainList,
         getKnowledgeUserInfo: getKnowledgeUserInfo,
         saveExecutiveMessage: saveExecutiveMessage,
-        GetStatus: GetStatus
+        GetStatus: GetStatus,
+        getAssignStatutoryStatus: getAssignStatutoryStatus
 
     };
 }
