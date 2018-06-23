@@ -217,7 +217,7 @@ function pageControls() {
             displayLoader();
 
             var csv_name = null;
-            var count = 0;
+            //var count = 0;
             function apiCallDownload(csv_name, callback){
                 bu.getAssignStatutoryDownloadStatus(csv_name, callback);
             }
@@ -240,10 +240,10 @@ function pageControls() {
                         // count = count+1;
                         sleep(180000);
                         // apiCallDownload(csv_name, call_bck_fn);
-                        if(count <3){
-                            apiCallDownload(csv_name, call_bck_fn);
-                            count++;
-                        }
+                        //if(count <3){
+                        apiCallDownload(csv_name, call_bck_fn);
+                        //     count++;
+                        // }
                         
                     }
                     hideLoader();
@@ -468,8 +468,7 @@ function pageControls() {
                             //     count++;
                             // }
                             
-                        }
-                        if(error == "InvalidCsvFile"){
+                        }else if(error == "InvalidCsvFile"){
                             displayMessage(message.invalid_csv_file);
                         }else if(error == "CsvFileBlank"){
                             displayMessage(message.csv_file_blank);
