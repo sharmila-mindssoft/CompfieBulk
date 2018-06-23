@@ -1320,7 +1320,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         try:
             bulk_db_check.begin()
             query = "UPDATE tbl_bulk_past_data_csv SET " + \
-                " file_submit_status = %s AND file_download_status = %s" + \
+                " file_submit_status = %s , file_download_status = %s" + \
                 " WHERE csv_past_id = %s"
             param = [file_submit_value, file_down_status, self._csv_id]
 
