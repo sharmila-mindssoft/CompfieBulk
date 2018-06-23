@@ -62,7 +62,7 @@ class SourceDB(object):
         self.frequency_id_name_map = {}
         self.hierarchy_checker = {}
         self.stop = True
-        self.due_dates = []
+        self.due_dates = {}
         # self.get_doc_names()
 
     def connect_source_db(self, legal_entity_id):
@@ -129,10 +129,6 @@ class SourceDB(object):
         self.get_assignee()
         self.generate_hierarchy_checker()
         self.collect_due_dates_in_csv()
-
-    def collect_due_dates_in_csv(self):
-        for row_idx, data in enumerate(self._source_data):
-            self.due_dates.append(data.get("Due_Date"))
 
     def get_legal_entities(self):
         query = "SELECT legal_entity_id, legal_entity_name, " + \
@@ -250,6 +246,30 @@ class SourceDB(object):
                     primary][secondary][compliance] = {
                         "compliance_id": compliance_id,
                         "desc": description}
+
+    def frame_key(self, unit_code, primary, seondary, compliance, desc):
+        key = "%s-%s-%s-%s-%s" % (
+            unit_code, primary, seondary, compliance, desc)
+        return key
+
+    def collect_due_dates_in_csv(self):
+        for row_idx, data in enumerate(self._source_data):
+            primary = data.get("Primary_Legislation").strip()
+            secondary = data.get("Secondary_Legislation")
+            compliance = data.get("Compliance_Task")
+            unit_code = data.get("Unit_Code")
+            desc = data.get("Compliance_Description")
+            due_date = data.get("Due_Date")
+            if secondary == "":
+                secondary = "empty"
+            else:
+                secondary = secondary.strip()
+            key = self.frame_key(
+                unit_code, primary, secondary, compliance, desc)
+            if key not in self.due_dates:
+                self.due_dates[key] = []
+            self.due_dates[key].append(due_date)
+
 
     def get_compliance_frequency(self):
         query = "select frequency_id, frequency " + \
@@ -382,7 +402,10 @@ class SourceDB(object):
         due_dates = self.get_past_due_dates(domain_id, unit_id, compliance_id)
         if due_dates is None:
             return "Not Found"
-        if self.due_dates.count(due_date) > 1:
+        key = self.frame_key(
+            unit_code, primary_legislation.strip(), secondary,
+            compliance_task, description)
+        if self.due_dates[key].count(due_date) > 1:
             return "Duplicate due date"
         try:
             due_date = datetime.strptime(due_date, "%d-%b-%Y")
@@ -604,7 +627,11 @@ class SourceDB(object):
         return compliance_task_name
 
     def save_completed_task_data(self, db, data, legal_entity_id, csv_id):
+        self.generate_hierarchy_checker()
+        self.get_unit_code()
+        self.get_assignee()
         for idx, d in enumerate(data):
+            print "indx: %s" % idx
             self.connect_source_db(legal_entity_id)
             columns = [
                 "legal_entity_id", "unit_id", "compliance_id", "start_date",
@@ -613,42 +640,49 @@ class SourceDB(object):
                 "approve_status", "approved_by", "approved_on",
                 "current_status"
             ]
-
-            # Compliance ID
             compliance_task_name = self.get_compliance_task_name(
                 d["compliance_task_name"])
+            primary = d["perimary_legislation"].strip()
+            secondary = d["secondary_legislation"]
+            if secondary == "":
+                secondary = "empty"
+            else:
+                secondary = secondary.strip()
+            compliance_id = self.hierarchy_checker[
+                primary][secondary][compliance_task_name]["compliance_id"]
+            completion_date = d["completion_date"]
+            unit_code = [d["unit_code"]]
+            assignee = [d["assignee"]]
+            unit_id = self.unit_code[d["unit_code"]]["unit_id"]
+            assignee_id = self.assignee[d["assignee"]]["ID"]
             c_name = [
                 compliance_task_name,
                 d["compliance_description"],
                 d["compliance_frequency"]
             ]
-            q = "SELECT compliance_id FROM tbl_compliances where " + \
-                "compliance_task = TRIM(%s) and compliance_description = " + \
-                "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
-                " tbl_compliance_frequency WHERE frequency=TRIM(%s))"
-            compliance_id = self._source_db.select_all(q, c_name)
-            # if len(compliance_id) > 0:
-            compliance_id = compliance_id[0]["compliance_id"]
-
-            completion_date = d["completion_date"]
-
-            # Unit ID
-            unit_code = [d["unit_code"]]
-            q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
-            unit_id = self._source_db.select_all(q, unit_code)
-            unit_id = unit_id[0]["unit_id"]
+             
+            # q = "SELECT compliance_id FROM tbl_compliances where " + \
+            #     "compliance_task = TRIM(%s) and compliance_description = " + \
+            #     "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
+            #     " tbl_compliance_frequency WHERE frequency=TRIM(%s))"
+            # compliance_id = self._source_db.select_all(q, c_name)
+            # # if len(compliance_id) > 0:
+            # compliance_id = compliance_id[0]["compliance_id"]                      
+            # q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
+            
+            # unit_id = unit_id[0]["unit_id"]
 
             # assignee_id
-            assignee = [d["assignee"]]
-            q = " SELECT distinct ac.assignee as ID, u.employee_code, " + \
-                " u.employee_name, " + \
-                " CONCAT_WS(' - ', u.employee_code, " + \
-                " u.employee_name) As Assignee " + \
-                " FROM tbl_assign_compliances ac INNER JOIN tbl_users u " + \
-                " ON (ac.assignee = u.user_id) where " + \
-                " CONCAT_WS(' - ', u.employee_code, u.employee_name)=TRIM(%s)"
-            assignee_id = self._source_db.select_all(q, assignee)
-            assignee_id = assignee_id[0]["ID"]
+            
+            # q = " SELECT distinct ac.assignee as ID, u.employee_code, " + \
+            #     " u.employee_name, " + \
+            #     " CONCAT_WS(' - ', u.employee_code, " + \
+            #     " u.employee_name) As Assignee " + \
+            #     " FROM tbl_assign_compliances ac INNER JOIN tbl_users u " + \
+            #     " ON (ac.assignee = u.user_id) where " + \
+            #     " CONCAT_WS(' - ', u.employee_code, u.employee_name)=TRIM(%s)"
+            # assignee_id = self._source_db.select_all(q, assignee)
+            # assignee_id = assignee_id[0]["ID"]
 
             query = "SELECT two_levels_of_approval FROM tbl_reminder_settings"
             rows = self._source_db.select_all(query)
