@@ -1,0 +1,212 @@
+{% extends "files/client/common/html/container.html" %} {% block content %}
+<div class="content-page">
+    <div class="content">
+        <div class="container">
+            <div class="row" id="animationSandbox">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-10">
+                    <div class="portlet">
+                        <div class="portlet-heading bg-info">
+                            <h3 class="portlet-title">Domain Score Card</h3>
+                            <div class="portlet-widgets"></div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="bg-primary1" class="panel-collapse collapse in">
+                            <div class="portlet-body">
+                                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
+                                            <p class="form-control-static filter-country-name default-display-none col-sm-6"></p>
+                                            <div class="col-sm-6 has-feedback default-display-none">
+                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="country-id" value="">
+                                                <div id="ac-country" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Business Group: </label>
+                                            <p class="form-control-static filter-business-group-name default-display-none col-sm-6"></p>
+                                            <div class="col-sm-6 has-feedback default-display-none">
+                                                <input type="text" class="form-control input-sm" id="business-group" placeholder="Enter Business Group" tabindex="2">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="business-group-id" value="">
+                                                <div id="ac-business-group" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                            <p class="form-control-static filter-legal-entity-name default-display-none col-sm-6"></p>
+                                            <div class="col-sm-6 has-feedback default-display-none">
+                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" tabindex="3">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="legal-entity-id" value="">
+                                                <div id="ac-legal-entity" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Division: </label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="division" placeholder="Enter Division" tabindex="4">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="division-id" value="">
+                                                <div id="ac-division" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Category: </label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="category" placeholder="Enter Category" tabindex="5">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="category-id" value="">
+                                                <div id="ac-category" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Domain: </label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain" tabindex="6">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="domain-id" value="">
+                                                <div id="ac-domain" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <center>
+                                            <div class="form-group m-b-0">
+                                                <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button" tabindex="7"> Show </button>
+                                            </div>
+                                        </center>
+                                    </div>
+                                    <div class="clear"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="compliance_animation">
+                        <div id="report-view" style="display: none;">
+                            <div class="card-box details">
+                                <div class="table-responsive">
+                                    <div class="col-sm-12">
+                                        <div class="col-sm-12 text-center"><img class="rpt-logo" id="client-logo"></div>
+                                        <div class="col-sm-12 text-center">
+                                            <h4>Domain Score Card</h4></div>
+                                        <div class="col-sm-6 text-center">
+                                            <h6>Legal Entity : <span id="legal-entity-name"></span></h6></div>
+                                        <div class="col-sm-6 text-center">
+                                            <h6>Country : <span id="country-name" ></span></h6></div>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="table-responsive">
+                                    <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th width="01%">#</th>
+                                                <th width="10%">Domain</th>
+                                                <th width="10%" class="text-center">Assigned</th>
+                                                <th width="10%" class="text-center">Un Assigned</th>
+                                                <th width="10%" class="text-center">Not Opted</th>
+                                                <th width="10%" class="text-center">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="report-table-tbody">
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                    <div class="domain-table-view" style="display: none;">
+                                        <div class="clear"></div>
+                                        <br>
+                                        <div class="col-sm-12">
+                                            <h6 id="domain-name"></h6></div>
+                                        <table id="datatable-responsive" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr class="bg-lightdark">
+                                                    <th width="15%" rowspan="2">Unit</th>
+                                                    <th width="40%" colspan="4" class="text-center">Assigned</th>
+                                                    <th width="10%" rowspan="2" class="text-center">Un Assigned</th>
+                                                    <th width="10%" rowspan="2" class="text-center">Not Opted</th>
+                                                    <th width="10%" rowspan="2" class="text-center">Total</th>
+                                                </tr>
+                                                <tr class="bg-lightdark">
+                                                    <th width="10%" class="text-center">Inprogress</th>
+                                                    <th width="10%" class="text-center">Complied</th>
+                                                    <th width="10%" class="text-center">Delayed Complied</th>
+                                                    <th width="10%" class="text-center">Not Complied</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="report-table-tbody-new">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end col -->
+            </div>
+        </div>
+    </div>
+</div>
+<div id="template">
+    <table id="report-table">
+        <tr class="report-row">
+            <td class="sno"></td>
+            <td>
+                <a class="labour-view c-pointer domain-name"></a>
+            </td>
+            <td class="text-center assigned"></td>
+            <td class="text-center un-assigned"></td>
+            <td class="text-center not-opted"></td>
+            <td class="text-center font-bold row-total"></td>
+        </tr>
+        <tr class="report-total-row">
+            <td>&nbsp;</td>
+            <td class="font-bold">Total</td>
+            <td class="font-bold text-center assigned-total"></td>
+            <td class="font-bold text-center un-assigned-total"></td>
+            <td class="font-bold text-center not-opted-total"></td>
+            <td class="font-bold text-center total-count"></td>
+        </tr>
+        <tr class="unit-details report-new-row">
+            <td class="unit-name">UN001 - Unit One</td>
+            <td class="text-center inprogress"></td>
+            <td class="text-center complied"></td>
+            <td class="text-center delayed-complied "></td>
+            <td class="text-center not-complied "></td>
+            <td class="text-center un-assigned "></td>
+            <td class="text-center not-opted "></td>
+            <td class="font-bold text-center row-total"></td>
+        </tr>
+        <tr class="unit-details report-new-total-row">
+            <td class="font-bold">Total</td>
+            <td class="text-center font-bold total-inprogress"></td>
+            <td class="text-center font-bold total-complied"></td>
+            <td class="text-center font-bold total-delayed-complied"></td>
+            <td class="text-center font-bold total-not-complied"></td>
+            <td class="text-center font-bold total-un-assigned"></td>
+            <td class="text-center font-bold total-not-opted"></td>
+            <td class="text-center font-bold total-count-new"></td>
+        </tr>
+    </table>
+</div>
+{% endblock %} 
+{% block contentscript %}
+<script src="/script/domain-score-card/domain_score_card.js"></script>
+{% endblock %}

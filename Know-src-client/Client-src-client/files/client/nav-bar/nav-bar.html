@@ -1,0 +1,114 @@
+<div class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a href="#" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <i class="zmdi zmdi-menu"></i>
+            </a>
+            <div class="pull-left dashboard-menu">
+                <button class="button-menu-mobile open-left waves-effect waves-light"><i class="zmdi zmdi-menu"></i></button>
+                <span class="clearfix"></span>
+            </div>
+        </div>
+        <div class="collapse navbar-collapse cssmenu" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right pull-right menu-ul">
+                <li><a class="home-menu" href="/home">HOME</a></li>
+                <li class="dashboard-to-menu"><a href="/dashboard">DASHBOARD</a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="nav-bar-templates" style="display:none">
+        <ul class="sub-menu-name">
+            <li>
+                <a href="#" class="dropdown-toggle waves-effect waves-light profile menu-name" data-toggle="dropdown" aria-expanded="true">
+                </a>
+                <ul class="dropdown-menu menu-items-ul"></ul>
+            </li>
+        </ul>
+        <ul class="sub-menu-item">
+            <li>
+                <a class="menu-url"></a>
+            </li>
+        </ul>
+        <ul class="settings-menu">
+            <li class="dropdown user-box">
+                <a href="#" class="dropdown-toggle waves-effect waves-light profile " data-toggle="dropdown" aria-expanded="true"> MY ACCOUNT <span class="caret"></span> </a>
+                <ul class="dropdown-menu">
+                    <li><a style="cursor: default;">Logged in as:<br /><span class="username">User</span></a></li>
+                </ul>
+            </li>
+        </ul>
+        <ul class="reminders">
+            <li class="dropdown user-box reminder-menu">
+                <a class="dropdown-toggle waves-effect waves-light profile p-l-10 p-r-10 mlink" data-toggle="dropdown" aria-expanded="false"> <i class="zmdi zmdi-timer c-pointer" title="Reminders"></i> </a>
+                <div class="notify-icon-container" style="display: none;">
+                    <button class="not-btn btnPulse inactive throb"></button>
+                </div>
+                <ul class="dropdown-menu reminder-items-ul"></ul>
+            </li>
+        </ul>
+        <ul class="notifications">
+            <li class="dropdown user-box notification-menu">
+                <a class="dropdown-toggle waves-effect waves-light profile p-l-10 p-r-10 slink" data-toggle="dropdown" aria-expanded="false"> <i class="zmdi zmdi-notifications-none load-statu" title="Statutory Notifications"></i> </a>
+                <div class="notify-icon-container" style="display: none;">
+                    <button class="not-btn btnPulse inactive throb"></button>
+                </div>
+                <ul class="dropdown-menu notification-items-ul"></ul>
+            </li>
+        </ul>
+        <ul class="escalations">
+            <li class="dropdown user-box escalation-menu">
+                <a class="dropdown-toggle waves-effect waves-light profile p-l-10 p-r-10 mlink" data-toggle="dropdown" aria-expanded="false"> <i class="zmdi zmdi-flash c-pointer" title="Escalations"></i> </a>
+                <div class="notify-icon-container" style="display: none;">
+                    <button class="not-btn btnPulse inactive throb"></button>
+                </div>
+                <ul class="dropdown-menu escalation-items-ul"></ul>
+            </li>
+        </ul>
+        <ul class="messages">
+            <li class="dropdown user-box message-menu">
+                <a class="dropdown-toggle waves-effect waves-light profile p-l-10 p-r-10 mlink" data-toggle="dropdown" aria-expanded="false"> <i class="zmdi zmdi-email load-msg" title="Messages"></i> </a>
+                <div class="notify-icon-container" style="display: none;">
+                    <button class="not-btn btnPulse inactive throb"></button>
+                </div>
+                <ul class="dropdown-menu msg-items-ul"></ul>
+            </li>
+        </ul>
+        <ul class="notifications-list" style="width: 200px;">
+            <li style="width: 200px; white-space:normal;">
+                <a class="slink">
+                    <div> <strong class="statu-heading"></strong> </div>
+                    <div class="statu-content"> </div>
+                </a>
+            </li>
+            <li class="divider"></li>
+        </ul>
+        <ul class="reminders-read-all" style="width: 200px;">
+            <li>
+               <a class="text-center mlink c-pointer" href="/reminders"> <strong>Read More</strong>
+               <i class="fa fa-angle-right"></i>
+               </a>
+            </li>
+        </ul>
+        <ul class="notifications-read-all" style="width: 200px;">
+            <li>
+               <a class="text-center mlink c-pointer" href="/notifications"> <strong>Read More</strong>
+               <i class="fa fa-angle-right"></i>
+               </a>
+            </li>
+        </ul>
+        <ul class="escalations-read-all" style="width: 200px;">
+            <li>
+               <a class="text-center mlink c-pointer" href="/escalations"> <strong>Read More</strong>
+               <i class="fa fa-angle-right"></i>
+               </a>
+            </li>
+        </ul>
+        <ul class="message-read-all" style="width: 200px;">
+            <li>
+               <a class="text-center mlink c-pointer" href="/message"> <strong>Read More</strong>
+               <i class="fa fa-angle-right"></i>
+               </a>
+            </li>
+        </ul>
+    </div>
+</div>

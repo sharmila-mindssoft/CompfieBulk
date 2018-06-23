@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Compfie</title>
+    {% include "/files/client/common/html/assets.html" %}
+</head>
+
+<body class="fixed-left">
+    <div id="wrapper">
+        {% include "/files/client/common/html/header.html" %} {% block content %} {% endblock %} {% include "/files/client/common/html/footer.html" %}
+    </div>
+</body>
+{% include "/files/client/common/html/jsfiles.html" %} {% block contentscript %} {% endblock %}
+
+</html>
