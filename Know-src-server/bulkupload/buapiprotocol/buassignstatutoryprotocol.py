@@ -605,7 +605,9 @@ class BulkUploadConstant(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_category_id", "user_category_name"])
+        data = parse_dictionary(data, [
+            "user_category_id", "user_category_name"
+        ])
         return BulkUploadConstant(
             data.get("user_category_id"),
             data.get("user_category_name")
@@ -614,6 +616,25 @@ class BulkUploadConstant(object):
     def to_structure(self):
         return {
             self.user_category_name: self.user_category_id,
+        }
+
+
+class GetAssignStatutoryStatus(Request):
+    def __init__(self, csv_name):
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["csv_name"]
+        )
+        return GetAssignStatutoryStatus(
+            data.get("csv_name")
+        )
+
+    def to_inner_structure(self):
+        return{
+            "csv_name": self.csv_name
         }
 
 
@@ -631,6 +652,7 @@ def _init_Request_class_map():
         AssignStatutoryValidate, SubmitAssignStatutory,
         GetDomainExecutiveDetails,
         GetBulkUploadConstants, BulkUploadConstant,
+        GetAssignStatutoryStatus
     ]
 
     class_map = {}
@@ -1459,6 +1481,34 @@ class GetBulkUploadConstantSuccess(Response):
         }
 
 
+class Alive(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return Alive()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class Done(Response):
+    def __init__(self, csv_name):
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_name"])
+        csv_name = data.get("csv_name")
+        return Done(csv_name)
+
+    def to_inner_structure(self):
+        return {
+            "csv_name": self.csv_name
+        }
+
+
 def _init_Response_class_map():
     classes = [
         GetClientInfoSuccess,
@@ -1484,7 +1534,9 @@ def _init_Response_class_map():
         UnitsNotAssignedToUser,
         CsvFileExeededMaxLines,
         GetDomainExecutiveDetailsSuccess,
-        GetBulkUploadConstantSuccess
+        GetBulkUploadConstantSuccess,
+        Alive,
+        Done
     ]
 
     class_map = {}
