@@ -183,6 +183,7 @@ def get_download_assing_statutory_list(
         )
         ac_list.append(ac_tuple)
 
+    db = connect_bulk_db()
     db.call_proc("sp_delete_assign_statutory_template", (
         le_name, domain_names, unit_names
         ))
@@ -190,6 +191,7 @@ def get_download_assing_statutory_list(
         db.bulk_insert(
             "tbl_download_assign_statutory_template", column, ac_list
             )
+        db.commit()
     return ac_list
 
 ########################################################

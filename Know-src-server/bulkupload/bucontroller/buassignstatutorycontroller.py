@@ -3,7 +3,6 @@ import threading
 import time
 import json
 import os
-
 from ..bucsvvalidation.assignstatutoryvalidation import (
     ValidateAssignStatutoryCsvData, ValidateAssignStatutoryForApprove
 )
@@ -17,7 +16,8 @@ from ..bulkuploadcommon import (
     convert_base64_to_file,
     read_data_from_csv,
     generate_valid_file,
-    remove_uploaded_file
+    remove_uploaded_file,
+    generate_random_string
 )
 from ..bulkexport import ConvertJsonToCSV
 
@@ -124,6 +124,9 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.GetAssignStatutoryStatus:
         result = process_get_status(db, request_frame)
 
+    if type(request_frame) is bu_as.GetAssignStatutoryDownloadStatus:
+        result = process_get_download_status(db, request_frame)
+
     return result
 
 ########################################################
@@ -173,7 +176,7 @@ def get_client_info(db, session_user):
 ########################################################
 
 
-def get_download_assign_statutory(db, request_frame, session_user):
+def validate_download_data(db, request_frame, session_user, csv_name):
 
     cl_id = request_frame.cl_id
     le_id = request_frame.le_id
@@ -192,10 +195,28 @@ def get_download_assign_statutory(db, request_frame, session_user):
     converter = ConvertJsonToCSV(
         db, request_frame, session_user, "DownloadAssignStatutory"
     )
-    result = bu_as.DownloadAssignStatutorySuccess(
+
+    return_data = bu_as.DownloadAssignStatutorySuccess(
         converter.FILE_DOWNLOAD_PATH
+    ).to_structure()
+    return_data = json.dumps(return_data)
+
+    file_name = "%s_%s.%s" % (
+        csv_name, "result", "txt"
     )
-    return result
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    with open(file_path, "wb") as fn:
+        fn.write(return_data)
+    return
+
+
+def get_download_assign_statutory(db, request_frame, session_user):
+    csv_name = generate_random_string()
+    t = threading.Thread(
+        target=validate_download_data,
+        args=(db, request_frame, session_user, csv_name))
+    t.start()
+    return bu_as.Done(csv_name)
 
 
 ########################################################
@@ -834,3 +855,22 @@ def process_get_status(db, request):
             elif str(result[0]) == "UploadedRecordsCountNotMatch":
                 return bu_as.UploadedRecordsCountNotMatch.parse_inner_structure(
                     result[1])
+
+
+def process_get_download_status(db, request):
+    csv_name = request.csv_name
+    file_name = "%s_%s.%s" % (
+        csv_name, "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    if os.path.exists(file_path) is False:
+        return bu_as.Alive()
+    else:
+        return_data = ""
+        with open(file_path, "r") as fn:
+            return_data += fn.read()
+
+        result = json.loads(return_data)
+        if str(result[0]) == "DownloadAssignStatutorySuccess":
+            return bu_as.DownloadAssignStatutorySuccess.parse_inner_structure(
+                result[1])

@@ -65,7 +65,7 @@ function initMethods() {
         GetStatus: GetStatus,
         getAssignStatutoryStatus: getAssignStatutoryStatus,
         getApproveMappingStatus:getApproveMappingStatus,
-
+        getAssignStatutoryDownloadStatus: getAssignStatutoryDownloadStatus,
     };
 }
 

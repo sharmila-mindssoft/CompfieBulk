@@ -215,11 +215,14 @@ function pageControls() {
             }
 
             displayLoader();
-            bu.getDownloadAssignStatutory(parseInt(clientId), 
-                parseInt(legalentityId), 
-                DOMAINIDS, UNITIDS, clientName, 
-                legalentityName, DOMAINNAMES, UNITNAMES, 
-                function(error, data) {
+
+            var csv_name = null;
+            var count = 0;
+            function apiCallDownload(csv_name, callback){
+                bu.getAssignStatutoryDownloadStatus(csv_name, callback);
+            }
+            function call_bck_fn(error, data){
+                console.log("get status data: error"+ error + ", data:"+data)
                 if (error == null) {
                     downloadURL = data.link;
                     if (downloadURL != null){
@@ -230,11 +233,57 @@ function pageControls() {
                         displayMessage(message.no_compliance_assign_statutory);
                         hideLoader();
                     }
-                } else {
+                }
+                else{
+                    if (error == "Alive"){
+                        console.log("inside if=====> going to get status again")
+                        // count = count+1;
+                        sleep(180000);
+                        // apiCallDownload(csv_name, call_bck_fn);
+                        if(count <3){
+                            apiCallDownload(csv_name, call_bck_fn);
+                            count++;
+                        }
+                        
+                    }
+                    hideLoader();
+                    
+                }
+            }
+            bu.getDownloadAssignStatutory(
+                parseInt(clientId), parseInt(legalentityId), 
+                DOMAINIDS, UNITIDS, clientName, 
+                legalentityName, DOMAINNAMES, UNITNAMES, 
+                function(error, response){
+                if(error == "Done" || response == "Done"){
+                    csv_name = response.csv_name;
+                    apiCallDownload(csv_name, call_bck_fn);
+                }else{
                     displayMessage(error);
                     hideLoader();
                 }
             });
+
+            // bu.getDownloadAssignStatutory(parseInt(clientId), 
+            //     parseInt(legalentityId), 
+            //     DOMAINIDS, UNITIDS, clientName, 
+            //     legalentityName, DOMAINNAMES, UNITNAMES, 
+            //     function(error, data) {
+            //     if (error == null) {
+            //         downloadURL = data.link;
+            //         if (downloadURL != null){
+            //             window.open(downloadURL, '_blank');
+            //             hideLoader();
+            //         }
+            //         else{
+            //             displayMessage(message.no_compliance_assign_statutory);
+            //             hideLoader();
+            //         }
+            //     } else {
+            //         displayMessage(error);
+            //         hideLoader();
+            //     }
+            // });
         }
     });
 
