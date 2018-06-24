@@ -177,7 +177,6 @@ def get_client_info(db, session_user):
 
 
 def validate_download_data(db, request_frame, session_user, csv_name):
-
     cl_id = request_frame.cl_id
     le_id = request_frame.le_id
     d_ids = request_frame.d_ids
@@ -241,19 +240,14 @@ def get_download_assign_statutory(db, request_frame, session_user):
 
 def validate_data(db, request_frame, c_obj, session_user, csv_name):
     res_data = c_obj.perform_validation()
-    print "Invalid CSV res_data -> ", res_data
-
     assigned_units = verify_user_units(
         db, session_user, ",".join(map(str, c_obj._unit_ids))
     )
-
     return_data = None
     if res_data == "InvalidCSV":
         return_data = "InvalidCSV"
-
     elif assigned_units < len(c_obj._unit_ids):
         return_data = "UnitsNotAssignedToUser"
-
     elif res_data["return_status"] is True:
         invalid_units = c_obj.check_uploaded_count_in_csv()
         if len(invalid_units) > 0:
@@ -291,7 +285,6 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
                         res_data["invalid"]
                     ).to_structure()
                     return_data = json.dumps(return_data)
-                    print "return_data->>> ", return_data
 
     # csv data save to temp db
     else:
@@ -315,7 +308,6 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
 
 
 def upload_assign_statutory_csv(db, request_frame, session_user):
-
     try:
         if request_frame.csv_size > 0:
             pass
@@ -349,105 +341,12 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
             target=validate_data,
             args=(db, request_frame, c_obj, session_user, csv_name))
         t.start()
-        print "csv_name returned"
         return bu_as.Done(csv_name)
 
     except Exception, e:
         print e
         raise e
 
-
-def upload_assign_statutory_csv_unused(db, request_frame, session_user):
-
-    try:
-        if request_frame.csv_size > 0:
-            pass
-
-        if get_rejected_file_count(db, session_user) > MAX_REJECTED_COUNT:
-            return bu_as.RejectionMaxCountReached()
-
-        # save csv file
-        csv_name = convert_base64_to_file(
-            BULKUPLOAD_CSV_PATH, request_frame.csv_name,
-            request_frame.csv_data
-        )
-        # read data from csv file
-        header, assign_statutory_data = read_data_from_csv(csv_name)
-
-        if len(assign_statutory_data) == 0:
-            return bu_as.CsvFileBlank()
-
-        if len(assign_statutory_data) > CSV_MAX_LINES:
-            file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
-            remove_uploaded_file(file_path)
-            return bu_as.CsvFileExeededMaxLines(CSV_MAX_LINES)
-
-        # csv data validation
-        c_obj = ValidateAssignStatutoryCsvData(
-            db, assign_statutory_data, session_user, request_frame.csv_name,
-            header
-        )
-
-        if c_obj.compare_csv_columns() is False:
-            return bu_as.InvalidCsvFile()
-
-        res_data = c_obj.perform_validation()
-
-        assigned_units = verify_user_units(
-            db, session_user, ",".join(map(str, c_obj._unit_ids))
-        )
-        if assigned_units < len(c_obj._unit_ids):
-            return bu_as.UnitsNotAssignedToUser()
-
-        if res_data["return_status"] is True:
-            invalid_units = c_obj.check_uploaded_count_in_csv()
-            if len(invalid_units) > 0:
-                return bu_as.UploadedRecordsCountNotMatch(invalid_units)
-
-            generate_valid_file(csv_name)
-            d_ids = ",".join(map(str, c_obj._domain_ids))
-            d_names = ",".join(c_obj._domain_names)
-            csv_args = [
-                session_user.user_id(),
-                c_obj._client_id, c_obj._legal_entity_id,
-                d_ids, c_obj._legal_entity, d_names,
-                csv_name, c_obj._country,
-                res_data["total"]
-            ]
-            new_csv_id = save_assign_statutory_csv(db, csv_args)
-            if new_csv_id:
-                if (
-                    save_assign_statutory_data(
-                        db, new_csv_id, res_data["data"]
-                    ) is True
-                ):
-                    u_ids = ",".join(map(str, c_obj._unit_ids))
-                    c_obj.save_manager_message(
-                        csv_name, c_obj._client_group,
-                        c_obj._legal_entity, session_user.user_id(),
-                        u_ids
-                    )
-                    c_obj.source_commit()
-                    result = bu_as.UploadAssignStatutoryCSVSuccess(
-                        res_data["total"], res_data["valid"],
-                        res_data["invalid"]
-                    )
-
-        # csv data save to temp db
-        else:
-            result = bu_as.UploadAssignStatutoryCSVFailed(
-                res_data["invalid_file"], res_data["mandatory_error"],
-                res_data["max_length_error"], res_data["duplicate_error"],
-                res_data["invalid_char_error"], res_data["invalid_data_error"],
-                res_data["inactive_error"], res_data["total"],
-                res_data["invalid"]
-            )
-
-        return result
-
-    except Exception, e:
-        print e
-        raise e
 
 ########################################################
 '''
@@ -828,18 +727,13 @@ def process_get_status(db, request):
     file_name = "%s_%s.%s" % (
         file_string[0], "result", "txt"
     )
-    print 'file_namefile_name>>>>', file_name
-    print ' os.path os.path>>',  os.path
     file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    print 'file path>>>', file_path
     if os.path.exists(file_path) is False:
         return bu_as.Alive()
     else:
         return_data = ""
         with open(file_path, "r") as fn:
             return_data += fn.read()
-
-        print "return_datareturn_datareturn_datareturn_data>>>", return_data
         if return_data == "InvalidCSV":
             return bu_as.InvalidCsvFile()
         elif return_data == "UnitsNotAssignedToUser":

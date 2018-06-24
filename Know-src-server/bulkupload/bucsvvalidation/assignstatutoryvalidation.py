@@ -10,7 +10,7 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
 )
 from bulkupload.bulkconstants import (
-    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, TEMP_FILE_SERVER,
+    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH,
     BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
     BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME
 )
@@ -91,8 +91,8 @@ class SourceDB(object):
         self.get_unit_location(legal_entity_id)
         self.get_unit_code(legal_entity_id)
         self.get_unit_name(legal_entity_id)
-        self.get_statutories()
-        self.get_child_statutories()
+        self.get_statutories(country_id)
+        self.get_child_statutories(country_id)
         self.get_statutory_provision()
         self.get_compliance_task()
         self.get_compliance_description()
@@ -147,15 +147,21 @@ class SourceDB(object):
         for d in data:
             self._unit_name[d["unit_name"]] = d
 
-    def get_statutories(self):
-        data = self._source_db.call_proc("sp_bu_level_one_statutories")
+    def get_statutories(self, country_id):
+        data = self._source_db.call_proc(
+            "sp_bu_level_one_statutories", [country_id]
+        )
         for d in data:
-            self._statutories[d["statutory_name"]] = d
+            self._statutories[d["statutory_name"]+'-'+d["domain_name"]] = d
 
-    def get_child_statutories(self):
-        data = self._source_db.call_proc("sp_bu_chils_level_statutories")
+    def get_child_statutories(self, country_id):
+        data = self._source_db.call_proc(
+            "sp_bu_chils_level_statutories", [country_id]
+        )
         for d in data:
-            self._child_statutories[d["statutory_name"]] = d
+            self._child_statutories[
+                d["statutory_name"]+'-'+d["domain_name"]
+            ] = d
 
     def get_statutory_provision(self):
         data = self._source_db.call_proc("sp_bu_compliance_info")
@@ -335,7 +341,7 @@ class SourceDB(object):
                 approval_status = 4
 
             p_legislation_id = self._statutories.get(
-                d["Primary_Legislation"]).get(
+                d["Primary_Legislation"]+'-'+d["Domain"]).get(
                 "statutory_id"
             )
 
@@ -345,7 +351,7 @@ class SourceDB(object):
                 d["Secondary_Legislation"] != ''
             ):
                 s_legislation_id = self._child_statutories.get(
-                    d["Secondary_Legislation"]
+                    d["Secondary_Legislation"]+'-'+d["Domain"]
                 ).get("statutory_id")
 
             comp_id = None
@@ -446,7 +452,7 @@ class SourceDB(object):
         statutory_provision = data.get("Statutory_Provision")
         task_name = data.get("Compliance_Task")
         compliance_description = data.get("Compliance_Description")
-        p_legislation = data.get("Primary_Legislation")
+        p_legislation = data.get("Primary_Legislation")+'-'+data.get("Domain")
         s_legislation = data.get("Secondary_Legislation")
         unit_id = self._unit_code.get(unit_code).get("unit_id")
         domain_id = self._domain.get(domain_name).get("domain_id")
@@ -461,7 +467,7 @@ class SourceDB(object):
             s_legislation != ''
         ):
             s_legislation_id = self._child_statutories.get(
-                s_legislation
+                s_legislation+'-'+data.get("Domain")
             ).get("statutory_id")
 
         c_ids = self._source_db.call_proc(
@@ -860,9 +866,15 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     ):
                         unboundMethod = self._validation_maps.get(key)
                         if unboundMethod is not None:
-                            if key == "Organization":
+                            if(
+                                key == "Organization" or
+                                key == "Primary_Legislation"
+                            ):
                                 org_val = v+'-'+data.get('Domain')
                                 isFound = unboundMethod(org_val)
+                            elif key == "Secondary_Legislation":
+                                s_legs_val = v+'-'+data.get('Domain')
+                                isFound = unboundMethod(s_legs_val)
                             elif key == "Unit_Location":
                                 loc_val = data.get('Unit_Code')+'-'+v
                                 isFound = unboundMethod(loc_val)
@@ -1112,9 +1124,15 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                                 unboundMethod = self._validation_maps.get(
                                     key
                                 )
-                                if key == "Organization":
+                                if(
+                                    key == "Organization" or
+                                    key == "Primary_Legislation"
+                                ):
                                     org_val = v+'-'+data.get('Domain')
                                     isFound = unboundMethod(org_val)
+                                elif key == "Secondary_Legislation":
+                                    s_legs_val = v+'-'+data.get('Domain')
+                                    isFound = unboundMethod(s_legs_val)
                                 elif key == "Unit_Location":
                                     loc_val = data.get('Unit_Code')+'-'+v
                                     isFound = unboundMethod(loc_val)
