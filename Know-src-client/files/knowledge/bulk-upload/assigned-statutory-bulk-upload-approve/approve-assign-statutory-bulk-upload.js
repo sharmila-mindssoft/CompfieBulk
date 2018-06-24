@@ -852,43 +852,86 @@ validateAuthentication = function(id, passwordField, reasonField) {
 // Server to approve & Reject send status. To check system rejected status
 approveOrRejectAction = function(id, clId, leId, action, reason, password) {
     displayLoader();
-    bu.assignStatutoryActionInList(parseInt(clId), parseInt(leId),
-        parseInt(id), parseInt(action), reason, password,
-        function(err1, res2) {
-            console.log(err1, res2);
-            if (err1 == null) {
-                if (res2.hasOwnProperty("rej_count")) {
-                    setTimeout(function() {
-                        hideLoader();
-                        var statusmsg = res2.rej_count + ' ' + 
-                            message.sys_rejected_confirm;
-                        confirm_alert(statusmsg, function(isConfirm) {
-                            if (isConfirm) {
-                                displayLoader();
-                                bu.confirmAssignStatutoryUpdateAction(
-                                    parseInt(id),
-                                    parseInt(clId), parseInt(leId),
-                                    function(error, res3) {
-                                        if (error == null) {
-                                            displayMsg(action);
-                                            STATUTE.fetchValues();
-                                        } else {
-                                            STATUTE.failuresMessage(error);
-                                            hideLoader();
-                                        }
-                                    });
-                            }
-                        });
-                    }, 500);
-                } else {
-                    displayMsg(action);
-                    STATUTE.fetchValues();
-                }
-            } else {
-                STATUTE.failuresMessage(err1);
+
+    var csv_name = null;
+    function apiCallList(csv_name, callback){
+        bu.getAssignStatutoryListStatus(csv_name, callback);
+    }
+
+    function apiCallConfirm(csv_name, callback){
+        bu.getAssignStatutoryConfirmStatus(csv_name, callback);
+    }
+
+    function call_bck_fn_confirm(error, data){
+        if (error == null) {
+            displayMsg(action);
+            STATUTE.fetchValues();
+        } else{
+            if (error == "Alive"){
+                sleep(180000);
+                apiCallConfirm(csv_name, call_bck_fn_confirm);                        
+            }else{
+                STATUTE.failuresMessage(
+                    error
+                );
                 hideLoader();
             }
-        });
+        }
+    }
+
+    function call_bck_fn(error, response){
+        if (error == null) {
+            if (response.hasOwnProperty("rej_count")) {
+                setTimeout(function() {
+                    hideLoader();
+                    var statusmsg = response.rej_count + ' ' + 
+                        message.sys_rejected_confirm;
+                    confirm_alert(statusmsg, function(isConfirm) {
+                        if (isConfirm) {
+                            displayLoader();
+                            bu.confirmAssignStatutoryUpdateAction(
+                            parseInt(id),
+                            parseInt(clId), parseInt(leId),
+                            function(error, res3) {
+                                if(error == "Done" || res3 == "Done"){
+                                    csv_name = res3.csv_name;
+                                    apiCallConfirm(
+                                        csv_name, call_bck_fn_confirm
+                                    );
+                                }else{
+                                    STATUTE.failuresMessage(error);
+                                    hideLoader();
+                                }
+                            });
+                        }
+                    });
+                }, 500);
+            } else {
+                displayMsg(action);
+                STATUTE.fetchValues();
+            }
+        } else {
+            if (error == "Alive"){
+                sleep(180000);
+                apiCallList(csv_name, call_bck_fn);                 
+            }else{
+                STATUTE.failuresMessage(error);
+                hideLoader();
+            }
+        }
+    }
+
+    bu.assignStatutoryActionInList(parseInt(clId), parseInt(leId),
+    parseInt(id), parseInt(action), reason, password,
+    function(err1, res2) {
+        if(err1 == "Done" || res2 == "Done"){
+            csv_name = res2.csv_name;
+            apiCallList(csv_name, call_bck_fn);
+        }else{
+            STATUTE.failuresMessage(err1);
+            hideLoader();
+        }
+    });
 }
 
 // Display message to info message
@@ -1317,6 +1360,15 @@ createPageView = function(total_records) {
     });
 };
 
+function sleep(milliseconds) {
+      var start = new Date().getTime();
+      for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+          break;
+        }
+      }
+    }
+
 // To validate and send action status server using submit button action
 ApproveAssignStatutoryBU.prototype.submitProcess = function() {
     var password = SUBMIT_PASSWORD.val();
@@ -1332,6 +1384,7 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
     }
 
     displayLoader();
+    // var count = 0;
     setTimeout(function() {
         bu.validateAssignStatutory(parseInt(csvid), function(error, response) {
         if (response.un_saved_count > 0) {
@@ -1339,50 +1392,93 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
             Custombox.close();
             hideLoader();
         } else {
-            bu.submitAssignStatutoryAction(parseInt(csvid), parseInt(clId),
-                parseInt(leId), password,
-                function(error, response) {
-                    if (error == null) {
+
+            var csv_name = null;
+            function apiCallSubmit(csv_name, callback){
+                bu.getAssignStatutorySubmitStatus(csv_name, callback);
+            }
+
+            function apiCallConfirm(csv_name, callback){
+                bu.getAssignStatutoryConfirmStatus(csv_name, callback);
+            }
+
+            function call_bck_fn_confirm(error, data){
+                if (error == null) {
+                    displaySuccessMessage(
+                        message.assign_statutory_submit_success
+                    );
+                    STATUTE.pageLoad();
+                } else{
+                    if (error == "Alive"){
+                        sleep(180000);
+                        apiCallConfirm(csv_name, call_bck_fn_confirm);                        
+                    }else{
+                        STATUTE.failuresMessage(
+                            error
+                        );
                         hideLoader();
-                        Custombox.close();
-                        var dispMsg = message.assign_statutory_submit_success;
-                        if (response.hasOwnProperty("rej_count")) {
-                            setTimeout(function() {
-                                var msg = response.rej_count + ' ' + 
-                                    message.sys_rejected_confirm;
-                                confirm_alert(msg, function(isConfirm) {
-                                    if (isConfirm) {
-                                        displayLoader();
-                                        bu.confirmAssignStatutoryUpdateAction(
-                                            parseInt(csvid),
-                                            parseInt(clId), parseInt(leId),
-                                            function(error, res3) {
-                                                if (error == null) {
-                                                    displaySuccessMessage(
-                                                        dispMsg
-                                                    );
-                                                    STATUTE.pageLoad();
-                                                } else {
-                                                    STATUTE.failuresMessage(
-                                                        error
-                                                    );
-                                                    hideLoader();
-                                                }
-                                            });
-                                    }
-                                });
-                            }, 500);
-                        } else {
-                            displaySuccessMessage(
-                                message.assign_statutory_submit_success
-                            );
-                            STATUTE.pageLoad();
-                        }
+                    }
+                }
+            }
+
+            function call_bck_fn(error, response){
+                if (error == null) {
+                    hideLoader();
+                    Custombox.close();
+                    var dispMsg = message.assign_statutory_submit_success;
+                    if (response.hasOwnProperty("rej_count")) {
+                        setTimeout(function() {
+                            var msg = response.rej_count + ' ' + 
+                                message.sys_rejected_confirm;
+                            confirm_alert(msg, function(isConfirm) {
+                                if (isConfirm) {
+                                    displayLoader();
+                                    bu.confirmAssignStatutoryUpdateAction(
+                                        parseInt(csvid),
+                                        parseInt(clId), parseInt(leId),
+                                        function(error, res3) {
+                                            if(error == "Done" || res3 == "Done"){
+                                                csv_name = res3.csv_name;
+                                                apiCallConfirm(
+                                                    csv_name, call_bck_fn_confirm
+                                                );
+                                            }else{
+                                                statute.failuresMessage(error);
+                                                hideLoader();
+                                            }
+                                        });
+                                }
+                            });
+                        }, 500);
                     } else {
+                        displaySuccessMessage(
+                            message.assign_statutory_submit_success
+                        );
+                        STATUTE.pageLoad();
+                    }
+                } else {
+                    if (error == "Alive"){
+                        sleep(180000);
+                        apiCallSubmit(csv_name, call_bck_fn);                 
+                    }else{
                         statute.failuresMessage(error);
                         hideLoader();
                     }
-                });
+                }
+            }
+
+            bu.submitAssignStatutoryAction(parseInt(csvid), parseInt(clId),
+                parseInt(leId), password,
+                function(error, response) {
+                if(error == "Done" || response == "Done"){
+                    csv_name = response.csv_name;
+                    apiCallSubmit(csv_name, call_bck_fn);
+                }else{
+                    statute.failuresMessage(error);
+                    hideLoader();
+                }
+            });
+
         }
     });
     }, 500);

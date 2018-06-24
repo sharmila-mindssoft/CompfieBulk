@@ -714,7 +714,6 @@ function GetStatus(csv_name, callback){
 }
 
 function getAssignStatutoryStatus(csv_name, callback){
-    console.log("inside get status");
     var request = [
         'GetAssignStatutoryStatus', {
             "csv_name": csv_name
@@ -724,9 +723,35 @@ function getAssignStatutoryStatus(csv_name, callback){
 }
 
 function getAssignStatutoryDownloadStatus(csv_name, callback){
-    console.log("inside get status");
     var request = [
         'GetAssignStatutoryDownloadStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function getAssignStatutorySubmitStatus(csv_name, callback){
+    var request = [
+        'GetAssignStatutorySubmitStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function getAssignStatutoryConfirmStatus(csv_name, callback){
+    var request = [
+        'GetAssignStatutoryConfirmStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function getAssignStatutoryListStatus(csv_name, callback){
+    var request = [
+        'GetAssignStatutoryListStatus', {
             "csv_name": csv_name
         }
     ];

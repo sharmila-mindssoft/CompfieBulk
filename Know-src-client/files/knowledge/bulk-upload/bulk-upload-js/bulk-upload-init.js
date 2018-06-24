@@ -64,7 +64,10 @@ function initMethods() {
         saveExecutiveMessage: saveExecutiveMessage,
         GetStatus: GetStatus,
         getAssignStatutoryStatus: getAssignStatutoryStatus,
-        getAssignStatutoryDownloadStatus: getAssignStatutoryDownloadStatus
+        getAssignStatutoryDownloadStatus: getAssignStatutoryDownloadStatus,
+        getAssignStatutorySubmitStatus: getAssignStatutorySubmitStatus,
+        getAssignStatutoryConfirmStatus: getAssignStatutoryConfirmStatus,
+        getAssignStatutoryListStatus: getAssignStatutoryListStatus
 
     };
 }

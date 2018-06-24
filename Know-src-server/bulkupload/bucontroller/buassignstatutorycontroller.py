@@ -68,7 +68,9 @@ def process_bu_assign_statutory_request(request, db, session_user):
             db, request_frame, session_user
         )
     if type(request_frame) is bu_as.GetAssignStatutoryFilters:
-        result = get_assign_statutory_filter_for_approve_page(db, request_frame)
+        result = get_assign_statutory_filter_for_approve_page(
+            db, request_frame
+        )
     if type(request_frame) is bu_as.ViewAssignStatutoryData:
         result = get_assign_statutory_data_by_csvid(
             db, request_frame, session_user
@@ -126,6 +128,15 @@ def process_bu_assign_statutory_request(request, db, session_user):
 
     if type(request_frame) is bu_as.GetAssignStatutoryDownloadStatus:
         result = process_get_download_status(db, request_frame)
+
+    if type(request_frame) is bu_as.GetAssignStatutorySubmitStatus:
+        result = process_get_submit_status(db, request_frame)
+
+    if type(request_frame) is bu_as.GetAssignStatutoryConfirmStatus:
+        result = process_get_confirm_status(db, request_frame)
+
+    if type(request_frame) is bu_as.GetAssignStatutoryListStatus:
+        result = process_get_list_status(db, request_frame)
 
     return result
 
@@ -407,49 +418,76 @@ def get_assign_statutory_data_by_filter(db, request_frame, session_user):
 #################################################################
 # To update records in table by approve all / reject all function
 #################################################################
-def update_assign_statutory_action_in_list(db, request_frame, session_user):
+def list_statutory_thread_process(
+    db, request_frame, c_obj, session_user, csv_name
+):
     csv_id = request_frame.csv_id
     action = request_frame.bu_action
     remarks = request_frame.remarks
-    client_id = request_frame.cl_id
-    legal_entity_id = request_frame.le_id
-    user_id = session_user.user_id()
-    try:
-        c_obj = ValidateAssignStatutoryForApprove(
-            db, csv_id, client_id, legal_entity_id, session_user
-        )
-        is_declined = c_obj.perform_validation_before_submit()
-        if action == 1:
-            if len(is_declined.keys()) > 0:
-                c_obj.update_child(csv_id)
-                return bu_as.ValidationSuccess(len(is_declined.keys()))
-            else:
-                if(update_approve_action_from_list(
-                    db, csv_id, action, remarks, session_user, "all"
-                )
-                ):
-                    c_obj.frame_data_for_main_db_insert(user_id)
-                    u_ids = ",".join(map(str, c_obj._unit_ids))
-                    c_obj.save_executive_message(
-                        action, c_obj._csv_name, c_obj._client_group,
-                        c_obj._legal_entity, session_user.user_id(),
-                        u_ids, None, 0
-                    )
-                    c_obj.source_commit()
-                    delete_action_after_approval(db, csv_id)
-                    return bu_as.AssignStatutoryApproveActionInListSuccess()
+    return_data = None
+    is_declined = c_obj.perform_validation_before_submit()
+    if action == 1:
+        if len(is_declined.keys()) > 0:
+            c_obj.update_child(csv_id)
+            return_data = bu_as.ValidationSuccess(
+                len(is_declined.keys())
+            ).to_structure()
+            return_data = json.dumps(return_data)
         else:
             if(update_approve_action_from_list(
                 db, csv_id, action, remarks, session_user, "all"
-            )):
+            )
+            ):
+                c_obj.frame_data_for_main_db_insert(session_user.user_id())
                 u_ids = ",".join(map(str, c_obj._unit_ids))
                 c_obj.save_executive_message(
                     action, c_obj._csv_name, c_obj._client_group,
                     c_obj._legal_entity, session_user.user_id(),
-                    u_ids, remarks, 0
+                    u_ids, None, 0
                 )
                 c_obj.source_commit()
-                return bu_as.AssignStatutoryApproveActionInListSuccess()
+                delete_action_after_approval(db, csv_id)
+                return_data = bu_as.AssignStatutoryApproveActionInListSuccess().to_structure()
+                return_data = json.dumps(return_data)
+    else:
+        if(update_approve_action_from_list(
+            db, csv_id, action, remarks, session_user, "all"
+        )):
+            u_ids = ",".join(map(str, c_obj._unit_ids))
+            c_obj.save_executive_message(
+                action, c_obj._csv_name, c_obj._client_group,
+                c_obj._legal_entity, session_user.user_id(),
+                u_ids, remarks, 0
+            )
+            c_obj.source_commit()
+            return_data =  bu_as.AssignStatutoryApproveActionInListSuccess().to_structure()
+            return_data = json.dumps(return_data)
+
+    file_string = csv_name.split(".")
+    file_name = "%s_%s.%s" % (
+        file_string[0], "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    with open(file_path, "wb") as fn:
+        fn.write(return_data)
+    return
+
+
+def update_assign_statutory_action_in_list(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    client_id = request_frame.cl_id
+    legal_entity_id = request_frame.le_id
+    csv_name = generate_random_string()
+    try:
+        c_obj = ValidateAssignStatutoryForApprove(
+            db, csv_id, client_id, legal_entity_id, session_user
+        )
+
+        t = threading.Thread(
+            target=list_statutory_thread_process,
+            args=(db, request_frame, c_obj, session_user, csv_name))
+        t.start()
+        return bu_as.Done(csv_name)
 
     except Exception, e:
         raise e
@@ -621,13 +659,53 @@ def save_action(db, request_frame, session_user):
 #########################################################
 # submit record by user after select all individual rpw
 #########################################################
+
+def submit_statutory_thread_process(
+    db, request_frame, c_obj, session_user, csv_name
+):
+    csv_id = request_frame.csv_id
+    return_data = None
+    is_declined = c_obj.perform_validation_before_submit()
+    if len(is_declined.keys()) > 0:
+        return_data = bu_as.ValidationSuccess(
+            len(is_declined.keys())
+            ).to_structure()
+        return_data = json.dumps(return_data)
+    else:
+        update_approve_action_from_list(
+            db, csv_id, 1, None, session_user, "single"
+        )
+        u_ids = ",".join(map(str, c_obj._unit_ids))
+        c_obj.save_executive_message(
+            1, c_obj._csv_name, c_obj._client_group,
+            c_obj._legal_entity, session_user.user_id(),
+            u_ids, None, 0
+        )
+        c_obj.frame_data_for_main_db_insert(session_user.user_id())
+        c_obj.source_commit()
+        delete_action_after_approval(db, csv_id)
+
+        return_data = bu_as.SubmitAssignStatutorySuccess().to_structure()
+        return_data = json.dumps(return_data)
+
+    file_string = csv_name.split(".")
+    file_name = "%s_%s.%s" % (
+        file_string[0], "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    with open(file_path, "wb") as fn:
+        fn.write(return_data)
+    return
+
+
 def submit_assign_statutory(db, request_frame, session_user):
     try:
         csv_id = request_frame.csv_id
         client_id = request_frame.cl_id
         legal_entity_id = request_frame.le_id
-        user_id = session_user.user_id()
         # csv data validation
+
+        csv_name = generate_random_string()
 
         approved_count, un_saved_count = get_validation_info(db, csv_id)
         if un_saved_count > 0:
@@ -636,24 +714,13 @@ def submit_assign_statutory(db, request_frame, session_user):
         c_obj = ValidateAssignStatutoryForApprove(
             db, csv_id, client_id, legal_entity_id, session_user
         )
-        is_declined = c_obj.perform_validation_before_submit()
-        if len(is_declined.keys()) > 0:
-            return bu_as.ValidationSuccess(len(is_declined.keys()))
-        else:
-            update_approve_action_from_list(
-                db, csv_id, 1, None, session_user, "single"
-            )
-            u_ids = ",".join(map(str, c_obj._unit_ids))
-            c_obj.save_executive_message(
-                1, c_obj._csv_name, c_obj._client_group,
-                c_obj._legal_entity, session_user.user_id(),
-                u_ids, None, 0
-            )
-            c_obj.frame_data_for_main_db_insert(user_id)
-            c_obj.source_commit()
-            delete_action_after_approval(db, csv_id)
 
-            return bu_as.SubmitAssignStatutorySuccess()
+        t = threading.Thread(
+            target=submit_statutory_thread_process,
+            args=(db, request_frame, c_obj, session_user, csv_name))
+        t.start()
+        return bu_as.Done(csv_name)
+
     except Exception, e:
         print e
         print str(traceback.format_exc())
@@ -663,28 +730,51 @@ def submit_assign_statutory(db, request_frame, session_user):
 ############################################################
 # submit record bu user with system declined information
 #############################################################
-def confirm_submit_assign_statutory(db, request_frame, session_user):
+def confirm_statutory_thread_process(
+    db, request_frame, c_obj, session_user, csv_name
+):
     csv_id = request_frame.csv_id
-    client_id = request_frame.cl_id
-    legal_entity_id = request_frame.le_id
-    user_id = session_user.user_id()
-    # csv data validation
-    c_obj = ValidateAssignStatutoryForApprove(
-        db, csv_id, client_id, legal_entity_id, session_user
-    )
+    return_data = None
     is_declined = c_obj.perform_validation_before_submit()
     if len(is_declined.keys()) > 0:
-        c_obj.make_rejection(is_declined, user_id)
+        c_obj.make_rejection(is_declined, session_user.user_id())
         u_ids = ",".join(map(str, c_obj._unit_ids))
         c_obj.save_executive_message(
             1, c_obj._csv_name, c_obj._client_group,
             c_obj._legal_entity, session_user.user_id(),
             u_ids, None, len(is_declined.keys())
         )
-        c_obj.frame_data_for_main_db_insert(user_id)
+        c_obj.frame_data_for_main_db_insert(session_user.user_id())
         c_obj.source_commit()
         delete_action_after_approval(db, csv_id)
-        return bu_as.SubmitAssignStatutorySuccess()
+        return_data = bu_as.SubmitAssignStatutorySuccess().to_structure()
+        return_data = json.dumps(return_data)
+
+    file_string = csv_name.split(".")
+    file_name = "%s_%s.%s" % (
+        file_string[0], "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    with open(file_path, "wb") as fn:
+        fn.write(return_data)
+    return
+
+
+def confirm_submit_assign_statutory(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    client_id = request_frame.cl_id
+    legal_entity_id = request_frame.le_id
+
+    csv_name = generate_random_string()
+    # csv data validation
+    c_obj = ValidateAssignStatutoryForApprove(
+        db, csv_id, client_id, legal_entity_id, session_user
+    )
+    t = threading.Thread(
+        target=confirm_statutory_thread_process,
+        args=(db, request_frame, c_obj, session_user, csv_name))
+    t.start()
+    return bu_as.Done(csv_name)
 
 
 #####################################################
@@ -767,4 +857,67 @@ def process_get_download_status(db, request):
         result = json.loads(return_data)
         if str(result[0]) == "DownloadAssignStatutorySuccess":
             return bu_as.DownloadAssignStatutorySuccess.parse_inner_structure(
+                result[1])
+
+
+def process_get_submit_status(db, request):
+    csv_name = request.csv_name
+    file_name = "%s_%s.%s" % (
+        csv_name, "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    if os.path.exists(file_path) is False:
+        return bu_as.Alive()
+    else:
+        return_data = ""
+        with open(file_path, "r") as fn:
+            return_data += fn.read()
+
+        result = json.loads(return_data)
+        if str(result[0]) == "ValidationSuccess":
+            return bu_as.ValidationSuccess.parse_inner_structure(
+                result[1])
+        elif str(result[0]) == "SubmitAssignStatutorySuccess":
+            return bu_as.SubmitAssignStatutorySuccess.parse_inner_structure(
+                result[1])
+
+
+def process_get_confirm_status(db, request):
+    csv_name = request.csv_name
+    file_name = "%s_%s.%s" % (
+        csv_name, "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    if os.path.exists(file_path) is False:
+        return bu_as.Alive()
+    else:
+        return_data = ""
+        with open(file_path, "r") as fn:
+            return_data += fn.read()
+
+        result = json.loads(return_data)
+        if str(result[0]) == "SubmitAssignStatutorySuccess":
+            return bu_as.SubmitAssignStatutorySuccess.parse_inner_structure(
+                result[1])
+
+
+def process_get_list_status(db, request):
+    csv_name = request.csv_name
+    file_name = "%s_%s.%s" % (
+        csv_name, "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    if os.path.exists(file_path) is False:
+        return bu_as.Alive()
+    else:
+        return_data = ""
+        with open(file_path, "r") as fn:
+            return_data += fn.read()
+
+        result = json.loads(return_data)
+        if str(result[0]) == "ValidationSuccess":
+            return bu_as.ValidationSuccess.parse_inner_structure(
+                result[1])
+        elif str(result[0]) == "AssignStatutoryApproveActionInListSuccess":
+            return bu_as.AssignStatutoryApproveActionInListSuccess.parse_inner_structure(
                 result[1])

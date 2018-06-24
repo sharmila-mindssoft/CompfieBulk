@@ -1213,6 +1213,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
     # frame data for system rejected information while approval process
     def make_rejection(self, declined_info, user_id):
         try:
+            self._db = connect_bulk_db()
             created_on = get_date_time()
             count = len(declined_info.keys())
             for k, v in declined_info.items():
@@ -1235,6 +1236,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
             self._db.execute(q1, [
                 count, user_id, created_on, self._csv_id, self._csv_id
             ])
+            self._db.commit()
 
         except Exception, e:
             raise (e)
@@ -1260,3 +1262,22 @@ def bulkupload_db_connect():
         autocommit=False,
     )
     return cnx_pool
+
+
+def connect_bulk_db():
+    _bulk_db = None
+    try:
+        _bulk_db_con = mysql.connector.connect(
+            user=BULK_UPLOAD_DB_USERNAME,
+            password=BULK_UPLOAD_DB_PASSWORD,
+            host=BULK_UPLOAD_DB_HOST,
+            database=BULK_UPLOAD_DATABASE_NAME,
+            port=BULK_UPLOAD_DB_PORT,
+            autocommit=False
+        )
+        _bulk_db = Database(_bulk_db_con)
+        _bulk_db.begin()
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
+    return _bulk_db
