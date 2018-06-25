@@ -577,63 +577,83 @@ def queue_process_statutory_document(db, request_frame, session_user):
     
 
 def statutory_validate_data(db, request_frame, c_obj, session_user):
-    return_data = None
-    csv_name = c_obj._csv_name
-    
-    csv_id = request_frame.csv_id
-    action = request_frame.bu_action
-    remarks = request_frame.remarks
-    country_id = request_frame.c_id
-    domain_id = request_frame.d_id
+    def write_file():
+        csv_name = c_obj._csv_name
+        file_string = csv_name.split(".")
+        file_name = "%s_%s.%s" % (
+            file_string[0], "result", "txt"
+        )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            fn.write(return_data)
 
-    if action == 1:
-        is_declined = c_obj.perform_validation_before_submit()
-        if len(is_declined.keys()) > 0:
-            return_data = bu_sm.ValidationSuccess(
-                len(is_declined.keys())).to_structure()
+    try:
+        return_data = None
+        csv_name = c_obj._csv_name
+        
+        csv_id = request_frame.csv_id
+        action = request_frame.bu_action
+        remarks = request_frame.remarks
+        country_id = request_frame.c_id
+        domain_id = request_frame.d_id
+
+        if action == 1:
+            is_declined = c_obj.perform_validation_before_submit()
+            if len(is_declined.keys()) > 0:
+                return_data = bu_sm.ValidationSuccess(
+                    len(is_declined.keys())).to_structure()
+            else:
+                
+                if (update_approve_action_from_list(
+                        db, csv_id, action, remarks, session_user, "all"
+                )):
+                    if c_obj._doc_count > 0:
+                        get_update_approve_file_status(db, csv_id, 3)
+                        c_obj.format_download_process_initiate(csv_id)
+                    else:
+                        get_update_approve_file_status(db, csv_id, 1)
+
+                    c_obj.frame_data_for_main_db_insert()
+                    c_obj.save_manager_message(
+                        action, c_obj._csv_name, c_obj._country_name,
+                        c_obj._domain_name, session_user.user_id(),
+                        None, 0
+                    )
+                    c_obj.source_commit()
+                    delete_action_after_approval(db, csv_id)
+                    return_data = bu_sm.UpdateApproveActionFromListSuccess().to_structure()
         else:
             
             if (update_approve_action_from_list(
-                    db, csv_id, action, remarks, session_user, "all"
+                db, csv_id, action, remarks, session_user, "all"
             )):
-                if c_obj._doc_count > 0:
-                    get_update_approve_file_status(db, csv_id, 3)
-                    c_obj.format_download_process_initiate(csv_id)
-                else:
-                    get_update_approve_file_status(db, csv_id, 1)
-
-                c_obj.frame_data_for_main_db_insert()
+                get_update_approve_file_status(db, csv_id, 1)
                 c_obj.save_manager_message(
                     action, c_obj._csv_name, c_obj._country_name,
-                    c_obj._domain_name, session_user.user_id(),
-                    None, 0
+                    c_obj._domain_name, session_user.user_id(), remarks, 0
                 )
                 c_obj.source_commit()
-                delete_action_after_approval(db, csv_id)
                 return_data = bu_sm.UpdateApproveActionFromListSuccess().to_structure()
-    else:
-        
-        if (update_approve_action_from_list(
-            db, csv_id, action, remarks, session_user, "all"
-        )):
-            get_update_approve_file_status(db, csv_id, 1)
-            c_obj.save_manager_message(
-                action, c_obj._csv_name, c_obj._country_name,
-                c_obj._domain_name, session_user.user_id(), remarks, 0
-            )
-            c_obj.source_commit()
-            return_data = bu_sm.UpdateApproveActionFromListSuccess().to_structure()
 
-    return_data = json.dumps(return_data)
-    file_string = csv_name.split(".")
-    file_name = "%s_%s.%s" % (
-        file_string[0], "result", "txt"
-    )
-    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    with open(file_path, "wb") as fn:
-        fn.write(return_data)
+        return_data = json.dumps(return_data)
+
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "bustatutorymappingcontroller.py - statutory_validate_data", e)
+        raise(error)
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "bustatutorymappingcontroller.py - statutory_validate_data()", e)
+        raise(e)
+    write_file()
     return
-
 
 def submit_statutory_mapping(db, request_frame, session_user):
     try:
@@ -662,43 +682,65 @@ def submit_statutory_mapping(db, request_frame, session_user):
 
 
 def submit_statutory_validate(db, request_frame, c_obj, session_user):
-    is_declined = c_obj.perform_validation_before_submit()
-    return_data = None
 
-    csv_id = request_frame.csv_id
-    country_id = request_frame.c_id
-    domain_id = request_frame.d_id
-
-    csv_name = c_obj._csv_name
-    if len(is_declined.keys()) > 0:
-        return_data = bu_sm.ValidationSuccess(len(is_declined.keys())).to_structure()
-    else:
-        update_approve_action_from_list(
-            db, csv_id, 1, None, session_user, "single"
-            )
-        if c_obj._doc_count > 0:
-            get_update_approve_file_status(db, csv_id, 3)
-            c_obj.format_download_process_initiate(csv_id)
-        else:
-            get_update_approve_file_status(db, csv_id, 1)
-        c_obj.save_manager_message(
-            1, c_obj._csv_name, c_obj._country_name, c_obj._domain_name,
-            session_user.user_id(), None, 0
+    def write_file():   
+        return_data = json.dumps(return_data)
+        file_string = csv_name.split(".")
+        file_name = "%s_%s.%s" % (
+            file_string[0], "result", "txt"
         )
-        c_obj.frame_data_for_main_db_insert()
-        c_obj.source_commit()
-        delete_action_after_approval(db, csv_id)
-        return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure()
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            fn.write(return_data)
 
-    return_data = json.dumps(return_data)
-    file_string = csv_name.split(".")
-    file_name = "%s_%s.%s" % (
-        file_string[0], "result", "txt"
-    )
-    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    with open(file_path, "wb") as fn:
-        fn.write(return_data)
+    try:
+        is_declined = c_obj.perform_validation_before_submit()
+        return_data = None
+
+        csv_id = request_frame.csv_id
+        country_id = request_frame.c_id
+        domain_id = request_frame.d_id
+
+        csv_name = c_obj._csv_name
+        if len(is_declined.keys()) > 0:
+            return_data = bu_sm.ValidationSuccess(len(is_declined.keys())).to_structure()
+        else:
+            update_approve_action_from_list(
+                db, csv_id, 1, None, session_user, "single"
+                )
+            if c_obj._doc_count > 0:
+                get_update_approve_file_status(db, csv_id, 3)
+                c_obj.format_download_process_initiate(csv_id)
+            else:
+                get_update_approve_file_status(db, csv_id, 1)
+            c_obj.save_manager_message(
+                1, c_obj._csv_name, c_obj._country_name, c_obj._domain_name,
+                session_user.user_id(), None, 0
+            )
+            c_obj.frame_data_for_main_db_insert()
+            c_obj.source_commit()
+            delete_action_after_approval(db, csv_id)
+            return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure()
+        return_data = json.dumps(return_data)
+
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "bustatutorymappingcontroller.py - submit_statutory_validate", e)
+        raise(error)
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "bustatutorymappingcontroller.py - submit_statutory_validate()", e)
+        raise(e)
+    write_file()
     return
+
 
 def confirm_submit_statutory_mapping(db, request_frame, session_user):
     try:
@@ -721,43 +763,65 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         raise e
 
 def confirm_statutory_validate(db, request_frame, c_obj, session_user):
-    is_declined = c_obj.perform_validation_before_submit()
-    user_id = session_user.user_id()
-    
-    csv_id = request_frame.csv_id
-    country_id = request_frame.c_id
-    domain_id = request_frame.d_id
-    user_id = session_user.user_id()
-    
-    return_data = None
-    csv_name = c_obj._csv_name
-
-    if len(is_declined.keys()) > 0:
-        rej_done = c_obj.make_rejection(is_declined, user_id)
-        c_obj.save_manager_message(
-            1, c_obj._csv_name, c_obj._country_name, c_obj._domain_name,
-            session_user.user_id(), None, len(is_declined.keys())
+    def write_file():
+        csv_name = c_obj._csv_name
+        file_string = csv_name.split(".")
+        file_name = "%s_%s.%s" % (
+            file_string[0], "result", "txt"
         )
-        c_obj.frame_data_for_main_db_insert()
-        c_obj.source_commit()
-        delete_action_after_approval(db, csv_id)
-        if c_obj._doc_count > 0 and rej_done:
-            get_update_approve_file_status(db, csv_id, 3)
-            c_obj.format_download_process_initiate(csv_id)
-        else:
-            get_update_approve_file_status(db, csv_id, 1)
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            fn.write(return_data)
+        return
 
-        c_obj.source_bulkdb_commit()
-        return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure();
+    try:
+        is_declined = c_obj.perform_validation_before_submit()
+        user_id = session_user.user_id()
+        
+        csv_id = request_frame.csv_id
+        country_id = request_frame.c_id
+        domain_id = request_frame.d_id
+        user_id = session_user.user_id()
+        
+        return_data = None
+        csv_name = c_obj._csv_name
 
-    return_data = json.dumps(return_data)
-    file_string = csv_name.split(".")
-    file_name = "%s_%s.%s" % (
-        file_string[0], "result", "txt"
-    )
-    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    with open(file_path, "wb") as fn:
-        fn.write(return_data)
+        if len(is_declined.keys()) > 0:
+            rej_done = c_obj.make_rejection(is_declined, user_id)
+            c_obj.save_manager_message(
+                1, c_obj._csv_name, c_obj._country_name, c_obj._domain_name,
+                session_user.user_id(), None, len(is_declined.keys())
+            )
+            c_obj.frame_data_for_main_db_insert()
+            c_obj.source_commit()
+            delete_action_after_approval(db, csv_id)
+            if c_obj._doc_count > 0 and rej_done:
+                get_update_approve_file_status(db, csv_id, 3)
+                c_obj.format_download_process_initiate(csv_id)
+            else:
+                get_update_approve_file_status(db, csv_id, 1)
+
+            c_obj.source_bulkdb_commit()
+            return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure();
+
+        return_data = json.dumps(return_data)
+    
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "bustatutorymappingcontroller.py - statutory_validate_data", e)
+        raise(error)
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "bustatutorymappingcontroller.py - statutory_validate_data()", e)
+        raise(e)
+    write_file()
     return
 
 
@@ -995,19 +1059,16 @@ def process_get_status(db, request):
                     "bustatutorymappingcontroller.py-process_get_status",
                     result
                 )
-            raise Exception(str(result))
+                raise Exception(str(result))
 
 
 def process_get_approve_mapping_status(db, request):
-    print "request >>>>>>>>>>>>>"
-    print request
     csv_name = request.csv_name
     file_string = csv_name.split(".")
     file_name = "%s_%s.%s" % (
         file_string[0], "result", "txt"
     )
     file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    print "file_path >>>>>>>>>>>>>>>>>>>>>>>>>", os.path.exists(file_path)
     if os.path.exists(file_path) is False:
         print "Alive"
         return bu_sm.Alive()
@@ -1015,18 +1076,21 @@ def process_get_approve_mapping_status(db, request):
         return_data = ""
         with open(file_path, "r") as fn:
             return_data += fn.read()
-        # remove_uploaded_file(file_path)
+        remove_uploaded_file(file_path)
         result = json.loads(return_data)
-        print "JSON result >>>>>>>>>>>>>>>>>>>>>>>", result
         if str(result[0]) == "UpdateApproveActionFromListSuccess":
-            print "UpdateApproveActionFromListSuccess >>>>>>>>>>>>>>>>>>>>>>>", result[1]
             return bu_sm.UpdateApproveActionFromListSuccess.parse_inner_structure(
                 result[1])
         elif str(result[0]) == "ValidationSuccess":
-            print "ValidationSuccess >>>>>>>>>>>>>>>>>>>>>>>", result[0]
             return bu_sm.ValidationSuccess.parse_inner_structure(
                 result[1])
         elif str(result[0]) == "SubmitStatutoryMappingSuccess":
-            print "SubmitStatutoryMappingSuccess >>>>>>>>>>>>>>>>>>>>>>>", result[0]
             return bu_sm.SubmitStatutoryMappingSuccess.parse_inner_structure(
                 result[1])
+        else:
+            logger.logKnowledge(
+                "error",
+                "bustatutorymappingcontroller.py-process_get_approve_mapping_status",
+                result
+            )
+            raise Exception(str(result))
