@@ -51,6 +51,7 @@ class SourceDB(object):
         self.compliance_description = {}
         self.compliance_frequency = {}
         self.assignee = {}
+        self.approval_dict = {}
         # self.connect_source_db()
         self._validation_method_maps = {}
         self.status_check_methods()
@@ -62,7 +63,7 @@ class SourceDB(object):
         self.frequency_id_name_map = {}
         self.hierarchy_checker = {}
         self.stop = True
-        self.due_dates = []
+        self.due_dates = {}
         # self.get_doc_names()
 
     def connect_source_db(self, legal_entity_id):
@@ -129,10 +130,6 @@ class SourceDB(object):
         self.get_assignee()
         self.generate_hierarchy_checker()
         self.collect_due_dates_in_csv()
-
-    def collect_due_dates_in_csv(self):
-        for row_idx, data in enumerate(self._source_data):
-            self.due_dates.append(data.get("Due_Date"))
 
     def get_legal_entities(self):
         query = "SELECT legal_entity_id, legal_entity_name, " + \
@@ -251,6 +248,30 @@ class SourceDB(object):
                         "compliance_id": compliance_id,
                         "desc": description}
 
+    def frame_key(self, unit_code, primary, seondary, compliance, desc):
+        key = "%s-%s-%s-%s-%s" % (
+            unit_code, primary, seondary, compliance, desc)
+        return key
+
+    def collect_due_dates_in_csv(self):
+        for row_idx, data in enumerate(self._source_data):
+            primary = data.get("Primary_Legislation").strip()
+            secondary = data.get("Secondary_Legislation")
+            compliance = data.get("Compliance_Task")
+            unit_code = data.get("Unit_Code")
+            desc = data.get("Compliance_Description")
+            due_date = data.get("Due_Date")
+            if secondary == "":
+                secondary = "empty"
+            else:
+                secondary = secondary.strip()
+            key = self.frame_key(
+                unit_code, primary, secondary, compliance, desc)
+            if key not in self.due_dates:
+                self.due_dates[key] = []
+            self.due_dates[key].append(due_date)
+
+
     def get_compliance_frequency(self):
         query = "select frequency_id, frequency " + \
             " from tbl_compliance_frequency " + \
@@ -264,12 +285,26 @@ class SourceDB(object):
         query = "SELECT Distinct assignee as ID, employee_code," + \
                 " employee_name, " + \
                 " CONCAT_WS(' - ', employee_code, employee_name) " + \
-                " As Assignee " + \
+                " As Assignee, approval_person, country_id, domain_id, " + \
+                " concurrence_person, compliance_id, unit_id " + \
                 " FROM tbl_assign_compliances ac INNER JOIN " + \
                 " tbl_users u ON (ac.assignee = u.user_id)"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.assignee[d["Assignee"]] = d
+            unit_id = d["unit_id"]
+            compliance_id = d["compliance_id"]
+            if unit_id not in self.approval_dict:
+                self.approval_dict[unit_id] = {}
+            if compliance_id not in self.approval_dict[unit_id]:
+                self.approval_dict[unit_id][compliance_id] = {}
+            self.approval_dict[unit_id][compliance_id] = {
+                "approval": d["approval_person"],
+                "country_id": d["country_id"],
+                "domain_id": d["domain_id"],
+                "concur": d["concurrence_person"]
+            }
+
 
     def check_base(self, check_status, store, key_name, status_name):
         data = store.get(key_name)
@@ -382,7 +417,10 @@ class SourceDB(object):
         due_dates = self.get_past_due_dates(domain_id, unit_id, compliance_id)
         if due_dates is None:
             return "Not Found"
-        if self.due_dates.count(due_date) > 1:
+        key = self.frame_key(
+            unit_code, primary_legislation.strip(), secondary,
+            compliance_task, description)
+        if self.due_dates[key].count(due_date) > 1:
             return "Duplicate due date"
         try:
             due_date = datetime.strptime(due_date, "%d-%b-%Y")
@@ -604,7 +642,63 @@ class SourceDB(object):
         return compliance_task_name
 
     def save_completed_task_data(self, db, data, legal_entity_id, csv_id):
+        def frame_key_for_doc(
+                unit_code, primary, secondary, comp, desc, due_date):
+            key = "%s-%s-%s-%s-%s-%s" % (
+                unit_code, primary, secondary, comp, desc, due_date
+            )
+            return key
+        self.generate_hierarchy_checker()
+        self.get_unit_code()
+        self.get_assignee()
+
+        is_two_level = None
+        query = "SELECT two_levels_of_approval FROM tbl_reminder_settings"
+        rows = self._source_db.select_all(query)
+        if int(rows[0]["two_levels_of_approval"]) == 1:
+            is_two_level = True
+        else:
+            is_two_level = False
+
+        document_size_dict = {}
+        q = "SELECT document_file_size,compliance_task_name, " + \
+            " perimary_legislation, secondary_legislation, " + \
+            " compliance_description, due_date, unit_code " + \
+            " FROM tbl_bulk_past_data where csv_past_id= %s "
+        rows = db.select_all(q, [csv_id])
+        for row in rows:
+            unit_code = row["unit_code"]
+            primary = row["perimary_legislation"].strip()
+            secondary = row["secondary_legislation"]
+            if secondary == "":
+                secondary = "empty"
+            else:
+                secondary = secondary.strip()
+            comp = self.get_compliance_task_name(row["compliance_task_name"])
+            desc = row["compliance_description"]
+            due_date = row["due_date"]
+            key = frame_key_for_doc(
+                unit_code, primary, secondary, comp, desc, due_date)
+            document_size_dict[key] = row["document_file_size"]
+
         for idx, d in enumerate(data):
+            print "indx: %s" % idx
+            compliance_task_name = self.get_compliance_task_name(
+                d["compliance_task_name"])
+            primary = d["perimary_legislation"].strip()
+            secondary = d["secondary_legislation"]
+            if secondary == "":
+                secondary = "empty"
+            else:
+                secondary = secondary.strip()
+            compliance_id = self.hierarchy_checker[
+                primary][secondary][compliance_task_name]["compliance_id"]
+            completion_date = d["completion_date"]
+            unit_id = self.unit_code[d["unit_code"]]["unit_id"]
+            assignee_id = self.assignee[d["assignee"]]["ID"]
+            approved_by = self.approval_dict[
+                unit_id][compliance_id]["approval"]
+            concurred_by = self.approval_dict[unit_id][compliance_id]["concur"]
             self.connect_source_db(legal_entity_id)
             columns = [
                 "legal_entity_id", "unit_id", "compliance_id", "start_date",
@@ -613,76 +707,11 @@ class SourceDB(object):
                 "approve_status", "approved_by", "approved_on",
                 "current_status"
             ]
-
-            # Compliance ID
-            compliance_task_name = self.get_compliance_task_name(
-                d["compliance_task_name"])
-            c_name = [
-                compliance_task_name,
-                d["compliance_description"],
-                d["compliance_frequency"]
-            ]
-            q = "SELECT compliance_id FROM tbl_compliances where " + \
-                "compliance_task = TRIM(%s) and compliance_description = " + \
-                "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
-                " tbl_compliance_frequency WHERE frequency=TRIM(%s))"
-            compliance_id = self._source_db.select_all(q, c_name)
-            # if len(compliance_id) > 0:
-            compliance_id = compliance_id[0]["compliance_id"]
-
-            completion_date = d["completion_date"]
-
-            # Unit ID
-            unit_code = [d["unit_code"]]
-            q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
-            unit_id = self._source_db.select_all(q, unit_code)
-            unit_id = unit_id[0]["unit_id"]
-
-            # assignee_id
-            assignee = [d["assignee"]]
-            q = " SELECT distinct ac.assignee as ID, u.employee_code, " + \
-                " u.employee_name, " + \
-                " CONCAT_WS(' - ', u.employee_code, " + \
-                " u.employee_name) As Assignee " + \
-                " FROM tbl_assign_compliances ac INNER JOIN tbl_users u " + \
-                " ON (ac.assignee = u.user_id) where " + \
-                " CONCAT_WS(' - ', u.employee_code, u.employee_name)=TRIM(%s)"
-            assignee_id = self._source_db.select_all(q, assignee)
-            assignee_id = assignee_id[0]["ID"]
-
-            query = "SELECT two_levels_of_approval FROM tbl_reminder_settings"
-            rows = self._source_db.select_all(query)
-            if int(rows[0]["two_levels_of_approval"]) == 1:
-                is_two_level = True
-            else:
-                is_two_level = False
-
-            # Getting Approval and Concurrence Persons
-            concur_approve_columns = "approval_person, country_id, domain_id"
-            if is_two_level:
-                concur_approve_columns += ", concurrence_person"
-            condition = "compliance_id = %s and unit_id = %s "
-            tbl_assign_compliances = "tbl_assign_compliances"
-            rows = self._source_db.get_data(
-                tbl_assign_compliances,
-                concur_approve_columns,
-                condition, [compliance_id, unit_id]
-            )
-            concurred_by = 0
-            approved_by = 0
-            if len(rows) > 0:
-                approved_by = rows[0]["approval_person"]
-                users = [assignee_id, approved_by]
-                if is_two_level:
-                    concurred_by = rows[0]["concurrence_person"]
-                    users.append(concurred_by)
-
             values = [
                 legal_entity_id, unit_id, compliance_id, get_date_time(),
                 d["due_date"], completion_date,
                 assignee_id, completion_date,
                 1, approved_by, completion_date, 3]
-
             if d["document_name"] != "":
                 columns.append("documents")
                 values.append(d["document_name"])
@@ -694,23 +723,12 @@ class SourceDB(object):
                 values.append(1)
                 values.append(concurred_by)
                 values.append(completion_date)
-            q = "SELECT document_file_size FROM tbl_bulk_past_data " + \
-                "where csv_past_id= %s and compliance_task_name=%s " + \
-                " and perimary_legislation = %s and " + \
-                " secondary_legislation = %s and " \
-                "compliance_description = %s and due_date= %s and " + \
-                "unit_code = %s"
-            params = [
-                csv_id, d["compliance_task_name"],
-                d["perimary_legislation"], d["secondary_legislation"],
-                d["compliance_description"], d["due_date"],
-                d["unit_code"]
-            ]
-            rows = db.select_all(q, params)
-            if rows:
-                document_size = rows[0]["document_file_size"]
-                columns.append("document_size")
-                values.append(document_size)
+            key = frame_key_for_doc(
+                d["unit_code"], primary, secondary, compliance_task_name,
+                d["compliance_description"], d["due_date"])
+            document_size = document_size_dict[key]
+            columns.append("document_size")
+            values.append(document_size)
             if values:
                 self._source_db.insert(
                     "tbl_compliance_history", columns, values)
