@@ -60,20 +60,16 @@ def move_client_files():
         print "path created ", file_path
         os.makedirs(file_path)
 
-    print "csv_id-> ", csv_id
     actual_zip_file = os.path.join(
         file_path, str(csv_id) + ".zip"
     )
-    print "actual_zip_file > ", actual_zip_file
+
     caller_name = "%sdownloadclientfile?csvid=%s" % (
         CLIENT_TEMP_FILE_SERVER, csv_id)
-    print "download file Cller nameeeeee in file server main ", caller_name
+
     a, b = urllib.urlretrieve(caller_name, actual_zip_file)
-    print "A ", a
-    print "b ", b
     try:
         zip_ref = ZipFile(actual_zip_file, 'r')
-        print "zip_ref>>> ", zip_ref
         zip_ref.extractall(file_path)
         zip_ref.close()
         os.remove(actual_zip_file)
