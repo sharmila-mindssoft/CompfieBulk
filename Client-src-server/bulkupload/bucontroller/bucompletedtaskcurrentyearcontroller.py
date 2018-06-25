@@ -1,6 +1,7 @@
 import os
 import threading
 import json
+from server import logger
 from ..buapiprotocol.pastdatadownloadbulk import PastDataJsonToCSV
 from server.common import (
     get_date_time_in_date,
@@ -126,6 +127,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
             fn.write(return_data)
         return
     try:
+        dsa
         res_data = c_obj.perform_validation(request_frame.legal_entity_id)
         res_data = c_obj.res_data
         return_data = None
@@ -170,6 +172,9 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
     except Exception, e:
         return_data = json.dumps(str(e))
         write_file()
+        logger.logclient(
+            "error",
+            "bucompletedtaskcurrentyearcontroller.py-validate_data", e)
         raise(e)
     write_file()
     return
@@ -329,6 +334,10 @@ def process_get_status(db, request):
         elif str(result[0]) == "ProcessQueuedTasksSuccess":
             return bu_ct.ProcessQueuedTasksSuccess()
         else:
+            logger.logclient(
+                "error",
+                "bucompletedtaskcurrentyearcontroller.py-process_get_status",
+                result)
             raise Exception(str(result))
 
 
