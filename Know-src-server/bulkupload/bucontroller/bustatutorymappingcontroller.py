@@ -866,7 +866,7 @@ def process_get_status(db, request):
         return_data = ""
         with open(file_path, "r") as fn:
             return_data += fn.read()
-        # remove_uploaded_file(file_path)
+        remove_uploaded_file(file_path)
         if return_data == "InvalidCSV":
             return bu_sm.InvalidCsvFile()
         else:
