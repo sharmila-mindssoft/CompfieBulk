@@ -883,4 +883,4 @@ def process_get_status(db, request):
                     "bustatutorymappingcontroller.py-process_get_status",
                     result
                 )
-            raise Exception(str(result))
+                raise Exception(str(result))
