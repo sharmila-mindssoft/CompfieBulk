@@ -116,55 +116,62 @@ def get_completed_task_csv_list(db, request_frame, session_user):
 
 
 def validate_data(db, request_frame, c_obj, session_user, csv_name):
-    res_data = c_obj.perform_validation(request_frame.legal_entity_id)
-    res_data = c_obj.res_data
-    return_data = None
-    if res_data is False:
-        return_data = bu_ct.InvalidCsvFile().to_structure()
-    elif res_data["return_status"] is True:
-        current_date_time = get_date_time_in_date()
-        str_current_date_time = datetime_to_string_time(current_date_time)
-        unit_id = res_data["unit_id"]
-        domain_id = res_data["domain_id"]
-        client_id, client_group_name = get_client_id_by_le(
-            request_frame.legal_entity_id)
-        csv_args = [
-            client_id, request_frame.legal_entity_id, domain_id,
-            unit_id, client_group_name, csv_name, session_user,
-            str_current_date_time, res_data["total"],
-            res_data["doc_count"], "0", "0"
-        ]
-        new_csv_id = save_completed_task_current_year_csv(
-            db, csv_args
+    def write_file():
+        file_string = csv_name.split(".")
+        file_name = "%s_%s.%s" % (
+            file_string[0], "result", "txt"
         )
-        if new_csv_id:
-            if save_completed_task_data(
-                db, new_csv_id, res_data["data"]
-            ):
-                save_file_in_client_docs(csv_name, request_frame.csv_data)
-        return_data = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
-            res_data["total"], res_data["valid"],
-            res_data["invalid"],
-            new_csv_id, csv_name, res_data["doc_count"],
-            res_data["doc_names"], unit_id, domain_id
-        ).to_structure()
-    else:
-        return_data = bu_ct.UploadCompletedTaskCurrentYearCSVFailed(
-            res_data["invalid_file"], res_data["mandatory_error"],
-            res_data["max_length_error"], res_data["duplicate_error"],
-            res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"], res_data["total"], res_data["invalid"],
-            res_data["invalid_file_format"], res_data["invalid_date"]
-        ).to_structure()
-    return_data = json.dumps(return_data)
-
-    file_string = csv_name.split(".")
-    file_name = "%s_%s.%s" % (
-        file_string[0], "result", "txt"
-    )
-    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    with open(file_path, "wb") as fn:
-        fn.write(return_data)
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            fn.write(return_data)
+        return
+    try:
+        res_data = c_obj.perform_validation(request_frame.legal_entity_id)
+        res_data = c_obj.res_data
+        return_data = None
+        if res_data is False:
+            return_data = bu_ct.InvalidCsvFile().to_structure()
+        elif res_data["return_status"] is True:
+            current_date_time = get_date_time_in_date()
+            str_current_date_time = datetime_to_string_time(current_date_time)
+            unit_id = res_data["unit_id"]
+            domain_id = res_data["domain_id"]
+            client_id, client_group_name = get_client_id_by_le(
+                request_frame.legal_entity_id)
+            csv_args = [
+                client_id, request_frame.legal_entity_id, domain_id,
+                unit_id, client_group_name, csv_name, session_user,
+                str_current_date_time, res_data["total"],
+                res_data["doc_count"], "0", "0"
+            ]
+            new_csv_id = save_completed_task_current_year_csv(
+                db, csv_args
+            )
+            if new_csv_id:
+                if save_completed_task_data(
+                    db, new_csv_id, res_data["data"]
+                ):
+                    save_file_in_client_docs(csv_name, request_frame.csv_data)
+            return_data = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
+                res_data["total"], res_data["valid"],
+                res_data["invalid"],
+                new_csv_id, csv_name, res_data["doc_count"],
+                res_data["doc_names"], unit_id, domain_id
+            ).to_structure()
+        else:
+            return_data = bu_ct.UploadCompletedTaskCurrentYearCSVFailed(
+                res_data["invalid_file"], res_data["mandatory_error"],
+                res_data["max_length_error"], res_data["duplicate_error"],
+                res_data["invalid_char_error"], res_data["invalid_data_error"],
+                res_data["inactive_error"], res_data["total"], res_data["invalid"],
+                res_data["invalid_file_format"], res_data["invalid_date"]
+            ).to_structure()
+        return_data = json.dumps(return_data)
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file()
+        raise(e)
+    write_file()
     return
 
 
@@ -322,7 +329,7 @@ def process_get_status(db, request):
         elif str(result[0]) == "ProcessQueuedTasksSuccess":
             return bu_ct.ProcessQueuedTasksSuccess()
         else:
-            return bu_ct.InvalidCsvFile()
+            raise Exception(str(result))
 
 
 def submit_queued_tasks(
