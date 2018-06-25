@@ -401,14 +401,14 @@ function validateUpload() {
                     $('#ods').attr("href", ods_path);
                     // $('#txt').attr("href", txt_path);
                     hideLoader();
-                }                        
+                }
             }
             buClient.UploadCompletedTaskCurrentYearCSV(
                 args, function(error, data){
                     if(error == "Done" || data == "Done"){
                         leg_id = parseInt(LEGALENTITY_ID_UPLOAD.val());
                         csv_name = data.csv_name;
-                        apiCall(leg_id, csv_name, call_bck_fn);    
+                        apiCall(leg_id, csv_name, call_bck_fn);
                     }else if (error == "InvalidCsvFile" ){
                         MY_MODAL.modal("hide");
                         UPLOAD_FILE.val("");
@@ -423,7 +423,7 @@ function validateUpload() {
                         displayMessage(message.upload_failed);
                         $('#myModal').modal('hide');
                         hideLoader();
-                    } 
+                    }
                 });
         } else {
             $('#myModal').modal('hide');
@@ -667,26 +667,42 @@ BulkCompletedTaskCurrentYear.prototype.processQueuedTasks = function(data) {
         "domain_id": parseInt(data.domain_id),
         "unit_id": parseInt(data.unit_id)
     };
+
+    function apiCall(legId, csv_id, callback){
+        buClient.GetStatus(legId, csv_id, callback);
+    }
+    function call_bck_fn(error, data){
+        if (error == "Alive"){
+            sleep(180000);
+            apiCall(legId, csv_id, call_bck_fn);
+        }
+        else if (error == null) {
+            hideLoader();
+            displaySuccessMessage(message.process_queued_task_success);
+            VIEW_SCREEN.show();
+            BUCT_PAGE.showList();
+        } else if (error == "ProcessDocumentSubmitQueued"){
+            displaySuccessMessage(message.process_queued_doc_success);
+        }
+        else{
+            t_this.possibleFailures(error);
+            hideLoader();
+        }
+    }
+
+
     buClient.processQueuedTasksRequest(args,
         function(error, data) {
-            if (error == null) {
+            if(error == "Done" || data == "Done"){
+                csv_id = data.csv_name;
+                apiCall(legId, csv_id, call_bck_fn);
+            }else if (error == "ProcessCompleted"){
+                displaySuccessMessage(message.process_completed);
                 hideLoader();
-                displaySuccessMessage(message.process_queued_task_success);
                 VIEW_SCREEN.show();
                 BUCT_PAGE.showList();
-            } else {
-                if (error == "ProcessDocumentSubmitQueued"){
-                    displaySuccessMessage(message.process_queued_doc_success);
-                }
-                else if (error == "ProcessCompleted"){
-                    displaySuccessMessage(message.process_completed);
-                    hideLoader();
-                    VIEW_SCREEN.show();
-                    BUCT_PAGE.showList();
-                }else{
-                    t_this.possibleFailures(error);
-                    hideLoader();
-                }
+            }else{
+                hideLoader();
             }
         });
 }
@@ -826,12 +842,12 @@ function submitUpload() {
         } else {
             $('#myModal').modal('hide');
         }
-    }    
+    }
     $('#myModal').modal('show');
     buClient.saveBulkRecords(args, function(error, data) {
         if(error == "Done" || data == "Done"){
             csv_id = data.csv_name;
-            apiCall(leg_id, csv_id, call_bck_fn);    
+            apiCall(leg_id, csv_id, call_bck_fn);
         }else{
             $('#myModal').modal('hide');
         }

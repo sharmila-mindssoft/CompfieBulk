@@ -1241,13 +1241,13 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             file_status = None
             _db_check = bulkupload_db_connect()
             try:
-                query = "select file_download_status from " \
-                        "tbl_bulk_past_data_csv where csv_past_id = %s"
-                param = [csvid]
+            	query = "select file_download_status from " \
+                	    "tbl_bulk_past_data_csv where csv_past_id = %s"
+            	param = [csvid]
 
-                data = _db_check.select_all(query, param)
-                if len(data) > 0:
-                    file_status = data[0].get("file_download_status")
+            	data = _db_check.select_all(query, param)
+            	if len(data) > 0:
+                	file_status = data[0].get("file_download_status")
             except Exception:
                 _db_check.rollback()
 
@@ -1300,6 +1300,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             print e
             response = "error"
         self.save_file_submit_status(response)
+        print "RESPONSEEE-> ", response
         return response
 
     def frame_data_for_main_db_insert(
@@ -1344,7 +1345,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         bulk_db_check = bulkupload_db_connect()
         try:
             query = "UPDATE tbl_bulk_past_data_csv SET " + \
-                " file_submit_status = %s AND file_download_status = %s" + \
+                " file_submit_status = %s , file_download_status = %s" + \
                 " WHERE csv_past_id = %s"
             param = [file_submit_value, file_down_status, self._csv_id]
 

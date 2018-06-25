@@ -10,7 +10,9 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
 )
 from bulkupload.bulkconstants import (
-    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH
+    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, TEMP_FILE_SERVER,
+    BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
+    BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME
 )
 from server.database.forms import (
     frmAssignStatutoryBulkUpload,
@@ -620,6 +622,11 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         self._country = None
         self._sheet_name = "Assign Statutory"
 
+    def connect_bulk_database(self):
+        c_db_con = bulkupload_db_connect()
+        self._db = Database(c_db_con)
+        self._db.begin()
+
     # error summary mapped with initial count
     def error_summary(self):
         self._error_summary = {
@@ -896,9 +903,13 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
     # call perform validation function
     def perform_validation(self):
+        self.connect_bulk_database()
         mapped_error_dict = {}
         mapped_header_dict = {}
         invalid = 0
+        if(self.compare_csv_columns() is False):
+            return "InvalidCSV"
+
         duplicate = self.check_duplicate_compliance_for_same_unit_in_csv()
         duplicate_compliance_in_csv = duplicate[0]
         duplicate_compliance_row = duplicate[1]
@@ -1027,8 +1038,17 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self._csv_name = None
         self._unit_ids = None
 
+    def connect_bulk_database(self):
+        c_db_con = bulkupload_db_connect()
+        self._db = Database(c_db_con)
+        self._db.begin()
+
+    def source_bulkdb_commit(self):
+        self._db.commit()
+
     # get uploaded details by csv_id for approval process
     def get_source_data(self):
+        self.connect_bulk_database()
         self._source_data = self._db.call_proc(
             "sp_assign_statutory_by_csvid", [self._csv_id]
         )
@@ -1210,3 +1230,15 @@ class ValidateAssignStatutoryForApprove(SourceDB):
 
         except Exception, e:
             raise (e)
+
+
+def bulkupload_db_connect():
+    cnx_pool = mysql.connector.connect(
+        user=BULK_UPLOAD_DB_USERNAME,
+        password=BULK_UPLOAD_DB_PASSWORD,
+        host=BULK_UPLOAD_DB_HOST,
+        database=BULK_UPLOAD_DATABASE_NAME,
+        port=BULK_UPLOAD_DB_PORT,
+        autocommit=False,
+    )
+    return cnx_pool

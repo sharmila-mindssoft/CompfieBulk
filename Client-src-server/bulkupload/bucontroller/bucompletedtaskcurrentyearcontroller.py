@@ -316,6 +316,11 @@ def process_get_status(db, request):
                 result[1])
         elif str(result[0]) == "SaveBulkRecordSuccess":
             return bu_ct.SaveBulkRecordSuccess.parse_inner_structure(result[1])
+
+        elif str(result[0]) == "ProcessDocumentSubmitQueued":
+            return bu_ct.ProcessDocumentSubmitQueued()
+        elif str(result[0]) == "ProcessQueuedTasksSuccess":
+            return bu_ct.ProcessQueuedTasksSuccess()
         else:
             return bu_ct.InvalidCsvFile()
 
@@ -329,17 +334,17 @@ def submit_queued_tasks(
         cObj.document_download_process_initiate(
             csv_id, country_id, legal_id, domain_id, unit_id, session_token
         )
-        result = bu_ct.ProcessDocumentSubmitQueued()
+        result = bu_ct.ProcessDocumentSubmitQueued().to_structure()
 
     if(data_cur_stats in [0, 2]):
         if cObj.check_for_duplicate_records(legal_id) is False:
-            return bu_ct.DataAlreadyExists()
+            return bu_ct.DataAlreadyExists().to_structure()
         if cObj.frame_data_for_main_db_insert(
             db, dataResult, request_frame.legal_entity_id, session_user
         ) is True:
-            result = bu_ct.ProcessQueuedTasksSuccess()
+            result = bu_ct.ProcessQueuedTasksSuccess().to_structure()
     else:
-        result = bu_ct.ProcessQueuedTasksSuccess()
+        result = bu_ct.ProcessQueuedTasksSuccess().to_structure()
     return_data = json.dumps(result)
     file_name = "%s_%s.%s" % (
         csv_id, "result", "txt"
@@ -356,8 +361,6 @@ def process_queued_tasks(db, request_frame, session_user, session_token):
     legal_id = request_frame.legal_entity_id
     domain_id = request_frame.domain_id
     unit_id = request_frame.unit_id
-    result = None
-
     file_cur_stats, data_cur_stats, \
         file_download_stats = \
         get_current_doc_data_submit_status(db, csv_id)
@@ -368,19 +371,13 @@ def process_queued_tasks(db, request_frame, session_user, session_token):
     if (file_cur_stats == 1 and data_cur_stats == 1):
         return bu_ct.ProcessCompleted()
 
-    if(file_cur_stats in [0, 2] and file_download_stats != "completed"):
-        cObj.document_download_process_initiate(
-            csv_id, country_id, legal_id, domain_id, unit_id, session_token
+    t = threading.Thread(
+        target=submit_queued_tasks,
+        args=(
+            db, file_cur_stats, file_download_stats, cObj, data_cur_stats,
+            dataResult, csv_id, country_id, legal_id, domain_id, unit_id,
+            session_token, request_frame, session_user
         )
-        result = bu_ct.ProcessDocumentSubmitQueued()
-
-    if(data_cur_stats in [0, 2]):
-        if cObj.check_for_duplicate_records(legal_id) is False:
-            return bu_ct.DataAlreadyExists()
-        if cObj.frame_data_for_main_db_insert(
-            db, dataResult, request_frame.legal_entity_id, session_user
-        ) is True:
-            result = bu_ct.ProcessQueuedTasksSuccess()
-    else:
-        result = bu_ct.ProcessQueuedTasksSuccess()
-    return result
+    )
+    t.start()
+    return bu_ct.Done(str(csv_id))

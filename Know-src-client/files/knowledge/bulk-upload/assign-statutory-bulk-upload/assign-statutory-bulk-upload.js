@@ -215,11 +215,14 @@ function pageControls() {
             }
 
             displayLoader();
-            bu.getDownloadAssignStatutory(parseInt(clientId), 
-                parseInt(legalentityId), 
-                DOMAINIDS, UNITIDS, clientName, 
-                legalentityName, DOMAINNAMES, UNITNAMES, 
-                function(error, data) {
+
+            var csv_name = null;
+            //var count = 0;
+            function apiCallDownload(csv_name, callback){
+                bu.getAssignStatutoryDownloadStatus(csv_name, callback);
+            }
+            function call_bck_fn(error, data){
+                console.log("get status data: error"+ error + ", data:"+data)
                 if (error == null) {
                     downloadURL = data.link;
                     if (downloadURL != null){
@@ -230,11 +233,57 @@ function pageControls() {
                         displayMessage(message.no_compliance_assign_statutory);
                         hideLoader();
                     }
-                } else {
+                }
+                else{
+                    if (error == "Alive"){
+                        console.log("inside if=====> going to get status again")
+                        // count = count+1;
+                        sleep(180000);
+                        // apiCallDownload(csv_name, call_bck_fn);
+                        //if(count <3){
+                        apiCallDownload(csv_name, call_bck_fn);
+                        //     count++;
+                        // }
+                        
+                    }
+                    hideLoader();
+                    
+                }
+            }
+            bu.getDownloadAssignStatutory(
+                parseInt(clientId), parseInt(legalentityId), 
+                DOMAINIDS, UNITIDS, clientName, 
+                legalentityName, DOMAINNAMES, UNITNAMES, 
+                function(error, response){
+                if(error == "Done" || response == "Done"){
+                    csv_name = response.csv_name;
+                    apiCallDownload(csv_name, call_bck_fn);
+                }else{
                     displayMessage(error);
                     hideLoader();
                 }
             });
+
+            // bu.getDownloadAssignStatutory(parseInt(clientId), 
+            //     parseInt(legalentityId), 
+            //     DOMAINIDS, UNITIDS, clientName, 
+            //     legalentityName, DOMAINNAMES, UNITNAMES, 
+            //     function(error, data) {
+            //     if (error == null) {
+            //         downloadURL = data.link;
+            //         if (downloadURL != null){
+            //             window.open(downloadURL, '_blank');
+            //             hideLoader();
+            //         }
+            //         else{
+            //             displayMessage(message.no_compliance_assign_statutory);
+            //             hideLoader();
+            //         }
+            //     } else {
+            //         displayMessage(error);
+            //         hideLoader();
+            //     }
+            // });
         }
     });
 
@@ -310,6 +359,15 @@ function pageControls() {
         }
     });
 
+    function sleep(milliseconds) {
+      var start = new Date().getTime();
+      for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+          break;
+        }
+      }
+    }
+
     //upload file button process
     UPLOADFILEBUTTON.click(function() {
         var args = {};
@@ -331,7 +389,14 @@ function pageControls() {
                 "csv_size": CSVINFO["file_size"]
             };
             $('#myModal').modal('show');
-            bu.getUploadAssignStatutoryCSV(args, function(error, data) {
+
+            var csv_name = null;
+            // var count = 0;
+            function apiCall(csv_name, callback){
+                bu.getAssignStatutoryStatus(csv_name, callback);
+            }
+            function call_bck_fn(error, data){
+                console.log("get status data: error"+ error + ", data:"+data)
                 if (error == null) {
                     TOTALRECORD.text(data.total);
                     VALIDRECORD.text( parseInt(data.valid) - 
@@ -361,8 +426,9 @@ function pageControls() {
                     // MULTISELECTUNIT.multiselect('rebuild');
                     UPLOADFILE.val('');
                     $('#myModal').modal('hide');
-                } else {
-                   if(error == 'UploadAssignStatutoryCSVFailed'){
+                }
+                else{
+                    if(error == 'UploadAssignStatutoryCSVFailed'){
                         displayMessage(message.upload_failed);
                         INVALIDFILENAME = data.invalid_file.split('.');;
                         TOTALRECORD.text(data.total);
@@ -392,19 +458,20 @@ function pageControls() {
                         $('#xls_type').attr("href", xls_path);
                         $('#ods_type').attr("href", ods_path);
                     }else{
-                        if(error == "InvalidCsvFile"){
+                        if (error == "Alive"){
+                            console.log("inside if=====> going to get status again")
+                            // count = count+1;
+                            sleep(180000);
+                            apiCall(csv_name, call_bck_fn);
+                            // if(count <3){
+                            //     apiCall(csv_name, call_bck_fn);
+                            //     count++;
+                            // }
+                            
+                        }else if(error == "InvalidCsvFile"){
                             displayMessage(message.invalid_csv_file);
                         }else if(error == "CsvFileBlank"){
                             displayMessage(message.csv_file_blank);
-                        }else if(error == "CsvFileExeededMaxLines") {
-                            displayMessage(
-                                message.csv_max_lines_exceeded.replace(
-                                'MAX_LINES', data.csv_max_lines)
-                            );
-                        }else if(error == "RejectionMaxCountReached"){
-                            displayMessage(
-                                message.rejection_max_count_reached
-                            );
                         }else if(error == "UnitsNotAssignedToUser"){
                             displayMessage(message.units_not_assigned_to_user);
                         }else if(error == "UploadedRecordsCountNotMatch"){
@@ -422,7 +489,48 @@ function pageControls() {
                     $('#myModal').modal('hide');
                     UPLOADFILE.val('');
                 }
-            });   
+            }
+
+            bu.getUploadAssignStatutoryCSV(
+            args, function(error, response){
+                if(error == "Done" || response == "Done"){
+                    csv_name = response.csv_name;
+                    console.log("got csv name: "+ csv_name);
+                    apiCall(csv_name, call_bck_fn);
+                }else if(error == "RejectionMaxCountReached"){
+                    $('#myModal').modal('hide');
+                    UPLOADFILE.val('');
+                    displayMessage(message.rejection_max_count_reached);
+                }
+                else if (error == "CsvFileExeededMaxLines") {
+                    $('#myModal').modal('hide');
+                    UPLOADFILE.val('');
+                    displayMessage(message.csv_max_lines_exceeded.replace(
+                        'MAX_LINES', response.csv_max_lines));
+                }else if(error == "CsvFileBlank") {
+                    $('#myModal').modal('hide');
+                    UPLOADFILE.val('');
+                    displayMessage(message.csv_file_blank);
+                }else if(error == "InvalidCsvFile"){
+                    $('#myModal').modal('hide');
+                    UPLOADFILE.val('');
+                    displayMessage(message.invalid_csv_file);
+                }else if(error == "UnitsNotAssignedToUser"){
+                    $('#myModal').modal('hide');
+                    UPLOADFILE.val('');
+                    displayMessage(message.units_not_assigned_to_user);
+                }else if(error == "UploadedRecordsCountNotMatch"){
+                    $('#myModal').modal('hide');
+                    UPLOADFILE.val('');
+                    displayMessage(
+                        message.uploaded_record_count_invalid.replace(
+                        'UNITS', data.u_names.toString()
+                        )
+                    );
+                }else{
+                    displayMessage(error);
+                }
+            });
         }
 
     });
