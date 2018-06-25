@@ -165,10 +165,18 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
                 res_data["max_length_error"], res_data["duplicate_error"],
                 res_data["invalid_char_error"], res_data["invalid_data_error"],
                 res_data["inactive_error"], res_data["total"],
-                res_data["invalid"], res_data["invalid_file_format"],
-                res_data["invalid_date"]
+                res_data["invalid"],
+                res_data["invalid_file_format"], res_data["invalid_date"]
             ).to_structure()
         return_data = json.dumps(return_data)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file()
+        logger.logclient(
+            "error",
+            "bucompletedtaskcurrentyearcontroller.py-validate_data", e)
+        raise(error)
     except Exception, e:
         return_data = json.dumps(str(e))
         write_file()
