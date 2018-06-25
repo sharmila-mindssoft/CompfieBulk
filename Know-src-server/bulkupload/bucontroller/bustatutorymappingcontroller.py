@@ -1,6 +1,5 @@
 import os
 import threading
-import time
 import json
 import traceback
 from server import logger
@@ -198,74 +197,87 @@ def get_statutory_mapping_csv_list(db, session_user):
 
 
 def validate_data(db, request_frame, c_obj, session_user, csv_name):
-    res_data = c_obj.perform_validation()
-    print "Invalid CSV res_data -> ", res_data
-    return_data = None
-    if res_data == "InvalidCSV":
-        return_data = "InvalidCSV"
+    def write_file():
+        file_string = csv_name.split(".")
+        file_name = "%s_%s.%s" % (
+            file_string[0], "result", "txt"
+        )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            fn.write(return_data)
+        return
+    try:
+        res_data = c_obj.perform_validation()
+        return_data = None
+        if res_data == "InvalidCSV":
+            return_data = "InvalidCSV"
 
-    elif res_data is None:
-        raise RuntimeError("Invalid Csv File")
+        elif res_data is None:
+            raise RuntimeError("Invalid Csv File")
 
-    elif res_data["return_status"] is True:
-        generate_valid_file(csv_name)
-        if res_data["doc_count"] == 0:
-            upload_sts = 1
+        elif res_data["return_status"] is True:
+            generate_valid_file(csv_name)
+            if res_data["doc_count"] == 0:
+                upload_sts = 1
+            else:
+                upload_sts = 0
+
+            csv_args = [
+                session_user.user_id(),
+                request_frame.c_id, request_frame.c_name,
+                request_frame.d_id,
+                request_frame.d_name, csv_name,
+                res_data["total"], res_data["doc_count"], upload_sts
+            ]
+            new_csv_id = save_mapping_csv(db, csv_args)
+
+            # result = None
+
+            if new_csv_id:
+                if save_mapping_data(db, new_csv_id, res_data["data"]) is True:
+                    if res_data["doc_count"] == 0:
+                        c_obj.save_executive_message(
+                            csv_name, request_frame.c_name,
+                            request_frame.d_name, session_user.user_id()
+                        )
+                        c_obj.source_commit()
+                    return_data = bu_sm.UploadStatutoryMappingCSVValidSuccess(
+                        new_csv_id, res_data["csv_name"],
+                        res_data["total"], res_data["valid"],
+                        res_data["invalid"],
+                        res_data["doc_count"], res_data["doc_names"],
+                        csv_name
+                    ).to_structure()
+                    return_data = json.dumps(return_data)
+            # csv data save to temp db
         else:
-            upload_sts = 0
-
-        csv_args = [
-            session_user.user_id(),
-            request_frame.c_id, request_frame.c_name,
-            request_frame.d_id,
-            request_frame.d_name, csv_name,
-            res_data["total"], res_data["doc_count"], upload_sts
-        ]
-        new_csv_id = save_mapping_csv(db, csv_args)
-
-        # result = None
-
-        if new_csv_id:
-            if save_mapping_data(db, new_csv_id, res_data["data"]) is True:
-                if res_data["doc_count"] == 0:
-                    c_obj.save_executive_message(
-                        csv_name, request_frame.c_name,
-                        request_frame.d_name, session_user.user_id()
-                    )
-                    c_obj.source_commit()
-                return_data = bu_sm.UploadStatutoryMappingCSVValidSuccess(
-                    new_csv_id, res_data["csv_name"],
-                    res_data["total"], res_data["valid"],
-                    res_data["invalid"],
-                    res_data["doc_count"], res_data["doc_names"],
-                    csv_name
-                ).to_structure()
-                return_data = json.dumps(return_data)
-                print "return_data->>> ", return_data
-        # csv data save to temp db
-    else:
-        return_data = bu_sm.UploadStatutoryMappingCSVInvalidSuccess(
-            res_data["invalid_file"], res_data["mandatory_error"],
-            res_data["max_length_error"], res_data["duplicate_error"],
-            res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"], res_data["total"],
-            res_data["invalid"],
-            res_data["total"] - res_data["invalid"],
-            res_data["invalid_frequency_error"]
-        ).to_structure()
-        return_data = json.dumps(return_data)
-
-    print return_data
-    file_string = csv_name.split(".")
-    file_name = "%s_%s.%s" % (
-        file_string[0], "result", "txt"
-    )
-    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    with open(file_path, "wb") as fn:
-        fn.write(return_data)
+            return_data = bu_sm.UploadStatutoryMappingCSVInvalidSuccess(
+                res_data["invalid_file"], res_data["mandatory_error"],
+                res_data["max_length_error"], res_data["duplicate_error"],
+                res_data["invalid_char_error"], res_data["invalid_data_error"],
+                res_data["inactive_error"], res_data["total"],
+                res_data["invalid"],
+                res_data["total"] - res_data["invalid"],
+                res_data["invalid_frequency_error"]
+            ).to_structure()
+            return_data = json.dumps(return_data)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "bustatutorymappingcontroller.py - validate_data", e)
+        raise(error)
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "bustatutorymappingcontroller.py - validate_data()", e)
+        raise(e)
+    write_file()
     return
-    # return result
-
 
 
 ########################################################
@@ -323,7 +335,6 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             target=validate_data,
             args=(db, request_frame, c_obj, session_user, csv_name))
         t.start()
-        print "csv_name returned"
         return bu_sm.Done(csv_name)
 
     except Exception, e:
@@ -866,3 +877,10 @@ def process_get_status(db, request):
             elif str(result[0]) == "UploadStatutoryMappingCSVInvalidSuccess":
                 return bu_sm.UploadStatutoryMappingCSVInvalidSuccess.parse_inner_structure(
                     result[1])
+            else:
+                logger.logKnowledge(
+                    "error",
+                    "bustatutorymappingcontroller.py-process_get_status",
+                    result
+                )
+            raise Exception(str(result))
