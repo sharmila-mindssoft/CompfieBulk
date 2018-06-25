@@ -1801,17 +1801,31 @@ class Done(Response):
             "csv_name": self.csv_name
         }
 
+# class DocumentQueueProcessSuccess(Response):
+#     def __init__(self):
+#         pass
+
+#     @staticmethod
+#     def parse_inner_structure(data):
+#         data = parse_dictionary(data)
+#         return DocumentQueueProcessSuccess()
+
+#     def to_inner_structure(self):
+#         return {}
 class DocumentQueueProcessSuccess(Response):
-    def __init__(self):
-        pass
+    def __init__(self, rejected_reason):
+        self.rejected_reason = rejected_reason
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return DocumentQueueProcessSuccess()
+        data = parse_dictionary(data, ["rejected_reason"])
+        rejected_reason = data.get("rejected_reason")
+        return DocumentQueueProcessSuccess(rejected_reason)
 
     def to_inner_structure(self):
-        return {}
+        return {
+            "rejected_reason": self.rejected_reason
+        }
 
 def _init_Response_class_map():
     classes = [

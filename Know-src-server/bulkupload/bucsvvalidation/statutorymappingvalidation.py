@@ -37,7 +37,7 @@ from keyvalidationsettings import (
 from ..bulkuploadcommon import (
     write_data_to_excel, rename_file_type, generate_random_string
 )
-
+from requests.exceptions import ConnectionError
 __all__ = [
     "ValidateStatutoryMappingCsvData",
     "ValidateStatutoryMappingForApprove",
@@ -1773,8 +1773,35 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             print str(traceback.format_exc())
             raise (e)
 
+
+    def update_file_status(self, csvid, file_submit_status):
+            
+            c_db_con = bulkupload_db_connect()
+            _db_check = Database(c_db_con)
+            try:
+                _db_check.begin()
+                data = _db_check.call_proc(
+                    "sp_update_approve_file_status", [csvid, file_submit_status]
+                )
+                print "sp_update_approve_file_status >>>>>>>>>>>"
+                print data
+                _db_check.commit()
+            except Exception, e:
+                print e
+                _db_check.rollback()
+                c_db_con.close()
+                return "error"
+            finally:
+                _db_check.close()
+                c_db_con.close()
+            return "success"
+
+
     def format_download_process_initiate(self, csvid):
-        self.file_server_approve_call(csvid)
+        approve_call_res = self.file_server_approve_call(csvid)
+        if approve_call_res == "error":
+            self.update_file_status(csvid, 2)
+            return 
         self._stop = False
 
         def check_status():
@@ -1785,9 +1812,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 self._stop = True
                 res = self.file_server_download_call(csvid)
                 if(res == "success"):
-                    update_file_status(self, csvid, 1)
-                if(res == "error"):
-                    update_file_status(self, csvid, 2)
+                    print "update_file_status 1"
+                    self.update_file_status(csvid, 1)
+                else:
+                    print "update_file_status 2"
+                    self.update_file_status(csvid, 2)
 
             if self._stop is False:
                 t = threading.Timer(60, check_status)
@@ -1815,32 +1844,17 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 c_db_con.close()
             return file_status
 
-        def update_file_status(self, csvid, file_status):
-            c_db_con = bulkupload_db_connect()
-            _db_check = Database(c_db_con)
-            try:
-                _db_check.begin()
-                q = "update tbl_bulk_statutory_mapping_csv set " + \
-                    " file_submit_status = %s where " + \
-                    " csv_id  = %s"
-                _db_check.execute(q, [
-                    file_status, csvid
-                ])
-                c_db_con.close()
-            except Exception, e:
-                print e
-                _db_check.rollback()
-                c_db_con.close()
-                return "error"
-            return "success"
-
         check_status()
 
     def file_server_approve_call(self, csvid):
         caller_name = "%sapprove?csvid=%s" % (TEMP_FILE_SERVER, csvid)
         print "caller_name", caller_name
-        response = requests.post(caller_name)
-        print "response.text-> ", response.text
+        try:
+            response = requests.post(caller_name)
+        except ConnectionError as e:
+            print e
+            response = "error"
+        return response
 
     def file_server_download_call(self, csvid):
         actual_zip_file = os.path.join(

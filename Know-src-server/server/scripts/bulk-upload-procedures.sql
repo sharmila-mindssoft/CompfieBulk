@@ -1996,7 +1996,7 @@ CREATE PROCEDURE `sp_update_approve_file_status`(
 )
 BEGIN
   UPDATE tbl_bulk_statutory_mapping_csv SET file_submit_status = _file_status 
-  WHERE csv_id = _csvid
+  WHERE csv_id = _csvid;
 END //
 DELIMITER ;
 
