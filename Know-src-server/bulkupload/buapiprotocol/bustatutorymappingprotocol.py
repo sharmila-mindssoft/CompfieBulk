@@ -574,6 +574,48 @@ class GetStatus(Request):
             "csv_name": self.csv_name
         }
 
+class GetApproveMappingStatus(Request):
+    def __init__(self, csv_name):
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["csv_name"]
+        )
+        return GetApproveMappingStatus(
+            data.get("csv_name")
+        )
+
+    def to_inner_structure(self):
+        return{
+            "csv_name": self.csv_name
+        }
+class DocumentQueueProcess(Request):
+    def __init__(self, c_id, d_id, csv_id, bu_action):
+        self.c_id = c_id
+        self.d_id = d_id
+        self.csv_id = csv_id
+        self.bu_action = bu_action
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "c_id", "d_id",
+            "csv_id", "bu_action"
+        ])
+        return DocumentQueueProcess(
+            data.get("c_id"), data.get("d_id"),
+            data.get("csv_id"), data.get("bu_action")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "c_id": self.c_id,
+            "d_id": self.d_id,
+            "csv_id": self.csv_id,
+            "bu_action": self.bu_action
+        }
 
 def _init_Request_class_map():
     classes = [
@@ -597,7 +639,10 @@ def _init_Request_class_map():
         SaveAction,
         GetDomains, GetKExecutiveDetails,
         SaveExecutiveMessageAfterDocUpload,
-        GetStatus
+        GetStatus,
+        GetApproveMappingStatus,
+        DocumentQueueProcess
+
     ]
     class_map = {}
     for c in classes:
@@ -962,24 +1007,25 @@ class PendingCsvList(object):
     def __init__(
         self, csv_id, csv_name, uploaded_by,
         uploaded_on, no_of_records, approve_count, rej_count, download_file,
-        declined_count
+        declined_count, file_submit_status
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
-        self.uploaded_by = uploaded_by
+        self.uploaded_by = uploaded_by 
         self.uploaded_on = uploaded_on
         self.no_of_records = no_of_records
         self.approve_count = approve_count
         self.rej_count = rej_count
         self.download_file = download_file
         self.declined_count = declined_count
+        self.file_submit_status = file_submit_status        
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "csv_id", "csv_name", "uploaded_by", "uploaded_on",
             "no_of_records", "approve_count", "rej_count", "download_file",
-            "declined_count"
+            "declined_count", "file_submit_status"
 
         ])
         return PendingCsvList(
@@ -987,7 +1033,7 @@ class PendingCsvList(object):
             data.get("uploaded_by"), data.get("uploaded_on"),
             data.get("no_of_records"), data.get("approve_count"),
             data.get("rej_count"), data.get("download_file"),
-            data.get("declined_count")
+            data.get("declined_count"), data.get("file_submit_status")
         )
 
     def to_structure(self):
@@ -1000,7 +1046,8 @@ class PendingCsvList(object):
             "approve_count": self.approve_count,
             "rej_count": self.rej_count,
             "download_file": self.download_file,
-            "declined_count": self.declined_count
+            "declined_count": self.declined_count,
+            "file_submit_status": self.file_submit_status
         }
 
 
@@ -1429,7 +1476,6 @@ class RemoveRejectedDataSuccess(Response):
     def to_inner_structure(self):
         return {}
 
-
 class GetApproveStatutoryMappingListSuccess(Response):
     def __init__(self, pending_csv_list):
         self.pending_csv_list = pending_csv_list
@@ -1755,6 +1801,17 @@ class Done(Response):
             "csv_name": self.csv_name
         }
 
+class DocumentQueueProcessSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return DocumentQueueProcessSuccess()
+
+    def to_inner_structure(self):
+        return {}
 
 def _init_Response_class_map():
     classes = [
@@ -1780,7 +1837,8 @@ def _init_Response_class_map():
         CsvFileCannotBeBlank,
         RejectionMaxCountReached,
         GetDomainsSuccess, GetKExecutiveDetailsSuccess,
-        SendExecutiveMessageSuccess, Alive, Done
+        SendExecutiveMessageSuccess, Alive, Done,
+        DocumentQueueProcessSuccess
     ]
     class_map = {}
     for c in classes:

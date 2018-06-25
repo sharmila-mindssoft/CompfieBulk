@@ -66,6 +66,7 @@ function initMethods() {
         getAssignStatutoryStatus: getAssignStatutoryStatus,
         getApproveMappingStatus:getApproveMappingStatus,
         getAssignStatutoryDownloadStatus: getAssignStatutoryDownloadStatus,
+        documentUploadQueueProcess: documentUploadQueueProcess
     };
 }
 

@@ -743,3 +743,17 @@ function getAssignStatutoryDownloadStatus(csv_name, callback){
     apiRequest('bu/assign_statutory', request, callback);
 }
 
+function documentUploadQueueProcess(
+    csvid, action, country_id, domain_id, callback
+) {
+    var request = [
+        'DocumentQueueProcess',
+        {
+            "csv_id": csvid,
+            "bu_action": action,
+            "c_id": parseInt(country_id),
+            "d_id": parseInt(domain_id)
+        }
+    ];
+    apiRequest("bu/statutory_mapping", request, callback);
+}

@@ -40,6 +40,7 @@ var bulkMessage = {
     "document_required": "Document Required",
     "approve_reject_submit_success": "Selected Action submitted successfully",
     "uploaded_record_count_invalid": "Downloaded and uploaded records are not same for unit \"UNITS\"",
+    "process_queued_doc_success": "Document Submit process is in queue",
 }
 
 $.extend(message, bulkMessage);

@@ -1783,7 +1783,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             file_status = get_file_stats(csvid)
             if file_status == "completed":
                 self._stop = True
-                self.file_server_download_call(csvid)
+                res = self.file_server_download_call(csvid)
+                if(res == "success"):
+                    update_file_status(self, csvid, 1)
+                if(res == "error"):
+                    update_file_status(self, csvid, 2)
 
             if self._stop is False:
                 t = threading.Timer(60, check_status)
@@ -1811,6 +1815,25 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 c_db_con.close()
             return file_status
 
+        def update_file_status(self, csvid, file_status):
+            c_db_con = bulkupload_db_connect()
+            _db_check = Database(c_db_con)
+            try:
+                _db_check.begin()
+                q = "update tbl_bulk_statutory_mapping_csv set " + \
+                    " file_submit_status = %s where " + \
+                    " csv_id  = %s"
+                _db_check.execute(q, [
+                    file_status, csvid
+                ])
+                c_db_con.close()
+            except Exception, e:
+                print e
+                _db_check.rollback()
+                c_db_con.close()
+                return "error"
+            return "success"
+
         check_status()
 
     def file_server_approve_call(self, csvid):
@@ -1826,12 +1849,17 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         caller_name = "%sdownloadfile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
         print "Download Caller namee", caller_name
         urllib.urlretrieve(caller_name, actual_zip_file)
-        zip_ref = ZipFile(actual_zip_file, 'r')
-        zip_ref.extractall(KNOWLEDGE_FORMAT_PATH)
-        zip_ref.close()
-        os.remove(actual_zip_file)
-        self.file_server_remove_call(csvid)
-        return True
+        try:
+            zip_ref = ZipFile(actual_zip_file, 'r')
+            zip_ref.extractall(KNOWLEDGE_FORMAT_PATH)
+            zip_ref.close()
+            os.remove(actual_zip_file)
+            self.file_server_remove_call(csvid)
+        except Exception as e:
+            print e
+            raise IOError
+            return "error"
+        return "success"
 
     def file_server_remove_call(self, csvid):
         caller_name = "%sremovefile?csvid=%s" % (TEMP_FILE_SERVER, csvid)
