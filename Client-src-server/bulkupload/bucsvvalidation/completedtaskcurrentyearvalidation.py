@@ -1241,13 +1241,13 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             file_status = None
             _db_check = bulkupload_db_connect()
             try:
-            	query = "select file_download_status from " \
-                	    "tbl_bulk_past_data_csv where csv_past_id = %s"
-            	param = [csvid]
+                query = "select file_download_status from " + \
+                        "tbl_bulk_past_data_csv where csv_past_id = %s"
+                param = [csvid]
 
-            	data = _db_check.select_all(query, param)
-            	if len(data) > 0:
-                	file_status = data[0].get("file_download_status")
+                data = _db_check.select_all(query, param)
+                if len(data) > 0:
+                    file_status = data[0].get("file_download_status")
             except Exception:
                 _db_check.rollback()
 
