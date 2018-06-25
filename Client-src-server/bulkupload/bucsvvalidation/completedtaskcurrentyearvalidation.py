@@ -660,20 +660,20 @@ class SourceDB(object):
                 d["compliance_description"],
                 d["compliance_frequency"]
             ]
-             
+
             # q = "SELECT compliance_id FROM tbl_compliances where " + \
             #     "compliance_task = TRIM(%s) and compliance_description = " + \
             #     "TRIM(%s) and frequency_id = (SELECT frequency_id from " + \
             #     " tbl_compliance_frequency WHERE frequency=TRIM(%s))"
             # compliance_id = self._source_db.select_all(q, c_name)
             # # if len(compliance_id) > 0:
-            # compliance_id = compliance_id[0]["compliance_id"]                      
+            # compliance_id = compliance_id[0]["compliance_id"]
             # q = "select unit_id from tbl_units where unit_code = TRIM(%s)"
-            
+
             # unit_id = unit_id[0]["unit_id"]
 
             # assignee_id
-            
+
             # q = " SELECT distinct ac.assignee as ID, u.employee_code, " + \
             #     " u.employee_name, " + \
             #     " CONCAT_WS(' - ', u.employee_code, " + \
@@ -1258,14 +1258,13 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             file_status = None
             _db_check = bulkupload_db_connect()
             try:
-                _db_check.begin()
-                query = "select file_download_status from " \
-                        "tbl_bulk_past_data_csv where csv_past_id = %s"
-                param = [csvid]
+            	query = "select file_download_status from " \
+                	    "tbl_bulk_past_data_csv where csv_past_id = %s"
+            	param = [csvid]
 
-                data = _db_check.select_all(query, param)
-                if len(data) > 0:
-                    file_status = data[0].get("file_download_status")
+            	data = _db_check.select_all(query, param)
+            	if len(data) > 0:
+                file_status = data[0].get("file_download_status")
             except Exception:
                 _db_check.rollback()
 
@@ -1318,6 +1317,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             print e
             response = "error"
         self.save_file_submit_status(response)
+        print "RESPONSEEE-> ", response
         return response
 
     def frame_data_for_main_db_insert(
