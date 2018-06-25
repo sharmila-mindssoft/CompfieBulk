@@ -682,7 +682,6 @@ class SourceDB(object):
             document_size_dict[key] = row["document_file_size"]
 
         for idx, d in enumerate(data):
-            print "indx: %s" % idx
             compliance_task_name = self.get_compliance_task_name(
                 d["compliance_task_name"])
             primary = d["perimary_legislation"].strip()
@@ -1242,7 +1241,6 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             file_status = None
             _db_check = bulkupload_db_connect()
             try:
-                _db_check.begin()
                 query = "select file_download_status from " \
                         "tbl_bulk_past_data_csv where csv_past_id = %s"
                 param = [csvid]
@@ -1308,21 +1306,24 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         self, db, data_result, legal_entity_id, csv_id
     ):
         db = bulkupload_db_connect()
-        # try:
         data_save_status = self.save_completed_task_data(
             db, data_result, legal_entity_id, csv_id
         )
         self.save_data_submit_status(data_save_status)
-        self.remove_data_from_temp_db(db, csv_id)
         db.commit()
+        self.remove_data_from_temp_db(csv_id)
         return data_save_status
 
-    def remove_data_from_temp_db(self, db, csv_id):
-        query = "DELETE FROM tbl_bulk_past_data WHERE csv_past_id=%s"
+    def remove_data_from_temp_db(self, csv_id):
+        db = bulkupload_db_connect()
+        query = "DELETE t1 FROM tbl_bulk_past_data t1 " + \
+            " INNER JOIN tbl_bulk_past_data_csv t2 on " + \
+            " t1.csv_past_id=t2.csv_past_id " + \
+            " WHERE t1.csv_past_id=%s and t2.file_submit_status=1" + \
+            " and t2.data_submit_status=1"
         params = [csv_id]
-        self._db = bulkupload_db_connect()
-        self._db.execute(query, params)
-        self._db.commit()
+        db.execute(query, params)
+        db.commit()
 
     def save_data_submit_status(self, data_save_status):
         data_submit_value = 0
@@ -1337,20 +1338,11 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         self._db.execute(query, [data_submit_value, self._csv_id])
         self._db.commit()
 
-    def save_file_submit_status(self, response):
-        file_submit_value = 0
-        if str(response).find("200") >= 0:
-            file_submit_value = 1
-        else:
-            file_submit_value = 2
-
-        file_down_status = "completed"
-        if file_submit_value == 2:
-            file_down_status = None
-
+    def update_file_submit_status(
+        self, file_submit_value, file_down_status
+    ):
         bulk_db_check = bulkupload_db_connect()
         try:
-            bulk_db_check.begin()
             query = "UPDATE tbl_bulk_past_data_csv SET " + \
                 " file_submit_status = %s AND file_download_status = %s" + \
                 " WHERE csv_past_id = %s"
@@ -1362,10 +1354,18 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             print e
             bulk_db_check.rollback()
 
-        finally:
-            bulk_db_check.close()
-            bulk_db_con.close()
+    def save_file_submit_status(self, response):
+        file_submit_value = 0
+        if str(response).find("200") >= 0:
+            file_submit_value = 1
+        else:
+            file_submit_value = 2
 
+        file_down_status = "completed"
+        if file_submit_value == 2:
+            file_down_status = None
+        self.update_file_submit_status(file_submit_value, file_down_status)
+        self.remove_data_from_temp_db(self._csv_id)
 
 
 def bulkupload_db_connect():

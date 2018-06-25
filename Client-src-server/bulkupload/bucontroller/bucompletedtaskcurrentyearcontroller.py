@@ -205,6 +205,10 @@ def submit_compliance(
         c_obj.document_download_process_initiate(
             csv_id, country_id, legal_id, domain_id, unit_id, session_token
         )
+    else:
+        c_obj.update_file_submit_status(
+            1, "completed"
+        )
     if c_obj.frame_data_for_main_db_insert(
         db, data_result, request_frame.legal_entity_id, csv_id
     ) is True:
@@ -347,8 +351,6 @@ def submit_queued_tasks(
 
 
 def process_queued_tasks(db, request_frame, session_user, session_token):
-    # file_submit_status = request_frame.file_submit_status
-    # data_submit_status = request_frame.data_submit_status
     csv_id = request_frame.new_csv_id
     country_id = request_frame.country_id
     legal_id = request_frame.legal_entity_id
@@ -363,20 +365,8 @@ def process_queued_tasks(db, request_frame, session_user, session_token):
     dataResult = get_past_record_data(db, csv_id)
     cObj = ValidateCompletedTaskForSubmit(
         db, csv_id, dataResult, session_user)
-
     if (file_cur_stats == 1 and data_cur_stats == 1):
         return bu_ct.ProcessCompleted()
-
-    # t = threading.Thread(
-    #     target=submit_queued_tasks,
-    #     args=(
-    #        db, file_cur_stats, file_download_stats, cObj, data_cur_stats, 
-            # dataResult, csv_id, country_id, legal_id, domain_id, unit_id,
-            # session_token, request_frame, session_user
-    #     )
-    # )
-    # t.start()
-    # return bu_ct.Done(str(csv_id))        
 
     if(file_cur_stats in [0, 2] and file_download_stats != "completed"):
         cObj.document_download_process_initiate(
