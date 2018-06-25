@@ -281,19 +281,10 @@ function validateUpload() {
                 buClient.GetStatus(leg_id, csv_name, callback);
             }
             function call_bck_fn(error, data){
-                console.log("get status response: error"+ error + ", data:"+data)
                 if (error == "Alive"){
-                    console.log("inside if=====> going to get status again")
                     sleep(180000);
                     apiCall(leg_id, csv_name, call_bck_fn);
-                }else if (error == "CsvFileExeededMaxLines"){
-                    displayMessage(message.csv_max_lines_exceeded.replace(
-                    "MAX_LINES", data.csv_max_lines));
-                    UPLOAD_FILE.val("");
-                    MY_MODAL.modal("hide");
-                    hideLoader();
-                }
-                else if (error == "InvalidCsvFile" ){
+                }else if (error == "InvalidCsvFile" ){
                     MY_MODAL.modal("hide");
                     UPLOAD_FILE.val("");
                     displayMessage(message.invalid_csv_file);
@@ -410,17 +401,29 @@ function validateUpload() {
                     $('#ods').attr("href", ods_path);
                     // $('#txt').attr("href", txt_path);
                     hideLoader();
-                }                        
+                }
             }
             buClient.UploadCompletedTaskCurrentYearCSV(
                 args, function(error, data){
                     if(error == "Done" || data == "Done"){
                         leg_id = parseInt(LEGALENTITY_ID_UPLOAD.val());
                         csv_name = data.csv_name;
-                        console.log("got csv name: "+csv_name);
-                        apiCall(leg_id, csv_name, call_bck_fn);    
+                        apiCall(leg_id, csv_name, call_bck_fn);
+                    }else if (error == "InvalidCsvFile" ){
+                        MY_MODAL.modal("hide");
+                        UPLOAD_FILE.val("");
+                        displayMessage(message.invalid_csv_file);
+                    }else if (error == "CsvFileExeededMaxLines"){
+                        displayMessage(message.csv_max_lines_exceeded.replace(
+                        "MAX_LINES", data.csv_max_lines));
+                        UPLOAD_FILE.val("");
+                        MY_MODAL.modal("hide");
+                        hideLoader();
+                    }else if(data == "Bad Request"){
+                        displayMessage(message.upload_failed);
+                        $('#myModal').modal('hide');
+                        hideLoader();
                     }
-                    
                 });
         } else {
             $('#myModal').modal('hide');
@@ -429,7 +432,6 @@ function validateUpload() {
             $('#remaining-doc-title').show();
             setDocumentCount();
             myDropzone.processQueue();
-            setTimeout(hideLoader(), 5000);
         }
     }
 }
@@ -665,26 +667,42 @@ BulkCompletedTaskCurrentYear.prototype.processQueuedTasks = function(data) {
         "domain_id": parseInt(data.domain_id),
         "unit_id": parseInt(data.unit_id)
     };
+
+    function apiCall(legId, csv_id, callback){
+        buClient.GetStatus(legId, csv_id, callback);
+    }
+    function call_bck_fn(error, data){
+        if (error == "Alive"){
+            sleep(180000);
+            apiCall(legId, csv_id, call_bck_fn);
+        }
+        else if (error == null) {
+            hideLoader();
+            displaySuccessMessage(message.process_queued_task_success);
+            VIEW_SCREEN.show();
+            BUCT_PAGE.showList();
+        } else if (error == "ProcessDocumentSubmitQueued"){
+            displaySuccessMessage(message.process_queued_doc_success);
+        }
+        else{
+            t_this.possibleFailures(error);
+            hideLoader();
+        }
+    }
+
+
     buClient.processQueuedTasksRequest(args,
         function(error, data) {
-            if (error == null) {
+            if(error == "Done" || data == "Done"){
+                csv_id = data.csv_name;
+                apiCall(legId, csv_id, call_bck_fn);
+            }else if (error == "ProcessCompleted"){
+                displaySuccessMessage(message.process_completed);
                 hideLoader();
-                displaySuccessMessage(message.process_queued_task_success);
                 VIEW_SCREEN.show();
                 BUCT_PAGE.showList();
-            } else {
-                if (error == "ProcessDocumentSubmitQueued"){
-                    displaySuccessMessage(message.process_queued_doc_success);
-                }
-                else if (error == "ProcessCompleted"){
-                    displaySuccessMessage(message.process_completed);
-                    hideLoader();
-                    VIEW_SCREEN.show();
-                    BUCT_PAGE.showList();
-                }else{
-                    t_this.possibleFailures(error);
-                    hideLoader();
-                }
+            }else{
+                hideLoader();
             }
         });
 }
@@ -788,16 +806,23 @@ function getCountryId(le_id) {
 function submitUpload() {
     var domId = $("#dom_id_hdn").val();
     var unitId = $("#unit_id_hdn").val();
+    var leg_id = parseInt(LEGALENTITY_ID_UPLOAD.val())
+    var csv_id = null;
     var args = {
         "new_csv_id": parseInt($('#hdn_csv_id').val()),
         "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val()),
-        "legal_entity_id": parseInt(LEGALENTITY_ID_UPLOAD.val()),
+        "legal_entity_id": leg_id,
         "domain_id": parseInt(domId),
         "unit_id": parseInt(unitId)
     };
-    $('#myModal').modal('show');
-    buClient.saveBulkRecords(args, function(error, data) {
-        if(error == 'DataAlreadyExists'){
+    function apiCall(leg_id, csv_id, callback){
+        buClient.GetStatus(leg_id, csv_id, callback);
+    }
+    function call_bck_fn(error, data){
+        if (error == "Alive"){
+            sleep(180000);
+            apiCall(leg_id, csv_id, call_bck_fn);
+        }else if(error == 'DataAlreadyExists'){
             resetAdd();
             resetEdit();
             displayMessage(message.data_already_exists);
@@ -807,34 +832,23 @@ function submitUpload() {
             ADD_SCREEN.hide();
         }
         else if (error == null) {
-            if (totalfileUploadSuccess > 0){
-                buClient.updateDocumentCount(
-                        parseInt(
-                            $(".uploaded-data .text-primary").attr("id")
-                        ), parseInt(
-                        $(".uploaded-data").attr("id")),
-                        totalfileUploadSuccess,
-                    function(error, data){
-                        resetAdd();
-                        resetEdit();
-                        displaySuccessMessage("Compliance Submitted successfully");
-                        $('#myModal').modal('hide');
-                        VIEW_SCREEN.show();
-                        BUCT_PAGE.showList();
-                        ADD_SCREEN.hide();
-                    }
-                );
-                $('#myModal').modal('hide');
-            }else{
-                resetAdd();
-                resetEdit();
-                displaySuccessMessage("Compliance Submitted successfully");
-                $('#myModal').modal('hide');
-                VIEW_SCREEN.show();
-                BUCT_PAGE.showList();
-                ADD_SCREEN.hide();
-            }
+            resetAdd();
+            resetEdit();
+            displaySuccessMessage("Compliance Submitted successfully");
+            $('#myModal').modal('hide');
+            VIEW_SCREEN.show();
+            BUCT_PAGE.showList();
+            ADD_SCREEN.hide();
         } else {
+            $('#myModal').modal('hide');
+        }
+    }
+    $('#myModal').modal('show');
+    buClient.saveBulkRecords(args, function(error, data) {
+        if(error == "Done" || data == "Done"){
+            csv_id = data.csv_name;
+            apiCall(leg_id, csv_id, call_bck_fn);
+        }else{
             $('#myModal').modal('hide');
         }
     })
@@ -999,9 +1013,7 @@ var myDropzone = new Dropzone("div#myDrop", {
                 perQueueUploadSuccess = 0;
                 myDropzone.processQueue();
             }
-            if (totalfileUploadSuccess == DOC_NAMES.length ||
-                REMAINING_DOCUMENTS == 0
-            ) {
+            if (REMAINING_DOCUMENTS == 0) {
                 displaySuccessMessage(message.document_upload_success);
                 $('#divSuccessbutton').show();
                 BTN_UPLOAD.hide();
