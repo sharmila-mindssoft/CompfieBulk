@@ -64,9 +64,14 @@ function initMethods() {
         saveExecutiveMessage: saveExecutiveMessage,
         GetStatus: GetStatus,
         getAssignStatutoryStatus: getAssignStatutoryStatus,
-        getApproveMappingStatus:getApproveMappingStatus,
         getAssignStatutoryDownloadStatus: getAssignStatutoryDownloadStatus,
+        getAssignStatutorySubmitStatus: getAssignStatutorySubmitStatus,
+        getAssignStatutoryConfirmStatus: getAssignStatutoryConfirmStatus,
+        getAssignStatutoryListStatus: getAssignStatutoryListStatus,
+        getApproveMappingStatus:getApproveMappingStatus,
         documentUploadQueueProcess: documentUploadQueueProcess
+        
+
     };
 }
 

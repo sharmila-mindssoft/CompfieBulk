@@ -395,7 +395,7 @@ function assignStatutoryActionInList(cl_id, le_id, csvid, action,
             "cl_id": cl_id,
             "le_id": le_id,
             "csv_id": csvid,
-            "bu_action": action, 
+            "bu_action": action,
             "remarks": remarks,
             "password": password
         }
@@ -714,7 +714,6 @@ function GetStatus(csv_name, callback){
 }
 
 function getAssignStatutoryStatus(csv_name, callback){
-    console.log("inside get status");
     var request = [
         'GetAssignStatutoryStatus', {
             "csv_name": csv_name
@@ -734,9 +733,35 @@ function getApproveMappingStatus(csv_name, callback){
 }
 
 function getAssignStatutoryDownloadStatus(csv_name, callback){
-    console.log("inside get status");
     var request = [
         'GetAssignStatutoryDownloadStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function getAssignStatutorySubmitStatus(csv_name, callback){
+    var request = [
+        'GetAssignStatutorySubmitStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function getAssignStatutoryConfirmStatus(csv_name, callback){
+    var request = [
+        'GetAssignStatutoryConfirmStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function getAssignStatutoryListStatus(csv_name, callback){
+    var request = [
+        'GetAssignStatutoryListStatus', {
             "csv_name": csv_name
         }
     ];
@@ -757,3 +782,4 @@ function documentUploadQueueProcess(
     ];
     apiRequest("bu/statutory_mapping", request, callback);
 }
+

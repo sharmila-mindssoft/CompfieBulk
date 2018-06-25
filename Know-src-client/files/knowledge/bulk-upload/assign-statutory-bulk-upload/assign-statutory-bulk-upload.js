@@ -142,7 +142,6 @@ function fetchData(){
 }
 
 function pageControls() {
-    
     //download file button process
     DOWNLOADFILEBUTTON.click(function() {
         var $this = null;
@@ -215,14 +214,11 @@ function pageControls() {
             }
 
             displayLoader();
-
             var csv_name = null;
-            var count = 0;
             function apiCallDownload(csv_name, callback){
                 bu.getAssignStatutoryDownloadStatus(csv_name, callback);
             }
             function call_bck_fn(error, data){
-                console.log("get status data: error"+ error + ", data:"+data)
                 if (error == null) {
                     downloadURL = data.link;
                     if (downloadURL != null){
@@ -236,18 +232,11 @@ function pageControls() {
                 }
                 else{
                     if (error == "Alive"){
-                        console.log("inside if=====> going to get status again")
-                        // count = count+1;
                         sleep(180000);
-                        // apiCallDownload(csv_name, call_bck_fn);
-                        if(count <3){
-                            apiCallDownload(csv_name, call_bck_fn);
-                            count++;
-                        }
-                        
+                        apiCallDownload(csv_name, call_bck_fn);                        
+                    }else{
+                        hideLoader();
                     }
-                    hideLoader();
-                    
                 }
             }
             bu.getDownloadAssignStatutory(
@@ -263,27 +252,6 @@ function pageControls() {
                     hideLoader();
                 }
             });
-
-            // bu.getDownloadAssignStatutory(parseInt(clientId), 
-            //     parseInt(legalentityId), 
-            //     DOMAINIDS, UNITIDS, clientName, 
-            //     legalentityName, DOMAINNAMES, UNITNAMES, 
-            //     function(error, data) {
-            //     if (error == null) {
-            //         downloadURL = data.link;
-            //         if (downloadURL != null){
-            //             window.open(downloadURL, '_blank');
-            //             hideLoader();
-            //         }
-            //         else{
-            //             displayMessage(message.no_compliance_assign_statutory);
-            //             hideLoader();
-            //         }
-            //     } else {
-            //         displayMessage(error);
-            //         hideLoader();
-            //     }
-            // });
         }
     });
 
@@ -391,12 +359,11 @@ function pageControls() {
             $('#myModal').modal('show');
 
             var csv_name = null;
-            // var count = 0;
+            var count = 0;
             function apiCall(csv_name, callback){
                 bu.getAssignStatutoryStatus(csv_name, callback);
             }
             function call_bck_fn(error, data){
-                console.log("get status data: error"+ error + ", data:"+data)
                 if (error == null) {
                     TOTALRECORD.text(data.total);
                     VALIDRECORD.text( parseInt(data.valid) - 
@@ -423,7 +390,6 @@ function pageControls() {
                     fetchDomainMultiselect()
                     MULTISELECTDOMAIN.multiselect('rebuild');
                     fetchUnitMultiselect()
-                    // MULTISELECTUNIT.multiselect('rebuild');
                     UPLOADFILE.val('');
                     $('#myModal').modal('hide');
                 }
@@ -445,7 +411,6 @@ function pageControls() {
                         INVALIDERROR.text(getInvaliddataCount);
                         $('.download-options').show();
                         $('.view-summary').show();
-                        
                         csv_path = "/invalid_file/csv/" + INVALIDFILENAME[0] + 
                         '.csv';
                         xls_path = "/invalid_file/xlsx/" + INVALIDFILENAME[0] + 
@@ -457,9 +422,12 @@ function pageControls() {
                         $('#csv_type').attr("href", csv_path);
                         $('#xls_type').attr("href", xls_path);
                         $('#ods_type').attr("href", ods_path);
+                        $('.view-summary').show();
+                        $('.download-options').show();
+                        UPLOADFILE.val('');
+                        $('#myModal').modal('hide');
                     }else{
                         if (error == "Alive"){
-                            console.log("inside if=====> going to get status again")
                             // count = count+1;
                             sleep(180000);
                             apiCall(csv_name, call_bck_fn);
@@ -467,9 +435,12 @@ function pageControls() {
                             //     apiCall(csv_name, call_bck_fn);
                             //     count++;
                             // }
-                            
-                        }
-                        if(error == "InvalidCsvFile"){
+                        }else if (error == "CsvFileExeededMaxLines") {
+                            displayMessage(message.csv_max_lines_exceeded.replace(
+                            'MAX_LINES', response.csv_max_lines));
+                        }else if(error == "CsvFileBlank") {
+                            displayMessage(message.csv_file_blank);
+                        }else if(error == "InvalidCsvFile"){
                             displayMessage(message.invalid_csv_file);
                         }else if(error == "CsvFileBlank"){
                             displayMessage(message.csv_file_blank);
@@ -484,45 +455,32 @@ function pageControls() {
                         }else{
                             displayMessage(error);
                         }
-                        $('.view-summary').hide();
-                        $('.download-options').hide();
+                        if(error != "Alive"){
+                            $('#myModal').modal('hide');
+                            UPLOADFILE.val('');
+                            $('.view-summary').hide();
+                            $('.download-options').hide();
+                        }
                     }
-                    $('#myModal').modal('hide');
-                    UPLOADFILE.val('');
                 }
             }
-
             bu.getUploadAssignStatutoryCSV(
             args, function(error, response){
                 if(error == "Done" || response == "Done"){
                     csv_name = response.csv_name;
-                    console.log("got csv name: "+ csv_name);
                     apiCall(csv_name, call_bck_fn);
                 }else if(error == "RejectionMaxCountReached"){
-                    $('#myModal').modal('hide');
-                    UPLOADFILE.val('');
                     displayMessage(message.rejection_max_count_reached);
-                }
-                else if (error == "CsvFileExeededMaxLines") {
-                    $('#myModal').modal('hide');
-                    UPLOADFILE.val('');
+                }else if (error == "CsvFileExeededMaxLines") {
                     displayMessage(message.csv_max_lines_exceeded.replace(
                         'MAX_LINES', response.csv_max_lines));
                 }else if(error == "CsvFileBlank") {
-                    $('#myModal').modal('hide');
-                    UPLOADFILE.val('');
                     displayMessage(message.csv_file_blank);
                 }else if(error == "InvalidCsvFile"){
-                    $('#myModal').modal('hide');
-                    UPLOADFILE.val('');
                     displayMessage(message.invalid_csv_file);
                 }else if(error == "UnitsNotAssignedToUser"){
-                    $('#myModal').modal('hide');
-                    UPLOADFILE.val('');
                     displayMessage(message.units_not_assigned_to_user);
                 }else if(error == "UploadedRecordsCountNotMatch"){
-                    $('#myModal').modal('hide');
-                    UPLOADFILE.val('');
                     displayMessage(
                         message.uploaded_record_count_invalid.replace(
                         'UNITS', data.u_names.toString()
@@ -531,9 +489,12 @@ function pageControls() {
                 }else{
                     displayMessage(error);
                 }
+                if(error != "Done" && response != "Done"){
+                    $('#myModal').modal('hide');
+                    UPLOADFILE.val('');
+                }
             });
         }
-
     });
 }
 
@@ -554,12 +515,9 @@ function download(filename, mime_type, text) {
         encodeURIComponent(text);
     element.setAttribute('href', href);
     element.setAttribute('download', filename);
-
     element.style.display = 'none';
     document.body.appendChild(element);
-
     element.click();
-
     document.body.removeChild(element);
 }
 
