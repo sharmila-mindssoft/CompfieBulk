@@ -83,6 +83,7 @@ displayLoader = function() {
 
 // Hiding spinner icon in page
 hideLoader = function() {
+    console.log('enter into hide')
     $('.loading-indicator-spin').hide();
 }
 
@@ -974,11 +975,12 @@ viewListDetailsPage = function(id) {
     FILTER_COMPLIANCE_TASK.val('');
     FILTER_COMPLIANCE_DESCRIPTION.val('');
     PAGE_LIMIT = parseInt(ITEMS_PER_PAGE.val());
-    if (CURRENT_PAGE == 1)
+    if (CURRENT_PAGE == 1){
         SNO = 0;
+        STATUTE.loadFilterPage(id);
+    }
     else
         SNO = (CURRENT_PAGE - 1) * PAGE_LIMIT;
-    STATUTE.loadFilterPage(id);
     
     STATUTE.loadDetailsPageWithFilter(id, view_data, DOMAIN.val(), UNIT.val(),
         PRIMARY_LEGISLATION.val(), SECONDARY_LEGISLATION.val(),
@@ -989,6 +991,7 @@ viewListDetailsPage = function(id) {
 
 // To load the Grid detailed view page values
 ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
+    console.log('enter into display')
     var clone = null;
     var no = 0;
     var showFrom = 1;
@@ -1098,6 +1101,7 @@ ApproveAssignStatutoryBU.prototype.displayDetailsPage = function(data, flag) {
         PAGINATION_VIEW.show();
         if(showFrom == undefined) showFrom = 1;
         showPagePan(showFrom, SNO, TOTAL_RECORD);
+        hideLoader();
     } else {
         PAGINATION_VIEW.hide();
         hideLoader();
@@ -1208,7 +1212,7 @@ ApproveAssignStatutoryBU.prototype.loadFilterPage = function(id) {
             statute.filterComplianceTask = response.c_tasks;
             statute.filterComplianceDescription = response.c_descs;
             statute.displayFilterList();
-            hideLoader();
+            // hideLoader();
         } else {
             statute.failuresMessage(error);
             hideLoader();
@@ -1319,7 +1323,7 @@ ApproveAssignStatutoryBU.prototype.loadDetailsPageWithFilter = function(
                     createPageView(TOTAL_RECORD);
                 statute.displayDetailsPage(statute.dataListDetails, false);
                 ASID.val(id);
-                hideLoader();
+                // hideLoader();
             } else {
                 statute.failuresMessage(error);
                 hideLoader();
