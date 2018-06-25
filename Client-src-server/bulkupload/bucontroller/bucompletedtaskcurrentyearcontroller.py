@@ -205,6 +205,10 @@ def submit_compliance(
         c_obj.document_download_process_initiate(
             csv_id, country_id, legal_id, domain_id, unit_id, session_token
         )
+    else:
+        c_obj.update_file_submit_status(
+            1, "completed"
+        )
     if c_obj.frame_data_for_main_db_insert(
         db, data_result, request_frame.legal_entity_id, csv_id
     ) is True:
@@ -364,7 +368,6 @@ def process_queued_tasks(db, request_frame, session_user, session_token):
     dataResult = get_past_record_data(db, csv_id)
     cObj = ValidateCompletedTaskForSubmit(
         db, csv_id, dataResult, session_user)
-
     if (file_cur_stats == 1 and data_cur_stats == 1):
         return bu_ct.ProcessCompleted()
 
