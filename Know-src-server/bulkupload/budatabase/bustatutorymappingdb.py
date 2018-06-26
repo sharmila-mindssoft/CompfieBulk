@@ -317,7 +317,7 @@ def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
     _source_db.begin()
     result = _source_db.call_proc(
         "sp_bu_get_mapped_knowledge_executives",
-        [session_user.user_id(), cid, did]
+        [session_user.user_id(), cid, did] 
     )
     _source_db_con.close()
     mapped_executives = ''
@@ -339,7 +339,7 @@ def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
             d["csv_id"], d["csv_name"], d["uploaded_by"],
             upload_on, d["total_records"], d["approve_count"],
             d["rej_count"],
-            d["csv_name"], d["declined_count"]
+            d["csv_name"], d["declined_count"], d["file_submit_status"]
         ))
 
     return csv_data
@@ -615,11 +615,15 @@ def update_approve_action_from_list(
     try:
         if action_type == "all":
             args = [csv_id, action, remarks, session_user.user_id()]
+            db = connect_bulk_db()
             db.call_proc("sp_statutory_mapping_update_all_action", args)
+            db.commit()
             return True
         else:
             args = [csv_id, session_user.user_id()]
+            db = connect_bulk_db()
             db.call_proc("sp_statutory_update_action", args)
+            db.commit()
             return True
 
     except Exception, e:
@@ -633,7 +637,9 @@ def update_approve_action_from_list(
 def delete_action_after_approval(db, csv_id):
     try:
         args = [csv_id]
+        db = connect_bulk_db()
         db.call_proc("sp_statutory_mapping_delete", args)
+        db.commit()
         return True
 
     except Exception, e:
@@ -665,6 +671,12 @@ def get_pending_action(db, csv_id):
     else:
         return False
 
+def get_update_approve_file_status(db, csv_id, file_status):
+    args = [csv_id]
+    db = connect_bulk_db()
+    db.call_proc("sp_update_approve_file_status", [csv_id, file_status])
+    db.commit()
+    return True
 #  transaction method end
 
 

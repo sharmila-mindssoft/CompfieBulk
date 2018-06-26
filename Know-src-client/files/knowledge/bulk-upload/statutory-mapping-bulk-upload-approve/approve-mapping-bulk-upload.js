@@ -350,6 +350,7 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
     var j = 1;
     var tr = '', clone4 = '', cloneRow = '';
     var approveRejCount = {};
+    var fileSubStats = '';
     tThis = this;    
     LIST_CONTAINER.find('tr').remove();
     if(listData.length == 0) {
@@ -365,32 +366,59 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             cNameSplit = data.csv_name.split("_");
             cNameSplit.pop();
             cName = cNameSplit.join("_");
+
+            fileSubStats = data.file_submit_status;
+
             $('.sno', cloneRow).text(j);
             $('.csv-name', cloneRow).text(cName);
             $('.uploaded-on', cloneRow).text(data.uploaded_on);
             $('.uploaded-by', cloneRow).text(data.uploaded_by);
             $('.tot-records', cloneRow).text(data.no_of_records);
-            $('.approve-reject', cloneRow).text(
+            $('.approve-reject', cloneRow).text(    
                 data.approve_count + ' / ' + data.rej_count
             );
-            $('.approve-checkbox', cloneRow).on('click', function(e) {
-                if (e.target.checked) {
-                    if(data.rej_count > 0) {
-                        approveRejCount['approve_count'] = data.approve_count;
-                        approveRejCount['rej_count'] = data.rej_count;
-                        approveRejCount['csv_id'] = data.csv_id;
-                        displayPopUp('approve', approveRejCount, null);
+            $('.queued-task i', cloneRow).hide();
+             console.log("fileSubStats = "+fileSubStats);
+            if(fileSubStats == 2){
+                $('.queued-task i', cloneRow).show();
+                $('.queued-task i', cloneRow).on('click', function() {
+                   tThis.processQueuedTasks(data.csv_id);
+                });
+                $('.show-approve-check', cloneRow).remove();
+                $('.show-reject-check', cloneRow).remove();
+                $('.bu-view-mapping', cloneRow).remove();
+            }
+            else if(fileSubStats == 3 && fileSubStats != 2){
+                $('.queued-task', cloneRow).show();
+                $('.queued-task', cloneRow).text("In Progress");
+                $('.show-approve-check', cloneRow).remove();
+                $('.show-reject-check', cloneRow).remove();
+                $('.bu-view-mapping', cloneRow).remove();
+                
+            }
+            else
+            {
+                $('.approve-checkbox', cloneRow).on('click', function(e) {
+                    if (e.target.checked) {
+                        if(data.rej_count > 0) {
+                            approveRejCount['approve_count'] = data.approve_count;
+                            approveRejCount['rej_count'] = data.rej_count;
+                            approveRejCount['csv_id'] = data.csv_id;
+                            displayPopUp('approve', approveRejCount, null);
+                        }
+                        else{
+                            displayPopUp('approve', data.csv_id, null);
+                        }
                     }
-                    else{
-                        displayPopUp('approve', data.csv_id, null);
+                });
+                $('.reject-checkbox', cloneRow).on('click', function(e) {
+                    if(e.target.checked) {
+                        displayPopUp('reject', data.csv_id, null);
                     }
-                }
-            });
-            $('.reject-checkbox', cloneRow).on('click', function(e) {
-                if(e.target.checked) {
-                    displayPopUp('reject', data.csv_id, null);
-                }
-            });
+                });
+            }
+
+
             fileName = data.csv_name.split('.')
             fileName = fileName[0]
 
@@ -470,6 +498,37 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
     $('[data-toggle="tooltip"]').tooltip();
 };
 
+ApproveBulkMapping.prototype.processQueuedTasks = function(csvId) {
+    tThis = this;
+    displayLoader();
+    tThis.CSVID = csvId;
+        bu.documentUploadQueueProcess(
+        csvId, 1, COUNTRY_VAL.val(),
+        DOMAIN_VAL.val(),
+        function(error, response) {   
+            if(error == null){
+                if(response.rejected_reason == "error"){
+                    /*displaySuccessMessage(message.process_queued_temp_error);*/
+                    BU_APPROVE_PAGE.possibleFailures(message.process_queued_temp_error);
+                }
+                else{
+                    displaySuccessMessage(message.process_queued_doc_success);
+                }
+                if(BU_APPROVE_PAGE.fetchListData()){
+                       hideLoader();
+                }
+                
+            }
+            else{
+                hideLoader();
+                tThis.possibleFailures(error);
+
+            }
+        }
+        );
+
+};
+
 ApproveBulkMapping.prototype.fetchDropDownData = function() {
     tThis = this;
     displayLoader();
@@ -498,18 +557,53 @@ ApproveBulkMapping.prototype.fetchDropDownData = function() {
 ApproveBulkMapping.prototype.confirmAction = function() {
     tThis = this;
     displayLoader();
-    console.log("confirm action called")
-    bu.confirmUpdateAction(
-        tThis.CSVID, tThis.countryId, tThis.domainId,
-        function(error, response) {
-        if (error == null) {
+    function sleep(milliseconds) {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+             if ((new Date().getTime() - start) > milliseconds){
+                break;
+            }
+        }
+    }
+
+    function apiCall(csv_name, callback){
+        console.log("Rejecttion API CALL");
+        bu.getApproveMappingStatus(csv_name, callback);
+    }
+
+    function call_bck_fn(error, response){
+
+        console.log("call_bck_fn --"+error+"-=----"+response);
+        if (error == "Alive"){
+            /*count = count+1;*/
+            sleep(180000);
+            /*if(count < 3){*/
+            apiCall(csv_name, call_bck_fn);
+            /*}*/
+        }
+        else if (error == null && error != "Alive") {
             tThis.showList();
             tThis.fetchListData();
             displaySuccessMessage(message.approve_reject_submit_success);
         }
         else {
-            BU_APPROVE_PAGE.possibleFailures(error);
+            if (error != "Alive"){
+                BU_APPROVE_PAGE.possibleFailures(error);    
+            }            
         }
+    }
+
+    bu.confirmUpdateAction(
+        tThis.CSVID, tThis.countryId, tThis.domainId,
+        function(error, response) {
+            if(error == "Done" || response == "Done"){
+                csv_name = response.csv_name;
+                apiCall(csv_name, call_bck_fn);
+            }
+            else{
+                hideLoader();
+                tThis.possibleFailures(error);
+            }
     });
 };
 ApproveBulkMapping.prototype.actionFromList = function(
@@ -520,6 +614,60 @@ ApproveBulkMapping.prototype.actionFromList = function(
     tThis = this;
     tThis.countryId = parseInt(COUNTRY_VAL.val());
     tThis.domainId = parseInt(DOMAIN_VAL.val());
+    var count = 0;
+    function sleep(milliseconds) {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+             if ((new Date().getTime() - start) > milliseconds){
+                break;
+            }
+        }
+    }
+    function apiCall(csv_name, callback){
+        bu.getApproveMappingStatus(csv_name, callback);
+    }
+    function call_bck_fn(error, response){
+        console.log("action : "+action);
+        console.log("error : "+error);
+        if (error == "Alive"){
+            /*count = count+1;*/
+            sleep(180000);
+            /*if(count < 3){*/
+            apiCall(csv_name, call_bck_fn);
+            /*}*/
+        }
+        else if (error == null && error != "Alive") {
+            if (response.rej_count > 0) {
+                msg = response.rej_count
+                + " compliance declined, Do you want to continue ?";
+                confirm_alert(msg, function(isConfirm) {
+                    if (isConfirm) {
+                        tThis.confirmAction();
+                    }
+                    else {
+                        hideLoader();
+                    }
+                });
+            }
+            else {
+                if (action == 1) {
+                    displaySuccessMessage(message.approve_success);
+                    hideLoader();
+
+                }
+                else {
+                    displaySuccessMessage(message.reject_success);
+                    hideLoader();
+                }
+                tThis.fetchListData();
+                hideLoader();
+            }
+        }
+        else {
+            //hideLoader();
+            tThis.possibleFailures(error);
+        }
+    }
 
     if(typeof csvId != "number") {
         if(csvId["TYPE"].length > 0 && csvId["TYPE"] == "approve") {
@@ -589,7 +737,17 @@ ApproveBulkMapping.prototype.actionFromList = function(
         csvId, action, remarks, pwd, COUNTRY_VAL.val(),
         DOMAIN_VAL.val(),
         function(error, response) {
-            if (error == null) {
+            
+            if(error == "Done" || response == "Done"){
+                csv_name = response.csv_name;
+                apiCall(csv_name, call_bck_fn);
+            }
+            else{
+                hideLoader();
+                tThis.possibleFailures(error);
+
+            }
+            /*if (error == null) {
                 if (response.rej_count > 0) {
                     msg = response.rej_count
                     + " compliance declined, Do you want to continue ?";
@@ -604,6 +762,8 @@ ApproveBulkMapping.prototype.actionFromList = function(
                 }
                 else {
                     if (action == 1) {
+
+
                         displaySuccessMessage(message.approve_success);
                     }
                     else {
@@ -615,7 +775,7 @@ ApproveBulkMapping.prototype.actionFromList = function(
             else {
                 hideLoader();
                 tThis.possibleFailures(error);
-            }
+            }*/
         }
         );
     }
@@ -1114,12 +1274,31 @@ ApproveBulkMapping.prototype.finalSubmit = function(csvId, pwd) {
     tThis.CSVID = csvId;
     tThis.countryId = parseInt(COUNTRY_VAL.val());
     tThis.domainId = parseInt(DOMAIN_VAL.val());
-    bu.submitMappingAction(
-        csvId, parseInt(COUNTRY_VAL.val()), parseInt(DOMAIN_VAL.val()), pwd,
-        function(err, res) {
-        if(err == null) {
-            if (res.rej_count > 0) {
-                msg = res.rej_count + " compliance declined, " 
+
+    function sleep(milliseconds) {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+             if ((new Date().getTime() - start) > milliseconds){
+                break;
+            }
+        }
+    }
+
+    function apiCall(csv_name, callback){
+        bu.getApproveMappingStatus(csv_name, callback);
+    }
+
+    function call_bck_fn(error, response){
+        if (error == "Alive"){
+            /*count = count+1;*/
+            sleep(180000);
+            /*if(count < 3){*/
+            apiCall(csv_name, call_bck_fn);
+            /*}*/
+        }
+        if(error == null && error != "Alive") {
+            if (response.rej_count > 0) {
+                msg = response.rej_count + " compliance declined, " 
                 + "Do you want to continue ?";
                 confirm_alert(msg, function(isConfirm) {
                     if (isConfirm) {
@@ -1141,8 +1320,22 @@ ApproveBulkMapping.prototype.finalSubmit = function(csvId, pwd) {
             }
         }
         else {
-            tThis.possibleFailures(err);
+            if (error != "Alive"){
+                tThis.possibleFailures(error);
+            }
         }
+    }
+    bu.submitMappingAction(
+        csvId, parseInt(COUNTRY_VAL.val()), parseInt(DOMAIN_VAL.val()), pwd,
+        function(error, response) {
+            if(error == "Done" || response == "Done"){
+                csv_name = response.csv_name;
+                apiCall(csv_name, call_bck_fn);
+            }
+            else{
+                hideLoader();
+                tThis.possibleFailures(error);
+            }
     });
 
 };

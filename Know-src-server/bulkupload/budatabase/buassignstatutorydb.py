@@ -543,12 +543,14 @@ def update_approve_action_from_list(
     db, csv_id, action, remarks, session_user, type
 ):
     try:
+        db = connect_bulk_db()
         if type == "all":
             args = [csv_id, action, remarks, session_user.user_id()]
             db.call_proc("sp_assign_statutory_update_all_action", args)
         else:
             args = [csv_id, session_user.user_id()]
             db.call_proc("sp_assign_statutory_update_action", args)
+        db.commit()
         return True
 
     except Exception, e:
@@ -808,8 +810,10 @@ def get_rejected_file_count(db, session_user):
 
 def delete_action_after_approval(db, csv_id):
     try:
+        db = connect_bulk_db()
         args = [csv_id]
         db.call_proc("sp_assign_statutory_delete", args)
+        db.commit()
         return True
 
     except Exception, e:
