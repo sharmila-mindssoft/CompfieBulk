@@ -382,12 +382,22 @@ def update_document_count(db, csv_id, count):
 
 
 def get_current_doc_data_submit_status(db, csv_id):
-    query = "SELECT file_submit_status, data_submit_status, " + \
+    query = "SELECT total_documents, file_submit_status, " + \
+            " data_submit_status, " + \
             "file_download_status from tbl_bulk_past_data_csv " + \
             "where csv_past_id = %s "
     param = [csv_id]
     rows = db.select_all(query, param)
+    total_documents = rows[0]["total_documents"]
     file_submit_status = rows[0]["file_submit_status"]
     data_submit_status = rows[0]["data_submit_status"]
     file_download_stats = rows[0]["file_download_status"]
+    if total_documents <= 0:
+        query = "UPDATE tbl_bulk_past_data_csv SET " + \
+                " file_submit_status = 1 , " + \
+                " file_download_status = 'Completed'" + \
+                " WHERE csv_past_id = %s"
+        param = [csv_id]
+        db.execute(query, param)
+        file_submit_status = 1
     return file_submit_status, data_submit_status, file_download_stats
