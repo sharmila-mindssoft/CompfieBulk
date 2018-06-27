@@ -178,7 +178,8 @@ class SourceDB(object):
             self.unit_name[d["unit_name"]] = d
 
     def get_primary_legislation(self):
-        query = "Select SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(" + \
+        query = "Select distinct SUBSTRING_INDEX(" + \
+            " SUBSTRING_INDEX(SUBSTRING(" + \
             " SUBSTRING(" + \
             " t.statutory_mapping,3),1, CHAR_LENGTH(t.statutory_mapping) " + \
             " -4), '>>', 1),'\",',1) AS primary_legislation, domain_id, " + \
@@ -186,7 +187,7 @@ class SourceDB(object):
             " tbl_compliances t where is_active = 1"
         rows = self._source_db.select_all(query)
         for d in rows:
-            self.statutories[d["primary_legislation"]] = d
+            self.statutories[d["primary_legislation"].strip()] = d
 
     def get_secondary_legislation(self):
         query = "Select SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(" + \
@@ -202,7 +203,7 @@ class SourceDB(object):
             " from tbl_compliances t where is_active = 1"
         rows = self._source_db.select_all(query)
         for d in rows:
-            self.statutories[d["secondary_legislation"]] = d
+            self.statutories[d["secondary_legislation"].strip()] = d
 
     def get_compliance_task(self):
         query = "SELECT compliance_id, statutory_provision, " + \
@@ -445,11 +446,13 @@ class SourceDB(object):
             domain_name, unit_code)
         if secondary_legislation == "":
             secondary = "empty"
+        else:
+            secondary = secondary_legislation.strip()
         key = self.frame_key(
             unit_code, primary_legislation.strip(), secondary,
             compliance_task, description)
         try:
-            data = self.hierarchy_checker[primary_legislation][
+            data = self.hierarchy_checker[primary_legislation.strip()][
                 secondary][compliance_task_name]
             if data["desc"] == description:
                 compliance_id = data["compliance_id"]
@@ -572,21 +575,26 @@ class SourceDB(object):
         return "Not Found"
 
     def check_primary_legislation(self, statutories, unit_code):
-        status1 = self.check_base(False, self.statutories, statutories, None)
+        status1 = self.check_base(
+            False, self.statutories, statutories.strip(), None)
         if status1 is True:
             return self.check_is_valid_primary_legislation(
-                unit_code, statutories)
+                unit_code, statutories.strip())
         else:
             return status1
 
     def check_secondary_legislation(self, statutories, primary):
         status1 = True
         try:
-            if statutories not in self.hierarchy_checker[primary]:
+            if(
+                statutories.strip() not in
+                self.hierarchy_checker[primary.strip()]
+            ):
                 status1 = "Not Found"
         except KeyError:
             return
-        status2 = self.check_base(False, self.statutories, statutories, None)
+        status2 = self.check_base(
+            False, self.statutories, statutories.strip(), None)
         if status1 is True:
             return status2
         else:
@@ -600,7 +608,7 @@ class SourceDB(object):
                 secondary = "empty"
             if (
                 compliance_task_name not in self.hierarchy_checker[
-                    primary][secondary]):
+                    primary.strip()][secondary.strip()]):
                 status1 = "Not Found"
         except KeyError:
             return
@@ -622,7 +630,8 @@ class SourceDB(object):
                 secondary = "empty"
             if (
                 self.hierarchy_checker[
-                    primary][secondary][compliance_task_name]["desc"] !=
+                    primary.strip()][
+                    secondary.strip()][compliance_task_name]["desc"] !=
                 compliance_description
             ):
                 status1 = "Not Found"
