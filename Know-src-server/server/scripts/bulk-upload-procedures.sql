@@ -1796,6 +1796,22 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_get_all_matching_compliances`;
+DELIMITER //
+CREATE PROCEDURE `sp_get_all_matching_compliances`(
+    IN countryid INT(11), IN domainid INT(11)
+)
+BEGIN
+ SELECT
+    t2.country_id, t2.domain_id, t1.statutory , t1.statutory_provision,
+    t1.compliance_task
+    FROM tbl_bulk_statutory_mapping AS t1
+    INNER JOIN tbl_bulk_statutory_mapping_csv AS t2 ON t1.csv_id = t2.csv_id
+    WHERE
+      t2.country_id = countryid AND
+      t2.domain_id = domainid ;
+END //
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_task_id`;
 DELIMITER //
@@ -1811,6 +1827,22 @@ SELECT
       t2.country_id = countryid AND
       t2.domain_id = domainid AND
       t1.task_id = taskid;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_get_all_matching_task_ids`;
+DELIMITER //
+CREATE PROCEDURE `sp_get_all_matching_task_ids`(
+    IN countryid INT(11), IN domainid INT(11)
+)
+BEGIN
+SELECT
+    t2.country_id, t2.domain_id, t1.task_id
+    FROM tbl_bulk_statutory_mapping AS t1
+    INNER JOIN tbl_bulk_statutory_mapping_csv AS t2 ON t1.csv_id = t2.csv_id
+    WHERE
+      t2.country_id = countryid AND
+      t2.domain_id = domainid ;
 END //
 DELIMITER ;
 
