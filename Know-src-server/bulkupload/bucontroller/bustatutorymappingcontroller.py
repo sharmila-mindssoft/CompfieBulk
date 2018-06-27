@@ -577,7 +577,7 @@ def queue_process_statutory_document(db, request_frame, session_user):
     
 
 def statutory_validate_data(db, request_frame, c_obj, session_user):
-    def write_file():
+    def write_file(return_data):
         csv_name = c_obj._csv_name
         file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
@@ -640,19 +640,19 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
     except AssertionError as error:
         e = "AssertionError"
         return_data = json.dumps(e)
-        write_file()
+        write_file(return_data)
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - statutory_validate_data", e)
         raise(error)
     except Exception, e:
         return_data = json.dumps(str(e))
-        write_file()
+        write_file(return_data)
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - statutory_validate_data()", e)
         raise(e)
-    write_file()
+    write_file(return_data)
     return
 
 def submit_statutory_mapping(db, request_frame, session_user):
@@ -683,7 +683,7 @@ def submit_statutory_mapping(db, request_frame, session_user):
 
 def submit_statutory_validate(db, request_frame, c_obj, session_user):
 
-    def write_file():   
+    def write_file(return_data):   
         return_data = json.dumps(return_data)
         file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
@@ -721,24 +721,22 @@ def submit_statutory_validate(db, request_frame, c_obj, session_user):
             c_obj.source_commit()
             delete_action_after_approval(db, csv_id)
             return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure()
-        return_data = json.dumps(return_data)
-
     except AssertionError as error:
         e = "AssertionError"
         return_data = json.dumps(e)
-        write_file()
+        write_file(return_data)
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - submit_statutory_validate", e)
         raise(error)
     except Exception, e:
         return_data = json.dumps(str(e))
-        write_file()
+        write_file(return_data)
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - submit_statutory_validate()", e)
         raise(e)
-    write_file()
+    write_file(return_data)
     return
 
 
@@ -763,7 +761,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         raise e
 
 def confirm_statutory_validate(db, request_frame, c_obj, session_user):
-    def write_file():
+    def write_file(return_data):
         csv_name = c_obj._csv_name
         file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
@@ -802,26 +800,23 @@ def confirm_statutory_validate(db, request_frame, c_obj, session_user):
                 get_update_approve_file_status(db, csv_id, 1)
 
             c_obj.source_bulkdb_commit()
-            return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure();
-
-        return_data = json.dumps(return_data)
-    
+            return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure();    
     except AssertionError as error:
         e = "AssertionError"
         return_data = json.dumps(e)
-        write_file()
+        write_file(return_data)
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - statutory_validate_data", e)
         raise(error)
     except Exception, e:
         return_data = json.dumps(str(e))
-        write_file()
+        write_file(return_data)
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - statutory_validate_data()", e)
         raise(e)
-    write_file()
+    write_file(return_data)
     return
 
 

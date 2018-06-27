@@ -2026,5 +2026,4 @@ ADD COLUMN `data_submit_status` TINYINT DEFAULT '0' AFTER `file_submit_status`;
 
 
 ALTER TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping_csv`
-ADD COLUMN `file_submit_status` TINYINT DEFAULT '0' AFTER `file_download_status`,
-ADD COLUMN `data_submit_status` TINYINT DEFAULT '0' AFTER `file_submit_status`;
+ADD COLUMN `file_submit_status` TINYINT DEFAULT '0' AFTER `file_download_status`;

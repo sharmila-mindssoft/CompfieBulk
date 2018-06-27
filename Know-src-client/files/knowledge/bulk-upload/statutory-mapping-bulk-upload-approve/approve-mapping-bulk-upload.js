@@ -747,35 +747,6 @@ ApproveBulkMapping.prototype.actionFromList = function(
                 tThis.possibleFailures(error);
 
             }
-            /*if (error == null) {
-                if (response.rej_count > 0) {
-                    msg = response.rej_count
-                    + " compliance declined, Do you want to continue ?";
-                    confirm_alert(msg, function(isConfirm) {
-                        if (isConfirm) {
-                            tThis.confirmAction();
-                        }
-                        else {
-                            hideLoader();
-                        }
-                    });
-                }
-                else {
-                    if (action == 1) {
-
-
-                        displaySuccessMessage(message.approve_success);
-                    }
-                    else {
-                        displaySuccessMessage(message.reject_success);
-                    }
-                    tThis.fetchListData()
-                }
-            }
-            else {
-                hideLoader();
-                tThis.possibleFailures(error);
-            }*/
         }
         );
     }
