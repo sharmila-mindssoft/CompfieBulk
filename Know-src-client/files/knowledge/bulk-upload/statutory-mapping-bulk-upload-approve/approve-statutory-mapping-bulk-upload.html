@@ -78,8 +78,10 @@
                                                 <th class="text-center">Task Wise Action</th>
                                                 <th class="text-center">Approve</th>
                                                 <th class="text-center">Reject</th>
+                                                <th class="text-center">Queued Documents</th>
                                             </tr>
                                             <tr>
+                                                
                                                 <td></td>
                                                 <td>
                                                     <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
@@ -105,6 +107,7 @@
                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                     </div>
                                                 </td>
+                                                <td></td>
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
@@ -441,7 +444,7 @@
               </a>
                 </td>
                 <td class="text-center">
-                    <div class="checkbox checkbox-primary checkbox-single m-b-0">
+                    <div class="checkbox checkbox-primary checkbox-single m-b-0 show-approve-check">
                          <a href="#custom_modal_approve" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove" class="approve-checkbox"> 
                             <input value="option2" type="checkbox"  title="Click here to approve">
                         </a>
@@ -449,13 +452,16 @@
                     </div>
                 </td>
                 <td class="text-center">
-                    <div class="checkbox checkbox-danger checkbox-single m-b-0">
+                    <div class="checkbox checkbox-danger checkbox-single m-b-0 show-reject-check">
                         <a href="#custom_modal_reject" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" title="Click here to remove" class="reject-checkbox"> 
                             <input value="option2" type="checkbox"  title="Click here to reject">
                         </a>
                         <label></label>
                     </div>
                 </td>
+                <td class="text-center queued-task"> 
+                        <i class="fa fa-refresh text-primary c-pointer" data-toggle="tooltip" title="Click here to upload queued docs"></i>
+                </td>   
             </tr>
         </table>
         <table class="table-sm-approve-info">

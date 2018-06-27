@@ -1,5 +1,6 @@
 var MY_MODAL = $("#myModal");
 var STATUS = "DONE";
+var TIMEOUT_MLS = 45000;
 var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
 
 var CANCEL_BUTTON = $("#cancel_button");
@@ -234,15 +235,6 @@ function setDocumentCount(){
     $('#bu_remain_total').text(REMAINING_DOCUMENTS);
 }
 
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
-}
-
 function validateUpload() {
     var csvSplitName = null;
     var getValidCount = null;
@@ -278,12 +270,14 @@ function validateUpload() {
             };
             var csv_name = null;
             function apiCall(leg_id, csv_name, callback){
+                console.log(new Date());
+                console.log("calling get status: "+ new Date().getTime());
                 buClient.GetStatus(leg_id, csv_name, callback);
             }
             function call_bck_fn(error, data){
+                console.log(error);
                 if (error == "Alive"){
-                    sleep(180000);
-                    apiCall(leg_id, csv_name, call_bck_fn);
+                    setTimeout(apiCall, TIMEOUT_MLS, leg_id, csv_name, call_bck_fn);
                 }else if (error == "InvalidCsvFile" ){
                     MY_MODAL.modal("hide");
                     UPLOAD_FILE.val("");
@@ -673,8 +667,7 @@ BulkCompletedTaskCurrentYear.prototype.processQueuedTasks = function(data) {
     }
     function call_bck_fn(error, data){
         if (error == "Alive"){
-            sleep(180000);
-            apiCall(legId, csv_id, call_bck_fn);
+            setTimeout(apiCall, TIMEOUT_MLS, legId, csv_id, call_bck_fn);
         }
         else if (error == null) {
             hideLoader();
@@ -820,8 +813,7 @@ function submitUpload() {
     }
     function call_bck_fn(error, data){
         if (error == "Alive"){
-            sleep(180000);
-            apiCall(leg_id, csv_id, call_bck_fn);
+            setTimeout(apiCall, TIMEOUT_MLS, leg_id, csv_id, call_bck_fn);
         }else if(error == 'DataAlreadyExists'){
             resetAdd();
             resetEdit();

@@ -924,5 +924,12 @@ bu_api_params = {
     "c_d_ids": {
         'type': 'VECTOR_TYPE_STRING', 'length': 100000,
         'validation_method': is_alpha_numeric, 'is_optional': True
-    }
+    },
+    'file_submit_status': {
+        'type': 'INT',
+        'length': None,
+        'validation_method': None,
+        'is_optional': False
+    },
 }
+ 

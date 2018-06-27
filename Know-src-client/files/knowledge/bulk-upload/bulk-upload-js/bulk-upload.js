@@ -714,7 +714,6 @@ function GetStatus(csv_name, callback){
 }
 
 function getAssignStatutoryStatus(csv_name, callback){
-    console.log("inside get status");
     var request = [
         'GetAssignStatutoryStatus', {
             "csv_name": csv_name
@@ -723,8 +722,17 @@ function getAssignStatutoryStatus(csv_name, callback){
     apiRequest('bu/assign_statutory', request, callback);
 }
 
+
+function getApproveMappingStatus(csv_name, callback){
+    var request = [
+        'GetApproveMappingStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/statutory_mapping', request, callback);
+}
+
 function getAssignStatutoryDownloadStatus(csv_name, callback){
-    console.log("inside get status");
     var request = [
         'GetAssignStatutoryDownloadStatus', {
             "csv_name": csv_name
@@ -732,3 +740,46 @@ function getAssignStatutoryDownloadStatus(csv_name, callback){
     ];
     apiRequest('bu/assign_statutory', request, callback);
 }
+
+function getAssignStatutorySubmitStatus(csv_name, callback){
+    var request = [
+        'GetAssignStatutorySubmitStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function getAssignStatutoryConfirmStatus(csv_name, callback){
+    var request = [
+        'GetAssignStatutoryConfirmStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function getAssignStatutoryListStatus(csv_name, callback){
+    var request = [
+        'GetAssignStatutoryListStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/assign_statutory', request, callback);
+}
+
+function documentUploadQueueProcess(
+    csvid, action, country_id, domain_id, callback
+) {
+    var request = [
+        'DocumentQueueProcess',
+        {
+            "csv_id": csvid,
+            "bu_action": action,
+            "c_id": parseInt(country_id),
+            "d_id": parseInt(domain_id)
+        }
+    ];
+    apiRequest("bu/statutory_mapping", request, callback);
+}
+

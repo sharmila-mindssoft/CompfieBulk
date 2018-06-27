@@ -3,6 +3,7 @@ import threading
 import time
 import json
 import os
+from server import logger
 from ..bucsvvalidation.assignstatutoryvalidation import (
     ValidateAssignStatutoryCsvData, ValidateAssignStatutoryForApprove
 )
@@ -68,7 +69,9 @@ def process_bu_assign_statutory_request(request, db, session_user):
             db, request_frame, session_user
         )
     if type(request_frame) is bu_as.GetAssignStatutoryFilters:
-        result = get_assign_statutory_filter_for_approve_page(db, request_frame)
+        result = get_assign_statutory_filter_for_approve_page(
+            db, request_frame
+        )
     if type(request_frame) is bu_as.ViewAssignStatutoryData:
         result = get_assign_statutory_data_by_csvid(
             db, request_frame, session_user
@@ -127,6 +130,15 @@ def process_bu_assign_statutory_request(request, db, session_user):
     if type(request_frame) is bu_as.GetAssignStatutoryDownloadStatus:
         result = process_get_download_status(db, request_frame)
 
+    if type(request_frame) is bu_as.GetAssignStatutorySubmitStatus:
+        result = process_get_submit_status(db, request_frame)
+
+    if type(request_frame) is bu_as.GetAssignStatutoryConfirmStatus:
+        result = process_get_confirm_status(db, request_frame)
+
+    if type(request_frame) is bu_as.GetAssignStatutoryListStatus:
+        result = process_get_list_status(db, request_frame)
+
     return result
 
 ########################################################
@@ -178,35 +190,54 @@ def get_client_info(db, session_user):
 
 def validate_download_data(db, request_frame, session_user, csv_name):
 
-    cl_id = request_frame.cl_id
-    le_id = request_frame.le_id
-    d_ids = request_frame.d_ids
-    u_ids = request_frame.u_ids
-    cl_name = request_frame.cl_name
-    le_name = request_frame.le_name
-    d_names = request_frame.d_names
-    u_names = request_frame.u_names
+    def write_file():
+        file_name = "%s_%s.%s" % (
+            csv_name, "result", "txt"
+        )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            fn.write(return_data)
+        return
+    try:
+        cl_id = request_frame.cl_id
+        le_id = request_frame.le_id
+        d_ids = request_frame.d_ids
+        u_ids = request_frame.u_ids
+        cl_name = request_frame.cl_name
+        le_name = request_frame.le_name
+        d_names = request_frame.d_names
+        u_names = request_frame.u_names
 
-    get_download_assing_statutory_list(
-        db, cl_id, le_id, d_ids, u_ids,
-        cl_name, le_name, d_names, u_names, session_user
-    )
+        get_download_assing_statutory_list(
+            db, cl_id, le_id, d_ids, u_ids,
+            cl_name, le_name, d_names, u_names, session_user
+        )
 
-    converter = ConvertJsonToCSV(
-        db, request_frame, session_user, "DownloadAssignStatutory"
-    )
+        converter = ConvertJsonToCSV(
+            db, request_frame, session_user, "DownloadAssignStatutory"
+        )
 
-    return_data = bu_as.DownloadAssignStatutorySuccess(
-        converter.FILE_DOWNLOAD_PATH
-    ).to_structure()
-    return_data = json.dumps(return_data)
+        return_data = bu_as.DownloadAssignStatutorySuccess(
+            converter.FILE_DOWNLOAD_PATH
+        ).to_structure()
+        return_data = json.dumps(return_data)
 
-    file_name = "%s_%s.%s" % (
-        csv_name, "result", "txt"
-    )
-    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    with open(file_path, "wb") as fn:
-        fn.write(return_data)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buassignstatutorycontroller.py - validate_download_data", e)
+        raise(error)
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buassignstatutorycontroller.py - validate_download_data", e)
+        raise(e)
+    write_file()
     return
 
 
@@ -240,82 +271,95 @@ def get_download_assign_statutory(db, request_frame, session_user):
 
 
 def validate_data(db, request_frame, c_obj, session_user, csv_name):
-    res_data = c_obj.perform_validation()
-    print "Invalid CSV res_data -> ", res_data
+    def write_file():
+        file_string = csv_name.split(".")
+        file_name = "%s_%s.%s" % (
+            file_string[0], "result", "txt"
+        )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            fn.write(return_data)
+        return
+    try:
+        res_data = c_obj.perform_validation()
+        assigned_units = verify_user_units(
+            db, session_user, ",".join(map(str, c_obj._unit_ids))
+        )
+        return_data = None
+        if res_data == "InvalidCSV":
+            return_data = "InvalidCSV"
+        elif assigned_units < len(c_obj._unit_ids):
+            return_data = "UnitsNotAssignedToUser"
+        elif res_data["return_status"] is True:
+            invalid_units = c_obj.check_uploaded_count_in_csv()
+            if len(invalid_units) > 0:
+                return_data = bu_as.UploadedRecordsCountNotMatch(
+                    invalid_units
+                ).to_structure()
+                return_data = json.dumps(return_data)
+            else:
+                generate_valid_file(csv_name)
+                d_ids = ",".join(map(str, c_obj._domain_ids))
+                d_names = ",".join(c_obj._domain_names)
+                csv_args = [
+                    session_user.user_id(),
+                    c_obj._client_id, c_obj._legal_entity_id,
+                    d_ids, c_obj._legal_entity, d_names,
+                    csv_name, c_obj._country,
+                    res_data["total"]
+                ]
+                new_csv_id = save_assign_statutory_csv(db, csv_args)
+                if new_csv_id:
+                    if (
+                        save_assign_statutory_data(
+                            db, new_csv_id, res_data["data"]
+                        ) is True
+                    ):
+                        u_ids = ",".join(map(str, c_obj._unit_ids))
+                        c_obj.save_manager_message(
+                            csv_name, c_obj._client_group,
+                            c_obj._legal_entity, session_user.user_id(),
+                            u_ids
+                        )
+                        c_obj.source_commit()
+                        return_data = bu_as.UploadAssignStatutoryCSVSuccess(
+                            res_data["total"], res_data["valid"],
+                            res_data["invalid"]
+                        ).to_structure()
+                        return_data = json.dumps(return_data)
 
-    assigned_units = verify_user_units(
-        db, session_user, ",".join(map(str, c_obj._unit_ids))
-    )
-
-    return_data = None
-    if res_data == "InvalidCSV":
-        return_data = "InvalidCSV"
-
-    elif assigned_units < len(c_obj._unit_ids):
-        return_data = "UnitsNotAssignedToUser"
-
-    elif res_data["return_status"] is True:
-        invalid_units = c_obj.check_uploaded_count_in_csv()
-        if len(invalid_units) > 0:
-            return_data = bu_as.UploadedRecordsCountNotMatch(
-                invalid_units
+        # csv data save to temp db
+        else:
+            return_data = bu_as.UploadAssignStatutoryCSVFailed(
+                res_data["invalid_file"], res_data["mandatory_error"],
+                res_data["max_length_error"], res_data["duplicate_error"],
+                res_data["invalid_char_error"], res_data["invalid_data_error"],
+                res_data["inactive_error"], res_data["total"],
+                res_data["invalid"]
             ).to_structure()
             return_data = json.dumps(return_data)
-        else:
-            generate_valid_file(csv_name)
-            d_ids = ",".join(map(str, c_obj._domain_ids))
-            d_names = ",".join(c_obj._domain_names)
-            csv_args = [
-                session_user.user_id(),
-                c_obj._client_id, c_obj._legal_entity_id,
-                d_ids, c_obj._legal_entity, d_names,
-                csv_name, c_obj._country,
-                res_data["total"]
-            ]
-            new_csv_id = save_assign_statutory_csv(db, csv_args)
-            if new_csv_id:
-                if (
-                    save_assign_statutory_data(
-                        db, new_csv_id, res_data["data"]
-                    ) is True
-                ):
-                    u_ids = ",".join(map(str, c_obj._unit_ids))
-                    c_obj.save_manager_message(
-                        csv_name, c_obj._client_group,
-                        c_obj._legal_entity, session_user.user_id(),
-                        u_ids
-                    )
-                    c_obj.source_commit()
-                    return_data = bu_as.UploadAssignStatutoryCSVSuccess(
-                        res_data["total"], res_data["valid"],
-                        res_data["invalid"]
-                    ).to_structure()
-                    return_data = json.dumps(return_data)
-                    print "return_data->>> ", return_data
 
-    # csv data save to temp db
-    else:
-        return_data = bu_as.UploadAssignStatutoryCSVFailed(
-            res_data["invalid_file"], res_data["mandatory_error"],
-            res_data["max_length_error"], res_data["duplicate_error"],
-            res_data["invalid_char_error"], res_data["invalid_data_error"],
-            res_data["inactive_error"], res_data["total"],
-            res_data["invalid"]
-        ).to_structure()
-        return_data = json.dumps(return_data)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buassignstatutorycontroller.py - validate_data", e)
+        raise(error)
 
-    file_string = csv_name.split(".")
-    file_name = "%s_%s.%s" % (
-        file_string[0], "result", "txt"
-    )
-    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    with open(file_path, "wb") as fn:
-        fn.write(return_data)
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buassignstatutorycontroller.py - validate_data", e)
+        raise(e)
+    write_file()
     return
 
 
 def upload_assign_statutory_csv(db, request_frame, session_user):
-
     try:
         if request_frame.csv_size > 0:
             pass
@@ -349,105 +393,12 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
             target=validate_data,
             args=(db, request_frame, c_obj, session_user, csv_name))
         t.start()
-        print "csv_name returned"
         return bu_as.Done(csv_name)
 
     except Exception, e:
         print e
         raise e
 
-
-def upload_assign_statutory_csv_unused(db, request_frame, session_user):
-
-    try:
-        if request_frame.csv_size > 0:
-            pass
-
-        if get_rejected_file_count(db, session_user) > MAX_REJECTED_COUNT:
-            return bu_as.RejectionMaxCountReached()
-
-        # save csv file
-        csv_name = convert_base64_to_file(
-            BULKUPLOAD_CSV_PATH, request_frame.csv_name,
-            request_frame.csv_data
-        )
-        # read data from csv file
-        header, assign_statutory_data = read_data_from_csv(csv_name)
-
-        if len(assign_statutory_data) == 0:
-            return bu_as.CsvFileBlank()
-
-        if len(assign_statutory_data) > CSV_MAX_LINES:
-            file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
-            remove_uploaded_file(file_path)
-            return bu_as.CsvFileExeededMaxLines(CSV_MAX_LINES)
-
-        # csv data validation
-        c_obj = ValidateAssignStatutoryCsvData(
-            db, assign_statutory_data, session_user, request_frame.csv_name,
-            header
-        )
-
-        if c_obj.compare_csv_columns() is False:
-            return bu_as.InvalidCsvFile()
-
-        res_data = c_obj.perform_validation()
-
-        assigned_units = verify_user_units(
-            db, session_user, ",".join(map(str, c_obj._unit_ids))
-        )
-        if assigned_units < len(c_obj._unit_ids):
-            return bu_as.UnitsNotAssignedToUser()
-
-        if res_data["return_status"] is True:
-            invalid_units = c_obj.check_uploaded_count_in_csv()
-            if len(invalid_units) > 0:
-                return bu_as.UploadedRecordsCountNotMatch(invalid_units)
-
-            generate_valid_file(csv_name)
-            d_ids = ",".join(map(str, c_obj._domain_ids))
-            d_names = ",".join(c_obj._domain_names)
-            csv_args = [
-                session_user.user_id(),
-                c_obj._client_id, c_obj._legal_entity_id,
-                d_ids, c_obj._legal_entity, d_names,
-                csv_name, c_obj._country,
-                res_data["total"]
-            ]
-            new_csv_id = save_assign_statutory_csv(db, csv_args)
-            if new_csv_id:
-                if (
-                    save_assign_statutory_data(
-                        db, new_csv_id, res_data["data"]
-                    ) is True
-                ):
-                    u_ids = ",".join(map(str, c_obj._unit_ids))
-                    c_obj.save_manager_message(
-                        csv_name, c_obj._client_group,
-                        c_obj._legal_entity, session_user.user_id(),
-                        u_ids
-                    )
-                    c_obj.source_commit()
-                    result = bu_as.UploadAssignStatutoryCSVSuccess(
-                        res_data["total"], res_data["valid"],
-                        res_data["invalid"]
-                    )
-
-        # csv data save to temp db
-        else:
-            result = bu_as.UploadAssignStatutoryCSVFailed(
-                res_data["invalid_file"], res_data["mandatory_error"],
-                res_data["max_length_error"], res_data["duplicate_error"],
-                res_data["invalid_char_error"], res_data["invalid_data_error"],
-                res_data["inactive_error"], res_data["total"],
-                res_data["invalid"]
-            )
-
-        return result
-
-    except Exception, e:
-        print e
-        raise e
 
 ########################################################
 '''
@@ -508,28 +459,36 @@ def get_assign_statutory_data_by_filter(db, request_frame, session_user):
 #################################################################
 # To update records in table by approve all / reject all function
 #################################################################
-def update_assign_statutory_action_in_list(db, request_frame, session_user):
-    csv_id = request_frame.csv_id
-    action = request_frame.bu_action
-    remarks = request_frame.remarks
-    client_id = request_frame.cl_id
-    legal_entity_id = request_frame.le_id
-    user_id = session_user.user_id()
-    try:
-        c_obj = ValidateAssignStatutoryForApprove(
-            db, csv_id, client_id, legal_entity_id, session_user
+def list_statutory_thread_process(
+    db, request_frame, c_obj, session_user, csv_name
+):
+    def write_file():
+        file_name = "%s_%s.%s" % (
+            csv_name, "result", "txt"
         )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            fn.write(return_data)
+        return
+    try:
+        csv_id = request_frame.csv_id
+        action = request_frame.bu_action
+        remarks = request_frame.remarks
+        return_data = None
         is_declined = c_obj.perform_validation_before_submit()
         if action == 1:
             if len(is_declined.keys()) > 0:
                 c_obj.update_child(csv_id)
-                return bu_as.ValidationSuccess(len(is_declined.keys()))
+                return_data = bu_as.ValidationSuccess(
+                    len(is_declined.keys())
+                ).to_structure()
+                return_data = json.dumps(return_data)
             else:
                 if(update_approve_action_from_list(
                     db, csv_id, action, remarks, session_user, "all"
                 )
                 ):
-                    c_obj.frame_data_for_main_db_insert(user_id)
+                    c_obj.frame_data_for_main_db_insert(session_user.user_id())
                     u_ids = ",".join(map(str, c_obj._unit_ids))
                     c_obj.save_executive_message(
                         action, c_obj._csv_name, c_obj._client_group,
@@ -538,7 +497,8 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                     )
                     c_obj.source_commit()
                     delete_action_after_approval(db, csv_id)
-                    return bu_as.AssignStatutoryApproveActionInListSuccess()
+                    return_data = bu_as.AssignStatutoryApproveActionInListSuccess().to_structure()
+                    return_data = json.dumps(return_data)
         else:
             if(update_approve_action_from_list(
                 db, csv_id, action, remarks, session_user, "all"
@@ -550,7 +510,42 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
                     u_ids, remarks, 0
                 )
                 c_obj.source_commit()
-                return bu_as.AssignStatutoryApproveActionInListSuccess()
+                return_data =  bu_as.AssignStatutoryApproveActionInListSuccess().to_structure()
+                return_data = json.dumps(return_data)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buassignstatutorycontroller.py - list_statutory_thread_process", e)
+        raise(error)
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buassignstatutorycontroller.py - list_statutory_thread_process", e)
+        raise(e)
+    write_file()
+    return
+
+
+def update_assign_statutory_action_in_list(db, request_frame, session_user):
+    csv_id = request_frame.csv_id
+    client_id = request_frame.cl_id
+    legal_entity_id = request_frame.le_id
+    csv_name = generate_random_string()
+    try:
+        c_obj = ValidateAssignStatutoryForApprove(
+            db, csv_id, client_id, legal_entity_id, session_user
+        )
+
+        t = threading.Thread(
+            target=list_statutory_thread_process,
+            args=(db, request_frame, c_obj, session_user, csv_name))
+        t.start()
+        return bu_as.Done(csv_name)
 
     except Exception, e:
         raise e
@@ -722,24 +717,27 @@ def save_action(db, request_frame, session_user):
 #########################################################
 # submit record by user after select all individual rpw
 #########################################################
-def submit_assign_statutory(db, request_frame, session_user):
+
+def submit_statutory_thread_process(
+    db, request_frame, c_obj, session_user, csv_name
+):
+    def write_file():
+        file_name = "%s_%s.%s" % (
+            csv_name, "result", "txt"
+        )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            fn.write(return_data)
+        return
     try:
         csv_id = request_frame.csv_id
-        client_id = request_frame.cl_id
-        legal_entity_id = request_frame.le_id
-        user_id = session_user.user_id()
-        # csv data validation
-
-        approved_count, un_saved_count = get_validation_info(db, csv_id)
-        if un_saved_count > 0:
-            return bu_as.CompleteActionBeforeSubmit()
-
-        c_obj = ValidateAssignStatutoryForApprove(
-            db, csv_id, client_id, legal_entity_id, session_user
-        )
+        return_data = None
         is_declined = c_obj.perform_validation_before_submit()
         if len(is_declined.keys()) > 0:
-            return bu_as.ValidationSuccess(len(is_declined.keys()))
+            return_data = bu_as.ValidationSuccess(
+                len(is_declined.keys())
+                ).to_structure()
+            return_data = json.dumps(return_data)
         else:
             update_approve_action_from_list(
                 db, csv_id, 1, None, session_user, "single"
@@ -750,11 +748,54 @@ def submit_assign_statutory(db, request_frame, session_user):
                 c_obj._legal_entity, session_user.user_id(),
                 u_ids, None, 0
             )
-            c_obj.frame_data_for_main_db_insert(user_id)
+            c_obj.frame_data_for_main_db_insert(session_user.user_id())
             c_obj.source_commit()
             delete_action_after_approval(db, csv_id)
 
-            return bu_as.SubmitAssignStatutorySuccess()
+            return_data = bu_as.SubmitAssignStatutorySuccess().to_structure()
+            return_data = json.dumps(return_data)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buassignstatutorycontroller.py - submit_statutory_thread_process", e)
+        raise(error)
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buassignstatutorycontroller.py - submit_statutory_thread_process", e)
+        raise(e)
+    write_file()
+    return
+
+
+def submit_assign_statutory(db, request_frame, session_user):
+    try:
+        csv_id = request_frame.csv_id
+        client_id = request_frame.cl_id
+        legal_entity_id = request_frame.le_id
+        # csv data validation
+
+        csv_name = generate_random_string()
+
+        approved_count, un_saved_count = get_validation_info(db, csv_id)
+        if un_saved_count > 0:
+            return bu_as.CompleteActionBeforeSubmit()
+
+        c_obj = ValidateAssignStatutoryForApprove(
+            db, csv_id, client_id, legal_entity_id, session_user
+        )
+
+        t = threading.Thread(
+            target=submit_statutory_thread_process,
+            args=(db, request_frame, c_obj, session_user, csv_name))
+        t.start()
+        return bu_as.Done(csv_name)
+
     except Exception, e:
         print e
         print str(traceback.format_exc())
@@ -764,28 +805,69 @@ def submit_assign_statutory(db, request_frame, session_user):
 ############################################################
 # submit record bu user with system declined information
 #############################################################
+def confirm_statutory_thread_process(
+    db, request_frame, c_obj, session_user, csv_name
+):
+    def write_file():
+        file_name = "%s_%s.%s" % (
+            csv_name, "result", "txt"
+        )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            fn.write(return_data)
+        return
+    try:
+        csv_id = request_frame.csv_id
+        return_data = None
+        is_declined = c_obj.perform_validation_before_submit()
+        if len(is_declined.keys()) > 0:
+            c_obj.make_rejection(is_declined, session_user.user_id())
+            u_ids = ",".join(map(str, c_obj._unit_ids))
+            c_obj.save_executive_message(
+                1, c_obj._csv_name, c_obj._client_group,
+                c_obj._legal_entity, session_user.user_id(),
+                u_ids, None, len(is_declined.keys())
+            )
+            c_obj.frame_data_for_main_db_insert(session_user.user_id())
+            c_obj.source_commit()
+            delete_action_after_approval(db, csv_id)
+            return_data = bu_as.SubmitAssignStatutorySuccess().to_structure()
+            return_data = json.dumps(return_data)
+
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buassignstatutorycontroller.py - confirm_statutory_thread_process", e)
+        raise(error)
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buassignstatutorycontroller.py - confirm_statutory_thread_process", e)
+        raise(e)
+    write_file()
+    return
+
+
 def confirm_submit_assign_statutory(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     client_id = request_frame.cl_id
     legal_entity_id = request_frame.le_id
-    user_id = session_user.user_id()
+
+    csv_name = generate_random_string()
     # csv data validation
     c_obj = ValidateAssignStatutoryForApprove(
         db, csv_id, client_id, legal_entity_id, session_user
     )
-    is_declined = c_obj.perform_validation_before_submit()
-    if len(is_declined.keys()) > 0:
-        c_obj.make_rejection(is_declined, user_id)
-        u_ids = ",".join(map(str, c_obj._unit_ids))
-        c_obj.save_executive_message(
-            1, c_obj._csv_name, c_obj._client_group,
-            c_obj._legal_entity, session_user.user_id(),
-            u_ids, None, len(is_declined.keys())
-        )
-        c_obj.frame_data_for_main_db_insert(user_id)
-        c_obj.source_commit()
-        delete_action_after_approval(db, csv_id)
-        return bu_as.SubmitAssignStatutorySuccess()
+    t = threading.Thread(
+        target=confirm_statutory_thread_process,
+        args=(db, request_frame, c_obj, session_user, csv_name))
+    t.start()
+    return bu_as.Done(csv_name)
 
 
 #####################################################
@@ -828,18 +910,13 @@ def process_get_status(db, request):
     file_name = "%s_%s.%s" % (
         file_string[0], "result", "txt"
     )
-    print 'file_namefile_name>>>>', file_name
-    print ' os.path os.path>>',  os.path
     file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    print 'file path>>>', file_path
     if os.path.exists(file_path) is False:
         return bu_as.Alive()
     else:
         return_data = ""
         with open(file_path, "r") as fn:
             return_data += fn.read()
-
-        print "return_datareturn_datareturn_datareturn_data>>>", return_data
         if return_data == "InvalidCSV":
             return bu_as.InvalidCsvFile()
         elif return_data == "UnitsNotAssignedToUser":
@@ -855,6 +932,12 @@ def process_get_status(db, request):
             elif str(result[0]) == "UploadedRecordsCountNotMatch":
                 return bu_as.UploadedRecordsCountNotMatch.parse_inner_structure(
                     result[1])
+            else:
+                logger.logKnowledge(
+                    "error",
+                    "buassignstatutorycontroller.py-process_get_status",
+                    result)
+                raise Exception(str(result))
 
 
 def process_get_download_status(db, request):
@@ -874,3 +957,90 @@ def process_get_download_status(db, request):
         if str(result[0]) == "DownloadAssignStatutorySuccess":
             return bu_as.DownloadAssignStatutorySuccess.parse_inner_structure(
                 result[1])
+        else:
+            logger.logKnowledge(
+                "error",
+                "buassignstatutorycontroller.py-process_get_download_status",
+                result)
+            raise Exception(str(result))
+
+
+def process_get_submit_status(db, request):
+    csv_name = request.csv_name
+    file_name = "%s_%s.%s" % (
+        csv_name, "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    if os.path.exists(file_path) is False:
+        return bu_as.Alive()
+    else:
+        return_data = ""
+        with open(file_path, "r") as fn:
+            return_data += fn.read()
+
+        result = json.loads(return_data)
+        if str(result[0]) == "ValidationSuccess":
+            return bu_as.ValidationSuccess.parse_inner_structure(
+                result[1])
+        elif str(result[0]) == "SubmitAssignStatutorySuccess":
+            return bu_as.SubmitAssignStatutorySuccess.parse_inner_structure(
+                result[1])
+        else:
+            logger.logKnowledge(
+                "error",
+                "buassignstatutorycontroller.py-process_get_submit_status",
+                result)
+            raise Exception(str(result))
+
+
+def process_get_confirm_status(db, request):
+    csv_name = request.csv_name
+    file_name = "%s_%s.%s" % (
+        csv_name, "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    if os.path.exists(file_path) is False:
+        return bu_as.Alive()
+    else:
+        return_data = ""
+        with open(file_path, "r") as fn:
+            return_data += fn.read()
+
+        result = json.loads(return_data)
+        if str(result[0]) == "SubmitAssignStatutorySuccess":
+            return bu_as.SubmitAssignStatutorySuccess.parse_inner_structure(
+                result[1])
+        else:
+            logger.logKnowledge(
+                "error",
+                "buassignstatutorycontroller.py-process_get_confirm_status",
+                result)
+            raise Exception(str(result))
+
+
+def process_get_list_status(db, request):
+    csv_name = request.csv_name
+    file_name = "%s_%s.%s" % (
+        csv_name, "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    if os.path.exists(file_path) is False:
+        return bu_as.Alive()
+    else:
+        return_data = ""
+        with open(file_path, "r") as fn:
+            return_data += fn.read()
+
+        result = json.loads(return_data)
+        if str(result[0]) == "ValidationSuccess":
+            return bu_as.ValidationSuccess.parse_inner_structure(
+                result[1])
+        elif str(result[0]) == "AssignStatutoryApproveActionInListSuccess":
+            return bu_as.AssignStatutoryApproveActionInListSuccess.parse_inner_structure(
+                result[1])
+        else:
+            logger.logKnowledge(
+                "error",
+                "buassignstatutorycontroller.py-process_get_list_status",
+                result)
+            raise Exception(str(result))

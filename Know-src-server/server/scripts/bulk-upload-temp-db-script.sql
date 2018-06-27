@@ -24,6 +24,7 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping_csv` (
   `rejected_file_download_count` INT NULL,
   `declined_count` INT DEFAULT NULL,
   `file_download_status` VARCHAR(50) Null,
+  `file_submit_status` TINYINT default 0,
   PRIMARY KEY (`csv_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_statutory_mapping`;
@@ -195,6 +196,8 @@ CREATE TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv` (
   `uploaded_documents` INT NOT NULL,
   `upload_status` TINYINT default 0,
   `file_download_status` VARCHAR(50) NULL,
+  `file_submit_status` TINYINT default 0,
+  `data_submit_status` TINYINT default 0,
   PRIMARY KEY (`csv_past_id`));
 
 DROP TABLE IF EXISTS `compfie_bulkupload`.`tbl_bulk_past_data`;

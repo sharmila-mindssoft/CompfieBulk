@@ -441,9 +441,10 @@ BEGIN
     INNER JOIN tbl_statutory_mappings AS t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
     INNER JOIN tbl_mapped_locations AS t4 ON t1.statutory_mapping_id = t4.statutory_mapping_id
     INNER JOIN (SELECT a.geography_id,b.parent_ids,a.unit_id FROM tbl_units a
-      INNER JOIN tbl_geographies b ON a.geography_id = b.geography_id
-      WHERE find_in_set(a.unit_id, unitid)) t7 ON
-      (t4.geography_id = t7.geography_id OR find_in_set(t4.geography_id,t7.parent_ids))
+    INNER JOIN tbl_geographies b ON a.geography_id = b.geography_id
+    WHERE FIND_IN_SET(a.unit_id, unitid)) t7 ON
+    (t4.geography_id = t7.geography_id OR find_in_set(t4.geography_id,t7.parent_ids))
+    AND FIND_IN_SET(t3.domain_id, domainid)
     ORDER BY TRIM(LEADING '[' FROM t3.statutory_mapping);
 
     -- get compliances
@@ -630,10 +631,12 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_bu_level_one_statutories`;
 DELIMITER //
-CREATE PROCEDURE `sp_bu_level_one_statutories`()
+CREATE PROCEDURE `sp_bu_level_one_statutories`(IN country_id_ INT)
 BEGIN
-   SELECT t1.statutory_id, t1.statutory_name FROM tbl_statutories AS t1
-   WHERE t1.parent_ids = '';
+  SELECT t1.statutory_id, t1.statutory_name, t3.domain_name FROM tbl_statutories AS t1
+  INNER JOIN tbl_statutory_levels AS t2 on t1.level_id = t2.level_id
+  INNER JOIN tbl_domains AS t3 on t2.domain_id = t3.domain_id
+  WHERE t2.country_id = country_id_ and t1.parent_ids = '';
 END //
 DELIMITER ;
 
@@ -708,10 +711,12 @@ DELIMITER ;
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_bu_chils_level_statutories`;
 DELIMITER //
-CREATE PROCEDURE `sp_bu_chils_level_statutories`()
+CREATE PROCEDURE `sp_bu_chils_level_statutories`(IN country_id_ INT)
 BEGIN
-   SELECT t1.statutory_id, t1.statutory_name FROM tbl_statutories AS t1
-   WHERE t1.parent_ids != '';
+  SELECT t1.statutory_id, t1.statutory_name, t3.domain_name FROM tbl_statutories AS t1
+  INNER JOIN tbl_statutory_levels AS t2 on t1.level_id = t2.level_id
+  INNER JOIN tbl_domains AS t3 on t2.domain_id = t3.domain_id
+  WHERE t2.country_id = country_id_ and t1.parent_ids != '';
 END //
 DELIMITER ;
 
