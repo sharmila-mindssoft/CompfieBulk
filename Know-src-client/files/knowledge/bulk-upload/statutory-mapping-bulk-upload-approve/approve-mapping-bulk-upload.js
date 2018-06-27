@@ -1368,7 +1368,7 @@ function key_view_search(mainList) {
             (~d.c_desc.toLowerCase().indexOf(keyCDesc)) &&
             (~d.p_cons.toLowerCase().indexOf(keyPCons)) &&
             (~d.task_type.toLowerCase().indexOf(keyTaskType)) &&
-            (~d.refer.toLowerCase().indexOf(keyRefer)) &&
+            (~d.refer_bu.toLowerCase().indexOf(keyRefer)) &&
             (~d.frequency.toLowerCase().indexOf(keyFreq)) &&
             (~d.format_file.toLowerCase().indexOf(keyFormat)) &&
             (~d.geo_location.toLowerCase().indexOf(keyGeo))) {
