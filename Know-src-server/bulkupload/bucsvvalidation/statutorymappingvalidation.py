@@ -74,6 +74,8 @@ class StatutorySource(object):
         self._csv_column_name = []
         self._csv_column_name_with_mandatory = []
         self.csv_column_fields()
+        self.compliance_list_knowdb = []
+        self.taskids_list_knowdb = []
 
     def csv_column_fields(self):
         self._csv_column_name = [
@@ -653,37 +655,103 @@ class StatutorySource(object):
         self, country_id, domain_id, statutory,
         statutory_provision, task_name
     ):
+        compare_str = str(country_id)
+        compare_str += "-" + str(domain_id)
         statutories = statutory.split(CSV_DELIMITER)
         statutory_string = str("[\"" + (',').join(statutories) + "\"]")
+        compare_str += "-" + str(statutory_string)
+        compare_str += "-" + str(statutory_provision)
+        compare_str += "-" + str(task_name)
+        # print "compare str-> ", compare_str
+        if len(self.compliance_list_knowdb) > 0:
+            if compare_str in self.compliance_list_knowdb:
+                print "in if " + compare_str
+                return False
+            else:
+                return True
 
-        data = self._source_db.call_proc(
-            "sp_bu_check_duplicate_compliance", [
-                country_id, domain_id, statutory_provision, task_name,
-                statutory_string
-            ]
-        )
-        if len(data) > 0:
-            return False
-        else:
-            return True
+        return True
+
+        # statutories = statutory.split(CSV_DELIMITER)
+        # statutory_string = str("[\"" + (',').join(statutories) + "\"]")
+
+        # data = self._source_db.call_proc(
+        #     "sp_bu_check_duplicate_compliance", [
+        #         country_id, domain_id, statutory_provision, task_name,
+        #         statutory_string
+        #     ]
+        # )
+        # if len(data) > 0:
+        #     return False
+        # else:
+        #     return True
+
+    def get_all_matching_compliance_know(self, country_id, domain_id):
+        print "IN DB comp task know"
+        data = self._source_db.call_proc("sp_bu_get_matching_compliance", [
+            country_id, domain_id
+        ])
+        # print "DATA-> ", data
+        for d in data:
+            data_str = str(d["country_id"])
+            data_str += "-" + str(d["domain_id"])
+            data_str += "-" + str(d["statutory_mapping"])
+            data_str += "-" + str(d["statutory_provision"])
+            data_str += "-" + str(d["compliance_task"])
+            self.compliance_list_knowdb.append(data_str)
+
+        # self.compliance_list_tempdb = data
+
+        print "self.compliance_list_knowdb>>", len(self.compliance_list_knowdb)
 
     def check_task_id_duplicate(
         self, country_id, domain_id, statutory,
         statutory_provision, task_name, task_id
     ):
+        compare_str = str(country_id)
+        compare_str += "-" + str(domain_id)
         statutories = statutory.split(CSV_DELIMITER)
         statutory_string = str("[\"" + (',').join(statutories) + "\"]")
+        compare_str += "-" + str(statutory_string)
+        compare_str += "-" + str(statutory_provision)
+        compare_str += "-" + str(task_name)
+        compare_str += "-" + str(task_id)
+        # print "taskidss cmp str -> ", compare_str
+        if len(self.taskids_list_knowdb) > 0:
+            if compare_str in self.taskids_list_knowdb:
+                # print "in if taskids_list ", compare_str
+                return False
+            else:
+                return True
 
-        data = self._source_db.call_proc(
-            "sp_bu_check_duplicate_task_id", [
-                country_id, domain_id, statutory_provision, task_name,
-                statutory_string, task_id
-            ]
-        )
-        if len(data) > 0:
-            return False
-        else:
-            return True
+        return True
+        # data = self._source_db.call_proc(
+        #     "sp_bu_check_duplicate_task_id", [
+        #         country_id, domain_id, statutory_provision, task_name,
+        #         statutory_string, task_id
+        #     ]
+        # )
+        # if len(data) > 0:
+        #     return False
+        # else:
+        #     return True
+
+    def get_all_matching_taskids_know(self, country_id, domain_id):
+        print "IN DB taskids"
+        data = self._source_db.call_proc("sp_bu_get_matching_taskids", [
+            country_id, domain_id
+        ])
+        # print "DATA-> ", data
+        for d in data:
+            data_str = str(d["country_id"])
+            data_str += "-" + str(d["domain_id"])
+            data_str += "-" + str(d["statutory_mapping"])
+            data_str += "-" + str(d["statutory_provision"])
+            data_str += "-" + str(d["compliance_task"])
+            data_str += "-" + str(d["task_id"])
+            self.taskids_list_knowdb.append(data_str)
+
+        # print "self.taskids_list_knowdb>>", self.taskids_list_knowdb
 
     def save_mapping_data(self, c_id, d_id, n_id, uploadedby, mapping):
         created_on = get_date_time()
@@ -993,6 +1061,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         self._csv_header = csv_header
         self._error_summary = {}
         self.error_summary()
+        self.compliance_list_tempdb = []
+        self.taskid_list_tempdb = []
 
         self._doc_names = []
         self._sheet_name = "Statutory Mapping"
@@ -1088,25 +1158,82 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         self, country_id, domain_id, statutory, statutory_provision,
         compliance_task
     ):
-        data = self._db.call_proc("sp_check_duplicate_statu_mapping", [
-            country_id, domain_id, statutory, statutory_provision,
-            compliance_task
-        ])
-        if len(data) > 0:
-            return False
-        else:
-            return True
+        # print "DB CHECK !"
+        # data = self._db.call_proc("sp_check_duplicate_statu_mapping", [
+        #     country_id, domain_id, statutory, statutory_provision,
+        #     compliance_task
+        # ])
+        # printself.compliance_list_tempdb
+
+        compare_str = str(country_id)
+        compare_str += "-" + str(domain_id)
+        compare_str += "-" + str(statutory)
+        compare_str += "-" + str(statutory_provision)
+        compare_str += "-" + str(compliance_task)
+        # print "--> " + compare_str
+        if len(self.compliance_list_tempdb) > 0:
+            if compare_str in self.compliance_list_tempdb:
+                return False
+            else:
+                return True
+
+        return True
 
     def check_duplicate_taskid_in_tempDB(
         self, country_id, domain_id, task_id
     ):
-        data = self._db.call_proc("sp_check_duplicate_task_id", [
-            country_id, domain_id, task_id
+        # data = self._db.call_proc("sp_check_duplicate_task_id", [
+        #     country_id, domain_id, task_id
+        # ])
+        # if len(data) > 0:
+        #     return False
+        # else:
+        #     return True
+        compare_str = str(country_id)
+        compare_str += "-" + str(domain_id)
+        compare_str += "-" + str(task_id)
+        # print "cmp str ", compare_str
+        if len(self.taskid_list_tempdb) > 0:
+            if compare_str in self.taskid_list_tempdb:
+                return False
+            else:
+                return True
+
+        return True
+
+    def get_all_matching_compliance_temp(self, country_id, domain_id):
+        print "IN DB COmp task tempdb"
+        data = self._db.call_proc("sp_get_all_matching_compliances", [
+            country_id, domain_id
         ])
-        if len(data) > 0:
-            return False
-        else:
-            return True
+        # print "DATA-> ", data
+        for d in data:
+            # print "statutory ->", d["statutory"]
+            # print "proiv ->", d["statutory_provision"]
+            data_str = str(d["country_id"])
+            data_str += "-" + str(d["domain_id"])
+            data_str += "-" + str(d["statutory"])
+            data_str += "-" + str(d["statutory_provision"])
+            data_str += "-" + str(d["compliance_task"])
+
+            # print "data_str-> ", data_str
+            self.compliance_list_tempdb.append(data_str)
+
+        # self.compliance_list_tempdb = data
+
+        # print "self.compliance_list_tempdb-> ", self.compliance_list_tempdb
+
+    def get_all_matching_taskids_temp(self, country_id, domain_id):
+        print "In DB"
+        data = self._db.call_proc("sp_get_all_matching_task_ids", [
+            country_id, domain_id
+        ])
+        for d in data:
+            data_str = str(d["country_id"])
+            data_str += "-" + str(d["domain_id"])
+            data_str += "-" + str(d["task_id"])
+            self.taskid_list_tempdb.append(data_str)
+        # print "self.taskid_list_tempdb", self.taskid_list_tempdb
 
     '''
         looped csv data to perform corresponding validation
@@ -1132,6 +1259,18 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         duplicate_task_ids = self.check_duplicate_task_id_in_csv()
 
         self.init_values(self._country_id, self._domain_id)
+        self.get_all_matching_taskids_temp(
+            self._country_id, self._domain_id
+        )
+        self.get_all_matching_compliance_temp(
+            self._country_id, self._domain_id
+        )
+        self.get_all_matching_compliance_know(
+            self._country_id, self._domain_id
+        )
+        self.get_all_matching_taskids_know(
+            self._country_id, self._domain_id
+        )
 
         def make_error_desc(res, msg):
             if res is True:

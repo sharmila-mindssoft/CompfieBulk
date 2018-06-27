@@ -188,6 +188,23 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS `sp_bu_get_matching_compliance`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_matching_compliance`(
+IN cid INT, did INT
+)
+BEGIN
+  SELECT t1.country_id, t1.domain_id, t2.statutory_mapping,
+         t1.statutory_provision, t1.compliance_task
+
+  FROM tbl_compliances AS t1
+  INNER JOIN tbl_statutory_mappings AS t2
+  ON t1.statutory_mapping_id = t2.statutory_mapping_id
+  WHERE t1.country_id = cid AND t1.domain_id = did;
+END //
+DELIMITER ;
+
+
 -- --------------------------------------------------------------------------------
 -- To get the categories under a client
 -- --------------------------------------------------------------------------------
@@ -250,6 +267,22 @@ BEGIN
   t2.statutory_mapping = mapping
   AND t1.compliance_task = taskname
   AND t1.task_id = taskid;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_matching_taskids`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_matching_taskids`(
+IN cid INT, did INT
+)
+BEGIN
+  SELECT t1.country_id, t1.domain_id, t1.statutory_provision,
+  t1.compliance_task, t2.statutory_mapping, t1.task_id
+  FROM tbl_compliances AS t1
+  INNER JOIN tbl_statutory_mappings AS t2
+  ON t1.statutory_mapping_id = t2.statutory_mapping_id
+  WHERE t1.country_id = cid AND t1.domain_id = did;
 END //
 DELIMITER ;
 
@@ -460,8 +493,8 @@ BEGIN
       AND FIND_IN_SET(t4.unit_id, unitid)
       AND FIND_IN_SET(t1.domain_id, domainid)
       AND t6.unit_id IS NULL
-    GROUP BY   t1.statutory_mapping_id , t1.compliance_id , t4.unit_id, 
-        t1.domain_id, t4.unit_code, t4.unit_name, 
+    GROUP BY   t1.statutory_mapping_id , t1.compliance_id , t4.unit_id,
+        t1.domain_id, t4.unit_code, t4.unit_name,
         t4.geography_id, t.statutory_mapping,
         t1.statutory_provision,
         t1.compliance_task ,
@@ -779,7 +812,7 @@ CREATE PROCEDURE `sp_bu_is_valid_le`(
     IN le_name VARCHAR(50), client_group_name VARCHAR(50)
 )
 BEGIN
-  SELECT count(legal_entity_id) AS cnt FROM tbl_legal_entities 
+  SELECT count(legal_entity_id) AS cnt FROM tbl_legal_entities
   WHERE legal_entity_name = le_name and client_id = (
     SELECT client_id from tbl_client_groups where group_name = client_group_name
   );
