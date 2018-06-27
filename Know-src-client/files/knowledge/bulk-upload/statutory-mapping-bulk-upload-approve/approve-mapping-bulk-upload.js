@@ -609,7 +609,7 @@ ApproveBulkMapping.prototype.confirmAction = function() {
 ApproveBulkMapping.prototype.actionFromList = function(
     csvId, action, remarks, pwd
 ) {
-    var showPopup = false;;
+    var showPopup = false;
     displayLoader();
     tThis = this;
     tThis.countryId = parseInt(COUNTRY_VAL.val());
