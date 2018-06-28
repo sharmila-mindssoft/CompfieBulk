@@ -170,41 +170,6 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_compliance`;
-DELIMITER //
-CREATE PROCEDURE `sp_bu_check_duplicate_compliance`(
-IN cid INT, did INT, provision VARCHAR(500),
-taskname VARCHAR(150), mapping longtext
-)
-BEGIN
-  SELECT t1.compliance_task FROM tbl_compliances AS t1
-  INNER JOIN tbl_statutory_mappings AS t2
-  ON t1.statutory_mapping_id = t2.statutory_mapping_id
-  WHERE t1.country_id = cid AND t1.domain_id = did
-  AND t1.statutory_provision = provision and
-  t2.statutory_mapping = mapping
-  AND t1.compliance_task = taskname;
-END //
-DELIMITER ;
-
-
-DROP PROCEDURE IF EXISTS `sp_bu_get_matching_compliance`;
-DELIMITER //
-CREATE PROCEDURE `sp_bu_get_matching_compliance`(
-IN cid INT, did INT
-)
-BEGIN
-  SELECT t1.country_id, t1.domain_id, t2.statutory_mapping,
-         t1.statutory_provision, t1.compliance_task
-
-  FROM tbl_compliances AS t1
-  INNER JOIN tbl_statutory_mappings AS t2
-  ON t1.statutory_mapping_id = t2.statutory_mapping_id
-  WHERE t1.country_id = cid AND t1.domain_id = did;
-END //
-DELIMITER ;
-
-
 -- --------------------------------------------------------------------------------
 -- To get the categories under a client
 -- --------------------------------------------------------------------------------
@@ -250,42 +215,6 @@ BEGIN
   _user_id);
 END //
 DELIMITER ;
-
-
-DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_task_id`;
-DELIMITER //
-CREATE PROCEDURE `sp_bu_check_duplicate_task_id`(
-IN cid INT, did INT, provision VARCHAR(500),
-taskname VARCHAR(150), mapping longtext, taskid VARCHAR(25)
-)
-BEGIN
-  SELECT t1.task_id FROM tbl_compliances AS t1
-  INNER JOIN tbl_statutory_mappings AS t2
-  ON t1.statutory_mapping_id = t2.statutory_mapping_id
-  WHERE t1.country_id = cid AND t1.domain_id = did
-  AND t1.statutory_provision = provision and
-  t2.statutory_mapping = mapping
-  AND t1.compliance_task = taskname
-  AND t1.task_id = taskid;
-END //
-DELIMITER ;
-
-
-DROP PROCEDURE IF EXISTS `sp_bu_get_matching_taskids`;
-DELIMITER //
-CREATE PROCEDURE `sp_bu_get_matching_taskids`(
-IN cid INT, did INT
-)
-BEGIN
-  SELECT t1.country_id, t1.domain_id, t1.statutory_provision,
-  t1.compliance_task, t2.statutory_mapping, t1.task_id
-  FROM tbl_compliances AS t1
-  INNER JOIN tbl_statutory_mappings AS t2
-  ON t1.statutory_mapping_id = t2.statutory_mapping_id
-  WHERE t1.country_id = cid AND t1.domain_id = did;
-END //
-DELIMITER ;
-
 
 -- --------------------------------------------------------------------------------
 -- To get the geographies under a level
@@ -889,3 +818,41 @@ DELIMITER ;
 ALTER TABLE `tbl_compliances`
 ADD COLUMN `task_id` VARCHAR(25) NOT NULL AFTER `is_updated`,
 ADD COLUMN `task_type` VARCHAR(150) NOT NULL AFTER `task_id`;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_matching_taskids`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_matching_taskids`(
+IN cid INT, did INT
+)
+BEGIN
+  SELECT t1.country_id, t1.domain_id, t1.statutory_provision,
+  t1.compliance_task, t2.statutory_mapping, t1.task_id
+  FROM tbl_compliances AS t1
+  INNER JOIN tbl_statutory_mappings AS t2
+  ON t1.statutory_mapping_id = t2.statutory_mapping_id
+  WHERE t1.country_id = cid AND t1.domain_id = did;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_matching_compliance`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_matching_compliance`(
+IN cid INT, did INT
+)
+BEGIN
+  SELECT t1.country_id, t1.domain_id, t2.statutory_mapping,
+         t1.statutory_provision, t1.compliance_task
+
+  FROM tbl_compliances AS t1
+  INNER JOIN tbl_statutory_mappings AS t2
+  ON t1.statutory_mapping_id = t2.statutory_mapping_id
+  WHERE t1.country_id = cid AND t1.domain_id = did;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_task_id`;
+DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_compliance`;
+
