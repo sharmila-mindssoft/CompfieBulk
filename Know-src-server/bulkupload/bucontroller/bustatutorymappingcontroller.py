@@ -37,7 +37,8 @@ from ..budatabase.bustatutorymappingdb import (
 
 from ..bulkuploadcommon import (
     convert_base64_to_file, read_data_from_csv,
-    generate_valid_file, remove_uploaded_file
+    generate_valid_file, remove_uploaded_file,
+    remove_bulk_uploaded_files
 )
 from ..bulkexport import ConvertJsonToCSV
 import datetime
@@ -577,33 +578,6 @@ def queue_process_statutory_document(db, request_frame, session_user):
         return bu_sm.DocumentQueueProcessSuccess(rejected_reason)
 
 
-def remove_bulk_uploaded_files(csv_name):
-    file_string = csv_name.split(".")
-    print "file_string >>>"
-    print file_string[0]
-    upload_files = ["csv", "txt", "ods", "xlsx"]
-    for remove_file in upload_files:
-
-        print "remove_file >>"
-        print remove_file
-
-        print "BULKUPLOAD_CSV_PATH >>>"
-        print BULKUPLOAD_CSV_PATH
-
-        file_path = "%s/%s/%s.%s" % (
-            BULKUPLOAD_CSV_PATH,
-            remove_file,
-            file_string[0],
-            remove_file
-            )
-        print "os.path.exists(file_path) >>>"
-        print os.path.exists(file_path)
-        if os.path.exists(file_path) is True:
-            print "Removed Trueeueueue"
-            print remove_uploaded_file(file_path)
-    return
-
-
 def statutory_validate_data(db, request_frame, c_obj, session_user):
     def write_file(return_data):
         csv_name = c_obj._csv_name
@@ -646,8 +620,7 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
                     c_obj.source_commit()
                     delete_action_after_approval(db, csv_id)
                     remove_bulk_uploaded_files(csv_name)
-                    return_data = bu_sm.UpdateApproveActionFromListSuccess()
-                    return_data = return_data.to_structure()
+                    return_data = bu_sm.UpdateApproveActionFromListSuccess().to_structure()
         else:
             if (update_approve_action_from_list(
                 db, csv_id, action, remarks, session_user, "all"
@@ -658,8 +631,7 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
                     c_obj._domain_name, session_user.user_id(), remarks, 0
                 )
                 c_obj.source_commit()
-                return_data = bu_sm.UpdateApproveActionFromListSuccess(). \
-                    to_structure()
+                return_data = bu_sm.UpdateApproveActionFromListSuccess().to_structure()
         return_data = json.dumps(return_data)
 
     except AssertionError as error:
@@ -1070,11 +1042,9 @@ def process_get_status(db, request):
         else:
             result = json.loads(return_data)
             if str(result[0]) == "UploadStatutoryMappingCSVValidSuccess":
-                return bu_sm.UploadStatutoryMappingCSVValidSuccess. \
-                    parse_inner_structure(result[1])
+                return bu_sm.UploadStatutoryMappingCSVValidSuccess.parse_inner_structure(result[1])
             elif str(result[0]) == "UploadStatutoryMappingCSVInvalidSuccess":
-                return bu_sm.UploadStatutoryMappingCSVInvalidSuccess. \
-                    parse_inner_structure(result[1])
+                return bu_sm.UploadStatutoryMappingCSVInvalidSuccess.parse_inner_structure(result[1])
             else:
                 logger.logKnowledge(
                     "error",
@@ -1101,8 +1071,7 @@ def process_get_approve_mapping_status(db, request):
         remove_uploaded_file(file_path)
         result = json.loads(return_data)
         if str(result[0]) == "UpdateApproveActionFromListSuccess":
-            return bu_sm.UpdateApproveActionFromListSuccess. \
-                parse_inner_structure(result[1])
+            return bu_sm.UpdateApproveActionFromListSuccess.parse_inner_structure(result[1])
         elif str(result[0]) == "ValidationSuccess":
             return bu_sm.ValidationSuccess.parse_inner_structure(
                 result[1])

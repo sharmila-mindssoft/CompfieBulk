@@ -21,7 +21,7 @@ var PAGE_TYPE = "show";
 var CURRENT_PASSWORD = null;
 var BU_APPROVE_PAGE = null;
 var IS_AUTHENTICATE = '';
-var TIMEOUT_MLS = 45000;
+var TIMEOUT_MLS = 5000;
 
 // auto complete - country
 var COUNTRY_VAL = $('#countryid');
