@@ -800,7 +800,8 @@ def confirm_statutory_validate(db, request_frame, c_obj, session_user):
                 get_update_approve_file_status(db, csv_id, 1)
 
             c_obj.source_bulkdb_commit()
-            return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure();    
+            return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure();
+        return_data = json.dumps(return_data)
     except AssertionError as error:
         e = "AssertionError"
         return_data = json.dumps(e)

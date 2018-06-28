@@ -1626,6 +1626,12 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             declined_count = 0
             self._declined_row_idx = {}
             self.init_values(self._country_id, self._domain_id)
+            self.get_all_matching_compliance_know(
+                self._country_id, self._domain_id
+            )
+            self.get_all_matching_taskids_know(
+                self._country_id, self._domain_id
+            )
 
             for row_idx, data in enumerate(self._source_data):
                 res = True
