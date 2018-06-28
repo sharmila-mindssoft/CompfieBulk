@@ -713,7 +713,9 @@ DROP PROCEDURE IF EXISTS `sp_bu_chils_level_statutories`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_chils_level_statutories`(IN country_id_ INT)
 BEGIN
-  SELECT t1.statutory_id, t1.statutory_name, t3.domain_name FROM tbl_statutories AS t1
+  SELECT t1.statutory_id, t1.statutory_name, t3.domain_name,
+  SUBSTRING_INDEX(t1.parent_names,'>>',1) as parent_name
+  FROM tbl_statutories AS t1
   INNER JOIN tbl_statutory_levels AS t2 on t1.level_id = t2.level_id
   INNER JOIN tbl_domains AS t3 on t2.domain_id = t3.domain_id
   WHERE t2.country_id = country_id_ and t1.parent_ids != '';
