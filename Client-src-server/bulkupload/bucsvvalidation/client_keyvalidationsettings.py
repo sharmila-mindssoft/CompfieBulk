@@ -27,6 +27,7 @@ def is_alpha_numeric_allow_spl(value):
     else:
         return False
 
+
 def is_alphabet(value):
     r = re.compile("^[a-zA-Z ]*$")  # a-z with space
     if r.match(value):

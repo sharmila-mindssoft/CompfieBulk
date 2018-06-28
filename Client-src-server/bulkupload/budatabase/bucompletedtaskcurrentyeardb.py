@@ -56,9 +56,7 @@ def get_legal_entity_domains(
     return results
 
 
-def save_completed_task_current_year_csv(
-    db, completed_task
-):
+def save_completed_task_current_year_csv(completed_task):
 
     columns = [
         "client_id", "legal_entity_id", "domain_id", "unit_id_id",
@@ -80,7 +78,7 @@ def save_completed_task_current_year_csv(
     return completed_task_id
 
 
-def save_completed_task_data(db, csv_id, csv_data):
+def save_completed_task_data(csv_id, csv_data):
     try:
         columns = [
             "csv_past_id", "Legal_Entity", "Domain",
