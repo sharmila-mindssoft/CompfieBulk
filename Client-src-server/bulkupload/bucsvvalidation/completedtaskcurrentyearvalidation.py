@@ -7,7 +7,7 @@ import threading
 from requests.exceptions import ConnectionError
 from datetime import datetime, timedelta
 from server.dbase import Database
-from server.common import get_date_time
+from server.common import (get_date_time, get_current_date)
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME)
@@ -525,8 +525,11 @@ class SourceDB(object):
         except ValueError:
             return
         start_date = due_date.date() - timedelta(days=trigger_before_days)
+        current_date = get_current_date()
         if completion_date < start_date:
             return "Should be greater than Start Date"
+        if completion_date > current_date:
+            return "Should be less than current Date"
         else:
             return True
 

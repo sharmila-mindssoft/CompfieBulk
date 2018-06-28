@@ -21,6 +21,7 @@ var PAGE_TYPE = "show";
 var CURRENT_PASSWORD = null;
 var BU_APPROVE_PAGE = null;
 var IS_AUTHENTICATE = '';
+var TIMEOUT_MLS = 45000;
 
 // auto complete - country
 var COUNTRY_VAL = $('#countryid');
@@ -557,15 +558,6 @@ ApproveBulkMapping.prototype.fetchDropDownData = function() {
 ApproveBulkMapping.prototype.confirmAction = function() {
     tThis = this;
     displayLoader();
-    function sleep(milliseconds) {
-        var start = new Date().getTime();
-        for (var i = 0; i < 1e7; i++) {
-             if ((new Date().getTime() - start) > milliseconds){
-                break;
-            }
-        }
-    }
-
     function apiCall(csv_name, callback){
         console.log("Rejecttion API CALL");
         bu.getApproveMappingStatus(csv_name, callback);
@@ -575,11 +567,7 @@ ApproveBulkMapping.prototype.confirmAction = function() {
 
         console.log("call_bck_fn --"+error+"-=----"+response);
         if (error == "Alive"){
-            /*count = count+1;*/
-            sleep(180000);
-            /*if(count < 3){*/
-            apiCall(csv_name, call_bck_fn);
-            /*}*/
+            setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
         }
         else if (error == null && error != "Alive") {
             tThis.showList();
@@ -615,14 +603,6 @@ ApproveBulkMapping.prototype.actionFromList = function(
     tThis.countryId = parseInt(COUNTRY_VAL.val());
     tThis.domainId = parseInt(DOMAIN_VAL.val());
     var count = 0;
-    function sleep(milliseconds) {
-        var start = new Date().getTime();
-        for (var i = 0; i < 1e7; i++) {
-             if ((new Date().getTime() - start) > milliseconds){
-                break;
-            }
-        }
-    }
     function apiCall(csv_name, callback){
         bu.getApproveMappingStatus(csv_name, callback);
     }
@@ -630,11 +610,7 @@ ApproveBulkMapping.prototype.actionFromList = function(
         console.log("action : "+action);
         console.log("error : "+error);
         if (error == "Alive"){
-            /*count = count+1;*/
-            sleep(180000);
-            /*if(count < 3){*/
-            apiCall(csv_name, call_bck_fn);
-            /*}*/
+            setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
         }
         else if (error == null && error != "Alive") {
             if (response.rej_count > 0) {
@@ -880,8 +856,6 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
             formatDownloadUrl += $('#view_csv_id').val();
             formatDownloadUrl += "/" + data.format_file;
 
-            // http://202.21.34.173:9000/uploadedformat/92/bug_cycle_flow-94222.pdf
-
             cloneRow = VIEW_LIST_ROW_TEMPLATE.clone();
             $('.sno', cloneRow).text(j);
             $('.statutory', cloneRow).text(data.statutory);
@@ -916,11 +890,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
             if (parseInt(data.bu_action) == 1) {
                 $('.view-approve-check',cloneRow).attr("checked", true);
                 $('.view-reject-check',cloneRow).attr("checked", false);
-                //console.log("view-approve-check >>> Length");
-                //console.log(TOTAL_VIEW_ITEMS);
                 TOTAL_VIEW_APPROVE_ITEMS++;
-                //console.log("TOTAL_VIEW_APPROVE_ITEMS");
-                //console.log(TOTAL_VIEW_APPROVE_ITEMS);
             }
             else if (data.bu_action == null) {
                 $('.view-approve-check',cloneRow).attr("checked", false);
@@ -940,8 +910,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                         ).addClass("default-display-none");
                 }
                 TOTAL_VIEW_REJECT_ITEMS++;
-               // console.log("TOTAL_VIEW_REJECT_ITEMS");
-              //  console.log(TOTAL_VIEW_REJECT_ITEMS);
+              
             }
             else {
                 $('.view-approve-check', cloneRow).attr("checked", false);
@@ -1246,26 +1215,13 @@ ApproveBulkMapping.prototype.finalSubmit = function(csvId, pwd) {
     tThis.countryId = parseInt(COUNTRY_VAL.val());
     tThis.domainId = parseInt(DOMAIN_VAL.val());
 
-    function sleep(milliseconds) {
-        var start = new Date().getTime();
-        for (var i = 0; i < 1e7; i++) {
-             if ((new Date().getTime() - start) > milliseconds){
-                break;
-            }
-        }
-    }
-
     function apiCall(csv_name, callback){
         bu.getApproveMappingStatus(csv_name, callback);
     }
 
     function call_bck_fn(error, response){
         if (error == "Alive"){
-            /*count = count+1;*/
-            sleep(180000);
-            /*if(count < 3){*/
-            apiCall(csv_name, call_bck_fn);
-            /*}*/
+            setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
         }
         if(error == null && error != "Alive") {
             if (response.rej_count > 0) {
@@ -1934,9 +1890,6 @@ function PageControls() {
                             "data-original-title", "");
 
                         $(this).find("*").prop("checked", false);
-                        /*$('.reject-reason .fa-info-circle').addClass("default-display-none");
-
-                        $('.reject-reason .fa-info-circle').attr("data-original-title","");*/
 
                         $('.tbody-sm-approve-view .view-reject-check').each(
                             function() {

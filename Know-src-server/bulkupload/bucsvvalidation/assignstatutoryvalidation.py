@@ -160,7 +160,7 @@ class SourceDB(object):
         )
         for d in data:
             self._child_statutories[
-                d["statutory_name"]+'-'+d["domain_name"]
+                d["statutory_name"]+'-'+d["parent_name"]+'-'+d["domain_name"]
             ] = d
 
     def get_statutory_provision(self):
@@ -351,7 +351,7 @@ class SourceDB(object):
                 d["Secondary_Legislation"] != ''
             ):
                 s_legislation_id = self._child_statutories.get(
-                    d["Secondary_Legislation"]+'-'+d["Domain"]
+                    d["Secondary_Legislation"]+'-'+d["Primary_Legislation"]+'-'+d["Domain"]
                 ).get("statutory_id")
 
             comp_id = None
@@ -467,7 +467,7 @@ class SourceDB(object):
             s_legislation != ''
         ):
             s_legislation_id = self._child_statutories.get(
-                s_legislation+'-'+data.get("Domain")
+                s_legislation+'-'+data.get("Primary_Legislation")+'-'+data.get("Domain")
             ).get("statutory_id")
 
         c_ids = self._source_db.call_proc(
@@ -873,7 +873,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                                 org_val = v+'-'+data.get('Domain')
                                 isFound = unboundMethod(org_val)
                             elif key == "Secondary_Legislation":
-                                s_legs_val = v+'-'+data.get('Domain')
+                                s_legs_val = v+'-'+data.get("Primary_Legislation")+'-'+data.get('Domain')
                                 isFound = unboundMethod(s_legs_val)
                             elif key == "Unit_Location":
                                 loc_val = data.get('Unit_Code')+'-'+v
@@ -1131,7 +1131,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                                     org_val = v+'-'+data.get('Domain')
                                     isFound = unboundMethod(org_val)
                                 elif key == "Secondary_Legislation":
-                                    s_legs_val = v+'-'+data.get('Domain')
+                                    s_legs_val = v+'-'+data.get('Primary_Legislation')+'-'+data.get('Domain')
                                     isFound = unboundMethod(s_legs_val)
                                 elif key == "Unit_Location":
                                     loc_val = data.get('Unit_Code')+'-'+v
