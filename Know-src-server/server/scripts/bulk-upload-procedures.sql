@@ -1646,26 +1646,6 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_check_duplicate_compliance_for_unit`;
-DELIMITER //
-CREATE PROCEDURE `sp_check_duplicate_compliance_for_unit`(
-IN domain_ VARCHAR(50), unitcode_ VARCHAR(50), provision_ VARCHAR(500),
-taskname_ VARCHAR(150), description_ VARCHAR(500),
-p_legislation VARCHAR(500), s_legislation VARCHAR(500),
-legal_entity_ VARCHAR(500)
-)
-BEGIN
-  SELECT
-    compliance_task_name
-    FROM tbl_bulk_assign_statutory WHERE
-    domain = domain_ AND unit_code = unitcode_ AND statutory_provision = provision_
-    AND compliance_task_name = taskname_ AND compliance_description = description_
-    AND legal_entity = legal_entity_ AND perimary_legislation = p_legislation
-    AND secondary_legislation = s_legislation;
-END //
-DELIMITER ;
-
-
 DROP PROCEDURE IF EXISTS `sp_check_upload_compliance_count_for_unit`;
 DELIMITER //
 CREATE PROCEDURE `sp_check_upload_compliance_count_for_unit`(
@@ -1775,31 +1755,6 @@ CREATE PROCEDURE `sp_sm_get_total_file_count`(
 BEGIN
     SELECT total_documents FROM tbl_bulk_statutory_mapping_csv
     WHERE csv_id = csvid;
-END //
-DELIMITER ;
-
-
-DROP PROCEDURE IF EXISTS `sp_check_invalid_compliance_in_csv`;
-DELIMITER //
-CREATE PROCEDURE `sp_check_invalid_compliance_in_csv`(
-IN client_group_ VARCHAR(50), legal_entity_ VARCHAR(100), domain_ TEXT,
-organization_ TEXT, unit_code_ VARCHAR(50), unit_name_ VARCHAR(50),
-unit_location_ TEXT , primary_legislation_ VARCHAR(100),
-secondary_legislation_ TEXT, statutory_provision_ VARCHAR(500),
-compliance_task_ VARCHAR(100), compliance_description_ TEXT
-)
-BEGIN
-  SELECT as_id
-  FROM tbl_download_assign_statutory_template WHERE
-  client_group = client_group_ AND legal_entity = legal_entity_ AND
-  domain = domain_ AND organization = organization_ AND
-  unit_code = unit_code_ AND unit_name = unit_name_ AND
-  unit_location = unit_location_ AND
-  perimary_legislation = primary_legislation_ AND
-  secondary_legislation = secondary_legislation_ AND
-  statutory_provision = statutory_provision_ AND
-  compliance_task_name = compliance_task_ AND
-  compliance_description = compliance_description_;
 END //
 DELIMITER ;
 
@@ -2025,5 +1980,44 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS `sp_get_all_downloaded_compliances`;
+DELIMITER //
+CREATE PROCEDURE `sp_get_all_downloaded_compliances`(
+    IN clientgroup_name TEXT, country_name TEXT, le_name TEXT, domain_name TEXT, unitcode_ TEXT
+)
+BEGIN
+    SELECT
+    client_group, country, legal_entity, domain, organization, unit_code, unit_name,
+    unit_location, perimary_legislation, secondary_legislation, statutory_provision, compliance_task_name,
+    compliance_description
+    FROM tbl_download_assign_statutory_template WHERE
+    client_group = clientgroup_name AND country = country_name AND legal_entity = le_name AND find_in_set (domain, domain_name)
+    AND find_in_set (unit_code, unitcode_)
+    ORDER BY domain, unit_code;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_get_all_uploaded_compliances`;
+DELIMITER //
+CREATE PROCEDURE `sp_get_all_uploaded_compliances`(
+    IN clientgroup_name TEXT, le_name TEXT, domain_name TEXT, unitcode_ TEXT
+)
+BEGIN
+    SELECT
+    legal_entity, domain, unit_code, perimary_legislation,
+    secondary_legislation, statutory_provision, compliance_task_name,
+    compliance_description
+    FROM tbl_bulk_assign_statutory WHERE
+    client_group = clientgroup_name AND legal_entity = le_name AND find_in_set (domain, domain_name)
+    AND find_in_set (unit_code, unitcode_)
+    ORDER BY domain, unit_code;
+END //
+DELIMITER ;
+
+
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_statu_mapping`;
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_task_id`;
+DROP PROCEDURE IF EXISTS `sp_check_invalid_compliance_in_csv`;
+DROP PROCEDURE IF EXISTS `sp_check_duplicate_compliance_for_unit`;
+
