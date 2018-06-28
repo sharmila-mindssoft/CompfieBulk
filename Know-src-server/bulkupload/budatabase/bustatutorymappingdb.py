@@ -36,9 +36,7 @@ __all__ = [
     "get_rejected_sm_file_count",
     "get_domains_for_user_bu",
     "get_countries_for_user_bu",
-    "get_knowledge_executive_bu",
-    "get_thread_status"
-
+    "get_knowledge_executive_bu"
 ]
 
 # transaction method begin
@@ -317,7 +315,7 @@ def get_pending_mapping_list(db, cid, did, uploaded_by, session_user):
     _source_db.begin()
     result = _source_db.call_proc(
         "sp_bu_get_mapped_knowledge_executives",
-        [session_user.user_id(), cid, did] 
+        [session_user.user_id(), cid, did]
     )
     _source_db_con.close()
     mapped_executives = ''
@@ -554,8 +552,8 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
     upload_on = None
     total = None
     mapping_data = []
-    months = ['Jan','Feb','Mar','Apr','May',
-    'Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec']
     if len(data) > 0:
         for idx, d in enumerate(data):
             statu_months = ''
@@ -567,14 +565,15 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
                 upload_by = d["uploaded_by"]
                 total = d["total_records"]
 
-
             statutory_date = d["statutory_date"].replace(CSV_DELIMITER, ", ")
             trigger_before = d["trigger_before"].replace(CSV_DELIMITER, ", ")
             statu_month = d["statutory_month"].replace(CSV_DELIMITER, ",")
 
-            if(statu_month != ''and len(statu_month)>=1):
+            if(statu_month != ''and len(statu_month) >= 1):
                 smonth_list = statu_month.split(",")
-                smonth_list = ','.join(str(x).rstrip().lstrip() for x in smonth_list)
+                smonth_list = ','.join(
+                    str(x).rstrip().lstrip() for x in smonth_list
+                    )
                 smonth_list = smonth_list.split(",")
                 statu_months = []
                 mon = None
@@ -671,8 +670,8 @@ def get_pending_action(db, csv_id):
     else:
         return False
 
+
 def get_update_approve_file_status(db, csv_id, file_status):
-    args = [csv_id]
     db = connect_bulk_db()
     db.call_proc("sp_update_approve_file_status", [csv_id, file_status])
     db.commit()
@@ -848,6 +847,7 @@ def get_rejected_sm_file_count(db, session_user):
     rej_count = result[0]["rejected"]
     return rej_count
 
+
 def get_sm_document_count(db, csv_id):
     result = db.call_proc(
         "sp_get_document_count", [csv_id]
@@ -897,13 +897,3 @@ def connect_bulk_db():
         print "Connection Exception Caught"
         print e
     return _bulk_db
-
-
-def get_thread_status(db, csv_name):
-    q = " SELECT return_data from tbl_bulk_statutory_mapping_csv  " + \
-        " where csv_name = %s"
-    param = [csv_name]
-    rows = db.select_all(q, param)
-    if len(rows) > 0:
-        return rows[0]["return_data"]
-    return False

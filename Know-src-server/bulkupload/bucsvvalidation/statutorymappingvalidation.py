@@ -1609,14 +1609,15 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                     csvParam.get("check_is_exists") is True or
                                     csvParam.get("check_is_active") is True
                                 ):
-                                    unboundMethod = self._check_method_maps.get(
-                                        key
-                                    )
+                                    unboundMethod = self._check_method_maps. \
+                                        get(key)
 
-                                    if key in ["Applicable_Location", "Statutory"]:
+                                    if key in ["Applicable_Location",
+                                               "Statutory"]:
                                         if v.find(">>") > 0:
                                             v = " >> ".join(
-                                                e.strip() for e in v.split(">>")
+                                                e.strip() for e in v.split(
+                                                    ">>")
                                             )
 
                                     if unboundMethod is not None:
@@ -1733,10 +1734,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     msg.append(grouped_list[0].get("Compliance_Task"))
                 uploaded_by = grouped_list[0].get("uploaded_by")
 
-                statu_mapping = value.get("Statutory");
+                statu_mapping = value.get("Statutory")
                 statu_mapping_formated = self.get_statu_map_ws(statu_mapping)
                 statu_mapping_strips = self.get_statu_maps(statu_mapping)
-                statu_mapping_strips = statu_mapping_strips.split(CSV_DELIMITER)
+                statu_mapping_strips = statu_mapping_strips.split(
+                    CSV_DELIMITER)
                 for statu_m in statu_mapping_strips:
                     parent_id = ''
                     parent_names = ''
@@ -1763,57 +1765,71 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                 statu_position = self.statu_level_position
                                 level_id = statu_position.get(statu_level)
                                 if(self.t_statu.get(strip_data) is not None):
-                                    parent_id += str(self.t_statu.get(strip_data)) + ","
-                                    parent_names = self.get_statu_map_ws(str(strip_data))
+                                    parent_id += str(
+                                        self.t_statu.get(strip_data)) + ","
+                                    parent_names = self.get_statu_map_ws(
+                                        str(strip_data))
 
                                 if(
                                    self.statutories.get(strip_data) is not None
                                    ):
                                     # Removed For adding duplicate parent id
                                     # parent_id += str(self.statutories.get(
-                                    #     strip_data).get("statutory_id")) + ","
-                                    parent_names = self.get_statu_map_ws(str(strip_data))
+                                    # strip_data).get("statutory_id")) + ","
+                                    parent_names = self.get_statu_map_ws(
+                                        str(strip_data))
 
-
-                                if (int(statu_level) == 1 and
-                                   self.statutories.get(strip_data) is None):
+                                if (
+                                    int(statu_level) == 1 and
+                                    self.statutories.get(strip_data) is None
+                                ):
                                     if(strip_data not in statu_exists_id):
                                         statu_id = self.save_statu_data(
                                             str(legis_name), level_id,
                                             parent_id, parent_names,
                                             uploaded_by)
-                                        self.get_statutories(self._country_id,
-                                            self._domain_id)
+                                        self.get_statutories(
+                                            self._country_id, self._domain_id)
                                         if(len(legis_data) == 1):
                                             if statu_id not in statu_ids:
                                                 statu_ids.append(statu_id)
                                         statu_exists_id.append(strip_data)
                                         self.t_statu[strip_data] = statu_id
                                         parent_id += str(statu_id) + ","
-                                        parent_names = self.get_statu_map_ws(str(strip_data))
+                                        parent_names = self.get_statu_map_ws(
+                                            str(strip_data))
                                 else:
                                     if(
                                         int(statu_level) > 1 and
-                                        self.statutories.get(strip_data) is None
+                                        self.statutories.get(
+                                            strip_data) is None
                                     ):
-                                        if(self.t_statu.get(strip_data) is None):
+                                        if(
+                                            self.t_statu.get(strip_data) is
+                                            None
+                                        ):
                                             statu_id = self.save_statu_data(
                                                 str(legis_name), level_id,
                                                 parent_id, parent_names,
                                                 uploaded_by)
-                                            self.get_statutories(self._country_id,
-                                            self._domain_id)
+                                            self.get_statutories(
+                                                self._country_id,
+                                                self._domain_id
+                                                )
                                             if len(legis_data) == statu_level:
                                                 if statu_id not in statu_ids:
                                                     statu_ids.append(statu_id)
-                                                    statu_exists_id.append(strip_data)
+                                                    statu_exists_id.append(
+                                                        strip_data)
                                             self.t_statu[strip_data] = statu_id
                                             parent_id += str(statu_id) + ","
-                                            parent_names = self.get_statu_map_ws(str(strip_data))
+                                            p_name = self.get_statu_map_ws(str(
+                                                strip_data))
+                                            parent_names = p_name
                 self.save_statutories_data(
                     self._country_id, self._domain_id, nature_id, uploaded_by,
-                    str(statu_mapping_formated), grouped_list, org_ids, statu_ids,
-                    geo_ids)
+                    str(statu_mapping_formated), grouped_list, org_ids,
+                    statu_ids, geo_ids)
         except Exception, e:
             print str(traceback.format_exc())
             raise e
@@ -1864,16 +1880,16 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             print str(traceback.format_exc())
             raise (e)
 
-
     def update_file_status(self, csvid, file_submit_status):
 
             c_db_con = bulkupload_db_connect()
             _db_check = Database(c_db_con)
             try:
                 _db_check.begin()
-                data = _db_check.call_proc(
-                    "sp_update_approve_file_status", [csvid, file_submit_status]
-                )
+                _db_check.call_proc(
+                    "sp_update_approve_file_status",
+                    [csvid, file_submit_status]
+                    )
                 _db_check.commit()
             except Exception, e:
                 print e
@@ -1884,7 +1900,6 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 _db_check.close()
                 c_db_con.close()
             return "success"
-
 
     def format_download_process_initiate(self, csvid):
         approve_call_res = self.file_server_approve_call(csvid)
@@ -1969,7 +1984,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         response = requests.post(caller_name)
         print "response in remove file", response.text
 
-    ## Delete Rejected CSV Documents.
+    # Delete Rejected CSV Documents.
     def temp_server_folder_remove_call(self, csvid):
         caller_name = "%sremovefolders?csvid=%s" % (TEMP_FILE_SERVER, csvid)
         response = requests.post(caller_name)
