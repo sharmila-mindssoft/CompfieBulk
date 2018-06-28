@@ -19,6 +19,7 @@
 /knowledgeformat/
 /clientdocuments/
 /Client-src-server/logs/
+/Temp-filer-server/logs/tempfile/
 *.bat
 *.ods
 *.2*

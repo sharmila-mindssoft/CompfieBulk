@@ -59,6 +59,7 @@ var CSV_INFO = null;
 var DOC_NAMES = [];
 var CSV_ID = null;
 var ACTUAL_CSV_NAME = '';
+var TIMEOUT_MLS = 45000;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -207,14 +208,6 @@ BulkUploadStatutoryMapping.prototype.fetchDropDownData = function() {
     });
 };
 
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
-}
 
 BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
     $('#myModal').modal('show');
@@ -235,14 +228,14 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
         bu.GetStatus(csv_name, callback);
     }
     function call_bck_fn(error, response){
-        console.log("get status response: error"+ error + ", response:"+response)
+        console.log("get status response: error"+ error + ", response:"+ response)
         TEMPLATE_DIV.hide();
         if (error == "Alive"){
             console.log("inside if=====> going to get status again")
             // count = count+1;
-            sleep(180000);
             // if(count <3)
-            apiCall(csv_name, call_bck_fn);
+            setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
+            // apiCall(csv_name, call_bck_fn);
         }
         else if(error == "InvalidCsvFile"){
             $('#myModal').modal('hide');
