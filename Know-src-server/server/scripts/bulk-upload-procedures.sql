@@ -88,7 +88,7 @@ IN uploadedby VARCHAR(50), cid INT, did INT
 )
 BEGIN
     SELECT t1.csv_id, csv_name, uploaded_on, uploaded_by,
-    total_records, 
+    total_records,
     (SELECT COUNT(action) FROM tbl_bulk_statutory_mapping WHERE
      IFNULL(action, 0) = 1 AND csv_id = t1.csv_id) AS approve_count,
     (SELECT COUNT(action) FROM tbl_bulk_statutory_mapping WHERE
@@ -96,7 +96,7 @@ BEGIN
     IFNULL(declined_count, 0) AS declined_count,
     IFNULL(t1.file_submit_status, 0) AS file_submit_status
     FROM tbl_bulk_statutory_mapping_csv AS t1
-    WHERE upload_status =  1 
+    WHERE upload_status =  1
     AND (approve_status = 0 OR (approve_status = 1 AND (file_submit_status = 3 OR file_submit_status = 2)))
     AND IFNULL(t1.is_fully_rejected, 0) = 0
     AND country_id = cid AND domain_id = did
@@ -1779,77 +1779,6 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_check_duplicate_statu_mapping`;
-DELIMITER //
-CREATE PROCEDURE `sp_check_duplicate_statu_mapping`(
-    IN countryid INT(11), IN domainid INT(11), IN statutory TEXT,
-    IN statutory_provision VARCHAR(500), IN compliance_task VARCHAR(100)
-)
-BEGIN
- SELECT
-    t1.compliance_task
-    FROM tbl_bulk_statutory_mapping AS t1
-    INNER JOIN tbl_bulk_statutory_mapping_csv AS t2 ON t1.csv_id = t2.csv_id
-    WHERE
-      t2.country_id = countryid AND
-      t2.domain_id = domainid AND
-      t1.statutory = statutory AND
-      t1.statutory_provision = statutory_provision AND
-      t1.compliance_task = compliance_task;
-END //
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `sp_get_all_matching_compliances`;
-DELIMITER //
-CREATE PROCEDURE `sp_get_all_matching_compliances`(
-    IN countryid INT(11), IN domainid INT(11)
-)
-BEGIN
- SELECT
-    t2.country_id, t2.domain_id, t1.statutory , t1.statutory_provision,
-    t1.compliance_task
-    FROM tbl_bulk_statutory_mapping AS t1
-    INNER JOIN tbl_bulk_statutory_mapping_csv AS t2 ON t1.csv_id = t2.csv_id
-    WHERE
-      t2.country_id = countryid AND
-      t2.domain_id = domainid ;
-END //
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `sp_check_duplicate_task_id`;
-DELIMITER //
-CREATE PROCEDURE `sp_check_duplicate_task_id`(
-    IN countryid INT(11), IN domainid INT(11), IN taskid VARCHAR(100)
-)
-BEGIN
-SELECT
-    t1.compliance_task
-    FROM tbl_bulk_statutory_mapping AS t1
-    INNER JOIN tbl_bulk_statutory_mapping_csv AS t2 ON t1.csv_id = t2.csv_id
-    WHERE
-      t2.country_id = countryid AND
-      t2.domain_id = domainid AND
-      t1.task_id = taskid;
-END //
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `sp_get_all_matching_task_ids`;
-DELIMITER //
-CREATE PROCEDURE `sp_get_all_matching_task_ids`(
-    IN countryid INT(11), IN domainid INT(11)
-)
-BEGIN
-SELECT
-    t2.country_id, t2.domain_id, t1.task_id
-    FROM tbl_bulk_statutory_mapping AS t1
-    INNER JOIN tbl_bulk_statutory_mapping_csv AS t2 ON t1.csv_id = t2.csv_id
-    WHERE
-      t2.country_id = countryid AND
-      t2.domain_id = domainid ;
-END //
-DELIMITER ;
-
-
 DROP PROCEDURE IF EXISTS `sp_check_invalid_compliance_in_csv`;
 DELIMITER //
 CREATE PROCEDURE `sp_check_invalid_compliance_in_csv`(
@@ -2027,7 +1956,7 @@ CREATE PROCEDURE `sp_update_approve_file_status`(
     IN _file_status INT(11)
 )
 BEGIN
-  UPDATE tbl_bulk_statutory_mapping_csv SET file_submit_status = _file_status 
+  UPDATE tbl_bulk_statutory_mapping_csv SET file_submit_status = _file_status
   WHERE csv_id = _csvid;
 END //
 DELIMITER ;
@@ -2059,3 +1988,42 @@ ADD COLUMN `data_submit_status` TINYINT DEFAULT '0' AFTER `file_submit_status`;
 
 ALTER TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping_csv`
 ADD COLUMN `file_submit_status` TINYINT DEFAULT '0' AFTER `file_download_status`;
+
+DROP PROCEDURE IF EXISTS `sp_get_all_matching_task_ids`;
+DELIMITER //
+CREATE PROCEDURE `sp_get_all_matching_task_ids`(
+    IN countryid INT(11), IN domainid INT(11)
+)
+BEGIN
+SELECT
+    t2.country_id, t2.domain_id, t1.task_id, t1.statutory,
+    t1.statutory_provision, t1.compliance_task
+    FROM tbl_bulk_statutory_mapping AS t1
+    INNER JOIN tbl_bulk_statutory_mapping_csv AS t2 ON t1.csv_id = t2.csv_id
+    WHERE
+      t2.country_id = countryid AND
+      t2.domain_id = domainid ;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_get_all_matching_compliances`;
+DELIMITER //
+CREATE PROCEDURE `sp_get_all_matching_compliances`(
+    IN countryid INT(11), IN domainid INT(11)
+)
+BEGIN
+ SELECT
+    t2.country_id, t2.domain_id, t1.statutory, t1.statutory_provision,
+    t1.compliance_task
+    FROM tbl_bulk_statutory_mapping AS t1
+    INNER JOIN tbl_bulk_statutory_mapping_csv AS t2 ON t1.csv_id = t2.csv_id
+    WHERE
+      t2.country_id = countryid AND
+      t2.domain_id = domainid ;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_check_duplicate_statu_mapping`;
+DROP PROCEDURE IF EXISTS `sp_check_duplicate_task_id`;

@@ -425,7 +425,7 @@ function validateUpload() {
             $('#up-doc-title').show();
             $('#remaining-doc-title').show();
             setDocumentCount();
-            myDropzone.processQueue();
+            myDropzone.processQueue(); 
         }
     }
 }
@@ -1011,8 +1011,10 @@ var myDropzone = new Dropzone("div#myDrop", {
                 BTN_UPLOAD.hide();
                 BUCT_PAGE.showList();
             }
-            // myDropzone.removeAllFiles(true);
-            hideLoader();
+            if(queueCount == 0){
+                hideLoader();
+            }
+            // myDropzone.removeAllFiles(true);            
         });
 
         this.on("error", function(file, errorMessage) {
