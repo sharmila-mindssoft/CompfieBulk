@@ -1815,7 +1815,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                             self.get_statutories(
                                                 self._country_id,
                                                 self._domain_id
-                                                )
+                                            )
                                             if len(legis_data) == statu_level:
                                                 if statu_id not in statu_ids:
                                                     statu_ids.append(statu_id)
@@ -1889,7 +1889,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 _db_check.call_proc(
                     "sp_update_approve_file_status",
                     [csvid, file_submit_status]
-                    )
+                )
                 _db_check.commit()
             except Exception, e:
                 print e
@@ -1905,7 +1905,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         approve_call_res = self.file_server_approve_call(csvid)
         if approve_call_res == "error":
             self.update_file_status(csvid, 2)
-            return
+            return False
         self._stop = False
 
         def check_status():
@@ -1916,10 +1916,8 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 self._stop = True
                 res = self.file_server_download_call(csvid)
                 if(res == "success"):
-                    print "update_file_status 1"
                     self.update_file_status(csvid, 1)
                 else:
-                    print "update_file_status 2"
                     self.update_file_status(csvid, 2)
 
             if self._stop is False:
@@ -1949,6 +1947,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             return file_status
 
         check_status()
+        return True
 
     def file_server_approve_call(self, csvid):
         caller_name = "%sapprove?csvid=%s" % (TEMP_FILE_SERVER, csvid)
@@ -1975,7 +1974,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             self.file_server_remove_call(csvid)
         except Exception as e:
             print e
-            raise IOError
+            # raise IOError
             return "error"
         return "success"
 
