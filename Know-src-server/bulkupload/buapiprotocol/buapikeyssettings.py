@@ -931,5 +931,8 @@ bu_api_params = {
         'validation_method': None,
         'is_optional': False
     },
+    'as_ids': {
+        'type': 'VECTOR_TYPE_INT', 'length': None,
+        'validation_method': None, 'is_optional': False
+    },
 }
- 

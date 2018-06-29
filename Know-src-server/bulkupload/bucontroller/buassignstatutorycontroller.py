@@ -704,7 +704,7 @@ def download_rejected_asm_report(db, request_frame, session_user):
 def save_action(db, request_frame, session_user):
     try:
         save_action_from_view(
-            db, request_frame.csv_id, request_frame.as_id,
+            db, request_frame.csv_id, request_frame.as_ids,
             request_frame.bu_action, request_frame.remarks,
             session_user
         )

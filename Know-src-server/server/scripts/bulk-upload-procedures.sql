@@ -1406,12 +1406,12 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `sp_approve_assign_statutory_action_save`;
 DELIMITER //
 CREATE PROCEDURE `sp_approve_assign_statutory_action_save`(
-IN csvid INT, asid INT, buaction INT, buremarks VARCHAR(500)
+IN csvid INT, asids TEXT, buaction INT, buremarks VARCHAR(500)
 )
 BEGIN
     UPDATE tbl_bulk_assign_statutory SET action = buaction,
     remarks = buremarks WHERE csv_assign_statutory_id = csvid AND
-    bulk_assign_statutory_id = asid;
+    find_in_set (bulk_assign_statutory_id, asids);
 END //
 DELIMITER ;
 

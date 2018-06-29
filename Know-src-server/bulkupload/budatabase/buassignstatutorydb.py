@@ -775,8 +775,9 @@ def get_asm_csv_file_name_by_id(db, session_user, user_id, csv_id):
     return data[0]["csv_name"]
 
 
-def save_action_from_view(db, csv_id, as_id, action, remarks, session_user):
+def save_action_from_view(db, csv_id, as_ids, action, remarks, session_user):
     try:
+        as_id = ",".join(str(e) for e in as_ids)
         args = [csv_id, as_id, action, remarks]
         db.call_proc("sp_approve_assign_statutory_action_save", args)
         return True

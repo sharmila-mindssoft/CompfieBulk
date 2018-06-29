@@ -207,24 +207,36 @@ PageControls = function() {
     });
     CHECK_ALL_APPROVE.click(function() {
         if ($(this).prop("checked") == true) {
-            DETAILS_TBODY.find('.single-approve').removeAttr("checked");
-            DETAILS_TBODY.find('.single-approve').trigger('click');
-        } else{
+            var approve_all_ids = [];
             DETAILS_TBODY.find('.single-approve').removeAttr("checked");
             DETAILS_TBODY.find(".single-approve").each(function(){
-               $(this).prop('checked', false).triggerHandler('click');
+               $(this).prop('checked', true);
+               approve_all_ids.push(parseInt($(this).val()));
             });
+            tempAction(approve_all_ids, 1);
+            //DETAILS_TBODY.find('.single-approve').trigger('click');
+        } else{
+            var approve_all_ids = [];
+            DETAILS_TBODY.find('.single-approve').removeAttr("checked");
+            DETAILS_TBODY.find(".single-approve").each(function(){
+               $(this).prop('checked', false);
+               approve_all_ids.push(parseInt($(this).val()));
+            });
+            tempAction(approve_all_ids, 0);
         }
     });
     CHECK_ALL_REJECT.click(function() {
         if ($(this).prop("checked") == true) {
             confirmationAction(0, 'single-reject');
         } else {
+            var reject_all_ids = [];
             DETAILS_TBODY.find('.single-reject').removeAttr("checked");
             DETAILS_TBODY.find('.rejected-reason').html('')
             DETAILS_TBODY.find(".single-reject").each(function(){
-               $(this).prop('checked', false).triggerHandler('click');
+               $(this).prop('checked', false);
+               reject_all_ids.push(parseInt($(this).val()));
             });
+            tempAction(reject_all_ids, 0);
         }
     });
     PASSWORD_SINGLE_REJECT_SUBMIT.click(function() {
@@ -245,8 +257,13 @@ PageControls = function() {
         } else {
             Custombox.close();
             if (CHECK_ALL_REJECT.prop("checked") == true) {
+                var reject_all_ids = [];
                 DETAILS_TBODY.find('.single-reject').removeAttr("checked");
-                DETAILS_TBODY.find('.single-reject').trigger('click');
+                DETAILS_TBODY.find(".single-reject").each(function(){
+                   $(this).prop('checked', true);
+                   reject_all_ids.push(parseInt($(this).val()));
+                });
+                tempAction(reject_all_ids, 2);
             } else {
                 singleReject(SINGLE_REJECT_ID.val(), true);
             }
@@ -1117,10 +1134,10 @@ singleApprove = function(id) {
     if ($('#approve' + id).prop("checked") == true) {
         $('#reject' + id).removeAttr("checked");
         $('#rejected_reason' + id + ' i').remove();
-        tempAction(id, 1);
+        tempAction([id], 1);
         checkAllEnableDisable();
     } else {
-        tempAction(id, 0);
+        tempAction([id], 0);
         checkAllEnableDisable();
     }
 }
@@ -1140,7 +1157,7 @@ singleReject = function(id, flag) {
                     'data-toggle="tooltip" data-original-title=' +
                     '"' + SINGLE_REJECT_REASON.val() + '"></i>'
                 );
-                tempAction(id, 2);
+                tempAction([parseInt(id)], 2);
                 checkAllEnableDisable();
             }
         } else {
@@ -1152,11 +1169,11 @@ singleReject = function(id, flag) {
                 'data-original-title="' + SINGLE_REJECT_REASON.val() + '" ' +
                 '></i>'
             );
-            tempAction(id, 2);
+            tempAction([id], 2);
             CHECK_ALL_APPROVE.removeAttr("checked");
         }
     } else {
-        tempAction(id, 0);
+        tempAction([id], 0);
         checkAllEnableDisable();
         $('#rejected_reason' + id + ' i').remove();
     }
@@ -1168,7 +1185,7 @@ tempAction = function(id, action) {
     var csvid = ASID.val();
     var reason = SINGLE_REJECT_REASON.val();
     displayLoader();
-    bu.updateAssignStatutoryActionFromView(parseInt(csvid), parseInt(id),
+    bu.updateAssignStatutoryActionFromView(parseInt(csvid), id,
         parseInt(action), reason,
         function(error, response) {
             if (error == null) {
