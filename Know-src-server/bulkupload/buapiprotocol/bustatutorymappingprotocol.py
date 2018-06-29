@@ -574,6 +574,7 @@ class GetStatus(Request):
             "csv_name": self.csv_name
         }
 
+
 class GetApproveMappingStatus(Request):
     def __init__(self, csv_name):
         self.csv_name = csv_name
@@ -591,6 +592,8 @@ class GetApproveMappingStatus(Request):
         return{
             "csv_name": self.csv_name
         }
+
+
 class DocumentQueueProcess(Request):
     def __init__(self, c_id, d_id, csv_id, bu_action):
         self.c_id = c_id
@@ -616,6 +619,7 @@ class DocumentQueueProcess(Request):
             "csv_id": self.csv_id,
             "bu_action": self.bu_action
         }
+
 
 def _init_Request_class_map():
     classes = [
@@ -1011,14 +1015,14 @@ class PendingCsvList(object):
     ):
         self.csv_id = csv_id
         self.csv_name = csv_name
-        self.uploaded_by = uploaded_by 
+        self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
         self.no_of_records = no_of_records
         self.approve_count = approve_count
         self.rej_count = rej_count
         self.download_file = download_file
         self.declined_count = declined_count
-        self.file_submit_status = file_submit_status        
+        self.file_submit_status = file_submit_status
 
     @staticmethod
     def parse_structure(data):
@@ -1476,6 +1480,7 @@ class RemoveRejectedDataSuccess(Response):
     def to_inner_structure(self):
         return {}
 
+
 class GetApproveStatutoryMappingListSuccess(Response):
     def __init__(self, pending_csv_list):
         self.pending_csv_list = pending_csv_list
@@ -1812,6 +1817,8 @@ class Done(Response):
 
 #     def to_inner_structure(self):
 #         return {}
+
+
 class DocumentQueueProcessSuccess(Response):
     def __init__(self, rejected_reason):
         self.rejected_reason = rejected_reason
@@ -1826,6 +1833,7 @@ class DocumentQueueProcessSuccess(Response):
         return {
             "rejected_reason": self.rejected_reason
         }
+
 
 def _init_Response_class_map():
     classes = [
