@@ -742,14 +742,16 @@ ApproveAssignStatutoryBU.prototype.displayListPage = function(data) {
                 .attr("onClick", "goToDetailsPage(" + v.csv_id + ")");
         }
 
+        $('.dropbtn',clone).attr("data-dropdown-id", no);
         $('.dropbtn',clone).on('click', function(){
-            if($(".dropdown-content", clone).hasClass("show")==false){
-                $(".dropdown-content", clone).show();
-                $(".dropdown-content", clone).addClass("show");
+            var dropdownID = $(this).attr("data-dropdown-id");
+            if($("#dropdown-content-id-"+dropdownID).hasClass("show") == false){
+                $("#dropdown-content-id-"+dropdownID).show();
+                $("#dropdown-content-id-"+dropdownID).addClass("show");
             }
             else{
-                $(".dropdown-content", clone).hide();
-                $(".dropdown-content", clone).removeClass("show");
+                $("#dropdown-content-id-"+dropdownID).hide();
+                $("#dropdown-content-id-"+dropdownID).removeClass("show");
             }
         });
 
@@ -780,6 +782,7 @@ ApproveAssignStatutoryBU.prototype.displayListPage = function(data) {
             'text');
         });
         $('.dropdown-content', clone).addClass("show-download" + v.csv_id);
+        $('.dropdown-content', clone).attr("id", "dropdown-content-id-"+no);
         $('.approve span', clone)
             .attr(
                 "onClick", "confirmationAction(" + v.csv_id + ", 'approve')"
