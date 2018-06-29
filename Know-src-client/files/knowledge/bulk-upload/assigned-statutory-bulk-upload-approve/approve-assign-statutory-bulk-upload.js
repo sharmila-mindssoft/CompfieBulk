@@ -75,6 +75,7 @@ var COMPLIANCE_APPLICABLE = $("#compliance_applicable");
 var COMPLIANCE_NOT_APPLICABLE = $("#compliance_not_applicable");
 var COMPLIANCE_DO_NOT_SHOW = $("#compliance_do_not_show");
 var PER_PAGE = 0;
+var TIMEOUT_MLS = 45000;
 
 // Display spinner icon in page
 displayLoader = function() {
@@ -886,8 +887,7 @@ approveOrRejectAction = function(id, clId, leId, action, reason, password) {
             STATUTE.fetchValues();
         } else{
             if (error == "Alive"){
-                sleep(180000);
-                apiCallConfirm(csv_name, call_bck_fn_confirm);                        
+                setTimeout(apiCallConfirm, TIMEOUT_MLS, csv_name, call_bck_fn_confirm);                       
             }else{
                 STATUTE.failuresMessage(
                     error
@@ -930,8 +930,7 @@ approveOrRejectAction = function(id, clId, leId, action, reason, password) {
             }
         } else {
             if (error == "Alive"){
-                sleep(180000);
-                apiCallList(csv_name, call_bck_fn);                 
+                setTimeout(apiCallList, TIMEOUT_MLS, csv_name, call_bck_fn);            
             }else{
                 STATUTE.failuresMessage(error);
                 hideLoader();
@@ -1381,15 +1380,6 @@ createPageView = function(total_records) {
     });
 };
 
-function sleep(milliseconds) {
-      var start = new Date().getTime();
-      for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds){
-          break;
-        }
-      }
-    }
-
 // To validate and send action status server using submit button action
 ApproveAssignStatutoryBU.prototype.submitProcess = function() {
     var password = SUBMIT_PASSWORD.val();
@@ -1431,8 +1421,8 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
                     STATUTE.pageLoad();
                 } else{
                     if (error == "Alive"){
-                        sleep(180000);
-                        apiCallConfirm(csv_name, call_bck_fn_confirm);                        
+                        setTimeout(apiCallConfirm, TIMEOUT_MLS, csv_name, call_bck_fn_confirm);
+                                              
                     }else{
                         STATUTE.failuresMessage(
                             error
@@ -1479,8 +1469,7 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
                     }
                 } else {
                     if (error == "Alive"){
-                        sleep(180000);
-                        apiCallSubmit(csv_name, call_bck_fn);                 
+                        setTimeout(apiCallSubmit, TIMEOUT_MLS, csv_name, call_bck_fn);          
                     }else{
                         statute.failuresMessage(error);
                         hideLoader();
