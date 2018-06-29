@@ -42,6 +42,7 @@ class SourceDB(object):
         self._knowledge_db = None
         self._knowledge_db_con = None
         # self.Client_Group = {}
+        self.legal_entity_id = None
         self.legal_entity = {}
         self.domain = {}
         self.unit_code = {}
@@ -281,7 +282,6 @@ class SourceDB(object):
                 self.due_dates[key] = []
             self.due_dates[key].append(due_date)
 
-
     def get_compliance_frequency(self):
         query = "select frequency_id, frequency " + \
             " from tbl_compliance_frequency " + \
@@ -314,7 +314,6 @@ class SourceDB(object):
                 "domain_id": d["domain_id"],
                 "concur": d["concurrence_person"]
             }
-
 
     def check_base(self, check_status, store, key_name, status_name):
         data = store.get(key_name)
@@ -440,7 +439,6 @@ class SourceDB(object):
         primary_legislation, secondary_legislation, description, frequency
     ):
         compliance_id = None
-        secondary = secondary_legislation
         compliance_task_name = self.get_compliance_task_name(compliance_task)
         (unit_id, domain_id) = self.return_unit_domain_id(
             domain_name, unit_code)
@@ -692,7 +690,6 @@ class SourceDB(object):
         self.generate_hierarchy_checker()
         self.get_unit_code()
         self.get_assignee()
-        is_two_level = None
         query = "SELECT two_levels_of_approval FROM tbl_reminder_settings"
         rows = self._source_db.select_all(query)
         if int(rows[0]["two_levels_of_approval"]) == 1:
@@ -1111,7 +1108,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                 mapped_error_dict, mapped_header_dict)
         else:
             self.res_data = self.make_valid_return(
-                mapped_error_dict, legal_entity_id)
+                mapped_error_dict)
 
     def make_invalid_return(self, mapped_error_dict, mapped_header_dict):
         file_string = self._csv_name.split(".")
@@ -1159,7 +1156,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
         }
 
     def make_valid_return(
-        self, mapped_error_dict, legal_entity_id
+        self, mapped_error_dict
     ):
         invalid = len(mapped_error_dict.keys())
         total = len(self._source_data)
@@ -1187,6 +1184,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def __init__(self, db, csv_id, data_result, session_user):
         SourceDB.__init__(self)
         self._db = db
+        self._stop = None
         self._csv_id = csv_id
         self._session_user_obj = session_user
         self._source_data = data_result
@@ -1322,17 +1320,15 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def call_file_server(
         self, csvid, country_id, legal_id, domain_id, unit_id, session_token
     ):
-        file_server_ip = None
-        file_server_port = None
         query = "select ip, port from tbl_file_server where " + \
             "file_server_id = (select file_server_id from " + \
             " tbl_client_database where legal_entity_id = %s )"
         param = [legal_id]
         self.connect_source_db(legal_id)
-        docRows = self._knowledge_db.select_all(query, param)
-        if docRows > 0:
-            file_server_ip = docRows[0]["ip"]
-            file_server_port = docRows[0]["port"]
+        doc_rows = self._knowledge_db.select_all(query, param)
+        if doc_rows > 0:
+            file_server_ip = doc_rows[0]["ip"]
+            file_server_port = doc_rows[0]["port"]
         else:
             return "File server not available"
 
@@ -1354,7 +1350,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         return response
 
     def frame_data_for_main_db_insert(
-        self, db, data_result, legal_entity_id, csv_id
+        self, data_result, legal_entity_id, csv_id
     ):
         db = bulkupload_db_connect()
         data_save_status = self.save_completed_task_data(
@@ -1377,7 +1373,6 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         db.commit()
 
     def save_data_submit_status(self, data_save_status):
-        data_submit_value = 0
         if data_save_status is True:
             data_submit_value = 1
         else:
@@ -1406,7 +1401,6 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             bulk_db_check.rollback()
 
     def save_file_submit_status(self, response):
-        file_submit_value = 0
         if str(response).find("200") >= 0:
             file_submit_value = 1
         else:
@@ -1421,6 +1415,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
 
 def bulkupload_db_connect():
     _bulk_db = None
+    _bulk_db_con = None
     try:
         _bulk_db_con = mysql.connector.connect(
             user=BULK_UPLOAD_DB_USERNAME,

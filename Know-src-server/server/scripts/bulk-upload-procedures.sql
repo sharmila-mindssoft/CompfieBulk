@@ -11,6 +11,7 @@ DELIMITER ;
 
 
 DROP FUNCTION IF EXISTS `SPLIT_STR`;
+DELIMITER //
 CREATE FUNCTION `SPLIT_STR`(
   x VARCHAR(1000),
   delim VARCHAR(12),
@@ -19,6 +20,8 @@ CREATE FUNCTION `SPLIT_STR`(
 RETURN REPLACE(SUBSTRING(SUBSTRING_INDEX(x, delim, pos),
        LENGTH(SUBSTRING_INDEX(x, delim, pos -1)) + 1),
        delim, '');
+END //
+DELIMITER ;
 
 
 -- --------------------------------------------------------------------------------
@@ -1916,34 +1919,6 @@ BEGIN
 END //
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS `sp_pastdata_get_file_download_status`;
-DROP PROCEDURE IF EXISTS `sp_sm_get_declined_docs`;
-
-ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data`
-ADD COLUMN `document_upload_status` TINYINT NULL AFTER `document_name`,
-ADD COLUMN `document_file_size` FLOAT DEFAULT '0' AFTER `document_upload_status`;
-
-ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv`
-ADD COLUMN `file_download_status` VARCHAR(50) NULL AFTER `upload_status`;
-
--- Added Country columns
-ALTER TABLE `compfie_bulkupload`.`tbl_bulk_units`
-ADD COLUMN `country` VARCHAR(50) NOT NULL AFTER `csv_unit_id`;
-
-ALTER TABLE `compfie_bulkupload`.`tbl_download_assign_statutory_template`
-ADD COLUMN `country` VARCHAR(50) NOT NULL AFTER `client_group`;
-
-ALTER TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory_csv`
-ADD COLUMN `country` VARCHAR(50) NOT NULL AFTER `domain_ids`;
-
-ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv`
-ADD COLUMN `file_submit_status` TINYINT DEFAULT '0' AFTER `file_download_status`,
-ADD COLUMN `data_submit_status` TINYINT DEFAULT '0' AFTER `file_submit_status`;
-
-
-ALTER TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping_csv`
-ADD COLUMN `file_submit_status` TINYINT DEFAULT '0' AFTER `file_download_status`;
-
 DROP PROCEDURE IF EXISTS `sp_get_all_matching_task_ids`;
 DELIMITER //
 CREATE PROCEDURE `sp_get_all_matching_task_ids`(
@@ -2015,9 +1990,34 @@ BEGIN
 END //
 DELIMITER ;
 
-
+DROP PROCEDURE IF EXISTS `sp_pastdata_get_file_download_status`;
+DROP PROCEDURE IF EXISTS `sp_sm_get_declined_docs`;
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_statu_mapping`;
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_task_id`;
 DROP PROCEDURE IF EXISTS `sp_check_invalid_compliance_in_csv`;
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_compliance_for_unit`;
 
+
+ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data`
+ADD COLUMN `document_upload_status` TINYINT NULL AFTER `document_name`,
+ADD COLUMN `document_file_size` FLOAT DEFAULT '0' AFTER `document_upload_status`;
+
+ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv`
+ADD COLUMN `file_download_status` VARCHAR(50) NULL AFTER `upload_status`;
+
+-- Added Country columns
+ALTER TABLE `compfie_bulkupload`.`tbl_bulk_units`
+ADD COLUMN `country` VARCHAR(50) NOT NULL AFTER `csv_unit_id`;
+
+ALTER TABLE `compfie_bulkupload`.`tbl_download_assign_statutory_template`
+ADD COLUMN `country` VARCHAR(50) NOT NULL AFTER `client_group`;
+
+ALTER TABLE `compfie_bulkupload`.`tbl_bulk_assign_statutory_csv`
+ADD COLUMN `country` VARCHAR(50) NOT NULL AFTER `domain_ids`;
+
+ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv`
+ADD COLUMN `file_submit_status` TINYINT DEFAULT '0' AFTER `file_download_status`,
+ADD COLUMN `data_submit_status` TINYINT DEFAULT '0' AFTER `file_submit_status`;
+
+ALTER TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping_csv`
+ADD COLUMN `file_submit_status` TINYINT DEFAULT '0' AFTER `file_download_status`;

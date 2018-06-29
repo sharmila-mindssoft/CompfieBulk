@@ -69,12 +69,12 @@ def process_bu_completed_task_current_year_request(
 
     if type(request_frame) is bu_ct.GetDownloadData:
         result = process_get_bulk_download_data(
-            db, request_frame, session_user
+            request_frame
         )
 
     if type(request_frame) is bu_ct.GetUnits:
         result = process_get_units(
-            db, request_frame, session_user
+            request_frame, session_user
         )
 
     if type(request_frame) is bu_ct.DownloadUploadedData:
@@ -88,7 +88,7 @@ def process_bu_completed_task_current_year_request(
         )
 
     if type(request_frame) is bu_ct.GetStatus:
-        result = process_get_status(db, request_frame)
+        result = process_get_status(request_frame)
 
     if type(request_frame) is bu_ct.ProcessQueuedTasks:
         result = process_queued_tasks(
@@ -99,7 +99,7 @@ def process_bu_completed_task_current_year_request(
 
 
 def process_get_units(
-    db, request, session_user
+    request, session_user
 ):
     le_id = request.legal_entity_id
     domain_id = request.domain_id
@@ -127,7 +127,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
             fn.write(return_data)
         return
     try:
-        res_data = c_obj.perform_validation(request_frame.legal_entity_id)
+        c_obj.perform_validation(request_frame.legal_entity_id)
         res_data = c_obj.res_data
         return_data = None
         if res_data is False:
@@ -145,13 +145,9 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
                 str_current_date_time, res_data["total"],
                 res_data["doc_count"], "0", "0"
             ]
-            new_csv_id = save_completed_task_current_year_csv(
-                db, csv_args
-            )
+            new_csv_id = save_completed_task_current_year_csv(csv_args)
             if new_csv_id:
-                if save_completed_task_data(
-                    db, new_csv_id, res_data["data"]
-                ):
+                if save_completed_task_data(new_csv_id, res_data["data"]):
                     save_file_in_client_docs(csv_name, request_frame.csv_data)
             return_data = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
                 res_data["total"], res_data["valid"],
@@ -176,14 +172,14 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
         logger.logclient(
             "error",
             "bucompletedtaskcurrentyearcontroller.py-validate_data", e)
-        raise(error)
+        raise error
     except Exception, e:
         return_data = json.dumps(str(e))
         write_file()
         logger.logclient(
             "error",
             "bucompletedtaskcurrentyearcontroller.py-validate_data", e)
-        raise(e)
+        raise e
     write_file()
     return
 
@@ -221,20 +217,21 @@ def submit_compliance(
 ):
     if c_obj.check_for_duplicate_records(legal_id) is False:
         return_data = bu_ct.DataAlreadyExists().to_structure()
-    if c_obj.doc_count > 0:
-        c_obj.document_download_process_initiate(
-            csv_id, country_id, legal_id, domain_id, unit_id, session_token
-        )
     else:
-        c_obj.update_file_submit_status(
-            1, "completed"
-        )
-    if c_obj.frame_data_for_main_db_insert(
-        db, data_result, request_frame.legal_entity_id, csv_id
-    ) is True:
-        return_data = bu_ct.SaveBulkRecordSuccess().to_structure()
-    else:
-        return_data = []
+        if c_obj.doc_count > 0:
+            c_obj.document_download_process_initiate(
+                csv_id, country_id, legal_id, domain_id, unit_id, session_token
+            )
+        else:
+            c_obj.update_file_submit_status(
+                1, "completed"
+            )
+        if c_obj.frame_data_for_main_db_insert(
+            data_result, request_frame.legal_entity_id, csv_id
+        ) is True:
+            return_data = bu_ct.SaveBulkRecordSuccess().to_structure()
+        else:
+            return_data = []
     result = json.dumps(return_data)
     file_name = "%s_%s.%s" % (
         csv_id, "result", "txt"
@@ -272,7 +269,7 @@ def process_save_bulk_records(db, request_frame, session_user, session_token):
 
 
 def process_get_bulk_download_data(
-        db, request_frame, session_user
+        request_frame
 ):
     converter = PastDataJsonToCSV(request_frame, "DownloadPastData")
 
@@ -309,7 +306,7 @@ def process_update_document_count(
     return bu_ct.UpdateDocumentCountSuccess()
 
 
-def process_get_status(db, request):
+def process_get_status(request):
     csv_name = request.csv_name
     file_string = csv_name.split(".")
     file_name = "%s_%s.%s" % (
@@ -350,21 +347,22 @@ def process_get_status(db, request):
 
 
 def submit_queued_tasks(
-    db, file_cur_stats, file_download_stats, cObj, data_cur_stats, dataResult,
+    db, file_cur_stats, file_download_stats, c_obj, data_cur_stats, data_result,
     csv_id, country_id, legal_id, domain_id, unit_id, session_token,
     request_frame, session_user
 ):
-    if(file_cur_stats in [0, 2] and file_download_stats != "completed"):
-        cObj.document_download_process_initiate(
+    result = None
+    if file_cur_stats in [0, 2] and file_download_stats != "completed":
+        c_obj.document_download_process_initiate(
             csv_id, country_id, legal_id, domain_id, unit_id, session_token
         )
         result = bu_ct.ProcessDocumentSubmitQueued().to_structure()
 
-    if(data_cur_stats in [0, 2]):
-        if cObj.check_for_duplicate_records(legal_id) is False:
+    if data_cur_stats in [0, 2]:
+        if c_obj.check_for_duplicate_records(legal_id) is False:
             return bu_ct.DataAlreadyExists().to_structure()
-        if cObj.frame_data_for_main_db_insert(
-            db, dataResult, request_frame.legal_entity_id, session_user
+        if c_obj.frame_data_for_main_db_insert(
+            db, data_result, request_frame.legal_entity_id, session_user
         ) is True:
             result = bu_ct.ProcessQueuedTasksSuccess().to_structure()
     else:
@@ -389,17 +387,17 @@ def process_queued_tasks(db, request_frame, session_user, session_token):
         file_download_stats = \
         get_current_doc_data_submit_status(db, csv_id)
 
-    dataResult = get_past_record_data(db, csv_id)
-    cObj = ValidateCompletedTaskForSubmit(
-        db, csv_id, dataResult, session_user)
-    if (file_cur_stats == 1 and data_cur_stats == 1):
+    data_result = get_past_record_data(db, csv_id)
+    c_obj = ValidateCompletedTaskForSubmit(
+        db, csv_id, data_result, session_user)
+    if file_cur_stats == 1 and data_cur_stats == 1:
         return bu_ct.ProcessCompleted()
 
     t = threading.Thread(
         target=submit_queued_tasks,
         args=(
-            db, file_cur_stats, file_download_stats, cObj, data_cur_stats,
-            dataResult, csv_id, country_id, legal_id, domain_id, unit_id,
+            db, file_cur_stats, file_download_stats, c_obj, data_cur_stats,
+            data_result, csv_id, country_id, legal_id, domain_id, unit_id,
             session_token, request_frame, session_user
         )
     )
