@@ -233,7 +233,7 @@ function pageControls() {
                 }
                 else{
                     if (error == "Alive"){
-                        setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
+                        setTimeout(apiCallDownload, TIMEOUT_MLS, csv_name, call_bck_fn);
                     }else{
                         hideLoader();
                     }
