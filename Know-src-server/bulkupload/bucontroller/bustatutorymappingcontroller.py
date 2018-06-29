@@ -703,7 +703,7 @@ def submit_statutory_validate(db, request_frame, c_obj, session_user):
         else:
             update_approve_action_from_list(
                 db, csv_id, 1, None, session_user, "single"
-                )
+            )
             if c_obj._doc_count > 0:
                 get_update_approve_file_status(db, csv_id, 3)
                 c_obj.format_download_process_initiate(csv_id)
@@ -1062,7 +1062,6 @@ def process_get_approve_mapping_status(db, request):
     )
     file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
     if os.path.exists(file_path) is False:
-        print "Alive"
         return bu_sm.Alive()
     else:
         return_data = ""
