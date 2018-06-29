@@ -573,7 +573,7 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
                 smonth_list = statu_month.split(",")
                 smonth_list = ','.join(
                     str(x).rstrip().lstrip() for x in smonth_list
-                    )
+                )
                 smonth_list = smonth_list.split(",")
                 statu_months = []
                 mon = None
