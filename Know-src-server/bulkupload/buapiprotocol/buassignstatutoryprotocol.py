@@ -483,8 +483,8 @@ class AssignStatutoryApproveActionInList(Request):
 
 
 class SaveAction(Request):
-    def __init__(self, as_id, csv_id, bu_action, remarks):
-        self.as_id = as_id
+    def __init__(self, as_ids, csv_id, bu_action, remarks):
+        self.as_ids = as_ids
         self.csv_id = csv_id
         self.bu_action = bu_action
         self.remarks = remarks
@@ -492,16 +492,16 @@ class SaveAction(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "as_id", "csv_id", "bu_action", "remarks"
+            "as_ids", "csv_id", "bu_action", "remarks"
         ])
         return SaveAction(
-            data.get("as_id"), data.get("csv_id"),
+            data.get("as_ids"), data.get("csv_id"),
             data.get("bu_action"), data.get("remarks")
         )
 
     def to_inner_structure(self):
         return {
-            "as_id": self.as_id,
+            "as_ids": self.as_ids,
             "csv_id": self.csv_id,
             "bu_action": self.bu_action,
             "remarks": self.remarks

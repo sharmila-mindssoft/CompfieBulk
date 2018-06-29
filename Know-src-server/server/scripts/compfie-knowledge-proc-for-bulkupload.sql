@@ -502,10 +502,10 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_bu_compliance_info`;
 DELIMITER //
-CREATE PROCEDURE `sp_bu_compliance_info`()
+CREATE PROCEDURE `sp_bu_compliance_info`( IN country_id_ INT(11))
 BEGIN
   SELECT compliance_id, statutory_provision, compliance_task, compliance_description,
-  is_active FROM tbl_compliances;
+  is_active FROM tbl_compliances WHERE country_id = country_id_;
 END //
 DELIMITER ;
 
@@ -570,24 +570,6 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS `sp_bu_get_compliance_id_by_name`;
-DELIMITER //
-CREATE PROCEDURE `sp_bu_get_compliance_id_by_name`(
-  IN c_task TEXT, c_desc TEXT, s_provision TEXT, country_id_ INT(11),
-  domain_id_ INT(11), p_legislation INT(11), s_legislation TEXT
-)
-BEGIN
-  SELECT distinct compliance_id from tbl_compliances as t1
-  INNER JOIN tbl_mapped_statutories as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
-  INNER JOIN tbl_statutories as t4 on t3.statutory_id = t4.statutory_id
-  WHERE t1.domain_id = domain_id_ and t1.country_id = country_id_ and
-  if(s_legislation != '',find_in_set(s_legislation,concat(t4.parent_ids,t4.statutory_id)),(t4.statutory_id = p_legislation and t4.parent_ids = '')) and
-  statutory_provision = s_provision and
-  compliance_task = c_task and
-  compliance_description = c_desc;
-END //
-DELIMITER ;
-
 -- --------------------------------------------------------------------------------
 -- Client unit bulk upload - procedures starts
 -- --------------------------------------------------------------------------------
@@ -648,21 +630,6 @@ BEGIN
   INNER JOIN tbl_statutory_levels AS t2 on t1.level_id = t2.level_id
   INNER JOIN tbl_domains AS t3 on t2.domain_id = t3.domain_id
   WHERE t2.country_id = country_id_ and t1.parent_ids != '';
-END //
-DELIMITER ;
-
-
-DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_compliance_for_unit`;
-DELIMITER //
-CREATE PROCEDURE `sp_bu_check_duplicate_compliance_for_unit`(
-IN domain_ INT, unit_ INT, compid_ INT
-)
-BEGIN
-  SELECT compliance_id
-  FROM tbl_client_compliances
-  WHERE domain_id = domain_
-  AND unit_id = unit_
-  AND compliance_id = compid_;
 END //
 DELIMITER ;
 
@@ -815,11 +782,6 @@ BEGIN
 END //
 DELIMITER ;
 
-ALTER TABLE `tbl_compliances`
-ADD COLUMN `task_id` VARCHAR(25) NOT NULL AFTER `is_updated`,
-ADD COLUMN `task_type` VARCHAR(150) NOT NULL AFTER `task_id`;
-
-
 DROP PROCEDURE IF EXISTS `sp_bu_get_matching_taskids`;
 DELIMITER //
 CREATE PROCEDURE `sp_bu_get_matching_taskids`(
@@ -853,6 +815,57 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS `sp_bu_get_assigned_compliances_for_unit`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_assigned_compliances_for_unit`(
+IN client_id_ INT, le_id_ INT, domain_ids_ TEXT, unit_ids_ TEXT
+)
+BEGIN
+  SELECT unit_id, domain_id, compliance_id
+  FROM tbl_client_compliances
+  WHERE
+  client_id = client_id_ AND legal_entity_id = le_id_ AND
+  find_in_set (domain_id, domain_ids_) AND find_in_set (unit_id, unit_ids_);
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_bu_get_all_compliance_info`;
+DELIMITER //
+CREATE PROCEDURE `sp_bu_get_all_compliance_info`(
+    IN country_id_ INT, domain_ids_ TEXT
+)
+BEGIN
+    -- mapped statu names
+    SELECT t2.statutory_name, t1.statutory_id, IFNULL(t2.parent_ids, 0) AS parent_ids,
+    t2.parent_names, t1.statutory_mapping_id
+    FROM tbl_mapped_statutories AS t1
+    INNER JOIN tbl_statutories AS t2 ON t1.statutory_id = t2.statutory_id
+    INNER JOIN tbl_statutory_mappings AS t3 ON t1.statutory_mapping_id = t3.statutory_mapping_id
+    WHERE t3.country_id = country_id_ AND find_in_set (t3.domain_id, domain_ids_)
+    ORDER BY TRIM(LEADING '[' FROM t3.statutory_mapping);
+
+    -- get compliances
+    SELECT t1.compliance_id, t1.country_id, t1.domain_id, t2.statutory_mapping,
+    t1.statutory_provision, t1.compliance_task, t1.compliance_description,
+    t1.statutory_mapping_id
+    FROM tbl_compliances AS t1
+    INNER JOIN tbl_statutory_mappings AS t2
+    ON t1.statutory_mapping_id = t2.statutory_mapping_id
+    WHERE t1.country_id = country_id_ AND find_in_set (t1.domain_id, domain_ids_);
+
+END//
+
+DELIMITER ;
+
+
 DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_task_id`;
 DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_compliance`;
+DROP PROCEDURE IF EXISTS `sp_bu_check_duplicate_compliance_for_unit`;
+DROP PROCEDURE IF EXISTS `sp_bu_get_compliance_id_by_name`;
+
+ALTER TABLE `tbl_compliances`
+ADD COLUMN `task_id` VARCHAR(25) NOT NULL AFTER `is_updated`,
+ADD COLUMN `task_type` VARCHAR(150) NOT NULL AFTER `task_id`;
+
 
