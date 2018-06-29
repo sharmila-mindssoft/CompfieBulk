@@ -479,12 +479,12 @@ function getBulkClientUnitApproveRejectList(csv_id, f_count,
     apiRequest("bu/client_units", request, callback);
 }
 
-function updateAssignStatutoryActionFromView(csvid, as_id, action, remarks,
+function updateAssignStatutoryActionFromView(csvid, as_ids, action, remarks,
     callback) {
     var request = [
         'SaveAction',
         {
-            "as_id": as_id,
+            "as_ids": as_ids,
             "csv_id": csvid,
             "bu_action": action,
             "remarks": remarks,
