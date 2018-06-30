@@ -20,7 +20,6 @@ CREATE FUNCTION `SPLIT_STR`(
 RETURN REPLACE(SUBSTRING(SUBSTRING_INDEX(x, delim, pos),
        LENGTH(SUBSTRING_INDEX(x, delim, pos -1)) + 1),
        delim, '');
-END //
 DELIMITER ;
 
 
