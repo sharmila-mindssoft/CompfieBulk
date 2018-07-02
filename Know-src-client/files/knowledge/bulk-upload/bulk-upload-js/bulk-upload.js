@@ -388,7 +388,7 @@ function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
 }
 
 function assignStatutoryActionInList(cl_id, le_id, csvid, action,
-    remarks, password, callback) {
+    rejected_reason, password, callback) {
     var request = [
         'AssignStatutoryApproveActionInList',
         {
@@ -396,7 +396,7 @@ function assignStatutoryActionInList(cl_id, le_id, csvid, action,
             "le_id": le_id,
             "csv_id": csvid,
             "bu_action": action,
-            "remarks": remarks,
+            "rejected_reason": rejected_reason,
             "password": password
         }
     ];
@@ -479,15 +479,15 @@ function getBulkClientUnitApproveRejectList(csv_id, f_count,
     apiRequest("bu/client_units", request, callback);
 }
 
-function updateAssignStatutoryActionFromView(csvid, as_ids, action, remarks,
-    callback) {
+function updateAssignStatutoryActionFromView(
+    csvid, as_ids, action, rejected_reason, callback) {
     var request = [
         'SaveAction',
         {
             "as_ids": as_ids,
             "csv_id": csvid,
             "bu_action": action,
-            "remarks": remarks,
+            "rejected_reason": rejected_reason,
         }
     ];
     apiRequest("bu/assign_statutory", request, callback);

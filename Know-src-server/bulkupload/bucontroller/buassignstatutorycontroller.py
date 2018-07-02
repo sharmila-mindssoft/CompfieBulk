@@ -473,7 +473,7 @@ def list_statutory_thread_process(
     try:
         csv_id = request_frame.csv_id
         action = request_frame.bu_action
-        remarks = request_frame.remarks
+        remarks = request_frame.rejected_reason
         return_data = None
         is_declined = c_obj.perform_validation_before_submit()
         if action == 1:
@@ -705,7 +705,7 @@ def save_action(db, request_frame, session_user):
     try:
         save_action_from_view(
             db, request_frame.csv_id, request_frame.as_ids,
-            request_frame.bu_action, request_frame.remarks,
+            request_frame.bu_action, request_frame.rejected_reason,
             session_user
         )
         return bu_as.SaveActionSuccess()
