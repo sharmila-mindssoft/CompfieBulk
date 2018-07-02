@@ -150,7 +150,7 @@ def return_past_due_dates(
         ",'>>',2), CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING( " + \
         " statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4" + \
         " ), '>>', 1))+1),3),'\",',1)) AS secondary_legislation," +\
-        " c.statutory_provision, FROM tbl_assign_compliances ac " + \
+        " c.statutory_provision FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_users u ON (ac.assignee = u.user_id) " + \
         " INNER JOIN tbl_compliances c ON " + \
         " (ac.compliance_id = c.compliance_id) " + \

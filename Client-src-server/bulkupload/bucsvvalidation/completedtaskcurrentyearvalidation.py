@@ -65,7 +65,7 @@ class SourceDB(object):
         self.hierarchy_checker = {}
         self.stop = True
         self.due_dates = {}
-        self.provisions = []
+        self.provisions = {}
         # self.get_doc_names()
 
     def connect_source_db(self, legal_entity_id):
@@ -143,9 +143,9 @@ class SourceDB(object):
 
     def get_provisions(self):
         query = "SELECT statutory_provision FROM tbl_compliances"
-        row = self._source_db.select_all(query)
+        rows = self._source_db.select_all(query)
         for d in rows:
-            self.provisions.append(d["statutory_provision"])
+            self.provisions[d["statutory_provision"]] = d
 
     def get_domains(self):
         query = "SELECT domain_id, domain_name, is_active  FROM tbl_domains"
