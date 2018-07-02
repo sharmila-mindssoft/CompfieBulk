@@ -87,6 +87,7 @@ var CURRENT_PAGE_SMID = [];
 var TOTAL_VIEW_ITEMS = 0;
 var TOTAL_VIEW_APPROVE_ITEMS = 0;
 var TOTAL_VIEW_REJECT_ITEMS = 0;
+var VIEW_REJECTED_REASON = $('.view-reason').val();
 
 var FREEZER_TABLE = $("#multi_col_freezer .table-responsive table");
 var FREEZER_TBODY = $("#multi_col_freezer .table-responsive tbody");
@@ -135,6 +136,8 @@ function resetFilter(evt) {
 
 function displayPopUp(TYPE, csvId, smId, callback) {
     var targetId ='';
+    var reject_reason = '';
+    var viewReason = '';
     if (TYPE == "reject") {
         targetId = "#custom_modal";
         CURRENT_PASSWORD = $('#current_password_reject');
@@ -174,8 +177,14 @@ function displayPopUp(TYPE, csvId, smId, callback) {
                         );
                     }
                     else if (TYPE == "reject") {
-                        if ($('.reject-reason-txt').val() == '') {
+                        reject_reason = $('.reject-reason-txt').val()
+                        if (reject_reason == '') {
                             displayMessage(message.reason_required);
+                            hideLoader();
+                        }
+                        else if(reject_reason.match(/^[ A-Za-z0-9.,-]*$/) === null)
+                        {
+                            displayMessage(message.reason_invalid);
                             hideLoader();
                         }
                         else {
@@ -191,8 +200,14 @@ function displayPopUp(TYPE, csvId, smId, callback) {
                         );
                     }
                     else if (TYPE == "view-reject") {
-                        if ($('.view-reason').val()== '') {
+                        viewReason = $('.view-reason').val()
+                        if (viewReason == '') {
                             displayMessage(message.reason_required)
+                            hideLoader();
+                        }
+                        else if(viewReason.match(/^[ A-Za-z0-9.,-]*$/) === null)
+                        {
+                            displayMessage(message.reason_invalid);
                             hideLoader();
                         }
                         else {
@@ -216,6 +231,7 @@ function displayPopUp(TYPE, csvId, smId, callback) {
 function displayViewRejectAllPopUp(callback) {
     targetId = "#custom_modal_remarks";
     CURRENT_PASSWORD = null;
+    var viewReason = '';
     $('.view-reason').val('');
 
     Custombox.open({
@@ -232,12 +248,18 @@ function displayViewRejectAllPopUp(callback) {
             if (IS_AUTHENTICATE) {
                 displayLoader();
                 setTimeout(function() {
-                    if ($('.view-reason').val() == '') {
+                    viewReason = $('.view-reason').val()
+                    if (viewReason == '') {
                         displayMessage(message.reason_required);
                         hideLoader();
                     }
+                    else if(viewReason.match(/^[ A-Za-z0-9.,-]*$/) === null)
+                    {
+                        displayMessage(message.reason_invalid);
+                        hideLoader();
+                    }
                     else {
-                        callback($('.view-reason').val());
+                        callback(viewReason);
                     }
 
                 }, 500);
@@ -250,8 +272,23 @@ function displayViewRejectAllPopUp(callback) {
     });
 }
 
+function validateViewAuthentication() {
+    var viewRejectReason = $('.view-reason').val();
+    if(viewRejectReason.match(/^[ A-Za-z0-9.,-]*$/) === null){
+        displayMessage(message.reason_invalid);
+        hideLoader();
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
 function validateAuthentication() {
+    
     var password = CURRENT_PASSWORD.val().trim();
+    var rejectReason = $('.reject-reason-txt').val();
     if (password.length == 0) {
         displayMessage(message.password_required);
         CURRENT_PASSWORD.focus();
@@ -259,12 +296,28 @@ function validateAuthentication() {
     }
     else if(isLengthMinMax(
         CURRENT_PASSWORD, 1, 20, message.password_20_exists) == false
-    ) {
+    ){
+        return false;
+    }
+    else if(rejectReason.match(/^[ A-Za-z0-9.,-]*$/) === null){
+
+        displayMessage(message.reason_invalid);
+        hideLoader();
         return false;
     }
     else {
-        IS_AUTHENTICATE = true;
-        Custombox.close();
+        mirror.verifyPassword(password, function(error, response) {
+            if (error == null) {
+                hideLoader();
+                IS_AUTHENTICATE = true;
+                Custombox.close();
+            } else {
+                hideLoader();
+                if (error == 'InvalidPassword') {
+                    displayMessage(message.invalid_password);
+                }
+            }
+        });
     }
     displayLoader();
 }
@@ -1259,6 +1312,10 @@ ApproveBulkMapping.prototype.finalSubmit = function(csvId, pwd) {
                 csv_name = response.csv_name;
                 apiCall(csv_name, call_bck_fn);
             }
+            else if(error == "Failure"){
+                hideLoader();
+                tThis.possibleFailures(message.select_all_compliance_required);
+            }
             else{
                 hideLoader();
                 tThis.possibleFailures(error);
@@ -1444,6 +1501,13 @@ function PageControls() {
     PASSWORD_SUBMIT_BUTTON.click(function() {
         if (CURRENT_PASSWORD != null) {
             validateAuthentication();
+        }
+        else if(VIEW_REJECTED_REASON != null){
+            if(validateViewAuthentication() == true){
+                IS_AUTHENTICATE = true;
+                Custombox.close();
+                displayLoader();
+            }
         }
         else {
             IS_AUTHENTICATE = true;

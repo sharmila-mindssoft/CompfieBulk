@@ -247,7 +247,7 @@ PageControls = function() {
             SINGLE_REJECT_REASON.focus();
             CHECK_ALL_REJECT.removeAttr("checked");
             return false;
-        } else if (reason.match(/^[ A-Za-z0-9_.,-]*$/) === null) {
+        } else if (reason.match(/^[ A-Za-z0-9.,-]*$/) === null) {
             displayMessage(message.reason_invalid);
             SINGLE_REJECT_REASON.focus();
             CHECK_ALL_REJECT.removeAttr("checked");

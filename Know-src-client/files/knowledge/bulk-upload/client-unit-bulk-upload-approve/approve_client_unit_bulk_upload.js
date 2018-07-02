@@ -429,8 +429,14 @@ function displayViewRejectAllPopUp(callback){
             if (IS_AUTHENTICATE) {
                 displayLoader();
                 setTimeout(function() {
+                    var rejectReason = REJECT_REASON.val()
                     if (REJECT_REASON.val() == '') {
                         displayMessage(message.reason_required);
+                        hideLoader();
+                    }
+                    else if(rejectReason.match(/^[ A-Za-z0-9.,-]*$/) === null)
+                    {
+                        displayMessage(message.reason_invalid);
                         hideLoader();
                     }
                     else {
@@ -626,9 +632,27 @@ function validateAuthentication() {
     ){
         return false;
     }
+    else if(Rej_Reason.match(/^[ A-Za-z0-9.,-]*$/) === null){
+
+        displayMessage(message.reason_invalid);
+        hideLoader();
+        return false;
+    }
     else {
-    	IS_AUTHENTICATE = true;
-        Custombox.close();
+    	//IS_AUTHENTICATE = true;
+        //Custombox.close();
+        mirror.verifyPassword(Password, function(error, response) {
+        if (error == null) {
+            hideLoader();
+            IS_AUTHENTICATE = true;
+            Custombox.close();
+        } else {
+            hideLoader();
+            if (error == 'InvalidPassword') {
+                displayMessage(message.invalid_password);
+            }
+        }
+        });
     }
     displayLoader();
 }
@@ -694,7 +718,7 @@ function getCSVFileApprovalList(csv_id, start_count, _PAGE_LIMIT) {
                     hidePageView();
                     bindClientUnitList([]);
                 } else {
-                    displayMessage(err);
+                    displayMessage(error);
                 }
                 hideLoader();
             }
