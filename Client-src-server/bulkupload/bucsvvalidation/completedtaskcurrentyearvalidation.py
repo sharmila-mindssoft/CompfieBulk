@@ -625,12 +625,17 @@ class SourceDB(object):
         try:
             if secondary == "":
                 secondary = "empty"
-            if (
-                compliance_task_name not in self.hierarchy_checker[
-                    primary.strip()][secondary.strip()][provision]):
-                status1 = "Not Found"
+            provision_data = self.hierarchy_checker[
+                primary.strip()][secondary.strip()]
         except KeyError:
             return
+        try:
+            if (
+                compliance_task_name not in provision_data[provision]
+            ):
+                status1 = "Not Found"
+        except KeyError:
+            status1 = "Not Found"
         status2 = self.check_base(
             True, self.compliance_task, compliance_task, None)
         if status1 is True:
