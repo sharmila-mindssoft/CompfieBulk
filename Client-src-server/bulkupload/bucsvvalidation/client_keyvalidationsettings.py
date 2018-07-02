@@ -361,6 +361,11 @@ csv_params = {
         validation_method=is_alpha_numeric, is_found_check=True,
         is_active_check=True
     ),
+    "Statutory_Provision": make_required_validation(
+        key_type="STRING", max_length_check=500, is_valid_char_check=True,
+        validation_method=is_alpha_numeric, is_found_check=True,
+        is_active_check=True
+    ),
     "Compliance_Task": make_required_validation(
         key_type="STRING", is_mandatory_check=True, max_length_check=100,
         is_valid_char_check=True,
