@@ -59,6 +59,11 @@ var CSV_INFO = null;
 var DOC_NAMES = [];
 var CSV_ID = null;
 var ACTUAL_CSV_NAME = '';
+var TIMEOUT_MLS = 45000;
+
+var TOT_DOCS = 0;
+var UPL_DOCS = 0;
+var REM_DOCS = 0;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -207,14 +212,6 @@ BulkUploadStatutoryMapping.prototype.fetchDropDownData = function() {
     });
 };
 
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
-}
 
 BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
     $('#myModal').modal('show');
@@ -235,14 +232,14 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
         bu.GetStatus(csv_name, callback);
     }
     function call_bck_fn(error, response){
-        console.log("get status response: error"+ error + ", response:"+response)
+        console.log("get status response: error"+ error + ", response:"+ response)
         TEMPLATE_DIV.hide();
         if (error == "Alive"){
             console.log("inside if=====> going to get status again")
             // count = count+1;
-            sleep(180000);
             // if(count <3)
-            apiCall(csv_name, call_bck_fn);
+            setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
+            // apiCall(csv_name, call_bck_fn);
         }
         else if(error == "InvalidCsvFile"){
             $('#myModal').modal('hide');
@@ -264,9 +261,15 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
                     SUMMARY_INVALID.text(response.invalid);
                     DOC_NAMES = response.doc_names;
                     UPLOAD_DOCUMENT.show();
+
+                    TOT_DOCS = response.doc_count;
+                    UPL_DOCS = 0;
+                    REM_DOCS = response.doc_count;
+                    setDocumentCount();
+
                     DOCUMENT_TOTAL.text(response.doc_count);
-                    UPL_DOC_TXT.hide();
-                    UPL_DOC_REM.hide();
+                    // UPL_DOC_TXT.hide();
+                    // UPL_DOC_REM.hide();
 
                     DOCUMENT_SUMMARY.hide();
                     t_this.changeTxttoLabel(COUNTRY_AC.val(), DOMAIN_AC.val(),
@@ -343,104 +346,17 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
             FILE_UPLOAD_CSV.val("");
         }
     });
-
-    /*
-    bu.uploadStatutoryMappingCSV(args, function (error, response) {
-        var csv_path;
-        var xls_path;
-        var ods_path;
-        console.log("error-> "+ error);
-        console.log("Response-> "+ response);
-        $('#myModal').modal('hide');
-        TEMPLATE_DIV.hide();
-        if (error == null) {
-            console.log(JSON.stringify(response));
-            if (response.invalid == 0) {
-                displaySuccessMessage(message.upload_success);
-                if (response.doc_count > 0) {
-                    CSV_ID = response.csv_id;
-                    DATA_SUMMARY.show();
-                    ERROR_SUMMARY.hide();
-                    DATA_SUMMARY.removeClass("col-sm-6");
-                    DATA_SUMMARY.addClass("col-sm-12");
-                    SUMMARY_TOTAL.text(response.total);
-                    SUMMARY_VALID.text(response.valid);
-                    SUMMARY_INVALID.text(response.invalid);
-                    DOC_NAMES = response.doc_names;
-                    UPLOAD_DOCUMENT.show();
-                    DOCUMENT_TOTAL.text(response.doc_count);
-                    UPL_DOC_TXT.hide();
-                    UPL_DOC_REM.hide();
-
-                    DOCUMENT_SUMMARY.hide();
-                    t_this.changeTxttoLabel(COUNTRY_AC.val(), DOMAIN_AC.val(),
-                                            response.csv_name,
-                                            response.new_csv_name)
-                }
-                else {
-                    DATA_SUMMARY.hide();
-                    ERROR_SUMMARY.hide();
-                    t_this.showList();
-                }
-            }
-            else {
-                displayMessage(message.upload_failed);
-                FILE_UPLOAD_CSV.val("");
-                DATA_SUMMARY.removeClass("col-sm-12");
-                DATA_SUMMARY.addClass("col-sm-6");
-                DATA_SUMMARY.show();
-                ERROR_SUMMARY.show();
-                // show error summary
-                VALIDOR_INVALID_BUTTON.show();
-
-                SUMMARY_TOTAL.text(response.total);
-                SUMMARY_VALID.text(response.valid);
-                SUMMARY_INVALID.text(response.invalid);
-                SUMMARY_MANDATORY.text(response.mandatory_error);
-                SUMMARY_MAX_LENGTH.text(response.max_length_error);
-                SUMMARY_DUPLICATE.text(response.duplicate_error);
-                SUMMARY_INVALID_CHAR.text(response.invalid_char_error);
-                SUMMARY_INVALID_DATA.text(response.invalid_data_error);
-                SUMMARY_INACTIVE.text(response.inactive_error);
-                SUMMARY_FREQUENCY_INVALID.text(
-                    response.invalid_frequency_error
-                    );
-
-                INVALID_FILE_NAME = response.invalid_file.split('.');
-                csv_path = "/invalid_file/csv/"
-                            + INVALID_FILE_NAME[0] + '.csv';
-                xls_path = "/invalid_file/xlsx/"
-                            + INVALID_FILE_NAME[0] + '.xlsx';
-                ods_path = "/invalid_file/ods/"
-                            + INVALID_FILE_NAME[0] + '.ods';
-
-                $('#csv_type').attr("href", csv_path);
-                $('#xls_type').attr("href", xls_path);
-                $('#ods_type').attr("href", ods_path);
-            }
-        }
-        else {
-            $('#myModal').modal('hide');
-            if(error == "RejectionMaxCountReached"){
-                displayMessage(message.upload_limit);
-            }
-            else if (error == "CsvFileExeededMaxLines") {
-                displayMessage(message.csv_max_lines_exceeded.replace(
-                    'MAX_LINES', response.csv_max_lines));
-                FILE_UPLOAD_CSV.val("");
-            }else if(error == "CsvFileCannotBeBlank") {
-                displayMessage(message.csv_file_blank);
-                FILE_UPLOAD_CSV.val("");
-            }
-            else{
-                BU_SMPAGE.possibleFailures(error);
-                FILE_UPLOAD_CSV.val("");
-            }
-        }
-    })
-
-    */
 };
+
+function setDocumentCount(){
+    DOCUMENT_TOTAL.text(TOT_DOCS);
+    if (UPL_DOCS > TOT_DOCS) {
+        UPL_DOCS = TOT_DOCS;
+        REM_DOCS = TOT_DOCS - UPL_DOCS;
+    }
+    DOCUMENT_UPLOADED.text(UPL_DOCS);
+    DOCUMENT_REMAINING.text(REM_DOCS);
+}
 
 document.getElementById("txt_type").addEventListener("click", function(){
     if(INVALID_FILE_NAME != null) {
@@ -515,6 +431,11 @@ BulkUploadStatutoryMapping.prototype.showEdit = function(data) {
     UPLOAD_DOCUMENT.show();
     DOCUMENT_SUMMARY.show();
     DOCUMENT_TOTAL.text(data.no_of_documents);
+
+    TOT_DOCS = data.no_of_documents;
+    UPL_DOCS = data.uploaded_documents;
+    REM_DOCS = parseInt(data.no_of_documents) - parseInt(data.uploaded_documents);
+    setDocumentCount();
 
     UPL_DOC_TXT.show();
     UPL_DOC_REM.show();
@@ -640,6 +561,7 @@ function PageControls() {
         console.log($(".dropzone > .dz-preview").length)
         if($(".dropzone > .dz-preview").length > 0){
             displayLoader();
+            setDocumentCount();
             myDropzone.processQueue();
         }
         else{
@@ -728,6 +650,9 @@ var myDropzone = new Dropzone("div#myDrop", {
             if (totalfileUploadSuccess < queueCount) {
                 totalfileUploadSuccess += 1;
                 perQueueUploadSuccess += 1;
+                UPL_DOCS += 1;
+                REM_DOCS = TOT_DOCS - UPL_DOCS;
+                setDocumentCount();
             }
 
             if (perQueueUploadSuccess == maxParallelCount) {

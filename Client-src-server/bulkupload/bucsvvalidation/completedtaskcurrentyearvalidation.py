@@ -1376,7 +1376,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         return response
 
     def frame_data_for_main_db_insert(
-        self, data_result, legal_entity_id, csv_id
+        self, data_result, legal_entity_id, csv_id, country_id, domain_id
     ):
         db = bulkupload_db_connect()
         data_save_status = self.save_completed_task_data(

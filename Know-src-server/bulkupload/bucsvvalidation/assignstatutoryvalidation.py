@@ -66,6 +66,8 @@ class SourceDB(object):
         self.statusCheckMethods()
         self._csv_column_name = []
         self.csv_column_fields()
+        self._assigned_compliances_knowledge = []
+        self._compliance_info = {}
 
     def connect_source_db(self):
         self._source_db_con = mysql.connector.connect(
@@ -93,9 +95,9 @@ class SourceDB(object):
         self.get_unit_name(legal_entity_id)
         self.get_statutories(country_id)
         self.get_child_statutories(country_id)
-        self.get_statutory_provision()
-        self.get_compliance_task()
-        self.get_compliance_description()
+        self.get_statutory_provision(country_id)
+        self.get_compliance_task(country_id)
+        self.get_compliance_description(country_id)
         self.get_organisation(country_id)
         self.get_applicable_status()
 
@@ -160,21 +162,21 @@ class SourceDB(object):
         )
         for d in data:
             self._child_statutories[
-                d["statutory_name"]+'-'+d["domain_name"]
+                d["statutory_name"]+'-'+d["parent_name"]+'-'+d["domain_name"]
             ] = d
 
-    def get_statutory_provision(self):
-        data = self._source_db.call_proc("sp_bu_compliance_info")
+    def get_statutory_provision(self, country_id):
+        data = self._source_db.call_proc("sp_bu_compliance_info", [country_id])
         for d in data:
             self._statutory_provision[d["statutory_provision"]] = d
 
-    def get_compliance_task(self):
-        data = self._source_db.call_proc("sp_bu_compliance_info")
+    def get_compliance_task(self, country_id):
+        data = self._source_db.call_proc("sp_bu_compliance_info", [country_id])
         for d in data:
             self._compliance_task[d["compliance_task"]] = d
 
-    def get_compliance_description(self):
-        data = self._source_db.call_proc("sp_bu_compliance_info")
+    def get_compliance_description(self, country_id):
+        data = self._source_db.call_proc("sp_bu_compliance_info", [country_id])
         for d in data:
             self._compliance_description[d["compliance_description"]] = d
 
@@ -193,6 +195,49 @@ class SourceDB(object):
         ]
         for d in data:
             self._applicable_status[d["applicable_status"]] = d
+
+    def get_compliance_info(self, country_id, domain_ids_):
+        domain_ids = ",".join(str(e) for e in domain_ids_)
+        data = self._source_db.call_proc_with_multiresult_set(
+            "sp_bu_get_all_compliance_info", [country_id, domain_ids], 2
+        )
+
+        def status_list(map_id):
+            s_legislation = None
+            p_legislation = None
+            for s in data[0]:
+                if s["statutory_mapping_id"] == map_id:
+                    if(
+                        s["parent_ids"] == '' or s["parent_ids"] == 0 or
+                        s["parent_ids"] == '0,'
+                    ):
+                        s_legislation = s["statutory_name"]
+                        p_legislation = s_legislation
+                    else:
+                        names = [
+                            x.strip() for x in s["parent_names"].split('>>')
+                            if x != ''
+                        ]
+                        p_legislation = names[0]
+                        if len(names) > 1:
+                            s_legislation = names[1]
+                        else:
+                            s_legislation = s["statutory_name"]
+            return p_legislation, s_legislation
+
+        for d in data[1]:
+            p_legislation, s_legislation = status_list(
+                d["statutory_mapping_id"]
+            )
+            if s_legislation == p_legislation:
+                s_legislation = ""
+
+            key = "%s-%s-%s-%s-%s-%s-%s" % (
+                d["compliance_task"], d["compliance_description"],
+                d["statutory_provision"], d["country_id"], d["domain_id"],
+                p_legislation, s_legislation
+            )
+            self._compliance_info[key] = d
 
     def check_base(self, check_status, store, key_name, status_name):
         data = store.get(key_name)
@@ -311,7 +356,7 @@ class SourceDB(object):
 
     # save client compliance data in tbl_client_compliances main db
     def save_client_compliances_data(
-        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, client_id_,
+        self, cl_id, le_id, u_id, d_id, cs_id, data, user_id, country_id_,
         is_rejected, saved_by, saved_on
     ):
         created_on = get_date_time()
@@ -345,26 +390,14 @@ class SourceDB(object):
                 "statutory_id"
             )
 
-            s_legislation_id = ''
-            if(
-                d["Secondary_Legislation"] is not None and
-                d["Secondary_Legislation"] != ''
-            ):
-                s_legislation_id = self._child_statutories.get(
-                    d["Secondary_Legislation"]+'-'+d["Domain"]
-                ).get("statutory_id")
-
-            comp_id = None
-            c_ids = self._source_db.call_proc(
-                "sp_bu_get_compliance_id_by_name",
-                [
-                    d["Compliance_Task"], d["Compliance_Description"],
-                    d["Statutory_Provision"], client_id_, d_id,
-                    p_legislation_id, s_legislation_id
-                ])
-
-            for c_id in c_ids:
-                comp_id = c_id["compliance_id"]
+            key = "%s-%s-%s-%s-%s-%s-%s" % (
+                d["Compliance_Task"], d["Compliance_Description"],
+                d["Statutory_Provision"], country_id_, d_id,
+                d["Primary_Legislation"], d["Secondary_Legislation"]
+            )
+            comp_id = self._compliance_info.get(key).get(
+                "compliance_id"
+            )
 
             values.append((
                 int(cs_id), cl_id, le_id, u_id, d_id, p_legislation_id,
@@ -421,71 +454,53 @@ class SourceDB(object):
             "Statutory_remarks", "Compliance_Applicable_Status"
         ]
 
-    # check duplicate compliance for same unit in temp db
-    def check_compliance_task_name_duplicate(
-        self, data
+    def get_all_assigned_compliance_knowledge(
+        self, client_id, legal_entity_id
     ):
-        domain_name = data.get("Domain")
-        unit_code = data.get("Unit_Code")
-        statutory_provision = data.get("Statutory_Provision")
-        task_name = data.get("Compliance_Task")
-        compliance_description = data.get("Compliance_Description")
-        p_legislation = data.get("Primary_Legislation")
-        s_legislation = data.get("Secondary_Legislation")
-        l_entity = data.get("Legal_Entity")
-
-        res = self._db.call_proc("sp_check_duplicate_compliance_for_unit", [
-            domain_name, unit_code, statutory_provision, task_name,
-            compliance_description, p_legislation, s_legislation, l_entity
-        ])
-        if len(res) > 0:
-            return False
-        else:
-            return True
+        domain_ids = ",".join(str(e) for e in self._domain_ids)
+        unit_ids = ",".join(str(e) for e in self._unit_ids)
+        data = self._source_db.call_proc(
+            'sp_bu_get_assigned_compliances_for_unit',
+            [
+                client_id, legal_entity_id,
+                domain_ids, unit_ids
+            ]
+        )
+        data_str = ""
+        for d in data:
+            data_str = str(d["domain_id"])
+            data_str += "-" + str(d["unit_id"])
+            data_str += "-" + str(d["compliance_id"])
+            self._assigned_compliances_knowledge.append(data_str)
 
     # check duplicate compliance in already existing knowledge table
     def check_compliance_task_name_duplicate_in_knowledge(
         self, data, country_id
     ):
         domain_name = data.get("Domain")
-        unit_code = data.get("Unit_Code")
-        statutory_provision = data.get("Statutory_Provision")
-        task_name = data.get("Compliance_Task")
-        compliance_description = data.get("Compliance_Description")
-        p_legislation = data.get("Primary_Legislation")+'-'+data.get("Domain")
-        s_legislation = data.get("Secondary_Legislation")
-        unit_id = self._unit_code.get(unit_code).get("unit_id")
         domain_id = self._domain.get(domain_name).get("domain_id")
+        unit_code = data.get("Unit_Code")
+        unit_id = self._unit_code.get(unit_code).get("unit_id")
 
-        p_legislation_id = self._statutories.get(p_legislation).get(
-            "statutory_id"
+        key = "%s-%s-%s-%s-%s-%s-%s" % (
+            data.get("Compliance_Task"), data.get("Compliance_Description"),
+            data.get("Statutory_Provision"), country_id, domain_id,
+            data.get("Primary_Legislation"), data.get("Secondary_Legislation")
+        )
+        comp_id = self._compliance_info.get(key).get(
+            "compliance_id"
         )
 
-        s_legislation_id = ''
-        if(
-            s_legislation is not None and
-            s_legislation != ''
-        ):
-            s_legislation_id = self._child_statutories.get(
-                s_legislation+'-'+data.get("Domain")
-            ).get("statutory_id")
+        compare_str = str(domain_id)
+        compare_str += "-" + str(unit_id)
+        compare_str += "-" + str(comp_id)
 
-        c_ids = self._source_db.call_proc(
-            "sp_bu_get_compliance_id_by_name",
-            [
-                task_name, compliance_description, statutory_provision,
-                country_id, domain_id, p_legislation_id, s_legislation_id
-            ]
-        )
-        comp_id = c_ids[0]["compliance_id"]
-        res = self._source_db.call_proc(
-            "sp_bu_check_duplicate_compliance_for_unit",
-            [domain_id, unit_id, comp_id]
-        )
-        if len(res) > 0:
-            return False
-        else:
-            return True
+        if len(self._assigned_compliances_knowledge) > 0:
+            if compare_str in self._assigned_compliances_knowledge:
+                return False
+            else:
+                return True
+        return True
 
     # save domain executive notification message
     def save_executive_message(
@@ -621,12 +636,16 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         self._client_id = None
         self._client_group = None
         self._unit_ids = []
+        self._unit_codes = []
         self._legal_entity_id = None
         self._legal_entity = None
         self._domain_ids = []
         self._domain_names = []
         self._country = None
         self._sheet_name = "Assign Statutory"
+
+        self._compliances_downloaded = []
+        self._compliances_uploaded = []
 
     def connect_bulk_database(self):
         c_db_con = bulkupload_db_connect()
@@ -751,11 +770,13 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     ).get("client_id")
 
         self._unit_ids = []
+        self._unit_codes = []
         for k, v in groupby(self._source_data, key=lambda s: (
             s["Unit_Code"]
         )):
             grouped_list = list(v)
             if len(grouped_list) >= 1:
+                self._unit_codes.append(grouped_list[0].get("Unit_Code"))
                 if(
                     self._unit_code.get(grouped_list[0].get("Unit_Code"))
                 ) is not None:
@@ -766,32 +787,96 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
     # check invalid compliance in csv while upload
     def check_invalid_compliance_in_csv(self, data):
-        client_group = data.get("Client_Group")
-        legal_entity = data.get("Legal_Entity")
-        domain = data.get("Domain")
-        organization = data.get("Organization").replace(CSV_DELIMITER, ",")
-        unit_code = data.get("Unit_Code")
-        unit_name = data.get("Unit_Name")
-        unit_location = data.get("Unit_Location")
-        primary_legislation = data.get("Primary_Legislation")
-        secondary_legislation = data.get("Secondary_Legislation")
-        statutory_provision = data.get("Statutory_Provision")
-        compliance_task = data.get("Compliance_Task")
-        compliance_description = data.get("Compliance_Description")
+        compare_str = str(data.get("Client_Group"))
+        compare_str += "-" + str(data.get("Country"))
+        compare_str += "-" + str(data.get("Legal_Entity"))
+        compare_str += "-" + str(data.get("Domain"))
+        compare_str += "-" + str(data.get("Organization").replace(
+            CSV_DELIMITER, ","))
+        compare_str += "-" + str(data.get("Unit_Code"))
+        compare_str += "-" + str(data.get("Unit_Name"))
+        compare_str += "-" + str(data.get("Unit_Location"))
+        compare_str += "-" + str(data.get("Primary_Legislation"))
+        compare_str += "-" + str(data.get("Secondary_Legislation"))
+        compare_str += "-" + str(data.get("Statutory_Provision"))
+        compare_str += "-" + str(data.get("Compliance_Task"))
+        compare_str += "-" + str(data.get("Compliance_Description"))
 
-        res = self._db.call_proc(
-            "sp_check_invalid_compliance_in_csv",
+        if len(self._compliances_downloaded) > 0:
+            if compare_str in self._compliances_downloaded:
+                return True
+            else:
+                return False
+        return False
+
+    # check duplicate compliance for same unit in temp db
+    def check_compliance_task_name_duplicate(
+        self, data
+    ):
+        compare_str = str(data.get("Legal_Entity"))
+        compare_str += "-" + str(data.get("Domain"))
+        compare_str += "-" + str(data.get("Unit_Code"))
+        compare_str += "-" + str(data.get("Primary_Legislation"))
+        compare_str += "-" + str(data.get("Secondary_Legislation"))
+        compare_str += "-" + str(data.get("Statutory_Provision"))
+        compare_str += "-" + str(data.get("Compliance_Task"))
+        compare_str += "-" + str(data.get("Compliance_Description"))
+
+        if len(self._compliances_uploaded) > 0:
+            if compare_str in self._compliances_uploaded:
+                return False
+            else:
+                return True
+        return True
+
+    def get_all_downloaded_compliances(self):
+        domain_names = ",".join(str(e) for e in self._domain_names)
+        unit_codes = ",".join(str(e) for e in self._unit_codes)
+        data = self._db.call_proc(
+            'sp_get_all_downloaded_compliances',
             [
-                client_group, legal_entity, domain, organization, unit_code,
-                unit_name, unit_location, primary_legislation,
-                secondary_legislation, statutory_provision, compliance_task,
-                compliance_description
+                self._client_group, self._country, self._legal_entity,
+                domain_names, unit_codes
             ]
         )
-        if len(res) > 0:
-            return True
-        else:
-            return False
+        data_str = ""
+        for d in data:
+            data_str = str(d["client_group"])
+            data_str += "-" + str(d["country"])
+            data_str += "-" + str(d["legal_entity"])
+            data_str += "-" + str(d["domain"])
+            data_str += "-" + str(d["organization"])
+            data_str += "-" + str(d["unit_code"])
+            data_str += "-" + str(d["unit_name"])
+            data_str += "-" + str(d["unit_location"])
+            data_str += "-" + str(d["perimary_legislation"])
+            data_str += "-" + str(d["secondary_legislation"])
+            data_str += "-" + str(d["statutory_provision"])
+            data_str += "-" + str(d["compliance_task_name"])
+            data_str += "-" + str(d["compliance_description"])
+            self._compliances_downloaded.append(data_str)
+
+    def get_all_uploaded_compliances(self):
+        domain_names = ",".join(str(e) for e in self._domain_names)
+        unit_codes = ",".join(str(e) for e in self._unit_codes)
+        data = self._db.call_proc(
+            'sp_get_all_uploaded_compliances',
+            [
+                self._client_group, self._legal_entity,
+                domain_names, unit_codes
+            ]
+        )
+        data_str = ""
+        for d in data:
+            data_str = str(d["legal_entity"])
+            data_str += "-" + str(d["domain"])
+            data_str += "-" + str(d["unit_code"])
+            data_str += "-" + str(d["perimary_legislation"])
+            data_str += "-" + str(d["secondary_legislation"])
+            data_str += "-" + str(d["statutory_provision"])
+            data_str += "-" + str(d["compliance_task_name"])
+            data_str += "-" + str(d["compliance_description"])
+            self._compliances_uploaded.append(data_str)
 
     def make_error_desc(self, res, msg):
             if res is True:
@@ -873,7 +958,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                                 org_val = v+'-'+data.get('Domain')
                                 isFound = unboundMethod(org_val)
                             elif key == "Secondary_Legislation":
-                                s_legs_val = v+'-'+data.get('Domain')
+                                s_legs_val = v+'-'+data.get("Primary_Legislation")+'-'+data.get('Domain')
                                 isFound = unboundMethod(s_legs_val)
                             elif key == "Unit_Location":
                                 loc_val = data.get('Unit_Code')+'-'+v
@@ -932,6 +1017,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
             self._session_user_obj.user_id(), client_id, country_id,
             legal_entity_id
         )
+        is_get_master_info = False
+
         for row_idx, data in enumerate(self._source_data):
             res, mapped_header_dict, error_count = self.check_validation(
                 True,
@@ -942,22 +1029,38 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 mapped_header_dict
             )
             if res is True:
-                if not self.check_compliance_task_name_duplicate(data):
-                    self._error_summary["duplicate_error"] += 1
-                    dup_error = "Duplicate Compliance in Temp DB"
-                    res = self.make_error_desc(res, dup_error)
-                if not self.check_compliance_task_name_duplicate_in_knowledge(
-                    data, country_id
-                ):
-                    self._error_summary["duplicate_error"] += 1
-                    dup_error = "Duplicate Compliance"
-                    res = self.make_error_desc(res, dup_error)
+                if is_get_master_info is False:
+                    self.get_master_table_info()
+                    self.get_all_downloaded_compliances()
+                    self.get_all_uploaded_compliances()
+                    self.get_all_assigned_compliance_knowledge(
+                        client_id, legal_entity_id
+                    )
+                    self.get_compliance_info(country_id, self._domain_ids)
+                    is_get_master_info = True
+
+                # changed
                 if not self.check_invalid_compliance_in_csv(
                     data
                 ):
                     self._error_summary["invalid_data_error"] += 1
                     invalid_error = "Invalid Compliance"
                     res = self.make_error_desc(res, invalid_error)
+
+                # changed
+                if not self.check_compliance_task_name_duplicate(data):
+                    self._error_summary["duplicate_error"] += 1
+                    dup_error = "Duplicate Compliance in Temp DB"
+                    res = self.make_error_desc(res, dup_error)
+
+                # changed
+                if not self.check_compliance_task_name_duplicate_in_knowledge(
+                    data, country_id
+                ):
+                    self._error_summary["duplicate_error"] += 1
+                    dup_error = "Duplicate Compliance"
+                    res = self.make_error_desc(res, dup_error)
+
             if res is not True:
                 error_list = mapped_error_dict.get(row_idx)
                 if error_list is None:
@@ -976,8 +1079,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 self._error_summary["invalid_char_error"] += error_count[
                     "invalid_char"
                 ]
-        if invalid == 0:
-            self.get_master_table_info()
+
         if invalid > 0:
             return self.make_invalid_return(
                 mapped_error_dict, mapped_header_dict
@@ -1049,6 +1151,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
         self._client_group = None
         self._csv_name = None
         self._unit_ids = None
+        self._domain_ids = None
 
     def connect_bulk_database(self):
         c_db_con = bulkupload_db_connect()
@@ -1091,6 +1194,21 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                     )
         self._unit_ids = list(set(self._unit_ids))
 
+        self._domain_ids = []
+        for k, v in groupby(self._source_data, key=lambda s: (
+            s["Domain"]
+        )):
+            grouped_list = list(v)
+            if len(grouped_list) >= 1:
+                if(
+                    self._domain.get(grouped_list[0].get("Domain"))
+                ) is not None:
+                    self._domain_ids.append(self._domain.get(
+                        grouped_list[0].get("Domain")).get("domain_id")
+                    )
+
+        is_get_master_info = False
+
         for row_idx, data in enumerate(self._source_data):
             res = True
             declined_count = 0
@@ -1131,7 +1249,9 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                                     org_val = v+'-'+data.get('Domain')
                                     isFound = unboundMethod(org_val)
                                 elif key == "Secondary_Legislation":
-                                    s_legs_val = v+'-'+data.get('Domain')
+                                    s_legs_val = v+'-'+data.get(
+                                        'Primary_Legislation'
+                                        )+'-'+data.get('Domain')
                                     isFound = unboundMethod(s_legs_val)
                                 elif key == "Unit_Location":
                                     loc_val = data.get('Unit_Code')+'-'+v
@@ -1150,6 +1270,13 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                                     res.append(msg)
                                 else:
                                     res = [msg]
+
+            if is_get_master_info is False:
+                self.get_all_assigned_compliance_knowledge(
+                    self._client_id, self._legal_entity_id
+                )
+                self.get_compliance_info(country_id, self._domain_ids)
+                is_get_master_info = True
 
             if not self.check_compliance_task_name_duplicate_in_knowledge(
                 data, country_id

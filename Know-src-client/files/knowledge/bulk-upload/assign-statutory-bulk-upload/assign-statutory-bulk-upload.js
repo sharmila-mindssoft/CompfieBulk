@@ -38,6 +38,7 @@ var DOMAINNAMES = [];
 var DOMAINIDS = [];
 var CSVINFO = null;
 var PREVIOUSVAL = [];
+var TIMEOUT_MLS = 45000;
 
 
 //Autocomplete success function
@@ -232,8 +233,7 @@ function pageControls() {
                 }
                 else{
                     if (error == "Alive"){
-                        sleep(180000);
-                        apiCallDownload(csv_name, call_bck_fn);                        
+                        setTimeout(apiCallDownload, TIMEOUT_MLS, csv_name, call_bck_fn);
                     }else{
                         hideLoader();
                     }
@@ -327,15 +327,6 @@ function pageControls() {
         }
     });
 
-    function sleep(milliseconds) {
-      var start = new Date().getTime();
-      for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds){
-          break;
-        }
-      }
-    }
-
     //upload file button process
     UPLOADFILEBUTTON.click(function() {
         var args = {};
@@ -428,13 +419,7 @@ function pageControls() {
                         $('#myModal').modal('hide');
                     }else{
                         if (error == "Alive"){
-                            // count = count+1;
-                            sleep(180000);
-                            apiCall(csv_name, call_bck_fn);
-                            // if(count <3){
-                            //     apiCall(csv_name, call_bck_fn);
-                            //     count++;
-                            // }
+                            setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
                         }else if (error == "CsvFileExeededMaxLines") {
                             displayMessage(message.csv_max_lines_exceeded.replace(
                             'MAX_LINES', response.csv_max_lines));

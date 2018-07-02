@@ -75,6 +75,7 @@ var COMPLIANCE_APPLICABLE = $("#compliance_applicable");
 var COMPLIANCE_NOT_APPLICABLE = $("#compliance_not_applicable");
 var COMPLIANCE_DO_NOT_SHOW = $("#compliance_do_not_show");
 var PER_PAGE = 0;
+var TIMEOUT_MLS = 45000;
 
 // Display spinner icon in page
 displayLoader = function() {
@@ -207,24 +208,36 @@ PageControls = function() {
     });
     CHECK_ALL_APPROVE.click(function() {
         if ($(this).prop("checked") == true) {
-            DETAILS_TBODY.find('.single-approve').removeAttr("checked");
-            DETAILS_TBODY.find('.single-approve').trigger('click');
-        } else{
+            var approve_all_ids = [];
             DETAILS_TBODY.find('.single-approve').removeAttr("checked");
             DETAILS_TBODY.find(".single-approve").each(function(){
-               $(this).prop('checked', false).triggerHandler('click');
+               $(this).prop('checked', true);
+               approve_all_ids.push(parseInt($(this).val()));
             });
+            tempAction(approve_all_ids, 1);
+            //DETAILS_TBODY.find('.single-approve').trigger('click');
+        } else{
+            var approve_all_ids = [];
+            DETAILS_TBODY.find('.single-approve').removeAttr("checked");
+            DETAILS_TBODY.find(".single-approve").each(function(){
+               $(this).prop('checked', false);
+               approve_all_ids.push(parseInt($(this).val()));
+            });
+            tempAction(approve_all_ids, 0);
         }
     });
     CHECK_ALL_REJECT.click(function() {
         if ($(this).prop("checked") == true) {
             confirmationAction(0, 'single-reject');
         } else {
+            var reject_all_ids = [];
             DETAILS_TBODY.find('.single-reject').removeAttr("checked");
             DETAILS_TBODY.find('.rejected-reason').html('')
             DETAILS_TBODY.find(".single-reject").each(function(){
-               $(this).prop('checked', false).triggerHandler('click');
+               $(this).prop('checked', false);
+               reject_all_ids.push(parseInt($(this).val()));
             });
+            tempAction(reject_all_ids, 0);
         }
     });
     PASSWORD_SINGLE_REJECT_SUBMIT.click(function() {
@@ -245,8 +258,13 @@ PageControls = function() {
         } else {
             Custombox.close();
             if (CHECK_ALL_REJECT.prop("checked") == true) {
+                var reject_all_ids = [];
                 DETAILS_TBODY.find('.single-reject').removeAttr("checked");
-                DETAILS_TBODY.find('.single-reject').trigger('click');
+                DETAILS_TBODY.find(".single-reject").each(function(){
+                   $(this).prop('checked', true);
+                   reject_all_ids.push(parseInt($(this).val()));
+                });
+                tempAction(reject_all_ids, 2);
             } else {
                 singleReject(SINGLE_REJECT_ID.val(), true);
             }
@@ -724,14 +742,16 @@ ApproveAssignStatutoryBU.prototype.displayListPage = function(data) {
                 .attr("onClick", "goToDetailsPage(" + v.csv_id + ")");
         }
 
+        $('.dropbtn',clone).attr("data-dropdown-id", no);
         $('.dropbtn',clone).on('click', function(){
-            if($(".dropdown-content", clone).hasClass("show")==false){
-                $(".dropdown-content", clone).show();
-                $(".dropdown-content", clone).addClass("show");
+            var dropdownID = $(this).attr("data-dropdown-id");
+            if($("#dropdown-content-id-"+dropdownID).hasClass("show") == false){
+                $("#dropdown-content-id-"+dropdownID).show();
+                $("#dropdown-content-id-"+dropdownID).addClass("show");
             }
             else{
-                $(".dropdown-content", clone).hide();
-                $(".dropdown-content", clone).removeClass("show");
+                $("#dropdown-content-id-"+dropdownID).hide();
+                $("#dropdown-content-id-"+dropdownID).removeClass("show");
             }
         });
 
@@ -762,6 +782,7 @@ ApproveAssignStatutoryBU.prototype.displayListPage = function(data) {
             'text');
         });
         $('.dropdown-content', clone).addClass("show-download" + v.csv_id);
+        $('.dropdown-content', clone).attr("id", "dropdown-content-id-"+no);
         $('.approve span', clone)
             .attr(
                 "onClick", "confirmationAction(" + v.csv_id + ", 'approve')"
@@ -869,8 +890,7 @@ approveOrRejectAction = function(id, clId, leId, action, reason, password) {
             STATUTE.fetchValues();
         } else{
             if (error == "Alive"){
-                sleep(180000);
-                apiCallConfirm(csv_name, call_bck_fn_confirm);                        
+                setTimeout(apiCallConfirm, TIMEOUT_MLS, csv_name, call_bck_fn_confirm);                       
             }else{
                 STATUTE.failuresMessage(
                     error
@@ -913,8 +933,7 @@ approveOrRejectAction = function(id, clId, leId, action, reason, password) {
             }
         } else {
             if (error == "Alive"){
-                sleep(180000);
-                apiCallList(csv_name, call_bck_fn);                 
+                setTimeout(apiCallList, TIMEOUT_MLS, csv_name, call_bck_fn);            
             }else{
                 STATUTE.failuresMessage(error);
                 hideLoader();
@@ -1117,10 +1136,10 @@ singleApprove = function(id) {
     if ($('#approve' + id).prop("checked") == true) {
         $('#reject' + id).removeAttr("checked");
         $('#rejected_reason' + id + ' i').remove();
-        tempAction(id, 1);
+        tempAction([id], 1);
         checkAllEnableDisable();
     } else {
-        tempAction(id, 0);
+        tempAction([id], 0);
         checkAllEnableDisable();
     }
 }
@@ -1140,7 +1159,7 @@ singleReject = function(id, flag) {
                     'data-toggle="tooltip" data-original-title=' +
                     '"' + SINGLE_REJECT_REASON.val() + '"></i>'
                 );
-                tempAction(id, 2);
+                tempAction([parseInt(id)], 2);
                 checkAllEnableDisable();
             }
         } else {
@@ -1152,11 +1171,11 @@ singleReject = function(id, flag) {
                 'data-original-title="' + SINGLE_REJECT_REASON.val() + '" ' +
                 '></i>'
             );
-            tempAction(id, 2);
+            tempAction([id], 2);
             CHECK_ALL_APPROVE.removeAttr("checked");
         }
     } else {
-        tempAction(id, 0);
+        tempAction([id], 0);
         checkAllEnableDisable();
         $('#rejected_reason' + id + ' i').remove();
     }
@@ -1168,7 +1187,7 @@ tempAction = function(id, action) {
     var csvid = ASID.val();
     var reason = SINGLE_REJECT_REASON.val();
     displayLoader();
-    bu.updateAssignStatutoryActionFromView(parseInt(csvid), parseInt(id),
+    bu.updateAssignStatutoryActionFromView(parseInt(csvid), id,
         parseInt(action), reason,
         function(error, response) {
             if (error == null) {
@@ -1364,15 +1383,6 @@ createPageView = function(total_records) {
     });
 };
 
-function sleep(milliseconds) {
-      var start = new Date().getTime();
-      for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds){
-          break;
-        }
-      }
-    }
-
 // To validate and send action status server using submit button action
 ApproveAssignStatutoryBU.prototype.submitProcess = function() {
     var password = SUBMIT_PASSWORD.val();
@@ -1414,8 +1424,8 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
                     STATUTE.pageLoad();
                 } else{
                     if (error == "Alive"){
-                        sleep(180000);
-                        apiCallConfirm(csv_name, call_bck_fn_confirm);                        
+                        setTimeout(apiCallConfirm, TIMEOUT_MLS, csv_name, call_bck_fn_confirm);
+                                              
                     }else{
                         STATUTE.failuresMessage(
                             error
@@ -1462,8 +1472,7 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
                     }
                 } else {
                     if (error == "Alive"){
-                        sleep(180000);
-                        apiCallSubmit(csv_name, call_bck_fn);                 
+                        setTimeout(apiCallSubmit, TIMEOUT_MLS, csv_name, call_bck_fn);          
                     }else{
                         statute.failuresMessage(error);
                         hideLoader();

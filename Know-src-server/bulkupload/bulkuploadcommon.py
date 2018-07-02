@@ -107,10 +107,13 @@ def read_data_from_csv(file_name):
                         headerrow.append(c.strip())
                 else:
                     data = {}
+                    data_text = ""
                     for cdx, c in enumerate(r):
                         val = c.strip()
+                        data_text += val
                         data[headerrow[cdx]] = val
-                    mapped_data.append(data)
+                    if data_text.strip() != "":
+                        mapped_data.append(data)
     return headerrow, mapped_data
 
 
@@ -317,3 +320,29 @@ def write_download_data_to_excel(
         if (srow not in remove_error_desc_row):
             summarySheet.write_string(srow, 1, str(error_count))
         srow += 1
+
+
+def remove_bulk_uploaded_files(csv_name):
+    file_string = csv_name.split(".")
+    print "file_string >>>"
+    print file_string[0]
+    upload_files = ["csv", "txt", "ods", "xlsx"]
+    for remove_file in upload_files:
+
+        print "remove_file >>"
+        print remove_file
+
+        print "BULKUPLOAD_CSV_PATH >>>"
+        print BULKUPLOAD_CSV_PATH
+
+        file_path = "%s/%s/%s.%s" % (
+            BULKUPLOAD_CSV_PATH,
+            remove_file,
+            file_string[0],
+            remove_file
+            )
+        print "os.path.exists(file_path) >>>"
+        print os.path.exists(file_path)
+        if os.path.exists(file_path) is True:
+            print "Removed Trueeueueue"
+            print remove_uploaded_file(file_path)

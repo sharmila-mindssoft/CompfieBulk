@@ -74,6 +74,8 @@ class StatutorySource(object):
         self._csv_column_name = []
         self._csv_column_name_with_mandatory = []
         self.csv_column_fields()
+        self.compliance_list_knowdb = []
+        self.taskids_list_knowdb = []
 
     def csv_column_fields(self):
         self._csv_column_name = [
@@ -653,37 +655,65 @@ class StatutorySource(object):
         self, country_id, domain_id, statutory,
         statutory_provision, task_name
     ):
+        compare_str = str(country_id)
+        compare_str += "-" + str(domain_id)
         statutories = statutory.split(CSV_DELIMITER)
         statutory_string = str("[\"" + (',').join(statutories) + "\"]")
+        compare_str += "-" + str(statutory_string)
+        compare_str += "-" + str(statutory_provision)
+        compare_str += "-" + str(task_name)
+        if len(self.compliance_list_knowdb) > 0:
+            if compare_str in self.compliance_list_knowdb:
+                return False
+            else:
+                return True
 
-        data = self._source_db.call_proc(
-            "sp_bu_check_duplicate_compliance", [
-                country_id, domain_id, statutory_provision, task_name,
-                statutory_string
-            ]
-        )
-        if len(data) > 0:
-            return False
-        else:
-            return True
+        return True
+
+    def get_all_matching_compliance_know(self, country_id, domain_id):
+        data = self._source_db.call_proc("sp_bu_get_matching_compliance", [
+            country_id, domain_id
+        ])
+        for d in data:
+            data_str = str(d["country_id"])
+            data_str += "-" + str(d["domain_id"])
+            data_str += "-" + str(d["statutory_mapping"])
+            data_str += "-" + str(d["statutory_provision"])
+            data_str += "-" + str(d["compliance_task"])
+            self.compliance_list_knowdb.append(data_str)
 
     def check_task_id_duplicate(
         self, country_id, domain_id, statutory,
         statutory_provision, task_name, task_id
     ):
+        compare_str = str(country_id)
+        compare_str += "-" + str(domain_id)
         statutories = statutory.split(CSV_DELIMITER)
         statutory_string = str("[\"" + (',').join(statutories) + "\"]")
+        compare_str += "-" + str(statutory_string)
+        compare_str += "-" + str(statutory_provision)
+        compare_str += "-" + str(task_name)
+        compare_str += "-" + str(task_id)
+        if len(self.taskids_list_knowdb) > 0:
+            if compare_str in self.taskids_list_knowdb:
+                return False
+            else:
+                return True
 
-        data = self._source_db.call_proc(
-            "sp_bu_check_duplicate_task_id", [
-                country_id, domain_id, statutory_provision, task_name,
-                statutory_string, task_id
-            ]
-        )
-        if len(data) > 0:
-            return False
-        else:
-            return True
+        return True
+
+    def get_all_matching_taskids_know(self, country_id, domain_id):
+        data = self._source_db.call_proc("sp_bu_get_matching_taskids", [
+            country_id, domain_id
+        ])
+        for d in data:
+            data_str = str(d["country_id"])
+            data_str += "-" + str(d["domain_id"])
+            data_str += "-" + str(d["statutory_mapping"])
+            data_str += "-" + str(d["statutory_provision"])
+            data_str += "-" + str(d["compliance_task"])
+            data_str += "-" + str(d["task_id"])
+            self.taskids_list_knowdb.append(data_str)
 
     def save_mapping_data(self, c_id, d_id, n_id, uploadedby, mapping):
         created_on = get_date_time()
@@ -993,6 +1023,8 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         self._csv_header = csv_header
         self._error_summary = {}
         self.error_summary()
+        self.compliance_list_tempdb = []
+        self.taskid_list_tempdb = []
 
         self._doc_names = []
         self._sheet_name = "Statutory Mapping"
@@ -1088,25 +1120,63 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         self, country_id, domain_id, statutory, statutory_provision,
         compliance_task
     ):
-        data = self._db.call_proc("sp_check_duplicate_statu_mapping", [
-            country_id, domain_id, statutory, statutory_provision,
-            compliance_task
-        ])
-        if len(data) > 0:
-            return False
-        else:
-            return True
+        compare_str = str(country_id)
+        compare_str += "-" + str(domain_id)
+        compare_str += "-" + str(statutory)
+        compare_str += "-" + str(statutory_provision)
+        compare_str += "-" + str(compliance_task)
+        if len(self.compliance_list_tempdb) > 0:
+            if compare_str in self.compliance_list_tempdb:
+                return False
+            else:
+                return True
+
+        return True
 
     def check_duplicate_taskid_in_tempDB(
-        self, country_id, domain_id, task_id
+        self, country_id, domain_id, task_id, statutory, statutory_provision,
+        compliance_task
     ):
-        data = self._db.call_proc("sp_check_duplicate_task_id", [
-            country_id, domain_id, task_id
+        compare_str = str(country_id)
+        compare_str += "-" + str(domain_id)
+        compare_str += "-" + str(task_id)
+        compare_str += "-" + str(statutory)
+        compare_str += "-" + str(statutory_provision)
+        compare_str += "-" + str(compliance_task)
+        if len(self.taskid_list_tempdb) > 0:
+            if compare_str in self.taskid_list_tempdb:
+                return False
+            else:
+                return True
+
+        return True
+
+    def get_all_matching_compliance_temp(self, country_id, domain_id):
+        data = self._db.call_proc("sp_get_all_matching_compliances", [
+            country_id, domain_id
         ])
-        if len(data) > 0:
-            return False
-        else:
-            return True
+        for d in data:
+            data_str = str(d["country_id"])
+            data_str += "-" + str(d["domain_id"])
+            data_str += "-" + str(d["statutory"])
+            data_str += "-" + str(d["statutory_provision"])
+            data_str += "-" + str(d["compliance_task"])
+
+            self.compliance_list_tempdb.append(data_str)
+
+    def get_all_matching_taskids_temp(self, country_id, domain_id):
+        data = self._db.call_proc("sp_get_all_matching_task_ids", [
+            country_id, domain_id
+        ])
+        for d in data:
+            data_str = str(d["country_id"])
+            data_str += "-" + str(d["domain_id"])
+            data_str += "-" + str(d["task_id"])
+            data_str += "-" + str(d["statutory"])
+            data_str += "-" + str(d["statutory_provision"])
+            data_str += "-" + str(d["compliance_task"])
+
+            self.taskid_list_tempdb.append(data_str)
 
     '''
         looped csv data to perform corresponding validation
@@ -1132,6 +1202,18 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
         duplicate_task_ids = self.check_duplicate_task_id_in_csv()
 
         self.init_values(self._country_id, self._domain_id)
+        self.get_all_matching_taskids_temp(
+            self._country_id, self._domain_id
+        )
+        self.get_all_matching_compliance_temp(
+            self._country_id, self._domain_id
+        )
+        self.get_all_matching_compliance_know(
+            self._country_id, self._domain_id
+        )
+        self.get_all_matching_taskids_know(
+            self._country_id, self._domain_id
+        )
 
         def make_error_desc(res, msg):
             if res is True:
@@ -1248,7 +1330,10 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         res = make_error_desc(res, dup_error)
 
                     if not self.check_duplicate_taskid_in_tempDB(
-                        self._country_id, self._domain_id, data.get("Task_ID")
+                        self._country_id, self._domain_id,
+                        data.get("Task_ID"), data.get("Statutory"),
+                        data.get("Statutory_Provision"),
+                        data.get("Compliance_Task")
                     ):
                         self._error_summary["duplicate_error"] += 1
                         dup_error = "Task_ID - Duplicate in Temp DB"
@@ -1487,6 +1572,12 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             declined_count = 0
             self._declined_row_idx = {}
             self.init_values(self._country_id, self._domain_id)
+            self.get_all_matching_compliance_know(
+                self._country_id, self._domain_id
+            )
+            self.get_all_matching_taskids_know(
+                self._country_id, self._domain_id
+            )
 
             for row_idx, data in enumerate(self._source_data):
                 res = True
@@ -1518,14 +1609,15 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                     csvParam.get("check_is_exists") is True or
                                     csvParam.get("check_is_active") is True
                                 ):
-                                    unboundMethod = self._check_method_maps.get(
-                                        key
-                                    )
+                                    unboundMethod = self._check_method_maps. \
+                                        get(key)
 
-                                    if key in ["Applicable_Location", "Statutory"]:
+                                    if key in ["Applicable_Location",
+                                               "Statutory"]:
                                         if v.find(">>") > 0:
                                             v = " >> ".join(
-                                                e.strip() for e in v.split(">>")
+                                                e.strip() for e in v.split(
+                                                    ">>")
                                             )
 
                                     if unboundMethod is not None:
@@ -1642,10 +1734,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                     msg.append(grouped_list[0].get("Compliance_Task"))
                 uploaded_by = grouped_list[0].get("uploaded_by")
 
-                statu_mapping = value.get("Statutory");
+                statu_mapping = value.get("Statutory")
                 statu_mapping_formated = self.get_statu_map_ws(statu_mapping)
                 statu_mapping_strips = self.get_statu_maps(statu_mapping)
-                statu_mapping_strips = statu_mapping_strips.split(CSV_DELIMITER)
+                statu_mapping_strips = statu_mapping_strips.split(
+                    CSV_DELIMITER)
                 for statu_m in statu_mapping_strips:
                     parent_id = ''
                     parent_names = ''
@@ -1672,57 +1765,71 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                 statu_position = self.statu_level_position
                                 level_id = statu_position.get(statu_level)
                                 if(self.t_statu.get(strip_data) is not None):
-                                    parent_id += str(self.t_statu.get(strip_data)) + ","
-                                    parent_names = self.get_statu_map_ws(str(strip_data))
+                                    parent_id += str(
+                                        self.t_statu.get(strip_data)) + ","
+                                    parent_names = self.get_statu_map_ws(
+                                        str(strip_data))
 
                                 if(
                                    self.statutories.get(strip_data) is not None
                                    ):
                                     # Removed For adding duplicate parent id
                                     # parent_id += str(self.statutories.get(
-                                    #     strip_data).get("statutory_id")) + ","
-                                    parent_names = self.get_statu_map_ws(str(strip_data))
+                                    # strip_data).get("statutory_id")) + ","
+                                    parent_names = self.get_statu_map_ws(
+                                        str(strip_data))
 
-
-                                if (int(statu_level) == 1 and
-                                   self.statutories.get(strip_data) is None):
+                                if (
+                                    int(statu_level) == 1 and
+                                    self.statutories.get(strip_data) is None
+                                ):
                                     if(strip_data not in statu_exists_id):
                                         statu_id = self.save_statu_data(
                                             str(legis_name), level_id,
                                             parent_id, parent_names,
                                             uploaded_by)
-                                        self.get_statutories(self._country_id,
-                                            self._domain_id)
+                                        self.get_statutories(
+                                            self._country_id, self._domain_id)
                                         if(len(legis_data) == 1):
                                             if statu_id not in statu_ids:
                                                 statu_ids.append(statu_id)
                                         statu_exists_id.append(strip_data)
                                         self.t_statu[strip_data] = statu_id
                                         parent_id += str(statu_id) + ","
-                                        parent_names = self.get_statu_map_ws(str(strip_data))
+                                        parent_names = self.get_statu_map_ws(
+                                            str(strip_data))
                                 else:
                                     if(
                                         int(statu_level) > 1 and
-                                        self.statutories.get(strip_data) is None
+                                        self.statutories.get(
+                                            strip_data) is None
                                     ):
-                                        if(self.t_statu.get(strip_data) is None):
+                                        if(
+                                            self.t_statu.get(strip_data) is
+                                            None
+                                        ):
                                             statu_id = self.save_statu_data(
                                                 str(legis_name), level_id,
                                                 parent_id, parent_names,
                                                 uploaded_by)
-                                            self.get_statutories(self._country_id,
-                                            self._domain_id)
+                                            self.get_statutories(
+                                                self._country_id,
+                                                self._domain_id
+                                            )
                                             if len(legis_data) == statu_level:
                                                 if statu_id not in statu_ids:
                                                     statu_ids.append(statu_id)
-                                                    statu_exists_id.append(strip_data)
+                                                    statu_exists_id.append(
+                                                        strip_data)
                                             self.t_statu[strip_data] = statu_id
                                             parent_id += str(statu_id) + ","
-                                            parent_names = self.get_statu_map_ws(str(strip_data))
+                                            p_name = self.get_statu_map_ws(str(
+                                                strip_data))
+                                            parent_names = p_name
                 self.save_statutories_data(
                     self._country_id, self._domain_id, nature_id, uploaded_by,
-                    str(statu_mapping_formated), grouped_list, org_ids, statu_ids,
-                    geo_ids)
+                    str(statu_mapping_formated), grouped_list, org_ids,
+                    statu_ids, geo_ids)
         except Exception, e:
             print str(traceback.format_exc())
             raise e
@@ -1773,18 +1880,16 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             print str(traceback.format_exc())
             raise (e)
 
-
     def update_file_status(self, csvid, file_submit_status):
-            
+
             c_db_con = bulkupload_db_connect()
             _db_check = Database(c_db_con)
             try:
                 _db_check.begin()
-                data = _db_check.call_proc(
-                    "sp_update_approve_file_status", [csvid, file_submit_status]
+                _db_check.call_proc(
+                    "sp_update_approve_file_status",
+                    [csvid, file_submit_status]
                 )
-                print "sp_update_approve_file_status >>>>>>>>>>>"
-                print data
                 _db_check.commit()
             except Exception, e:
                 print e
@@ -1796,12 +1901,11 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 c_db_con.close()
             return "success"
 
-
     def format_download_process_initiate(self, csvid):
         approve_call_res = self.file_server_approve_call(csvid)
         if approve_call_res == "error":
             self.update_file_status(csvid, 2)
-            return 
+            return False
         self._stop = False
 
         def check_status():
@@ -1812,10 +1916,8 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 self._stop = True
                 res = self.file_server_download_call(csvid)
                 if(res == "success"):
-                    print "update_file_status 1"
                     self.update_file_status(csvid, 1)
                 else:
-                    print "update_file_status 2"
                     self.update_file_status(csvid, 2)
 
             if self._stop is False:
@@ -1845,6 +1947,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             return file_status
 
         check_status()
+        return True
 
     def file_server_approve_call(self, csvid):
         caller_name = "%sapprove?csvid=%s" % (TEMP_FILE_SERVER, csvid)
@@ -1871,7 +1974,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             self.file_server_remove_call(csvid)
         except Exception as e:
             print e
-            raise IOError
+            # raise IOError
             return "error"
         return "success"
 
@@ -1880,7 +1983,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
         response = requests.post(caller_name)
         print "response in remove file", response.text
 
-    ## Delete Rejected CSV Documents.
+    # Delete Rejected CSV Documents.
     def temp_server_folder_remove_call(self, csvid):
         caller_name = "%sremovefolders?csvid=%s" % (TEMP_FILE_SERVER, csvid)
         response = requests.post(caller_name)
