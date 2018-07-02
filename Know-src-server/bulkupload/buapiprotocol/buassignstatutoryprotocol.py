@@ -451,26 +451,23 @@ class ViewAssignStatutoryDataFromFilter(Request):
 
 
 class AssignStatutoryApproveActionInList(Request):
-    def __init__(
-        self, cl_id, le_id, csv_id, bu_action, rejected_reason, password
-    ):
+    def __init__(self, cl_id, le_id, csv_id, bu_action, remarks, password):
         self.cl_id = cl_id
         self.le_id = le_id
         self.csv_id = csv_id
         self.bu_action = bu_action
-        self.rejected_reason = rejected_reason
+        self.remarks = remarks
         self.password = password
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "cl_id", "le_id",
-            "csv_id", "bu_action", "rejected_reason", "password"
+            "csv_id", "bu_action", "remarks", "password"
         ])
         return AssignStatutoryApproveActionInList(
             data.get("cl_id"), data.get("le_id"),
-            data.get("csv_id"), data.get("bu_action"),
-            data.get("rejected_reason"),
+            data.get("csv_id"), data.get("bu_action"), data.get("remarks"),
             data.get("password")
         )
 
@@ -480,26 +477,26 @@ class AssignStatutoryApproveActionInList(Request):
             "le_id": self.le_id,
             "csv_id": self.csv_id,
             "bu_action": self.bu_action,
-            "rejected_reason": self.rejected_reason,
+            "remarks": self.remarks,
             "password": self.password
         }
 
 
 class SaveAction(Request):
-    def __init__(self, as_ids, csv_id, bu_action, rejected_reason):
+    def __init__(self, as_ids, csv_id, bu_action, remarks):
         self.as_ids = as_ids
         self.csv_id = csv_id
         self.bu_action = bu_action
-        self.rejected_reason = rejected_reason
+        self.remarks = remarks
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "as_ids", "csv_id", "bu_action", "rejected_reason"
+            "as_ids", "csv_id", "bu_action", "remarks"
         ])
         return SaveAction(
             data.get("as_ids"), data.get("csv_id"),
-            data.get("bu_action"), data.get("rejected_reason")
+            data.get("bu_action"), data.get("remarks")
         )
 
     def to_inner_structure(self):
@@ -507,7 +504,7 @@ class SaveAction(Request):
             "as_ids": self.as_ids,
             "csv_id": self.csv_id,
             "bu_action": self.bu_action,
-            "rejected_reason": self.rejected_reason
+            "remarks": self.remarks
         }
 
 
