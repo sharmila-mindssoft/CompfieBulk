@@ -65,6 +65,7 @@ class SourceDB(object):
         self.hierarchy_checker = {}
         self.stop = True
         self.due_dates = {}
+        self.provisions = {}
         # self.get_doc_names()
 
     def connect_source_db(self, legal_entity_id):
@@ -131,6 +132,7 @@ class SourceDB(object):
         self.get_assignee()
         self.generate_hierarchy_checker()
         self.collect_due_dates_in_csv()
+        self.get_provisions()
 
     def get_legal_entities(self):
         query = "SELECT legal_entity_id, legal_entity_name, " + \
@@ -138,6 +140,12 @@ class SourceDB(object):
         rows = self._source_db.select_all(query)
         for d in rows:
             self.legal_entity[d["legal_entity_name"]] = d
+
+    def get_provisions(self):
+        query = "SELECT statutory_provision FROM tbl_compliances"
+        rows = self._source_db.select_all(query)
+        for d in rows:
+            self.provisions[d["statutory_provision"]] = d
 
     def get_domains(self):
         query = "SELECT domain_id, domain_name, is_active  FROM tbl_domains"
@@ -237,11 +245,12 @@ class SourceDB(object):
             " statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) " + \
             " -4), '>>', 1))+1),3),'\",',1)) AS secondary_legislation, " + \
             " compliance_id, compliance_task, compliance_description, " + \
-            " is_active from tbl_compliances t "
+            " is_active, statutory_provision from tbl_compliances t "
         rows = self._source_db.select_all(query)
         for d in rows:
             primary = d["primary_legislation"].strip()
             secondary = d["secondary_legislation"]
+            provision = d["statutory_provision"]
             compliance = d["compliance_task"]
             compliance_id = d["compliance_id"]
             description = d["compliance_description"]
@@ -253,9 +262,12 @@ class SourceDB(object):
                 self.hierarchy_checker[primary] = {}
             if secondary not in self.hierarchy_checker[primary]:
                 self.hierarchy_checker[primary][secondary] = {}
-            if compliance not in self.hierarchy_checker[primary][secondary]:
+            if provision not in self.hierarchy_checker[primary][secondary]:
+                self.hierarchy_checker[primary][secondary][provision] = {}
+            if compliance not in self.hierarchy_checker[
+                    primary][secondary][provision]:
                 self.hierarchy_checker[
-                    primary][secondary][compliance] = {
+                    primary][secondary][provision][compliance] = {
                         "compliance_id": compliance_id,
                         "desc": description}
 
@@ -436,7 +448,8 @@ class SourceDB(object):
 
     def check_due_date(
         self, due_date, domain_name, unit_code, compliance_task,
-        primary_legislation, secondary_legislation, description, frequency
+        primary_legislation, secondary_legislation, description, frequency,
+        provision
     ):
         compliance_id = None
         compliance_task_name = self.get_compliance_task_name(compliance_task)
@@ -451,7 +464,7 @@ class SourceDB(object):
             compliance_task, description)
         try:
             data = self.hierarchy_checker[primary_legislation.strip()][
-                secondary][compliance_task_name]
+                secondary][provision][compliance_task_name]
             if data["desc"] == description:
                 compliance_id = data["compliance_id"]
         except KeyError:
@@ -601,7 +614,12 @@ class SourceDB(object):
         else:
             return status1
 
-    def check_compliance_task(self, compliance_task, primary, secondary):
+    def check_statutory_provision(self, provision):
+        return self.check_base(False, self.provisions, provision, None)
+
+    def check_compliance_task(
+        self, compliance_task, primary, secondary, provision
+    ):
         status1 = True
         compliance_task_name = self.get_compliance_task_name(compliance_task)
         try:
@@ -609,7 +627,7 @@ class SourceDB(object):
                 secondary = "empty"
             if (
                 compliance_task_name not in self.hierarchy_checker[
-                    primary.strip()][secondary.strip()]):
+                    primary.strip()][secondary.strip()][provision]):
                 status1 = "Not Found"
         except KeyError:
             return
@@ -621,7 +639,8 @@ class SourceDB(object):
             return status1
 
     def check_compliance_description(
-        self, compliance_description, primary, secondary, compliance_task
+        self, compliance_description, primary, secondary, compliance_task,
+        provision
     ):
         status1 = True
         compliance_task_name = self.get_compliance_task_name(
@@ -631,8 +650,8 @@ class SourceDB(object):
                 secondary = "empty"
             if (
                 self.hierarchy_checker[
-                    primary.strip()][
-                    secondary.strip()][compliance_task_name]["desc"] !=
+                    primary.strip()][secondary.strip()][
+                    provision][compliance_task_name]["desc"] !=
                 compliance_description
             ):
                 status1 = "Not Found"
@@ -723,12 +742,14 @@ class SourceDB(object):
                 d["compliance_task_name"])
             primary = d["perimary_legislation"].strip()
             secondary = d["secondary_legislation"]
+            provision = d["statutory_provision"]
             if secondary == "":
                 secondary = "empty"
             else:
                 secondary = secondary.strip()
             compliance_id = self.hierarchy_checker[
-                primary][secondary][compliance_task_name]["compliance_id"]
+                primary][secondary][provision][
+                compliance_task_name]["compliance_id"]
             completion_date = d["completion_date"]
             unit_id = self.unit_code[d["unit_code"]]["unit_id"]
             assignee_id = self.assignee[d["assignee"]]["ID"]
@@ -788,7 +809,8 @@ class SourceDB(object):
             "Compliance_Frequency": self.check_frequency,
             "Assignee": self.check_assignee,
             "Due_Date": self.check_due_date,
-            "Completion_Date": self.check_completion_date
+            "Completion_Date": self.check_completion_date,
+            "Statutory_Provision": self.check_statutory_provision
         }
 
     def csv_column_fields(self):
@@ -796,6 +818,7 @@ class SourceDB(object):
             "Legal_Entity", "Domain",
             "Unit_Code", "Unit_Name",
             "Primary_Legislation", "Secondary_Legislation",
+            "Statutory_Provision",
             "Compliance_Task", "Compliance_Description",
             "Compliance_Frequency", "Statutory_Date",
             "Due_Date", "Assignee", "Completion_Date",
@@ -895,7 +918,8 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                                 data.get("Primary_Legislation"),
                                 data.get("Secondary_Legislation"),
                                 data.get("Compliance_Description"),
-                                data.get("Compliance_Frequency")
+                                data.get("Compliance_Frequency"),
+                                data.get("Statutory_Provision")
                             )
                         elif key == "Completion_Date":
                             is_found = unbound_method(
@@ -925,13 +949,15 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
                         elif key == "Compliance_Task":
                             is_found = unbound_method(
                                 v, data.get("Primary_Legislation"),
-                                data.get("Secondary_Legislation")
+                                data.get("Secondary_Legislation"),
+                                data.get("Statutory_Provision")
                             )
                         elif key == "Compliance_Description":
                             is_found = unbound_method(
                                 v, data.get("Primary_Legislation"),
                                 data.get("Secondary_Legislation"),
-                                data.get("Compliance_Task")
+                                data.get("Compliance_Task"),
+                                data.get("Statutory_Provision")
                             )
                         else:
                             is_found = unbound_method(v)

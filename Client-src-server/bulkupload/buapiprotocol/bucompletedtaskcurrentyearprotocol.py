@@ -204,7 +204,7 @@ class UnitWiseStatutoriesForPastRecords(object):
     def __init__(
         self, compliance_id, compliance_name, description, frequency,
         statutory_date, due_date, assignee_name, assignee_id,
-        primary_legislation, secondary_legislation
+        primary_legislation, secondary_legislation, statutory_provision
     ):
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
@@ -216,6 +216,7 @@ class UnitWiseStatutoriesForPastRecords(object):
         self.assignee_id = assignee_id
         self.primary_legislation = primary_legislation
         self.secondary_legislation = secondary_legislation
+        self.statutory_provision = statutory_provision
 
     @staticmethod
     def parse_structure(data):
@@ -223,14 +224,15 @@ class UnitWiseStatutoriesForPastRecords(object):
             "compliance_id", "compliance_name", "description",
             "compliance_task_frequency", "pr_statutory_date", "due_date",
             "assignee_name", "assignee_id", "primary_legislation",
-            "secondary_legislation"
+            "secondary_legislation", "statutory_provision"
         ])
         return UnitWiseStatutoriesForPastRecords(
             data.get("compliance_id"), data.get("compliance_name"),
             data.get("description"), data.get("compliance_task_frequency"),
             data.get("pr_statutory_date"), data.get("due_date"),
             data.get("assignee_name"), data.get("assignee_id"),
-            data.get("primary_legislation"), data.get("secondary_legislation")
+            data.get("primary_legislation"), data.get("secondary_legislation"),
+            data.get("statutory_provision")
         )
 
     def to_structure(self):
@@ -244,7 +246,8 @@ class UnitWiseStatutoriesForPastRecords(object):
             "assignee_name": self.assignee_name,
             "assignee_id": self.assignee_id,
             "primary_legislation": self.primary_legislation,
-            "secondary_legislation": self.secondary_legislation
+            "secondary_legislation": self.secondary_legislation,
+            "statutory_provision": self.statutory_provision
         }
 
 

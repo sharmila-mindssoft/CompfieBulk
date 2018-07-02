@@ -1011,7 +1011,7 @@ var myDropzone = new Dropzone("div#myDrop", {
                 BTN_UPLOAD.hide();
                 BUCT_PAGE.showList();
             }
-            if(queueCount == 0){
+            if(queueCount == 0 || totalfileUploadSuccess == queueCount){
                 hideLoader();
             }
             // myDropzone.removeAllFiles(true);            

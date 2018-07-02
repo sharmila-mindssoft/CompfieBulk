@@ -2018,6 +2018,7 @@ ADD COLUMN `country` VARCHAR(50) NOT NULL AFTER `domain_ids`;
 ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv`
 ADD COLUMN `file_submit_status` TINYINT DEFAULT '0' AFTER `file_download_status`,
 ADD COLUMN `data_submit_status` TINYINT DEFAULT '0' AFTER `file_submit_status`;
+ADD COLUMN `statutory_provision` text DEFAULT NULL AFTER `secondary_legislation`;
 
 ALTER TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping_csv`
 ADD COLUMN `file_submit_status` TINYINT DEFAULT '0' AFTER `file_download_status`;
