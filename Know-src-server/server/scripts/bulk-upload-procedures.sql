@@ -228,7 +228,7 @@ BEGIN
     compliance_description
     FROM tbl_download_assign_statutory_template WHERE
     client_group = clientgroup_name AND country = country_name AND legal_entity = le_name AND find_in_set (domain, domain_name)
-    AND find_in_set (unit_name, unitname_)
+    AND find_in_set (unit_code, unitname_)
     ORDER BY domain, unit_code;
 END //
 DELIMITER ;
@@ -244,7 +244,7 @@ CREATE PROCEDURE `sp_delete_assign_statutory_template`(IN
 BEGIN
     DELETE FROM tbl_download_assign_statutory_template
     WHERE legal_entity = legalentityname_ AND
-    find_in_set (domain, domainname_) AND find_in_set (unit_name, unitname_);
+    find_in_set (domain, domainname_) AND find_in_set (unit_code, unitname_);
 END //
 DELIMITER ;
 
@@ -2019,8 +2019,8 @@ ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data_csv`
 ADD COLUMN `file_submit_status` TINYINT DEFAULT '0' AFTER `file_download_status`,
 ADD COLUMN `data_submit_status` TINYINT DEFAULT '0' AFTER `file_submit_status`;
 
-ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data`
-ADD COLUMN `statutory_provision` text DEFAULT NULL AFTER `secondary_legislation`;
-
 ALTER TABLE `compfie_bulkupload`.`tbl_bulk_statutory_mapping_csv`
 ADD COLUMN `file_submit_status` TINYINT DEFAULT '0' AFTER `file_download_status`;
+
+ALTER TABLE `compfie_bulkupload`.`tbl_bulk_past_data`
+ADD COLUMN `statutory_provision` text DEFAULT NULL AFTER `secondary_legislation`;

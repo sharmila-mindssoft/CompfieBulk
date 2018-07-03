@@ -388,7 +388,7 @@ function getViewAssignStatutoryDataFromFilter(csvid, f_count, r_range,
 }
 
 function assignStatutoryActionInList(cl_id, le_id, csvid, action,
-    remarks, password, callback) {
+    remarks, callback) {
     var request = [
         'AssignStatutoryApproveActionInList',
         {
@@ -396,8 +396,7 @@ function assignStatutoryActionInList(cl_id, le_id, csvid, action,
             "le_id": le_id,
             "csv_id": csvid,
             "bu_action": action,
-            "remarks": remarks,
-            "password": password
+            "remarks": remarks
         }
     ];
     apiRequest("bu/assign_statutory", request, callback);
@@ -599,25 +598,25 @@ function submitMappingAction(csvid, country_id, domain_id, pwd, callback) {
     apiRequest("bu/statutory_mapping", request, callback);
 }
 
-function validateAssignStatutory(csvid, callback) {
+function validateAssignStatutory(csvid, pwd, callback) {
     var request = [
         'AssignStatutoryValidate',
         {
-            "csv_id": csvid
+            "csv_id": csvid,
+            "password": pwd
         }
     ];
     apiRequest("bu/assign_statutory", request, callback);
 }
 
 
-function submitAssignStatutoryAction(csvid, cl_id, le_id, pwd, callback) {
+function submitAssignStatutoryAction(csvid, cl_id, le_id, callback) {
     var request = [
         'SubmitAssignStatutory',
         {
             "csv_id": csvid,
             "cl_id": cl_id,
-            "le_id": le_id,
-            "password": pwd
+            "le_id": le_id
         }
     ];
     apiRequest("bu/assign_statutory", request, callback);

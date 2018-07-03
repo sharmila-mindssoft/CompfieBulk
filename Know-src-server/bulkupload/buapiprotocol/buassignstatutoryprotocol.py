@@ -451,24 +451,22 @@ class ViewAssignStatutoryDataFromFilter(Request):
 
 
 class AssignStatutoryApproveActionInList(Request):
-    def __init__(self, cl_id, le_id, csv_id, bu_action, remarks, password):
+    def __init__(self, cl_id, le_id, csv_id, bu_action, remarks):
         self.cl_id = cl_id
         self.le_id = le_id
         self.csv_id = csv_id
         self.bu_action = bu_action
         self.remarks = remarks
-        self.password = password
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "cl_id", "le_id",
-            "csv_id", "bu_action", "remarks", "password"
+            "csv_id", "bu_action", "remarks"
         ])
         return AssignStatutoryApproveActionInList(
             data.get("cl_id"), data.get("le_id"),
-            data.get("csv_id"), data.get("bu_action"), data.get("remarks"),
-            data.get("password")
+            data.get("csv_id"), data.get("bu_action"), data.get("remarks")
         )
 
     def to_inner_structure(self):
@@ -477,8 +475,7 @@ class AssignStatutoryApproveActionInList(Request):
             "le_id": self.le_id,
             "csv_id": self.csv_id,
             "bu_action": self.bu_action,
-            "remarks": self.remarks,
-            "password": self.password
+            "remarks": self.remarks
         }
 
 
@@ -530,43 +527,43 @@ class ConfirmAssignStatutorySubmit(Request):
 
 
 class AssignStatutoryValidate(Request):
-    def __init__(self, csv_id):
+    def __init__(self, csv_id, password):
         self.csv_id = csv_id
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["csv_id"])
-        return AssignStatutoryValidate(
-            data.get("csv_id")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "csv_id": self.csv_id
-        }
-
-
-class SubmitAssignStatutory(Request):
-    def __init__(self, csv_id, cl_id, le_id, password):
-        self.csv_id = csv_id
-        self.cl_id = cl_id
-        self.le_id = le_id
         self.password = password
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["csv_id", "cl_id", "le_id", "password"])
-        return SubmitAssignStatutory(
-            data.get("csv_id"), data.get("cl_id"), data.get("le_id"),
+        data = parse_dictionary(data, ["csv_id", "password"])
+        return AssignStatutoryValidate(
+            data.get("csv_id"),
             data.get("password")
         )
 
     def to_inner_structure(self):
         return {
             "csv_id": self.csv_id,
-            "cl_id": self.cl_id,
-            "le_id": self.le_id,
             "password": self.password
+        }
+
+
+class SubmitAssignStatutory(Request):
+    def __init__(self, csv_id, cl_id, le_id):
+        self.csv_id = csv_id
+        self.cl_id = cl_id
+        self.le_id = le_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_id", "cl_id", "le_id"])
+        return SubmitAssignStatutory(
+            data.get("csv_id"), data.get("cl_id"), data.get("le_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "csv_id": self.csv_id,
+            "cl_id": self.cl_id,
+            "le_id": self.le_id
         }
 
 

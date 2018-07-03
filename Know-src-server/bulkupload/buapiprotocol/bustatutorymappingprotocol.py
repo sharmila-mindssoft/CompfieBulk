@@ -1806,6 +1806,19 @@ class Done(Response):
             "csv_name": self.csv_name
         }
 
+
+class Failure(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return Alive()
+
+    def to_inner_structure(self):
+        return {}
+
+
 # class DocumentQueueProcessSuccess(Response):
 #     def __init__(self):
 #         pass
@@ -1860,7 +1873,7 @@ def _init_Response_class_map():
         RejectionMaxCountReached,
         GetDomainsSuccess, GetKExecutiveDetailsSuccess,
         SendExecutiveMessageSuccess, Alive, Done,
-        DocumentQueueProcessSuccess
+        DocumentQueueProcessSuccess, Failure
     ]
     class_map = {}
     for c in classes:

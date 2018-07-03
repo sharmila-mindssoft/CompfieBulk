@@ -213,6 +213,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
             fn.write(return_data)
+            os.chmod(file_path, 0777)
         return
     try:
         res_data = c_obj.perform_validation()
@@ -587,6 +588,7 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
         )
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
+            os.chmod(file_path, 0777)
             fn.write(return_data)
 
     try:
@@ -660,9 +662,7 @@ def submit_statutory_mapping(db, request_frame, session_user):
         domain_id = request_frame.d_id
         # csv data validation
         if get_pending_action(db, csv_id):
-            raise RuntimeError(
-                "All compliance should be selected before submit"
-            )
+            return bu_sm.Failure()
 
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
@@ -687,6 +687,7 @@ def submit_statutory_validate(db, request_frame, c_obj, session_user):
         )
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
+            os.chmod(file_path, 0777)
             fn.write(return_data)
 
     try:
@@ -766,6 +767,7 @@ def confirm_statutory_validate(db, request_frame, c_obj, session_user):
         )
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
+            os.chmod(file_path, 0777)
             fn.write(return_data)
         return
 

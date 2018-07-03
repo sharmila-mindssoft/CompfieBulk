@@ -1773,9 +1773,13 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                 if(
                                    self.statutories.get(strip_data) is not None
                                    ):
-                                    # Removed For adding duplicate parent id
-                                    # parent_id += str(self.statutories.get(
-                                    # strip_data).get("statutory_id")) + ","
+                                    checkexists = parent_id.split(",")
+                                    checkexists = [x.strip() for x in checkexists if x.strip()]
+                                    checkexists = [int(i) for i in checkexists]
+                                    check_parent_id = int(self.statutories.get(
+                                        strip_data).get("statutory_id"))
+                                    if check_parent_id not in checkexists:
+                                        parent_id += str(check_parent_id) + ","
                                     parent_names = self.get_statu_map_ws(
                                         str(strip_data))
 
