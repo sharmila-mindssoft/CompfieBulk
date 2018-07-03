@@ -197,7 +197,7 @@ function pageControls() {
                         }
                         if(ISVALID){
                             UNITNAMES.push(
-                                UNITS[i].u_name.split('-').pop().trim()
+                                UNITS[i].u_name.split('-')[0].trim()
                             );
                             UNITIDS.push(UNITS[i].u_id);
                         }   
@@ -207,7 +207,7 @@ function pageControls() {
                 $("#units option:selected").each(function () {
                    $this = $(this);
                    if ($this.length) {
-                    selText = $this.text().split('-').pop();
+                    selText = $this.text().split('-')[0].trim();
                     UNITNAMES.push(selText.trim());
                    }
                 });
