@@ -530,19 +530,22 @@ class ConfirmAssignStatutorySubmit(Request):
 
 
 class AssignStatutoryValidate(Request):
-    def __init__(self, csv_id):
+    def __init__(self, csv_id, password):
         self.csv_id = csv_id
+        self.password = password
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["csv_id"])
+        data = parse_dictionary(data, ["csv_id", "password"])
         return AssignStatutoryValidate(
-            data.get("csv_id")
+            data.get("csv_id"),
+            data.get("password")
         )
 
     def to_inner_structure(self):
         return {
-            "csv_id": self.csv_id
+            "csv_id": self.csv_id,
+            "password": self.password
         }
 
 
