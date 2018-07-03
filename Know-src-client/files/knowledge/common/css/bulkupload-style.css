@@ -1,6 +1,5 @@
-    .multiselect {
-        width: 100%;
-        overflow: hidden;
+    .btn-group  .multiselect{
+        width: 100% !important;
     }
 
     .multiselect-native-select>.btn-group {
@@ -280,12 +279,12 @@
 
   /* approve-statutory-mapping-bulk-upload Inline Styles */
 .datatable-inline{
-  width: 3000px !important; 
+  width: 3000px !important;
   overflow-x: auto;
   margin:0;
 }
 .pagination-inline{
-width: 100%; 
+width: 100%;
 display: table;
 }
 .td-inline-one{
@@ -587,18 +586,18 @@ td.task-id {
   overflow: visible;
 }
 #multi_col_freezer .table-responsive  thead th {
-  position: relative; 
+  position: relative;
 }
-.thead-tr-1-tr th:nth-child(1),  
-.thead-tr-1-tr th:nth-child(2), 
+.thead-tr-1-tr th:nth-child(1),
+.thead-tr-1-tr th:nth-child(2),
 .thead-tr-1-tr th:nth-child(3),
-.thead-tr-2-tr th:nth-child(1), 
-.thead-tr-2-tr th:nth-child(2), 
+.thead-tr-2-tr th:nth-child(1),
+.thead-tr-2-tr th:nth-child(2),
 .thead-tr-2-tr th:nth-child(3),
-.thead-tr-3-tr th:nth-child(1), 
-.thead-tr-3-tr th:nth-child(2), 
-.thead-tr-3-tr th:nth-child(3), 
-.thead-tr-3-tr th:nth-child(4), 
+.thead-tr-3-tr th:nth-child(1),
+.thead-tr-3-tr th:nth-child(2),
+.thead-tr-3-tr th:nth-child(3),
+.thead-tr-3-tr th:nth-child(4),
 .thead-tr-3-tr th:nth-child(5) {
   position: relative;
   z-index: 99;
@@ -673,9 +672,13 @@ tr.thead-tr-3-tr .columnfixed {
     animation-direction: normal;
 }
 #multi_col_freezer .table-responsive  thead th {
-  position: relative; 
+  position: relative;
     transition-delay: 0.1s;
     animation: topScroll 5s 2;
     animation-direction: normal;
 }
+}
+
+.tbl-reason-for-rejection{
+    word-break: break-all;
 }
