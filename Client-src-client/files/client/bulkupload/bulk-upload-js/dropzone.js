@@ -436,6 +436,7 @@ var Dropzone = function (_Emitter) {
         /**
          * If the filesize is too big.
          * `{{filesize}}` and `{{maxFilesize}}` will be replaced with the respective configuration values.
+         * Changed mib to MB
          */
         dictFileTooBig: "File is too big ({{filesize}}MB). Max filesize: {{maxFilesize}}MB.",
 
