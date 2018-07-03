@@ -1544,6 +1544,13 @@ $(document).ready(function() {
     PageControls();
     bulkLoadItemsPerPage();
     $(".nicescroll").niceScroll();
+
+    $('#remark').on('input', function (e) {
+      isCommon_input(this);
+    });
+    $('#single_reject_remark').on('input', function (e) {
+      isCommon_input(this);
+    });
 });
 
 $(document).mouseup(function(e) 
