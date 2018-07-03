@@ -215,7 +215,6 @@ BulkUploadStatutoryMapping.prototype.fetchDropDownData = function() {
 
 BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
     $('#myModal').modal('show');
-    console.log("CSV_INFO -> "+ JSON.stringify(CSV_INFO));
     var t_this = this;
     var args = {
         "c_id": parseInt(COUNTRY_VAL.val()),
@@ -329,7 +328,6 @@ BulkUploadStatutoryMapping.prototype.uploadCsv = function() {
     args, function(error, response){
         if(error == "Done" || response == "Done"){
             csv_name = response.csv_name;
-            console.log("got csv name: "+ csv_name);
             apiCall(csv_name, call_bck_fn);
         }else if(error == "RejectionMaxCountReached"){
             $('#myModal').modal('hide');
@@ -469,7 +467,6 @@ function key_search(mainList) {
 // page control events
 function PageControls() {
     ADD_BUTTON.click(function() {
-        console.log("add button click")
         BU_SMPAGE.showAddScreen();
     });
 
@@ -558,7 +555,6 @@ function PageControls() {
     }
     else {
         // Todo mandatory check
-        console.log($(".dropzone > .dz-preview").length)
         if($(".dropzone > .dz-preview").length > 0){
             displayLoader();
             setDocumentCount();
@@ -583,7 +579,6 @@ function file_upload_rul() {
     var session_id = mirror.getSessionToken();
     var file_base_url = "/knowledgetemp/upload?session_id=" +
         session_id + "&csvid=" + CSV_ID
-    console.log(file_base_url);
     return file_base_url;
 }
 
@@ -615,8 +610,6 @@ var myDropzone = new Dropzone("div#myDrop", {
     },
     init: function() {
         this.on("addedfile", function(file) {
-            console.log("Added file-> " + file.name);
-            console.log("addedfiles-> " + addedfiles);
             console.log("DOC_NAMES-> " + DOC_NAMES);
             if (jQuery.inArray(file.name, addedfiles) > -1) {
                 myDropzone.removeFile(file);
@@ -659,12 +652,8 @@ var myDropzone = new Dropzone("div#myDrop", {
                 perQueueUploadSuccess = 0;
                 myDropzone.processQueue();
             }
-            console.log("totalfileUploadSuccess-> "+ totalfileUploadSuccess);
-            console.log("queueCount->> "+ queueCount);
             if (totalfileUploadSuccess == queueCount) {
                 myDropzone.removeAllFiles(true);
-                console.log("DOC_NAMES.length->> "+ DOC_NAMES.length);
-                console.log("totalfileUploadSuccess->> "+ totalfileUploadSuccess);
                 if(DOC_NAMES.length == totalfileUploadSuccess){
                     var args = {
                         "c_name": COUNTRY_AC.val(),
@@ -688,7 +677,10 @@ var myDropzone = new Dropzone("div#myDrop", {
         this.on("error", function(file, errorMessage) {
             hideLoader();
             displayMessage(errorMessage);
-            addedfiles = []
+            addedfiles = [];
+            queueCount = 0;
+            totalfileUploadSuccess = 0;
+
             myDropzone.removeAllFiles(true);
         });
     }

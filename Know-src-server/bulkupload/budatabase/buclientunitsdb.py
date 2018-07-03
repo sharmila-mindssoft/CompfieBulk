@@ -398,7 +398,7 @@ def get_bulk_client_units_and_filtersets_by_csv_id(db, request, session_user):
             if idx == 0:
                 group_name = d["client_group"]
                 csv_name = d["csv_name"]
-                upload_on = d["uploaded_on"].strftime("%s-%b-%Y %H:%M")
+                upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
                 upload_by = d["uploaded_by"]
                 total_records = d["total_records"]
             client_unit_data.append(bu_cu.BulkClientUnitList(
@@ -553,7 +553,7 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user):
                     if idx == 0:
                         group_name = d["client_group"]
                         csv_name = d["csv_name"]
-                        upload_on = d["uploaded_on"].strftime("%s-%b-%Y %H:%M")
+                        upload_on = d["uploaded_on"].strftime("%d-%b-%Y %H:%M")
                         upload_by = d["uploaded_by"]
 
                     client_unit_data.append(bu_cu.BulkClientUnitList(

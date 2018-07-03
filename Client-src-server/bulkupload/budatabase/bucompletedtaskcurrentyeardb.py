@@ -79,36 +79,37 @@ def save_completed_task_current_year_csv(completed_task):
 
 
 def save_completed_task_data(csv_id, csv_data):
-    try:
-        columns = [
-            "csv_past_id", "Legal_Entity", "Domain",
-            "Unit_Code", "Unit_Name", "perimary_legislation",
-            "Secondary_Legislation", "compliance_task_name",
-            "Compliance_Description", "Compliance_Frequency", "Statutory_Date",
-            "Due_Date", "Assignee", "Completion_Date", "document_name"
-        ]
+    columns = [
+        "csv_past_id", "Legal_Entity", "Domain",
+        "Unit_Code", "Unit_Name", "perimary_legislation",
+        "Secondary_Legislation", "statutory_provision", "compliance_task_name",
+        "Compliance_Description", "Compliance_Frequency", "Statutory_Date",
+        "Due_Date", "Assignee", "Completion_Date", "document_name"
+    ]
 
-        values = []
-        for idx, d in enumerate(csv_data):
-            values.append((
-                csv_id, d["Legal_Entity"],
-                d["Domain"], d["Unit_Code"], d["Unit_Name"],
-                d["Primary_Legislation"], d["Secondary_Legislation"],
-                d["Compliance_Task"], d["Compliance_Description"],
-                d["Compliance_Frequency"], d["Statutory_Date"],
-                string_to_datetime(d["Due_Date"]), d["Assignee"],
-                string_to_datetime(d["Completion_Date"]), d["Document_Name"]
+    values = []
+    for idx, d in enumerate(csv_data):
+        values.append((
+            csv_id, d["Legal_Entity"],
+            d["Domain"], d["Unit_Code"], d["Unit_Name"],
+            d["Primary_Legislation"], d["Secondary_Legislation"],
+            d["Statutory_Provision"],
+            d["Compliance_Task"], d["Compliance_Description"],
+            d["Compliance_Frequency"], d["Statutory_Date"],
+            string_to_datetime(d["Due_Date"]), d["Assignee"],
+            string_to_datetime(d["Completion_Date"]), d["Document_Name"]
 
-            ))
-        db = connect_bulk_db()
-        if values:
-            db.bulk_insert("tbl_bulk_past_data", columns, values)
-            db.commit()
-            return True
-        else:
-            return False
-    except Exception:
-        raise ValueError("Transaction failed")
+        ))
+    if values:
+        try:
+            db = connect_bulk_db()
+            if db.bulk_insert("tbl_bulk_past_data", columns, values):
+                db.commit()
+                return True
+            else:
+                raise ValueError("Transaction Failed")
+        except Exception, e:
+            return e
 
 
 def get_past_record_data(db, csv_id):
@@ -118,7 +119,7 @@ def get_past_record_data(db, csv_id):
         " secondary_legislation, compliance_task_name, " + \
         " compliance_description, compliance_frequency, " + \
         " statutory_date, due_date, assignee, completion_date, " + \
-        " document_name" + \
+        " document_name, statutory_provision" + \
         " FROM tbl_bulk_past_data where csv_past_id = %s; "
     param = [csv_id]
     rows = db.select_all(query, param)

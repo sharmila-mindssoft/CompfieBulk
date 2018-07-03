@@ -227,13 +227,12 @@ class StatutorySource(object):
 
     def check_geography(self, geo_names):
         geo_names_levels = len(geo_names.split(">>"))
-        g_n = ""
         result_status = []
         for i in range(2, geo_names_levels + 1):
             message = ''
             g_n = " >> ".join(geo_names.split(" >> ")[:i])
             check_g_n = self.check_base(True, self.geographies, g_n)
-            if(check_g_n is not True):
+            if check_g_n is not True:
                 message = str(check_g_n)
                 result_status.append(message)
                 return message
@@ -243,11 +242,11 @@ class StatutorySource(object):
     def check_frequency(self, frequency):
         return self.check_base(False, self.compliance_frequency, frequency)
 
-    def check_repeat_type(self, rType):
-        return self.check_base(False, self.repeats_type, rType)
+    def check_repeat_type(self, r_type):
+        return self.check_base(False, self.repeats_type, r_type)
 
-    def check_duration_type(self, dType):
-        return self.check_base(False, self.duration_type, dType)
+    def check_duration_type(self, d_type):
+        return self.check_base(False, self.duration_type, d_type)
 
     def check_statutory(self, statutory):
         return self.check_base(False, self.statutories, statutory)
@@ -258,8 +257,8 @@ class StatutorySource(object):
                 return "Invalid Level"
         return True
 
-    def check_task_type(self, tType):
-        return self.check_base(False, self.task_type, tType)
+    def check_task_type(self, t_type):
+        return self.check_base(False, self.task_type, t_type)
 
     def check_single_input(self, d):
         msg = []
@@ -286,12 +285,12 @@ class StatutorySource(object):
         if (s_mon == 1 or s_mon == 3 or s_mon == 5 or s_mon == 7 or
                 s_mon == 8 or s_mon == 10 or s_mon == 12):
             max1 = 31
-        elif(s_mon == 4 or s_mon == 6 or s_mon == 9 or s_mon == 11):
+        elif s_mon == 4 or s_mon == 6 or s_mon == 9 or s_mon == 11:
             max1 = 30
-        elif(s_mon == 2):
+        elif s_mon == 2:
             max1 = 28
 
-        if(s_date < 1 or s_date > max1):
+        if s_date < 1 or s_date > max1:
             text = "Statutory_Date - %s Invalid Date for Month %s" % (s_date,
                                                                       s_mon)
             msg.append(text)
@@ -317,7 +316,7 @@ class StatutorySource(object):
         ]
         invalid = self.check_empty_for_compliance_frequency(d, keys)
         msg.extend(invalid)
-        if (d["Statutory_Date"] != "" and d["Statutory_Month"]):
+        if d["Statutory_Date"] != "" and d["Statutory_Month"]:
             invalid_date = self.check_date_validation(
                 int(d["Statutory_Date"]), int(d["Statutory_Month"])
             )
@@ -352,7 +351,7 @@ class StatutorySource(object):
         msg.extend(self.check_empty_for_compliance_frequency(d, keys))
         return msg
 
-    def check_periodical_and_Review(self, d):
+    def check_periodical_and_review(self, d):
         msg = []
         keys = [
             "Duration_Type", "Duration"
@@ -387,7 +386,7 @@ class StatutorySource(object):
                     d["Statutory_Date"] != ""
                 ):
                     msg.append("Statutory_Date - Invalid data")
-                if (d["Statutory_Date"] != "" and d["Statutory_Month"] != ""):
+                if d["Statutory_Date"] != "" and d["Statutory_Month"] != "":
                     invalid_date_msg = self.check_date_validation(
                         int(d["Statutory_Date"]), int(d["Statutory_Month"])
                     )
@@ -418,7 +417,7 @@ class StatutorySource(object):
                     )
                     msg.extend(invalid_date_msg)
 
-                if (d["Multiple_Input_Selection"] != ""):
+                if d["Multiple_Input_Selection"] != "":
                     msg.append("Multiple_Input_Selection - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)":
@@ -456,7 +455,7 @@ class StatutorySource(object):
                 keys = ["Statutory_Month", "Statutory_Date", "Trigger_Days"]
                 multiple_inp_msg = self.check_multiple_input(d, keys)
                 msg.extend(multiple_inp_msg)
-                if (multiple_inp_msg == []):
+                if multiple_inp_msg == []:
                     date_list = d["Statutory_Date"].split(CSV_DELIMITER)
                     mon_list = d["Statutory_Month"].split(CSV_DELIMITER)
                     for s_date, s_month in zip(date_list, mon_list):
@@ -507,7 +506,10 @@ class StatutorySource(object):
                 ):
                     msg.append("Statutory_Date - Invalid data")
 
-                if (d["Statutory_Date"] != "" and d["Statutory_Month"] != ""):
+                if (
+                    d["Statutory_Date"] != "" and
+                    d["Statutory_Month"] != ""
+                ):
                     invalid_date_msg = self.check_date_validation(
                         int(d["Statutory_Date"]), int(d["Statutory_Month"])
                     )
@@ -534,7 +536,7 @@ class StatutorySource(object):
                         int(d["Statutory_Date"]), int(d["Statutory_Month"])
                     )
                     msg.extend(invalid_date_msg)
-                if (d["Multiple_Input_Selection"] != ""):
+                if d["Multiple_Input_Selection"] != "":
                     msg.append("Multiple_Input_Selection - Invalid data")
 
             elif d["Repeats_Type"] == "Day(s)":
@@ -560,7 +562,7 @@ class StatutorySource(object):
                 d["Repeats_Every"] == "" and
                 d["Repeats_By (DOM/EOM)"] == ""
             ):
-                if(d["Statutory_Date"] != ""):
+                if d["Statutory_Date"] != "":
                     msg.append("Statutory_Date - Invalid data")
                 if d["Statutory_Month"] != "":
                     msg.append("Statutory_Month - Invalid data")
@@ -586,7 +588,7 @@ class StatutorySource(object):
                 keys = ["Statutory_Month", "Statutory_Date", "Trigger_Days"]
                 multiple_inp_msg = self.check_multiple_input(d, keys)
                 msg.extend(multiple_inp_msg)
-                if (multiple_inp_msg == []):
+                if multiple_inp_msg == []:
                     date_list = d["Statutory_Date"].split(CSV_DELIMITER)
                     mon_list = d["Statutory_Month"].split(CSV_DELIMITER)
                     for s_date, s_month in zip(date_list, mon_list):
@@ -608,7 +610,10 @@ class StatutorySource(object):
 
     def check_format_file_name(self, d):
         msg = []
-        if (d["Compliance_Document"] != "" and d["Format"] == ""):
+        if (
+            d["Compliance_Document"] != "" and
+            d["Format"] == ""
+        ):
             msg.append(
                 "Format - Field is blank when Compliance_Document available"
             )
@@ -616,7 +621,10 @@ class StatutorySource(object):
 
     def check_compliance_doc_name(self, d):
         msg = []
-        if (d["Compliance_Document"] == "" and d["Format"] != ""):
+        if (
+            d["Compliance_Document"] == "" and
+            d["Format"] != ""
+        ):
             msg.append(
                 "Compliance_Document - Field is blank when Format available"
             )
@@ -1398,7 +1406,7 @@ class ValidateStatutoryMappingCsvData(StatutorySource):
                         msg = self.check_on_occurrence(data)
 
                     elif value in ["Periodical", "Review"]:
-                        msg = self.check_periodical_and_Review(data)
+                        msg = self.check_periodical_and_review(data)
 
                     else:
                         msg = self.check_flexi_review(data)
@@ -1773,9 +1781,13 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                                 if(
                                    self.statutories.get(strip_data) is not None
                                    ):
-                                    # Removed For adding duplicate parent id
-                                    # parent_id += str(self.statutories.get(
-                                    # strip_data).get("statutory_id")) + ","
+                                    checkexists = parent_id.split(",")
+                                    checkexists = [x.strip() for x in checkexists if x.strip()]
+                                    checkexists = [int(i) for i in checkexists]
+                                    check_parent_id = int(self.statutories.get(
+                                        strip_data).get("statutory_id"))
+                                    if check_parent_id not in checkexists:
+                                        parent_id += str(check_parent_id) + ","
                                     parent_names = self.get_statu_map_ws(
                                         str(strip_data))
 
@@ -1878,7 +1890,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
             return True
         except Exception, e:
             print str(traceback.format_exc())
-            raise (e)
+            raise e
 
     def update_file_status(self, csvid, file_submit_status):
 

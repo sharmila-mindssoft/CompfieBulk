@@ -39,3 +39,11 @@ function bulkLoadItemsPerPage() {
         $('#items_per_page').append($('<option value="' + Id + '">' + Id + '</option>'));
     };
 }
+
+function IsCommonInputBulkUpload(inputElm) {
+    //allowed => alphanumeric, dot, comma, Hyphen, @, hash
+    //return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
+    var start = inputElm.selectionStart, end = inputElm.selectionEnd;
+    inputElm.value = $(inputElm).val().replace(/[^ 0-9A-Za-z.,-]/gi, '');
+    inputElm.setSelectionRange(start, end);
+}

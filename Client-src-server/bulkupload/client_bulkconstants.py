@@ -43,7 +43,7 @@ string_months = {
 
 csv_headers = [
     "Legal_Entity", "Domain", "Unit_Code", "Unit_Name", "Primary_Legislation",
-    "Secondary_Legislation", "Compliance_Task", "Compliance_Description",
-    "Compliance_Frequency", "Statutory_Date", "Due_Date", "Assignee",
-    "Completion_Date", "Document_Name"
+    "Secondary_Legislation", "Statutory_Provision", "Compliance_Task",
+    "Compliance_Description", "Compliance_Frequency", "Statutory_Date",
+    "Due_Date", "Assignee", "Completion_Date", "Document_Name"
 ]
