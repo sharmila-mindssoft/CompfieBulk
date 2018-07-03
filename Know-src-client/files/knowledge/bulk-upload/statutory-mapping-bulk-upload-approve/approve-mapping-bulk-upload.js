@@ -1995,9 +1995,9 @@ $(document).ready(function() {
 $(".nicescroll").niceScroll();
 
 $('.reject-reason-txt').on('input', function (e) {
-      isCommon_input(this);
+      IsCommonInputBulkUpload(this);
 });
 
 $('#view_reason_id').on('input', function (e) {
-      isCommon_input(this);
+      IsCommonInputBulkUpload(this);
 });
