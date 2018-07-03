@@ -663,9 +663,6 @@ def submit_statutory_mapping(db, request_frame, session_user):
         # csv data validation
         if get_pending_action(db, csv_id):
             return bu_sm.Failure()
-            # raise RuntimeError(
-            #     "All compliance should be selected before submit"
-            # )
 
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
