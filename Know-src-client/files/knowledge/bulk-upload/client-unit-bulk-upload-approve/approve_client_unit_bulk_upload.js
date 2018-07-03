@@ -434,11 +434,6 @@ function displayViewRejectAllPopUp(callback){
                         displayMessage(message.reason_required);
                         hideLoader();
                     }
-                    else if(rejectReason.match(/^[ A-Za-z0-9.,-]*$/) === null)
-                    {
-                        displayMessage(message.reason_invalid);
-                        hideLoader();
-                    }
                     else {
                         callback($('.view-reason').val());
                     }
@@ -630,12 +625,6 @@ function validateAuthentication() {
             "Reason should not exceed 500 characters"
         )) == false
     ){
-        return false;
-    }
-    else if(Rej_Reason.match(/^[ A-Za-z0-9.,-]*$/) === null){
-
-        displayMessage(message.reason_invalid);
-        hideLoader();
         return false;
     }
     else {
@@ -1607,4 +1596,12 @@ $('#filter_orgn').keyup(function() {
 $(document).ready(function() {
     initialize('list');
     $(".nicescroll").niceScroll();
+});
+
+$('#exampleInputReason').on('input', function (e) {
+      isCommon_input(this);
+});
+
+$('#exampleInputReason1').on('input', function (e) {
+      isCommon_input(this);
 });

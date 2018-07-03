@@ -182,11 +182,6 @@ function displayPopUp(TYPE, csvId, smId, callback) {
                             displayMessage(message.reason_required);
                             hideLoader();
                         }
-                        else if(reject_reason.match(/^[ A-Za-z0-9.,-]*$/) === null)
-                        {
-                            displayMessage(message.reason_invalid);
-                            hideLoader();
-                        }
                         else {
                             BU_APPROVE_PAGE.actionFromList(
                                 csvId, 2, $('.reject-reason-txt').val(),
@@ -203,11 +198,6 @@ function displayPopUp(TYPE, csvId, smId, callback) {
                         viewReason = $('.view-reason').val()
                         if (viewReason == '') {
                             displayMessage(message.reason_required)
-                            hideLoader();
-                        }
-                        else if(viewReason.match(/^[ A-Za-z0-9.,-]*$/) === null)
-                        {
-                            displayMessage(message.reason_invalid);
                             hideLoader();
                         }
                         else {
@@ -253,11 +243,6 @@ function displayViewRejectAllPopUp(callback) {
                         displayMessage(message.reason_required);
                         hideLoader();
                     }
-                    else if(viewReason.match(/^[ A-Za-z0-9.,-]*$/) === null)
-                    {
-                        displayMessage(message.reason_invalid);
-                        hideLoader();
-                    }
                     else {
                         callback(viewReason);
                     }
@@ -272,19 +257,6 @@ function displayViewRejectAllPopUp(callback) {
     });
 }
 
-function validateViewAuthentication() {
-    var viewRejectReason = $('.view-reason').val();
-    if(viewRejectReason.match(/^[ A-Za-z0-9.,-]*$/) === null){
-        displayMessage(message.reason_invalid);
-        hideLoader();
-        return false;
-    }
-    else
-    {
-        return true;
-    }
-}
-
 function validateAuthentication() {
     
     var password = CURRENT_PASSWORD.val().trim();
@@ -297,12 +269,6 @@ function validateAuthentication() {
     else if(isLengthMinMax(
         CURRENT_PASSWORD, 1, 20, message.password_20_exists) == false
     ){
-        return false;
-    }
-    else if(rejectReason.match(/^[ A-Za-z0-9.,-]*$/) === null){
-
-        displayMessage(message.reason_invalid);
-        hideLoader();
         return false;
     }
     else {
@@ -1502,13 +1468,6 @@ function PageControls() {
         if (CURRENT_PASSWORD != null) {
             validateAuthentication();
         }
-        else if(VIEW_REJECTED_REASON != null){
-            if(validateViewAuthentication() == true){
-                IS_AUTHENTICATE = true;
-                Custombox.close();
-                displayLoader();
-            }
-        }
         else {
             IS_AUTHENTICATE = true;
             Custombox.close();
@@ -2034,3 +1993,11 @@ $(document).ready(function() {
     BU_APPROVE_PAGE.showList();
 });
 $(".nicescroll").niceScroll();
+
+$('.reject-reason-txt').on('input', function (e) {
+      isCommon_input(this);
+});
+
+$('#view_reason_id').on('input', function (e) {
+      isCommon_input(this);
+});
