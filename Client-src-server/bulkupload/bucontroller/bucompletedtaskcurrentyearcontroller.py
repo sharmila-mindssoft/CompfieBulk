@@ -227,7 +227,8 @@ def submit_compliance(
                 1, "completed"
             )
         if c_obj.frame_data_for_main_db_insert(
-            data_result, request_frame.legal_entity_id, csv_id
+            data_result, request_frame.legal_entity_id, csv_id, country_id,
+            domain_id
         ) is True:
             return_data = bu_ct.SaveBulkRecordSuccess().to_structure()
         else:
@@ -347,9 +348,9 @@ def process_get_status(request):
 
 
 def submit_queued_tasks(
-    db, file_cur_stats, file_download_stats, c_obj, data_cur_stats, data_result,
-    csv_id, country_id, legal_id, domain_id, unit_id, session_token,
-    request_frame, session_user
+    db, file_cur_stats, file_download_stats, c_obj, data_cur_stats,
+    data_result, csv_id, country_id, legal_id, domain_id, unit_id,
+    session_token, request_frame, session_user
 ):
     result = None
     if file_cur_stats in [0, 2] and file_download_stats != "completed":
@@ -362,7 +363,8 @@ def submit_queued_tasks(
         if c_obj.check_for_duplicate_records(legal_id) is False:
             return bu_ct.DataAlreadyExists().to_structure()
         if c_obj.frame_data_for_main_db_insert(
-            db, data_result, request_frame.legal_entity_id, session_user
+            data_result, request_frame.legal_entity_id, csv_id, country_id,
+            domain_id
         ) is True:
             result = bu_ct.ProcessQueuedTasksSuccess().to_structure()
     else:

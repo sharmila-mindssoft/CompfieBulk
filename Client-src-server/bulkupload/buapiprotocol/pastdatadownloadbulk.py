@@ -81,10 +81,10 @@ class PastDataJsonToCSV(object):
                 csv_headers = [
                     "Legal_Entity", "Domain", "Unit_Code",
                     "Unit_Name", "Primary_Legislation",
-                    "Secondary_Legislation", "Compliance_Task",
-                    "Compliance_Description", "Compliance_Frequency",
-                    "Statutory_Date", "Due_Date", "Assignee",
-                    "Completion_Date*", "Document_Name"
+                    "Secondary_Legislation", "Statutory_Provision",
+                    "Compliance_Task", "Compliance_Description",
+                    "Compliance_Frequency", "Statutory_Date", "Due_Date",
+                    "Assignee", "Completion_Date*", "Document_Name"
                 ]
             self.write_csv(csv_headers, None)
             for swc in statutory_wise_compliances:
@@ -98,10 +98,11 @@ class PastDataJsonToCSV(object):
                     assignee_name = comp.assignee_name
                     primary_legislation = comp.primary_legislation
                     secondary_legislation = comp.secondary_legislation
+                    statutory_provison = comp.statutory_provision
                     csv_values = [
                         le_name, domain_name, unit_code, unit_name,
                         primary_legislation, secondary_legislation,
-                        compliance_name, description,
+                        statutory_provison, compliance_name, description,
                         compliance_task_frequency, statutory_date,
                         due_date, assignee_name, "", ""
                     ]
@@ -148,8 +149,8 @@ def return_past_due_dates(
         " statutory_mapping,3),1,CHAR_LENGTH(statutory_mapping) -4) " + \
         ",'>>',2), CHAR_LENGTH(SUBSTRING_INDEX(SUBSTRING(SUBSTRING( " + \
         " statutory_mapping,3),1, CHAR_LENGTH(statutory_mapping) -4" + \
-        " ), '>>', 1))+1),3),'\",',1)) AS secondary_legislation" +\
-        " FROM tbl_assign_compliances ac " + \
+        " ), '>>', 1))+1),3),'\",',1)) AS secondary_legislation," +\
+        " c.statutory_provision FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_users u ON (ac.assignee = u.user_id) " + \
         " INNER JOIN tbl_compliances c ON " + \
         " (ac.compliance_id = c.compliance_id) " + \
@@ -219,6 +220,7 @@ def get_download_bulk_compliance_data(
         s_maps = compliance["statutory_mapping"]
         primary_legislation = compliance["primary_legislation"]
         secondary_legislation = compliance["secondary_legislation"]
+        statutory_provision = compliance["statutory_provision"]
         statutories = s_maps
         level_1 = statutories
         if level_1 not in level_1_statutory_wise_compliances:
@@ -253,7 +255,8 @@ def get_download_bulk_compliance_data(
                     clientcore.COMPLIANCE_FREQUENCY(compliance["frequency"]),
                     summary, datetime_to_string(due_date),
                     assingee_name, compliance["assignee"],
-                    primary_legislation, secondary_legislation
+                    primary_legislation, secondary_legislation,
+                    statutory_provision
                 )
             )
     statutory_wise_compliances = []
