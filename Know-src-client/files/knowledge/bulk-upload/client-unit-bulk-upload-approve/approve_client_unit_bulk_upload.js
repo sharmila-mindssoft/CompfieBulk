@@ -77,90 +77,90 @@ var _FILTER_CLICKED = true;
 
 // To load the client groups under logged techno executive
 function initialize(type_of_initialization) {
-	displayPage(type_of_initialization);
-	if (type_of_initialization == "list") {
-		displayLoader();
-		bu.getClientGroupsList(function(error, response) {
-		    if (error == null) {
-		    	CLIENTGROUPLIST = response.client_group_list;
-		    	bu.getTechnoUserDetails(
+    displayPage(type_of_initialization);
+    if (type_of_initialization == "list") {
+        displayLoader();
+        bu.getClientGroupsList(function(error, response) {
+            if (error == null) {
+                CLIENTGROUPLIST = response.client_group_list;
+                bu.getTechnoUserDetails(
                     parseInt(USERCATEGORYID), function(error, response)
                 {
-		    		if(error == null) {
-		    			TECHNOUSERLIST = response.techno_info;
-		    			hideLoader();
-		    		}
-		    		else {
-		    			displayMessage(error);
-		    			hideLoader();
-		    		}
-		    	});
-		    } else {
-		        displayMessage(error);
-		    	hideLoader();
-		    }
-		});
-	}
+                    if(error == null) {
+                        TECHNOUSERLIST = response.techno_info;
+                        hideLoader();
+                    }
+                    else {
+                        displayMessage(error);
+                        hideLoader();
+                    }
+                });
+            } else {
+                displayMessage(error);
+                hideLoader();
+            }
+        });
+    }
 }
 
 // Displays the client unit bulk uploaded files list
 BTN_UPLOADED_FILELIST.click(function() {
     var ClientId = null, GroupName = null;
-	if (SEARCH_GROUP_ID.val() != '') {
-		ClientId = parseInt(SEARCH_GROUP_ID.val().trim());
-		GroupName = SEARCH_GROUP_NAME.val().trim();
-		displayLoader();
-		function onSuccess(data) {
-		    CLIENTUNITCSVFILESLIST = data.bu_cu_csv_files_list;
-		    loadClientUnitCSVFilesList(CLIENTUNITCSVFILESLIST);
-		}
+    if (SEARCH_GROUP_ID.val() != '') {
+        ClientId = parseInt(SEARCH_GROUP_ID.val().trim());
+        GroupName = SEARCH_GROUP_NAME.val().trim();
+        displayLoader();
+        function onSuccess(data) {
+            CLIENTUNITCSVFILESLIST = data.bu_cu_csv_files_list;
+            loadClientUnitCSVFilesList(CLIENTUNITCSVFILESLIST);
+        }
 
-		function onFailure(error) {
-		    displayMessage(error);
-		    hideLoader();
-		}
-		bu.getClientGroupsClientUnitFilesList(
+        function onFailure(error) {
+            displayMessage(error);
+            hideLoader();
+        }
+        bu.getClientGroupsClientUnitFilesList(
             ClientId, GroupName, function(error, response)
         {
-		    if (error == null) {
-		        onSuccess(response);
-		    } else {
-		        onFailure(error);
-		    }
-		});
-	} else {
-		displayMessage(message.cg_required);
-	}
+            if (error == null) {
+                onSuccess(response);
+            } else {
+                onFailure(error);
+            }
+        });
+    } else {
+        displayMessage(message.cg_required);
+    }
 });
 
 
 // To display the uploaded CSV files list
 function loadClientUnitCSVFilesList(data) {
-	var sno = 0;
+    var sno = 0;
     var TableRow = null, clone = null, SplitFileName = null;
     var App_Rej = 0;
     var NoRecordRow = null;
-	if(data.length > 0) {
-		TBL_CLIENTUNIT_BULK_UPLOADED_LIST.empty();
-		$.each(data, function(key, value) {
-			TableRow = $(
+    if(data.length > 0) {
+        TBL_CLIENTUNIT_BULK_UPLOADED_LIST.empty();
+        $.each(data, function(key, value) {
+            TableRow = $(
                 '#templates .table-bulk-client-unit-uploaded-file-list ' +
                 '.table-row'
             );
-			clone = TableRow.clone();
-			sno = sno + 1;
-			$('.sno', clone).text(sno);
+            clone = TableRow.clone();
+            sno = sno + 1;
+            $('.sno', clone).text(sno);
             cname_split = value.csv_name.split("_");
             cname_split.pop();
             cname = cname_split.join("_");
-			$('.uploaded-file-name', clone).text(cname);
-			$('#csvUnitID', clone).val(value.csv_id);
-			$('.uploaded-on', clone).text(value.uploaded_on);
-			$('.uploaded-by', clone).text(fetchTechnoManager(value.uploaded_by));
-			$('.no-of-units', clone).text(value.no_of_records);
+            $('.uploaded-file-name', clone).text(cname);
+            $('#csvUnitID', clone).val(value.csv_id);
+            $('.uploaded-on', clone).text(value.uploaded_on);
+            $('.uploaded-by', clone).text(fetchTechnoManager(value.uploaded_by));
+            $('.no-of-units', clone).text(value.no_of_records);
             TOTAL_RECORD = value.no_of_records;
-			App_Rej = value.approved_count + " / " + value.rej_count;
-			$('.approved-rejected', clone).text(App_Rej);
+            App_Rej = value.approved_count + " / " + value.rej_count;
+            $('.approved-rejected', clone).text(App_Rej);
 
             $('.download-invalidfile', clone).html(
                 '<i class="fa fa-download text-primary c-pointer dropbtn" ' +
@@ -201,15 +201,15 @@ function loadClientUnitCSVFilesList(data) {
                 })
             );
 
-			//approve all
-			$('.approve-checkbox', clone).on('change', function(e){
+            //approve all
+            $('.approve-checkbox', clone).on('change', function(e){
                 if (e.target.checked){
                     displayPopUp('approve_all', value.csv_id, null, e);
                 }
             });
 
-			//reject all
-			$('.reject-checkbox', clone).on('change', function(e){
+            //reject all
+            $('.reject-checkbox', clone).on('change', function(e){
                 if(e.target.checked){
                     displayPopUp('reject_all', value.csv_id, null, e);
                 }
@@ -220,38 +220,38 @@ function loadClientUnitCSVFilesList(data) {
                 value.rej_count > 0 ||
                 value.declined_count > 0
             ){
-            	$('.viewbtn', clone).hide();
-            	$('.editbtn', clone).show();
+                $('.viewbtn', clone).hide();
+                $('.editbtn', clone).show();
                 _SHOW_CLICKED = true;
                 _FILTER_CLICKED = false;
                 APPROVE_ALL_UNITS.prop("checked", false);
                 REJECT_ALL_UNITS.prop("checked", false);
-            	$('.editbtn', clone).on('click', function(){
-                	displayViewScreen(value.csv_id, 0, 25);
-            	});
+                $('.editbtn', clone).on('click', function(){
+                    displayViewScreen(value.csv_id, 0, 25);
+                });
             } else {
-            	$('.viewbtn', clone).show();
-            	$('.editbtn', clone).hide();
+                $('.viewbtn', clone).show();
+                $('.editbtn', clone).hide();
                 _SHOW_CLICKED = true;
                 _FILTER_CLICKED = false;
                 APPROVE_ALL_UNITS.prop("checked", false);
                 REJECT_ALL_UNITS.prop("checked", false);
-            	$('.viewbtn', clone).on('click', function(){
-	                displayViewScreen(value.csv_id, 0, 25);
-	            });
+                $('.viewbtn', clone).on('click', function(){
+                    displayViewScreen(value.csv_id, 0, 25);
+                });
             }
-			TBL_CLIENTUNIT_BULK_UPLOADED_LIST.append(clone);
-		});
-	} else {
-		TBL_CLIENTUNIT_BULK_UPLOADED_LIST.empty();
-		NoRecordRow = $("#templates .table-no-record tr");
+            TBL_CLIENTUNIT_BULK_UPLOADED_LIST.append(clone);
+        });
+    } else {
+        TBL_CLIENTUNIT_BULK_UPLOADED_LIST.empty();
+        NoRecordRow = $("#templates .table-no-record tr");
         clone = NoRecordRow.clone();
         TBL_CLIENTUNIT_BULK_UPLOADED_LIST.append(clone);
-	}
-	/*$('.js-filtertable-view').each(function() {
+    }
+    /*$('.js-filtertable-view').each(function() {
         $(this).filtertable().addFilter('.js-filter-main');
     });*/
-	hideLoader();
+    hideLoader();
 }
 
 function download(filename, mime_type, text) {
@@ -271,19 +271,19 @@ function download(filename, mime_type, text) {
 
 // Fetch the employee code and name from the datalist for the uploaded user
 function fetchTechnoManager(executiveId) {
-	data = TECHNOUSERLIST;
-	var Executive_Name_Code = null;
-	$.each(data, function(key, value) {
-		if(value.user_id == executiveId){
-			Executive_Name_Code = value.emp_code_name;
-		}
-	});
-	return Executive_Name_Code;
+    data = TECHNOUSERLIST;
+    var Executive_Name_Code = null;
+    $.each(data, function(key, value) {
+        if(value.user_id == executiveId){
+            Executive_Name_Code = value.emp_code_name;
+        }
+    });
+    return Executive_Name_Code;
 }
 
 // To display invalid files download formats
 function showFormats(arg) {
-	document.getElementById("myDropdown-"+arg).classList.toggle("show");
+    document.getElementById("myDropdown-"+arg).classList.toggle("show");
 }
 
 function keySearchUnitsFilesList(data) {
@@ -361,7 +361,7 @@ function displayPopUp(TYPE, csv_id, b_u_id, evt){
                 displayLoader();
                 setTimeout(function() {
                     if (TYPE == "approve_all") {
-                    	performApproveRejectAction(
+                        performApproveRejectAction(
                             csv_id, 1, CURRENT_PASSWORD.val(), null
                         );
                     }
@@ -628,42 +628,47 @@ function validateAuthentication() {
         return false;
     }
     else {
-    	//IS_AUTHENTICATE = true;
-        //Custombox.close();
-        mirror.verifyPassword(Password, function(error, response) {
-        if (error == null) {
-            hideLoader();
+        if(Password != null){
+            mirror.verifyPassword(Password, function(error, response) {
+            if (error == null) {
+                hideLoader();
+                IS_AUTHENTICATE = true;
+                Custombox.close();
+            } else {
+                hideLoader();
+                if (error == 'InvalidPassword') {
+                    displayMessage(message.invalid_password);
+                }
+            }
+            });
+        }
+        else
+        {
             IS_AUTHENTICATE = true;
             Custombox.close();
-        } else {
-            hideLoader();
-            if (error == 'InvalidPassword') {
-                displayMessage(message.invalid_password);
-            }
         }
-        });
     }
     displayLoader();
 }
 
 // To navigate to the approval list page of a selected csv file
 function displayViewScreen(csv_id, start_count, _PAGE_LIMIT) {
-	BULK_CLIENTUNIT_UPLOADED_FILELIST_VIEWPAGE.hide();
-	BULK_CLIENTUNIT_UPLOADED_APPROVAL_LISTPAGE.show();
+    BULK_CLIENTUNIT_UPLOADED_FILELIST_VIEWPAGE.hide();
+    BULK_CLIENTUNIT_UPLOADED_APPROVAL_LISTPAGE.show();
     _PAGE_LIMIT = parseInt(ITEMS_PER_PAGE.val());
     if (_ON_CURRENT_PAGE == 1) {
         _SHOW_FROM = 0
     } else {
         _SHOW_FROM = (_ON_CURRENT_PAGE - 1) * _PAGE_LIMIT;
     }
-	getCSVFileApprovalList(csv_id, _SHOW_FROM, _PAGE_LIMIT);
+    getCSVFileApprovalList(csv_id, _SHOW_FROM, _PAGE_LIMIT);
 }
 
 //To display the approval units list
 function getCSVFileApprovalList(csv_id, start_count, _PAGE_LIMIT) {
-	displayLoader();
+    displayLoader();
     var cname_split = "", cname = "";
-	bu.getBulkClientUnitApproveRejectList(
+    bu.getBulkClientUnitApproveRejectList(
         csv_id, start_count, _PAGE_LIMIT, function(error, response){
         if (error == null) {
             VIEWCLIENTUNITLIST = response.client_unit_data;
@@ -1010,14 +1015,14 @@ function keySearchUnitsDetailsList(data) {
 // To display the page as per request
 function displayPage(page_mode) {
     var NoRecordRow = null, Clone = null;
-	if (page_mode == "list") {
-		SEARCH_GROUP_ID.val('');
-		SEARCH_GROUP_NAME.val('');
-		TBL_CLIENTUNIT_BULK_UPLOADED_LIST.empty();
-		NoRecordRow = $("#templates .table-no-record tr");
+    if (page_mode == "list") {
+        SEARCH_GROUP_ID.val('');
+        SEARCH_GROUP_NAME.val('');
+        TBL_CLIENTUNIT_BULK_UPLOADED_LIST.empty();
+        NoRecordRow = $("#templates .table-no-record tr");
         Clone = NoRecordRow.clone();
         TBL_CLIENTUNIT_BULK_UPLOADED_LIST.append(Clone);
-	}
+    }
 }
 
 // To invoke loading of client groups list
@@ -1062,8 +1067,8 @@ PASSWORD_SUBMIT_BUTTON.click(function(){
 });
 
 CANCEL_BUTTON.click(function() {
-	BULK_CLIENTUNIT_UPLOADED_FILELIST_VIEWPAGE.show();
-	BULK_CLIENTUNIT_UPLOADED_APPROVAL_LISTPAGE.hide();
+    BULK_CLIENTUNIT_UPLOADED_FILELIST_VIEWPAGE.show();
+    BULK_CLIENTUNIT_UPLOADED_APPROVAL_LISTPAGE.hide();
     $('.clear-filtered').hide();
     $('.filtered_items').text('');
     filterHead = null;
@@ -1599,9 +1604,9 @@ $(document).ready(function() {
 });
 
 $('#exampleInputReason').on('input', function (e) {
-      isCommon_input(this);
+      IsCommonInputBulkUpload(this);
 });
 
 $('#exampleInputReason1').on('input', function (e) {
-      isCommon_input(this);
+      IsCommonInputBulkUpload(this);
 });
