@@ -235,6 +235,7 @@ function pageControls() {
                     if (error == "Alive"){
                         setTimeout(apiCallDownload, TIMEOUT_MLS, csv_name, call_bck_fn);
                     }else{
+                        displayMessage(error);
                         hideLoader();
                     }
                 }
