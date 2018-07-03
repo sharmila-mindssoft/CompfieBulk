@@ -116,16 +116,26 @@ def get_completed_task_csv_list(db, request_frame, session_user):
     return result
 
 
+def write_file(csv_name, return_data):
+    file_string = str(csv_name).split(".")
+    file_name = "%s_%s.%s" % (
+        file_string[0], "result", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    with open(file_path, "wb") as fn:
+        fn.write(return_data)
+    os.chmod(file_path, 0o777)
+    return
+
+
 def validate_data(db, request_frame, c_obj, session_user, csv_name):
-    def write_file():
-        file_string = csv_name.split(".")
-        file_name = "%s_%s.%s" % (
-            file_string[0], "result", "txt"
-        )
-        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-        with open(file_path, "wb") as fn:
-            fn.write(return_data)
-        return
+    def write_and_raise_exception(error, csv_name):
+        return_data = json.dumps(str(error))
+        write_file(csv_name, return_data)
+        logger.logclient(
+            "error",
+            "bucompletedtaskcurrentyearcontroller.py-validate_data", error)
+        raise error
     try:
         c_obj.perform_validation(request_frame.legal_entity_id)
         res_data = c_obj.res_data
@@ -147,8 +157,12 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
             ]
             new_csv_id = save_completed_task_current_year_csv(csv_args)
             if new_csv_id:
-                if save_completed_task_data(new_csv_id, res_data["data"]):
+                ins_result = save_completed_task_data(
+                    new_csv_id, res_data["data"])
+                if (ins_result is True):
                     save_file_in_client_docs(csv_name, request_frame.csv_data)
+                else:
+                    write_and_raise_exception(ins_result, csv_name)
             return_data = bu_ct.UploadCompletedTaskCurrentYearCSVSuccess(
                 res_data["total"], res_data["valid"],
                 res_data["invalid"],
@@ -166,21 +180,11 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
             ).to_structure()
         return_data = json.dumps(return_data)
     except AssertionError as error:
-        e = "AssertionError"
-        return_data = json.dumps(e)
-        write_file()
-        logger.logclient(
-            "error",
-            "bucompletedtaskcurrentyearcontroller.py-validate_data", e)
-        raise error
+        error = "AssertionError"
+        write_and_raise_exception(error, csv_name)
     except Exception, e:
-        return_data = json.dumps(str(e))
-        write_file()
-        logger.logclient(
-            "error",
-            "bucompletedtaskcurrentyearcontroller.py-validate_data", e)
-        raise e
-    write_file()
+        write_and_raise_exception(e, csv_name)
+    write_file(csv_name, return_data)
     return
 
 
@@ -215,31 +219,43 @@ def submit_compliance(
     db, c_obj, csv_id, country_id, legal_id,
     domain_id, unit_id, session_token, data_result, request_frame
 ):
-    if c_obj.check_for_duplicate_records(legal_id) is False:
-        return_data = bu_ct.DataAlreadyExists().to_structure()
-    else:
-        if c_obj.doc_count > 0:
-            c_obj.document_download_process_initiate(
-                csv_id, country_id, legal_id, domain_id, unit_id, session_token
-            )
+    try:
+        if c_obj.check_for_duplicate_records(legal_id) is False:
+            return_data = bu_ct.DataAlreadyExists().to_structure()
         else:
-            c_obj.update_file_submit_status(
-                1, "completed"
-            )
-        if c_obj.frame_data_for_main_db_insert(
-            data_result, request_frame.legal_entity_id, csv_id, country_id,
-            domain_id
-        ) is True:
-            return_data = bu_ct.SaveBulkRecordSuccess().to_structure()
-        else:
-            return_data = []
-    result = json.dumps(return_data)
-    file_name = "%s_%s.%s" % (
-        csv_id, "result", "txt"
-    )
-    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    with open(file_path, "wb") as fn:
-        fn.write(result)
+            if c_obj.doc_count > 0:
+                c_obj.document_download_process_initiate(
+                    csv_id, country_id, legal_id, domain_id, unit_id,
+                    session_token
+                )
+            else:
+                c_obj.update_file_submit_status(
+                    1, "completed"
+                )
+            if c_obj.frame_data_for_main_db_insert(
+                data_result, request_frame.legal_entity_id, csv_id,
+                country_id, domain_id
+            ) is True:
+                return_data = bu_ct.SaveBulkRecordSuccess().to_structure()
+            else:
+                return_data = []
+        result = json.dumps(return_data)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file(csv_id, return_data)
+        logger.logclient(
+            "error",
+            "bucompletedtaskcurrentyearcontroller.py-submit_compliance", e)
+        raise error
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file(csv_id, return_data)
+        logger.logclient(
+            "error",
+            "bucompletedtaskcurrentyearcontroller.py-submit_compliance", e)
+        raise e
+    write_file(csv_id, result)
     return
 
 
@@ -352,30 +368,41 @@ def submit_queued_tasks(
     data_result, csv_id, country_id, legal_id, domain_id, unit_id,
     session_token, request_frame, session_user
 ):
-    result = None
-    if file_cur_stats in [0, 2] and file_download_stats != "completed":
-        c_obj.document_download_process_initiate(
-            csv_id, country_id, legal_id, domain_id, unit_id, session_token
-        )
-        result = bu_ct.ProcessDocumentSubmitQueued().to_structure()
+    try:
+        result = None
+        if file_cur_stats in [0, 2] and file_download_stats != "completed":
+            c_obj.document_download_process_initiate(
+                csv_id, country_id, legal_id, domain_id, unit_id, session_token
+            )
+            result = bu_ct.ProcessDocumentSubmitQueued().to_structure()
 
-    if data_cur_stats in [0, 2]:
-        if c_obj.check_for_duplicate_records(legal_id) is False:
-            return bu_ct.DataAlreadyExists().to_structure()
-        if c_obj.frame_data_for_main_db_insert(
-            data_result, request_frame.legal_entity_id, csv_id, country_id,
-            domain_id
-        ) is True:
+        if data_cur_stats in [0, 2]:
+            if c_obj.check_for_duplicate_records(legal_id) is False:
+                return bu_ct.DataAlreadyExists().to_structure()
+            if c_obj.frame_data_for_main_db_insert(
+                data_result, request_frame.legal_entity_id, csv_id, country_id,
+                domain_id
+            ) is True:
+                result = bu_ct.ProcessQueuedTasksSuccess().to_structure()
+        else:
             result = bu_ct.ProcessQueuedTasksSuccess().to_structure()
-    else:
-        result = bu_ct.ProcessQueuedTasksSuccess().to_structure()
-    return_data = json.dumps(result)
-    file_name = "%s_%s.%s" % (
-        csv_id, "result", "txt"
-    )
-    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-    with open(file_path, "wb") as fn:
-        fn.write(return_data)
+        return_data = json.dumps(result)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file(csv_id, return_data)
+        logger.logclient(
+            "error",
+            "bucompletedtaskcurrentyearcontroller.py-submit_queued_tasks", e)
+        raise error
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file(csv_id, return_data)
+        logger.logclient(
+            "error",
+            "bucompletedtaskcurrentyearcontroller.py-submit_queued_tasks", e)
+        raise e
+    write_file(csv_id, return_data)
     return
 
 
