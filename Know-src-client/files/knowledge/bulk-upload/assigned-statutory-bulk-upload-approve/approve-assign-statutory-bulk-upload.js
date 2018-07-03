@@ -949,7 +949,7 @@ approveOrRejectAction = function(id, clId, leId, action, reason, password) {
     }
 
     bu.assignStatutoryActionInList(parseInt(clId), parseInt(leId),
-    parseInt(id), parseInt(action), reason, password,
+    parseInt(id), parseInt(action), reason,
     function(err1, res2) {
         if(err1 == "Done" || res2 == "Done"){
             csv_name = res2.csv_name;
@@ -1487,7 +1487,7 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
                     }
                 }
                 bu.submitAssignStatutoryAction(parseInt(csvid), parseInt(clId),
-                    parseInt(leId), password,
+                    parseInt(leId),
                     function(error, response) {
                     if(error == "Done" || response == "Done"){
                         csv_name = response.csv_name;
