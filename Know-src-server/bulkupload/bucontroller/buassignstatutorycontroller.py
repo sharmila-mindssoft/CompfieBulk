@@ -197,6 +197,7 @@ def validate_download_data(db, request_frame, session_user, csv_name):
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
             fn.write(return_data)
+            os.chmod(file_path, 0777)
         return
     try:
         cl_id = request_frame.cl_id
@@ -279,6 +280,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
             fn.write(return_data)
+            os.chmod(file_path, 0777)
         return
     try:
         res_data = c_obj.perform_validation()
@@ -469,6 +471,7 @@ def list_statutory_thread_process(
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
             fn.write(return_data)
+            os.chmod(file_path, 0777)
         return
     try:
         csv_id = request_frame.csv_id
@@ -728,6 +731,7 @@ def submit_statutory_thread_process(
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
             fn.write(return_data)
+            os.chmod(file_path, 0777)
         return
     try:
         csv_id = request_frame.csv_id
@@ -815,6 +819,7 @@ def confirm_statutory_thread_process(
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
             fn.write(return_data)
+            os.chmod(file_path, 0777)
         return
     try:
         csv_id = request_frame.csv_id

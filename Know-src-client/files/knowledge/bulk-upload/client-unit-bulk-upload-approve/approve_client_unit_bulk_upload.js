@@ -429,6 +429,7 @@ function displayViewRejectAllPopUp(callback){
             if (IS_AUTHENTICATE) {
                 displayLoader();
                 setTimeout(function() {
+                    var rejectReason = REJECT_REASON.val()
                     if (REJECT_REASON.val() == '') {
                         displayMessage(message.reason_required);
                         hideLoader();
@@ -627,8 +628,20 @@ function validateAuthentication() {
         return false;
     }
     else {
-    	IS_AUTHENTICATE = true;
-        Custombox.close();
+    	//IS_AUTHENTICATE = true;
+        //Custombox.close();
+        mirror.verifyPassword(Password, function(error, response) {
+        if (error == null) {
+            hideLoader();
+            IS_AUTHENTICATE = true;
+            Custombox.close();
+        } else {
+            hideLoader();
+            if (error == 'InvalidPassword') {
+                displayMessage(message.invalid_password);
+            }
+        }
+        });
     }
     displayLoader();
 }
@@ -694,7 +707,7 @@ function getCSVFileApprovalList(csv_id, start_count, _PAGE_LIMIT) {
                     hidePageView();
                     bindClientUnitList([]);
                 } else {
-                    displayMessage(err);
+                    displayMessage(error);
                 }
                 hideLoader();
             }
@@ -1583,4 +1596,12 @@ $('#filter_orgn').keyup(function() {
 $(document).ready(function() {
     initialize('list');
     $(".nicescroll").niceScroll();
+});
+
+$('#exampleInputReason').on('input', function (e) {
+      isCommon_input(this);
+});
+
+$('#exampleInputReason1').on('input', function (e) {
+      isCommon_input(this);
 });
