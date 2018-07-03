@@ -437,7 +437,7 @@ var Dropzone = function (_Emitter) {
          * If the filesize is too big.
          * `{{filesize}}` and `{{maxFilesize}}` will be replaced with the respective configuration values.
          */
-        dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
+        dictFileTooBig: "File is too big ({{filesize}}MB). Max filesize: {{maxFilesize}}MB.",
 
         /**
          * If the file doesn't match the file type.
@@ -1201,7 +1201,7 @@ var Dropzone = function (_Emitter) {
             _this3.hiddenFileInput.parentNode.removeChild(_this3.hiddenFileInput);
           }
           _this3.hiddenFileInput = document.createElement("input");
-          _this3.hiddenFileInput.setAttribute("webkitdirectory", true); 
+          _this3.hiddenFileInput.setAttribute("webkitdirectory", true);
           _this3.hiddenFileInput.setAttribute("type", "file");
           if (_this3.options.maxFiles === null || _this3.options.maxFiles > 1) {
             _this3.hiddenFileInput.setAttribute("multiple", "multiple");
