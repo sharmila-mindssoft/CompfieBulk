@@ -991,7 +991,10 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     key == 'Statutory_Applicable_Status' and
                     s_applicable_status != ""
                 ):
-                    if p_legislation not in primary_dict:
+                    if (
+                        p_legislation not in primary_dict and
+                        p_legislation != ""
+                    ):
                         primary_dict[p_legislation] = {
                             "status": s_applicable_status
                         }
