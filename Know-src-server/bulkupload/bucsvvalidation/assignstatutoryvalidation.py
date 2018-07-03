@@ -898,7 +898,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         mapped_header_dict, primary_dict
     ):
 
-        p_legislation = data.get('Primary_Legislation')
+        p_legislation = data.get('Primary_Legislation')+'-'+data.get('Domain')
         s_applicable_status = data.get('Statutory_Applicable_Status').lower()
         c_applicable_status = data.get('Compliance_Applicable_Status').lower()
 
@@ -960,7 +960,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                                 org_val = v+'-'+data.get('Domain')
                                 isFound = unboundMethod(org_val)
                             elif key == "Secondary_Legislation":
-                                s_legs_val = v+'-'+p_legislation+'-'+data.get(
+                                s_legs_val = v+'-'+data.get('Primary_Legislation')+'-'+data.get(
                                     'Domain'
                                 )
                                 isFound = unboundMethod(s_legs_val)
@@ -993,7 +993,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 ):
                     if (
                         p_legislation not in primary_dict and
-                        p_legislation != ""
+                        data.get('Primary_Legislation') != ""
                     ):
                         primary_dict[p_legislation] = {
                             "status": s_applicable_status
