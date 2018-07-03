@@ -1546,10 +1546,10 @@ $(document).ready(function() {
     $(".nicescroll").niceScroll();
 
     $('#remark').on('input', function (e) {
-      isCommon_input(this);
+      IsCommonInputBulkUpload(this);
     });
     $('#single_reject_remark').on('input', function (e) {
-      isCommon_input(this);
+      IsCommonInputBulkUpload(this);
     });
 });
 

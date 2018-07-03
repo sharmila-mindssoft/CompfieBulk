@@ -1599,9 +1599,9 @@ $(document).ready(function() {
 });
 
 $('#exampleInputReason').on('input', function (e) {
-      isCommon_input(this);
+      IsCommonInputBulkUpload(this);
 });
 
 $('#exampleInputReason1').on('input', function (e) {
-      isCommon_input(this);
+      IsCommonInputBulkUpload(this);
 });
