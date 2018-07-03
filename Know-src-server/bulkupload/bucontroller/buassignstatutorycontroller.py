@@ -243,12 +243,21 @@ def validate_download_data(db, request_frame, session_user, csv_name):
 
 
 def get_download_assign_statutory(db, request_frame, session_user):
-    csv_name = generate_random_string()
-    t = threading.Thread(
-        target=validate_download_data,
-        args=(db, request_frame, session_user, csv_name))
-    t.start()
-    return bu_as.Done(csv_name)
+    try:
+        csv_name = generate_random_string()
+        t = threading.Thread(
+            target=validate_download_data,
+            args=(db, request_frame, session_user, csv_name))
+        t.start()
+        return bu_as.Done(csv_name)
+
+    except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        logger.logKnowledge(
+            "error", "get_download_assign_statutory",
+            str(traceback.format_exc()))
+        raise e
 
 
 ########################################################
@@ -399,6 +408,10 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
 
     except Exception, e:
         print e
+        print str(traceback.format_exc())
+        logger.logKnowledge(
+            "error", "upload_assign_statutory_csv",
+            str(traceback.format_exc()))
         raise e
 
 
@@ -551,6 +564,11 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
         return bu_as.Done(csv_name)
 
     except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        logger.logKnowledge(
+            "error", "update_assign_statutory_action_in_list",
+            str(traceback.format_exc()))
         raise e
 
 
@@ -714,6 +732,11 @@ def save_action(db, request_frame, session_user):
         return bu_as.SaveActionSuccess()
 
     except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        logger.logKnowledge(
+            "error", "save_action",
+            str(traceback.format_exc()))
         raise e
 
 
@@ -803,6 +826,9 @@ def submit_assign_statutory(db, request_frame, session_user):
     except Exception, e:
         print e
         print str(traceback.format_exc())
+        logger.logKnowledge(
+            "error", "submit_assign_statutory",
+            str(traceback.format_exc()))
         raise e
 
 
@@ -859,33 +885,49 @@ def confirm_statutory_thread_process(
 
 
 def confirm_submit_assign_statutory(db, request_frame, session_user):
-    csv_id = request_frame.csv_id
-    client_id = request_frame.cl_id
-    legal_entity_id = request_frame.le_id
+    try:
+        csv_id = request_frame.csv_id
+        client_id = request_frame.cl_id
+        legal_entity_id = request_frame.le_id
 
-    csv_name = generate_random_string()
-    # csv data validation
-    c_obj = ValidateAssignStatutoryForApprove(
-        db, csv_id, client_id, legal_entity_id, session_user
-    )
-    t = threading.Thread(
-        target=confirm_statutory_thread_process,
-        args=(db, request_frame, c_obj, session_user, csv_name))
-    t.start()
-    return bu_as.Done(csv_name)
+        csv_name = generate_random_string()
+        # csv data validation
+        c_obj = ValidateAssignStatutoryForApprove(
+            db, csv_id, client_id, legal_entity_id, session_user
+        )
+        t = threading.Thread(
+            target=confirm_statutory_thread_process,
+            args=(db, request_frame, c_obj, session_user, csv_name))
+        t.start()
+        return bu_as.Done(csv_name)
+    except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        logger.logKnowledge(
+            "error", "confirm_submit_assign_statutory",
+            str(traceback.format_exc()))
+        raise e
 
 
 #####################################################
 # validate pending record count while submit process
 #####################################################
 def validate_assign_statutory(db, request_frame):
-    csv_id = request_frame.csv_id
-    approved_count, un_saved_count = get_validation_info(db, csv_id)
+    try:
+        csv_id = request_frame.csv_id
+        approved_count, un_saved_count = get_validation_info(db, csv_id)
 
-    result = bu_as.AssignStatutoryValidateSuccess(
-        approved_count, un_saved_count
-    )
-    return result
+        result = bu_as.AssignStatutoryValidateSuccess(
+            approved_count, un_saved_count
+        )
+        return result
+    except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        logger.logKnowledge(
+            "error", "validate_assign_statutory",
+            str(traceback.format_exc()))
+        raise e
 
 
 ########################################################
