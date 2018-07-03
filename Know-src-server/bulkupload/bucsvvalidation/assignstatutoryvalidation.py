@@ -646,6 +646,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
         self._compliances_downloaded = []
         self._compliances_uploaded = []
+        self._applicable_list = ["applicable", "not applicable", "do not show"]
+        self._not_applicable_list = ["not applicable", "do not show"]
+        self._do_not_show_list = ["do not show"]
 
     def connect_bulk_database(self):
         c_db_con = bulkupload_db_connect()
@@ -892,8 +895,13 @@ class ValidateAssignStatutoryCsvData(SourceDB):
 
     def check_validation(
         self, res, row_idx, data, duplicate_compliance_row, error_count,
-        mapped_header_dict
+        mapped_header_dict, primary_dict
     ):
+
+        p_legislation = data.get('Primary_Legislation')+'-'+data.get('Domain')
+        s_applicable_status = data.get('Statutory_Applicable_Status').lower()
+        c_applicable_status = data.get('Compliance_Applicable_Status').lower()
+
         for key in self._csv_column_name:
             value = data.get(key)
             isFound = ""
@@ -904,12 +912,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                     key == 'Statutory_remarks' and
                     (
                         (
-                            data.get(
-                                'Statutory_Applicable_Status'
-                            ).lower() == 'not applicable' or
-                            data.get(
-                                'Statutory_Applicable_Status'
-                            ).lower() == 'do not show'
+                            s_applicable_status == 'not applicable' or
+                            s_applicable_status == 'do not show'
                         ) and
                         data.get('Statutory_remarks') == ''
                     )
@@ -921,9 +925,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 if (
                     key == 'Statutory_remarks' and
                     (
-                        data.get(
-                            'Statutory_Applicable_Status'
-                        ).lower() == 'applicable' and
+                        s_applicable_status == 'applicable' and
                         data.get('Statutory_remarks') != ''
                     )
                 ):
@@ -958,7 +960,9 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                                 org_val = v+'-'+data.get('Domain')
                                 isFound = unboundMethod(org_val)
                             elif key == "Secondary_Legislation":
-                                s_legs_val = v+'-'+data.get("Primary_Legislation")+'-'+data.get('Domain')
+                                s_legs_val = v+'-'+data.get('Primary_Legislation')+'-'+data.get(
+                                    'Domain'
+                                )
                                 isFound = unboundMethod(s_legs_val)
                             elif key == "Unit_Location":
                                 loc_val = data.get('Unit_Code')+'-'+v
@@ -978,6 +982,48 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                                 self._error_summary["inactive_error"] += 1
                             else:
                                 self._error_summary["invalid_data_error"] += 1
+
+                # if(key == 'Primary_Legislation' and p_legislation != ""):
+                #     if p_legislation not in primary_dict:
+                #         p_legislation = {"status": ""}
+
+                if(
+                    key == 'Statutory_Applicable_Status' and
+                    s_applicable_status != ""
+                ):
+                    if (
+                        p_legislation not in primary_dict and
+                        data.get('Primary_Legislation') != ""
+                    ):
+                        primary_dict[p_legislation] = {
+                            "status": s_applicable_status
+                        }
+                    existing_status = primary_dict[p_legislation]["status"]
+                    if existing_status != s_applicable_status:
+                        self._error_summary["invalid_data_error"] += 1
+                        invalid_error = "Statutory_Applicable_Status- Invalid"
+                        res = self.make_error_desc(res, invalid_error)
+
+                if(
+                    key == 'Compliance_Applicable_Status' and
+                    c_applicable_status != "" and
+                    s_applicable_status != "applicable"
+                ):
+                    if(
+                        s_applicable_status == "not applicable" and
+                        c_applicable_status not in self._not_applicable_list
+                    ):
+                        self._error_summary["invalid_data_error"] += 1
+                        invalid_error = "Compliance_Applicable_Status- Invalid"
+                        res = self.make_error_desc(res, invalid_error)
+                    elif(
+                        s_applicable_status == "do not show" and
+                        c_applicable_status not in self._do_not_show_list
+                    ):
+                        self._error_summary["invalid_data_error"] += 1
+                        invalid_error = "Compliance_Applicable_Status- Invalid"
+                        res = self.make_error_desc(res, invalid_error)
+
             if res is not True:
                 err_str = (',').join(res)
                 if err_str.find(key) != -1:
@@ -1003,6 +1049,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         self.connect_bulk_database()
         mapped_error_dict = {}
         mapped_header_dict = {}
+        primary_dict = {}
         invalid = 0
         if(self.compare_csv_columns() is False):
             return "InvalidCSV"
@@ -1026,7 +1073,8 @@ class ValidateAssignStatutoryCsvData(SourceDB):
                 data,
                 duplicate_compliance_row,
                 {"mandatory": 0, "max_length": 0, "invalid_char": 0},
-                mapped_header_dict
+                mapped_header_dict,
+                primary_dict
             )
             if res is True:
                 if is_get_master_info is False:
