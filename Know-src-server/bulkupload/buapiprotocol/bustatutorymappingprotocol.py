@@ -955,58 +955,6 @@ class SMRejectedDownload(object):
         }
 
 
-class RejectedList(object):
-    def __init__(
-        self, c_id, c_name, d_id, d_name, csv_id, csv_name, no_of_records,
-        rej_by, rej_on, rej_count, rej_file, rej_reason, remove
-    ):
-        self.c_id = c_id
-        self.c_name = c_name
-        self.d_id = d_id
-        self.d_name = d_name
-        self.csv_id = csv_id
-        self.csv_name = csv_name
-        self.no_of_records = no_of_records
-        self.rej_by = rej_by
-        self.rej_on = rej_on
-        self.rej_count = rej_count
-        self.rej_file = rej_file
-        self.rej_reason = rej_reason
-        self.remove = remove
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, [
-            "c_id", "c_name", "d_id", "d_name", "csv_id", "csv_name",
-            "no_of_records", "rej_by", "rej_on", "rej_count", "rej_file",
-            "rej_reason", "remove"
-        ])
-        return RejectedList(
-            data.get("c_id"), data.get("c_name"), data.get("d_id"),
-            data.get("d_name"), data.get("csv_id"), data.get("csv_name"),
-            data.get("no_of_records"), data.get("rej_by"), data.get("rej_on"),
-            data.get("rej_count"), data.get("rej_file"),
-            data.get("rej_reason"), data.get("remove")
-        )
-
-    def to_structure(self):
-        return {
-            "c_id": self.c_id,
-            "c_name": self.c_name,
-            "d_id": self.d_id,
-            "d_name": self.d_name,
-            "csv_id": self.csv_id,
-            "csv_name": self.csv_name,
-            "no_of_records": self.no_of_records,
-            "rej_by": self.rej_by,
-            "rej_on": self.rej_on,
-            "rej_count": self.rej_count,
-            "rej_file": self.rej_file,
-            "rej_reason": self.rej_reason,
-            "remove": self.remove
-        }
-
-
 class PendingCsvList(object):
     def __init__(
         self, csv_id, csv_name, uploaded_by,
@@ -1452,22 +1400,6 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
         }
 
 
-class GetRejectedStatutoryMappingListSuccess(Response):
-    def __init__(self, rejected_list):
-        self.rejected_list = rejected_list
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["rejected_list"])
-        return GetRejectedStatutoryMappingListSuccess(
-            data.get("rejected_list"))
-
-    def to_inner_structure(self):
-        return {
-            "rejected_list": self.rejected_list
-        }
-
-
 class RemoveRejectedDataSuccess(Response):
     def __init__(self):
         pass
@@ -1819,19 +1751,6 @@ class Failure(Response):
         return {}
 
 
-# class DocumentQueueProcessSuccess(Response):
-#     def __init__(self):
-#         pass
-
-#     @staticmethod
-#     def parse_inner_structure(data):
-#         data = parse_dictionary(data)
-#         return DocumentQueueProcessSuccess()
-
-#     def to_inner_structure(self):
-#         return {}
-
-
 class DocumentQueueProcessSuccess(Response):
     def __init__(self, rejected_reason):
         self.rejected_reason = rejected_reason
@@ -1853,7 +1772,6 @@ def _init_Response_class_map():
         GetStatutoryMappingCsvUploadedListSuccess,
         UploadStatutoryMappingCSVValidSuccess,
         UploadStatutoryMappingCSVInvalidSuccess,
-        GetRejectedStatutoryMappingListSuccess,
         RemoveRejectedDataSuccess,
         GetApproveStatutoryMappingListSuccess,
         GetApproveMappingFilterSuccess,
