@@ -1736,7 +1736,7 @@ class AssignStatutoryReportData(object):
                  uploaded_on, csv_name, total_records, total_rejected_records,
                  approved_by, rejected_by, approved_on, rejected_on,
                  is_fully_rejected, total_approve_records, rejected_reason,
-                 domain_name, declined_count):
+                 bu_dom_names, declined_count):
         self.uploaded_by = uploaded_by
         self.uploaded_on = uploaded_on
         self.csv_name = csv_name
@@ -1749,7 +1749,7 @@ class AssignStatutoryReportData(object):
         self.is_fully_rejected = is_fully_rejected
         self.total_approve_records = total_approve_records
         self.rejected_reason = rejected_reason
-        self.domain_name = domain_name
+        self.bu_dom_names = bu_dom_names
         self.declined_count = declined_count
 
     @staticmethod
@@ -1758,7 +1758,7 @@ class AssignStatutoryReportData(object):
             "uploaded_by", "uploaded_on", "csv_name", "total_records",
             "total_rejected_records", "approved_by", "rejected_by",
             "approved_on", "rejected_on", "is_fully_rejected",
-            "total_approve_records", "rejected_reason", "domain_name",
+            "total_approve_records", "rejected_reason", "bu_dom_names",
             "declined_count"
         ])
         return AssignStatutoryReportData(
@@ -1774,7 +1774,7 @@ class AssignStatutoryReportData(object):
             data.get("is_fully_rejected"),
             data.get("total_approve_records"),
             data.get("rejected_reason"),
-            data.get("domain_name"),
+            data.get("bu_dom_names"),
             data.get("declined_count")
         )
 
@@ -1792,7 +1792,7 @@ class AssignStatutoryReportData(object):
             "is_fully_rejected": self.is_fully_rejected,
             "total_approve_records": self.total_approve_records,
             "rejected_reason": self.rejected_reason,
-            "domain_name": self.domain_name,
+            "bu_dom_names": self.bu_dom_names,
             "declined_count": self.declined_count
         }
 
