@@ -55,57 +55,68 @@ __all__ = [
 
 
 def get_client_list(db, session_user):
-    _source_db_con = connectKnowledgeDB()
-    _source_db = Database(_source_db_con)
-    _source_db.begin()
+    try:
+        _source_db_con = connectKnowledgeDB()
+        _source_db = Database(_source_db_con)
+        _source_db.begin()
 
-    clients_data = []
-    entitys_data = []
-    units_data = []
-    assigned_units_data = []
-    result = _source_db.call_proc_with_multiresult_set("sp_client_info", [
-        session_user.user_id()
-        ], 5)
-    _source_db.close()
+        clients_data = []
+        entitys_data = []
+        units_data = []
+        assigned_units_data = []
+        result = _source_db.call_proc_with_multiresult_set("sp_client_info", [
+            session_user.user_id()
+            ], 5)
+        _source_db.close()
 
-    clients = result[0]
-    entitys = result[1]
-    domains = result[2]
-    units = result[3]
-    assigned_units = result[4]
+        clients = result[0]
+        entitys = result[1]
+        domains = result[2]
+        units = result[3]
+        assigned_units = result[4]
 
-    for c in clients:
+        for c in clients:
 
-        clients_data.append(bu_as.Clients(
-            c["client_id"], c["group_name"]
-        ))
+            clients_data.append(bu_as.Clients(
+                c["client_id"], c["group_name"]
+            ))
 
-    for e in entitys:
+        for e in entitys:
 
-        domains_data = []
-        for d in domains:
-            if e["legal_entity_id"] == d["legal_entity_id"]:
-                domains_data.append(bu_as.Domains(
-                    d["domain_id"], d["domain_name"]))
+            domains_data = []
+            for d in domains:
+                if e["legal_entity_id"] == d["legal_entity_id"]:
+                    domains_data.append(bu_as.Domains(
+                        d["domain_id"], d["domain_name"]))
 
-        entitys_data.append(bu_as.LegalEntites(
-            e["client_id"], e["legal_entity_id"], e["legal_entity_name"],
-            domains_data)
+            entitys_data.append(bu_as.LegalEntites(
+                e["client_id"], e["legal_entity_id"], e["legal_entity_name"],
+                domains_data)
+            )
+
+        for u in units:
+            domain_ids = [
+                int(x) for x in u["domain_ids"].split(',') if x != ''
+            ]
+            units_data.append(bu_as.Units(
+                u["client_id"], u["legal_entity_id"], u["unit_id"],
+                (u["unit_code"] + ' - ' + u["unit_name"]), domain_ids
+            ))
+
+        for au in assigned_units:
+            assigned_units_data.append(bu_as.AssignedUnits(
+                au["domain_id"], au["unit_id"]
+            ))
+
+        return clients_data, entitys_data, units_data, assigned_units_data
+    except Exception, e:
+        logger.logKnowledge(
+            "error", "get_client_list", str(
+                traceback.format_exc())
         )
-
-    for u in units:
-        domain_ids = [int(x) for x in u["domain_ids"].split(',') if x != '']
-        units_data.append(bu_as.Units(
-            u["client_id"], u["legal_entity_id"], u["unit_id"],
-            (u["unit_code"] + ' - ' + u["unit_name"]), domain_ids
-        ))
-
-    for au in assigned_units:
-        assigned_units_data.append(bu_as.AssignedUnits(
-            au["domain_id"], au["unit_id"]
-        ))
-
-    return clients_data, entitys_data, units_data, assigned_units_data
+        logger.logKnowledge(
+            "error", "get_client_list", str(e))
+        raise fetch_error()
 
 
 ########################################################
@@ -122,77 +133,87 @@ def get_download_assing_statutory_list(
     db, cl_id, le_id, d_ids, u_ids, cl_name,
     le_name, d_names, u_names, session_user
 ):
+    try:
+        _source_db_con = connectKnowledgeDB()
+        _source_db = Database(_source_db_con)
+        _source_db.begin()
 
-    _source_db_con = connectKnowledgeDB()
-    _source_db = Database(_source_db_con)
-    _source_db.begin()
+        u = ",".join(str(e) for e in u_ids)
+        d = ",".join(str(e) for e in d_ids)
 
-    u = ",".join(str(e) for e in u_ids)
-    d = ",".join(str(e) for e in d_ids)
+        domain_names = ",".join(str(e) for e in d_names)
+        unit_names = ",".join(str(e) for e in u_names)
 
-    domain_names = ",".join(str(e) for e in d_names)
-    unit_names = ",".join(str(e) for e in u_names)
-
-    column = [
-        "client_group", "country", "legal_entity", "domain", "organization",
-        "unit_code", "unit_name", "unit_location", "perimary_legislation",
-        "secondary_legislation", "statutory_provision", "compliance_task_name",
-        "compliance_description"
-    ]
-    result = _source_db.call_proc_with_multiresult_set(
-        "sp_get_assign_statutory_compliance", [u, d], 2
-    )
-
-    _source_db.close()
-
-    def status_list(map_id):
-        s_legislation = None
-        p_legislation = None
-        for s in result[0]:
-            if s["statutory_mapping_id"] == map_id:
-                if(
-                    s["parent_ids"] == '' or s["parent_ids"] == 0 or
-                    s["parent_ids"] == '0,'
-                ):
-                    s_legislation = s["statutory_name"]
-                    p_legislation = s_legislation
-                else:
-                    names = [
-                        x.strip() for x in s["parent_names"].split('>>')
-                        if x != ''
-                    ]
-                    p_legislation = names[0]
-                    if len(names) > 1:
-                        s_legislation = names[1]
-                    else:
-                        s_legislation = s["statutory_name"]
-        return p_legislation, s_legislation
-
-    ac_list = []
-    for r in result[1]:
-        p_legislation, s_legislation = status_list(r["statutory_mapping_id"])
-        if s_legislation == p_legislation:
-            s_legislation = ""
-        ac_tuple = (
-            cl_name, r["country_name"], le_name,
-            r["domain_name"], r["organizations"],
-            r["unit_code"], r["unit_name"], r["location"],
-            p_legislation.strip(), s_legislation.strip(),
-            r["statutory_provision"], r["compliance_task_name"],
-            r["compliance_description"]
+        column = [
+            "client_group", "country", "legal_entity", "domain",
+            "organization", "unit_code", "unit_name", "unit_location",
+            "perimary_legislation", "secondary_legislation",
+            "statutory_provision", "compliance_task_name",
+            "compliance_description"
+        ]
+        result = _source_db.call_proc_with_multiresult_set(
+            "sp_get_assign_statutory_compliance", [u, d], 2
         )
-        ac_list.append(ac_tuple)
 
-    db = connect_bulk_db()
-    db.call_proc("sp_delete_assign_statutory_template", (
-        le_name, domain_names, unit_names
-        ))
-    if len(ac_list) > 0:
-        db.bulk_insert(
-            "tbl_download_assign_statutory_template", column, ac_list
+        _source_db.close()
+
+        def status_list(map_id):
+            s_legislation = None
+            p_legislation = None
+            for s in result[0]:
+                if s["statutory_mapping_id"] == map_id:
+                    if(
+                        s["parent_ids"] == '' or s["parent_ids"] == 0 or
+                        s["parent_ids"] == '0,'
+                    ):
+                        s_legislation = s["statutory_name"]
+                        p_legislation = s_legislation
+                    else:
+                        names = [
+                            x.strip() for x in s["parent_names"].split('>>')
+                            if x != ''
+                        ]
+                        p_legislation = names[0]
+                        if len(names) > 1:
+                            s_legislation = names[1]
+                        else:
+                            s_legislation = s["statutory_name"]
+            return p_legislation, s_legislation
+
+        ac_list = []
+        for r in result[1]:
+            p_legislation, s_legislation = status_list(
+                r["statutory_mapping_id"])
+            if s_legislation == p_legislation:
+                s_legislation = ""
+            ac_tuple = (
+                cl_name, r["country_name"], le_name,
+                r["domain_name"], r["organizations"],
+                r["unit_code"], r["unit_name"], r["location"],
+                p_legislation.strip(), s_legislation.strip(),
+                r["statutory_provision"], r["compliance_task_name"],
+                r["compliance_description"]
             )
-        db.commit()
-    return ac_list
+            ac_list.append(ac_tuple)
+
+        db = connect_bulk_db()
+        db.call_proc("sp_delete_assign_statutory_template", (
+            le_name, domain_names, unit_names
+            ))
+        if len(ac_list) > 0:
+            db.bulk_insert(
+                "tbl_download_assign_statutory_template", column, ac_list
+                )
+            db.commit()
+        return ac_list
+    except Exception, e:
+        logger.logKnowledge(
+            "error", "get_download_assing_statutory_list", str(
+                traceback.format_exc())
+        )
+        logger.logKnowledge(
+            "error", "get_download_assing_statutory_list", str(e))
+        raise fetch_error()
 
 ########################################################
 '''
@@ -212,10 +233,16 @@ def get_download_assing_statutory_list(
 
 
 def save_assign_statutory_csv(db, args):
-    db = connect_bulk_db()
-    newid = db.call_insert_proc("sp_assign_statutory_csv_save", args)
-    db.commit()
-    return newid
+    try:
+        db = connect_bulk_db()
+        newid = db.call_insert_proc("sp_assign_statutory_csv_save", args)
+        db.commit()
+        return newid
+    except Exception, e:
+        logger.logKnowledge("error", "save_assign_statutory_csv",
+                            str(traceback.format_exc()))
+        logger.logKnowledge("error", "save_assign_statutory_csv", str(e))
+        raise fetch_error()
 
 
 ########################################################
@@ -296,8 +323,12 @@ def save_assign_statutory_data(db, csv_id, csv_data):
         else:
             return False
     except Exception, e:
-        print str(e)
-        raise ValueError("Transaction failed")
+        logger.logKnowledge(
+            "error", "save_assign_statutory_data", str(
+                traceback.format_exc())
+        )
+        logger.logKnowledge("error", "save_assign_statutory_data", str(e))
+        raise fetch_error()
 
 
 ########################################################
@@ -476,67 +507,77 @@ def get_assign_statutory_by_csv_id(db, request_frame, session_user):
 
 
 def get_assign_statutory_by_filter(db, request_frame, session_user):
-    csv_id = request_frame.csv_id
-    domain_name = request_frame.filter_d_name
-    unit_name = request_frame.filter_u_name
-    p_legis = request_frame.filter_p_leg
-    s_legis = request_frame.s_leg
-    s_prov = request_frame.s_prov
-    c_task = request_frame.c_task
-    c_desc = request_frame.c_desc
-    f_count = request_frame.f_count
-    r_range = request_frame.r_range
-    view_data = request_frame.filter_view_data
-    s_status = request_frame.s_status
-    c_status = request_frame.c_status
+    try:
 
-    result = db.call_proc_with_multiresult_set(
-        "sp_assign_statutory_view_by_filter",
-        [
-            csv_id, domain_name, unit_name, p_legis,
-            s_legis, s_prov, c_task, c_desc, f_count, r_range,
-            view_data, s_status, c_status
-        ], 3)
-    header_info = result[0]
-    count_info = result[1]
-    compliance_info = result[2]
+        csv_id = request_frame.csv_id
+        domain_name = request_frame.filter_d_name
+        unit_name = request_frame.filter_u_name
+        p_legis = request_frame.filter_p_leg
+        s_legis = request_frame.s_leg
+        s_prov = request_frame.s_prov
+        c_task = request_frame.c_task
+        c_desc = request_frame.c_desc
+        f_count = request_frame.f_count
+        r_range = request_frame.r_range
+        view_data = request_frame.filter_view_data
+        s_status = request_frame.s_status
+        c_status = request_frame.c_status
 
-    client_name = header_info[0]["client_group"]
-    legal_entity_name = header_info[0]["legal_entity"]
-    country_name = header_info[0]["country"]
+        result = db.call_proc_with_multiresult_set(
+            "sp_assign_statutory_view_by_filter",
+            [
+                csv_id, domain_name, unit_name, p_legis,
+                s_legis, s_prov, c_task, c_desc, f_count, r_range,
+                view_data, s_status, c_status
+            ], 3)
+        header_info = result[0]
+        count_info = result[1]
+        compliance_info = result[2]
 
-    file_name = header_info[0]["csv_name"].split('.')
-    remove_code = file_name[0].split('_')
-    csv_name = "%s" % ('_'.join(remove_code[:-1]))
-    upload_on = header_info[0]["uploaded_on"]
-    upload_by = header_info[0]["uploaded_by"]
+        client_name = header_info[0]["client_group"]
+        legal_entity_name = header_info[0]["legal_entity"]
+        country_name = header_info[0]["country"]
 
-    total_records = 0
-    as_data = []
+        file_name = header_info[0]["csv_name"].split('.')
+        remove_code = file_name[0].split('_')
+        csv_name = "%s" % ('_'.join(remove_code[:-1]))
+        upload_on = header_info[0]["uploaded_on"]
+        upload_by = header_info[0]["uploaded_by"]
 
-    if len(count_info) > 0:
-        total_records = count_info[0]["total_count"]
+        total_records = 0
+        as_data = []
 
-    if len(compliance_info) > 0:
-        for idx, d in enumerate(compliance_info):
+        if len(count_info) > 0:
+            total_records = count_info[0]["total_count"]
 
-            orgs = [x for x in d["organization"].split(',') if x != '']
+        if len(compliance_info) > 0:
+            for idx, d in enumerate(compliance_info):
 
-            as_data.append(bu_as.AssignStatutoryData(
-                d["bulk_assign_statutory_id"],
-                d["unit_location"], d["unit_code"],
-                d["unit_name"], d["domain"],
-                orgs, d["perimary_legislation"],
-                d["secondary_legislation"], d["statutory_provision"],
-                d["compliance_task_name"], d["compliance_description"],
-                d["statutory_applicable_status"], d["statytory_remarks"],
-                d["compliance_applicable_status"], d["action"], d["remarks"]
-            ))
-    return bu_as.ViewAssignStatutoryDataSuccess(
-        csv_id, csv_name, client_name, country_name,
-        legal_entity_name, upload_by,
-        upload_on,  as_data, total_records
-    )
+                orgs = [x for x in d["organization"].split(',') if x != '']
+
+                as_data.append(bu_as.AssignStatutoryData(
+                    d["bulk_assign_statutory_id"],
+                    d["unit_location"], d["unit_code"],
+                    d["unit_name"], d["domain"],
+                    orgs, d["perimary_legislation"],
+                    d["secondary_legislation"], d["statutory_provision"],
+                    d["compliance_task_name"], d["compliance_description"],
+                    d["statutory_applicable_status"], d["statytory_remarks"],
+                    d["compliance_applicable_status"], d["action"],
+                    d["remarks"]
+                ))
+        return bu_as.ViewAssignStatutoryDataSuccess(
+            csv_id, csv_name, client_name, country_name,
+            legal_entity_name, upload_by,
+            upload_on,  as_data, total_records
+        )
+    except Exception, e:
+        logger.logKnowledge(
+            "error", "get_assign_statutory_by_filter", str(
+                traceback.format_exc())
+        )
+        logger.logKnowledge("error", "get_assign_statutory_by_filter", str(e))
+        raise fetch_error()
 
 
 def update_approve_action_from_list(
@@ -554,9 +595,9 @@ def update_approve_action_from_list(
         return True
 
     except Exception, e:
-        logger.logKnowledge("error", "update action from list",
+        logger.logKnowledge("error", "update_approve_action_from_list",
                             str(traceback.format_exc()))
-        logger.logKnowledge("error", "update action from list", str(e))
+        logger.logKnowledge("error", "update_approve_action_from_list", str(e))
         raise fetch_error()
 
 ########################################################
@@ -784,9 +825,9 @@ def save_action_from_view(db, csv_id, as_ids, action, remarks, session_user):
 
     except Exception, e:
         logger.logKnowledge(
-            "error", "update action from view", str(traceback.format_exc())
+            "error", "save_action_from_view", str(traceback.format_exc())
         )
-        logger.logKnowledge("error", "update action from view", str(e))
+        logger.logKnowledge("error", "save_action_from_view", str(e))
         raise fetch_error()
 
 
@@ -819,23 +860,31 @@ def delete_action_after_approval(db, csv_id):
 
     except Exception, e:
         logger.logKnowledge(
-            "error", "update action from list", str(traceback.format_exc())
+            "error", "delete_action_after_approval", str(
+                traceback.format_exc())
         )
-        logger.logKnowledge("error", "update action from list", str(e))
+        logger.logKnowledge("error", "delete_action_after_approval", str(e))
         raise fetch_error()
 
 
 def verify_user_units(db, session_user, u_ids):
-    _source_db_con = connectKnowledgeDB()
-    _source_db = Database(_source_db_con)
-    _source_db.begin()
-    result = _source_db.call_proc(
-        "sp_bu_domain_executive_units", [session_user.user_id(), u_ids]
-    )
-    _source_db.close()
+    try:
+        _source_db_con = connectKnowledgeDB()
+        _source_db = Database(_source_db_con)
+        _source_db.begin()
+        result = _source_db.call_proc(
+            "sp_bu_domain_executive_units", [session_user.user_id(), u_ids]
+        )
+        _source_db.close()
 
-    unit_count = len(result)
-    return unit_count
+        unit_count = len(result)
+        return unit_count
+    except Exception, e:
+        logger.logKnowledge(
+            "error", "verify_user_units", str(traceback.format_exc())
+        )
+        logger.logKnowledge("error", "verify_user_units", str(e))
+        raise fetch_error()
 
 
 def get_form_categories(db, session_user):
@@ -858,37 +907,57 @@ def get_form_categories(db, session_user):
 
 
 def get_domain_executive(db, session_user):
-    _source_db_con = connectKnowledgeDB()
-    _source_db = Database(_source_db_con)
-    _source_db.begin()
-    result = _source_db.call_proc(
-        "sp_domain_executive_info", [session_user.user_id()]
-    )
-    _source_db.close()
-
-    domain_users = []
-    for r in result:
-        userid = r.get("user_id")
-        emp_name = "%s - %s" % (r.get("employee_code"), r.get("employee_name"))
-
-        domain_users.append(
-            bu_as.DomainExecutiveInfo(
-                emp_name, userid
-            )
+    try:
+        _source_db_con = connectKnowledgeDB()
+        _source_db = Database(_source_db_con)
+        _source_db.begin()
+        result = _source_db.call_proc(
+            "sp_domain_executive_info", [session_user.user_id()]
         )
-    return domain_users
+        _source_db.close()
+
+        domain_users = []
+        for r in result:
+            userid = r.get("user_id")
+            emp_name = "%s - %s" % (
+                r.get("employee_code"), r.get("employee_name")
+            )
+
+            domain_users.append(
+                bu_as.DomainExecutiveInfo(
+                    emp_name, userid
+                )
+            )
+        return domain_users
+
+    except Exception, e:
+        logger.logKnowledge(
+            "error", "get_domain_executive", str(
+                traceback.format_exc())
+        )
+        logger.logKnowledge("error", "get_domain_executive", str(e))
+        raise fetch_error()
 
 
 def get_country_name_by_legal_entity_id(le_id):
-    _source_db_con = connectKnowledgeDB()
-    _source_db = Database(_source_db_con)
-    _source_db.begin()
-    result = _source_db.call_proc(
-        "sp_bu_get_country_by_legal_entity_id", [le_id]
-    )
-    _source_db.close()
+    try:
+        _source_db_con = connectKnowledgeDB()
+        _source_db = Database(_source_db_con)
+        _source_db.begin()
+        result = _source_db.call_proc(
+            "sp_bu_get_country_by_legal_entity_id", [le_id]
+        )
+        _source_db.close()
 
-    return result[0]["country_id"], result[0]["country_name"]
+        return result[0]["country_id"], result[0]["country_name"]
+    except Exception, e:
+        logger.logKnowledge(
+            "error", "get_country_name_by_legal_entity_id", str(
+                traceback.format_exc())
+        )
+        logger.logKnowledge(
+            "error", "get_country_name_by_legal_entity_id", str(e))
+        raise fetch_error()
 
 
 def connectKnowledgeDB():
