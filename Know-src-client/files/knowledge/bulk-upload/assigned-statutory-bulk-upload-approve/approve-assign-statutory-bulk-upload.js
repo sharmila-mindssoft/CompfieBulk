@@ -1415,6 +1415,7 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
                 Custombox.close();
                 hideLoader();
             } else {
+                Custombox.close();
                 var csv_name = null;
                 function apiCallSubmit(csv_name, callback){
                     bu.getAssignStatutorySubmitStatus(csv_name, callback);
