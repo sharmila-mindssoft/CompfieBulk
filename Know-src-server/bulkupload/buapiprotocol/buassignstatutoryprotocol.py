@@ -258,7 +258,7 @@ class GetAssignedStatutoryBulkReportData(Request):
 class ExportASBulkReportData(Request):
     def __init__(self, bu_client_id, bu_group_name, bu_legal_entity_id,
                  legal_entity_name, bu_unit_id, unit_name,
-                 domain_ids, d_names, from_date, to_date, child_ids,
+                 domain_ids, bu_dom_names, from_date, to_date, child_ids,
                  user_category_id, csv):
         self.bu_client_id = bu_client_id
         self.bu_group_name = bu_group_name
@@ -267,7 +267,7 @@ class ExportASBulkReportData(Request):
         self.bu_unit_id = bu_unit_id
         self.unit_name = unit_name
         self.domain_ids = domain_ids
-        self.d_names = d_names
+        self.bu_dom_names = bu_dom_names
         self.from_date = from_date
         self.to_date = to_date
         self.child_ids = child_ids
@@ -280,7 +280,7 @@ class ExportASBulkReportData(Request):
                                        "bu_legal_entity_id",
                                        "legal_entity_name",
                                        "bu_unit_id", "unit_name", "domain_ids",
-                                       "d_names", "from_date", "to_date",
+                                       "bu_dom_names", "from_date", "to_date",
                                        "child_ids", "user_category_id", "csv"])
         return ExportASBulkReportData(
             data.get("bu_client_id"),
@@ -290,7 +290,7 @@ class ExportASBulkReportData(Request):
             data.get("bu_unit_id"),
             data.get("unit_name"),
             data.get("domain_ids"),
-            data.get("d_names"),
+            data.get("bu_dom_names"),
             data.get("from_date"),
             data.get("to_date"),
             data.get("child_ids"),
@@ -307,7 +307,7 @@ class ExportASBulkReportData(Request):
             "bu_unit_id": self.bu_unit_id,
             "unit_name": self.unit_name,
             "domain_ids": self.domain_ids,
-            "d_names": self.d_names,
+            "bu_dom_names": self.bu_dom_names,
             "from_date": self.from_date,
             "to_date": self.to_date,
             "child_ids": self.child_ids,

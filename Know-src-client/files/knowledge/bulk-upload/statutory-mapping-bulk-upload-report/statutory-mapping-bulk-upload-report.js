@@ -561,9 +561,9 @@ StatutoryMappingBulkReport.prototype.exportData = function() {
     }
     filterdata = {
         "c_ids": selectedCountryId,
-        "c_names": countryNames,
+        "bu_country_names": countryNames,
         "d_ids": selectedDomainId,
-        "d_names": domainNames,
+        "bu_dom_names": domainNames,
         "child_ids": selectedKe,
         "from_date": fromDate,
         "to_date": toDate,

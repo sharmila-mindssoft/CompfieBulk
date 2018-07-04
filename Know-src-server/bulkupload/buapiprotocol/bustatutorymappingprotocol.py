@@ -177,12 +177,13 @@ class GetSMBulkReportData(Request):
 
 
 class ExportSMBulkReportData(Request):
-    def __init__(self, c_ids, c_names, d_ids, d_names, from_date, to_date,
-                 child_ids, user_category_id, csv, c_d_ids):
+    def __init__(self, c_ids, bu_country_names, d_ids, bu_dom_names,
+                 from_date, to_date, child_ids, user_category_id,
+                 csv, c_d_ids):
         self.c_ids = c_ids
-        self.c_names = c_names
+        self.bu_country_names = bu_country_names
         self.d_ids = d_ids
-        self.d_names = d_names
+        self.bu_dom_names = bu_dom_names
         self.from_date = from_date
         self.to_date = to_date
         self.child_ids = child_ids
@@ -192,14 +193,15 @@ class ExportSMBulkReportData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "c_names", "d_ids", "d_names",
-                                       "from_date", "to_date", "child_ids",
+        data = parse_dictionary(data, ["c_ids", "bu_country_names", "d_ids",
+                                       "bu_dom_names", "from_date",
+                                       "to_date", "child_ids",
                                        "user_category_id", "csv", "c_d_ids"])
         return ExportSMBulkReportData(
             data.get("c_ids"),
-            data.get("c_names"),
+            data.get("bu_country_names"),
             data.get("d_ids"),
-            data.get("d_names"),
+            data.get("bu_dom_names"),
             data.get("from_date"),
             data.get("to_date"),
             data.get("child_ids"),
@@ -211,9 +213,9 @@ class ExportSMBulkReportData(Request):
     def to_inner_structure(self):
         return {
             "c_ids": self.c_ids,
-            "c_names": self.c_names,
+            "bu_country_names": self.bu_country_names,
             "d_ids": self.d_ids,
-            "d_names": self.d_names,
+            "bu_dom_names": self.bu_dom_names,
             "from_date": self.from_date, "to_date": self.to_date,
             "child_ids": self.child_ids,
             "user_category_id": self.user_category_id,

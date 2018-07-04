@@ -328,8 +328,8 @@ bu_api_params = {
         'type': 'VECTOR_TYPE_INT', 'length': None,
         'validation_method': None, 'is_optional': False
     },
-    "d_names": {
-        'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+    "bu_dom_names": {
+        'type': 'STRING', 'length': 1000,
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
     'u_names': {
@@ -666,8 +666,8 @@ bu_api_params = {
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
 
-    "c_names": {
-        'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+    "bu_country_names": {
+        'type': 'STRING', 'length': 100,
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
     "legal_entity_name": {
