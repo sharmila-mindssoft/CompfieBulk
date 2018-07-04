@@ -271,9 +271,11 @@ class SourceDB(object):
                         "compliance_id": compliance_id,
                         "desc": description}
 
-    def frame_key(self, unit_code, primary, seondary, compliance, desc):
-        key = "%s-%s-%s-%s-%s" % (
-            unit_code, primary, seondary, compliance, desc)
+    def frame_key(
+        self, unit_code, primary, seondary, compliance, desc, provision
+    ):
+        key = "%s-%s-%s-%s-%s-%s" % (
+            unit_code, primary, seondary, provision, compliance, desc)
         return key
 
     def collect_due_dates_in_csv(self):
@@ -284,12 +286,13 @@ class SourceDB(object):
             unit_code = data.get("Unit_Code")
             desc = data.get("Compliance_Description")
             due_date = data.get("Due_Date")
+            provision = data.get("Statutory_Provision")
             if secondary == "":
                 secondary = "empty"
             else:
                 secondary = secondary.strip()
             key = self.frame_key(
-                unit_code, primary, secondary, compliance, desc)
+                unit_code, primary, secondary, compliance, desc, provision)
             if key not in self.due_dates:
                 self.due_dates[key] = []
             self.due_dates[key].append(due_date)
@@ -417,17 +420,17 @@ class SourceDB(object):
 
     def check_temp_db_due_date_dict(
         self, unit_code, primary_legislation, secondary_legislation, secondary,
-        compliance_task, description, due_date
+        compliance_task, description, due_date, provision
     ):
         def query_db():
             q = "SELECT date(due_date) as due_date " + \
                 " FROM tbl_bulk_past_data " + \
                 "WHERE unit_code=%s and perimary_legislation=%s and " + \
                 "secondary_legislation=%s and compliance_task_name=%s and " + \
-                "compliance_description=%s "
+                "compliance_description=%s and statutory_provision = %s"
             params = [
                 unit_code, primary_legislation, secondary_legislation,
-                compliance_task, description
+                compliance_task, description, provision
             ]
             db = bulkupload_db_connect()
             rows = db.select_all(q, params)
@@ -438,7 +441,7 @@ class SourceDB(object):
             return due_dates_list
         key = self.frame_key(
             unit_code, primary_legislation, secondary,
-            compliance_task, description)
+            compliance_task, description, provision)
         if key not in self.temp_db_due_dates:
             self.temp_db_due_dates[key] = query_db()
         if due_date in self.temp_db_due_dates[key]:
@@ -461,7 +464,7 @@ class SourceDB(object):
             secondary = secondary_legislation.strip()
         key = self.frame_key(
             unit_code, primary_legislation.strip(), secondary,
-            compliance_task, description)
+            compliance_task, description, provision)
         try:
             data = self.hierarchy_checker[primary_legislation.strip()][
                 secondary][provision][compliance_task_name]
@@ -477,12 +480,12 @@ class SourceDB(object):
             return
         result1 = self.check_temp_db_due_date_dict(
             unit_code, primary_legislation, secondary_legislation, secondary,
-            compliance_task, description, due_date
+            compliance_task, description, due_date, provision
         )
         result2 = self.check_if_already_saved_compliance(
             unit_code, compliance_task_name, primary_legislation,
             secondary_legislation, description, self.legal_entity_id,
-            due_date, frequency)
+            due_date, frequency, provision)
         due_dates = self.get_past_due_dates(domain_id, unit_id, compliance_id)
         # RETURNING #
         if unit_id is None or domain_id is None or compliance_id is None:
@@ -743,11 +746,15 @@ class SourceDB(object):
             document_size_dict[key] = row["document_file_size"]
 
         for idx, d in enumerate(data):
+            print "d: %s" % d
             compliance_task_name = self.get_compliance_task_name(
                 d["compliance_task_name"])
             primary = d["perimary_legislation"].strip()
             secondary = d["secondary_legislation"]
             provision = d["statutory_provision"]
+            print "primary: %s, secondary : %s, provision: %s" % (
+                primary, secondary, provision
+            )
             if secondary == "":
                 secondary = "empty"
             else:
@@ -1061,7 +1068,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
     def check_if_already_saved_compliance(
         self, unit_code, compliance_name, primary_legislation,
         secondary_legislation, description, legal_entity_id, due_date,
-        frequency
+        frequency, provision
     ):
         def query_db():
             q = "SELECT date(due_date) as due_date " + \
@@ -1097,7 +1104,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             return due_dates_list
         key = self.frame_key(
             unit_code, primary_legislation, secondary_legislation,
-            compliance_name, description)
+            compliance_name, description, provision)
         if key not in self.main_db_due_dates:
             self.main_db_due_dates[key] = query_db()
         if due_date in self.main_db_due_dates[key]:
@@ -1237,7 +1244,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     def check_for_duplicate_records(self, legal_entity_id):
         def query_db(
             primary_legislation, secondary_legislation, compliance_name,
-            description, frequency, unit_code, legal_entity_id
+            description, frequency, unit_code, legal_entity_id, provision
         ):
             q = "SELECT compliance_history_id " + \
                 " from tbl_compliance_history " + \
@@ -1245,6 +1252,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 " SELECT compliance_id FROM tbl_compliances where " + \
                 "compliance_task = TRIM(%s) and compliance_description = " + \
                 " TRIM(%s) and statutory_mapping like %s and " + \
+                " statutory_provision = %s  and " + \
                 " frequency_id = (SELECT frequency_id from " + \
                 " tbl_compliance_frequency WHERE " + \
                 " frequency=TRIM(%s)) Limit 1) and unit_id =( select " + \
@@ -1258,7 +1266,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             else:
                 legis_cond += "%"
             params = [
-                compliance_name, description, legis_cond,
+                compliance_name, description, legis_cond, provision,
                 frequency, unit_code, legal_entity_id, due_date.date()
             ]
             self.connect_source_db(legal_entity_id)
@@ -1278,14 +1286,15 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 compliance_task_name)
             description = data.get("compliance_description")
             frequency = data.get("compliance_frequency")
+            provision = data.get("statutory_provision")
             key = self.frame_key(
                 unit_code, primary_legislation, secondary_legislation,
-                compliance_name, description)
+                compliance_name, description, provision)
             if key not in self.main_db_due_dates:
                 self.main_db_due_dates[key] = query_db(
                     primary_legislation, secondary_legislation,
                     compliance_name, description, frequency, unit_code,
-                    legal_entity_id)
+                    legal_entity_id, provision)
             if due_date in self.main_db_due_dates[key]:
                 return "Duplicate due date"
             else:
