@@ -38,7 +38,8 @@ __all__ = [
     "get_countries_for_user_bu",
     "get_knowledge_executive_bu",
     "get_sm_document_count",
-    "get_update_approve_file_status"
+    "get_update_approve_file_status",
+    "get_sm_csv_name",
 ]
 
 # transaction method begin
@@ -854,6 +855,14 @@ def get_sm_document_count(db, csv_id):
     )
     document_count = result[0]["document_count"]
     return document_count
+
+
+def get_sm_csv_name(db, csv_id):
+    result = db.call_proc(
+        "sp_get_sm_csv_name", [csv_id]
+    )
+    csv_name = result[0]["csv_name"]
+    return csv_name
 
 
 def get_all_compliance_frequency():

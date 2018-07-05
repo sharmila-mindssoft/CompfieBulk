@@ -686,33 +686,9 @@ ApproveBulkMapping.prototype.actionFromList = function(
                                 csvId, action, remarks, pwd, COUNTRY_VAL.val(),
                                 DOMAIN_VAL.val(),
                                 function(error, response) {
-                                    if (error == null) {
-                                        if (response.rej_count > 0) {
-                                            msg = response.rej_count
-                                            + " compliance declined, "
-                                            +"Do you want to continue ?";
-                                            confirm_alert(msg, 
-                                                function(isConfirm) {
-                                                if (isConfirm) {
-                                                    tThis.confirmAction();
-                                                }
-                                                else {
-                                                    hideLoader();
-                                                }
-                                            });
-                                        }else {
-                                            if (action == 1) {
-                                                displaySuccessMessage(
-                                                    message.approve_success
-                                                );
-                                            }
-                                            else {
-                                                displaySuccessMessage(
-                                                    message.reject_success
-                                                );
-                                            }
-                                            tThis.fetchListData()
-                                        }
+                                    if (error == 'Done') {
+                                        setTimeout(apiCall, TIMEOUT_MLS, 
+                                            response.csv_name, call_bck_fn);
                                     }
                                     else {
                                         hideLoader();
