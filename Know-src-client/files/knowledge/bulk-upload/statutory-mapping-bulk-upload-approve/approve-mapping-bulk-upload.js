@@ -408,6 +408,7 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
                 $('.show-reject-check', cloneRow).remove();
                 $('.bu-view-mapping', cloneRow).remove();
                 $('.dropbtn', cloneRow).remove();
+                $('.editbtn', cloneRow).remove();
                 
             }
             else if(fileSubStats == 3 && fileSubStats != 2){
@@ -417,6 +418,7 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
                 $('.show-reject-check', cloneRow).remove();
                 $('.bu-view-mapping', cloneRow).remove();
                 $('.dropbtn', cloneRow).remove();
+                $('.editbtn', cloneRow).remove();
                 
             }
             else
