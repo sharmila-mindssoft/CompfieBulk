@@ -258,7 +258,7 @@ function displayViewRejectAllPopUp(callback) {
 }
 
 function validateAuthentication() {
-    
+
     var password = CURRENT_PASSWORD.val().trim();
     var rejectReason = $('.reject-reason-txt').val();
     if (password.length == 0) {
@@ -317,9 +317,9 @@ ApproveBulkMapping.prototype.possibleFailures = function(error) {
         displayMessage(message.invalid_password);
     }
     else{
-        displayMessage(error);    
+        displayMessage(error);
     }
-    
+
     hideLoader();
 };
 ApproveBulkMapping.prototype.showList = function() {
@@ -371,7 +371,7 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
     var tr = '', clone4 = '', cloneRow = '';
     var approveRejCount = {};
     var fileSubStats = '';
-    tThis = this;    
+    tThis = this;
     LIST_CONTAINER.find('tr').remove();
     if(listData.length == 0) {
         LIST_CONTAINER.empty();
@@ -394,7 +394,7 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             $('.uploaded-on', cloneRow).text(data.uploaded_on);
             $('.uploaded-by', cloneRow).text(data.uploaded_by);
             $('.tot-records', cloneRow).text(data.no_of_records);
-            $('.approve-reject', cloneRow).text(    
+            $('.approve-reject', cloneRow).text(
                 data.approve_count + ' / ' + data.rej_count
             );
             $('.queued-task i', cloneRow).hide();
@@ -408,7 +408,7 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
                 $('.show-reject-check', cloneRow).remove();
                 $('.bu-view-mapping', cloneRow).remove();
                 $('.dropbtn', cloneRow).remove();
-                
+
             }
             else if(fileSubStats == 3 && fileSubStats != 2){
                 $('.queued-task', cloneRow).show();
@@ -417,7 +417,7 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
                 $('.show-reject-check', cloneRow).remove();
                 $('.bu-view-mapping', cloneRow).remove();
                 $('.dropbtn', cloneRow).remove();
-                
+
             }
             else
             {
@@ -461,7 +461,7 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             });
 
             $(".dl-xls-file, .dl-csv-file, .dl-ods-file,"+
-                " .dl-txt-file", cloneRow).on("click", function() {
+                ".dl-txt-file", cloneRow).on("click", function() {
                 $(".dropdown-content", cloneRow).hide();
                 $(".dropdown-content", cloneRow).removeClass("show");
             });
@@ -475,10 +475,29 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
             $('.dl-ods-file',cloneRow).attr(
                 "href", "/uploaded_file/ods/"+fileName+ '.ods'
             );
+
             $('.dl-txt-file',cloneRow).attr(
-                "href", "/uploaded_file/txt/"+fileName+'.txt'
+                "link", "/uploaded_file/txt/"+fileName+'.txt'
             );
-            if(data.approve_count > 0 || data.rej_count > 0 
+
+            $('.dl-txt-file',cloneRow).attr(
+                "fname", fileName
+            );
+
+            $('.dl-txt-file',cloneRow).on("click", function(){
+                var fNameLink = jQuery(this).attr('link');
+                var fname = jQuery(this).attr('fname');
+            $.get(
+                "/uploaded_file/txt/" + fname + ".txt",
+                function(data){
+                   download(
+                    fNameLink + ".txt", "text/plain", data
+                    );
+                },
+            'text');
+            });
+
+            if(data.approve_count > 0 || data.rej_count > 0
                 || data.declined_count > 0) {
 
                 $('.bu-view-mapping', cloneRow).hide();
@@ -521,6 +540,21 @@ ApproveBulkMapping.prototype.renderList = function(listData) {
     $('[data-toggle="tooltip"]').tooltip();
 };
 
+function download(filename, mime_type, text) {
+    var element = document.createElement('a');
+    var href = 'data:' + mime_type + ';' +
+        'charset=utf-8,' + encodeURIComponent(text);
+    element.setAttribute('href', href);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
 ApproveBulkMapping.prototype.processQueuedTasks = function(csvId) {
     tThis = this;
     displayLoader();
@@ -528,7 +562,7 @@ ApproveBulkMapping.prototype.processQueuedTasks = function(csvId) {
         bu.documentUploadQueueProcess(
         csvId, 1, COUNTRY_VAL.val(),
         DOMAIN_VAL.val(),
-        function(error, response) {   
+        function(error, response) {
             if(error == null){
                 if(response.rejected_reason == "error"){
                     /*displaySuccessMessage(message.process_queued_temp_error);*/
@@ -540,7 +574,7 @@ ApproveBulkMapping.prototype.processQueuedTasks = function(csvId) {
                 if(BU_APPROVE_PAGE.fetchListData()){
                        hideLoader();
                 }
-                
+
             }
             else{
                 hideLoader();
@@ -598,8 +632,8 @@ ApproveBulkMapping.prototype.confirmAction = function() {
         }
         else {
             if (error != "Alive"){
-                BU_APPROVE_PAGE.possibleFailures(error);    
-            }            
+                BU_APPROVE_PAGE.possibleFailures(error);
+            }
         }
     }
 
@@ -735,7 +769,7 @@ ApproveBulkMapping.prototype.actionFromList = function(
         csvId, action, remarks, pwd, COUNTRY_VAL.val(),
         DOMAIN_VAL.val(),
         function(error, response) {
-            
+
             if(error == "Done" || response == "Done"){
                 csv_name = response.csv_name;
                 apiCall(csv_name, call_bck_fn);
@@ -856,12 +890,12 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
     var actionStatus = '';
     var cloneRow = '';
     var approveCheckCount;
-    
+
     tThis = this;
     showFrom = tThis.showMapCount;
     showFrom += 1;
     VIEW_LIST_CONTAINER.find('tr').remove();
-    
+
     if(viewData.length == 0) {
         VIEW_LIST_CONTAINER.empty();
         tr = $('#no_record_templates .table-no-content .table-row-no-content');
@@ -871,7 +905,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
         hideLoader();
     }
     else {
-        
+
         $.each(viewData, function(idx, data) {
 
             formatDownloadUrl = "/uploadedformat/";
@@ -902,7 +936,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
             $('.geography', cloneRow).text(data.geo_location);
             $('.comp-desc', cloneRow).text(data.c_desc);
             $('.penal', cloneRow).text(data.p_cons);
-            
+
             $('.view-approve-check',cloneRow).attr("id", "view-approve-"+j);
             $('.view-approve-check',cloneRow).attr("data-sno", j);
             $('.view-reject-check',cloneRow).attr("id", "view-reject-"+j);
@@ -932,7 +966,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                         ).addClass("default-display-none");
                 }
                 TOTAL_VIEW_REJECT_ITEMS++;
-              
+
             }
             else {
                 $('.view-approve-check', cloneRow).attr("checked", false);
@@ -940,7 +974,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                 $('.reject-reason .fa-info-circle', cloneRow).each(function() {
                     $(this).addClass("default-display-none");
                 });
-            }            
+            }
 
             $('.view-approve-check', cloneRow).on('change', function(e) {
                 var currentElement = $(this).attr("data-sno");
@@ -972,7 +1006,7 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
             $(".view-reject-check", cloneRow).on('change', function(e) {
                 var currentElement = $(this).attr("data-sno");
                 if(e.target.checked) {
-                    csvId = $('#view_csv_id').val();                    
+                    csvId = $('#view_csv_id').val();
                     $('#view-approve-'+currentElement).prop("checked", false);
                     $('.approve-all').prop("checked", false);
                     displayPopUp('view-reject', parseInt(csvId), data.sm_id,
@@ -1247,7 +1281,7 @@ ApproveBulkMapping.prototype.finalSubmit = function(csvId, pwd) {
         }
         if(error == null && error != "Alive") {
             if (response.rej_count > 0) {
-                msg = response.rej_count + " compliance declined, " 
+                msg = response.rej_count + " compliance declined, "
                 + "Do you want to continue ?";
                 confirm_alert(msg, function(isConfirm) {
                     if (isConfirm) {
@@ -1704,7 +1738,7 @@ function PageControls() {
             viewalldata = "View Data : All";
             appendFilter(viewalldata);
         }
-        
+
         if(ORG_NAME.val() != "") {
             orgs = "Organization : " + ORG_NAME.val();
             appendFilter(orgs);
@@ -1852,7 +1886,7 @@ function PageControls() {
 
                 $(".tbody-sm-approve-view th.reject-reason")
                 .find("*").attr("data-original-title","");
-                
+
                 if (data) {
                     csvId = $('#view_csv_id').val();
                     bu.updateActionFromView(
@@ -1940,7 +1974,7 @@ function PageControls() {
                     "default-display-none");
                 $('#fa-info-circle-'+sno).attr(
                     "data-original-title", "");
-                
+
                 if (data) {
                     csvId = $('#view_csv_id').val();
                     bu.updateActionFromView(
@@ -1961,7 +1995,7 @@ function PageControls() {
         tThis.showViewScreen(tThis.CSVID, 0, pageLimit);
     });
 
-    
+
     FREEZER_TABLE.scroll(function(e) {
 
         FREEZER_THEAD.css("left", -FREEZER_TBODY.scrollLeft());
@@ -1974,13 +2008,13 @@ function PageControls() {
 
 
         $('#multi_col_freezer .table-responsive tbody td:nth-child(1)'
-            ).css("left", FREEZER_TABLE.scrollLeft());        
+            ).css("left", FREEZER_TABLE.scrollLeft());
         $('#multi_col_freezer .table-responsive tbody td:nth-child(2)'
-            ).css("left", FREEZER_TABLE.scrollLeft());        
+            ).css("left", FREEZER_TABLE.scrollLeft());
         $('#multi_col_freezer .table-responsive tbody td:nth-child(3)'
-            ).css("left", FREEZER_TABLE.scrollLeft());        
+            ).css("left", FREEZER_TABLE.scrollLeft());
         $('#multi_col_freezer .table-responsive tbody td:nth-child(4)'
-            ).css("left", FREEZER_TABLE.scrollLeft());        
+            ).css("left", FREEZER_TABLE.scrollLeft());
         $('#multi_col_freezer .table-responsive tbody td:nth-child(5)'
             ).css("left", FREEZER_TABLE.scrollLeft());
 
