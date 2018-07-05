@@ -8,7 +8,7 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
 from server.common import (
-    string_to_datetime, string_to_datetime_with_time
+    localize, string_to_datetime_with_time
 )
 from clientprotocol import clientcore
 from bulkupload.client_bulkconstants import (
@@ -30,6 +30,13 @@ __all__ = [
     "update_document_count",
     "get_current_doc_data_submit_status"
 ]
+
+
+def string_to_datetime(string):
+    string_in_date = string
+    if string is not None:
+        string_in_date = datetime.datetime.strptime(string, "%Y-%b-%d")
+    return localize(string_in_date)
 
 
 def get_legal_entity_domains(

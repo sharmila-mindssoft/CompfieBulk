@@ -6,7 +6,6 @@ import datetime
 import mysql.connector
 from server.dbase import Database
 from clientprotocol import clientcore
-from server.common import datetime_to_string
 from bulkupload.client_bulkconstants import CSV_DOWNLOAD_URL
 from server.constants import (
     KNOWLEDGE_DB_HOST,
@@ -23,6 +22,13 @@ ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..", "..")
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
 FILE_DOWNLOAD_BASE_PATH = "/download/csv"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
+
+
+def datetime_to_string(datetime_val):
+    date_in_string = datetime_val
+    if datetime_val is not None:
+        date_in_string = datetime_val.strftime("%Y-%b-%d")
+    return date_in_string
 
 
 class PastDataJsonToCSV(object):

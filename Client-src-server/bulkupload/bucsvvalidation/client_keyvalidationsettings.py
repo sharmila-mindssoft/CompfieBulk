@@ -157,8 +157,8 @@ def is_date(string):
     try:
         if string is not None:
             if string != datetime.datetime.strptime(
-                string_in_date, "%d-%b-%Y"
-            ).strftime("%d-%b-%Y"):
+                string_in_date, "%Y-%b-%d"
+            ).strftime("%Y-%b-%d"):
                 raise ValueError
             else:
                 return True

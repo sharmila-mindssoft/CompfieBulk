@@ -999,6 +999,7 @@ var myDropzone = new Dropzone("div#myDrop", {
                 UPLOADED_DOCUMENTS += 1;
                 REMAINING_DOCUMENTS = TOTAL_DOCUMENTS - UPLOADED_DOCUMENTS;
                 setDocumentCount();
+                file.previewElement.removeChild(file._removeLink);
             }
 
             if (perQueueUploadSuccess == maxParallelCount) {
