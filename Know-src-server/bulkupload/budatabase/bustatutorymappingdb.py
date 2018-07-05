@@ -36,7 +36,10 @@ __all__ = [
     "get_rejected_sm_file_count",
     "get_domains_for_user_bu",
     "get_countries_for_user_bu",
-    "get_knowledge_executive_bu"
+    "get_knowledge_executive_bu",
+    "get_sm_document_count",
+    "get_update_approve_file_status",
+    "get_sm_csv_name",
 ]
 
 # transaction method begin
@@ -214,7 +217,7 @@ def get_uploaded_statutory_mapping_csv_list(db, session_user):
 ########################################################
 
 
-def save_mapping_csv(db, args):
+def save_mapping_csv(args):
     db = connect_bulk_db()
     newid = db.call_insert_proc("sp_statutory_mapping_csv_save", args)
     db.commit()
@@ -240,7 +243,7 @@ def save_mapping_csv(db, args):
 ########################################################
 
 
-def save_mapping_data(db, csv_id, csv_data):
+def save_mapping_data(csv_id, csv_data):
     try:
         columns = [
             "csv_id", "s_no", "organization", "geography_location",
@@ -271,7 +274,8 @@ def save_mapping_data(db, csv_id, csv_data):
                 d["Repeats_By (DOM/EOM)"],
                 None if d["Duration"] == '' else d["Duration"],
                 d["Duration_Type"], d["Multiple_Input_Selection"],
-                d["Format"], d["Task_ID"], d["Task_Type"],
+                None if d["Format"] == '' else d["Format"],
+                d["Task_ID"], d["Task_Type"],
             ))
 
         if values:
@@ -569,7 +573,7 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
             trigger_before = d["trigger_before"].replace(CSV_DELIMITER, ", ")
             statu_month = d["statutory_month"].replace(CSV_DELIMITER, ",")
 
-            if(statu_month != ''and len(statu_month) >= 1):
+            if statu_month != '' and len(statu_month) >= 1:
                 smonth_list = statu_month.split(",")
                 smonth_list = ','.join(
                     str(x).rstrip().lstrip() for x in smonth_list
@@ -583,7 +587,7 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
                         i = i + 1
                         smon = smon.lstrip()
                         smon = smon.rstrip()
-                        if(i == int(smon)):
+                        if i == int(smon):
                             statu_months.append(str(mon))
                 statu_months = ', '.join(str(x) for x in statu_months)
             else:
@@ -608,9 +612,7 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
     )
 
 
-def update_approve_action_from_list(
-        db, csv_id, action, remarks, session_user, action_type
-):
+def update_approve_action_from_list(csv_id, action, remarks, session_user, action_type):
     try:
         if action_type == "all":
             args = [csv_id, action, remarks, session_user.user_id()]
@@ -633,7 +635,7 @@ def update_approve_action_from_list(
         raise fetch_error()
 
 
-def delete_action_after_approval(db, csv_id):
+def delete_action_after_approval(csv_id):
     try:
         args = [csv_id]
         db = connect_bulk_db()
@@ -671,7 +673,7 @@ def get_pending_action(db, csv_id):
         return False
 
 
-def get_update_approve_file_status(db, csv_id, file_status):
+def get_update_approve_file_status(csv_id, file_status):
     db = connect_bulk_db()
     db.call_proc("sp_update_approve_file_status", [csv_id, file_status])
     db.commit()
@@ -854,6 +856,14 @@ def get_sm_document_count(db, csv_id):
     )
     document_count = result[0]["document_count"]
     return document_count
+
+
+def get_sm_csv_name(db, csv_id):
+    result = db.call_proc(
+        "sp_get_sm_csv_name", [csv_id]
+    )
+    csv_name = result[0]["csv_name"]
+    return csv_name
 
 
 def get_all_compliance_frequency():

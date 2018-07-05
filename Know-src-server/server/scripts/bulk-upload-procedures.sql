@@ -1990,6 +1990,17 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_get_sm_csv_name`;
+DELIMITER //
+CREATE PROCEDURE `sp_get_sm_csv_name`(
+    IN _csvid INT(11)
+)
+BEGIN
+  SELECT csv_name FROM tbl_bulk_statutory_mapping_csv
+  WHERE csv_id = _csvid;
+END //
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS `sp_pastdata_get_file_download_status`;
 DROP PROCEDURE IF EXISTS `sp_sm_get_declined_docs`;
 DROP PROCEDURE IF EXISTS `sp_check_duplicate_statu_mapping`;

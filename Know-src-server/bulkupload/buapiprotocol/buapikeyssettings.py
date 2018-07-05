@@ -12,22 +12,22 @@ assign_statutory = "bulkupload.buapiprotocol.buassignstatutoryprotocol"
 client_units = "bulkupload.buapiprotocol.buclientunitsprotocol"
 
 bu_api_params = {
-    'c_id': {
-        'type': 'INT', 'length': None, 'validation_method': None,
-        'is_optional': False
-    },
-    'c_name': {
-        'type': 'STRING', 'length': 50,
-        'validation_method': is_alphabet_withdot, 'is_optional': True
-    },
-    'd_id': {
-        'type': 'INT', 'length': None,
-        'validation_method': None, 'is_optional': False
-    },
-    'd_name': {
-        'type': 'STRING', 'length': 50,
-        'validation_method': is_alphabet_withdot, 'is_optional': True
-    },
+    # 'c_id': {
+    #     'type': 'INT', 'length': None, 'validation_method': None,
+    #     'is_optional': False
+    # },
+    # 'c_name': {
+    #     'type': 'STRING', 'length': 50,
+    #     'validation_method': is_alphabet_withdot, 'is_optional': True
+    # },
+    # 'd_id': {
+    #     'type': 'INT', 'length': None,
+    #     'validation_method': None, 'is_optional': False
+    # },
+    # 'd_name': {
+    #     'type': 'STRING', 'length': 50,
+    #     'validation_method': is_alphabet_withdot, 'is_optional': True
+    # },
     'csv_id': {
         'type': 'INT', 'length': None, 'validation_method': None,
         'is_optional': True
@@ -177,11 +177,6 @@ bu_api_params = {
         'type': 'BOOL', 'length': None, 'validation_method': None,
         'is_optional': False
     },
-    'rejected_list': {
-        'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None,
-        'is_optional': False,
-        'module_name': statutory_mapping, "class_name": "RejectedList"
-    },
     'pwd': {
         'type': 'STRING', 'length': 100, 'validation_method': None,
         'is_optional': False
@@ -328,10 +323,16 @@ bu_api_params = {
         'type': 'VECTOR_TYPE_INT', 'length': None,
         'validation_method': None, 'is_optional': False
     },
-    "d_names": {
-        'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+    # "d_names": {
+    #     'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+    #     'validation_method': is_alpha_numeric, 'is_optional': True
+    # },
+
+    "bu_dom_names": {
+        'type': 'STRING', 'length': 1000,
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
+
     'u_names': {
         'type': 'VECTOR_TYPE_STRING', 'length': 1000,
         'validation_method': is_alpha_numeric, 'is_optional': True
@@ -342,22 +343,22 @@ bu_api_params = {
         'validation_method': None, 'is_optional': False
     },
 
-    'from_date': {
-        'type': 'TEXT', 'length': 20,
-        'validation_method': None, 'is_optional': True
-    },
-    'to_date': {
-        'type': 'TEXT', 'length': 20,
-        'validation_method': None, 'is_optional': True
-    },
+    # 'from_date': {
+    #     'type': 'TEXT', 'length': 20,
+    #     'validation_method': None, 'is_optional': True
+    # },
+    # 'to_date': {
+    #     'type': 'TEXT', 'length': 20,
+    #     'validation_method': None, 'is_optional': True
+    # },
     'export': {
         'type': 'BOOL', 'length': None,
         'validation_method': None, 'is_optional': False
     },
-    'r_count': {
-        'type': 'INT', 'length': None,
-        'validation_method': None, 'is_optional': False
-    },
+    # 'r_count': {
+    #     'type': 'INT', 'length': None,
+    #     'validation_method': None, 'is_optional': False
+    # },
     'p_count': {
         'type': 'INT', 'length': None,
         'validation_method': None, 'is_optional': False
@@ -368,19 +369,20 @@ bu_api_params = {
         'validation_method': None, 'is_optional': False,
         'module_name': statutory_mapping, "class_name": "ReportData"
     },
-    'country_name': {
-        'type': 'STRING', 'length': 50,
-        'validation_method': is_alpha_numeric, 'is_optional': False
-    },
-    'domain_name': {
-        'type': 'STRING', 'length': 50,
-        'validation_method': is_alpha_numeric, 'is_optional': False
-    },
+    # 'country_name': {
+    #     'type': 'STRING', 'length': 50,
+    #     'validation_method': is_alpha_numeric, 'is_optional': False
+    # },
 
-    'total_records': {
-        'type': 'INT', 'length': None,
-        'validation_method': None, 'is_optional': False
-    },
+    # 'domain_name': {
+    #     'type': 'STRING', 'length': 50,
+    #     'validation_method': is_alpha_numeric, 'is_optional': False
+    # },
+
+    # 'total_records': {
+    #     'type': 'INT', 'length': None,
+    #     'validation_method': None, 'is_optional': False
+    # },
     'total_rejected_records': {
         'type': 'INT', 'length': None,
         'validation_method': None, 'is_optional': True
@@ -666,20 +668,23 @@ bu_api_params = {
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
 
-    "c_names": {
-        'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+    # "c_names": {
+    #     'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+    #     'validation_method': is_alpha_numeric, 'is_optional': True
+    # },
+    # "legal_entity_name": {
+    #     'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+    #     'validation_method': is_alpha_numeric,
+    #     'is_optional': True
+    # },
+    # "unit_name": {
+    #     'type': 'VECTOR_TYPE_SRTING', 'length': 100,
+    #     'validation_method': is_alpha_numeric, 'is_optional': True
+    # },
+    "bu_country_names": {
+        'type': 'STRING', 'length': 100,
         'validation_method': is_alpha_numeric, 'is_optional': True
     },
-    "legal_entity_name": {
-        'type': 'VECTOR_TYPE_SRTING', 'length': 100,
-        'validation_method': is_alpha_numeric,
-        'is_optional': True
-    },
-    "unit_name": {
-        'type': 'VECTOR_TYPE_SRTING', 'length': 100,
-        'validation_method': is_alpha_numeric, 'is_optional': True
-    },
-
     'download_format': {
         'type': 'STRING', 'length': 100,
         'validation_method': is_alphabet, 'is_optional': True
@@ -744,7 +749,7 @@ bu_api_params = {
     },
     'bu_unit_name': {
         'type': 'TEXT', 'length': 50,
-        'validation_metunithod': is_alpha_numeric, 'is_optional': False
+        'validation_method': is_alpha_numeric, 'is_optional': False
     },
     'bu_address': {
         'type': 'TEXT', 'length': None,

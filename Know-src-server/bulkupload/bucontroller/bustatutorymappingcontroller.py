@@ -32,7 +32,8 @@ from ..budatabase.bustatutorymappingdb import (
     delete_action_after_approval, get_rejected_sm_file_count,
     get_domains_for_user_bu,
     get_countries_for_user_bu, get_knowledge_executive_bu,
-    get_sm_document_count, get_update_approve_file_status
+    get_sm_document_count, get_update_approve_file_status,
+    get_sm_csv_name
 )
 
 from ..bulkuploadcommon import (
@@ -138,10 +139,10 @@ def process_bu_statutory_mapping_request(request, db, session_user):
             request_frame, session_user
         )
     if type(request_frame) is bu_sm.GetStatus:
-        result = process_get_status(db, request_frame)
+        result = process_get_status(request_frame)
 
     if type(request_frame) is bu_sm.GetApproveMappingStatus:
-        result = process_get_approve_mapping_status(db, request_frame)
+        result = process_get_approve_mapping_status(request_frame)
 
     if type(request_frame) is bu_sm.DocumentQueueProcess:
         result = queue_process_statutory_document(
@@ -238,12 +239,12 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
                 request_frame.d_name, csv_name,
                 res_data["total"], res_data["doc_count"], upload_sts
             ]
-            new_csv_id = save_mapping_csv(db, csv_args)
+            new_csv_id = save_mapping_csv(csv_args)
 
             # result = None
 
             if new_csv_id:
-                if save_mapping_data(db, new_csv_id, res_data["data"]) is True:
+                if save_mapping_data(new_csv_id, res_data["data"]) is True:
                     if res_data["doc_count"] == 0:
                         c_obj.save_executive_message(
                             csv_name, request_frame.c_name,
@@ -277,14 +278,14 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - validate_data", e)
-        raise(error)
+        raise error
     except Exception, e:
         return_data = json.dumps(str(e))
         write_file()
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - validate_data()", e)
-        raise(e)
+        raise e
     write_file()
     return
 
@@ -406,12 +407,12 @@ def upload_statutory_mapping_csv_old_copy(db, request_frame, session_user):
                 request_frame.d_name, csv_name,
                 res_data["total"], res_data["doc_count"], upload_sts
             ]
-            new_csv_id = save_mapping_csv(db, csv_args)
+            new_csv_id = save_mapping_csv(csv_args)
 
             result = None
 
             if new_csv_id:
-                if save_mapping_data(db, new_csv_id, res_data["data"]) is True:
+                if save_mapping_data(new_csv_id, res_data["data"]) is True:
                     if res_data["doc_count"] == 0:
                         c_obj.save_executive_message(
                             csv_name, request_frame.c_name,
@@ -564,15 +565,15 @@ def queue_process_statutory_document(db, request_frame, session_user):
     action = request_frame.bu_action
     country_id = request_frame.c_id
     domain_id = request_frame.d_id
-
+    rejected_reason = ""
     if action == 1:
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
 
         if c_obj._doc_count > 0:
-            get_update_approve_file_status(db, csv_id, 3)
-            if(c_obj.format_download_process_initiate(csv_id)):
+            get_update_approve_file_status(csv_id, 3)
+            if c_obj.format_download_process_initiate(csv_id):
                 rejected_reason = "success"
             else:
                 rejected_reason = "error"
@@ -604,14 +605,12 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
                     len(is_declined.keys())).to_structure()
             else:
 
-                if (update_approve_action_from_list(
-                        db, csv_id, action, remarks, session_user, "all"
-                )):
+                if (update_approve_action_from_list(csv_id, action, remarks, session_user, "all")):
                     if c_obj._doc_count > 0:
-                        get_update_approve_file_status(db, csv_id, 3)
+                        get_update_approve_file_status(csv_id, 3)
                         c_obj.format_download_process_initiate(csv_id)
                     else:
-                        get_update_approve_file_status(db, csv_id, 1)
+                        get_update_approve_file_status(csv_id, 1)
 
                     c_obj.frame_data_for_main_db_insert()
                     c_obj.save_manager_message(
@@ -620,14 +619,12 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
                         None, 0
                     )
                     c_obj.source_commit()
-                    delete_action_after_approval(db, csv_id)
+                    delete_action_after_approval(csv_id)
                     remove_bulk_uploaded_files(csv_name)
                     return_data = bu_sm.UpdateApproveActionFromListSuccess().to_structure()
         else:
-            if (update_approve_action_from_list(
-                db, csv_id, action, remarks, session_user, "all"
-            )):
-                get_update_approve_file_status(db, csv_id, 1)
+            if (update_approve_action_from_list(csv_id, action, remarks, session_user, "all")):
+                get_update_approve_file_status(csv_id, 1)
                 c_obj.save_manager_message(
                     action, c_obj._csv_name, c_obj._country_name,
                     c_obj._domain_name, session_user.user_id(), remarks, 0
@@ -643,14 +640,14 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - statutory_validate_data", e)
-        raise(error)
+        raise error
     except Exception, e:
         return_data = json.dumps(str(e))
         write_file(return_data)
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - statutory_validate_data()", e)
-        raise(e)
+        raise e
     write_file(return_data)
     return
 
@@ -703,20 +700,20 @@ def submit_statutory_validate(db, request_frame, c_obj, session_user):
             ).to_structure()
         else:
             update_approve_action_from_list(
-                db, csv_id, 1, None, session_user, "single"
+                csv_id, 1, None, session_user, "single"
             )
             if c_obj._doc_count > 0:
-                get_update_approve_file_status(db, csv_id, 3)
+                get_update_approve_file_status(csv_id, 3)
                 c_obj.format_download_process_initiate(csv_id)
             else:
-                get_update_approve_file_status(db, csv_id, 1)
+                get_update_approve_file_status(csv_id, 1)
             c_obj.save_manager_message(
                 1, c_obj._csv_name, c_obj._country_name, c_obj._domain_name,
                 session_user.user_id(), None, 0
             )
             c_obj.frame_data_for_main_db_insert()
             c_obj.source_commit()
-            delete_action_after_approval(db, csv_id)
+            delete_action_after_approval(csv_id)
             remove_bulk_uploaded_files(csv_name)
             return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure()
 
@@ -727,14 +724,14 @@ def submit_statutory_validate(db, request_frame, c_obj, session_user):
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - submit_statutory_validate", e)
-        raise(error)
+        raise error
     except Exception, e:
         return_data = json.dumps(str(e))
         write_file(return_data)
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - submit_statutory_validate()", e)
-        raise(e)
+        raise e
     write_file(return_data)
     return
 
@@ -773,8 +770,6 @@ def confirm_statutory_validate(db, request_frame, c_obj, session_user):
 
     try:
         is_declined = c_obj.perform_validation_before_submit()
-        user_id = session_user.user_id()
-
         csv_id = request_frame.csv_id
         user_id = session_user.user_id()
         csv_name = c_obj._csv_name
@@ -784,16 +779,16 @@ def confirm_statutory_validate(db, request_frame, c_obj, session_user):
             rej_done = c_obj.make_rejection(is_declined, user_id)
             c_obj.save_manager_message(
                 1, c_obj._csv_name, c_obj._country_name, c_obj._domain_name,
-                session_user.user_id(), None, len(is_declined.keys())
+                user_id, None, len(is_declined.keys())
             )
             c_obj.frame_data_for_main_db_insert()
             c_obj.source_commit()
-            delete_action_after_approval(db, csv_id)
+            delete_action_after_approval(csv_id)
             if c_obj._doc_count > 0 and rej_done:
-                get_update_approve_file_status(db, csv_id, 3)
+                get_update_approve_file_status(csv_id, 3)
                 c_obj.format_download_process_initiate(csv_id)
             else:
-                get_update_approve_file_status(db, csv_id, 1)
+                get_update_approve_file_status(csv_id, 1)
 
             c_obj.source_bulkdb_commit()
             remove_bulk_uploaded_files(csv_name)
@@ -808,14 +803,14 @@ def confirm_statutory_validate(db, request_frame, c_obj, session_user):
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - statutory_validate_data", e)
-        raise(error)
+        raise error
     except Exception, e:
         return_data = json.dumps(str(e))
         write_file(return_data)
         logger.logKnowledge(
             "error",
             "bustatutorymappingcontroller.py - statutory_validate_data()", e)
-        raise(e)
+        raise e
     write_file(return_data)
     return
 
@@ -935,15 +930,16 @@ def delete_rejected_sm_csv_id(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     user_id = session_user.user_id()
     document_count = get_sm_document_count(db, csv_id)
+    csv_name = get_sm_csv_name(db, csv_id)
     c_obj = ValidateStatutoryMappingForApprove(db, csv_id, country_id,
                                                domain_id, session_user)
-    if(document_count > 0):
+    if document_count > 0:
         c_obj.temp_server_folder_remove_call(csv_id)
 
     rejected_data = process_delete_rejected_sm_csv_id(
         db, user_id, country_id, domain_id, csv_id
     )
-    remove_bulk_uploaded_files(c_obj._csv_name)
+    remove_bulk_uploaded_files(csv_name)
     result = bu_sm.RejectedSMBulkDataSuccess(rejected_data)
     return result
 
@@ -1025,7 +1021,7 @@ def download_rejected_sm_report(db, request_frame, session_user):
         result["txt_link"])
 
 
-def process_get_status(db, request):
+def process_get_status(request):
     csv_name = request.csv_name
     file_string = csv_name.split(".")
     file_name = "%s_%s.%s" % (
@@ -1056,7 +1052,7 @@ def process_get_status(db, request):
                 raise Exception(str(result))
 
 
-def process_get_approve_mapping_status(db, request):
+def process_get_approve_mapping_status(request):
     csv_name = request.csv_name
     file_string = csv_name.split(".")
     file_name = "%s_%s.%s" % (

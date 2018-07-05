@@ -868,4 +868,5 @@ ALTER TABLE `tbl_compliances`
 ADD COLUMN `task_id` VARCHAR(25) NOT NULL AFTER `is_updated`,
 ADD COLUMN `task_type` VARCHAR(150) NOT NULL AFTER `task_id`;
 
-
+ALTER TABLE `compfie_knowledge_new`.`tbl_units` 
+CHANGE COLUMN `postal_code` `postal_code` VARCHAR(6) NOT NULL ;

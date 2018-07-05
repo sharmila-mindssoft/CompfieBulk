@@ -190,12 +190,16 @@ function loadClientUnitCSVFilesList(data) {
                 $('<a/>')
                 .text("Download Text")
                 .addClass("dl-txt-file-"+value.csv_id)
+                .attr("link","/uploaded_file/txt/"+SplitFileName+'.txt')
+                .attr("fname",SplitFileName)
                 .on("click",function(){
+                    var fNameLink = jQuery(this).attr('link');
+                    var fnme = jQuery(this).attr('fname');
                     $.get(
-                        "/uploaded_file/txt/" + SplitFileName+".txt",
+                        "/uploaded_file/txt/" + fnme+".txt",
                         function(data)
                         {
-                           download(SplitFileName+".txt", "text/plain", data);
+                           download(fNameLink , "text/plain", data);
                         },
                     'text');
                 })
