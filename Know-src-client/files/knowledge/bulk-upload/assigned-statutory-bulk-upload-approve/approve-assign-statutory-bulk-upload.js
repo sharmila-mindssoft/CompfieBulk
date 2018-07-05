@@ -893,6 +893,7 @@ approveOrRejectAction = function(id, clId, leId, action, reason, password) {
 
     function call_bck_fn_confirm(error, data){
         if (error == null) {
+            hideLoader();
             displayMsg(action);
             STATUTE.fetchValues();
         } else{
@@ -1427,6 +1428,7 @@ ApproveAssignStatutoryBU.prototype.submitProcess = function() {
 
                 function call_bck_fn_confirm(error, data){
                     if (error == null) {
+                        hideLoader();
                         displaySuccessMessage(
                             message.assign_statutory_submit_success
                         );
