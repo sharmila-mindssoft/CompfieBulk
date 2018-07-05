@@ -491,7 +491,7 @@ class ConvertJsonToCSV(object):
         self.write_csv(csv_header_line2, None)
         csv_header_line3 = [
             "", "", "", "Domain", request.bu_dom_names, "",
-            "Unit", request.unit_name, "", "", "", ""
+            "DE Name", user_name_list, "", "", "", ""
         ]
         self.write_csv(csv_header_line3, None)
         csv_header_line4 = [
@@ -501,7 +501,7 @@ class ConvertJsonToCSV(object):
         self.write_csv(csv_header_line4, None)
         csv_header_line5 = [
             "", "", "", "Exported Date and Time", exported_time,
-            "", "DE Name", user_name_list, "", "", ""
+            "", "", "", "", "", ""
         ]
         self.write_csv(csv_header_line5, None)
         csv_header_line6 = ["S.No", "Domain", "Uploaded By",
