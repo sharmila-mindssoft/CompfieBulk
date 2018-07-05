@@ -474,7 +474,7 @@ class SourceDB(object):
             return
         csv_due_date = due_date
         try:
-            due_date = datetime.strptime(due_date, "%d-%b-%Y")
+            due_date = datetime.strptime(due_date, "%Y-%b-%d")
             due_date = due_date.date().strftime("%Y-%m-%d")
         except ValueError:
             return
@@ -535,7 +535,7 @@ class SourceDB(object):
         try:
             due_date = datetime.strptime(due_date, "%d-%b-%Y")
             completion_date = datetime.strptime(
-                completion_date, "%d-%b-%Y").date()
+                completion_date, "%Y-%b-%d").date()
         except ValueError:
             return
         start_date = due_date.date() - timedelta(days=trigger_before_days)
