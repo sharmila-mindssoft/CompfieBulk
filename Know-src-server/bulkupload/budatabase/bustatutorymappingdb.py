@@ -274,7 +274,8 @@ def save_mapping_data(csv_id, csv_data):
                 d["Repeats_By (DOM/EOM)"],
                 None if d["Duration"] == '' else d["Duration"],
                 d["Duration_Type"], d["Multiple_Input_Selection"],
-                d["Format"], d["Task_ID"], d["Task_Type"],
+                None if d["Format"] == '' else d["Format"],
+                d["Task_ID"], d["Task_Type"],
             ))
 
         if values:
