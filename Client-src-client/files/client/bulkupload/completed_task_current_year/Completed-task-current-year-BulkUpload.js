@@ -1020,8 +1020,8 @@ var myDropzone = new Dropzone("div#myDrop", {
 
         this.on("error", function(file, errorMessage) {
             displayMessage(errorMessage);
-            addedfiles = [];
-            myDropzone.removeAllFiles(true);
+            addedfiles.pop(file)
+            myDropzone.removeFile(file);
             hideLoader();
         });
     }
