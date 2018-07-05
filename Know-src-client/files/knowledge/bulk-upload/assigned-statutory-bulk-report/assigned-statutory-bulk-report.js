@@ -732,7 +732,7 @@ function loadCountwiseResult(data) {
         reasonRejection = data[entity].is_fully_rejected;
         totalApproveRecords = data[entity].total_approve_records;
         rejReason = data[entity].rejected_reason;
-        domainName = data[entity].domain_name;
+        domainName = data[entity].bu_dom_names;
         approvedOn = data[entity].approved_on;
         approvedBy = data[entity].approved_by;
         declinedCount = data[entity].declined_count;
