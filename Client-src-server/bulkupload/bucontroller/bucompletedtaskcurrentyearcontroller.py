@@ -220,7 +220,7 @@ def submit_compliance(
     domain_id, unit_id, session_token, data_result, request_frame
 ):
     try:
-        if c_obj.check_for_duplicate_records(legal_id) is False:
+        if c_obj.check_for_duplicate_records(legal_id) is not True:
             return_data = bu_ct.DataAlreadyExists().to_structure()
         else:
             if c_obj.doc_count > 0:
@@ -377,9 +377,9 @@ def submit_queued_tasks(
             result = bu_ct.ProcessDocumentSubmitQueued().to_structure()
 
         if data_cur_stats in [0, 2]:
-            if c_obj.check_for_duplicate_records(legal_id) is False:
-                return bu_ct.DataAlreadyExists().to_structure()
-            if c_obj.frame_data_for_main_db_insert(
+            if c_obj.check_for_duplicate_records(legal_id) is not True:
+                result = bu_ct.DataAlreadyExists().to_structure()
+            elif c_obj.frame_data_for_main_db_insert(
                 data_result, request_frame.legal_entity_id, csv_id, country_id,
                 domain_id
             ) is True:
