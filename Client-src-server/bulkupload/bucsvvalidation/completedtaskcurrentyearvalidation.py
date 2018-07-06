@@ -1,4 +1,4 @@
-import os
+fimport os
 import json
 import collections
 import mysql.connector
@@ -707,7 +707,8 @@ class SourceDB(object):
                     compliance_task_name += compliance_task_name_check[i]
         return compliance_task_name
 
-    def save_completed_task_data(self, db, data, legal_entity_id, csv_id):
+    def save_completed_task_data(self, db, data, legal_entity_id, csv_id,
+                                 country_id, domain_id):
         def frame_key_for_doc(
                 unit_code, primary, secondary, comp, desc, due_date):
             key = "%s-%s-%s-%s-%s-%s" % (
@@ -1392,7 +1393,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     ):
         db = bulkupload_db_connect()
         data_save_status = self.save_completed_task_data(
-            db, data_result, legal_entity_id, csv_id
+            db, data_result, legal_entity_id, csv_id, country_id, domain_id
         )
         self.save_data_submit_status(data_save_status)
         db.commit()
