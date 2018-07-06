@@ -17,9 +17,11 @@ CREATE FUNCTION `SPLIT_STR`(
   delim VARCHAR(12),
   pos INT
 ) RETURNS VARCHAR(1000) CHARSET latin1
+BEGIN
 RETURN REPLACE(SUBSTRING(SUBSTRING_INDEX(x, delim, pos),
        LENGTH(SUBSTRING_INDEX(x, delim, pos -1)) + 1),
        delim, '');
+END //
 DELIMITER ;
 
 
