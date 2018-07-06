@@ -744,9 +744,8 @@ class SourceDB(object):
             key = frame_key_for_doc(
                 unit_code, primary, secondary, comp, desc, due_date)
             document_size_dict[key] = row["document_file_size"]
-
+        self.connect_source_db(legal_entity_id)
         for idx, d in enumerate(data):
-            print "d: %s" % d
             compliance_task_name = self.get_compliance_task_name(
                 d["compliance_task_name"])
             primary = d["perimary_legislation"].strip()
@@ -768,7 +767,6 @@ class SourceDB(object):
             approved_by = self.approval_dict[
                 unit_id][compliance_id]["approval"]
             concurred_by = self.approval_dict[unit_id][compliance_id]["concur"]
-            self.connect_source_db(legal_entity_id)
             columns = [
                 "legal_entity_id", "unit_id", "compliance_id", "start_date",
                 "due_date", "completion_date", "completed_by",
@@ -804,7 +802,7 @@ class SourceDB(object):
             if values:
                 self._source_db.insert(
                     "tbl_compliance_history", columns, values)
-                self._source_db.commit()
+        self._source_db.commit()
         return True
 
     # main db related validation mapped with field name
