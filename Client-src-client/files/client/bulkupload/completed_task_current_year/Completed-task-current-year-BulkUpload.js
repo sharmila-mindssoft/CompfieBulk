@@ -836,7 +836,7 @@ function submitUpload() {
             setTimeout(apiCall, TIMEOUT_MLS, leg_id, csv_id, call_bck_fn);
         }else if(error == 'DuplicateExists'){
             hideLoader();
-            myModal.hide();
+            MY_MODAL.modal("hide");
             duplicate_count = data.duplicate_count;
             var msg = duplicate_count + ' ' + 
                 message.sys_rejected_confirm;
