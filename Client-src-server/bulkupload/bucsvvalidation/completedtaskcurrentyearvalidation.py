@@ -1,4 +1,4 @@
-fimport os
+import os
 import json
 import collections
 import mysql.connector
@@ -752,9 +752,6 @@ class SourceDB(object):
             primary = d["perimary_legislation"].strip()
             secondary = d["secondary_legislation"]
             provision = d["statutory_provision"]
-            print "primary: %s, secondary : %s, provision: %s" % (
-                primary, secondary, provision
-            )
             if secondary == "":
                 secondary = "empty"
             else:
@@ -1245,28 +1242,31 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             primary_legislation, secondary_legislation, compliance_name,
             description, frequency, unit_code, legal_entity_id, provision
         ):
-            q = "SELECT compliance_history_id " + \
+            q = "SELECT compliance_history_id, due_date" + \
                 " from tbl_compliance_history " + \
                 " where compliance_id = (" + \
                 " SELECT compliance_id FROM tbl_compliances where " + \
                 "compliance_task = TRIM(%s) and compliance_description = " + \
-                " TRIM(%s) and statutory_mapping like %s and " + \
+                " TRIM(%s) and (TRIM(statutory_mapping) like %s or " + \
+                " TRIM(statutory_mapping) like %s) and " + \
                 " statutory_provision = %s  and " + \
                 " frequency_id = (SELECT frequency_id from " + \
                 " tbl_compliance_frequency WHERE " + \
                 " frequency=TRIM(%s)) Limit 1) and unit_id =( select " + \
                 " unit_id from tbl_units where unit_code = %s and " + \
-                " legal_entity_id = %s ) " + \
-                " and date(due_date) = %s"
+                " legal_entity_id = %s ) "
 
-            legis_cond = '["' + primary_legislation
+            legis_cond = '["' + primary_legislation.strip()
+            legis_cond1 = legis_cond
             if secondary_legislation != "":
-                legis_cond += ">>" + secondary_legislation + "%"
+                legis_cond += ">>" + secondary_legislation.strip() + "%"
+                legis_cond1 += " >> " + secondary_legislation.strip() + "%"
             else:
                 legis_cond += "%"
+                legis_cond1 += "%"
             params = [
-                compliance_name, description, legis_cond, provision,
-                frequency, unit_code, legal_entity_id, due_date.date()
+                compliance_name, description, legis_cond, legis_cond1,
+                provision, frequency, unit_code, legal_entity_id
             ]
             self.connect_source_db(legal_entity_id)
             rows = self._source_db.select_all(q, params)
@@ -1275,6 +1275,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 due_date_string = row["due_date"].strftime("%Y-%m-%d")
                 due_dates_list.append(due_date_string)
             return due_dates_list
+        duplicate_count = 0
+        final_data = []
         for row_idx, data in enumerate(self._source_data):
             compliance_task_name = data.get("compliance_task_name")
             primary_legislation = data.get("perimary_legislation")
@@ -1294,10 +1296,13 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                     primary_legislation, secondary_legislation,
                     compliance_name, description, frequency, unit_code,
                     legal_entity_id, provision)
-            if due_date in self.main_db_due_dates[key]:
-                return "Duplicate due date"
+            if str(
+                    due_date.strftime("%Y-%m-%d")
+            ) in self.main_db_due_dates[key]:
+                duplicate_count += 1
             else:
-                return
+                final_data.append(data)
+        return duplicate_count, final_data
 
     def document_download_process_initiate(
         self, csvid, country_id, legal_id, domain_id, unit_id, session_token
@@ -1385,7 +1390,6 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             print e
             response = "error"
         self.save_file_submit_status(response)
-        print "RESPONSEEE-> ", response
         return response
 
     def frame_data_for_main_db_insert(
