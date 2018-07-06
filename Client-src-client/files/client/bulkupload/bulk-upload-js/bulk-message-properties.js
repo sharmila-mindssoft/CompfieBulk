@@ -13,7 +13,8 @@ var bulkMessage = {
     "compliance_submission_success": "Compliance Submitted successfully",
     "process_queued_task_success": "Data Submitted. Your process is in queue",
     "process_queued_doc_success": "Document Submit process is in queue",
-    "process_completed": "Process completed successfully"
+    "process_completed": "Process completed successfully",
+    'sys_rejected_confirm': 'compliance declined, Do you want to continue ?'
 
 };
 

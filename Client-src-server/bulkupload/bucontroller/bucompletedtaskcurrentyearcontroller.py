@@ -217,11 +217,15 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
 
 def submit_compliance(
     db, c_obj, csv_id, country_id, legal_id,
-    domain_id, unit_id, session_token, data_result, request_frame
+    domain_id, unit_id, session_token, request_frame
 ):
+
     try:
-        if c_obj.check_for_duplicate_records(legal_id) is not True:
-            return_data = bu_ct.DataAlreadyExists().to_structure()
+        skip_duplicate = request_frame.skip_duplicate
+        duplicate_count, data_result = c_obj.check_for_duplicate_records(
+            legal_id)
+        if duplicate_count > 0 and skip_duplicate is False:
+            return_data = bu_ct.DuplicateExists(duplicate_count).to_structure()
         else:
             if c_obj.doc_count > 0:
                 c_obj.document_download_process_initiate(
@@ -272,7 +276,7 @@ def process_save_bulk_records(db, request_frame, session_user, session_token):
         target=submit_compliance,
         args=(
             db, c_obj, csv_id, country_id, legal_id,
-            domain_id, unit_id, session_token, data_result, request_frame
+            domain_id, unit_id, session_token, request_frame
         )
     )
     t.start()
@@ -342,6 +346,10 @@ def process_get_status(request):
             return bu_ct.InvalidCsvFile()
         elif str(result[0]) == "DataAlreadyExists":
             return bu_ct.DataAlreadyExists()
+        elif str(result[0]) == "DuplicateExists":
+            return bu_ct.DuplicateExists.parse_inner_structure(
+                result[1]
+            )
         elif str(result[0]) == "UploadCompletedTaskCurrentYearCSVSuccess":
             return bu_ct.UploadCompletedTaskCurrentYearCSVSuccess.parse_inner_structure(
                 result[1])
@@ -365,10 +373,11 @@ def process_get_status(request):
 
 def submit_queued_tasks(
     db, file_cur_stats, file_download_stats, c_obj, data_cur_stats,
-    data_result, csv_id, country_id, legal_id, domain_id, unit_id,
+    csv_id, country_id, legal_id, domain_id, unit_id,
     session_token, request_frame, session_user
 ):
     try:
+        skip_duplicate = request_frame.skip_duplicate
         result = None
         if file_cur_stats in [0, 2] and file_download_stats != "completed":
             c_obj.document_download_process_initiate(
@@ -377,8 +386,10 @@ def submit_queued_tasks(
             result = bu_ct.ProcessDocumentSubmitQueued().to_structure()
 
         if data_cur_stats in [0, 2]:
-            if c_obj.check_for_duplicate_records(legal_id) is not True:
-                result = bu_ct.DataAlreadyExists().to_structure()
+            duplicate_count, data_result = c_obj.check_for_duplicate_records(
+                legal_id)
+            if duplicate_count > 0 and skip_duplicate is False:
+                result = bu_ct.DuplicateExists(duplicate_count).to_structure()
             elif c_obj.frame_data_for_main_db_insert(
                 data_result, request_frame.legal_entity_id, csv_id, country_id,
                 domain_id
@@ -426,7 +437,7 @@ def process_queued_tasks(db, request_frame, session_user, session_token):
         target=submit_queued_tasks,
         args=(
             db, file_cur_stats, file_download_stats, c_obj, data_cur_stats,
-            data_result, csv_id, country_id, legal_id, domain_id, unit_id,
+            csv_id, country_id, legal_id, domain_id, unit_id,
             session_token, request_frame, session_user
         )
     )

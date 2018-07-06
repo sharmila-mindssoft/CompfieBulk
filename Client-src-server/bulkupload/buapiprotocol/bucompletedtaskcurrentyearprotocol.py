@@ -64,24 +64,27 @@ class UploadCompletedTaskCurrentYearCSV(Request):
 
 class SaveBulkRecords(Request):
     def __init__(
-        self, new_csv_id, country_id, legal_entity_id, domain_id, unit_id
+        self, new_csv_id, country_id, legal_entity_id, domain_id, unit_id,
+        skip_duplicate
     ):
         self.new_csv_id = new_csv_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
         self.domain_id = domain_id
         self.unit_id = unit_id
+        self.skip_duplicate = skip_duplicate
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, ["new_csv_id", "country_id", "legal_entity_id",
-                   "domain_id", "unit_id"]
+                   "domain_id", "unit_id", "skip_duplicate"]
         )
         return SaveBulkRecords(
             data.get("new_csv_id"), data.get("country_id"),
             data.get("legal_entity_id"),
-            data.get("domain_id"), data.get("unit_id")
+            data.get("domain_id"), data.get("unit_id"),
+            data.get("skip_duplicate")
         )
 
     def to_inner_structure(self):
@@ -90,7 +93,8 @@ class SaveBulkRecords(Request):
             "country_id": self.country_id,
             "legal_entity_id": self.legal_entity_id,
             "domain_id": self.domain_id,
-            "unit_id": self.unit_id
+            "unit_id": self.unit_id,
+            "skip_duplicate": self.skip_duplicate
         }
 
 
@@ -375,7 +379,7 @@ class GetStatus(Request):
 class ProcessQueuedTasks(Request):
     def __init__(
         self, file_submit_status, data_submit_status, new_csv_id,
-        country_id, legal_entity_id, domain_id, unit_id
+        country_id, legal_entity_id, domain_id, unit_id, skip_duplicate
     ):
         self.file_submit_status = file_submit_status
         self.data_submit_status = data_submit_status
@@ -384,19 +388,22 @@ class ProcessQueuedTasks(Request):
         self.country_id = country_id
         self.domain_id = domain_id
         self.unit_id = unit_id
+        self.skip_duplicate = skip_duplicate
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, ["file_submit_status", "data_submit_status", "new_csv_id",
-                   "country_id", "legal_entity_id", "domain_id", "unit_id"]
+                   "country_id", "legal_entity_id", "domain_id", "unit_id",
+                   "skip_duplicate"]
         )
         return ProcessQueuedTasks(
             data.get("file_submit_status"),
             data.get("data_submit_status"),
             data.get("new_csv_id"), data.get("country_id"),
             data.get("legal_entity_id"),
-            data.get("domain_id"), data.get("unit_id")
+            data.get("domain_id"), data.get("unit_id"),
+            data.get("skip_duplicate")
         )
 
     def to_inner_structure(self):
@@ -407,7 +414,8 @@ class ProcessQueuedTasks(Request):
             "country_id": self.country_id,
             "legal_entity_id": self.legal_entity_id,
             "domain_id": self.domain_id,
-            "unit_id": self.unit_id
+            "unit_id": self.unit_id,
+            "skip_duplicate": self.skip_duplicate
         }
 
 
@@ -527,6 +535,23 @@ class DataAlreadyExists(Response):
 
     def to_inner_structure(self):
         return {}
+
+
+class DuplicateExists(Response):
+    def __init__(self, duplicate_count):
+        self.duplicate_count = duplicate_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["duplicate_count"])
+        duplicate_count = data.get("duplicate_count")
+        return DuplicateExists(duplicate_count)
+
+    def to_inner_structure(self):
+        return {
+            "duplicate_count": self.duplicate_count
+        }
+
 
 
 class UploadCompletedTaskCurrentYearCSVSuccess(Response):
@@ -830,7 +855,7 @@ def _init_response_class_map():
         DownloadBulkPastDataSuccess, GetUnitsSuccess,
         DownloadUploadedDataSuccess, UpdateDocumentCountSuccess,
         CsvFileExeededMaxLines,
-        Alive, Done,
+        Alive, Done, DuplicateExists,
         ProcessQueuedTasksSuccess,
         ProcessDocumentSubmitQueued,
         ProcessCompleted

@@ -1275,6 +1275,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 due_date_string = row["due_date"].strftime("%Y-%m-%d")
                 due_dates_list.append(due_date_string)
             return due_dates_list
+        duplicate_count = 0
+        final_data = []
         for row_idx, data in enumerate(self._source_data):
             compliance_task_name = data.get("compliance_task_name")
             primary_legislation = data.get("perimary_legislation")
@@ -1294,10 +1296,13 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                     primary_legislation, secondary_legislation,
                     compliance_name, description, frequency, unit_code,
                     legal_entity_id, provision)
-            if str(due_date.strftime("%Y-%m-%d")) in self.main_db_due_dates[key]:
-                return "Duplicate due date"
+            if str(
+                    due_date.strftime("%Y-%m-%d")
+            ) in self.main_db_due_dates[key]:
+                duplicate_count += 1
             else:
-                return True
+                final_data.append(data)
+        return duplicate_count, final_data
 
     def document_download_process_initiate(
         self, csvid, country_id, legal_id, domain_id, unit_id, session_token
