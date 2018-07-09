@@ -659,7 +659,8 @@ BulkCompletedTaskCurrentYear.prototype.processQueuedTasks = function(data) {
         "country_id": parseInt(countryId),
         "legal_entity_id": parseInt(legId),
         "domain_id": parseInt(data.domain_id),
-        "unit_id": parseInt(data.unit_id)
+        "unit_id": parseInt(data.unit_id),
+        "skip_duplicate": false
     };
 
     function apiCall(legId, csv_id, callback){
@@ -677,14 +678,28 @@ BulkCompletedTaskCurrentYear.prototype.processQueuedTasks = function(data) {
         } else if (error == "ProcessDocumentSubmitQueued"){
             displaySuccessMessage(message.process_queued_doc_success);
         }
+        else if (error == "DuplicateExists"){
+            duplicate_count = data.duplicate_count;
+            var msg = duplicate_count + ' ' + 
+                message.sys_rejected_confirm;
+            confirm_alert(msg, function(isConfirm) {
+                if (isConfirm) {
+                    args["skip_duplicate"] = true;
+                    mainApiCall(args);
+                }else{
+
+                }
+            });
+            hideLoader();
+        }
         else{
             t_this.possibleFailures(error);
             hideLoader();
         }
     }
-
-
-    buClient.processQueuedTasksRequest(args,
+    function mainApiCall(args){
+        displayLoader();
+        buClient.processQueuedTasksRequest(args,
         function(error, data) {
             if(error == "Done" || data == "Done"){
                 csv_id = data.csv_name;
@@ -698,6 +713,10 @@ BulkCompletedTaskCurrentYear.prototype.processQueuedTasks = function(data) {
                 hideLoader();
             }
         });
+    }
+    mainApiCall(args);
+
+    
 }
 
 BulkCompletedTaskCurrentYear.prototype.possibleFailures = function(
@@ -806,7 +825,8 @@ function submitUpload() {
         "country_id": getCountryId(LEGALENTITY_ID_UPLOAD.val()),
         "legal_entity_id": leg_id,
         "domain_id": parseInt(domId),
-        "unit_id": parseInt(unitId)
+        "unit_id": parseInt(unitId),
+        "skip_duplicate": false
     };
     function apiCall(leg_id, csv_id, callback){
         buClient.GetStatus(leg_id, csv_id, callback);
@@ -814,14 +834,21 @@ function submitUpload() {
     function call_bck_fn(error, data){
         if (error == "Alive"){
             setTimeout(apiCall, TIMEOUT_MLS, leg_id, csv_id, call_bck_fn);
-        }else if(error == 'DataAlreadyExists'){
-            resetAdd();
-            resetEdit();
-            displayMessage(message.data_already_exists);
-            $('#myModal').modal('hide');
-            VIEW_SCREEN.show();
-            BUCT_PAGE.showList();
-            ADD_SCREEN.hide();
+        }else if(error == 'DuplicateExists'){
+            hideLoader();
+            MY_MODAL.modal("hide");
+            duplicate_count = data.duplicate_count;
+            var msg = duplicate_count + ' ' + 
+                message.sys_rejected_confirm;
+            confirm_alert(msg, function(isConfirm) {
+                if (isConfirm) {
+                    args["skip_duplicate"] = true;
+                    mainApiCall(args);
+                }else{
+
+                }
+            });
+
         }
         else if (error == null) {
             resetAdd();
@@ -835,15 +862,18 @@ function submitUpload() {
             $('#myModal').modal('hide');
         }
     }
-    $('#myModal').modal('show');
-    buClient.saveBulkRecords(args, function(error, data) {
-        if(error == "Done" || data == "Done"){
-            csv_id = data.csv_name;
-            apiCall(leg_id, csv_id, call_bck_fn);
-        }else{
-            $('#myModal').modal('hide');
-        }
-    })
+    function mainApiCall(args){
+        $('#myModal').modal('show');
+        buClient.saveBulkRecords(args, function(error, data) {
+            if(error == "Done" || data == "Done"){
+                csv_id = data.csv_name;
+                apiCall(leg_id, csv_id, call_bck_fn);
+            }else{
+                $('#myModal').modal('hide');
+            }
+        });
+    }
+    mainApiCall(args);
 }
 
 
