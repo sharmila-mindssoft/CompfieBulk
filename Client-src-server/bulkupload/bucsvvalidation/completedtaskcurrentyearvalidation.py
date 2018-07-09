@@ -1,4 +1,4 @@
-fimport os
+import os
 import json
 import collections
 import mysql.connector
