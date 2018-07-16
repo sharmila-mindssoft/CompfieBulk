@@ -220,7 +220,7 @@ class SourceDB(object):
             "trim(compliance_task) else trim(Concat_ws( " + \
             "' - ',document_name, compliance_task)) end AS " + \
             " compliance_task, compliance_description, " + \
-            "is_active, frequency_id from tbl_compliances t1"
+            "is_active, frequency_id, document_name from tbl_compliances t1"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.compliance_task[d["compliance_task"]] = d
@@ -694,17 +694,27 @@ class SourceDB(object):
         return bool(rows[0]["two_levels_of_approval"])
 
     def get_compliance_task_name(self, compliance_task_name_data):
-        compliance_task_name_check = compliance_task_name_data.split(" - ")
-        compliance_task_name = compliance_task_name_check[0]
-        if len(compliance_task_name_check) > 1:
-            compliance_task_name = ""
-            for i, x in enumerate(compliance_task_name_check):
-                if i > 1:
-                    compliance_task_name += " - "
-                if i == 0:
-                    pass
-                else:
-                    compliance_task_name += compliance_task_name_check[i]
+        compliance_task_name = compliance_task_name_data
+        if compliance_task_name_data in self.compliance_task:
+            if (
+                self.compliance_task[
+                    compliance_task_name_data]["document_name"] in [None, ""]
+            ):
+                compliance_task_name = compliance_task_name_data
+            else:
+                compliance_task_name_check = compliance_task_name_data.split(
+                    " - ")
+                compliance_task_name = compliance_task_name_check[0]
+                if len(compliance_task_name_check) > 1:
+                    compliance_task_name = ""
+                    for i, x in enumerate(compliance_task_name_check):
+                        if i > 1:
+                            compliance_task_name += " - "
+                        if i == 0:
+                            pass
+                        else:
+                            compliance_task_name += compliance_task_name_check[
+                                i]
         return compliance_task_name
 
     def save_completed_task_data(self, db, data, legal_entity_id, csv_id,
