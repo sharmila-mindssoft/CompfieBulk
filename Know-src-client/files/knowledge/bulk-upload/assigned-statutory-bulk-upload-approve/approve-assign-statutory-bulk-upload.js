@@ -215,6 +215,8 @@ PageControls = function() {
                approve_all_ids.push(parseInt($(this).val()));
             });
             tempAction(approve_all_ids, 1);
+            DETAILS_TBODY.find('.single-reject').removeAttr("checked");
+            CHECK_ALL_REJECT.removeAttr("checked");
             //DETAILS_TBODY.find('.single-approve').trigger('click');
         } else{
             var approve_all_ids = [];
@@ -228,6 +230,8 @@ PageControls = function() {
     });
     CHECK_ALL_REJECT.click(function() {
         if ($(this).prop("checked") == true) {
+            CHECK_ALL_APPROVE.removeAttr("checked");
+            DETAILS_TBODY.find('.single-approve').removeAttr("checked");
             confirmationAction(0, 'single-reject');
         } else {
             var reject_all_ids = [];
@@ -1200,6 +1204,8 @@ tempAction = function(id, action) {
         function(error, response) {
             if (error == null) {
                 hideLoader();
+                if(id.length > 1)
+                    viewListDetailsPage(ASID.val());
             } else {
                 STATUTE.failuresMessage(error);
                 hideLoader();
