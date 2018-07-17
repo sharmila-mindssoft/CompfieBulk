@@ -728,6 +728,7 @@ class SourceDB(object):
         self.generate_hierarchy_checker()
         self.get_unit_code()
         self.get_assignee()
+        self.get_compliance_task()
         query = "SELECT two_levels_of_approval FROM tbl_reminder_settings"
         rows = self._source_db.select_all(query)
         if int(rows[0]["two_levels_of_approval"]) == 1:
@@ -1225,7 +1226,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
 
 
 class ValidateCompletedTaskForSubmit(SourceDB):
-    def __init__(self, db, csv_id, data_result, session_user):
+    def __init__(self, db, csv_id, data_result, session_user, legal_entity_id):
         SourceDB.__init__(self)
         self._db = db
         self._stop = None
@@ -1235,6 +1236,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         self.doc_count = 0
         self.main_db_due_dates = {}
         self.get_file_count(db)
+        self.connect_source_db(legal_entity_id)
+        self.get_compliance_task()
 
     def get_file_count(self, db):
         query = "select total_documents from tbl_bulk_past_data_csv " + \

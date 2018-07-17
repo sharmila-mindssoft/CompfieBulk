@@ -271,7 +271,7 @@ def process_save_bulk_records(db, request_frame, session_user, session_token):
     unit_id = request_frame.unit_id
     data_result = get_past_record_data(db, csv_id)
     c_obj = ValidateCompletedTaskForSubmit(
-        db, csv_id, data_result, session_user)
+        db, csv_id, data_result, session_user, legal_id)
     t = threading.Thread(
         target=submit_compliance,
         args=(
@@ -429,7 +429,7 @@ def process_queued_tasks(db, request_frame, session_user, session_token):
 
     data_result = get_past_record_data(db, csv_id)
     c_obj = ValidateCompletedTaskForSubmit(
-        db, csv_id, data_result, session_user)
+        db, csv_id, data_result, session_user, legal_id)
     if file_cur_stats == 1 and data_cur_stats == 1:
         return bu_ct.ProcessCompleted()
 
