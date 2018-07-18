@@ -49,6 +49,8 @@ from ..bulkconstants import (
 )
 
 from protocol import generalprotocol, technoreports
+import multiprocessing
+
 
 __all__ = [
     "process_bu_statutory_mapping_request"
@@ -341,7 +343,7 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             request_frame.csv_name, header
         )
 
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=validate_data,
             args=(db, request_frame, c_obj, session_user, csv_name))
         t.start()
@@ -549,7 +551,7 @@ def update_statutory_mapping_action(db, request_frame, session_user):
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=statutory_validate_data,
             args=(db, request_frame, c_obj, session_user))
         t.start()
@@ -664,7 +666,7 @@ def submit_statutory_mapping(db, request_frame, session_user):
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=submit_statutory_validate,
             args=(db, request_frame, c_obj, session_user))
         t.start()
@@ -746,7 +748,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=confirm_statutory_validate,
             args=(db, request_frame, c_obj, session_user))
         t.start()
