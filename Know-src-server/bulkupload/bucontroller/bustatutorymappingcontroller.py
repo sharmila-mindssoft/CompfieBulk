@@ -211,7 +211,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
     def write_file():
         file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
-            file_string[0], "result", "txt"
+            file_string[0], "upload", "txt"
         )
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
@@ -551,7 +551,7 @@ def update_statutory_mapping_action(db, request_frame, session_user):
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
-        t = multiprocessing.Process(
+        t = threading.Thread(
             target=statutory_validate_data,
             args=(db, request_frame, c_obj, session_user))
         t.start()
@@ -587,7 +587,7 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
         csv_name = c_obj._csv_name
         file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
-            file_string[0], "result", "txt"
+            file_string[0], "approve", "txt"
         )
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
@@ -610,6 +610,7 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
                 if (update_approve_action_from_list(csv_id, action, remarks, session_user, "all")):
                     if c_obj._doc_count > 0:
                         get_update_approve_file_status(csv_id, 3)
+                        print "Download process init"
                         c_obj.format_download_process_initiate(csv_id)
                     else:
                         get_update_approve_file_status(csv_id, 1)
@@ -666,7 +667,7 @@ def submit_statutory_mapping(db, request_frame, session_user):
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
-        t = multiprocessing.Process(
+        t = threading.Thread(
             target=submit_statutory_validate,
             args=(db, request_frame, c_obj, session_user))
         t.start()
@@ -682,7 +683,7 @@ def submit_statutory_validate(db, request_frame, c_obj, session_user):
         return_data = json.dumps(return_data)
         file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
-            file_string[0], "result", "txt"
+            file_string[0], "approve", "txt"
         )
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
@@ -748,7 +749,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
-        t = multiprocessing.Process(
+        t = threading.Thread(
             target=confirm_statutory_validate,
             args=(db, request_frame, c_obj, session_user))
         t.start()
@@ -762,7 +763,7 @@ def confirm_statutory_validate(db, request_frame, c_obj, session_user):
         csv_name = c_obj._csv_name
         file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
-            file_string[0], "result", "txt"
+            file_string[0], "approve", "txt"
         )
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
@@ -1027,7 +1028,7 @@ def process_get_status(request):
     csv_name = request.csv_name
     file_string = csv_name.split(".")
     file_name = "%s_%s.%s" % (
-        file_string[0], "result", "txt"
+        file_string[0], "upload", "txt"
     )
     file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
     if os.path.exists(file_path) is False:
@@ -1058,7 +1059,7 @@ def process_get_approve_mapping_status(request):
     csv_name = request.csv_name
     file_string = csv_name.split(".")
     file_name = "%s_%s.%s" % (
-        file_string[0], "result", "txt"
+        file_string[0], "approve", "txt"
     )
     file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
     if os.path.exists(file_path) is False:
