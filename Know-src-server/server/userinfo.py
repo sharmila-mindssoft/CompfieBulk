@@ -17,7 +17,6 @@ class UserInfo(object):
 
     def set_user_info(self):
         data = self._db.call_proc_with_multiresult_set("sp_user_details", [self._session_user_id], 8)
-        print "DaTa-> ", data
         if len(data) > 0:
             if len(data[0]) > 0:
                 self._user_details = data[0][0]
@@ -45,8 +44,6 @@ class UserInfo(object):
 
             if len(data[5]) > 0:
                 for d in data[5]:
-                    print "d-clientid->> ", d["client_id"]
-                    print "_user_clients-> ", self._user_clients
                     # self._user_clients.append(d["client_id"])
                     self._user_clients = d["client_id"]
 
