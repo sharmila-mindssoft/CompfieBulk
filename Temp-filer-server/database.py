@@ -232,9 +232,8 @@ class Database(object):
             "query:%s, param:%s" % (query, param))
         dec_doc_list = []
         for r in row:
-            print "r-> ", r
-            if r["format_file"] is not None:
+            if r["format_file"] is not None and r["format_file"] != '':
+
                 dec_doc_list.append(r["format_file"].encode('ascii', 'ignore'))
 
-        print "dec_doc_list ", dec_doc_list
         return dec_doc_list
