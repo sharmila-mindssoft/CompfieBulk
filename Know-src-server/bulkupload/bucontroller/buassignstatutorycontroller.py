@@ -30,6 +30,8 @@ from bulkupload.bulkconstants import (
 
 import datetime
 from protocol import generalprotocol, technoreports
+
+import multiprocessing
 __all__ = [
     "process_bu_assign_statutory_request"
 ]
@@ -245,7 +247,7 @@ def validate_download_data(db, request_frame, session_user, csv_name):
 def get_download_assign_statutory(db, request_frame, session_user):
     try:
         csv_name = generate_random_string()
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=validate_download_data,
             args=(db, request_frame, session_user, csv_name))
         t.start()
@@ -400,7 +402,7 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
             header
         )
 
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=validate_data,
             args=(db, request_frame, c_obj, session_user, csv_name))
         t.start()
@@ -557,7 +559,7 @@ def update_assign_statutory_action_in_list(db, request_frame, session_user):
             db, csv_id, client_id, legal_entity_id, session_user
         )
 
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=list_statutory_thread_process,
             args=(db, request_frame, c_obj, session_user, csv_name))
         t.start()
@@ -817,7 +819,7 @@ def submit_assign_statutory(db, request_frame, session_user):
             db, csv_id, client_id, legal_entity_id, session_user
         )
 
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=submit_statutory_thread_process,
             args=(db, request_frame, c_obj, session_user, csv_name))
         t.start()
@@ -895,7 +897,7 @@ def confirm_submit_assign_statutory(db, request_frame, session_user):
         c_obj = ValidateAssignStatutoryForApprove(
             db, csv_id, client_id, legal_entity_id, session_user
         )
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=confirm_statutory_thread_process,
             args=(db, request_frame, c_obj, session_user, csv_name))
         t.start()

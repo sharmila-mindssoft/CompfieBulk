@@ -23,4 +23,4 @@ ENABLE_API_LOG = False
 ENABLE_QUERY_LOG = True
 ENABLE_DEBUG_LOG = True
 
-CLIENT_TEMP_FILE_SERVER = "http://localhost:8086/"
+CLIENT_TEMP_FILE_SERVER = "http://localhost:8083/"
