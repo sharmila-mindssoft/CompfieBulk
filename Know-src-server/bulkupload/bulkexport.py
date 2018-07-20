@@ -395,7 +395,7 @@ class ConvertJsonToCSV(object):
         if child_ids is not None:
             user_ids = ",".join(str(e) for e in child_ids)
         else:
-            user_ids = session_user.user_id()
+            user_ids = session_user
         if domain_ids is not None:
             domain_ids = ",".join(map(str, domain_ids))
 

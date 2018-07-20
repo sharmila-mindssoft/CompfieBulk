@@ -1,4 +1,5 @@
 import os
+import pickle
 import threading
 import json
 import traceback
@@ -73,12 +74,12 @@ __all__ = [
         result: Object
 '''
 ########################################################
-
-
+db = None
+t = None
 def process_bu_statutory_mapping_request(request, db, session_user):
     request_frame = request.request
     result = None
-
+    db = db
     if type(request_frame) is bu_sm.GetDomains:
         result = process_get_domains_bu(session_user)
 
@@ -207,7 +208,9 @@ def get_statutory_mapping_csv_list(db, session_user):
     return result
 
 
-def validate_data(db, request_frame, c_obj, session_user, csv_name):
+def validate_data(
+    request_frame, session_user, csv_name, s_header, s_smap_data
+):
     def write_file():
         file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
@@ -219,6 +222,13 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
             os.chmod(file_path, 0777)
         return
     try:
+        header = pickle.loads(s_header)
+        statutory_mapping_data = pickle.loads(s_smap_data)
+        c_obj = ValidateStatutoryMappingCsvData(
+            db, statutory_mapping_data, session_user,
+            request_frame.c_id, request_frame.d_id,
+            request_frame.csv_name, header
+        )
         res_data = c_obj.perform_validation()
         return_data = None
         if res_data == "InvalidCSV":
@@ -235,7 +245,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
                 upload_sts = 0
 
             csv_args = [
-                session_user.user_id(),
+                session_user,
                 request_frame.c_id, request_frame.c_name,
                 request_frame.d_id,
                 request_frame.d_name, csv_name,
@@ -250,7 +260,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
                     if res_data["doc_count"] == 0:
                         c_obj.save_executive_message(
                             csv_name, request_frame.c_name,
-                            request_frame.d_name, session_user.user_id()
+                            request_frame.d_name, session_user
                         )
                         c_obj.source_commit()
                     return_data = bu_sm.UploadStatutoryMappingCSVValidSuccess(
@@ -289,6 +299,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
             "bustatutorymappingcontroller.py - validate_data()", e)
         raise e
     write_file()
+    t.terminate()
     return
 
 
@@ -336,19 +347,19 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             remove_uploaded_file(file_path)
             return bu_sm.CsvFileExeededMaxLines(CSV_MAX_LINES)
 
-        # csv data validation
-        c_obj = ValidateStatutoryMappingCsvData(
-            db, statutory_mapping_data, session_user,
-            request_frame.c_id, request_frame.d_id,
-            request_frame.csv_name, header
-        )
-
+        s_header = pickle.dumps(header)
+        s_smap_data = pickle.dumps(statutory_mapping_data)
         t = multiprocessing.Process(
             target=validate_data,
-            args=(db, request_frame, c_obj, session_user, csv_name))
+            args=(
+                request_frame, session_user.user_id(),
+                csv_name, s_header, s_smap_data
+            )
+        )
         t.start()
+        print "Proces id========================================>"
+        print t.pid
         return bu_sm.Done(csv_name)
-
     except Exception, e:
         print e
         print str(traceback.format_exc())

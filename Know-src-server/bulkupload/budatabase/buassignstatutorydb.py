@@ -131,7 +131,7 @@ def get_client_list(db, session_user):
 
 def get_download_assing_statutory_list(
     db, cl_id, le_id, d_ids, u_ids, cl_name,
-    le_name, d_names, u_names, session_user
+    le_name, d_names, u_names
 ):
     try:
         _source_db_con = connectKnowledgeDB()
@@ -157,33 +157,38 @@ def get_download_assing_statutory_list(
 
         _source_db.close()
 
-        def status_list(map_id):
-            s_legislation = None
-            p_legislation = None
-            for s in result[0]:
-                if s["statutory_mapping_id"] == map_id:
-                    if(
-                        s["parent_ids"] == '' or s["parent_ids"] == 0 or
-                        s["parent_ids"] == '0,'
-                    ):
-                        s_legislation = s["statutory_name"]
-                        p_legislation = s_legislation
-                    else:
-                        names = [
-                            x.strip() for x in s["parent_names"].split('>>')
-                            if x != ''
-                        ]
-                        p_legislation = names[0]
-                        if len(names) > 1:
-                            s_legislation = names[1]
-                        else:
-                            s_legislation = s["statutory_name"]
-            return p_legislation, s_legislation
+        legis_dict = {}
+        s_legislation = None
+        p_legislation = None
+        for s in result[0]:
+            if(
+                s["parent_ids"] == '' or s["parent_ids"] == 0 or
+                s["parent_ids"] == '0,'
+            ):
+                s_legislation = s["statutory_name"]
+                p_legislation = s_legislation
+            else:
+                names = [
+                    x.strip() for x in s["parent_names"].split('>>')
+                    if x != ''
+                ]
+                p_legislation = names[0]
+
+                if len(names) > 1:
+                    s_legislation = names[1]
+                else:
+                    s_legislation = s["statutory_name"]
+
+            legis_dict[s["statutory_mapping_id"]] = {
+                "primary": p_legislation,
+                "secondary": s_legislation
+            }
 
         ac_list = []
         for r in result[1]:
-            p_legislation, s_legislation = status_list(
-                r["statutory_mapping_id"])
+            p_legislation = legis_dict[r["statutory_mapping_id"]]["primary"]
+            s_legislation = legis_dict[r["statutory_mapping_id"]]["secondary"]
+
             if s_legislation == p_legislation:
                 s_legislation = ""
             ac_tuple = (
@@ -873,7 +878,7 @@ def verify_user_units(db, session_user, u_ids):
         _source_db = Database(_source_db_con)
         _source_db.begin()
         result = _source_db.call_proc(
-            "sp_bu_domain_executive_units", [session_user.user_id(), u_ids]
+            "sp_bu_domain_executive_units", [session_user, u_ids]
         )
         _source_db.close()
 

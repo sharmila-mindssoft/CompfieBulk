@@ -203,33 +203,37 @@ class SourceDB(object):
             "sp_bu_get_all_compliance_info", [country_id, domain_ids], 2
         )
 
-        def status_list(map_id):
-            s_legislation = None
-            p_legislation = None
-            for s in data[0]:
-                if s["statutory_mapping_id"] == map_id:
-                    if(
-                        s["parent_ids"] == '' or s["parent_ids"] == 0 or
-                        s["parent_ids"] == '0,'
-                    ):
-                        s_legislation = s["statutory_name"]
-                        p_legislation = s_legislation
-                    else:
-                        names = [
-                            x.strip() for x in s["parent_names"].split('>>')
-                            if x != ''
-                        ]
-                        p_legislation = names[0]
-                        if len(names) > 1:
-                            s_legislation = names[1]
-                        else:
-                            s_legislation = s["statutory_name"]
-            return p_legislation, s_legislation
+        legis_dict = {}
+        s_legislation = None
+        p_legislation = None
+        for s in data[0]:
+            if(
+                s["parent_ids"] == '' or s["parent_ids"] == 0 or
+                s["parent_ids"] == '0,'
+            ):
+                s_legislation = s["statutory_name"]
+                p_legislation = s_legislation
+            else:
+                names = [
+                    x.strip() for x in s["parent_names"].split('>>')
+                    if x != ''
+                ]
+                p_legislation = names[0]
+
+                if len(names) > 1:
+                    s_legislation = names[1]
+                else:
+                    s_legislation = s["statutory_name"]
+
+            legis_dict[s["statutory_mapping_id"]] = {
+                "primary": p_legislation,
+                "secondary": s_legislation
+            }
 
         for d in data[1]:
-            p_legislation, s_legislation = status_list(
-                d["statutory_mapping_id"]
-            )
+            p_legislation = legis_dict[d["statutory_mapping_id"]]["primary"]
+            s_legislation = legis_dict[d["statutory_mapping_id"]]["secondary"]
+
             if s_legislation == p_legislation:
                 s_legislation = ""
 
@@ -1062,7 +1066,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         client_id, country_id, legal_entity_id = self.get_init_info()
 
         self.init_values(
-            self._session_user_obj.user_id(), client_id, country_id,
+            self._session_user_obj, client_id, country_id,
             legal_entity_id
         )
         is_get_master_info = False
