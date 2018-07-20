@@ -1062,7 +1062,7 @@ class ValidateAssignStatutoryCsvData(SourceDB):
         client_id, country_id, legal_entity_id = self.get_init_info()
 
         self.init_values(
-            self._session_user_obj.user_id(), client_id, country_id,
+            self._session_user_obj, client_id, country_id,
             legal_entity_id
         )
         is_get_master_info = False
