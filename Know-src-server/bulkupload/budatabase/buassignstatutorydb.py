@@ -131,7 +131,7 @@ def get_client_list(db, session_user):
 
 def get_download_assing_statutory_list(
     db, cl_id, le_id, d_ids, u_ids, cl_name,
-    le_name, d_names, u_names, session_user
+    le_name, d_names, u_names
 ):
     try:
         _source_db_con = connectKnowledgeDB()
@@ -878,7 +878,7 @@ def verify_user_units(db, session_user, u_ids):
         _source_db = Database(_source_db_con)
         _source_db.begin()
         result = _source_db.call_proc(
-            "sp_bu_domain_executive_units", [session_user.user_id(), u_ids]
+            "sp_bu_domain_executive_units", [session_user, u_ids]
         )
         _source_db.close()
 

@@ -130,5 +130,7 @@ bu_api_params = {
     "csv_max_lines": make_int_field(is_optional=False),
     "file_submit_status": make_int_field(),
     "data_submit_status": make_int_field(),
-    "file_download_status": make_text_field(is_optional=True)
+    "file_download_status": make_text_field(is_optional=True),
+    "skip_duplicate": make_bool_field(),
+    "duplicate_count": make_int_field(is_optional=True)
 }

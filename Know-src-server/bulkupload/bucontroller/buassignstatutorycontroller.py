@@ -1,5 +1,6 @@
 import traceback
 import threading
+import pickle
 import time
 import json
 import os
@@ -53,10 +54,12 @@ __all__ = [
 '''
 ########################################################
 
-
+db = None
+t = None
 def process_bu_assign_statutory_request(request, db, session_user):
     request_frame = request.request
     result = None
+    db = db
     if type(request_frame) is bu_as.GetClientInfo:
         result = get_client_info(db, session_user)
 
@@ -190,7 +193,7 @@ def get_client_info(db, session_user):
 ########################################################
 
 
-def validate_download_data(db, request_frame, session_user, csv_name):
+def validate_download_data(request_frame, session_user, csv_name):
 
     def write_file():
         file_name = "%s_%s.%s" % (
@@ -213,7 +216,7 @@ def validate_download_data(db, request_frame, session_user, csv_name):
 
         get_download_assing_statutory_list(
             db, cl_id, le_id, d_ids, u_ids,
-            cl_name, le_name, d_names, u_names, session_user
+            cl_name, le_name, d_names, u_names
         )
 
         converter = ConvertJsonToCSV(
@@ -241,6 +244,7 @@ def validate_download_data(db, request_frame, session_user, csv_name):
             "buassignstatutorycontroller.py - validate_download_data", e)
         raise(e)
     write_file()
+    t.terminate()
     return
 
 
@@ -249,10 +253,10 @@ def get_download_assign_statutory(db, request_frame, session_user):
         csv_name = generate_random_string()
         t = multiprocessing.Process(
             target=validate_download_data,
-            args=(db, request_frame, session_user, csv_name))
+            args=(request_frame, session_user.user_id(),csv_name)
+        )
         t.start()
         return bu_as.Done(csv_name)
-
     except Exception, e:
         print e
         print str(traceback.format_exc())
@@ -282,7 +286,9 @@ def get_download_assign_statutory(db, request_frame, session_user):
 ########################################################
 
 
-def validate_data(db, request_frame, c_obj, session_user, csv_name):
+def validate_data(
+    request_frame, session_user, csv_name, s_smap_data, s_header
+):
     def write_file():
         file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
@@ -294,6 +300,12 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
             os.chmod(file_path, 0777)
         return
     try:
+        header = pickle.loads(s_header)
+        assign_statutory_data = pickle.loads(s_smap_data)
+        c_obj = ValidateAssignStatutoryCsvData(
+            db, assign_statutory_data, session_user, request_frame.csv_name,
+            header
+        )
         res_data = c_obj.perform_validation()
         assigned_units = verify_user_units(
             db, session_user, ",".join(map(str, c_obj._unit_ids))
@@ -315,7 +327,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
                 d_ids = ",".join(map(str, c_obj._domain_ids))
                 d_names = ",".join(c_obj._domain_names)
                 csv_args = [
-                    session_user.user_id(),
+                    session_user,
                     c_obj._client_id, c_obj._legal_entity_id,
                     d_ids, c_obj._legal_entity, d_names,
                     csv_name, c_obj._country,
@@ -331,7 +343,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
                         u_ids = ",".join(map(str, c_obj._unit_ids))
                         c_obj.save_manager_message(
                             csv_name, c_obj._client_group,
-                            c_obj._legal_entity, session_user.user_id(),
+                            c_obj._legal_entity, session_user,
                             u_ids
                         )
                         c_obj.source_commit()
@@ -369,6 +381,7 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
             "buassignstatutorycontroller.py - validate_data", e)
         raise(e)
     write_file()
+    t.terminate()
     return
 
 
@@ -397,15 +410,20 @@ def upload_assign_statutory_csv(db, request_frame, session_user):
             return bu_as.CsvFileExeededMaxLines(CSV_MAX_LINES)
 
         # csv data validation
-        c_obj = ValidateAssignStatutoryCsvData(
-            db, assign_statutory_data, session_user, request_frame.csv_name,
-            header
-        )
+        s_header = pickle.dumps(header)
+        s_smap_data = pickle.dumps(assign_statutory_data)
 
         t = multiprocessing.Process(
             target=validate_data,
-            args=(db, request_frame, c_obj, session_user, csv_name))
+            args=(
+                request_frame, session_user.user_id(), csv_name,
+                s_smap_data, s_header
+
+            )
+        )
         t.start()
+        print "Proces id========================================>"
+        print t.pid
         return bu_as.Done(csv_name)
 
     except Exception, e:
