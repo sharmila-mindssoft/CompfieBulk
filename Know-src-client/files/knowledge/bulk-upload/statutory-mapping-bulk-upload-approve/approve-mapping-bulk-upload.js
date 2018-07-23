@@ -21,7 +21,7 @@ var PAGE_TYPE = "show";
 var CURRENT_PASSWORD = null;
 var BU_APPROVE_PAGE = null;
 var IS_AUTHENTICATE = '';
-var TIMEOUT_MLS = 5000;
+var TIMEOUT_MLS = 45000;
 
 // auto complete - country
 var COUNTRY_VAL = $('#countryid');
@@ -722,7 +722,7 @@ ApproveBulkMapping.prototype.actionFromList = function(
                                 DOMAIN_VAL.val(),
                                 function(error, response) {
                                     if (error == 'Done') {
-                                        setTimeout(apiCall, TIMEOUT_MLS, 
+                                        setTimeout(apiCall, TIMEOUT_MLS,
                                             response.csv_name, call_bck_fn);
                                     }
                                     else {

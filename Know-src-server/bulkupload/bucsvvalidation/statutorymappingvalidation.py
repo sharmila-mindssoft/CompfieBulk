@@ -1936,6 +1936,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 t = threading.Timer(60, check_status)
                 t.daemon = True
                 t.start()
+                t.join()
 
         def get_file_stats(csvid):
             file_status = None
