@@ -76,6 +76,8 @@ __all__ = [
 ########################################################
 db = None
 t = None
+
+
 def process_bu_statutory_mapping_request(request, db, session_user):
     request_frame = request.request
     result = None
@@ -299,7 +301,7 @@ def validate_data(
             "bustatutorymappingcontroller.py - validate_data()", e)
         raise e
     write_file()
-    t.terminate()
+    print "os pid ---->>>", os.getpid()
     return
 
 
@@ -357,100 +359,8 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
             )
         )
         t.start()
-        print "Proces id========================================>"
-        print t.pid
+        print "Proces id========================================>", t.pid
         return bu_sm.Done(csv_name)
-    except Exception, e:
-        print e
-        print str(traceback.format_exc())
-        logger.logKnowledge(
-            "error", "upload_statutory_mapping_csv",
-            str(traceback.format_exc()))
-        raise e
-
-
-def upload_statutory_mapping_csv_old_copy(db, request_frame, session_user):
-    try:
-        if request_frame.csv_size > 0:
-            pass
-
-        if get_rejected_sm_file_count(db, session_user) >= MAX_REJECTED_COUNT:
-            return bu_sm.RejectionMaxCountReached()
-
-        # save csv file
-        csv_name = convert_base64_to_file(
-            BULKUPLOAD_CSV_PATH, request_frame.csv_name, request_frame.csv_data
-        )
-        # read data from csv file
-        header, statutory_mapping_data = read_data_from_csv(csv_name)
-
-        if len(statutory_mapping_data) == 0:
-            return bu_sm.CsvFileCannotBeBlank()
-
-        if len(statutory_mapping_data) > CSV_MAX_LINES:
-            file_path = "%s/csv/%s" % (BULKUPLOAD_CSV_PATH, csv_name)
-            remove_uploaded_file(file_path)
-            return bu_sm.CsvFileExeededMaxLines(CSV_MAX_LINES)
-
-        # csv data validation
-        c_obj = ValidateStatutoryMappingCsvData(
-            db, statutory_mapping_data, session_user,
-            request_frame.c_id, request_frame.d_id,
-            request_frame.csv_name, header
-        )
-        res_data = c_obj.perform_validation()
-
-        if res_data == "InvalidCSV":
-            return bu_sm.InvalidCsvFile()
-
-        if res_data is None:
-            raise RuntimeError("Invalid Csv File")
-
-        if res_data["return_status"] is True:
-            generate_valid_file(csv_name)
-            if res_data["doc_count"] == 0:
-                upload_sts = 1
-            else:
-                upload_sts = 0
-
-            csv_args = [
-                session_user.user_id(),
-                request_frame.c_id, request_frame.c_name,
-                request_frame.d_id,
-                request_frame.d_name, csv_name,
-                res_data["total"], res_data["doc_count"], upload_sts
-            ]
-            new_csv_id = save_mapping_csv(csv_args)
-
-            result = None
-
-            if new_csv_id:
-                if save_mapping_data(new_csv_id, res_data["data"]) is True:
-                    if res_data["doc_count"] == 0:
-                        c_obj.save_executive_message(
-                            csv_name, request_frame.c_name,
-                            request_frame.d_name, session_user.user_id()
-                        )
-                        c_obj.source_commit()
-                    result = bu_sm.UploadStatutoryMappingCSVValidSuccess(
-                        new_csv_id, res_data["csv_name"],
-                        res_data["total"], res_data["valid"],
-                        res_data["invalid"],
-                        res_data["doc_count"], res_data["doc_names"],
-                        csv_name
-                    )
-            # csv data save to temp db
-        else:
-            result = bu_sm.UploadStatutoryMappingCSVInvalidSuccess(
-                res_data["invalid_file"], res_data["mandatory_error"],
-                res_data["max_length_error"], res_data["duplicate_error"],
-                res_data["invalid_char_error"], res_data["invalid_data_error"],
-                res_data["inactive_error"], res_data["total"],
-                res_data["invalid"],
-                res_data["total"] - res_data["invalid"],
-                res_data["invalid_frequency_error"]
-            )
-        return result
     except Exception, e:
         print e
         print str(traceback.format_exc())
@@ -562,10 +472,11 @@ def update_statutory_mapping_action(db, request_frame, session_user):
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=statutory_validate_data,
             args=(db, request_frame, c_obj, session_user))
         t.start()
+        print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", t.pid
         return bu_sm.Done(c_obj._csv_name)
     except Exception, e:
         print e
@@ -678,10 +589,11 @@ def submit_statutory_mapping(db, request_frame, session_user):
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=submit_statutory_validate,
             args=(db, request_frame, c_obj, session_user))
         t.start()
+        print "!!!!!!!!!!!!!!!!SUBMIT Statu mapping !!!!!!!!!!!!!!!!!", t.pid
         return bu_sm.Done(c_obj._csv_name)
     except Exception, e:
         print e
@@ -760,10 +672,11 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         c_obj = ValidateStatutoryMappingForApprove(
             db, csv_id, country_id, domain_id, session_user
         )
-        t = threading.Thread(
+        t = multiprocessing.Process(
             target=confirm_statutory_validate,
             args=(db, request_frame, c_obj, session_user))
         t.start()
+        print "!!!!!!!!!!!!!!!Confirm Statu mapping !!!!!!!!!!!!!!!!!!", t.pid
         return bu_sm.Done(c_obj._csv_name)
     except Exception, e:
         raise e
