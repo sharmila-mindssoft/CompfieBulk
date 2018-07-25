@@ -862,7 +862,7 @@ def submit_assign_statutory(db, request_frame, session_user):
 # submit record bu user with system declined information
 #############################################################
 def confirm_statutory_thread_process(
-    db, request_frame, c_obj, session_user, csv_name
+    db, request_frame, session_user, csv_name
 ):
     def write_file():
         file_name = "%s_%s.%s" % (
