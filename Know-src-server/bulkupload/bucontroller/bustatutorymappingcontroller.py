@@ -512,6 +512,7 @@ def statutory_validate_data(request_frame, session_user):
             fn.write(return_data)
 
     try:
+        print "statutory_validate_data---------------------->>>>>>"
         return_data = None
         csv_id = request_frame.csv_id
         country_id = request_frame.c_id
@@ -552,11 +553,13 @@ def statutory_validate_data(request_frame, session_user):
                     remove_bulk_uploaded_files(csv_name)
                     return_data = bu_sm.UpdateApproveActionFromListSuccess().to_structure()
         else:
+            print "ELSE REJECT ALL ->"
             if (update_approve_action_from_list(csv_id, action, remarks, session_user, "all")):
+                print "IN If update approve action"
                 get_update_approve_file_status(csv_id, 1)
                 c_obj.save_manager_message(
                     action, c_obj._csv_name, c_obj._country_name,
-                    c_obj._domain_name, session_user.user_id(), remarks, 0
+                    c_obj._domain_name, session_user, remarks, 0
                 )
                 c_obj.source_commit()
                 c_obj.close_source_db()
@@ -676,7 +679,7 @@ def confirm_submit_statutory_mapping(db, request_frame, session_user):
         csv_id = request_frame.csv_id
         t = multiprocessing.Process(
             target=confirm_statutory_validate,
-            args=(db, request_frame, session_user))
+            args=(db, request_frame, session_user.user_id()))
         t.start()
         print "!!!!!!!!!!!!!!!Confirm Statu mapping !!!!!!!!!!!!!!!!!!", t.pid
         return bu_sm.Done(str(csv_id))
@@ -697,6 +700,7 @@ def confirm_statutory_validate(db, request_frame, session_user):
             fn.write(return_data)
 
     try:
+        print "confirm_statutory_validate------------->>>>>>"
         csv_id = request_frame.csv_id
         country_id = request_frame.c_id
         domain_id = request_frame.d_id
@@ -706,6 +710,8 @@ def confirm_statutory_validate(db, request_frame, session_user):
         )
         is_declined = c_obj.perform_validation_before_submit()
         user_id = session_user
+        print "Confirm ->>> ", user_id
+
         csv_name = c_obj._csv_name
         return_data = None
 
@@ -724,8 +730,8 @@ def confirm_statutory_validate(db, request_frame, session_user):
             else:
                 get_update_approve_file_status(csv_id, 1)
 
-            c_obj.source_commit()
-            c_obj.close_source_db()
+            # c_obj.source_commit()
+            # c_obj.close_source_db()
             c_obj.source_bulkdb_commit()
             remove_bulk_uploaded_files(csv_name)
             return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure()
