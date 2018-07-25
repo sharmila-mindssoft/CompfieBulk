@@ -117,7 +117,7 @@ class StatutorySource(object):
 
     def close_source_db(self):
         self._source_db.close()
-        self.__source_db_con.close()
+        self._source_db_con.close()
 
     def init_values(self, country_id, domain_id):
         self.get_compliance_frequency()
@@ -831,7 +831,7 @@ class StatutorySource(object):
     def save_compliance_data(self, c_id, d_id, mapping_id, data):
         created_on = get_date_time()
         approved_on = get_date_time()
-        approved_by = self._session_user_obj.user_id()
+        approved_by = self._session_user_obj
         columns = [
             "statutory_provision",
             "compliance_task", "compliance_description",
@@ -1936,6 +1936,7 @@ class ValidateStatutoryMappingForApprove(StatutorySource):
                 t = threading.Timer(60, check_status)
                 t.daemon = True
                 t.start()
+                t.join()
 
         def get_file_stats(csvid):
             file_status = None

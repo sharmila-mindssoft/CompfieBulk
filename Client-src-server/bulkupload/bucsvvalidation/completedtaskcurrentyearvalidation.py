@@ -33,6 +33,8 @@ __all__ = [
     also check csv data validation
 '''
 ################################
+bulk_db = None
+bulk_db_con = None
 
 
 class SourceDB(object):
@@ -68,7 +70,7 @@ class SourceDB(object):
         self.provisions = {}
         # self.get_doc_names()
 
-    def connect_source_db(self, legal_entity_id):
+    def connect_knowledge_db(self):
         self._knowledge_db_con = mysql.connector.connect(
             user=KNOWLEDGE_DB_USERNAME,
             password=KNOWLEDGE_DB_PASSWORD,
@@ -81,6 +83,8 @@ class SourceDB(object):
         self._knowledge_db = Database(self._knowledge_db_con)
         self._knowledge_db.begin()
 
+    def connect_source_db(self, legal_entity_id):
+        self.connect_knowledge_db()
         query = "select t1.client_database_id, t1.database_name, " + \
             "t1.database_username, t1.database_password, " + \
             "t3.database_ip, database_port " + \
@@ -112,10 +116,11 @@ class SourceDB(object):
                 )
         self._source_db = Database(self._source_db_con)
         self._source_db.begin()
+        self._knowledge_db.close()
 
     def close_source_db(self):
         self._source_db.close()
-        self.__source_db_con.close()
+        # self.__source_db_con.close()
 
     def init_values(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
@@ -347,6 +352,7 @@ class SourceDB(object):
 
     def get_past_due_dates(self, domain_id, unit_id, compliance_id):
         def generate_past_due_dates(domain_id, unit_id, compliance_id):
+            self.connect_source_db(self.legal_entity_id)
             rows = return_past_due_dates(
                 self._source_db, domain_id, unit_id, None, compliance_id
             )
@@ -360,6 +366,7 @@ class SourceDB(object):
             if compliance_id not in self._past_due_dates[domain_id][unit_id]:
                 self._past_due_dates[
                     domain_id][unit_id][compliance_id] = result
+            self.close_source_db()
             return result
         if domain_id in self._past_due_dates:
             if unit_id in self._past_due_dates[domain_id]:
@@ -381,6 +388,7 @@ class SourceDB(object):
                 " where unit_id = %s  and domain_id = %s" + \
                 " and compliance_id = %s"
             params = [unit_id, domain_id, compliance_id]
+            self.connect_source_db(self.legal_entity_id)
             rows = self._source_db.select_all(q, params)
             trigger_before_days = 0
             if rows:
@@ -401,6 +409,7 @@ class SourceDB(object):
                     self.trigger_before_days[
                         domain_id][unit_id][
                         compliance_id] = trigger_before_days
+            self.close_source_db()
             return trigger_before_days
         if domain_id in self.trigger_before_days:
             if unit_id in self.trigger_before_days[domain_id]:
@@ -433,11 +442,15 @@ class SourceDB(object):
                 compliance_task, description, provision
             ]
             db = bulkupload_db_connect()
+            print "db:>>>>>>>>>>>> %s" % db
+            print "bulk db con:>>>>>>>>>...........%s" % bulk_db_con
+            print "bulk db :>>>>>>>>>...........%s" % bulk_db
             rows = db.select_all(q, params)
             due_dates_list = []
             for row in rows:
                 due_date_string = row["due_date"].strftime("%Y-%m-%d")
                 due_dates_list.append(due_date_string)
+            close_bulkupload_db(db)
             return due_dates_list
         key = self.frame_key(
             unit_code, primary_legislation, secondary,
@@ -812,6 +825,7 @@ class SourceDB(object):
                 self._source_db.insert(
                     "tbl_compliance_history", columns, values)
         self._source_db.commit()
+        self.close_source_db()
         return True
 
     # main db related validation mapped with field name
@@ -1108,6 +1122,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             for row in rows:
                 due_date_string = row["due_date"].strftime("%Y-%m-%d")
                 due_dates_list.append(due_date_string)
+            self.close_source_db()
             return due_dates_list
         key = self.frame_key(
             unit_code, primary_legislation, secondary_legislation,
@@ -1287,6 +1302,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             for row in rows:
                 due_date_string = row["due_date"].strftime("%Y-%m-%d")
                 due_dates_list.append(due_date_string)
+            # self.close_source_db()
             return due_dates_list
         duplicate_count = 0
         final_data = []
@@ -1357,7 +1373,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 _db_check.rollback()
 
             finally:
-                _db_check.close()
+                close_bulkupload_db(_db_check)
             return file_status
 
         check_status()
@@ -1381,14 +1397,14 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             "file_server_id = (select file_server_id from " + \
             " tbl_client_database where legal_entity_id = %s )"
         param = [legal_id]
-        self.connect_source_db(legal_id)
+        self.connect_knowledge_db(legal_id)
         doc_rows = self._knowledge_db.select_all(query, param)
         if doc_rows > 0:
             file_server_ip = doc_rows[0]["ip"]
             file_server_port = doc_rows[0]["port"]
         else:
             return "File server not available"
-
+        self._knowledge_db.close()
         current_date = datetime.now().strftime("%d-%b-%Y")
         client_id = str(session_token).split("-")[0]
         caller = (
@@ -1414,6 +1430,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         )
         self.save_data_submit_status(data_save_status)
         db.commit()
+        close_bulkupload_db(db)
         self.remove_data_from_temp_db(csv_id)
         return data_save_status
 
@@ -1427,6 +1444,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         params = [csv_id]
         db.execute(query, params)
         db.commit()
+        close_bulkupload_db(db)
 
     def save_data_submit_status(self, data_save_status):
         if data_save_status is True:
@@ -1439,6 +1457,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 "data_submit_status = %s WHERE csv_past_id = %s"
         self._db.execute(query, [data_submit_value, self._csv_id])
         self._db.commit()
+        close_bulkupload_db(self._db)
 
     def update_file_submit_status(
         self, file_submit_value, file_down_status
@@ -1455,6 +1474,9 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         except Exception, e:
             print e
             bulk_db_check.rollback()
+            close_bulkupload_db(bulk_db_check)
+        finally:
+            close_bulkupload_db(bulk_db_check)
 
     def save_file_submit_status(self, response):
         if str(response).find("200") >= 0:
@@ -1470,10 +1492,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
 
 
 def bulkupload_db_connect():
-    _bulk_db = None
-    _bulk_db_con = None
     try:
-        _bulk_db_con = mysql.connector.connect(
+        bulk_db_con = mysql.connector.connect(
             user=BULK_UPLOAD_DB_USERNAME,
             password=BULK_UPLOAD_DB_PASSWORD,
             host=BULK_UPLOAD_DB_HOST,
@@ -1481,10 +1501,14 @@ def bulkupload_db_connect():
             port=BULK_UPLOAD_DB_PORT,
             autocommit=False
         )
-        _bulk_db = Database(_bulk_db_con)
-        _bulk_db.begin()
+        bulk_db = Database(bulk_db_con)
+        bulk_db.begin()
     except Exception, e:
         print "Connection Exception Caught"
         print e
-        _bulk_db_con.close()
-    return _bulk_db
+        bulk_db_con.close()
+    return bulk_db
+
+
+def close_bulkupload_db(bulk_db_con):
+    bulk_db_con.close()
