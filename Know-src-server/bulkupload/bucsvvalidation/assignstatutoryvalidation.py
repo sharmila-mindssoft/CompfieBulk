@@ -1238,7 +1238,7 @@ class ValidateAssignStatutoryForApprove(SourceDB):
                 self._legal_entity_id
             )
             self.init_values(
-                self._session_user_obj.user_id(), self._client_id, country_id,
+                self._session_user_obj, self._client_id, country_id,
                 self._legal_entity_id
             )
 
