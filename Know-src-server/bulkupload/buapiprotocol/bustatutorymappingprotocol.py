@@ -177,12 +177,13 @@ class GetSMBulkReportData(Request):
 
 
 class ExportSMBulkReportData(Request):
-    def __init__(self, c_ids, c_names, d_ids, d_names, from_date, to_date,
-                 child_ids, user_category_id, csv, c_d_ids):
+    def __init__(self, c_ids, bu_country_names, d_ids, bu_dom_names,
+                 from_date, to_date, child_ids, user_category_id,
+                 csv, c_d_ids):
         self.c_ids = c_ids
-        self.c_names = c_names
+        self.bu_country_names = bu_country_names
         self.d_ids = d_ids
-        self.d_names = d_names
+        self.bu_dom_names = bu_dom_names
         self.from_date = from_date
         self.to_date = to_date
         self.child_ids = child_ids
@@ -192,14 +193,15 @@ class ExportSMBulkReportData(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "c_names", "d_ids", "d_names",
-                                       "from_date", "to_date", "child_ids",
+        data = parse_dictionary(data, ["c_ids", "bu_country_names", "d_ids",
+                                       "bu_dom_names", "from_date",
+                                       "to_date", "child_ids",
                                        "user_category_id", "csv", "c_d_ids"])
         return ExportSMBulkReportData(
             data.get("c_ids"),
-            data.get("c_names"),
+            data.get("bu_country_names"),
             data.get("d_ids"),
-            data.get("d_names"),
+            data.get("bu_dom_names"),
             data.get("from_date"),
             data.get("to_date"),
             data.get("child_ids"),
@@ -211,9 +213,9 @@ class ExportSMBulkReportData(Request):
     def to_inner_structure(self):
         return {
             "c_ids": self.c_ids,
-            "c_names": self.c_names,
+            "bu_country_names": self.bu_country_names,
             "d_ids": self.d_ids,
-            "d_names": self.d_names,
+            "bu_dom_names": self.bu_dom_names,
             "from_date": self.from_date, "to_date": self.to_date,
             "child_ids": self.child_ids,
             "user_category_id": self.user_category_id,
@@ -955,58 +957,6 @@ class SMRejectedDownload(object):
         }
 
 
-class RejectedList(object):
-    def __init__(
-        self, c_id, c_name, d_id, d_name, csv_id, csv_name, no_of_records,
-        rej_by, rej_on, rej_count, rej_file, rej_reason, remove
-    ):
-        self.c_id = c_id
-        self.c_name = c_name
-        self.d_id = d_id
-        self.d_name = d_name
-        self.csv_id = csv_id
-        self.csv_name = csv_name
-        self.no_of_records = no_of_records
-        self.rej_by = rej_by
-        self.rej_on = rej_on
-        self.rej_count = rej_count
-        self.rej_file = rej_file
-        self.rej_reason = rej_reason
-        self.remove = remove
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, [
-            "c_id", "c_name", "d_id", "d_name", "csv_id", "csv_name",
-            "no_of_records", "rej_by", "rej_on", "rej_count", "rej_file",
-            "rej_reason", "remove"
-        ])
-        return RejectedList(
-            data.get("c_id"), data.get("c_name"), data.get("d_id"),
-            data.get("d_name"), data.get("csv_id"), data.get("csv_name"),
-            data.get("no_of_records"), data.get("rej_by"), data.get("rej_on"),
-            data.get("rej_count"), data.get("rej_file"),
-            data.get("rej_reason"), data.get("remove")
-        )
-
-    def to_structure(self):
-        return {
-            "c_id": self.c_id,
-            "c_name": self.c_name,
-            "d_id": self.d_id,
-            "d_name": self.d_name,
-            "csv_id": self.csv_id,
-            "csv_name": self.csv_name,
-            "no_of_records": self.no_of_records,
-            "rej_by": self.rej_by,
-            "rej_on": self.rej_on,
-            "rej_count": self.rej_count,
-            "rej_file": self.rej_file,
-            "rej_reason": self.rej_reason,
-            "remove": self.remove
-        }
-
-
 class PendingCsvList(object):
     def __init__(
         self, csv_id, csv_name, uploaded_by,
@@ -1452,22 +1402,6 @@ class UploadStatutoryMappingCSVInvalidSuccess(Response):
         }
 
 
-class GetRejectedStatutoryMappingListSuccess(Response):
-    def __init__(self, rejected_list):
-        self.rejected_list = rejected_list
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["rejected_list"])
-        return GetRejectedStatutoryMappingListSuccess(
-            data.get("rejected_list"))
-
-    def to_inner_structure(self):
-        return {
-            "rejected_list": self.rejected_list
-        }
-
-
 class RemoveRejectedDataSuccess(Response):
     def __init__(self):
         pass
@@ -1819,19 +1753,6 @@ class Failure(Response):
         return {}
 
 
-# class DocumentQueueProcessSuccess(Response):
-#     def __init__(self):
-#         pass
-
-#     @staticmethod
-#     def parse_inner_structure(data):
-#         data = parse_dictionary(data)
-#         return DocumentQueueProcessSuccess()
-
-#     def to_inner_structure(self):
-#         return {}
-
-
 class DocumentQueueProcessSuccess(Response):
     def __init__(self, rejected_reason):
         self.rejected_reason = rejected_reason
@@ -1853,7 +1774,6 @@ def _init_Response_class_map():
         GetStatutoryMappingCsvUploadedListSuccess,
         UploadStatutoryMappingCSVValidSuccess,
         UploadStatutoryMappingCSVInvalidSuccess,
-        GetRejectedStatutoryMappingListSuccess,
         RemoveRejectedDataSuccess,
         GetApproveStatutoryMappingListSuccess,
         GetApproveMappingFilterSuccess,

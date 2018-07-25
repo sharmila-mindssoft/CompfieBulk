@@ -241,7 +241,7 @@ class ConvertJsonToCSV(object):
         ]
         self.write_csv(csv_header_line1, None)
         csv_header_line2 = [
-            "", "", "", "Country", request.c_names, "", "Domain",
+            "", "", "", "Country", request.bu_country_names, "", "Domain",
             c_d_names, "", "", ""
         ]
         self.write_csv(csv_header_line2, None)
@@ -395,7 +395,7 @@ class ConvertJsonToCSV(object):
         if child_ids is not None:
             user_ids = ",".join(str(e) for e in child_ids)
         else:
-            user_ids = session_user.user_id()
+            user_ids = session_user
         if domain_ids is not None:
             domain_ids = ",".join(map(str, domain_ids))
 
@@ -490,8 +490,8 @@ class ConvertJsonToCSV(object):
         ]
         self.write_csv(csv_header_line2, None)
         csv_header_line3 = [
-            "", "", "", "Domain", request.d_names, "",
-            "Unit", request.unit_name, "", "", "", ""
+            "", "", "", "Domain", request.bu_dom_names, "",
+            "DE Name", user_name_list, "", "", "", ""
         ]
         self.write_csv(csv_header_line3, None)
         csv_header_line4 = [
@@ -501,7 +501,7 @@ class ConvertJsonToCSV(object):
         self.write_csv(csv_header_line4, None)
         csv_header_line5 = [
             "", "", "", "Exported Date and Time", exported_time,
-            "", "DE Name", user_name_list, "", "", ""
+            "", "", "", "", "", ""
         ]
         self.write_csv(csv_header_line5, None)
         csv_header_line6 = ["S.No", "Domain", "Uploaded By",

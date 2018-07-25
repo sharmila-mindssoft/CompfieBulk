@@ -38,7 +38,8 @@ __all__ = [
     "get_countries_for_user_bu",
     "get_knowledge_executive_bu",
     "get_sm_document_count",
-    "get_update_approve_file_status"
+    "get_update_approve_file_status",
+    "get_sm_csv_name",
 ]
 
 # transaction method begin
@@ -610,16 +611,18 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
     )
 
 
-def update_approve_action_from_list(csv_id, action, remarks, session_user, action_type):
+def update_approve_action_from_list(
+    csv_id, action, remarks, session_user, action_type
+):
     try:
         if action_type == "all":
-            args = [csv_id, action, remarks, session_user.user_id()]
+            args = [csv_id, action, remarks, session_user]
             db = connect_bulk_db()
             db.call_proc("sp_statutory_mapping_update_all_action", args)
             db.commit()
             return True
         else:
-            args = [csv_id, session_user.user_id()]
+            args = [csv_id, session_user]
             db = connect_bulk_db()
             db.call_proc("sp_statutory_update_action", args)
             db.commit()
@@ -854,6 +857,14 @@ def get_sm_document_count(db, csv_id):
     )
     document_count = result[0]["document_count"]
     return document_count
+
+
+def get_sm_csv_name(db, csv_id):
+    result = db.call_proc(
+        "sp_get_sm_csv_name", [csv_id]
+    )
+    csv_name = result[0]["csv_name"]
+    return csv_name
 
 
 def get_all_compliance_frequency():

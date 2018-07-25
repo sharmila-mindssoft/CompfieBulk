@@ -99,7 +99,7 @@ function resetFilter(evt) {
         DOMAIN.html();
         DOMAIN.multiselect('rebuild');
     }
-    if (evt == 'le') {    
+    if (evt == 'le') {
         FROM_DATE.val('');
         TO_DATE.val('');
 
@@ -448,7 +448,7 @@ GROUP_VAL.keyup(function(e) {
     var ctryGrps = [];
     var i = 0, occur = '', j = 0;
 
-    resetFilter('clients');    
+    resetFilter('clients');
     for (i = 0; i < CLIENT_LIST.length; i++) {
         if (CLIENT_LIST[i].country_id) {
             occur = -1
@@ -590,10 +590,10 @@ function fetchDomainMultiselect() {
             if(LEGAL_ENTITY_LIST[i].le_id == LEGAL_ENTITY.val()){
                 DOMAINS = LEGAL_ENTITY_LIST[i].bu_domains;
                 for (j in DOMAINS) {
-                    str += '<option value="'+ DOMAINS[j].d_id +'">'+ 
+                    str += '<option value="'+ DOMAINS[j].d_id +'">'+
                     DOMAINS[j].d_name +'</option>';
                 }
-            }                
+            }
         }
         DOMAIN.append(str);
         DOMAIN.multiselect('rebuild');
@@ -622,7 +622,7 @@ function processSubmit() {
 
     /* multiple COUNTRY selection in to generate array */
     if ($('#de_name option:selected').text() == "") {
-        selectedDEName = DOMAIN_EXECUTIVES; 
+        selectedDEName = DOMAIN_EXECUTIVES;
         // When execute unselected the Field.
     }
     else {
@@ -732,7 +732,7 @@ function loadCountwiseResult(data) {
         reasonRejection = data[entity].is_fully_rejected;
         totalApproveRecords = data[entity].total_approve_records;
         rejReason = data[entity].rejected_reason;
-        domainName = data[entity].domain_name;
+        domainName = data[entity].bu_dom_names;
         approvedOn = data[entity].approved_on;
         approvedBy = data[entity].approved_by;
         declinedCount = data[entity].declined_count;
@@ -835,7 +835,7 @@ assignStatutoryBulkReport.prototype.exportData = function() {
     var unitID = '';
     var unitName = '';
     var splitValues = '';
-    var domainNames = '', filterData = '';  
+    var domainNames = '', filterData = '';
 
     $.each(domainIds, function(key, value) {
         selectedDomain.push(parseInt(value));
@@ -861,7 +861,7 @@ assignStatutoryBulkReport.prototype.exportData = function() {
         "bu_unit_id": unitID,
         "unit_name": unitName,
         "domain_ids": selectedDomain,
-        "d_names": domainNames,
+        "bu_dom_names": domainNames,
         "from_date": fromDate,
         "to_date": toDate,
         "child_ids": selectedDEName,

@@ -17,9 +17,11 @@ CREATE FUNCTION `SPLIT_STR`(
   delim VARCHAR(12),
   pos INT
 ) RETURNS VARCHAR(1000) CHARSET latin1
+BEGIN
 RETURN REPLACE(SUBSTRING(SUBSTRING_INDEX(x, delim, pos),
        LENGTH(SUBSTRING_INDEX(x, delim, pos -1)) + 1),
        delim, '');
+END //
 DELIMITER ;
 
 
@@ -1987,6 +1989,17 @@ BEGIN
     client_group = clientgroup_name AND legal_entity = le_name AND find_in_set (domain, domain_name)
     AND find_in_set (unit_code, unitcode_)
     ORDER BY domain, unit_code;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_get_sm_csv_name`;
+DELIMITER //
+CREATE PROCEDURE `sp_get_sm_csv_name`(
+    IN _csvid INT(11)
+)
+BEGIN
+  SELECT csv_name FROM tbl_bulk_statutory_mapping_csv
+  WHERE csv_id = _csvid;
 END //
 DELIMITER ;
 

@@ -33,6 +33,8 @@ __all__ = [
     also check csv data validation
 '''
 ################################
+bulk_db = None
+bulk_db_con = None
 
 
 class SourceDB(object):
@@ -68,7 +70,7 @@ class SourceDB(object):
         self.provisions = {}
         # self.get_doc_names()
 
-    def connect_source_db(self, legal_entity_id):
+    def connect_knowledge_db(self):
         self._knowledge_db_con = mysql.connector.connect(
             user=KNOWLEDGE_DB_USERNAME,
             password=KNOWLEDGE_DB_PASSWORD,
@@ -81,6 +83,8 @@ class SourceDB(object):
         self._knowledge_db = Database(self._knowledge_db_con)
         self._knowledge_db.begin()
 
+    def connect_source_db(self, legal_entity_id):
+        self.connect_knowledge_db()
         query = "select t1.client_database_id, t1.database_name, " + \
             "t1.database_username, t1.database_password, " + \
             "t3.database_ip, database_port " + \
@@ -112,10 +116,11 @@ class SourceDB(object):
                 )
         self._source_db = Database(self._source_db_con)
         self._source_db.begin()
+        self._knowledge_db.close()
 
     def close_source_db(self):
         self._source_db.close()
-        self.__source_db_con.close()
+        # self.__source_db_con.close()
 
     def init_values(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
@@ -220,7 +225,7 @@ class SourceDB(object):
             "trim(compliance_task) else trim(Concat_ws( " + \
             "' - ',document_name, compliance_task)) end AS " + \
             " compliance_task, compliance_description, " + \
-            "is_active, frequency_id from tbl_compliances t1"
+            "is_active, frequency_id, document_name from tbl_compliances t1"
         rows = self._source_db.select_all(query)
         for d in rows:
             self.compliance_task[d["compliance_task"]] = d
@@ -347,6 +352,7 @@ class SourceDB(object):
 
     def get_past_due_dates(self, domain_id, unit_id, compliance_id):
         def generate_past_due_dates(domain_id, unit_id, compliance_id):
+            self.connect_source_db(self.legal_entity_id)
             rows = return_past_due_dates(
                 self._source_db, domain_id, unit_id, None, compliance_id
             )
@@ -360,6 +366,7 @@ class SourceDB(object):
             if compliance_id not in self._past_due_dates[domain_id][unit_id]:
                 self._past_due_dates[
                     domain_id][unit_id][compliance_id] = result
+            self.close_source_db()
             return result
         if domain_id in self._past_due_dates:
             if unit_id in self._past_due_dates[domain_id]:
@@ -381,6 +388,7 @@ class SourceDB(object):
                 " where unit_id = %s  and domain_id = %s" + \
                 " and compliance_id = %s"
             params = [unit_id, domain_id, compliance_id]
+            self.connect_source_db(self.legal_entity_id)
             rows = self._source_db.select_all(q, params)
             trigger_before_days = 0
             if rows:
@@ -401,6 +409,7 @@ class SourceDB(object):
                     self.trigger_before_days[
                         domain_id][unit_id][
                         compliance_id] = trigger_before_days
+            self.close_source_db()
             return trigger_before_days
         if domain_id in self.trigger_before_days:
             if unit_id in self.trigger_before_days[domain_id]:
@@ -433,11 +442,15 @@ class SourceDB(object):
                 compliance_task, description, provision
             ]
             db = bulkupload_db_connect()
+            print "db:>>>>>>>>>>>> %s" % db
+            print "bulk db con:>>>>>>>>>...........%s" % bulk_db_con
+            print "bulk db :>>>>>>>>>...........%s" % bulk_db
             rows = db.select_all(q, params)
             due_dates_list = []
             for row in rows:
                 due_date_string = row["due_date"].strftime("%Y-%m-%d")
                 due_dates_list.append(due_date_string)
+            close_bulkupload_db(db)
             return due_dates_list
         key = self.frame_key(
             unit_code, primary_legislation, secondary,
@@ -474,7 +487,7 @@ class SourceDB(object):
             return
         csv_due_date = due_date
         try:
-            due_date = datetime.strptime(due_date, "%d-%b-%Y")
+            due_date = datetime.strptime(due_date, "%Y-%b-%d")
             due_date = due_date.date().strftime("%Y-%m-%d")
         except ValueError:
             return
@@ -535,7 +548,7 @@ class SourceDB(object):
         try:
             due_date = datetime.strptime(due_date, "%d-%b-%Y")
             completion_date = datetime.strptime(
-                completion_date, "%d-%b-%Y").date()
+                completion_date, "%Y-%b-%d").date()
         except ValueError:
             return
         start_date = due_date.date() - timedelta(days=trigger_before_days)
@@ -694,20 +707,31 @@ class SourceDB(object):
         return bool(rows[0]["two_levels_of_approval"])
 
     def get_compliance_task_name(self, compliance_task_name_data):
-        compliance_task_name_check = compliance_task_name_data.split(" - ")
-        compliance_task_name = compliance_task_name_check[0]
-        if len(compliance_task_name_check) > 1:
-            compliance_task_name = ""
-            for i, x in enumerate(compliance_task_name_check):
-                if i > 1:
-                    compliance_task_name += " - "
-                if i == 0:
-                    pass
-                else:
-                    compliance_task_name += compliance_task_name_check[i]
+        compliance_task_name = compliance_task_name_data
+        if compliance_task_name_data in self.compliance_task:
+            if (
+                self.compliance_task[
+                    compliance_task_name_data]["document_name"] in [None, ""]
+            ):
+                compliance_task_name = compliance_task_name_data
+            else:
+                compliance_task_name_check = compliance_task_name_data.split(
+                    " - ")
+                compliance_task_name = compliance_task_name_check[0]
+                if len(compliance_task_name_check) > 1:
+                    compliance_task_name = ""
+                    for i, x in enumerate(compliance_task_name_check):
+                        if i > 1:
+                            compliance_task_name += " - "
+                        if i == 0:
+                            pass
+                        else:
+                            compliance_task_name += compliance_task_name_check[
+                                i]
         return compliance_task_name
 
-    def save_completed_task_data(self, db, data, legal_entity_id, csv_id):
+    def save_completed_task_data(self, db, data, legal_entity_id, csv_id,
+                                 country_id, domain_id):
         def frame_key_for_doc(
                 unit_code, primary, secondary, comp, desc, due_date):
             key = "%s-%s-%s-%s-%s-%s" % (
@@ -717,6 +741,7 @@ class SourceDB(object):
         self.generate_hierarchy_checker()
         self.get_unit_code()
         self.get_assignee()
+        self.get_compliance_task()
         query = "SELECT two_levels_of_approval FROM tbl_reminder_settings"
         rows = self._source_db.select_all(query)
         if int(rows[0]["two_levels_of_approval"]) == 1:
@@ -744,17 +769,13 @@ class SourceDB(object):
             key = frame_key_for_doc(
                 unit_code, primary, secondary, comp, desc, due_date)
             document_size_dict[key] = row["document_file_size"]
-
+        self.connect_source_db(legal_entity_id)
         for idx, d in enumerate(data):
-            print "d: %s" % d
             compliance_task_name = self.get_compliance_task_name(
                 d["compliance_task_name"])
             primary = d["perimary_legislation"].strip()
             secondary = d["secondary_legislation"]
             provision = d["statutory_provision"]
-            print "primary: %s, secondary : %s, provision: %s" % (
-                primary, secondary, provision
-            )
             if secondary == "":
                 secondary = "empty"
             else:
@@ -768,7 +789,6 @@ class SourceDB(object):
             approved_by = self.approval_dict[
                 unit_id][compliance_id]["approval"]
             concurred_by = self.approval_dict[unit_id][compliance_id]["concur"]
-            self.connect_source_db(legal_entity_id)
             columns = [
                 "legal_entity_id", "unit_id", "compliance_id", "start_date",
                 "due_date", "completion_date", "completed_by",
@@ -804,7 +824,8 @@ class SourceDB(object):
             if values:
                 self._source_db.insert(
                     "tbl_compliance_history", columns, values)
-                self._source_db.commit()
+        self._source_db.commit()
+        self.close_source_db()
         return True
 
     # main db related validation mapped with field name
@@ -1101,6 +1122,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
             for row in rows:
                 due_date_string = row["due_date"].strftime("%Y-%m-%d")
                 due_dates_list.append(due_date_string)
+            self.close_source_db()
             return due_dates_list
         key = self.frame_key(
             unit_code, primary_legislation, secondary_legislation,
@@ -1219,7 +1241,7 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
 
 
 class ValidateCompletedTaskForSubmit(SourceDB):
-    def __init__(self, db, csv_id, data_result, session_user):
+    def __init__(self, db, csv_id, data_result, session_user, legal_entity_id):
         SourceDB.__init__(self)
         self._db = db
         self._stop = None
@@ -1229,6 +1251,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         self.doc_count = 0
         self.main_db_due_dates = {}
         self.get_file_count(db)
+        self.connect_source_db(legal_entity_id)
+        self.get_compliance_task()
 
     def get_file_count(self, db):
         query = "select total_documents from tbl_bulk_past_data_csv " + \
@@ -1246,28 +1270,31 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             primary_legislation, secondary_legislation, compliance_name,
             description, frequency, unit_code, legal_entity_id, provision
         ):
-            q = "SELECT compliance_history_id " + \
+            q = "SELECT compliance_history_id, due_date" + \
                 " from tbl_compliance_history " + \
                 " where compliance_id = (" + \
                 " SELECT compliance_id FROM tbl_compliances where " + \
                 "compliance_task = TRIM(%s) and compliance_description = " + \
-                " TRIM(%s) and statutory_mapping like %s and " + \
+                " TRIM(%s) and (TRIM(statutory_mapping) like %s or " + \
+                " TRIM(statutory_mapping) like %s) and " + \
                 " statutory_provision = %s  and " + \
                 " frequency_id = (SELECT frequency_id from " + \
                 " tbl_compliance_frequency WHERE " + \
                 " frequency=TRIM(%s)) Limit 1) and unit_id =( select " + \
                 " unit_id from tbl_units where unit_code = %s and " + \
-                " legal_entity_id = %s ) " + \
-                " and date(due_date) = %s"
+                " legal_entity_id = %s ) "
 
-            legis_cond = '["' + primary_legislation
+            legis_cond = '["' + primary_legislation.strip()
+            legis_cond1 = legis_cond
             if secondary_legislation != "":
-                legis_cond += ">>" + secondary_legislation + "%"
+                legis_cond += ">>" + secondary_legislation.strip() + "%"
+                legis_cond1 += " >> " + secondary_legislation.strip() + "%"
             else:
                 legis_cond += "%"
+                legis_cond1 += "%"
             params = [
-                compliance_name, description, legis_cond, provision,
-                frequency, unit_code, legal_entity_id, due_date.date()
+                compliance_name, description, legis_cond, legis_cond1,
+                provision, frequency, unit_code, legal_entity_id
             ]
             self.connect_source_db(legal_entity_id)
             rows = self._source_db.select_all(q, params)
@@ -1275,7 +1302,10 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             for row in rows:
                 due_date_string = row["due_date"].strftime("%Y-%m-%d")
                 due_dates_list.append(due_date_string)
+            # self.close_source_db()
             return due_dates_list
+        duplicate_count = 0
+        final_data = []
         for row_idx, data in enumerate(self._source_data):
             compliance_task_name = data.get("compliance_task_name")
             primary_legislation = data.get("perimary_legislation")
@@ -1295,10 +1325,13 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                     primary_legislation, secondary_legislation,
                     compliance_name, description, frequency, unit_code,
                     legal_entity_id, provision)
-            if due_date in self.main_db_due_dates[key]:
-                return "Duplicate due date"
+            if str(
+                    due_date.strftime("%Y-%m-%d")
+            ) in self.main_db_due_dates[key]:
+                duplicate_count += 1
             else:
-                return
+                final_data.append(data)
+        return duplicate_count, final_data
 
     def document_download_process_initiate(
         self, csvid, country_id, legal_id, domain_id, unit_id, session_token
@@ -1340,7 +1373,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 _db_check.rollback()
 
             finally:
-                _db_check.close()
+                close_bulkupload_db(_db_check)
             return file_status
 
         check_status()
@@ -1364,14 +1397,14 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             "file_server_id = (select file_server_id from " + \
             " tbl_client_database where legal_entity_id = %s )"
         param = [legal_id]
-        self.connect_source_db(legal_id)
+        self.connect_knowledge_db(legal_id)
         doc_rows = self._knowledge_db.select_all(query, param)
         if doc_rows > 0:
             file_server_ip = doc_rows[0]["ip"]
             file_server_port = doc_rows[0]["port"]
         else:
             return "File server not available"
-
+        self._knowledge_db.close()
         current_date = datetime.now().strftime("%d-%b-%Y")
         client_id = str(session_token).split("-")[0]
         caller = (
@@ -1386,7 +1419,6 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             print e
             response = "error"
         self.save_file_submit_status(response)
-        print "RESPONSEEE-> ", response
         return response
 
     def frame_data_for_main_db_insert(
@@ -1394,10 +1426,11 @@ class ValidateCompletedTaskForSubmit(SourceDB):
     ):
         db = bulkupload_db_connect()
         data_save_status = self.save_completed_task_data(
-            db, data_result, legal_entity_id, csv_id
+            db, data_result, legal_entity_id, csv_id, country_id, domain_id
         )
         self.save_data_submit_status(data_save_status)
         db.commit()
+        close_bulkupload_db(db)
         self.remove_data_from_temp_db(csv_id)
         return data_save_status
 
@@ -1411,6 +1444,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         params = [csv_id]
         db.execute(query, params)
         db.commit()
+        close_bulkupload_db(db)
 
     def save_data_submit_status(self, data_save_status):
         if data_save_status is True:
@@ -1423,6 +1457,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 "data_submit_status = %s WHERE csv_past_id = %s"
         self._db.execute(query, [data_submit_value, self._csv_id])
         self._db.commit()
+        close_bulkupload_db(self._db)
 
     def update_file_submit_status(
         self, file_submit_value, file_down_status
@@ -1439,6 +1474,9 @@ class ValidateCompletedTaskForSubmit(SourceDB):
         except Exception, e:
             print e
             bulk_db_check.rollback()
+            close_bulkupload_db(bulk_db_check)
+        finally:
+            close_bulkupload_db(bulk_db_check)
 
     def save_file_submit_status(self, response):
         if str(response).find("200") >= 0:
@@ -1454,10 +1492,8 @@ class ValidateCompletedTaskForSubmit(SourceDB):
 
 
 def bulkupload_db_connect():
-    _bulk_db = None
-    _bulk_db_con = None
     try:
-        _bulk_db_con = mysql.connector.connect(
+        bulk_db_con = mysql.connector.connect(
             user=BULK_UPLOAD_DB_USERNAME,
             password=BULK_UPLOAD_DB_PASSWORD,
             host=BULK_UPLOAD_DB_HOST,
@@ -1465,10 +1501,14 @@ def bulkupload_db_connect():
             port=BULK_UPLOAD_DB_PORT,
             autocommit=False
         )
-        _bulk_db = Database(_bulk_db_con)
-        _bulk_db.begin()
+        bulk_db = Database(bulk_db_con)
+        bulk_db.begin()
     except Exception, e:
         print "Connection Exception Caught"
         print e
-        _bulk_db_con.close()
-    return _bulk_db
+        bulk_db_con.close()
+    return bulk_db
+
+
+def close_bulkupload_db(bulk_db_con):
+    bulk_db_con.close()
