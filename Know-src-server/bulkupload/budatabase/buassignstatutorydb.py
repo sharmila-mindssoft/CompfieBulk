@@ -591,10 +591,10 @@ def update_approve_action_from_list(
     try:
         db = connect_bulk_db()
         if type == "all":
-            args = [csv_id, action, remarks, session_user.user_id()]
+            args = [csv_id, action, remarks, session_user]
             db.call_proc("sp_assign_statutory_update_all_action", args)
         else:
-            args = [csv_id, session_user.user_id()]
+            args = [csv_id, session_user]
             db.call_proc("sp_assign_statutory_update_action", args)
         db.commit()
         return True
