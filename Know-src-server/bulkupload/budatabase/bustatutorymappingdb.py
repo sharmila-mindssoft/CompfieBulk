@@ -611,16 +611,18 @@ def get_statutory_mapping_by_csv_id(db, request_frame):
     )
 
 
-def update_approve_action_from_list(csv_id, action, remarks, session_user, action_type):
+def update_approve_action_from_list(
+    csv_id, action, remarks, session_user, action_type
+):
     try:
         if action_type == "all":
-            args = [csv_id, action, remarks, session_user.user_id()]
+            args = [csv_id, action, remarks, session_user]
             db = connect_bulk_db()
             db.call_proc("sp_statutory_mapping_update_all_action", args)
             db.commit()
             return True
         else:
-            args = [csv_id, session_user.user_id()]
+            args = [csv_id, session_user]
             db = connect_bulk_db()
             db.call_proc("sp_statutory_update_action", args)
             db.commit()
