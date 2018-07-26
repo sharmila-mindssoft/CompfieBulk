@@ -2368,7 +2368,7 @@ $('#btn-clientunit-submit').click(function() {
                                     }
                                 }
 
-                                unit = mirror.getUnitDict(null, unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);
+                                unit = mirror.getUnitDict(null, unitName, unitCode, unitAddress, unitPostalCode, parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);
 
                                 units.push(unit);
                             } else {
@@ -2680,10 +2680,10 @@ $('#btn-clientunit-submit').click(function() {
                         if (total_div != i) {
                             total_div = total_div + 1;
                         }
-                        console.log(parseInt(unitId), unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0)
+                        console.log(parseInt(unitId), unitName, unitCode, unitAddress, unitPostalCode, parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0)
                         div_arr = mirror.getDivisionDict(parseInt(divIdValue), divNameValue, category, total_div, parseInt(total_units));
                         division_units.push(div_arr);
-                        unit = mirror.getUnitDict(parseInt(unitId), unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);
+                        unit = mirror.getUnitDict(parseInt(unitId), unitName, unitCode, unitAddress, unitPostalCode, parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);
 
                         units.push(unit);
                     } else {
