@@ -871,4 +871,15 @@ bu_api_params = {
         'type': 'VECTOR_TYPE_INT', 'length': None,
         'validation_method': None, 'is_optional': False
     },
+    'bulk_d_name': {
+        'type': 'STRING', 'length': 50,
+        'validation_method': is_alphabet_withdot,
+        'is_optional': True
+    },
+    'bulk_c_name': {
+        'type': 'STRING', 'length': 50,
+        'validation_method': is_alphabet_withdot,
+        'is_optional': True
+    },
+
 }
