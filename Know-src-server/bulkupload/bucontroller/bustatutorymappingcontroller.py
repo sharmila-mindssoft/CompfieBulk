@@ -384,6 +384,7 @@ def save_executive_message_after_docupload(request_frame, session_user):
             request_frame.d_name, session_user.user_id()
         )
         c_obj.source_commit()
+        c_obj.close_source_db()
         result = bu_sm.SendExecutiveMessageSuccess()
         return result
 
@@ -466,18 +467,12 @@ def get_statutory_mapping_data_by_csvid(db, request_frame):
 def update_statutory_mapping_action(db, request_frame, session_user):
     try:
         csv_id = request_frame.csv_id
-        country_id = request_frame.c_id
-        domain_id = request_frame.d_id
-
-        c_obj = ValidateStatutoryMappingForApprove(
-            db, csv_id, country_id, domain_id, session_user
-        )
         t = multiprocessing.Process(
             target=statutory_validate_data,
-            args=(db, request_frame, c_obj, session_user))
+            args=(request_frame, session_user.user_id()))
         t.start()
         print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", t.pid
-        return bu_sm.Done(c_obj._csv_name)
+        return bu_sm.Done(str(csv_id))
     except Exception, e:
         print e
         print str(traceback.format_exc())
@@ -504,12 +499,12 @@ def queue_process_statutory_document(db, request_frame, session_user):
         return bu_sm.DocumentQueueProcessSuccess(rejected_reason)
 
 
-def statutory_validate_data(db, request_frame, c_obj, session_user):
+def statutory_validate_data(request_frame, session_user):
     def write_file(return_data):
-        csv_name = c_obj._csv_name
-        file_string = csv_name.split(".")
+        csv_id = request_frame.csv_id
+        # file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
-            file_string[0], "approve", "txt"
+            csv_id, "approve_sm", "txt"
         )
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
@@ -517,18 +512,25 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
             fn.write(return_data)
 
     try:
+        print "statutory_validate_data---------------------->>>>>>"
         return_data = None
-        csv_name = c_obj._csv_name
         csv_id = request_frame.csv_id
+        country_id = request_frame.c_id
+        domain_id = request_frame.d_id
         action = request_frame.bu_action
         remarks = request_frame.remarks
+
+        c_obj = ValidateStatutoryMappingForApprove(
+            db, csv_id, country_id, domain_id, session_user
+        )
+        csv_name = c_obj._csv_name
+
         if action == 1:
             is_declined = c_obj.perform_validation_before_submit()
             if len(is_declined.keys()) > 0:
                 return_data = bu_sm.ValidationSuccess(
                     len(is_declined.keys())).to_structure()
             else:
-
                 if (update_approve_action_from_list(csv_id, action, remarks, session_user, "all")):
                     if c_obj._doc_count > 0:
                         get_update_approve_file_status(csv_id, 3)
@@ -540,21 +542,28 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
                     c_obj.frame_data_for_main_db_insert()
                     c_obj.save_manager_message(
                         action, c_obj._csv_name, c_obj._country_name,
-                        c_obj._domain_name, session_user.user_id(),
+                        c_obj._domain_name, session_user,
                         None, 0
                     )
                     c_obj.source_commit()
+                    c_obj.close_source_db()
+                    c_obj.source_bulkdb_commit()
+                    print "c obj bulk db commit"
                     delete_action_after_approval(csv_id)
                     remove_bulk_uploaded_files(csv_name)
                     return_data = bu_sm.UpdateApproveActionFromListSuccess().to_structure()
         else:
+            print "ELSE REJECT ALL ->"
             if (update_approve_action_from_list(csv_id, action, remarks, session_user, "all")):
+                print "IN If update approve action"
                 get_update_approve_file_status(csv_id, 1)
                 c_obj.save_manager_message(
                     action, c_obj._csv_name, c_obj._country_name,
-                    c_obj._domain_name, session_user.user_id(), remarks, 0
+                    c_obj._domain_name, session_user, remarks, 0
                 )
                 c_obj.source_commit()
+                c_obj.close_source_db()
+                c_obj.source_bulkdb_commit()
                 return_data = bu_sm.UpdateApproveActionFromListSuccess().to_structure()
         return_data = json.dumps(return_data)
 
@@ -580,33 +589,26 @@ def statutory_validate_data(db, request_frame, c_obj, session_user):
 def submit_statutory_mapping(db, request_frame, session_user):
     try:
         csv_id = request_frame.csv_id
-        country_id = request_frame.c_id
-        domain_id = request_frame.d_id
-        # csv data validation
         if get_pending_action(db, csv_id):
             return bu_sm.Failure()
 
-        c_obj = ValidateStatutoryMappingForApprove(
-            db, csv_id, country_id, domain_id, session_user
-        )
         t = multiprocessing.Process(
             target=submit_statutory_validate,
-            args=(db, request_frame, c_obj, session_user))
+            args=(db, request_frame, session_user.user_id()))
         t.start()
         print "!!!!!!!!!!!!!!!!SUBMIT Statu mapping !!!!!!!!!!!!!!!!!", t.pid
-        return bu_sm.Done(c_obj._csv_name)
+        return bu_sm.Done(str(csv_id))
     except Exception, e:
         print e
         print str(traceback.format_exc())
         raise e
 
 
-def submit_statutory_validate(db, request_frame, c_obj, session_user):
+def submit_statutory_validate(db, request_frame, session_user):
     def write_file(return_data):
-        return_data = json.dumps(return_data)
-        file_string = csv_name.split(".")
+        csv_id = request_frame.csv_id
         file_name = "%s_%s.%s" % (
-            file_string[0], "approve", "txt"
+            csv_id, "approve_sm", "txt"
         )
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
@@ -614,11 +616,16 @@ def submit_statutory_validate(db, request_frame, c_obj, session_user):
             fn.write(return_data)
 
     try:
+        csv_id = request_frame.csv_id
+        country_id = request_frame.c_id
+        domain_id = request_frame.d_id
+        # csv data validation
+        c_obj = ValidateStatutoryMappingForApprove(
+            db, csv_id, country_id, domain_id, session_user
+        )
+        csv_name = c_obj._csv_name
         is_declined = c_obj.perform_validation_before_submit()
         return_data = None
-
-        csv_id = request_frame.csv_id
-        csv_name = c_obj._csv_name
 
         if len(is_declined.keys()) > 0:
             return_data = bu_sm.ValidationSuccess(
@@ -635,13 +642,17 @@ def submit_statutory_validate(db, request_frame, c_obj, session_user):
                 get_update_approve_file_status(csv_id, 1)
             c_obj.save_manager_message(
                 1, c_obj._csv_name, c_obj._country_name, c_obj._domain_name,
-                session_user.user_id(), None, 0
+                session_user, None, 0
             )
             c_obj.frame_data_for_main_db_insert()
             c_obj.source_commit()
+            c_obj.close_source_db()
+            c_obj.source_bulkdb_commit()
+
             delete_action_after_approval(csv_id)
             remove_bulk_uploaded_files(csv_name)
             return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure()
+        return_data = json.dumps(return_data)
 
     except AssertionError as error:
         e = "AssertionError"
@@ -658,6 +669,7 @@ def submit_statutory_validate(db, request_frame, c_obj, session_user):
             "error",
             "bustatutorymappingcontroller.py - submit_statutory_validate()", e)
         raise e
+    print "REturn data -> ", return_data
     write_file(return_data)
     return
 
@@ -665,40 +677,41 @@ def submit_statutory_validate(db, request_frame, c_obj, session_user):
 def confirm_submit_statutory_mapping(db, request_frame, session_user):
     try:
         csv_id = request_frame.csv_id
-        country_id = request_frame.c_id
-        domain_id = request_frame.d_id
-        # csv data validation
-
-        c_obj = ValidateStatutoryMappingForApprove(
-            db, csv_id, country_id, domain_id, session_user
-        )
         t = multiprocessing.Process(
             target=confirm_statutory_validate,
-            args=(db, request_frame, c_obj, session_user))
+            args=(db, request_frame, session_user.user_id()))
         t.start()
         print "!!!!!!!!!!!!!!!Confirm Statu mapping !!!!!!!!!!!!!!!!!!", t.pid
-        return bu_sm.Done(c_obj._csv_name)
+        return bu_sm.Done(str(csv_id))
     except Exception, e:
         raise e
 
 
-def confirm_statutory_validate(db, request_frame, c_obj, session_user):
+def confirm_statutory_validate(db, request_frame, session_user):
     def write_file(return_data):
-        csv_name = c_obj._csv_name
-        file_string = csv_name.split(".")
+        csv_id = request_frame.csv_id
+        # file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
-            file_string[0], "approve", "txt"
+            csv_id, "approve_sm", "txt"
         )
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
         with open(file_path, "wb") as fn:
             os.chmod(file_path, 0777)
             fn.write(return_data)
-        return
 
     try:
-        is_declined = c_obj.perform_validation_before_submit()
+        print "confirm_statutory_validate------------->>>>>>"
         csv_id = request_frame.csv_id
-        user_id = session_user.user_id()
+        country_id = request_frame.c_id
+        domain_id = request_frame.d_id
+        # csv data validation
+        c_obj = ValidateStatutoryMappingForApprove(
+            db, csv_id, country_id, domain_id, session_user
+        )
+        is_declined = c_obj.perform_validation_before_submit()
+        user_id = session_user
+        print "Confirm ->>> ", user_id
+
         csv_name = c_obj._csv_name
         return_data = None
 
@@ -717,6 +730,8 @@ def confirm_statutory_validate(db, request_frame, c_obj, session_user):
             else:
                 get_update_approve_file_status(csv_id, 1)
 
+            # c_obj.source_commit()
+            # c_obj.close_source_db()
             c_obj.source_bulkdb_commit()
             remove_bulk_uploaded_files(csv_name)
             return_data = bu_sm.SubmitStatutoryMappingSuccess().to_structure()
@@ -981,9 +996,8 @@ def process_get_status(request):
 
 def process_get_approve_mapping_status(request):
     csv_name = request.csv_name
-    file_string = csv_name.split(".")
     file_name = "%s_%s.%s" % (
-        file_string[0], "approve", "txt"
+        csv_name, "approve_sm", "txt"
     )
     file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
     if os.path.exists(file_path) is False:

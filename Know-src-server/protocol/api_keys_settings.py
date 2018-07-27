@@ -238,7 +238,7 @@ api_params = {
     'unit_name': {'type': 'TEXT', 'length': 50, 'validation_metunithod': is_alpha_numeric, 'is_optional': False},
     'u_name': {'type': 'TEXT', 'length': 160, 'validation_metunithod': is_alpha_numeric, 'is_optional': False},
     'address': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
-    'postal_code': {'type': 'INT', 'length': None, 'validation_method': is_numeric, 'is_optional': False},
+    'postal_code': {'type': 'STRING', 'length': 6, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'domain_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'org_names': {'type': 'VECTOR_TYPE_STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': False},
     'org_names_list': {},
