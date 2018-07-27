@@ -780,28 +780,54 @@ function downloadData() {
     } else {
         legalEntityName = LEGALENTITY_NAME_LABEL.text();
     }
+    args = {
+        "le_id":parseInt(leId), "domain_id": parseInt(domainId),
+        "unit_id": parseInt(unitId), "frequency": frequency,
+        "start_count": startCount, "le_name": legalEntityName,
+        "domain_name": domainName, "unit_name": unitName,
+        "unit_code": unitCode
 
-    buClient.getDownloadData(
-        parseInt(leId), parseInt(domainId), parseInt(unitId),
-        frequency, startCount,
-        legalEntityName, domainName, unitName, unitCode,
-        function(error, data) {
-            if (error == null) {
-                downloadUrl = data.link;
-                if (downloadUrl != null) {
-                    window.open(downloadUrl, '_blank');
-                } else {
-                    displayMessage(message.no_compliance_available);
-                }
-                hideLoader();
+    }
+    var csv_name = null;
+    function apiCall(legId, csv_name, callback){
+        buClient.GetStatus(legId, csv_name, callback);
+    }
+    function call_bck_fn(error, data){
+        if (error == "Alive"){
+            setTimeout(
+                apiCall, TIMEOUT_MLS, args["le_id"], csv_name, call_bck_fn);
+        }else if (error == null) {
+            downloadUrl = data.link;
+            if (downloadUrl != null) {
+                window.open(downloadUrl, '_blank');
             } else {
-                if (error == "ExportToCSVEmpty"){
-                    displayMessage(message.no_compliance_available);
-                }
-                hideLoader();
+                displayMessage(message.no_compliance_available);
             }
+            hideLoader();
+        } else {
+            if (error == "ExportToCSVEmpty"){
+                displayMessage(message.no_compliance_available);
+            }
+            hideLoader();
         }
-    );
+    }
+    function mainApiCall(args){
+        buClient.getDownloadData(
+            args["le_id"], args["domain_id"], args["unit_id"],
+            args["frequency"], args["start_count"], args["le_name"],
+            args["domain_name"], args["unit_name"], args["unit_code"],
+            function(error, data) {
+                if(error == "Done" || data == "Done"){
+                    csv_name = data.csv_name;
+                    apiCall(args["le_id"], csv_name, call_bck_fn);
+                }else{
+                    hideLoader();
+                    displayMessage(error);
+                }
+            }
+        );
+    }
+    mainApiCall(args);
 }
 
 
