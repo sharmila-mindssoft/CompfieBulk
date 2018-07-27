@@ -31,10 +31,14 @@ def datetime_to_string(datetime_val):
     return date_in_string
 
 
+def generate_file():
+    s = str(uuid.uuid4())
+    file_name = "%s.csv" % s.replace("-", "")
+    return file_name
+
+
 class PastDataJsonToCSV(object):
-    def __init__(self, request, report_type):
-        s = str(uuid.uuid4())
-        file_name = "%s.csv" % s.replace("-", "")
+    def __init__(self, request, report_type, file_name):
         self.FILE_DOWNLOAD_PATH = "%s/%s" % (
             CSV_DOWNLOAD_URL, file_name)
         self.FILE_PATH = "%s/%s" % (CSV_PATH, file_name)
