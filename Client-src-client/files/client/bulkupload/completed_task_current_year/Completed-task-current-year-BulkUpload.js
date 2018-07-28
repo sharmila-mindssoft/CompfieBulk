@@ -1001,10 +1001,11 @@ var uploadedfiles = [];
 var totalfileUploadSuccess = 0;
 var perQueueUploadSuccess = 0;
 var queueCount = 0;
-var maxParallelCount = 2;
+var maxParallelCount = 10;
 var myDropzone = new Dropzone("div#myDrop", {
     addRemoveLinks: true,
     autoProcessQueue: false,
+    uploadMultiple: true,
     parallelUploads: maxParallelCount,
     url: "#",
     transformFile: function transformFile(file, done) {
@@ -1033,7 +1034,6 @@ var myDropzone = new Dropzone("div#myDrop", {
             if(REMAINING_DOCUMENTS <= 0){
                 displayMessage("Required files were already added");
             }
-
         });
         this.on("removedfile", function(file) {
             if (jQuery.inArray(file.name, addedfiles) > -1) {

@@ -225,7 +225,7 @@ var Dropzone = function (_Emitter) {
          * the event `maxfilesexceeded` will be called. The dropzone element gets the
          * class `dz-max-files-reached` accordingly so you can provide visual feedback.
          */
-        maxFilesize: 50,
+        maxFilesize: 4000,
 
         /**
          * The name of the file param that gets transferred.
@@ -1202,7 +1202,7 @@ var Dropzone = function (_Emitter) {
             _this3.hiddenFileInput.parentNode.removeChild(_this3.hiddenFileInput);
           }
           _this3.hiddenFileInput = document.createElement("input");
-          _this3.hiddenFileInput.setAttribute("webkitdirectory", true);
+          // _this3.hiddenFileInput.setAttribute("webkitdirectory", true);
           _this3.hiddenFileInput.setAttribute("type", "file");
           if (_this3.options.maxFiles === null || _this3.options.maxFiles > 1) {
             _this3.hiddenFileInput.setAttribute("multiple", "multiple");

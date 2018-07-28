@@ -1,5 +1,4 @@
 import os
-import threading
 import json
 from server import logger
 from multiprocessing import Process
@@ -51,12 +50,14 @@ __all__ = [
         result: Object
 '''
 ########################################################
+db = None
 
 
 def process_bu_completed_task_current_year_request(
         request, db, session_user):
     request_frame = request.request
     result = None
+    db = db
     if type(request_frame) is bu_ct.GetCompletedTaskCsvUploadedList:
         result = get_completed_task_csv_list(db, request_frame, session_user)
 
@@ -131,7 +132,9 @@ def write_file(csv_name, return_data):
     return
 
 
-def validate_data(db, request_frame, c_obj, session_user, csv_name):
+def validate_data(
+    request_frame, csv_name, completed_task_data, header, session_user
+):
     def write_and_raise_exception(error, csv_name):
         return_data = json.dumps(str(error))
         write_file(csv_name, return_data)
@@ -140,6 +143,9 @@ def validate_data(db, request_frame, c_obj, session_user, csv_name):
             "bucompletedtaskcurrentyearcontroller.py-validate_data", error)
         raise error
     try:
+        c_obj = ValidateCompletedTaskCurrentYearCsvData(
+            db, completed_task_data, request_frame.csv_name, header
+        )
         c_obj.perform_validation(request_frame.legal_entity_id)
         res_data = c_obj.res_data
         return_data = None
@@ -208,23 +214,27 @@ def upload_completed_task_current_year_csv(db, request_frame, session_user):
         remove_uploaded_file(file_path)
         return bu_ct.CsvFileExeededMaxLines(CSV_MAX_LINE_ITEM)
     # csv data validation
-    c_obj = ValidateCompletedTaskCurrentYearCsvData(
-        db, completed_task_data, session_user,
-        request_frame.csv_name, header)
-    t = threading.Thread(
+    
+    t = Process(
         target=validate_data,
-        args=(db, request_frame, c_obj, session_user, csv_name))
+        args=(
+            request_frame, csv_name, completed_task_data, header, session_user
+        )
+    )
     t.start()
     return bu_ct.Done(csv_name)
 
 
 def submit_compliance(
-    db, c_obj, csv_id, country_id, legal_id,
-    domain_id, unit_id, session_token, request_frame
+    csv_id, country_id, legal_id, domain_id, unit_id, session_token,
+    request_frame, data_result
 ):
 
     try:
         skip_duplicate = request_frame.skip_duplicate
+        c_obj = ValidateCompletedTaskForSubmit(
+            db, csv_id, data_result, legal_id
+        )
         duplicate_count, data_result = c_obj.check_for_duplicate_records(
             legal_id)
         if duplicate_count > 0 and skip_duplicate is False:
@@ -273,13 +283,11 @@ def process_save_bulk_records(db, request_frame, session_user, session_token):
     domain_id = request_frame.domain_id
     unit_id = request_frame.unit_id
     data_result = get_past_record_data(db, csv_id)
-    c_obj = ValidateCompletedTaskForSubmit(
-        db, csv_id, data_result, session_user, legal_id)
-    t = threading.Thread(
+    t = Process(
         target=submit_compliance,
         args=(
-            db, c_obj, csv_id, country_id, legal_id,
-            domain_id, unit_id, session_token, request_frame
+            csv_id, country_id, legal_id,
+            domain_id, unit_id, session_token, request_frame, data_result
         )
     )
     t.start()
@@ -408,12 +416,14 @@ def process_get_status(request):
 
 
 def submit_queued_tasks(
-    db, file_cur_stats, file_download_stats, c_obj, data_cur_stats,
+    file_cur_stats, file_download_stats, data_cur_stats,
     csv_id, country_id, legal_id, domain_id, unit_id,
-    session_token, request_frame, session_user
+    session_token, request_frame, data_result
 ):
     try:
         skip_duplicate = request_frame.skip_duplicate
+        c_obj = ValidateCompletedTaskForSubmit(
+            db, csv_id, data_result, legal_id)
         result = None
         if file_cur_stats in [0, 2] and file_download_stats != "completed":
             c_obj.document_download_process_initiate(
@@ -464,17 +474,15 @@ def process_queued_tasks(db, request_frame, session_user, session_token):
         get_current_doc_data_submit_status(db, csv_id)
 
     data_result = get_past_record_data(db, csv_id)
-    c_obj = ValidateCompletedTaskForSubmit(
-        db, csv_id, data_result, session_user, legal_id)
     if file_cur_stats == 1 and data_cur_stats == 1:
         return bu_ct.ProcessCompleted()
 
-    t = threading.Thread(
+    t = Process(
         target=submit_queued_tasks,
         args=(
-            db, file_cur_stats, file_download_stats, c_obj, data_cur_stats,
+            file_cur_stats, file_download_stats, data_cur_stats,
             csv_id, country_id, legal_id, domain_id, unit_id,
-            session_token, request_frame, session_user
+            session_token, request_frame, data_result
         )
     )
     t.start()

@@ -287,37 +287,39 @@ def upload_client():
         "info", "run_tempfile_server > /client/temp/upload > Request", request
     )
     if request.method == 'POST':
-        f = request.files['file']
-        random_string = generate_random(5)
-        fn = f.filename
-        fname = fn.split(".")
-        random_file_name = fname[0] + '-' + random_string + "." + fname[1]
-        csvid = request.args.get("csvid")
-        load_path = os.path.join(
-            app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], csvid
-        )
-        if not os.path.exists(load_path):
-            os.makedirs(load_path)
-            os.chmod(load_path, 0777)
+        for key, f in request.files.iteritems():
+            if key.startswith('file'):
+                random_string = generate_random(5)
+                fn = f.filename
+                fname = fn.split(".")
+                random_file_name = fname[
+                    0] + '-' + random_string + "." + fname[1]
+                csvid = request.args.get("csvid")
+                load_path = os.path.join(
+                    app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], csvid
+                )
+                if not os.path.exists(load_path):
+                    os.makedirs(load_path)
+                    os.chmod(load_path, 0777)
 
-        actual_file = os.path.join(load_path, f.filename)
-        zip_f_name = actual_file + ".zip"
-        f.save(zip_f_name)
-        zip_ref = zipfile.ZipFile(zip_f_name, 'r')
-        zip_ref.extractall(load_path)
-        zip_ref.close()
-        os.rename(actual_file, load_path + '/' + random_file_name)
-        renamed_file = os.path.join(load_path, random_file_name)
-        renamed_file_size = os.path.getsize(renamed_file)
-        os.remove(zip_f_name)
-        if update_file_status_client(
-            f.filename, random_file_name, renamed_file_size, csvid
-        ) is False:
-            logger.logTempFiler(
-                    "info", "run_tempfile_server > /client/temp/upload",
-                    "update file status failed"
-            )
-            return "update failed"
+                actual_file = os.path.join(load_path, f.filename)
+                zip_f_name = actual_file + ".zip"
+                f.save(zip_f_name)
+                zip_ref = zipfile.ZipFile(zip_f_name, 'r')
+                zip_ref.extractall(load_path)
+                zip_ref.close()
+                os.rename(actual_file, load_path + '/' + random_file_name)
+                renamed_file = os.path.join(load_path, random_file_name)
+                renamed_file_size = os.path.getsize(renamed_file)
+                os.remove(zip_f_name)
+                if update_file_status_client(
+                    f.filename, random_file_name, renamed_file_size, csvid
+                ) is False:
+                    logger.logTempFiler(
+                            "info", "run_tempfile_server > /client/temp/upload",
+                            "update file status failed"
+                    )
+                    return "update failed"
 
         return "success"
 
