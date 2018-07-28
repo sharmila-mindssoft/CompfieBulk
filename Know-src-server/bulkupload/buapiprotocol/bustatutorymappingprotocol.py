@@ -1501,7 +1501,7 @@ class GetApproveStatutoryMappingViewSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_name", "d_name", "csv_name",
+            "bulk_c_name", "bulk_d_name", "csv_name",
             "uploaded_by", "uploaded_on", "csv_id", "mapping_data",
             "total"
         ])
@@ -1518,8 +1518,8 @@ class GetApproveStatutoryMappingViewSuccess(Response):
 
     def to_inner_structure(self):
         return {
-            "c_name": self.c_name,
-            "d_name": self.d_name,
+            "bulk_c_name": self.c_name,
+            "bulk_d_name": self.d_name,
             "csv_name": self.csv_name,
             "uploaded_by": self.uploaded_by,
             "uploaded_on": self.uploaded_on,

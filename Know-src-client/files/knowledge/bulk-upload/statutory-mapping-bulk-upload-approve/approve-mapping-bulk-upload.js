@@ -214,6 +214,9 @@ function displayPopUp(TYPE, csvId, smId, callback) {
                     }
                 }, 500);
             }
+            else{
+                callback($('.view-reason').val());
+            }
         },
     });
 }
@@ -988,14 +991,18 @@ ApproveBulkMapping.prototype.renderViewScreen = function(viewData) {
                     $('.approve-all').prop("checked", false);
                     displayPopUp('view-reject', parseInt(csvId), data.sm_id,
                         function(viewReason) {
-                            $('#fa-info-circle-'+currentElement).removeClass(
-                                "default-display-none");
-                            $('#fa-info-circle-'+currentElement).attr(
+                            if(viewReason != ""){
+                                $('#fa-info-circle-'+currentElement).removeClass(
+                                    "default-display-none");
+                                $('#fa-info-circle-'+currentElement).attr(
                                 "data-original-title", viewReason);
+                            }
+                            else{
+                                $('#view-reject-'+currentElement).prop("checked", false);
+                            }
                     });
                 }
-                else
-                {
+                else{
                     csvId = $('#view_csv_id').val();
                     $('#view-reject-'+currentElement).prop("checked", false);
                     bu.updateActionFromView(
