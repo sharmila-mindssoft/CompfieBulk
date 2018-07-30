@@ -22,6 +22,7 @@ var CSVFILENAME = $('#csvfile');
 var CSVUPLOADBUTTON = $('.uploadbtn');
 var CSVUPLOADEDFILE = '';
 
+var TIMEOUT_MLS = 30000;
 // To load the client groups under logged techno executive
 function initialize(type_of_initialization) {
 	displayLoader();
@@ -103,30 +104,47 @@ CSVUPLOADBUTTON.click(function () {
 			f_size = CSVUPLOADEDFILE.file_size;
 			f_name = CSVUPLOADEDFILE.file_name;
 			f_data = CSVUPLOADEDFILE.file_content;
-			function onSuccess(response) {
-				GROUPNAME.val('');
-				GROUPID.val('');
-				CSVFILENAME.val('');
-				displaySuccessMessage(message.upload_success);
-			}
-			function onFailure(error, response)
-			{
-				if(error == "EmptyCSVUploaded") {
+			function apiCall(csv_name, callback){
+        		bu.GetClientUnitUploadStatus(csv_name, callback);
+    		}
+
+    		function call_bck_fn(error, response){
+        		console.log("get status response: error"+ error + ", response:"+ response)
+        		if (error == "Alive"){
+            		console.log("inside if=====> going to get status again")
+		            // count = count+1;
+		            // if(count <3)
+            		setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
+        			// apiCall(csv_name, call_bck_fn);
+    			}
+    			else if (error == null) {
+					$('#myModal').modal('hide');
+    				GROUPNAME.val('');
+					GROUPID.val('');
+					CSVFILENAME.val('');
+					displaySuccessMessage(message.upload_success);
+    			}
+    			else if	(error == "EmptyCSVUploaded") {
+    				$('#myModal').modal('hide');
 					displayMessage(message.csv_file_blank);
 					CSVFILENAME.val('');
 				}
 				else if(error == "InvalidCSVUploaded") {
+					$('#myModal').modal('hide');
 					displayMessage(message.invalid_csv_file);
 					CSVFILENAME.val('');
 				}
 				else if(error == "CSVColumnMisMatched") {
+					$('#myModal').modal('hide');
 					displayMessage(message.invalid_csv_file);
 					CSVFILENAME.val('');
 				}
 				else if(error == "ClientUnitUploadMaxReached"){
+					$('#myModal').modal('hide');
 					displayMessage(message.client_unit_file_max);
 				}
 				else if(error == "CSVFileLinesMaxREached") {
+					$('#myModal').modal('hide');
 					displayMessage(
 						"CSV File exceeded max " +
 						response.csv_max_lines + " lines");
@@ -136,6 +154,7 @@ CSVUPLOADBUTTON.click(function () {
 				    $('.invaliddata').show();
 					$('.view-summary').show();
 					$('.download-file').hide();
+					$('#myModal').modal('hide');
 					CSVFILENAME.val('');
 					CSVUPLOADEDFILE = ''
 					displayMessage(message.upload_failed);
@@ -156,18 +175,32 @@ CSVUPLOADBUTTON.click(function () {
 				}
 				else {
 					displayMessage(error);
+					$('#myModal').modal('hide');
+					CSVFILENAME.val('');
 				}
-			}
+
+    		}
+
 			bu.uploadClientUnitsBulkCSV(
 				parseInt(clientId), groupName, f_name, f_data,
-				f_size, function(error, response)
-			{
-		    	$('#myModal').modal('hide');
-			    if (error == null) {
-			        onSuccess(response);
-			    } else {
-			        onFailure(error, response);
-			    }
+				f_size, function(error, response){
+		    	if(error == "Done" || response == "Done"){
+            		csv_name = response.csv_name;
+            		apiCall(csv_name, call_bck_fn);
+    			}else if(error == "ClientUnitUploadMaxReached"){
+    				$('#myModal').modal('hide');
+					displayMessage(message.client_unit_file_max);
+					CSVFILENAME.val('');
+				}
+
+    			//
+			    // if (error == null) {
+			    //     onSuccess(response);
+			    // } else {
+			    //     onFailure(error, response);
+			    // }
+
+
 			});
 		}
 	} else {
