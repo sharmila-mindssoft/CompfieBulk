@@ -1,4 +1,10 @@
 import os
+import traceback
+from server import logger
+import pickle
+import multiprocessing
+import json
+
 from ..bucsvvalidation.clientunitsvalidation import (
     ValidateClientUnitsBulkCsvData,
     ValidateClientUnitsBulkDataForApprove
@@ -39,7 +45,7 @@ from ..bulkuploadcommon import (
 import datetime
 from ..bulkexport import ConvertJsonToCSV
 from bulkupload.bulkconstants import (
-    BULKUPLOAD_CSV_PATH, CSV_MAX_LINES
+    BULKUPLOAD_CSV_PATH, CSV_MAX_LINES, BULKUPLOAD_INVALID_PATH
 )
 from protocol import generalprotocol, technoreports
 __all__ = [
@@ -62,9 +68,14 @@ __all__ = [
         result: Object
 '''
 ######################################################################
+db = None
+t = None
 
 
 def process_bu_client_units_request(request, db, session_user):
+    result = None
+    db = db
+    print "DB IN request", type(request.request), " db ", db
     request_frame = request.request
 
     if type(request_frame) is bu_cu.UploadClientUnitsBulkCSV:
@@ -138,6 +149,12 @@ def process_bu_client_units_request(request, db, session_user):
             db, request_frame, session_user
         )
 
+    if type(request_frame) is bu_cu.GetClientUnitUploadStatus:
+        result = process_get_cu_upload_status(request_frame)
+
+    if type(request_frame) is bu_cu.GetApproveClientUnitStatus:
+        result = process_get_approve_client_unit_status(request_frame)
+
     return result
 
 ###########################################################################
@@ -161,6 +178,174 @@ def process_bu_client_units_request(request, db, session_user):
 
 
 def upload_client_units_bulk_csv(db, request_frame, session_user):
+    try:
+        if get_bulk_client_unit_file_count(db, session_user.user_id()) is False:
+            return bu_cu.ClientUnitUploadMaxReached()
+
+        # save csv file
+        csv_name = convert_base64_to_file(
+            BULKUPLOAD_CSV_PATH, request_frame.csv_name,
+            request_frame.csv_data
+        )
+        # read data from csv file
+        header, client_units_bulk_data = read_data_from_csv(csv_name)
+
+        cu_header = pickle.dumps(header)
+        cu_bulk_data = pickle.dumps(client_units_bulk_data)
+
+        t = multiprocessing.Process(
+            target=client_unit_validate_data,
+            args=(
+                db, request_frame, session_user.user_id(),
+                csv_name, cu_header, cu_bulk_data
+            )
+        )
+        t.start()
+        print "Proces id========================================>", t.pid
+
+        return bu_cu.Done(csv_name)
+    except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        logger.logKnowledge(
+            "error", "upload_client_units_bulk_csv",
+            str(traceback.format_exc()))
+        raise e
+
+
+def client_unit_validate_data(
+    db, request_frame, session_user, csv_name, cu_header, cu_bulk_data
+):
+    def write_file():
+        file_string = csv_name.split(".")
+        file_name = "%s_%s.%s" % (
+            file_string[0], "upload", "txt"
+        )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            fn.write(return_data)
+            os.chmod(file_path, 0777)
+        return
+    try:
+        # csv data validation
+        header = pickle.loads(cu_header)
+        client_units_bulk_data = pickle.loads(cu_bulk_data)
+        return_data = None
+        print "db -> ", db
+        clientUnitObj = ValidateClientUnitsBulkCsvData(
+            db, client_units_bulk_data, session_user,
+            request_frame.bu_client_id,
+            csv_name, header
+        )
+        validationResult = clientUnitObj.perform_validation()
+        print "err--------------------------------------------"
+        print validationResult
+        if (
+            "No such file or directory" not in validationResult and
+            validationResult != "Empty CSV File Uploaded" and
+            validationResult != "CSV File lines reached max limit" and
+            validationResult != "Csv Column Mismatched" and
+            "ordinal not in range(128)" not in validationResult and
+            (validationResult["return_status"] is not None and
+                validationResult["return_status"] is True)
+        ):
+            generate_valid_file(csv_name)
+            csv_args = [
+                request_frame.bu_client_id, request_frame.bu_group_name,
+                csv_name, session_user, validationResult["total"]
+            ]
+            new_csv_id = save_client_units_mapping_csv(db, csv_args)
+            if new_csv_id:
+                if save_mapping_client_unit_data(
+                        db, new_csv_id, validationResult["data"]
+                ) is True:
+                    clientUnitObj.save_executive_message(
+                        csv_name, request_frame.bu_group_name,
+                        session_user
+                    )
+                    clientUnitObj.source_commit()
+                    result = bu_cu.UploadClientUnitBulkCSVSuccess(
+                        validationResult["total"], validationResult["valid"],
+                        validationResult["invalid"]
+                    ).to_structure()
+                    return_data = json.dumps(result)
+        elif (
+            "No such file or directory" not in validationResult and
+            "ordinal not in range(128)" not in validationResult and
+            validationResult != "Empty CSV File Uploaded" and
+            validationResult != "CSV File lines reached max limit" and
+            validationResult != "Csv Column Mismatched" and
+            (validationResult["return_status"] is not None and
+                validationResult["return_status"] is False)
+        ):
+            result = bu_cu.UploadClientUnitBulkCSVFailed(
+                validationResult["invalid_file"],
+                validationResult["mandatory_error"],
+                validationResult["max_length_error"],
+                validationResult["duplicate_error"],
+                validationResult["invalid_char_error"],
+                validationResult["invalid_data_error"],
+                validationResult["inactive_error"],
+                validationResult["max_unit_count_error"],
+                validationResult["total"], validationResult["invalid"]
+            ).to_structure()
+            return_data = json.dumps(result)
+        elif (
+            "No such file or directory" not in validationResult and
+            "ordinal not in range(128)" not in validationResult and
+            validationResult != "CSV File lines reached max limit" and
+            validationResult != "Csv Column Mismatched" and
+            validationResult == "Empty CSV File Uploaded"
+        ):
+            result = bu_cu.EmptyCSVUploaded().to_structure()
+            return_data = json.dumps(result)
+        elif (
+            "No such file or directory" not in validationResult and
+            "ordinal not in range(128)" not in validationResult and
+            validationResult != "Csv Column Mismatched" and
+            validationResult == "CSV File lines reached max limit"
+        ):
+            csv_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
+            file_path = os.path.join(csv_path, csv_name)
+            remove_uploaded_file(file_path)
+            result = bu_cu.CSVFileLinesMaxREached(
+                                            csv_max_lines=CSV_MAX_LINES
+                            ).to_structure()
+            return_data = json.dumps(result)
+        elif (
+            "No such file or directory" not in validationResult and
+            "ordinal not in range(128)" not in validationResult and
+            validationResult == "Csv Column Mismatched"
+        ):
+            result = bu_cu.CSVColumnMisMatched().to_structure()
+            return_data = json.dumps(result)
+        elif (
+            "No such file or directory" in validationResult or
+            "ordinal not in range(128)" in validationResult
+        ):
+            result = bu_cu.InvalidCSVUploaded().to_structure()
+            return_data = json.dumps(result)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buclientunitscontroller.py - client_unit_validate_data", e)
+        raise error
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file()
+        logger.logKnowledge(
+            "error",
+            "buclientunitscontroller.py - client_unit_validate_data", e)
+        raise e
+    write_file()
+    print "os pid ---->>>", os.getpid()
+    return
+
+
+def upload_client_units_bulk_csv_old_copy(db, request_frame, session_user):
 
     if get_bulk_client_unit_file_count(db, session_user.user_id()):
         # save csv file
@@ -260,7 +445,6 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             return bu_cu.InvalidCSVUploaded()
     else:
         return bu_cu.ClientUnitUploadMaxReached()
-
 
 ##############################################################################
 '''
@@ -393,11 +577,42 @@ def export_clientunit_bulk_report(db, request, session_user):
 def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
 
     csv_id = request_frame.csv_id
-    bu_client_id = request_frame.bu_client_id
-    bu_remarks = request_frame.bu_remarks
-    actionType = request_frame.bu_action
+    # bu_client_id = request_frame.bu_client_id
+    # bu_remarks = request_frame.bu_remarks
+    # actionType = request_frame.bu_action
 
     try:
+
+        t = multiprocessing.Process(
+            target=client_unit_approve_reject_process,
+            args=(request_frame, session_user.user_id()))
+        t.start()
+        print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", t.pid
+        return bu_cu.Done(str(csv_id))
+    except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        raise e
+
+
+def client_unit_approve_reject_process(request_frame, session_user):
+    def write_file(return_data):
+        csv_id = request_frame.csv_id
+        file_name = "%s_%s.%s" % (
+            csv_id, "approve_cu", "txt"
+        )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            os.chmod(file_path, 0777)
+            fn.write(return_data)
+
+    try:
+        return_data = None
+        csv_id = request_frame.csv_id
+        bu_client_id = request_frame.bu_client_id
+        bu_remarks = request_frame.bu_remarks
+        actionType = request_frame.bu_action
+        print "sessionusr client_unit_approve_reject_process-> ", session_user
         clientUnitObj = ValidateClientUnitsBulkDataForApprove(
             db, csv_id, bu_client_id, session_user
         )
@@ -406,20 +621,20 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
                 manual_rejection_count = \
                 clientUnitObj.check_for_system_declination_errors()
             if len(system_declined_count) == 0 and manual_rejection_count > 0:
-                return bu_cu.ReturnDeclinedCount(
+                return_data = bu_cu.ReturnDeclinedCount(
                     len(system_declined_count), int(manual_rejection_count)
-                )
+                ).to_structure()
             elif (
                     len(system_declined_count) > 0 and
                     manual_rejection_count == 0
             ):
-                return bu_cu.ReturnDeclinedCount(
+                return_data = bu_cu.ReturnDeclinedCount(
                     len(system_declined_count), int(manual_rejection_count)
-                )
+                ).to_structure()
             elif len(system_declined_count) > 0 and manual_rejection_count > 0:
-                return bu_cu.ReturnDeclinedCount(
+                return_data = bu_cu.ReturnDeclinedCount(
                     len(system_declined_count), int(manual_rejection_count)
-                )
+                ).to_structure()
             else:
                 if (
                     update_bulk_client_unit_approve_reject_list(
@@ -432,11 +647,11 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
                     clientUnitObj.save_manager_message(
                         actionType, clientUnitObj._csv_name,
                         clientUnitObj._group_name,
-                        session_user.user_id(), clientUnitObj._uploaded_by,
+                        session_user, clientUnitObj._uploaded_by,
                         None, 0
                     )
                     clientUnitObj.source_commit()
-                    return bu_cu.UpdateApproveRejectActionFromListSuccess()
+                    return_data = bu_cu.UpdateApproveRejectActionFromListSuccess().to_structure()
         else:
             if (
                 update_bulk_client_unit_approve_reject_list(
@@ -447,14 +662,33 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
                 clientUnitObj.save_manager_message(
                     actionType, clientUnitObj._csv_name,
                     clientUnitObj._group_name,
-                    session_user.user_id(), clientUnitObj._uploaded_by,
+                    session_user, clientUnitObj._uploaded_by,
                     bu_remarks, 0
                 )
                 clientUnitObj.source_commit()
-                return bu_cu.UpdateApproveRejectActionFromListSuccess()
-
+                return_data = bu_cu.UpdateApproveRejectActionFromListSuccess().to_structure()
+        return_data = json.dumps(return_data)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file(return_data)
+        logger.logKnowledge(
+            "error",
+            "buclientunitscontroller.py - client_unit_approve_reject_process",
+            e
+        )
+        raise error
     except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file(return_data)
+        logger.logKnowledge(
+            "error",
+            "buclientunitscontroller.py - client_unit_approve_reject_process",
+            e
+        )
         raise e
+    write_file(return_data)
+    return
 
 
 ########################################################
@@ -534,6 +768,35 @@ def perform_bulk_client_unit_declination(db, request_frame, session_user):
     csv_id = request_frame.csv_id
     bu_client_id = request_frame.bu_client_id
     try:
+
+        t = multiprocessing.Process(
+            target=client_unit_declination_process,
+            args=(request_frame, session_user.user_id()))
+        t.start()
+        print "!!!!!!!!! perform_bulk_client_unit_declination!!!!!!!!", t.pid
+        return bu_cu.Done(str(csv_id))
+    except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        raise e
+
+
+def client_unit_declination_process(request_frame, session_user):
+    def write_file(return_data):
+        csv_id = request_frame.csv_id
+        file_name = "%s_%s.%s" % (
+            csv_id, "approve_cu", "txt"
+        )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            os.chmod(file_path, 0777)
+            fn.write(return_data)
+
+    try:
+        return_data = None
+        csv_id = request_frame.csv_id
+        bu_client_id = request_frame.bu_client_id
+
         clientUnitObj = ValidateClientUnitsBulkDataForApprove(
             db, csv_id, bu_client_id, session_user
         )
@@ -556,11 +819,11 @@ def perform_bulk_client_unit_declination(db, request_frame, session_user):
                 )
                 clientUnitObj.save_manager_message(
                     1, clientUnitObj._csv_name, clientUnitObj._group_name,
-                    session_user.user_id(), clientUnitObj._uploaded_by,
+                    session_user, clientUnitObj._uploaded_by,
                     None, len(system_declined_count)
                 )
                 clientUnitObj.source_commit()
-                return bu_cu.SubmitClientUnitDeclinationSuccess()
+                return_data = bu_cu.SubmitClientUnitDeclinationSuccess().to_structure()
         else:
             if (
                 update_bulk_client_unit_approve_reject_list(
@@ -568,17 +831,38 @@ def perform_bulk_client_unit_declination(db, request_frame, session_user):
                     session_user
                 )
             ):
+                print "in if update_bulk_client_unit_approve_reject_list "
                 clientUnitObj.process_data_to_main_db_insert([])
                 clientUnitObj.save_manager_message(
                     1, clientUnitObj._csv_name, clientUnitObj._group_name,
-                    session_user.user_id(), clientUnitObj._uploaded_by,
+                    session_user, clientUnitObj._uploaded_by,
                     None, len(system_declined_count)
                 )
                 clientUnitObj.source_commit()
-                return bu_cu.SubmitClientUnitDeclinationSuccess()
+                return_data = bu_cu.SubmitClientUnitDeclinationSuccess().to_structure()
 
+        return_data = json.dumps(return_data)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file(return_data)
+        logger.logKnowledge(
+            "error",
+            "buclientunitscontroller.py - client_unit_declination_process",
+            e
+        )
+        raise error
     except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file(return_data)
+        logger.logKnowledge(
+            "error",
+            "buclientunitscontroller.py - client_unit_declination_process",
+            e
+        )
         raise e
+    write_file(return_data)
+    return
 
 ############################################################################
 '''   returns set of dataset
@@ -659,48 +943,96 @@ def get_bulk_client_unit_list_by_filter_for_view(
 
 
 def submit_bulk_client_unit_list_action(db, request_frame, session_user):
-
     csv_id = request_frame.csv_id
-    bu_client_id = request_frame.bu_client_id
+    # bu_client_id = request_frame.bu_client_id
     try:
-        if get_bulk_client_unit_null_action_count(
+        if (get_bulk_client_unit_null_action_count(
             db, request_frame, session_user
-        ):
-            clientUnitObj = ValidateClientUnitsBulkDataForApprove(
-                db, csv_id, bu_client_id, session_user
-            )
-            system_declined_count, system_declined_error, \
-                manual_rejection_count = \
-                clientUnitObj.check_for_system_declination_errors()
-            if (
-                    len(system_declined_count) > 0 and
-                    manual_rejection_count == 0
-            ):
-                return bu_cu.ReturnDeclinedCount(
-                    len(system_declined_count), int(manual_rejection_count)
-                )
-            elif len(system_declined_count) > 0 and manual_rejection_count > 0:
-                return bu_cu.ReturnDeclinedCount(
-                    len(system_declined_count), int(manual_rejection_count)
-                )
-            else:
-                clientUnitObj.process_data_to_main_db_insert(
-                    system_declined_count
-                )
-                clientUnitObj.save_manager_message(
-                    1, clientUnitObj._csv_name, clientUnitObj._group_name,
-                    session_user.user_id(), clientUnitObj._uploaded_by,
-                    None, 0
-                )
-                clientUnitObj.source_commit()
-                update_bulk_client_unit_approve_reject_list(
-                    db, csv_id, 4, None, 0, session_user
-                )
-                return bu_cu.SubmitClientUnitActionFromListSuccess()
-        else:
+        )) is False:
             return bu_cu.SubmitClientUnitActionFromListFailure()
+
+        else:
+            t = multiprocessing.Process(
+                target=client_unit_submit_list_process,
+                args=(request_frame, session_user.user_id()))
+            t.start()
+            print "!!!!!!!submit_bulk_client_unit_list_action!!!!!!!!", t.pid
+            return bu_cu.Done(str(csv_id))
     except Exception, e:
+        print e
+        print str(traceback.format_exc())
         raise e
+
+
+def client_unit_submit_list_process(request_frame, session_user):
+    def write_file(return_data):
+        csv_id = request_frame.csv_id
+        file_name = "%s_%s.%s" % (
+            csv_id, "approve_cu", "txt"
+        )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            os.chmod(file_path, 0777)
+            fn.write(return_data)
+
+    try:
+        return_data = None
+        csv_id = request_frame.csv_id
+        bu_client_id = request_frame.bu_client_id
+        clientUnitObj = ValidateClientUnitsBulkDataForApprove(
+            db, csv_id, bu_client_id, session_user
+        )
+        system_declined_count, system_declined_error, \
+            manual_rejection_count = \
+            clientUnitObj.check_for_system_declination_errors()
+        if (
+                len(system_declined_count) > 0 and
+                manual_rejection_count == 0
+        ):
+            return_data = bu_cu.ReturnDeclinedCount(
+                len(system_declined_count), int(manual_rejection_count)
+            ).to_structure()
+        elif len(system_declined_count) > 0 and manual_rejection_count > 0:
+            return_data = bu_cu.ReturnDeclinedCount(
+                len(system_declined_count), int(manual_rejection_count)
+            ).to_structure()
+        else:
+            clientUnitObj.process_data_to_main_db_insert(
+                system_declined_count
+            )
+            clientUnitObj.save_manager_message(
+                1, clientUnitObj._csv_name, clientUnitObj._group_name,
+                session_user, clientUnitObj._uploaded_by,
+                None, 0
+            )
+            clientUnitObj.source_commit()
+            update_bulk_client_unit_approve_reject_list(
+                db, csv_id, 4, None, 0, session_user
+            )
+            return_data = bu_cu.SubmitClientUnitActionFromListSuccess(
+                ).to_structure()
+        return_data = json.dumps(return_data)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file(return_data)
+        logger.logKnowledge(
+            "error",
+            "buclientunitscontroller.py - client_unit_submit_list_process",
+            e
+        )
+        raise error
+    except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file(return_data)
+        logger.logKnowledge(
+            "error",
+            "buclientunitscontroller.py - client_unit_submit_list_process",
+            e
+        )
+        raise e
+    write_file(return_data)
+    return
 
 
 ###########################################################################
@@ -730,6 +1062,33 @@ def confirm_submit_bulk_client_unit_list_action(
     csv_id = request_frame.csv_id
     bu_client_id = request_frame.bu_client_id
     try:
+        t = multiprocessing.Process(
+                target=client_unit_confirm_submit_process,
+                args=(request_frame, session_user.user_id()))
+        t.start()
+        print "!!!!!!!confirm_submit_bulk_client_unit_list_action!!!!!", t.pid
+        return bu_cu.Done(str(csv_id))
+    except Exception, e:
+        print e
+        print str(traceback.format_exc())
+        raise e
+
+
+def client_unit_confirm_submit_process(request_frame, session_user):
+    def write_file(return_data):
+        csv_id = request_frame.csv_id
+        file_name = "%s_%s.%s" % (
+            csv_id, "approve_cu", "txt"
+        )
+        file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+        with open(file_path, "wb") as fn:
+            os.chmod(file_path, 0777)
+            fn.write(return_data)
+
+    try:
+        return_data = None
+        csv_id = request_frame.csv_id
+        bu_client_id = request_frame.bu_client_id
         clientUnitObj = ValidateClientUnitsBulkDataForApprove(
             db, csv_id, bu_client_id, session_user
         )
@@ -738,22 +1097,48 @@ def confirm_submit_bulk_client_unit_list_action(
             manual_rejection_count = \
             clientUnitObj.check_for_system_declination_errors()
         if len(system_declined_count) > 0:
+            print "Entering If"
             clientUnitObj.process_data_to_main_db_insert(system_declined_count)
+            print "Main DB Inserted"
             clientUnitObj.make_rejection(
                 csv_id, 4, system_declined_count, system_declined_error
             )
+            print "rejection made"
             clientUnitObj.save_manager_message(
                 1, clientUnitObj._csv_name, clientUnitObj._group_name,
-                session_user.user_id(), clientUnitObj._uploaded_by,
+                session_user, clientUnitObj._uploaded_by,
                 None, len(system_declined_count)
             )
-            clientUnitObj.source_commit()
+            print "Manaher message saved"
             update_bulk_client_unit_approve_reject_list(
                 db, csv_id, 4, None, len(system_declined_count), session_user
             )
-            return bu_cu.SubmitClientUnitActionFromListSuccess()
+            print "Update Done"
+            clientUnitObj.source_commit()
+            return_data = bu_cu.SubmitClientUnitActionFromListSuccess(
+                ).to_structure()
+        return_data = json.dumps(return_data)
+    except AssertionError as error:
+        e = "AssertionError"
+        return_data = json.dumps(e)
+        write_file(return_data)
+        logger.logKnowledge(
+            "error",
+            "buclientunitscontroller.py - client_unit_confirm_submit_process",
+            e
+        )
+        raise error
     except Exception, e:
+        return_data = json.dumps(str(e))
+        write_file(return_data)
+        logger.logKnowledge(
+            "error",
+            "buclientunitscontroller.py - client_unit_confirm_submit_process",
+            e
+        )
         raise e
+    write_file(return_data)
+    return
 
 ###########################################################################
 '''   returns boolean value for the updation
@@ -842,3 +1227,83 @@ def get_client_groups_for_client_unit_bulk_upload(db, request, session_user):
     return bu_cu.GetClientGroupsListSuccess(
         client_group_list=groups
     )
+
+
+def process_get_cu_upload_status(request):
+    csv_name = request.csv_name
+    file_string = csv_name.split(".")
+    file_name = "%s_%s.%s" % (
+        file_string[0], "upload", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    if os.path.exists(file_path) is False:
+        return bu_cu.Alive()
+    else:
+        return_data = ""
+        with open(file_path, "r") as fn:
+            return_data += fn.read()
+        remove_uploaded_file(file_path)
+        if return_data == "InvalidCSV":
+            return bu_sm.InvalidCsvFile()
+        else:
+            result = json.loads(return_data)
+            print "Result ->>>>> ", result
+            if str(result[0]) == "UploadClientUnitBulkCSVSuccess":
+                return bu_cu.UploadClientUnitBulkCSVSuccess.parse_inner_structure(result[1])
+            elif str(result[0]) == "UploadClientUnitBulkCSVFailed":
+                return bu_cu.UploadClientUnitBulkCSVFailed.parse_inner_structure(result[1])
+            elif str(result[0]) == "EmptyCSVUploaded":
+                return bu_cu.EmptyCSVUploaded.parse_inner_structure(result[1])
+            elif str(result[0]) == "CSVFileLinesMaxREached":
+                return bu_cu.CSVFileLinesMaxREached.parse_inner_structure(result[1])
+            elif str(result[0]) == "CSVColumnMisMatched":
+                return bu_cu.CSVColumnMisMatched.parse_inner_structure(result[1])
+            elif str(result[0]) == "InvalidCSVUploaded":
+                return bu_cu.InvalidCSVUploaded.parse_inner_structure(result[1])
+            else:
+                logger.logKnowledge(
+                    "error",
+                    "buclientunitscontroller.py-process_get_cu_upload_status",
+                    result
+                )
+                raise Exception(str(result))
+
+
+def process_get_approve_client_unit_status(request):
+    csv_name = request.csv_name
+    file_name = "%s_%s.%s" % (
+        csv_name, "approve_cu", "txt"
+    )
+    file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
+    if os.path.exists(file_path) is False:
+        return bu_cu.Alive()
+    else:
+        return_data = ""
+        with open(file_path, "r") as fn:
+            return_data += fn.read()
+        remove_uploaded_file(file_path)
+        result = json.loads(return_data)
+        print "Result from file -> ", result
+        if str(result[0]) == "ReturnDeclinedCount":
+            return bu_cu.ReturnDeclinedCount.parse_inner_structure(result[1])
+
+        elif str(result[0]) == "UpdateApproveRejectActionFromListSuccess":
+            return bu_cu.UpdateApproveRejectActionFromListSuccess.parse_inner_structure(
+                result[1])
+
+        elif str(result[0]) == "SubmitClientUnitDeclinationSuccess":
+            return bu_cu.SubmitClientUnitDeclinationSuccess.parse_inner_structure(
+                result[1])
+
+        elif str(result[0]) == "SubmitClientUnitActionFromListSuccess":
+            return bu_cu.SubmitClientUnitActionFromListSuccess.parse_inner_structure(
+                result[1])
+
+        elif str(result[0]) == "SubmitClientUnitActionFromListSuccess":
+            return bu_cu.SubmitClientUnitActionFromListSuccess.parse_inner_structure(
+                result[1])
+        else:
+            log_param = "buclientunitscontroller.py-" + \
+                "process_get_approve_client_unit_status"
+            logger.logKnowledge("error", log_param, result)
+            raise Exception(str(result))

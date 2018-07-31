@@ -75,6 +75,8 @@ var _SHOW_FROM = 0;
 var _SHOW_CLICKED = true;
 var _FILTER_CLICKED = true;
 
+var TIMEOUT_MLS = 45000;
+
 // To load the client groups under logged techno executive
 function initialize(type_of_initialization) {
     displayPage(type_of_initialization);
@@ -454,11 +456,18 @@ function displayViewRejectAllPopUp(callback){
 // To perform approve all or reject all action from main list
 function performApproveRejectAction(csv_id, actionType, pwd, remarksText){
     displayLoader();
-    bu.performClientUnitApproveReject(
-        csv_id, actionType, remarksText, pwd,
-        parseInt(SEARCH_GROUP_ID.val().trim()),
-        function(error, response) {
-        if (error == null) {
+
+    function apiCall(csv_name, callback){
+        bu.getApproveClientUnitStatus(csv_name, callback);
+    }
+    function call_bck_fn(error, response){
+        console.log("response -> "+ JSON.stringify(response));
+
+        if (error == "Alive"){
+            setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
+        }
+        else if (error == null && error != "Alive") {
+            // Old code
             if (actionType == 1) {
                 displaySuccessMessage(message.approve_success);
                 initialize('list');
@@ -467,43 +476,78 @@ function performApproveRejectAction(csv_id, actionType, pwd, remarksText){
                 displaySuccessMessage(message.reject_success);
             }
             initialize('list');
+            }
+        else {
+                hideLoader();
+                console.log("error=> "+ error);
+                if(error == "ReturnDeclinedCount") {
+                    var declinedCount = response.declined_count;
+                    if(response.rejected_count > 0) {
+                        setTimeout(function() {
+                            msg = message.manuval_rejected_confirm;
+                            confirm_alert(msg, function(isConfirm) {
+                                console.log("isConfirm-> "+ isConfirm);
+
+                                if (isConfirm) {
+                                    performApproveRejectDeclination(
+                                        csv_id, actionType, pwd,
+                                        remarksText, declinedCount
+                                    );
+                                }
+                            });
+                        }, 500);
+                    }
+                    else if(declinedCount > 0) {
+                        performApproveRejectDeclination(
+                            csv_id, actionType, pwd,
+                            remarksText, declinedCount
+                        );
+                    }
+                } else {
+                    displayMessage(error);
+                }
         }
-        else
-        {
-            hideLoader();
-            if(error == "ReturnDeclinedCount")
-            {
-                var declinedCount = response.declined_count;
-                if(response.rejected_count > 0) {
-                    setTimeout(function() {
-                        msg = message.manuval_rejected_confirm;
-                        confirm_alert(msg, function(isConfirm) {
-                            if (isConfirm) {
-                                performApproveRejectDeclination(
-                                    csv_id, actionType, pwd,
-                                    remarksText, declinedCount
-                                );
-                            }
-                        });
-                    }, 500);
-                }
-                else if(declinedCount > 0) {
-                    performApproveRejectDeclination(
-                        csv_id, actionType, pwd,
-                        remarksText, declinedCount
-                    );
-                }
-            } else {
+    }
+
+    bu.performClientUnitApproveReject(
+        csv_id, actionType, remarksText, pwd,
+        parseInt(SEARCH_GROUP_ID.val().trim()),
+        function(error, response) {
+            if (error == 'Done') {
+                csv_name = response.csv_name;
+                setTimeout(apiCall, TIMEOUT_MLS, response.csv_name,
+                            call_bck_fn);
+            }
+            else {
+                hideLoader();
                 displayMessage(error);
             }
-        }
     });
 }
 
 function performApproveRejectDeclination(
     csv_id, actionType, pwd, remarksText, declined_count
 ) {
+    displayLoader();
     if (declined_count > 0) {
+        function apiCall(csv_name, callback){
+            bu.getApproveClientUnitStatus(csv_name, callback);
+        }
+        function call_bck_fn(error, response){
+            console.log("response -> "+ JSON.stringify(response));
+
+            if (error == "Alive"){
+                setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
+            }
+            else if (error == null && error != "Alive") {
+                displaySuccessMessage(message.approve_success);
+                hideLoader();
+                initialize('list');
+            } else {
+                displayMessage(error)
+            }
+        }
+
         setTimeout(function() {
             msg_decl = declined_count +
                 " units declined, Do you want to continue ?";
@@ -511,29 +555,52 @@ function performApproveRejectDeclination(
                 if (isConfirm) {
                     bu.confirmClientUnitDeclination(
                         csv_id, parseInt(SEARCH_GROUP_ID.val().trim()),
-                    function(error, response)
-                    {
-                        if (error == null) {
-                            displaySuccessMessage(message.approve_success);
-                            initialize('list');
-                        } else {
-                            displayMessage(error)
+                    function(error, response){
+                        console.log("error -> "+ error)
+                        console.log("Respnse -> "+ response);
+                        if (error == 'Done') {
+                            csv_name = response.csv_name;
+                            setTimeout(apiCall, TIMEOUT_MLS, response.csv_name,
+                                        call_bck_fn);
                         }
+                        else {
+                            hideLoader();
+                            displayMessage(error);
+                        }
+
                     });
                 }
             });
         }, 500);
     } else {
+        function apiCall(csv_name, callback){
+            bu.getApproveClientUnitStatus(csv_name, callback);
+        }
+        function call_bck_fn(error, response){
+            console.log("response in call_bck_fn-> "+ JSON.stringify(response));
+            if (error == "Alive"){
+                setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
+            }
+            else if (error == null && error != "Alive") {
+                displaySuccessMessage(message.approve_success);
+                hideLoader();
+                // initialize('list');
+            } else {
+                displayMessage(error)
+            }
+        }
+
         bu.confirmClientUnitDeclination(
             csv_id, parseInt(SEARCH_GROUP_ID.val().trim()),
-        function(error, response)
-        {
-            if (error == null) {
-                displaySuccessMessage(message.approve_success);
-                initialize('list');
+        function(error, response){
+            if (error == 'Done') {
+                csv_name = response.csv_name;
+                setTimeout(apiCall, TIMEOUT_MLS, response.csv_name,
+                                        call_bck_fn);
             }
             else {
-                displayMessage(error)
+                hideLoader();
+                displayMessage(error);
             }
         });
     }
@@ -551,17 +618,41 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
         csv_id, actionType, remarksText, pwd,
         parseInt(SEARCH_GROUP_ID.val().trim()),
     function(error, response){
-        if (error == null) {
+        if (error == 'Done') {
+            csv_name = response.csv_name;
+            setTimeout(apiCall, TIMEOUT_MLS, response.csv_name,
+                                    call_bck_fn);
+        }
+        else if (error == "SubmitClientUnitActionFromListFailure"){
+            displayMessage(
+                "All the units should be selected before Submit."
+            );
+            hideLoader();
+        }
+        else {
+            hideLoader();
+            displayMessage(error);
+        }
+    });
+    function apiCall(csv_name, callback){
+            bu.getApproveClientUnitStatus(csv_name, callback);
+    }
+    function call_bck_fn(error, response){
+        console.log("response insubmitfromlist call_bck_fn-> "+ JSON.stringify(response));
+        if (error == "Alive"){
+            setTimeout(apiCall, TIMEOUT_MLS, csv_name, call_bck_fn);
+        }
+        else if (error == null && error != "Alive") {
             if (actionType == 4) {
                 displaySuccessMessage(message.action_selection_success);
                 BULK_CLIENTUNIT_UPLOADED_FILELIST_VIEWPAGE.show();
                 BULK_CLIENTUNIT_UPLOADED_APPROVAL_LISTPAGE.hide();
                 initialize('list');
             }
-        }
-        else{
-            hideLoader();
+        } else {
+
             if(error == "InvalidPassword"){
+                hideLoader();
                 displayMessage(
                     "Invalid Password"
                 );
@@ -574,8 +665,12 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
                         if (isConfirm) {
                             bu.confirmSubmitClientUnitFromView(
                                 csv_id, parseInt(SEARCH_GROUP_ID.val().trim()),
-                                function(error, response)
-                                {
+                                function(error, response){
+                                    if (error == 'Done') {
+                                        csv_name = response.csv_name;
+                                        setTimeout(apiCallFinal, TIMEOUT_MLS, response.csv_name,
+                                                                call_bck_fn_final);
+                                    }
                                     if (error == null) {
                                         displaySuccessMessage(
                                             message.action_selection_success
@@ -586,17 +681,35 @@ function submitAction(csv_id, actionType, pwd, remarksText) {
                                     }
                                 }
                             );
-                        }
+                            function apiCallFinal(csv_name, callback){
+                                bu.getApproveClientUnitStatus(csv_name, callback);
+                            }
+                            function call_bck_fn_final(error, response){
+                                console.log("response insubmitfromlist call_bck_fn_final-> "+ JSON.stringify(response));
+                                if (error == "Alive"){
+                                    setTimeout(apiCallFinal, TIMEOUT_MLS, csv_name, call_bck_fn_final);
+                                }
+                                else if (error == null && error != "Alive") {
+                                    displaySuccessMessage(
+                                            message.action_selection_success
+                                    );
+                                    BULK_CLIENTUNIT_UPLOADED_FILELIST_VIEWPAGE.show();
+                                    BULK_CLIENTUNIT_UPLOADED_APPROVAL_LISTPAGE.hide();
+                                    initialize('list');
+                                }else{
+                                    hideLoader();
+                                    displayMessage(error);
+                                }
+                            }
+                        }// isconfirm if
                     });
                 }
             }
-            else if (error == "SubmitClientUnitActionFromListFailure"){
-                displayMessage(
-                    "All the units should be selected before Submit."
-                );
+            else {
+                    displayMessage(error);
             }
         }
-    });
+    }
 }
 
 // To validate the password inputted in custom box

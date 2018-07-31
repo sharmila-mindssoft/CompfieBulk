@@ -487,6 +487,44 @@ class GetClientGroupsList(Request):
         }
 
 
+class GetClientUnitUploadStatus(Request):
+    def __init__(self, csv_name):
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["csv_name"]
+        )
+        return GetClientUnitUploadStatus(
+            data.get("csv_name")
+        )
+
+    def to_inner_structure(self):
+        return{
+            "csv_name": self.csv_name
+        }
+
+
+class GetApproveClientUnitStatus(Request):
+    def __init__(self, csv_name):
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(
+            data, ["csv_name"]
+        )
+        return GetApproveClientUnitStatus(
+            data.get("csv_name")
+        )
+
+    def to_inner_structure(self):
+        return{
+            "csv_name": self.csv_name
+        }
+
+
 def _init_Request_class_map():
     classes = [
         UploadClientUnitsBulkCSV,
@@ -505,7 +543,8 @@ def _init_Request_class_map():
         ConfirmSubmitClientUnitFromView,
         GetBulkClientUnitListForFilterView,
         GetTechnoUserDetails,
-        GetClientGroupsList
+        GetClientGroupsList,
+        GetClientUnitUploadStatus, GetApproveClientUnitStatus
     ]
     class_map = {}
     for c in classes:
@@ -1367,6 +1406,34 @@ class GetClientGroupsListSuccess(Response):
         }
 
 
+class Alive(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return Alive()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class Done(Response):
+    def __init__(self, csv_name):
+        self.csv_name = csv_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["csv_name"])
+        csv_name = data.get("csv_name")
+        return Done(csv_name)
+
+    def to_inner_structure(self):
+        return {
+            "csv_name": self.csv_name
+        }
+
+
 def _init_Response_class_map():
 
     classes = [
@@ -1386,7 +1453,8 @@ def _init_Response_class_map():
         EmptyCSVUploaded, ClientUnitUploadMaxReached,
         InvalidCSVUploaded, EmptyFilteredData,
         CSVFileLinesMaxREached, CSVColumnMisMatched,
-        GetTechnoDetailsSuccess, GetClientGroupsListSuccess
+        GetTechnoDetailsSuccess, GetClientGroupsListSuccess,
+        Alive, Done
     ]
     class_map = {}
     for c in classes:

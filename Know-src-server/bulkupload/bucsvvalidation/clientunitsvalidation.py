@@ -11,7 +11,9 @@ from server.constants import (
 )
 
 from bulkupload.bulkconstants import (
-    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, CSV_MAX_LINES
+    CSV_DELIMITER, BULKUPLOAD_INVALID_PATH, CSV_MAX_LINES,
+    BULK_UPLOAD_DB_HOST, BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME,
+    BULK_UPLOAD_DB_PASSWORD, BULK_UPLOAD_DATABASE_NAME
 )
 
 from server.common import (
@@ -1259,6 +1261,11 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         self._doc_names = []
         self._sheet_name = "Client Unit"
 
+    def connect_bulk_database(self):
+        c_db_con = bulkupload_db_connect()
+        self._db = Database(c_db_con)
+        self._db.begin()
+
     #################################################################
     '''
         errorSummary: This class method is defined to store errors
@@ -1652,8 +1659,8 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
             csv_domain_duplicate = self.check_duplicate_domain_in_csv_row()
             csv_orgn_duplicate = self.check_duplicate_organization_in_csv_row()
             self.get_tempDB_data()
-            self._uploaded_by = self._session_user_obj.user_id()
-            self.init_values(self._session_user_obj.user_id(), self._client_id)
+            self._uploaded_by = self._session_user_obj
+            self.init_values(self._session_user_obj, self._client_id)
             return (
                 csv_column_compare, csv_unitcode_invalid,
                 csv_unitcode_duplicate,
@@ -1807,6 +1814,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
         return res
 
     def perform_validation(self):
+        self.connect_bulk_database()
         mapped_error_dict, mapped_header_dict = {}, {}
         invalid, i = 0, 0
         csv_domain_name = None
@@ -2081,6 +2089,7 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
 
 class ValidateClientUnitsBulkDataForApprove(SourceDB):
     def __init__(self, db, csv_id, client_id, session_user):
+        print "session_user -> ", session_user
         SourceDB.__init__(self)
         self._db = db
         self._csv_id = csv_id
@@ -2093,6 +2102,14 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
         self._csv_name = None
         self._uploaded_by = None
 
+    def connect_bulk_database(self):
+        c_db_con = bulkupload_db_connect()
+        self._db = Database(c_db_con)
+        self._db.begin()
+
+    def bulkdb_commit(self):
+        self._db.commit()
+
     ######################################################################
     '''
         get_uploaded_data: This class method is defined to fetch the temp
@@ -2101,6 +2118,7 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
     ######################################################################
 
     def get_uploaded_data(self):
+        self.connect_bulk_database()
         self._temp_data = self._db.call_proc(
             "sp_bulk_client_unit_by_csvid", [self._csv_id]
         )
@@ -2129,11 +2147,12 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
     ######################################################################
 
     def check_for_system_declination_errors(self):
+        print "self._session_user_obj-->> ", self._session_user_obj
         sys_declined_count = 0
         self._declined_bulk_unit_id = []
         self._declined_bulk_unit_id_err = []
         manual_rejection_count = 0
-        self.init_values(self._session_user_obj.user_id(), self._client_id)
+        self.init_values(self._session_user_obj, self._client_id)
         for row_idx, data in enumerate(self._temp_data):
             res = True
             if row_idx == 0:
@@ -2269,6 +2288,7 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
         self, csv_id, action_type, declined_ids, declined_ids_error
     ):
         try:
+            print "action type=? ", action_type
             for unit_id, unit_error in zip(declined_ids, declined_ids_error):
                 q = "update tbl_bulk_units set action = %s, remarks = %s " + \
                     "where bulk_unit_id = %s"
@@ -2282,6 +2302,7 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
                 q = "delete from tbl_bulk_units where action = %s and "\
                     "csv_unit_id = %s"
                 self._db.execute_insert(q, [1, int(csv_id)])
+                self._db.commit()
             else:
                 q = "delete from tbl_bulk_units where action = %s and "\
                     "csv_unit_id = %s"
@@ -2290,6 +2311,19 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
                 q = "delete from tbl_bulk_units where action = %s and "\
                     "csv_unit_id = %s"
                 self._db.execute_insert(q, [2, int(csv_id)])
+                self._db.commit()
         except Exception, e:
             print e
             raise ValueError("Transaction failed during system rejection")
+
+
+def bulkupload_db_connect():
+    cnx_pool = mysql.connector.connect(
+        user=BULK_UPLOAD_DB_USERNAME,
+        password=BULK_UPLOAD_DB_PASSWORD,
+        host=BULK_UPLOAD_DB_HOST,
+        database=BULK_UPLOAD_DATABASE_NAME,
+        port=BULK_UPLOAD_DB_PORT,
+        autocommit=False,
+    )
+    return cnx_pool

@@ -442,6 +442,16 @@ function performClientUnitApproveReject(csv_id, actionType, remarksText, pwd,
     apiRequest("bu/client_units", request, callback);
 }
 
+function getApproveClientUnitStatus(csv_name, callback){
+    var request = [
+        'GetApproveClientUnitStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/client_units', request, callback);
+
+}
+
 function getApproveMappingViewFilter(csvid, callback) {
     var request = [
         'GetApproveMappingFilter',
@@ -710,6 +720,16 @@ function GetStatus(csv_name, callback){
         }
     ];
     apiRequest('bu/statutory_mapping', request, callback);
+}
+
+function GetClientUnitUploadStatus(csv_name, callback){
+    console.log("inside client unit upload get status");
+    var request = [
+        'GetClientUnitUploadStatus', {
+            "csv_name": csv_name
+        }
+    ];
+    apiRequest('bu/client_units', request, callback);
 }
 
 function getAssignStatutoryStatus(csv_name, callback){
