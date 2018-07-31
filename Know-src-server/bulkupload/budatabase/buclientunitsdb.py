@@ -9,9 +9,12 @@ from server.constants import (
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME
 )
 
-from bulkupload.bulkconstants import (
-    MAX_REJECTED_COUNT
+from ..bulkconstants import (
+    MAX_REJECTED_COUNT, BULK_UPLOAD_DB_HOST,
+    BULK_UPLOAD_DB_PORT, BULK_UPLOAD_DB_USERNAME, BULK_UPLOAD_DB_PASSWORD,
+    BULK_UPLOAD_DATABASE_NAME
 )
+
 from server.dbase import Database
 
 from ..buapiprotocol import buclientunitsprotocol as bu_cu
@@ -61,6 +64,31 @@ def connect_knowledge_db():
     except Exception, e:
         print e
 
+###########################################################################
+'''
+    connect_bulk_db: This class methods connects to the Temp database.
+'''
+##########################################################################
+
+
+def connect_bulk_db():
+    _bulk_db = None
+    try:
+        _bulk_db_con = mysql.connector.connect(
+            user=BULK_UPLOAD_DB_USERNAME,
+            password=BULK_UPLOAD_DB_PASSWORD,
+            host=BULK_UPLOAD_DB_HOST,
+            database=BULK_UPLOAD_DATABASE_NAME,
+            port=BULK_UPLOAD_DB_PORT,
+            autocommit=False
+        )
+        _bulk_db = Database(_bulk_db_con)
+        _bulk_db.begin()
+    except Exception, e:
+        print "Connection Exception Caught"
+        print e
+    return _bulk_db
+
 ########################################################
 '''
     returns new primary key from table
@@ -79,8 +107,9 @@ def connect_knowledge_db():
 
 
 def save_client_units_mapping_csv(db, args):
-
+    db = connect_bulk_db()
     newid = db.call_insert_proc("sp_client_units_bulk_csv_save", args)
+    db.commit()
     return newid
 
 
@@ -124,7 +153,9 @@ def save_mapping_client_unit_data(db, csv_id, csv_data):
             ))
 
         if values:
+            db = connect_bulk_db()
             db.bulk_insert("tbl_bulk_units", columns, values)
+            db.commit()
             return True
         else:
             return False
@@ -278,7 +309,7 @@ def fetch_client_unit_bulk_report(db, session_user, user_id, clientGroupId,
 
             if(d["rejected_on"] is not None):
                 rejected_on = d["rejected_on"].strftime("%d-%b-%Y %H:%M")
-            
+
             client_list.append(bu_cu.ClientReportData(
                 int(d["uploaded_by"]),
                 str(uploaded_on),
@@ -346,11 +377,18 @@ def update_bulk_client_unit_approve_reject_list(
     try:
         args = [
             csv_unit_id, action, remarks,
-            session_user.user_id(), declined_count
+            session_user, declined_count
         ]
+        db = connect_bulk_db()
+        print "db->> ", db
+        print "action->> ", action
+        print "declined_count->> ", declined_count
+        print "session_user--> ", session_user
+        print "csv_unit_id ->> ", csv_unit_id
         data = db.call_proc("sp_bulk_client_unit_update_action", args)
-        print "here"
-        print data
+        print "sp_bulk_client_unit_update_action ", data
+        db.commit()
+        print "in buclientunitdb here", data
         return True
 
     except Exception, e:
@@ -675,6 +713,7 @@ def get_bulk_client_unit_file_count(db, user_id):
     # client_id = request_frame.bu_client_id
     args = [user_id]
     data = db.call_proc("sp_bulk_client_unit_file_count", args)
+    print "len(data)=> ", data[0].get("file_count")
     if len(data) > 0:
         if int(data[0].get("file_count")) < MAX_REJECTED_COUNT:
             return True

@@ -69,10 +69,11 @@ function initMethods() {
         getAssignStatutoryConfirmStatus: getAssignStatutoryConfirmStatus,
         getAssignStatutoryListStatus: getAssignStatutoryListStatus,
         getApproveMappingStatus:getApproveMappingStatus,
-        documentUploadQueueProcess: documentUploadQueueProcess
-        
+        documentUploadQueueProcess: documentUploadQueueProcess,
+        GetClientUnitUploadStatus: GetClientUnitUploadStatus,
+        getApproveClientUnitStatus: getApproveClientUnitStatus
 
     };
 }
 
-var bu = initMethods(); 
+var bu = initMethods();
