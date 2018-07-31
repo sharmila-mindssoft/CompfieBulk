@@ -196,7 +196,7 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
         t = multiprocessing.Process(
             target=client_unit_validate_data,
             args=(
-                db, request_frame, session_user.user_id(),
+                request_frame, session_user.user_id(),
                 csv_name, cu_header, cu_bulk_data
             )
         )
@@ -214,7 +214,7 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
 
 
 def client_unit_validate_data(
-    db, request_frame, session_user, csv_name, cu_header, cu_bulk_data
+    request_frame, session_user, csv_name, cu_header, cu_bulk_data
 ):
     def write_file():
         file_string = csv_name.split(".")
