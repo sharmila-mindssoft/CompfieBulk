@@ -15,4 +15,4 @@ EXPORT_PATH = os.path.join(ROOT_PATH, "exported_reports")
 # "zip",
 
 TEMP_FILE_SERVER = "http://localhost:8083/temp/"
-CLIENT_TEMP_FILE_SERVER = "http://localhost:8083/clienttemp/"
+CLIENT_TEMP_FILE_SERVER = "http://localhost:8086/clienttemp/"

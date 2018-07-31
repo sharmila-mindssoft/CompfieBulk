@@ -1035,17 +1035,18 @@ var myDropzone = new Dropzone("div#myDrop", {
             ){
                 myDropzone.removeFile(file);
             }else {
-                addedfiles.push(file.name);
-                queueCount += 1;
-                totalFileSize += file.size;
+                if (totalFileSize + file.size > maxTotalFileSize ){
+                    displayMessage("Total File size exceeds allowed limit."); 
+                    myDropzone.removeFile(file);
+                }else{
+                    addedfiles.push(file.name);
+                    queueCount += 1;
+                    totalFileSize += file.size;
+                }
+                
             }
             if(REMAINING_DOCUMENTS <= 0){
                 displayMessage("Required files were already added");
-            }
-            if (maxTotalFileSize < totalFileSize){
-                displayMessage("Total File size exceeds allowed limit."); 
-                addedfiles = [];  
-                myDropzone.removeAllFiles(true);
             }
         });
         this.on("thumbnail", function(file) {
