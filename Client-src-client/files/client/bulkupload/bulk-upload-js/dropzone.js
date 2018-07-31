@@ -225,7 +225,7 @@ var Dropzone = function (_Emitter) {
          * the event `maxfilesexceeded` will be called. The dropzone element gets the
          * class `dz-max-files-reached` accordingly so you can provide visual feedback.
          */
-        maxFilesize: 4000,
+        maxFilesize: 1000,
 
         /**
          * The name of the file param that gets transferred.
@@ -847,7 +847,6 @@ var Dropzone = function (_Emitter) {
               }
 
               var thumbnailElement = _ref5;
-
               thumbnailElement.alt = file.name;
               thumbnailElement.src = dataUrl;
             }
@@ -1802,6 +1801,7 @@ var Dropzone = function (_Emitter) {
         return done(this.options.dictInvalidFileType);
       } else if (this.options.maxFiles != null && this.getAcceptedFiles().length >= this.options.maxFiles) {
         done(this.options.dictMaxFilesExceeded.replace("{{maxFiles}}", this.options.maxFiles));
+        this.removeAllFiles(true);
         return this.emit("maxfilesexceeded", file);
       } else {
         return this.options.accept.call(this, file, done);
@@ -1908,7 +1908,11 @@ var Dropzone = function (_Emitter) {
       this._processingThumbnail = true;
       var file = this._thumbnailQueue.shift();
       return this.createThumbnail(file, this.options.thumbnailWidth, this.options.thumbnailHeight, this.options.thumbnailMethod, true, function (dataUrl) {
-        _this10.emit("thumbnail", file, dataUrl);
+        try{
+            _this10.emit("thumbnail", file, dataUrl);
+        }catch(e){
+            console.log("catched error/..............."+e);
+        }
         _this10._processingThumbnail = false;
         return _this10._processThumbnailQueue();
       });
@@ -2107,7 +2111,6 @@ var Dropzone = function (_Emitter) {
       if (callback != null) {
         img.onerror = callback;
       }
-
       return img.src = file.dataURL;
     }
 
@@ -2513,19 +2516,25 @@ var Dropzone = function (_Emitter) {
       var transformedFiles = [];
       // Clumsy way of handling asynchronous calls, until I get to add a proper Future library.
       var doneCounter = 0;
-
-      var _loop = function _loop(i) {
-        _this16.options.transformFile.call(_this16, files[i], function (transformedFile) {
+      _this16.options.transformFile.call(_this16, files, function (transformedFile) {
           transformedFiles[i] = transformedFile;
-          if (++doneCounter === files.length) {
-            done(transformedFiles);
-          }
+          done(transformedFiles);
+          // if (++doneCounter === files.length) {
+            
+          // }
         });
-      };
+      // var _loop = function _loop(i) {
+        // _this16.options.transformFile.call(_this16, files[i], function (transformedFile) {
+        //   transformedFiles[i] = transformedFile;
+        //   if (++doneCounter === files.length) {
+        //     done(transformedFiles);
+        //   }
+        // });
+      // };
 
-      for (var i = 0; i < files.length; i++) {
-        _loop(i);
-      }
+      // for (var i = 0; i < files.length; i++) {
+      //   _loop(i);
+      // }
     }
 
     // Takes care of adding other input elements of the form to the AJAX request

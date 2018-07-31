@@ -122,18 +122,35 @@ def update_file_status(old_file_name, new_file_name, file_size, csv_id):
     return response_data
 
 
-def update_file_status_client(old_file_name, new_file_name, file_size, csv_id):
+def update_file_status_client(update_tuples):
     response_data = None
     _db_con = bulkupload_db_connect()
-    _db = Database(_db_con)
+    # _db = Database(_db_con)
     try:
-        _db.begin()
-        if (
-            _db.update_file_status_client(
-                old_file_name, csv_id, new_file_name, file_size)
-        ) is None:
-            response_data = False
-        _db.commit()
+        # _db_con.begin()
+        query = ""
+        for data in update_tuples:
+            old_file_name = data[0]
+            new_file_name = data[1]
+            file_size = data[2]
+            csv_id = data[3]
+            q1 = "update tbl_bulk_past_data set document_upload_status = 1, \
+            document_file_size = %s , document_name = '%s' \
+            where csv_past_id = %s and document_name='%s';" % (
+                file_size, new_file_name, csv_id, old_file_name
+            )
+            query += q1
+        q2 = "update tbl_bulk_past_data_csv \
+            set uploaded_documents = uploaded_documents + %s \
+            where csv_past_id = %s and uploaded_documents \
+            < total_documents;" % (len(update_tuples), csv_id)
+        q3 = "UPDATE tbl_bulk_past_data_csv SET upload_status = 1 WHERE \
+            uploaded_documents = total_documents AND csv_past_id = %s;" % (
+                csv_id
+            )
+        query += q2 + q3 
+        result = _db_con.cmd_query_iter(query)
+        _db_con.commit()
     except Exception, e:
         logger.logTempFiler(
             "error", "run_tempfile_server > update_file_status_client()",
@@ -143,12 +160,10 @@ def update_file_status_client(old_file_name, new_file_name, file_size, csv_id):
             "error", "run_tempfile_server > update_file_status_client()",
             str(traceback.format_exc())
         )
-        _db.rollback()
+        _db_con.rollback()
 
     finally:
-        _db.close()
         _db_con.close()
-
     return response_data
 
 
@@ -286,41 +301,41 @@ def upload_client():
     logger.logTempFiler(
         "info", "run_tempfile_server > /client/temp/upload > Request", request
     )
+    update_tuples = []
     if request.method == 'POST':
-        for key, f in request.files.iteritems():
-            if key.startswith('file'):
+        csvid = request.args.get("csvid")
+        load_path = os.path.join(
+            app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], csvid
+        )
+        if not os.path.exists(load_path):
+            os.makedirs(load_path)
+            os.chmod(load_path, 0777)
+        for key, zf in request.files.iteritems():
+            actual_file = os.path.join(load_path, zf.filename)
+            zip_f_name = actual_file + ".zip"
+            zf.save(zip_f_name)
+            zip_ref = zipfile.ZipFile(zip_f_name, 'r')
+            for f in zip_ref.infolist():
+                actual_file = os.path.join(load_path, f.filename)
                 random_string = generate_random(5)
                 fn = f.filename
                 fname = fn.split(".")
                 random_file_name = fname[
                     0] + '-' + random_string + "." + fname[1]
-                csvid = request.args.get("csvid")
-                load_path = os.path.join(
-                    app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], csvid
-                )
-                if not os.path.exists(load_path):
-                    os.makedirs(load_path)
-                    os.chmod(load_path, 0777)
-
-                actual_file = os.path.join(load_path, f.filename)
-                zip_f_name = actual_file + ".zip"
-                f.save(zip_f_name)
-                zip_ref = zipfile.ZipFile(zip_f_name, 'r')
-                zip_ref.extractall(load_path)
-                zip_ref.close()
+                zip_ref.extract(fn, load_path)
                 os.rename(actual_file, load_path + '/' + random_file_name)
                 renamed_file = os.path.join(load_path, random_file_name)
                 renamed_file_size = os.path.getsize(renamed_file)
-                os.remove(zip_f_name)
-                if update_file_status_client(
-                    f.filename, random_file_name, renamed_file_size, csvid
-                ) is False:
-                    logger.logTempFiler(
-                            "info", "run_tempfile_server > /client/temp/upload",
-                            "update file status failed"
-                    )
-                    return "update failed"
-
+                update_tuples.append(
+                    [fn, random_file_name, renamed_file_size, csvid])
+            if update_file_status_client(update_tuples) is False:
+                logger.logTempFiler(
+                    "info", "run_tempfile_server > /client/temp/upload",
+                    "update file status failed"
+                )
+                return "update failed"
+            zip_ref.close()
+            os.remove(zip_f_name)
         return "success"
 
 
@@ -535,7 +550,6 @@ def approve_client():
     folder_path = os.path.join(
         app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], folder_name
     )
-
     if not os.path.exists(folder_path):
         logger.logTempFiler(
             "info", "run_tempfile_server > /temp/docsubmit",
@@ -568,7 +582,6 @@ def client_zip_folder(folder_name, folder_path):
             "info", "run_tempfile_server > client_zip_folder",
             "download status update failed"
         )
-
         return "download status update failed"
     zipping_in_process.remove(folder_name)
     file_status[folder_name] = "Zipping Completed"

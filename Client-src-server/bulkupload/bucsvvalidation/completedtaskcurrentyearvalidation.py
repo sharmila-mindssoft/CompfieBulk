@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import collections
 import mysql.connector
 import requests
@@ -1350,9 +1351,9 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 )
 
             if self._stop is False:
-                t = threading.Timer(60, check_status)
-                t.daemon = True
-                t.start()
+                time.sleep(30)
+                check_status()
+
 
         def get_file_stats(csvid):
             file_status = None
@@ -1393,7 +1394,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             "file_server_id = (select file_server_id from " + \
             " tbl_client_database where legal_entity_id = %s )"
         param = [legal_id]
-        self.connect_knowledge_db(legal_id)
+        self.connect_knowledge_db()
         doc_rows = self._knowledge_db.select_all(query, param)
         if doc_rows > 0:
             file_server_ip = doc_rows[0]["ip"]

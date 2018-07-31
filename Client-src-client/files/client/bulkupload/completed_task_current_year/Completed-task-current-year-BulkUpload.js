@@ -1001,16 +1001,23 @@ var uploadedfiles = [];
 var totalfileUploadSuccess = 0;
 var perQueueUploadSuccess = 0;
 var queueCount = 0;
-var maxParallelCount = 10;
+var maxParallelCount = 100;
+var totalFileSize = 0;
+var maxTotalFileSize = 500 *  1024 * 1024;
+var maxFilesCount = 1000;
 var myDropzone = new Dropzone("div#myDrop", {
     addRemoveLinks: true,
     autoProcessQueue: false,
     uploadMultiple: true,
+    timeout: 3600000,
+    maxFiles: maxFilesCount,
     parallelUploads: maxParallelCount,
     url: "#",
-    transformFile: function transformFile(file, done) {
+    transformFile: function transformFile(files, done) {
         var zip = new JSZip();
-        zip.file(file.name, file);
+        for (var i = 0; i < files.length; i++) {
+            zip.file(files[i].name, files[i]);
+        }        
         zip.generateAsync({
             type: "blob",
             compression: "DEFLATE"
@@ -1024,21 +1031,36 @@ var myDropzone = new Dropzone("div#myDrop", {
                 jQuery.inArray(file.name, addedfiles) > -1 ||
                 jQuery.inArray(file.name, DOC_NAMES) == -1 ||
                 jQuery.inArray(file.name, uploadedfiles) > -1 ||
-                REMAINING_DOCUMENTS <= 0
+                REMAINING_DOCUMENTS <= 0 || addedfiles.length >= maxFilesCount
             ){
                 myDropzone.removeFile(file);
             }else {
                 addedfiles.push(file.name);
                 queueCount += 1;
+                totalFileSize += file.size;
             }
             if(REMAINING_DOCUMENTS <= 0){
                 displayMessage("Required files were already added");
             }
+            if (maxTotalFileSize < totalFileSize){
+                displayMessage("Total File size exceeds allowed limit."); 
+                addedfiles = [];  
+                myDropzone.removeAllFiles(true);
+            }
+        });
+        this.on("thumbnail", function(file) {
+            var fileReader = new FileReader();
+            fileReader.onload = function () {
+                file.dataURL = fileReader.result;
+                file.previewElement.querySelector("img").src = file.dataURL;
+            }
+            fileReader.readAsDataURL(file);
         });
         this.on("removedfile", function(file) {
             if (jQuery.inArray(file.name, addedfiles) > -1) {
                 addedfiles.pop(file.name);
                 queueCount -= 1;
+                totalFileSize =- file.size;
             }
         });
 
@@ -1086,58 +1108,6 @@ var myDropzone = new Dropzone("div#myDrop", {
 function BulkCompletedTaskCurrentYear() {
     this._ActionMode = null;
     this._ListDataForView = [];
-}
-
-function genericWorker(worker_url, data) {
-    return new Promise(function (resolve, reject) {
-
-        if (!data.callback || !Array.isArray(data.callback))
-            return reject("Invalid data")
-
-        var callback = data.callback.pop()
-        var functions = data.callback
-        var context = data.context
-
-        if (!worker_url)
-            return reject("Worker_url is undefined")
-
-        if (!callback)
-            return reject("A callback was expected")
-
-        if (functions.length>0 && !context)
-            return reject("context is undefined")
-
-        callback = fn_string(callback) //Callback to be executed
-        functions = functions.map((fn_name)=> { return fn_string( context[fn_name] ) })
-
-        var worker = new Worker(worker_url)
-
-        worker.postMessage({ callback: callback, functions: functions })
-
-        worker.addEventListener('error', function(error){
-            return reject(error.message)
-        })
-
-        worker.addEventListener('message', function(e) {
-            resolve(e.data)
-            worker.terminate()
-
-        }, false)
-
-
-        //From function to string, with its name, arguments and its body
-        function fn_string (fn) {
-            var name = fn.name
-            fn = fn.toString()
-
-            return {
-                name: name,
-                args: fn.substring(fn.indexOf("(") + 1, fn.indexOf(")")),
-                body: fn.substring(fn.indexOf("{") + 1, fn.lastIndexOf("}"))
-            }
-        }
-
-    })
 }
 
 BUCT_PAGE = new BulkCompletedTaskCurrentYear();
