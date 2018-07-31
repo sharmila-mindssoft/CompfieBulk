@@ -380,15 +380,8 @@ def update_bulk_client_unit_approve_reject_list(
             session_user, declined_count
         ]
         db = connect_bulk_db()
-        print "db->> ", db
-        print "action->> ", action
-        print "declined_count->> ", declined_count
-        print "session_user--> ", session_user
-        print "csv_unit_id ->> ", csv_unit_id
         data = db.call_proc("sp_bulk_client_unit_update_action", args)
-        print "sp_bulk_client_unit_update_action ", data
         db.commit()
-        print "in buclientunitdb here", data
         return True
 
     except Exception, e:
@@ -581,8 +574,6 @@ def get_bulk_client_unit_list_by_filter(db, request_frame, session_user):
     upload_by = session_user.user_full_name()
     upload_on = None
     client_unit_data = []
-    print "unit_list"
-    print unit_list
     if len(unit_list) > 0:
         if len(unit_list[1]) > 0:
             total_records = unit_list[1][0]["total_records"]
@@ -647,7 +638,6 @@ def save_client_unit_action_from_view(
     try:
         args = [csv_id, bulk_unit_id, action, remarks]
         data = db.call_proc("sp_bulk_client_unit_id_save", args)
-        print data
         return True
 
     except Exception, e:
@@ -713,7 +703,6 @@ def get_bulk_client_unit_file_count(db, user_id):
     # client_id = request_frame.bu_client_id
     args = [user_id]
     data = db.call_proc("sp_bulk_client_unit_file_count", args)
-    print "len(data)=> ", data[0].get("file_count")
     if len(data) > 0:
         if int(data[0].get("file_count")) < MAX_REJECTED_COUNT:
             return True
@@ -783,8 +772,6 @@ def get_cliens_for_client_unit_bulk_upload(db, session_user):
         "sp_client_groups_for_client_unit_bulk_upload", (session_user,), 2
     )
     _source_db.close()
-    print "groups"
-    print groups
     return return_client_group(groups[1])
 
 ########################################################

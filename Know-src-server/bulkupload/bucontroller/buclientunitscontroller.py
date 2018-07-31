@@ -75,7 +75,6 @@ t = None
 def process_bu_client_units_request(request, db, session_user):
     result = None
     db = db
-    print "DB IN request", type(request.request), " db ", db
     request_frame = request.request
 
     if type(request_frame) is bu_cu.UploadClientUnitsBulkCSV:
@@ -226,120 +225,117 @@ def client_unit_validate_data(
             fn.write(return_data)
             os.chmod(file_path, 0777)
         return
-    try:
-        # csv data validation
-        header = pickle.loads(cu_header)
-        client_units_bulk_data = pickle.loads(cu_bulk_data)
-        return_data = None
-        print "db -> ", db
-        clientUnitObj = ValidateClientUnitsBulkCsvData(
-            db, client_units_bulk_data, session_user,
-            request_frame.bu_client_id,
-            csv_name, header
-        )
-        validationResult = clientUnitObj.perform_validation()
-        print "err--------------------------------------------"
-        print validationResult
-        if (
-            "No such file or directory" not in validationResult and
-            validationResult != "Empty CSV File Uploaded" and
-            validationResult != "CSV File lines reached max limit" and
-            validationResult != "Csv Column Mismatched" and
-            "ordinal not in range(128)" not in validationResult and
-            (validationResult["return_status"] is not None and
-                validationResult["return_status"] is True)
-        ):
-            generate_valid_file(csv_name)
-            csv_args = [
-                request_frame.bu_client_id, request_frame.bu_group_name,
-                csv_name, session_user, validationResult["total"]
-            ]
-            new_csv_id = save_client_units_mapping_csv(db, csv_args)
-            if new_csv_id:
-                if save_mapping_client_unit_data(
-                        db, new_csv_id, validationResult["data"]
-                ) is True:
-                    clientUnitObj.save_executive_message(
-                        csv_name, request_frame.bu_group_name,
-                        session_user
-                    )
-                    clientUnitObj.source_commit()
-                    result = bu_cu.UploadClientUnitBulkCSVSuccess(
-                        validationResult["total"], validationResult["valid"],
-                        validationResult["invalid"]
-                    ).to_structure()
-                    return_data = json.dumps(result)
-        elif (
-            "No such file or directory" not in validationResult and
-            "ordinal not in range(128)" not in validationResult and
-            validationResult != "Empty CSV File Uploaded" and
-            validationResult != "CSV File lines reached max limit" and
-            validationResult != "Csv Column Mismatched" and
-            (validationResult["return_status"] is not None and
-                validationResult["return_status"] is False)
-        ):
-            result = bu_cu.UploadClientUnitBulkCSVFailed(
-                validationResult["invalid_file"],
-                validationResult["mandatory_error"],
-                validationResult["max_length_error"],
-                validationResult["duplicate_error"],
-                validationResult["invalid_char_error"],
-                validationResult["invalid_data_error"],
-                validationResult["inactive_error"],
-                validationResult["max_unit_count_error"],
-                validationResult["total"], validationResult["invalid"]
-            ).to_structure()
-            return_data = json.dumps(result)
-        elif (
-            "No such file or directory" not in validationResult and
-            "ordinal not in range(128)" not in validationResult and
-            validationResult != "CSV File lines reached max limit" and
-            validationResult != "Csv Column Mismatched" and
-            validationResult == "Empty CSV File Uploaded"
-        ):
-            result = bu_cu.EmptyCSVUploaded().to_structure()
-            return_data = json.dumps(result)
-        elif (
-            "No such file or directory" not in validationResult and
-            "ordinal not in range(128)" not in validationResult and
-            validationResult != "Csv Column Mismatched" and
-            validationResult == "CSV File lines reached max limit"
-        ):
-            csv_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
-            file_path = os.path.join(csv_path, csv_name)
-            remove_uploaded_file(file_path)
-            result = bu_cu.CSVFileLinesMaxREached(
-                                            csv_max_lines=CSV_MAX_LINES
-                            ).to_structure()
-            return_data = json.dumps(result)
-        elif (
-            "No such file or directory" not in validationResult and
-            "ordinal not in range(128)" not in validationResult and
-            validationResult == "Csv Column Mismatched"
-        ):
-            result = bu_cu.CSVColumnMisMatched().to_structure()
-            return_data = json.dumps(result)
-        elif (
-            "No such file or directory" in validationResult or
-            "ordinal not in range(128)" in validationResult
-        ):
-            result = bu_cu.InvalidCSVUploaded().to_structure()
-            return_data = json.dumps(result)
-    except AssertionError as error:
-        e = "AssertionError"
-        return_data = json.dumps(e)
-        write_file()
-        logger.logKnowledge(
-            "error",
-            "buclientunitscontroller.py - client_unit_validate_data", e)
-        raise error
-    except Exception, e:
-        return_data = json.dumps(str(e))
-        write_file()
-        logger.logKnowledge(
-            "error",
-            "buclientunitscontroller.py - client_unit_validate_data", e)
-        raise e
+    # try:
+    # csv data validation
+    header = pickle.loads(cu_header)
+    client_units_bulk_data = pickle.loads(cu_bulk_data)
+    return_data = None
+    clientUnitObj = ValidateClientUnitsBulkCsvData(
+        db, client_units_bulk_data, session_user,
+        request_frame.bu_client_id,
+        csv_name, header
+    )
+    validationResult = clientUnitObj.perform_validation()
+    if (
+        "No such file or directory" not in validationResult and
+        validationResult != "Empty CSV File Uploaded" and
+        validationResult != "CSV File lines reached max limit" and
+        validationResult != "Csv Column Mismatched" and
+        "ordinal not in range(128)" not in validationResult and
+        (validationResult["return_status"] is not None and
+            validationResult["return_status"] is True)
+    ):
+        generate_valid_file(csv_name)
+        csv_args = [
+            request_frame.bu_client_id, request_frame.bu_group_name,
+            csv_name, session_user, validationResult["total"]
+        ]
+        new_csv_id = save_client_units_mapping_csv(db, csv_args)
+        if new_csv_id:
+            if save_mapping_client_unit_data(
+                    db, new_csv_id, validationResult["data"]
+            ) is True:
+                clientUnitObj.save_executive_message(
+                    csv_name, request_frame.bu_group_name,
+                    session_user
+                )
+                clientUnitObj.source_commit()
+                result = bu_cu.UploadClientUnitBulkCSVSuccess(
+                    validationResult["total"], validationResult["valid"],
+                    validationResult["invalid"]
+                ).to_structure()
+                return_data = json.dumps(result)
+    elif (
+        "No such file or directory" not in validationResult and
+        "ordinal not in range(128)" not in validationResult and
+        validationResult != "Empty CSV File Uploaded" and
+        validationResult != "CSV File lines reached max limit" and
+        validationResult != "Csv Column Mismatched" and
+        (validationResult["return_status"] is not None and
+            validationResult["return_status"] is False)
+    ):
+        result = bu_cu.UploadClientUnitBulkCSVFailed(
+            validationResult["invalid_file"],
+            validationResult["mandatory_error"],
+            validationResult["max_length_error"],
+            validationResult["duplicate_error"],
+            validationResult["invalid_char_error"],
+            validationResult["invalid_data_error"],
+            validationResult["inactive_error"],
+            validationResult["max_unit_count_error"],
+            validationResult["total"], validationResult["invalid"]
+        ).to_structure()
+        return_data = json.dumps(result)
+    elif (
+        "No such file or directory" not in validationResult and
+        "ordinal not in range(128)" not in validationResult and
+        validationResult != "CSV File lines reached max limit" and
+        validationResult != "Csv Column Mismatched" and
+        validationResult == "Empty CSV File Uploaded"
+    ):
+        result = bu_cu.EmptyCSVUploaded().to_structure()
+        return_data = json.dumps(result)
+    elif (
+        "No such file or directory" not in validationResult and
+        "ordinal not in range(128)" not in validationResult and
+        validationResult != "Csv Column Mismatched" and
+        validationResult == "CSV File lines reached max limit"
+    ):
+        csv_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
+        file_path = os.path.join(csv_path, csv_name)
+        remove_uploaded_file(file_path)
+        result = bu_cu.CSVFileLinesMaxREached(
+                                        csv_max_lines=CSV_MAX_LINES
+                        ).to_structure()
+        return_data = json.dumps(result)
+    elif (
+        "No such file or directory" not in validationResult and
+        "ordinal not in range(128)" not in validationResult and
+        validationResult == "Csv Column Mismatched"
+    ):
+        result = bu_cu.CSVColumnMisMatched().to_structure()
+        return_data = json.dumps(result)
+    elif (
+        "No such file or directory" in validationResult or
+        "ordinal not in range(128)" in validationResult
+    ):
+        result = bu_cu.InvalidCSVUploaded().to_structure()
+        return_data = json.dumps(result)
+    # except AssertionError as error:
+    #     e = "AssertionError"
+    #     return_data = json.dumps(e)
+    #     write_file()
+    #     logger.logKnowledge(
+    #         "error",
+    #         "buclientunitscontroller.py - client_unit_validate_data", e)
+    #     raise error
+    # except Exception, e:
+    #     return_data = json.dumps(str(e))
+    #     write_file()
+    #     logger.logKnowledge(
+    #         "error",
+    #         "buclientunitscontroller.py - client_unit_validate_data", e)
+    #     raise e
     write_file()
     print "os pid ---->>>", os.getpid()
     return
@@ -363,7 +359,6 @@ def upload_client_units_bulk_csv_old_copy(db, request_frame, session_user):
         )
         validationResult = clientUnitObj.perform_validation()
         print "err--------------------------------------------"
-        print validationResult
         if (
             "No such file or directory" not in validationResult and
             validationResult != "Empty CSV File Uploaded" and
@@ -1247,7 +1242,6 @@ def process_get_cu_upload_status(request):
             return bu_sm.InvalidCsvFile()
         else:
             result = json.loads(return_data)
-            print "Result ->>>>> ", result
             if str(result[0]) == "UploadClientUnitBulkCSVSuccess":
                 return bu_cu.UploadClientUnitBulkCSVSuccess.parse_inner_structure(result[1])
             elif str(result[0]) == "UploadClientUnitBulkCSVFailed":
@@ -1283,7 +1277,6 @@ def process_get_approve_client_unit_status(request):
             return_data += fn.read()
         remove_uploaded_file(file_path)
         result = json.loads(return_data)
-        print "Result from file -> ", result
         if str(result[0]) == "ReturnDeclinedCount":
             return bu_cu.ReturnDeclinedCount.parse_inner_structure(result[1])
 
