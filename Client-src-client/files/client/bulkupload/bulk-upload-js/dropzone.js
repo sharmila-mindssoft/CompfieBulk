@@ -848,7 +848,14 @@ var Dropzone = function (_Emitter) {
 
               var thumbnailElement = _ref5;
               thumbnailElement.alt = file.name;
-              thumbnailElement.src = dataUrl;
+              var fileReader = new FileReader();
+                fileReader.onload = function () {
+                    file.dataURL = fileReader.result;
+                    file.previewElement.querySelector("img").src = file.dataURL;
+                    thumbnailElement.src = file.dataURL;
+                }
+                fileReader.readAsDataURL(file);
+              
             }
 
             return setTimeout(function () {

@@ -1001,7 +1001,7 @@ var uploadedfiles = [];
 var totalfileUploadSuccess = 0;
 var perQueueUploadSuccess = 0;
 var queueCount = 0;
-var maxParallelCount = 100;
+var maxParallelCount = 10;
 var totalFileSize = 0;
 var maxTotalFileSize = 500 *  1024 * 1024;
 var maxFilesCount = 1000;
@@ -1048,7 +1048,7 @@ var myDropzone = new Dropzone("div#myDrop", {
             if(REMAINING_DOCUMENTS <= 0){
                 displayMessage("Required files were already added");
             }
-        });
+        }),
         this.on("thumbnail", function(file) {
             var fileReader = new FileReader();
             fileReader.onload = function () {
@@ -1056,18 +1056,18 @@ var myDropzone = new Dropzone("div#myDrop", {
                 file.previewElement.querySelector("img").src = file.dataURL;
             }
             fileReader.readAsDataURL(file);
-        });
+        }),
         this.on("removedfile", function(file) {
             if (jQuery.inArray(file.name, addedfiles) > -1) {
                 addedfiles.pop(file.name);
                 queueCount -= 1;
                 totalFileSize =- file.size;
             }
-        });
+        }),
 
         this.on("processing", function(file) {
             this.options.url = file_upload_rul();
-        });
+        }),
 
         this.on("success", function(file, response) {
             addedfiles.pop(file.name);
@@ -1095,8 +1095,7 @@ var myDropzone = new Dropzone("div#myDrop", {
                 hideLoader();
             }
             // myDropzone.removeAllFiles(true);            
-        });
-
+        }),
         this.on("error", function(file, errorMessage) {
             displayMessage(errorMessage);
             addedfiles.pop(file)
