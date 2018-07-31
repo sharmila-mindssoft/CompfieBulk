@@ -1915,11 +1915,7 @@ var Dropzone = function (_Emitter) {
       this._processingThumbnail = true;
       var file = this._thumbnailQueue.shift();
       return this.createThumbnail(file, this.options.thumbnailWidth, this.options.thumbnailHeight, this.options.thumbnailMethod, true, function (dataUrl) {
-        try{
-            _this10.emit("thumbnail", file, dataUrl);
-        }catch(e){
-            console.log("catched error/..............."+e);
-        }
+        _this10.emit("thumbnail", file, dataUrl);
         _this10._processingThumbnail = false;
         return _this10._processThumbnailQueue();
       });
@@ -2523,25 +2519,19 @@ var Dropzone = function (_Emitter) {
       var transformedFiles = [];
       // Clumsy way of handling asynchronous calls, until I get to add a proper Future library.
       var doneCounter = 0;
-      _this16.options.transformFile.call(_this16, files, function (transformedFile) {
-          transformedFiles[i] = transformedFile;
-          done(transformedFiles);
-          // if (++doneCounter === files.length) {
-            
-          // }
-        });
-      // var _loop = function _loop(i) {
-        // _this16.options.transformFile.call(_this16, files[i], function (transformedFile) {
-        //   transformedFiles[i] = transformedFile;
-        //   if (++doneCounter === files.length) {
-        //     done(transformedFiles);
-        //   }
-        // });
-      // };
 
-      // for (var i = 0; i < files.length; i++) {
-      //   _loop(i);
-      // }
+      var _loop = function _loop(i) {
+        _this16.options.transformFile.call(_this16, files[i], function (transformedFile) {
+          transformedFiles[i] = transformedFile;
+          if (++doneCounter === files.length) {
+            done(transformedFiles);
+          }
+        });
+      };
+
+      for (var i = 0; i < files.length; i++) {
+        _loop(i);
+      }
     }
 
     // Takes care of adding other input elements of the form to the AJAX request

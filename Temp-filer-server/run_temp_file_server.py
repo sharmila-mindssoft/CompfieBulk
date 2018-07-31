@@ -150,6 +150,8 @@ def update_file_status_client(update_tuples):
             )
         query += q2 + q3 
         result = _db_con.cmd_query_iter(query)
+        for r in result:
+            print r
         _db_con.commit()
     except Exception, e:
         logger.logTempFiler(
@@ -303,39 +305,40 @@ def upload_client():
     )
     update_tuples = []
     if request.method == 'POST':
-        csvid = request.args.get("csvid")
-        load_path = os.path.join(
-            app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], csvid
-        )
-        if not os.path.exists(load_path):
-            os.makedirs(load_path)
-            os.chmod(load_path, 0777)
-        for key, zf in request.files.iteritems():
-            actual_file = os.path.join(load_path, zf.filename)
-            zip_f_name = actual_file + ".zip"
-            zf.save(zip_f_name)
-            zip_ref = zipfile.ZipFile(zip_f_name, 'r')
-            for f in zip_ref.infolist():
-                actual_file = os.path.join(load_path, f.filename)
+        for key, f in request.files.iteritems():
+            if key.startswith('file'):
                 random_string = generate_random(5)
                 fn = f.filename
                 fname = fn.split(".")
                 random_file_name = fname[
                     0] + '-' + random_string + "." + fname[1]
-                zip_ref.extract(fn, load_path)
+                csvid = request.args.get("csvid")
+                load_path = os.path.join(
+                    app.config['CLIENT_DOCUMENT_UPLOAD_PATH'], csvid
+                )
+                if not os.path.exists(load_path):
+                    os.makedirs(load_path)
+                    os.chmod(load_path, 0777)
+
+                actual_file = os.path.join(load_path, f.filename)
+                zip_f_name = actual_file + ".zip"
+                f.save(zip_f_name)
+                zip_ref = zipfile.ZipFile(zip_f_name, 'r')
+                zip_ref.extractall(load_path)
+                zip_ref.close()
                 os.rename(actual_file, load_path + '/' + random_file_name)
                 renamed_file = os.path.join(load_path, random_file_name)
                 renamed_file_size = os.path.getsize(renamed_file)
+                os.remove(zip_f_name)
                 update_tuples.append(
                     [fn, random_file_name, renamed_file_size, csvid])
-            if update_file_status_client(update_tuples) is False:
-                logger.logTempFiler(
-                    "info", "run_tempfile_server > /client/temp/upload",
-                    "update file status failed"
-                )
-                return "update failed"
-            zip_ref.close()
-            os.remove(zip_f_name)
+        if update_file_status_client(update_tuples) is False:
+            logger.logTempFiler(
+                "info", "run_tempfile_server > /client/temp/upload",
+                "update file status failed"
+            )
+            return "update failed"
+
         return "success"
 
 

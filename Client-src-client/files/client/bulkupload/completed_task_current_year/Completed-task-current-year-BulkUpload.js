@@ -1013,11 +1013,9 @@ var myDropzone = new Dropzone("div#myDrop", {
     maxFiles: maxFilesCount,
     parallelUploads: maxParallelCount,
     url: "#",
-    transformFile: function transformFile(files, done) {
+    transformFile: function transformFile(file, done) {
         var zip = new JSZip();
-        for (var i = 0; i < files.length; i++) {
-            zip.file(files[i].name, files[i]);
-        }        
+        zip.file(file.name, file);
         zip.generateAsync({
             type: "blob",
             compression: "DEFLATE"
@@ -1092,6 +1090,7 @@ var myDropzone = new Dropzone("div#myDrop", {
                 BUCT_PAGE.showList();
             }
             if(queueCount == 0 || totalfileUploadSuccess == queueCount){
+                totalFileSize = 0;
                 hideLoader();
             }
             // myDropzone.removeAllFiles(true);            
