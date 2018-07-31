@@ -22,7 +22,7 @@ var CSVFILENAME = $('#csvfile');
 var CSVUPLOADBUTTON = $('.uploadbtn');
 var CSVUPLOADEDFILE = '';
 
-var TIMEOUT_MLS = 30000;
+var TIMEOUT_MLS = 45000;
 // To load the client groups under logged techno executive
 function initialize(type_of_initialization) {
 	displayLoader();
