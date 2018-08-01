@@ -963,6 +963,10 @@ function resetAdd() {
     addedfiles = [];
     uploadedfiles = [];
     loadEntityDetails();
+    totalfileUploadSuccess = 0;
+    perQueueUploadSuccess = 0;
+    queueCount = 0;
+    totalFileSize = 0;
 }
 
 function resetEdit() {
@@ -992,6 +996,10 @@ function resetEdit() {
     addedfiles = [];
     uploadedfiles = [];
     loadEntityDetails();
+    totalfileUploadSuccess = 0;
+    perQueueUploadSuccess = 0;
+    queueCount = 0;
+    totalFileSize = 0;
 }
 
 Dropzone.autoDiscover = false;
@@ -1003,7 +1011,7 @@ var perQueueUploadSuccess = 0;
 var queueCount = 0;
 var maxParallelCount = 10;
 var totalFileSize = 0;
-var maxTotalFileSize = 500 *  1024 * 1024;
+var maxTotalFileSize = 500 * 1024 * 1024;
 var maxFilesCount = 1000;
 var myDropzone = new Dropzone("div#myDrop", {
     addRemoveLinks: true,
@@ -1029,19 +1037,21 @@ var myDropzone = new Dropzone("div#myDrop", {
                 jQuery.inArray(file.name, addedfiles) > -1 ||
                 jQuery.inArray(file.name, DOC_NAMES) == -1 ||
                 jQuery.inArray(file.name, uploadedfiles) > -1 ||
-                REMAINING_DOCUMENTS <= 0 || addedfiles.length >= maxFilesCount
+                REMAINING_DOCUMENTS <= 0
             ){
                 myDropzone.removeFile(file);
             }else {
                 if (totalFileSize + file.size > maxTotalFileSize ){
                     displayMessage("Total File size exceeds allowed limit."); 
                     myDropzone.removeFile(file);
+                }if (addedfiles.length >= maxFilesCount){
+                    displayMessage("Total File count exceeds allowed limit.");
+                    myDropzone.removeFile(file);
                 }else{
                     addedfiles.push(file.name);
                     queueCount += 1;
                     totalFileSize += file.size;
                 }
-                
             }
             if(REMAINING_DOCUMENTS <= 0){
                 displayMessage("Required files were already added");
