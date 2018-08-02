@@ -1,3 +1,5 @@
+var maxFilesCount = 10;
+var maxTotalFileSize = (1 * 1024 * 1024)/ 10;
 function getDomains(le_id, callback) {
     var request = [
         'GetCompletedTask_Domains', {

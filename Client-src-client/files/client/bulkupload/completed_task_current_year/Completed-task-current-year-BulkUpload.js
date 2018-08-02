@@ -1011,8 +1011,8 @@ var perQueueUploadSuccess = 0;
 var queueCount = 0;
 var maxParallelCount = 10;
 var totalFileSize = 0;
-var maxTotalFileSize = 500 * 1024 * 1024;
-var maxFilesCount = 1000;
+// var maxTotalFileSize = (1 * 1024 * 1024)/ 10;
+// var maxFilesCount = 10;
 var myDropzone = new Dropzone("div#myDrop", {
     addRemoveLinks: true,
     autoProcessQueue: false,
@@ -1040,13 +1040,13 @@ var myDropzone = new Dropzone("div#myDrop", {
                 REMAINING_DOCUMENTS <= 0
             ){
                 myDropzone.removeFile(file);
-            }else {
+            }else{
                 if (totalFileSize + file.size > maxTotalFileSize ){
-                    displayMessage("Total File size exceeds allowed limit."); 
+                    displayMessage("Max File size "+ maxTotalFileSize+ " reached");
                     myDropzone.removeFile(file);
-                }if (addedfiles.length >= maxFilesCount){
-                    displayMessage("Total File count exceeds allowed limit.");
-                    myDropzone.removeFile(file);
+                }else if (addedfiles.length >= maxFilesCount){
+                    displayMessage("Max File count " +maxFilesCount +" reached");
+                    myDropzone.removeFile(file);    
                 }else{
                     addedfiles.push(file.name);
                     queueCount += 1;
@@ -1069,7 +1069,7 @@ var myDropzone = new Dropzone("div#myDrop", {
             if (jQuery.inArray(file.name, addedfiles) > -1) {
                 addedfiles.pop(file.name);
                 queueCount -= 1;
-                totalFileSize =- file.size;
+                totalFileSize -= file.size;
             }
         }),
 
