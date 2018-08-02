@@ -133,7 +133,7 @@ def save_client_units_mapping_csv(db, args):
 
 
 def save_mapping_client_unit_data(db, csv_id, csv_data):
-
+    return_data = None
     try:
         columns = [
             "csv_unit_id", "country", "legal_entity", "division", "category",
@@ -151,14 +151,16 @@ def save_mapping_client_unit_data(db, csv_id, csv_data):
                 d["State"], d["Postal_Code"], d["Domain"], d["Organization"],
                 0
             ))
+            if len(values) > 10000:
+                db = connect_bulk_db()
+                return_data = db.bulk_insert("tbl_bulk_units", columns, values)
+                values[:] = []
 
         if values:
             db = connect_bulk_db()
-            db.bulk_insert("tbl_bulk_units", columns, values)
-            db.commit()
-            return True
-        else:
-            return False
+            return_data = db.bulk_insert("tbl_bulk_units", columns, values)
+        db.commit()
+        return return_data
     except Exception, e:
         print e
         raise ValueError("Transaction failed")

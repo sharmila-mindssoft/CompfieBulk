@@ -211,16 +211,16 @@ def rename_file_type(src_file_name, des_file_type):
 
 
 def generate_valid_file(src_file_name):
-    f_types = ["xlsx", "ods", "txt"]
+    # f_types = ["xlsx", "ods", "txt"]
+    f_types = ["xlsx", "txt"]
+    src_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
+    str_split = src_file_name.split('.')
+    src_file = os.path.join(src_path, src_file_name)
     for f in f_types:
-        src_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
-        str_split = src_file_name.split('.')
         new_file = str_split[0] + "." + f
-
         dst_dir = os.path.join(BULKUPLOAD_CSV_PATH, f)
         if not os.path.exists(dst_dir):
             os.makedirs(dst_dir)
-        src_file = os.path.join(src_path, src_file_name)
         new_dst_file_name = os.path.join(dst_dir, new_file)
 
         if f == "txt":
