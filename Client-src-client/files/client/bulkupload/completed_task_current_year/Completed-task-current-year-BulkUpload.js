@@ -1042,7 +1042,9 @@ var myDropzone = new Dropzone("div#myDrop", {
                 myDropzone.removeFile(file);
             }else{
                 if (totalFileSize + file.size > maxTotalFileSize ){
-                    displayMessage("Max File size "+ maxTotalFileSize+ " reached");
+                    displayMessage(
+                        "Max File size "+ maxTotalFileSize /(1024 * 1024)+ "MB reached"
+                    );
                     myDropzone.removeFile(file);
                 }else if (addedfiles.length >= maxFilesCount){
                     displayMessage("Max File count " +maxFilesCount +" reached");
