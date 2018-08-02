@@ -6,6 +6,7 @@ import xlsxwriter
 import pyexcel
 import string
 import random
+from server import logger
 
 from bulkconstants import (
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
@@ -69,9 +70,14 @@ def convert_base64_to_file(src_path, file_name, file_content):
         framed_file_name = frame_file_name(fileSplitString[0])
 
     if file_content is not None:
-        with io.FileIO(file_path, "wb") as fn:
-            fn.write(file_content.decode('base64'))
-
+        try:
+            with open(file_path, "wb") as fn:
+                fn.write(file_content.decode('base64'))
+        except IOError, e:
+            logger.logKnowledge(
+                "error", "bulkuploadcommon - convert_base64_to_file",
+                "Exception when writing Csv file - %s" % (e))
+            raise RuntimeError(e)
     return framed_file_name
 
 ########################################################
@@ -123,7 +129,7 @@ def write_data_to_excel(
 ):
     if not os.path.exists(file_src_path):
         os.makedirs(file_src_path)
-    file_path = os.path.join(file_src_path, file_name)        
+    file_path = os.path.join(file_src_path, file_name)
     workbook = xlsxwriter.Workbook(file_path)
     worksheet = workbook.add_worksheet(sheet_name)
     worksheet.set_column('A:A', 30)
@@ -216,6 +222,7 @@ def generate_valid_file(src_file_name):
     src_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
     str_split = src_file_name.split('.')
     src_file = os.path.join(src_path, src_file_name)
+
     for f in f_types:
         new_file = str_split[0] + "." + f
         dst_dir = os.path.join(BULKUPLOAD_CSV_PATH, f)
@@ -226,9 +233,15 @@ def generate_valid_file(src_file_name):
         if f == "txt":
             general_txt_file(src_file, new_dst_file_name)
         else:
-            pyexcel.save_as(
-                file_name=src_file, dest_file_name=new_dst_file_name
-            )
+            try:
+                pyexcel.save_as(
+                    file_name=src_file, dest_file_name=new_dst_file_name
+                )
+            except IOError, e:
+                logger.logKnowledge(
+                    "error", "bulkuploadcommon - generate_valid_file",
+                    "Exception when writing Ods,xlsx file - %s" % (e))
+                raise RuntimeError(e)
 
 
 def rename_download_file_type(src_file_name, des_file_type):
@@ -254,10 +267,16 @@ def rename_download_file_type(src_file_name, des_file_type):
 
 def general_txt_file(src_file, dst_txt_file_name):
     src_file = src_file.replace('xlsx', 'csv')
-    with open(dst_txt_file_name, "w") as my_output_file:
-        with open(src_file, "r") as my_input_file:
-            for row in csv.reader(my_input_file):
-                my_output_file.write(" ".join(row) + '\n')
+    try:
+        with open(dst_txt_file_name, "w") as my_output_file:
+            with open(src_file, "r") as my_input_file:
+                for row in csv.reader(my_input_file):
+                    my_output_file.write(" ".join(row) + '\n')
+    except IOError, e:
+        logger.logKnowledge(
+            "error", "bulkuploadcommon - general_txt_file",
+            "Exception while writing txt file - %s" % (e))
+        raise RuntimeError(e)
 
 
 def write_download_data_to_excel(

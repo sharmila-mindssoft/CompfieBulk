@@ -243,7 +243,7 @@ def save_mapping_csv(args):
 ########################################################
 
 
-def save_mapping_data(csv_id, csv_data):
+def save_mapping_data_old(csv_id, csv_data):
     try:
         columns = [
             "csv_id", "s_no", "organization", "geography_location",
@@ -284,6 +284,52 @@ def save_mapping_data(csv_id, csv_data):
             return True
         else:
             return False
+    except Exception, e:
+        print str(e)
+        raise ValueError("Transaction failed")
+
+
+def save_mapping_data(csv_id, csv_data):
+    try:
+        columns = [
+            "csv_id", "s_no", "organization", "geography_location",
+            "statutory_nature", "statutory", "statutory_provision",
+            "compliance_task", "compliance_document",
+            "compliance_description",
+            "penal_consequences", "reference_link", "compliance_frequency",
+            "statutory_month", "statutory_date", "trigger_before",
+            "repeats_every", "repeats_type", "repeat_by", "duration",
+            "duration_type",
+            "multiple_input", "format_file", "task_id", "task_type"
+        ]
+        values = []
+        db = connect_bulk_db()
+        for idx, d in enumerate(csv_data):
+            values.append((
+                csv_id, idx + 1, d["Organization"], d["Applicable_Location"],
+                d["Statutory_Nature"], d["Statutory"],
+                d["Statutory_Provision"],
+                d["Compliance_Task"], d["Compliance_Document"],
+                d["Compliance_Description"], d["Penal_Consequences"],
+                d["Reference_Link"], d["Compliance_Frequency"],
+                d["Statutory_Month"],
+                d["Statutory_Date"], d["Trigger_Days"],
+                None if d["Repeats_Every"] == '' else d["Repeats_Every"],
+                d["Repeats_Type"],
+                None if d["Repeats_By (DOM/EOM)"] == '' else
+                d["Repeats_By (DOM/EOM)"],
+                None if d["Duration"] == '' else d["Duration"],
+                d["Duration_Type"], d["Multiple_Input_Selection"],
+                d["Format"], d["Task_ID"], d["Task_Type"],
+            ))
+            if len(values) > 10000:
+                db.bulk_insert("tbl_bulk_statutory_mapping", columns, values)
+                values[:] = []
+
+        if values:
+            db.bulk_insert("tbl_bulk_statutory_mapping", columns, values)
+        db.commit()
+        return True
     except Exception, e:
         print str(e)
         raise ValueError("Transaction failed")
