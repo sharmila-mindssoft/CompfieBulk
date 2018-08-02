@@ -1304,8 +1304,14 @@ def process_get_cu_upload_status(request):
         return bu_cu.Alive()
     else:
         return_data = ""
-        with open(file_path, "r") as fn:
-            return_data += fn.read()
+        try:
+            with open(file_path, "r") as fn:
+                return_data += fn.read()
+        except IOError, e:
+            logger.logKnowledge(
+                "error", "buclientunitscontroller - process_get_cu_upload_status",
+                "IO Error While Reading return_data file %s" % (e))
+            raise RuntimeError(e)
         remove_uploaded_file(file_path)
         if return_data == "InvalidCSV":
             return bu_sm.InvalidCsvFile()
