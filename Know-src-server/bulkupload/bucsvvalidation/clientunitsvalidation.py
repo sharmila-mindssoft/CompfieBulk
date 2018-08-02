@@ -795,6 +795,10 @@ class SourceDB(object):
                     unit_code = str(
                         unit_code_start_letters
                     ) + '0' + str(u_code)
+                else:
+                    unit_code = str(
+                        unit_code_start_letters
+                    ) + str(u_code)
         else:
             unit_code_start_letters = grp_name[:2].upper()
             if (u_code > 0 and u_code < 10):
@@ -809,6 +813,9 @@ class SourceDB(object):
             elif (u_code >= 1000 and u_code < 10000):
                 unit_code = str(unit_code_start_letters) + \
                     '0' + str(u_code)
+            else:
+                unit_code = str(unit_code_start_letters) + \
+                    str(u_code)
         return unit_code
 
     ##################################################################
@@ -947,8 +954,6 @@ class SourceDB(object):
                     unit_address = unit_data.get("Unit_Address") + "," + \
                         unit_data.get("City") + "," + unit_data.get("State")
                     post_code = unit_data.get("Postal_Code")
-                    print "self._auto_unit_code"
-                    print self._auto_unit_code
                     if self._auto_unit_code is None:
                         unit_code = self.generate_unit_code(
                             cl_id, groupName, le_id, None)
