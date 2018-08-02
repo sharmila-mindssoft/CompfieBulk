@@ -222,6 +222,9 @@ def validate_data(
         try:
             with open(file_path, "wb") as fn:
                 fn.write(return_data)
+                logger.logKnowledge("info", "bustatutorymappingcontroller validate_data",
+                    "Writing returndata in file for pid %s nad csv name %s" % (os.getpid(), csv_name))
+
                 os.chmod(file_path, 0777)
         except IOError, e:
             logger.logKnowledge(
@@ -230,7 +233,9 @@ def validate_data(
             raise RuntimeError(e)
         return
     try:
-        logger.logKnowledge("info", "validate_data", "Process try begins")
+        print "Cuurent process id", os.getpid()
+        logger.logKnowledge("info", "bustatutorymappingcontroller validate_data",
+                            "Process try begins for pid %s, csv name %s" % (os.getpid(), csv_name))
 
         header = pickle.loads(s_header)
         statutory_mapping_data = pickle.loads(s_smap_data)
@@ -239,10 +244,11 @@ def validate_data(
             request_frame.c_id, request_frame.d_id,
             request_frame.csv_name, header
         )
-        logger.logKnowledge("info", "validate_data", "C obj Generated")
+        logger.logKnowledge("info", "bustatutorymappingcontroller validate_data",
+                            "C obj Generated-%s" % (os.getpid()))
         res_data = c_obj.perform_validation()
-        logger.logKnowledge("info", "validate_data",
-                            "PerformValidation Done res_data Got")
+        logger.logKnowledge("info", "bustatutorymappingcontroller validate_data",
+                            "PerformValidation Done res_data Got-%s" % (os.getpid()))
         return_data = None
         if res_data == "InvalidCSV":
             return_data = "InvalidCSV"
@@ -265,14 +271,14 @@ def validate_data(
                 res_data["total"], res_data["doc_count"], upload_sts
             ]
             new_csv_id = save_mapping_csv(csv_args)
-            logger.logKnowledge("info", "validate_data",
-                                "csv id generated csv_id : %s" % (new_csv_id))
+            logger.logKnowledge("info", "bustatutorymappingcontroller validate_data",
+                                "csv id generated csv_id : %s for pid%s" % (new_csv_id, os.getpid()))
             # result = None
 
             if new_csv_id:
                 if save_mapping_data(new_csv_id, res_data["data"]) is True:
-                    logger.logKnowledge("info", "validate_data",
-                                        "Mapping Data Saved")
+                    logger.logKnowledge("info", "bustatutorymappingcontroller validate_data",
+                                        "Mapping Data Saved -%s" % (os.getpid()))
                     if res_data["doc_count"] == 0:
                         c_obj.save_executive_message(
                             csv_name, request_frame.c_name,
@@ -353,10 +359,10 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         if request_frame.csv_size > 0:
             pass
 
-        starttime = datetime.datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+        starttime = datetime.datetime.now()
         logger.logKnowledge(
             "info", "upload_statutory_mapping_csv",
-            "Begin - Upload Clicked. Start Time: %s" % (starttime))
+            "Begin - Upload Clicked. Start Time: %s" % (starttime).strftime("%d-%b-%Y %H:%M:%S"))
 
         if get_rejected_sm_file_count(db, session_user) >= MAX_REJECTED_COUNT:
             return bu_sm.RejectionMaxCountReached()
@@ -367,10 +373,12 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         csv_name = convert_base64_to_file(
             BULKUPLOAD_CSV_PATH, request_frame.csv_name, request_frame.csv_data
         )
-        endtime = datetime.datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+        endtime = datetime.datetime.now()
+        diff = endtime - starttime
+        print "diff -> ", diff
         logger.logKnowledge(
             "info", "upload_statutory_mapping_csv",
-            "Csv File Write Completed - %s" % (endtime))
+            "Csv File Write Completed - %s" % (diff))
 
         logger.logKnowledge(
             "info", "upload_statutory_mapping_csv",
@@ -1038,7 +1046,7 @@ def process_get_status(request):
             return bu_sm.InvalidCsvFile()
         else:
             logger.logKnowledge("info", "process_get_status",
-                                "return_data %s " % (return_data))
+                                "Read return_data %s for %s  pid- %s" % (return_data, csv_name, os.getpid()))
             result = json.loads(return_data)
             logger.logKnowledge("info", "process_get_status",
                                 "Result %s " % (result))

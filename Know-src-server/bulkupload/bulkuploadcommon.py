@@ -8,6 +8,7 @@ import string
 import random
 from server import logger
 from multiprocessing import Process
+import datetime
 
 from bulkconstants import (
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
@@ -234,6 +235,11 @@ def generate_valid_file(src_file_name):
             general_txt_file(src_file, new_dst_file_name)
         else:
             try:
+                starttime = datetime.datetime.now()
+                logger.logKnowledge(
+                    "info", "bulkuploadcommon - generate_valid_file",
+                    "StartTime for %s file - %s, File name %s & Dest filename %s" % (f,
+                    (starttime).strftime("%d-%b-%Y %H:%M:%S"), src_file_name, new_file))
                 # pyexcel.save_as(
                 #     file_name=src_file, dest_file_name=new_dst_file_name
                 # )
@@ -244,6 +250,16 @@ def generate_valid_file(src_file_name):
                     target=pyexcel.save_as,
                     kwargs=keywords)
                 t.start()
+                endtime = datetime.datetime.now()
+                logger.logKnowledge(
+                    "info", "bulkuploadcommon - generate_valid_file",
+                    "endtime for %s file - %s, File name %s & Dest filename %s" % (f,
+                    (endtime).strftime("%d-%b-%Y %H:%M:%S"), src_file_name, new_file))
+                diff = endtime - starttime
+                logger.logKnowledge(
+                    "info", "bulkuploadcommon - generate_valid_file",
+                    "Time difference for %s file - %s, File name %s & Dest filename %s" % (f,
+                    diff, src_file_name, new_file))
             except IOError, e:
                 logger.logKnowledge(
                     "error", "bulkuploadcommon - generate_valid_file",
