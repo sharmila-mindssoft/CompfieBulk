@@ -142,7 +142,6 @@ def save_mapping_client_unit_data(db, csv_id, csv_data):
             "domain", "organization", "action"
         ]
         values = []
-
         for idx, d in enumerate(csv_data):
             values.append((
                 csv_id, d["Country"], d["Legal_Entity"], d["Division"],
@@ -151,14 +150,18 @@ def save_mapping_client_unit_data(db, csv_id, csv_data):
                 d["State"], d["Postal_Code"], d["Domain"], d["Organization"],
                 0
             ))
+            if len(values) > 10000:
+                db = connect_bulk_db()
+                db.bulk_insert("tbl_bulk_units", columns, values)
+                print "CLIENT UNIT: 1000 inserted>>>>>>>>>>>>>>>>>>"
+                values[:] = []
 
         if values:
             db = connect_bulk_db()
             db.bulk_insert("tbl_bulk_units", columns, values)
-            db.commit()
-            return True
-        else:
-            return False
+            print "CLIENT UNIT: %s inserted>>>>>>>>>.." % len(values)
+        db.commit()
+        return True
     except Exception, e:
         print e
         raise ValueError("Transaction failed")

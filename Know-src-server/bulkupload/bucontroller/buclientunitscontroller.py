@@ -179,19 +179,41 @@ def process_bu_client_units_request(request, db, session_user):
 
 def upload_client_units_bulk_csv(db, request_frame, session_user):
     try:
+        starttime = datetime.datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+        logger.logKnowledge(
+            "info", "upload_client_units_bulk_csv",
+            "Begin - Upload Clicked. Start Time: %s" % (starttime))
+
         if get_bulk_client_unit_file_count(db, session_user.user_id()) is False:
             return bu_cu.ClientUnitUploadMaxReached()
-
+        logger.logKnowledge(
+            "info", "upload_client_units_bulk_csv",
+            "Begin, Max Count Checked"
+        )
         # save csv file
         csv_name = convert_base64_to_file(
             BULKUPLOAD_CSV_PATH, request_frame.csv_name,
             request_frame.csv_data
         )
+        endtime = datetime.datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+        logger.logKnowledge(
+            "info", "upload_client_units_bulk_csv",
+            "Csv File Write Completed - %s" % (endtime))
+        logger.logKnowledge(
+            "info", "upload_client_units_bulk_csv",
+            "Base 64 Converted csv_name - %s" % (csv_name))
+
         # read data from csv file
         header, client_units_bulk_data = read_data_from_csv(csv_name)
+        logger.logKnowledge(
+            "info", "upload_client_units_bulk_csv",
+            "Read Data From Csv Done, header: %s " % (header))
 
         cu_header = pickle.dumps(header)
         cu_bulk_data = pickle.dumps(client_units_bulk_data)
+
+        logger.logKnowledge("info", "upload_client_units_bulk_csv",
+                            "Begin Multi processing")
 
         t = multiprocessing.Process(
             target=client_unit_validate_data,
@@ -201,8 +223,11 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             )
         )
         t.start()
-        print "Proces id========================================>", t.pid
-
+        print "Proces id=======================>", t.pid
+        logger.logKnowledge(
+            "info", "upload_client_units_bulk_csv",
+            "Process Id %s for csvname %s: " % (t.pid, csv_name)
+        )
         return bu_cu.Done(csv_name)
     except Exception, e:
         print e
@@ -222,12 +247,20 @@ def client_unit_validate_data(
             file_string[0], "upload", "txt"
         )
         file_path = "%s/%s" % (BULKUPLOAD_INVALID_PATH, file_name)
-        with open(file_path, "wb") as fn:
-            fn.write(return_data)
-            os.chmod(file_path, 0777)
+        try:
+            with open(file_path, "wb") as fn:
+                fn.write(return_data)
+                os.chmod(file_path, 0777)
+        except IOError, e:
+            logger.logKnowledge(
+                "error", "client_unit_validate_data - write_file",
+                "IO Error While writing return_data file %s" % (e))
+            raise RuntimeError(e)
         return
     try:
         # csv data validation
+        logger.logKnowledge("info", "client_unit_validate_data",
+                            "Process begin")
         header = pickle.loads(cu_header)
         client_units_bulk_data = pickle.loads(cu_bulk_data)
         return_data = None
@@ -237,7 +270,12 @@ def client_unit_validate_data(
             request_frame.bu_client_id,
             csv_name, header
         )
+        logger.logKnowledge("info", "client_unit_validate_data",
+                            "clientUnitObj Generated")
         validationResult = clientUnitObj.perform_validation()
+
+        logger.logKnowledge("info", "client_unit_validate_data",
+                            "Perform validation Done ")
         print "err--------------------------------------------"
         print validationResult
         if (
@@ -249,26 +287,37 @@ def client_unit_validate_data(
             (validationResult["return_status"] is not None and
                 validationResult["return_status"] is True)
         ):
+            logger.logKnowledge("info", "client_unit_validate_data",
+                                "Came into if before generate valid file ")
             generate_valid_file(csv_name)
             csv_args = [
                 request_frame.bu_client_id, request_frame.bu_group_name,
                 csv_name, session_user, validationResult["total"]
             ]
             new_csv_id = save_client_units_mapping_csv(db, csv_args)
+            logger.logKnowledge("info", "client_unit_validate_data",
+                                "csv id generated -> %s " % (new_csv_id))
             if new_csv_id:
                 if save_mapping_client_unit_data(
                         db, new_csv_id, validationResult["data"]
                 ) is True:
+                    logger.logKnowledge("info", "client_unit_validate_data",
+                                        "save mapping client unit if True ")
                     clientUnitObj.save_executive_message(
                         csv_name, request_frame.bu_group_name,
                         session_user
                     )
+                    logger.logKnowledge("info", "client_unit_validate_data",
+                                        "save_executive_message saved ")
                     clientUnitObj.source_commit()
                     result = bu_cu.UploadClientUnitBulkCSVSuccess(
                         validationResult["total"], validationResult["valid"],
                         validationResult["invalid"]
                     ).to_structure()
                     return_data = json.dumps(result)
+                    logger.logKnowledge(
+                        "info", "client_unit_validate_data",
+                        "return data in first If-> %s" % (return_data))
         elif (
             "No such file or directory" not in validationResult and
             "ordinal not in range(128)" not in validationResult and
@@ -290,6 +339,9 @@ def client_unit_validate_data(
                 validationResult["total"], validationResult["invalid"]
             ).to_structure()
             return_data = json.dumps(result)
+            logger.logKnowledge(
+                        "info", "client_unit_validate_data",
+                        "return data in first elIf-> %s" % (return_data))
         elif (
             "No such file or directory" not in validationResult and
             "ordinal not in range(128)" not in validationResult and
@@ -299,6 +351,9 @@ def client_unit_validate_data(
         ):
             result = bu_cu.EmptyCSVUploaded().to_structure()
             return_data = json.dumps(result)
+            logger.logKnowledge(
+                        "info", "client_unit_validate_data",
+                        "return data in second elIf-> %s" % (return_data))
         elif (
             "No such file or directory" not in validationResult and
             "ordinal not in range(128)" not in validationResult and
@@ -312,6 +367,9 @@ def client_unit_validate_data(
                                             csv_max_lines=CSV_MAX_LINES
                             ).to_structure()
             return_data = json.dumps(result)
+            logger.logKnowledge(
+                        "info", "client_unit_validate_data",
+                        "return data in third elIf-> %s" % (return_data))
         elif (
             "No such file or directory" not in validationResult and
             "ordinal not in range(128)" not in validationResult and
@@ -319,12 +377,18 @@ def client_unit_validate_data(
         ):
             result = bu_cu.CSVColumnMisMatched().to_structure()
             return_data = json.dumps(result)
+            logger.logKnowledge(
+                        "info", "client_unit_validate_data",
+                        "return data in fourth elIf-> %s" % (return_data))
         elif (
             "No such file or directory" in validationResult or
             "ordinal not in range(128)" in validationResult
         ):
             result = bu_cu.InvalidCSVUploaded().to_structure()
             return_data = json.dumps(result)
+            logger.logKnowledge(
+                        "info", "client_unit_validate_data",
+                        "return data in fifth elIf-> %s" % (return_data))
     except AssertionError as error:
         e = "AssertionError"
         return_data = json.dumps(e)
