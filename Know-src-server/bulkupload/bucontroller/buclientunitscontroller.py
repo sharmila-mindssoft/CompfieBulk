@@ -75,7 +75,6 @@ t = None
 def process_bu_client_units_request(request, db, session_user):
     result = None
     db = db
-    print "DB IN request", type(request.request), " db ", db
     request_frame = request.request
 
     if type(request_frame) is bu_cu.UploadClientUnitsBulkCSV:
@@ -427,7 +426,6 @@ def upload_client_units_bulk_csv_old_copy(db, request_frame, session_user):
         )
         validationResult = clientUnitObj.perform_validation()
         print "err--------------------------------------------"
-        print validationResult
         if (
             "No such file or directory" not in validationResult and
             validationResult != "Empty CSV File Uploaded" and
@@ -1317,7 +1315,6 @@ def process_get_cu_upload_status(request):
             return bu_sm.InvalidCsvFile()
         else:
             result = json.loads(return_data)
-            print "Result ->>>>> ", result
             if str(result[0]) == "UploadClientUnitBulkCSVSuccess":
                 return bu_cu.UploadClientUnitBulkCSVSuccess.parse_inner_structure(result[1])
             elif str(result[0]) == "UploadClientUnitBulkCSVFailed":
@@ -1353,7 +1350,6 @@ def process_get_approve_client_unit_status(request):
             return_data += fn.read()
         remove_uploaded_file(file_path)
         result = json.loads(return_data)
-        print "Result from file -> ", result
         if str(result[0]) == "ReturnDeclinedCount":
             return bu_cu.ReturnDeclinedCount.parse_inner_structure(result[1])
 

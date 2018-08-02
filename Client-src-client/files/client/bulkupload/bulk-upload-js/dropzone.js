@@ -225,7 +225,7 @@ var Dropzone = function (_Emitter) {
          * the event `maxfilesexceeded` will be called. The dropzone element gets the
          * class `dz-max-files-reached` accordingly so you can provide visual feedback.
          */
-        maxFilesize: 50,
+        maxFilesize: 1000,
 
         /**
          * The name of the file param that gets transferred.
@@ -847,9 +847,15 @@ var Dropzone = function (_Emitter) {
               }
 
               var thumbnailElement = _ref5;
-
               thumbnailElement.alt = file.name;
-              thumbnailElement.src = dataUrl;
+              var fileReader = new FileReader();
+                fileReader.onload = function () {
+                    file.dataURL = fileReader.result;
+                    file.previewElement.querySelector("img").src = file.dataURL;
+                    thumbnailElement.src = file.dataURL;
+                }
+                fileReader.readAsDataURL(file);
+              
             }
 
             return setTimeout(function () {
@@ -1202,7 +1208,7 @@ var Dropzone = function (_Emitter) {
             _this3.hiddenFileInput.parentNode.removeChild(_this3.hiddenFileInput);
           }
           _this3.hiddenFileInput = document.createElement("input");
-          _this3.hiddenFileInput.setAttribute("webkitdirectory", true);
+          // _this3.hiddenFileInput.setAttribute("webkitdirectory", true);
           _this3.hiddenFileInput.setAttribute("type", "file");
           if (_this3.options.maxFiles === null || _this3.options.maxFiles > 1) {
             _this3.hiddenFileInput.setAttribute("multiple", "multiple");
@@ -1800,10 +1806,12 @@ var Dropzone = function (_Emitter) {
         return done(this.options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", this.options.maxFilesize));
       } else if (!Dropzone.isValidFile(file, this.options.acceptedFiles)) {
         return done(this.options.dictInvalidFileType);
-      } else if (this.options.maxFiles != null && this.getAcceptedFiles().length >= this.options.maxFiles) {
-        done(this.options.dictMaxFilesExceeded.replace("{{maxFiles}}", this.options.maxFiles));
-        return this.emit("maxfilesexceeded", file);
-      } else {
+      } 
+      // else if (this.options.maxFiles != null && this.getAcceptedFiles().length >= this.options.maxFiles) {
+      //   done(this.options.dictMaxFilesExceeded.replace("{{maxFiles}}", this.options.maxFiles));
+      //   return this.emit("maxfilesexceeded", file);
+      // } 
+      else {
         return this.options.accept.call(this, file, done);
       }
     }
@@ -2107,7 +2115,6 @@ var Dropzone = function (_Emitter) {
       if (callback != null) {
         img.onerror = callback;
       }
-
       return img.src = file.dataURL;
     }
 

@@ -780,28 +780,54 @@ function downloadData() {
     } else {
         legalEntityName = LEGALENTITY_NAME_LABEL.text();
     }
+    args = {
+        "le_id":parseInt(leId), "domain_id": parseInt(domainId),
+        "unit_id": parseInt(unitId), "frequency": frequency,
+        "start_count": startCount, "le_name": legalEntityName,
+        "domain_name": domainName, "unit_name": unitName,
+        "unit_code": unitCode
 
-    buClient.getDownloadData(
-        parseInt(leId), parseInt(domainId), parseInt(unitId),
-        frequency, startCount,
-        legalEntityName, domainName, unitName, unitCode,
-        function(error, data) {
-            if (error == null) {
-                downloadUrl = data.link;
-                if (downloadUrl != null) {
-                    window.open(downloadUrl, '_blank');
-                } else {
-                    displayMessage(message.no_compliance_available);
-                }
-                hideLoader();
+    }
+    var csv_name = null;
+    function apiCall(legId, csv_name, callback){
+        buClient.GetStatus(legId, csv_name, callback);
+    }
+    function call_bck_fn(error, data){
+        if (error == "Alive"){
+            setTimeout(
+                apiCall, TIMEOUT_MLS, args["le_id"], csv_name, call_bck_fn);
+        }else if (error == null) {
+            downloadUrl = data.link;
+            if (downloadUrl != null) {
+                window.open(downloadUrl, '_blank');
             } else {
-                if (error == "ExportToCSVEmpty"){
-                    displayMessage(message.no_compliance_available);
-                }
-                hideLoader();
+                displayMessage(message.no_compliance_available);
             }
+            hideLoader();
+        } else {
+            if (error == "ExportToCSVEmpty"){
+                displayMessage(message.no_compliance_available);
+            }
+            hideLoader();
         }
-    );
+    }
+    function mainApiCall(args){
+        buClient.getDownloadData(
+            args["le_id"], args["domain_id"], args["unit_id"],
+            args["frequency"], args["start_count"], args["le_name"],
+            args["domain_name"], args["unit_name"], args["unit_code"],
+            function(error, data) {
+                if(error == "Done" || data == "Done"){
+                    csv_name = data.csv_name;
+                    apiCall(args["le_id"], csv_name, call_bck_fn);
+                }else{
+                    hideLoader();
+                    displayMessage(error);
+                }
+            }
+        );
+    }
+    mainApiCall(args);
 }
 
 
@@ -937,6 +963,10 @@ function resetAdd() {
     addedfiles = [];
     uploadedfiles = [];
     loadEntityDetails();
+    totalfileUploadSuccess = 0;
+    perQueueUploadSuccess = 0;
+    queueCount = 0;
+    totalFileSize = 0;
 }
 
 function resetEdit() {
@@ -966,6 +996,10 @@ function resetEdit() {
     addedfiles = [];
     uploadedfiles = [];
     loadEntityDetails();
+    totalfileUploadSuccess = 0;
+    perQueueUploadSuccess = 0;
+    queueCount = 0;
+    totalFileSize = 0;
 }
 
 Dropzone.autoDiscover = false;
@@ -975,10 +1009,16 @@ var uploadedfiles = [];
 var totalfileUploadSuccess = 0;
 var perQueueUploadSuccess = 0;
 var queueCount = 0;
-var maxParallelCount = 2;
+var maxParallelCount = 10;
+var totalFileSize = 0;
+// var maxTotalFileSize = (1 * 1024 * 1024)/ 10;
+// var maxFilesCount = 10;
 var myDropzone = new Dropzone("div#myDrop", {
     addRemoveLinks: true,
     autoProcessQueue: false,
+    uploadMultiple: true,
+    timeout: 3600000,
+    maxFiles: maxFilesCount,
     parallelUploads: maxParallelCount,
     url: "#",
     transformFile: function transformFile(file, done) {
@@ -1000,25 +1040,44 @@ var myDropzone = new Dropzone("div#myDrop", {
                 REMAINING_DOCUMENTS <= 0
             ){
                 myDropzone.removeFile(file);
-            }else {
-                addedfiles.push(file.name);
-                queueCount += 1;
+            }else{
+                if (totalFileSize + file.size > maxTotalFileSize ){
+                    displayMessage(
+                        "Max File size "+ maxTotalFileSize /(1024 * 1024)+ "MB reached"
+                    );
+                    myDropzone.removeFile(file);
+                }else if (addedfiles.length >= maxFilesCount){
+                    displayMessage("Max File count " +maxFilesCount +" reached");
+                    myDropzone.removeFile(file);    
+                }else{
+                    addedfiles.push(file.name);
+                    queueCount += 1;
+                    totalFileSize += file.size;
+                }
             }
             if(REMAINING_DOCUMENTS <= 0){
                 displayMessage("Required files were already added");
             }
-
-        });
+        }),
+        this.on("thumbnail", function(file) {
+            var fileReader = new FileReader();
+            fileReader.onload = function () {
+                file.dataURL = fileReader.result;
+                file.previewElement.querySelector("img").src = file.dataURL;
+            }
+            fileReader.readAsDataURL(file);
+        }),
         this.on("removedfile", function(file) {
             if (jQuery.inArray(file.name, addedfiles) > -1) {
                 addedfiles.pop(file.name);
                 queueCount -= 1;
+                totalFileSize -= file.size;
             }
-        });
+        }),
 
         this.on("processing", function(file) {
             this.options.url = file_upload_rul();
-        });
+        }),
 
         this.on("success", function(file, response) {
             addedfiles.pop(file.name);
@@ -1043,11 +1102,11 @@ var myDropzone = new Dropzone("div#myDrop", {
                 BUCT_PAGE.showList();
             }
             if(queueCount == 0 || totalfileUploadSuccess == queueCount){
+                totalFileSize = 0;
                 hideLoader();
             }
             // myDropzone.removeAllFiles(true);            
-        });
-
+        }),
         this.on("error", function(file, errorMessage) {
             displayMessage(errorMessage);
             addedfiles.pop(file)
@@ -1060,58 +1119,6 @@ var myDropzone = new Dropzone("div#myDrop", {
 function BulkCompletedTaskCurrentYear() {
     this._ActionMode = null;
     this._ListDataForView = [];
-}
-
-function genericWorker(worker_url, data) {
-    return new Promise(function (resolve, reject) {
-
-        if (!data.callback || !Array.isArray(data.callback))
-            return reject("Invalid data")
-
-        var callback = data.callback.pop()
-        var functions = data.callback
-        var context = data.context
-
-        if (!worker_url)
-            return reject("Worker_url is undefined")
-
-        if (!callback)
-            return reject("A callback was expected")
-
-        if (functions.length>0 && !context)
-            return reject("context is undefined")
-
-        callback = fn_string(callback) //Callback to be executed
-        functions = functions.map((fn_name)=> { return fn_string( context[fn_name] ) })
-
-        var worker = new Worker(worker_url)
-
-        worker.postMessage({ callback: callback, functions: functions })
-
-        worker.addEventListener('error', function(error){
-            return reject(error.message)
-        })
-
-        worker.addEventListener('message', function(e) {
-            resolve(e.data)
-            worker.terminate()
-
-        }, false)
-
-
-        //From function to string, with its name, arguments and its body
-        function fn_string (fn) {
-            var name = fn.name
-            fn = fn.toString()
-
-            return {
-                name: name,
-                args: fn.substring(fn.indexOf("(") + 1, fn.indexOf(")")),
-                body: fn.substring(fn.indexOf("{") + 1, fn.lastIndexOf("}"))
-            }
-        }
-
-    })
 }
 
 BUCT_PAGE = new BulkCompletedTaskCurrentYear();

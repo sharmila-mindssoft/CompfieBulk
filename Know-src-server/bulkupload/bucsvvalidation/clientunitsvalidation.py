@@ -1823,8 +1823,6 @@ class ValidateClientUnitsBulkCsvData(SourceDB):
             self.perform_csv_temp_validation()
         if csv_column_compare is not None:
             return "Csv Column Mismatched"
-        print "length validation of file--------------------------------"
-        print len(self._source_data), CSV_MAX_LINES
         if len(self._source_data) > 0 and \
                 len(self._source_data) <= CSV_MAX_LINES:
             for row_idx, data in enumerate(self._source_data):

@@ -225,6 +225,8 @@ def generate_valid_file(src_file_name):
         new_file = str_split[0] + "." + f
 
         dst_dir = os.path.join(BULKUPLOAD_CSV_PATH, f)
+        if not os.path.exists(dst_dir):
+            os.makedirs(dst_dir)
         src_file = os.path.join(src_path, src_file_name)
         new_dst_file_name = os.path.join(dst_dir, new_file)
 

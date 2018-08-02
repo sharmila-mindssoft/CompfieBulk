@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import collections
 import mysql.connector
 import requests
@@ -442,9 +443,6 @@ class SourceDB(object):
                 compliance_task, description, provision
             ]
             db = bulkupload_db_connect()
-            print "db:>>>>>>>>>>>> %s" % db
-            print "bulk db con:>>>>>>>>>...........%s" % bulk_db_con
-            print "bulk db :>>>>>>>>>...........%s" % bulk_db
             rows = db.select_all(q, params)
             due_dates_list = []
             for row in rows:
@@ -860,11 +858,10 @@ class SourceDB(object):
 
 
 class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
-    def __init__(self, db, source_data, session_user, csv_name, csv_header):
+    def __init__(self, db, source_data, csv_name, csv_header):
         SourceDB.__init__(self)
         self._db = db
         self._source_data = source_data
-        self._session_user_obj = session_user
         self._csv_name = csv_name
         self._csv_header = csv_header
         self._legal_entity_names = None
@@ -1241,29 +1238,29 @@ class ValidateCompletedTaskCurrentYearCsvData(SourceDB):
 
 
 class ValidateCompletedTaskForSubmit(SourceDB):
-    def __init__(self, db, csv_id, data_result, session_user, legal_entity_id):
+    def __init__(self, db, csv_id, data_result, legal_entity_id):
         SourceDB.__init__(self)
         self._db = db
         self._stop = None
         self._csv_id = csv_id
-        self._session_user_obj = session_user
         self._source_data = data_result
         self.doc_count = 0
         self.main_db_due_dates = {}
-        self.get_file_count(db)
+        self.get_file_count()
         self.connect_source_db(legal_entity_id)
         self.get_compliance_task()
 
-    def get_file_count(self, db):
+    def get_file_count(self):
         query = "select total_documents from tbl_bulk_past_data_csv " + \
                 "where csv_past_id = %s"
         param = [self._csv_id]
+        db = bulkupload_db_connect()
         doc_rows = db.select_all(query, param)
         doc_count = 0
         for d in doc_rows:
             doc_count = d.get("total_documents")
-
         self.doc_count = doc_count
+        close_bulkupload_db(db)
 
     def check_for_duplicate_records(self, legal_entity_id):
         def query_db(
@@ -1354,9 +1351,9 @@ class ValidateCompletedTaskForSubmit(SourceDB):
                 )
 
             if self._stop is False:
-                t = threading.Timer(60, check_status)
-                t.daemon = True
-                t.start()
+                time.sleep(30)
+                check_status()
+
 
         def get_file_stats(csvid):
             file_status = None
@@ -1397,7 +1394,7 @@ class ValidateCompletedTaskForSubmit(SourceDB):
             "file_server_id = (select file_server_id from " + \
             " tbl_client_database where legal_entity_id = %s )"
         param = [legal_id]
-        self.connect_knowledge_db(legal_id)
+        self.connect_knowledge_db()
         doc_rows = self._knowledge_db.select_all(query, param)
         if doc_rows > 0:
             file_server_ip = doc_rows[0]["ip"]
