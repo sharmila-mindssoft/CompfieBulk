@@ -353,10 +353,10 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         if request_frame.csv_size > 0:
             pass
 
-        starttime = datetime.datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+        starttime = datetime.datetime.now()
         logger.logKnowledge(
             "info", "upload_statutory_mapping_csv",
-            "Begin - Upload Clicked. Start Time: %s" % (starttime))
+            "Begin - Upload Clicked. Start Time: %s" % (starttime).strftime("%d-%b-%Y %H:%M:%S"))
 
         if get_rejected_sm_file_count(db, session_user) >= MAX_REJECTED_COUNT:
             return bu_sm.RejectionMaxCountReached()
@@ -367,10 +367,12 @@ def upload_statutory_mapping_csv(db, request_frame, session_user):
         csv_name = convert_base64_to_file(
             BULKUPLOAD_CSV_PATH, request_frame.csv_name, request_frame.csv_data
         )
-        endtime = datetime.datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+        endtime = datetime.datetime.now()
+        diff = endtime - starttime
+        print "diff -> ", diff
         logger.logKnowledge(
             "info", "upload_statutory_mapping_csv",
-            "Csv File Write Completed - %s" % (endtime))
+            "Csv File Write Completed - %s" % (diff))
 
         logger.logKnowledge(
             "info", "upload_statutory_mapping_csv",

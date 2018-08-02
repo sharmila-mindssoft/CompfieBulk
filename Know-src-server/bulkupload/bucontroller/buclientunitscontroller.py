@@ -178,10 +178,10 @@ def process_bu_client_units_request(request, db, session_user):
 
 def upload_client_units_bulk_csv(db, request_frame, session_user):
     try:
-        starttime = datetime.datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+        starttime = datetime.datetime.now()
         logger.logKnowledge(
             "info", "upload_client_units_bulk_csv",
-            "Begin - Upload Clicked. Start Time: %s" % (starttime))
+            "Begin - Upload Clicked. Start Time: %s" % (starttime.strftime("%d-%b-%Y %H:%M:%S")))
 
         if get_bulk_client_unit_file_count(db, session_user.user_id()) is False:
             return bu_cu.ClientUnitUploadMaxReached()
@@ -194,10 +194,12 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             BULKUPLOAD_CSV_PATH, request_frame.csv_name,
             request_frame.csv_data
         )
-        endtime = datetime.datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+        endtime = datetime.datetime.now()
+        diff = endtime - starttime
+
         logger.logKnowledge(
             "info", "upload_client_units_bulk_csv",
-            "Csv File Write Completed - %s" % (endtime))
+            "Csv File Write Completed - %s" % (diff))
         logger.logKnowledge(
             "info", "upload_client_units_bulk_csv",
             "Base 64 Converted csv_name - %s" % (csv_name))
