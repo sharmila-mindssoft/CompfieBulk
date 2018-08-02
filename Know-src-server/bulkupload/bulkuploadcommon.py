@@ -7,6 +7,7 @@ import pyexcel
 import string
 import random
 from server import logger
+from multiprocessing import Process
 
 from bulkconstants import (
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
@@ -217,8 +218,7 @@ def rename_file_type(src_file_name, des_file_type):
 
 
 def generate_valid_file(src_file_name):
-    # f_types = ["xlsx", "ods", "txt"]
-    f_types = ["xlsx", "txt"]
+    f_types = ["xlsx", "ods", "txt"]
     src_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
     str_split = src_file_name.split('.')
     src_file = os.path.join(src_path, src_file_name)
@@ -234,9 +234,16 @@ def generate_valid_file(src_file_name):
             general_txt_file(src_file, new_dst_file_name)
         else:
             try:
-                pyexcel.save_as(
-                    file_name=src_file, dest_file_name=new_dst_file_name
-                )
+                # pyexcel.save_as(
+                #     file_name=src_file, dest_file_name=new_dst_file_name
+                # )
+                keywords = {
+                    'file_name': src_file,
+                    'dest_file_name': new_dst_file_name}
+                t = Process(
+                    target=pyexcel.save_as,
+                    kwargs=keywords)
+                t.start()
             except IOError, e:
                 logger.logKnowledge(
                     "error", "bulkuploadcommon - generate_valid_file",
