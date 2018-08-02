@@ -277,8 +277,6 @@ def client_unit_validate_data(
 
         logger.logKnowledge("info", "client_unit_validate_data",
                             "Perform validation Done for %s " % (os.getpid()))
-        print "err--------------------------------------------"
-        print validationResult
         if (
             "No such file or directory" not in validationResult and
             validationResult != "Empty CSV File Uploaded" and

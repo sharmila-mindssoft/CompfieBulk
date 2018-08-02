@@ -377,4 +377,4 @@ def remove_bulk_uploaded_files(csv_name):
             remove_file
             )
         if os.path.exists(file_path) is True:
-            print remove_uploaded_file(file_path)
+            remove_uploaded_file(file_path)
