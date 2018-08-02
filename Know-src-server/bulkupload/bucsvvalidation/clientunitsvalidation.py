@@ -755,7 +755,7 @@ class SourceDB(object):
     ###################################################################
 
     def generate_unit_code(self, cl_id, grp_name, le_id, u_code):
-
+        unit_code = None
         if u_code is None:
             unit_code_start_letters = grp_name[:2].upper()
             select_param = [
@@ -763,7 +763,6 @@ class SourceDB(object):
                 str(unit_code_start_letters),
                 int(cl_id), int(le_id)
             ]
-            unit_code = None
             q = "SELECT (max(TRIM(LEADING %s FROM unit_code))+1) as code " + \
                 "FROM tbl_units WHERE unit_code like binary " + \
                 "concat( %s,'%') and " + \
@@ -2096,6 +2095,7 @@ class ValidateClientUnitsBulkDataForApprove(SourceDB):
         self._temp_data = None
         self._declined_row_idx = []
         self.get_uploaded_data()
+        self.store_initial_values()
         self._group_name = None
         self._csv_name = None
         self._uploaded_by = None
