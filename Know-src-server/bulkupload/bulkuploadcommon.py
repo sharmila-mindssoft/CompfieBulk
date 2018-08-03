@@ -243,13 +243,16 @@ def generate_valid_file(src_file_name):
                 # pyexcel.save_as(
                 #     file_name=src_file, dest_file_name=new_dst_file_name
                 # )
-                keywords = {
-                    'file_name': src_file,
-                    'dest_file_name': new_dst_file_name}
-                t = Process(
-                    target=pyexcel.save_as,
-                    kwargs=keywords)
-                t.start()
+                pyexcel.isave_as(
+                    file_name=src_file, dest_file_name=new_dst_file_name
+                )
+                # keywords = {
+                #     'file_name': src_file,
+                #     'dest_file_name': new_dst_file_name}
+                # t = Process(
+                #     target=pyexcel.save_as,
+                #     kwargs=keywords)
+                # t.start()
                 endtime = datetime.datetime.now()
                 logger.logKnowledge(
                     "info", "bulkuploadcommon - generate_valid_file",
