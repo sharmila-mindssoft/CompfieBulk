@@ -258,7 +258,7 @@ def validate_data(
             raise RuntimeError("Invalid Csv File")
 
         elif res_data["return_status"] is True:
-            generate_valid_file(csv_name)
+            pr_pool = generate_valid_file(csv_name)
             if res_data["doc_count"] == 0:
                 upload_sts = 1
             else:
