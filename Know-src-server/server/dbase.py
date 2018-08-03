@@ -174,7 +174,7 @@ class Database(object):
             else:
                 cursor.execute(query)
 
-            logger.logKnowledge("query", "execute", "query: %s, param:%s" % (query, param))
+            # logger.logKnowledge("query", "execute", "query: %s, param:%s" % (query, param))
             cursor.nextset()
             return True
 
@@ -198,7 +198,7 @@ class Database(object):
             else:
                 cursor.execute(query)
 
-            logger.logKnowledge("query", "execute_insert", "query: %s, param:%s" % (query, param))
+            # logger.logKnowledge("query", "execute_insert", "query: %s, param:%s" % (query, param))
             cursor.nextset()
             no = int(cursor.lastrowid)
             if no == 0 :
@@ -232,7 +232,7 @@ class Database(object):
 
                 else:
                     cursor.execute(query)
-            logger.logKnowledge("query", "select_all", "query: %s, param:%s" % (query, param))
+            # logger.logKnowledge("query", "select_all", "query: %s, param:%s" % (query, param))
             cursor.nextset()
             res = cursor.fetchall()
             cursor.nextset()
@@ -259,7 +259,7 @@ class Database(object):
                     cursor.execute(query, param)
                 else:
                     cursor.execute(query)
-            logger.logKnowledge("query", "select_one", "query: %s, param:%s" % (query, param))
+            # logger.logKnowledge("query", "select_one", "query: %s, param:%s" % (query, param))
             cursor.nextset()
             res = cursor.fetchone()
             cursor.nextset()
@@ -408,7 +408,7 @@ class Database(object):
 
             n_id = int(self.execute_insert(query, values))
             print n_id
-            logger.logKnowledge("query", "insert", "query: %s, param:%s" % (query, values))
+            # logger.logKnowledge("query", "insert", "query: %s, param:%s" % (query, values))
             return n_id
             if n_id == 0 :
                 return False
@@ -436,7 +436,7 @@ class Database(object):
             cursor = self.cursor()
             assert cursor is not None
             cursor.executemany(query, valueList)
-            logger.logKnowledge("query", "bulk_insert", "query: %s, param:%s" % (query, valueList))
+            # logger.logKnowledge("query", "bulk_insert", "query: %s, param:%s" % (query, valueList))
             cursor.nextset()
             return True
         except Exception, e:
@@ -463,7 +463,7 @@ class Database(object):
                 cursor = self.cursor()
                 assert cursor is not None
                 cursor.execute(query)
-                logger.logKnowledge("query", "bulk_update", "query: %s, param:%s" % (query, values))
+                # logger.logKnowledge("query", "bulk_update", "query: %s, param:%s" % (query, values))
                 cursor.nextset()
             return True
         except Exception, e:
@@ -485,7 +485,7 @@ class Database(object):
         query += " WHERE " + condition
         try:
             status = self.execute(query, values)
-            logger.logKnowledge("query", "update", "query: %s, param:%s" % (query, values))
+            # logger.logKnowledge("query", "update", "query: %s, param:%s" % (query, values))
 
             return status
         except Exception, e:
@@ -673,7 +673,7 @@ class Database(object):
             else:
                 cursor.callproc(procedure_name, args)
 
-            logger.logKnowledge("query", "call_proc", "procedure: %s, param:%s" % (procedure_name, args))
+            # logger.logKnowledge("query", "call_proc", "procedure: %s, param:%s" % (procedure_name, args))
 
             cols = cursor.description
             if cols:
@@ -709,7 +709,7 @@ class Database(object):
                 cursor.callproc(procedure_name)
             else:
                 cursor.callproc(procedure_name, args)
-            logger.logKnowledge("query", "call_insert_proc", "procedure: %s, param:%s" % (procedure_name, args))
+            # logger.logKnowledge("query", "call_insert_proc", "procedure: %s, param:%s" % (procedure_name, args))
 
             cursor.nextset()
             cursor.execute("SELECT LAST_INSERT_ID() as newid")
@@ -731,7 +731,7 @@ class Database(object):
                 cursor.callproc(procedure_name)
             else:
                 cursor.callproc(procedure_name, args)
-            logger.logKnowledge("query", "call_update_proc", "procedure: %s, param:%s" % (procedure_name, args))
+            # logger.logKnowledge("query", "call_update_proc", "procedure: %s, param:%s" % (procedure_name, args))
 
             cursor.nextset()
         except Exception, e:
@@ -753,7 +753,7 @@ class Database(object):
             else:
                 cursor.callproc(procedure_name, args)
 
-            logger.logKnowledge("query", "call_proc_with_multiresult_set", "procedure: %s, param:%s" % (procedure_name, args))
+            # logger.logKnowledge("query", "call_proc_with_multiresult_set", "procedure: %s, param:%s" % (procedure_name, args))
             rows = []
             for c in cursor.stored_results():
                 cols = c.description

@@ -21,8 +21,8 @@ CSV_DOWNLOAD_URL = "/knowledge/downloadcsv"
 
 # # Log flag #
 ENABLE_API_LOG = False
-ENABLE_QUERY_LOG = True
-ENABLE_DEBUG_LOG = True
+ENABLE_QUERY_LOG = False
+ENABLE_DEBUG_LOG = False
 #
 # Timezone
 #

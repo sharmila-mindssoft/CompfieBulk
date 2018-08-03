@@ -7,6 +7,7 @@ import pyexcel
 import string
 import random
 from server import logger
+from multiprocessing import Process
 import datetime
 
 from bulkconstants import (
@@ -219,7 +220,6 @@ def rename_file_type(src_file_name, des_file_type):
 
 def generate_valid_file(src_file_name):
     f_types = ["xlsx", "ods", "txt"]
-    # f_types = ["xlsx", "txt"]
     src_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
     str_split = src_file_name.split('.')
     src_file = os.path.join(src_path, src_file_name)
@@ -240,9 +240,16 @@ def generate_valid_file(src_file_name):
                     "info", "bulkuploadcommon - generate_valid_file",
                     "StartTime for %s file - %s, File name %s & Dest filename %s" % (f,
                     (starttime).strftime("%d-%b-%Y %H:%M:%S"), src_file_name, new_file))
-                pyexcel.save_as(
-                    file_name=src_file, dest_file_name=new_dst_file_name
-                )
+                # pyexcel.save_as(
+                #     file_name=src_file, dest_file_name=new_dst_file_name
+                # )
+                keywords = {
+                    'file_name': src_file,
+                    'dest_file_name': new_dst_file_name}
+                t = Process(
+                    target=pyexcel.save_as,
+                    kwargs=keywords)
+                t.start()
                 endtime = datetime.datetime.now()
                 logger.logKnowledge(
                     "info", "bulkuploadcommon - generate_valid_file",
@@ -253,7 +260,6 @@ def generate_valid_file(src_file_name):
                     "info", "bulkuploadcommon - generate_valid_file",
                     "Time difference for %s file - %s, File name %s & Dest filename %s" % (f,
                     diff, src_file_name, new_file))
-
             except IOError, e:
                 logger.logKnowledge(
                     "error", "bulkuploadcommon - generate_valid_file",
@@ -371,4 +377,4 @@ def remove_bulk_uploaded_files(csv_name):
             remove_file
             )
         if os.path.exists(file_path) is True:
-            print remove_uploaded_file(file_path)
+            remove_uploaded_file(file_path)

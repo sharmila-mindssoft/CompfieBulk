@@ -224,7 +224,6 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
             )
         )
         t.start()
-        print "Proces id=======================>", t.pid
         logger.logKnowledge(
             "info", "upload_client_units_bulk_csv",
             "Process Id %s for csvname %s: " % (t.pid, csv_name)
@@ -267,7 +266,6 @@ def client_unit_validate_data(
         header = pickle.loads(cu_header)
         client_units_bulk_data = pickle.loads(cu_bulk_data)
         return_data = None
-        print "db -> ", db
         clientUnitObj = ValidateClientUnitsBulkCsvData(
             db, client_units_bulk_data, session_user,
             request_frame.bu_client_id,
@@ -279,8 +277,6 @@ def client_unit_validate_data(
 
         logger.logKnowledge("info", "client_unit_validate_data",
                             "Perform validation Done for %s " % (os.getpid()))
-        print "err--------------------------------------------"
-        print validationResult
         if (
             "No such file or directory" not in validationResult and
             validationResult != "Empty CSV File Uploaded" and
@@ -408,7 +404,6 @@ def client_unit_validate_data(
             "buclientunitscontroller.py - client_unit_validate_data", e)
         raise e
     write_file()
-    print "os pid ---->>>", os.getpid()
     return
 
 
@@ -429,7 +424,6 @@ def upload_client_units_bulk_csv_old_copy(db, request_frame, session_user):
             csv_name, header
         )
         validationResult = clientUnitObj.perform_validation()
-        print "err--------------------------------------------"
         if (
             "No such file or directory" not in validationResult and
             validationResult != "Empty CSV File Uploaded" and
@@ -653,7 +647,6 @@ def perform_bulk_client_unit_approve_reject(db, request_frame, session_user):
             target=client_unit_approve_reject_process,
             args=(request_frame, session_user.user_id()))
         t.start()
-        print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", t.pid
         return bu_cu.Done(str(csv_id))
     except Exception, e:
         print e
@@ -678,7 +671,6 @@ def client_unit_approve_reject_process(request_frame, session_user):
         bu_client_id = request_frame.bu_client_id
         bu_remarks = request_frame.bu_remarks
         actionType = request_frame.bu_action
-        print "sessionusr client_unit_approve_reject_process-> ", session_user
         clientUnitObj = ValidateClientUnitsBulkDataForApprove(
             db, csv_id, bu_client_id, session_user
         )
@@ -839,7 +831,6 @@ def perform_bulk_client_unit_declination(db, request_frame, session_user):
             target=client_unit_declination_process,
             args=(request_frame, session_user.user_id()))
         t.start()
-        print "!!!!!!!!! perform_bulk_client_unit_declination!!!!!!!!", t.pid
         return bu_cu.Done(str(csv_id))
     except Exception, e:
         print e
@@ -897,7 +888,6 @@ def client_unit_declination_process(request_frame, session_user):
                     session_user
                 )
             ):
-                print "in if update_bulk_client_unit_approve_reject_list "
                 clientUnitObj.process_data_to_main_db_insert([])
                 clientUnitObj.save_manager_message(
                     1, clientUnitObj._csv_name, clientUnitObj._group_name,
@@ -1022,7 +1012,6 @@ def submit_bulk_client_unit_list_action(db, request_frame, session_user):
                 target=client_unit_submit_list_process,
                 args=(request_frame, session_user.user_id()))
             t.start()
-            print "!!!!!!!submit_bulk_client_unit_list_action!!!!!!!!", t.pid
             return bu_cu.Done(str(csv_id))
     except Exception, e:
         print e
@@ -1132,7 +1121,6 @@ def confirm_submit_bulk_client_unit_list_action(
                 target=client_unit_confirm_submit_process,
                 args=(request_frame, session_user.user_id()))
         t.start()
-        print "!!!!!!!confirm_submit_bulk_client_unit_list_action!!!!!", t.pid
         return bu_cu.Done(str(csv_id))
     except Exception, e:
         print e
@@ -1163,23 +1151,18 @@ def client_unit_confirm_submit_process(request_frame, session_user):
             manual_rejection_count = \
             clientUnitObj.check_for_system_declination_errors()
         if len(system_declined_count) > 0:
-            print "Entering If"
             clientUnitObj.process_data_to_main_db_insert(system_declined_count)
-            print "Main DB Inserted"
             clientUnitObj.make_rejection(
                 csv_id, 4, system_declined_count, system_declined_error
             )
-            print "rejection made"
             clientUnitObj.save_manager_message(
                 1, clientUnitObj._csv_name, clientUnitObj._group_name,
                 session_user, clientUnitObj._uploaded_by,
                 None, len(system_declined_count)
             )
-            print "Manaher message saved"
             update_bulk_client_unit_approve_reject_list(
                 db, csv_id, 4, None, len(system_declined_count), session_user
             )
-            print "Update Done"
             clientUnitObj.source_commit()
             return_data = bu_cu.SubmitClientUnitActionFromListSuccess(
                 ).to_structure()
