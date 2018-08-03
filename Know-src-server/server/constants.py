@@ -20,9 +20,9 @@ FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 CSV_DOWNLOAD_URL = "/knowledge/downloadcsv"
 
 # # Log flag #
-ENABLE_API_LOG = False
-ENABLE_QUERY_LOG = False
-ENABLE_DEBUG_LOG = False
+ENABLE_API_LOG = True
+ENABLE_QUERY_LOG = True
+ENABLE_DEBUG_LOG = True
 #
 # Timezone
 #
