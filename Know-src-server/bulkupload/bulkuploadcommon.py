@@ -2,10 +2,13 @@ import os
 import io
 import uuid
 import csv
+import json
 import xlsxwriter
 import pyexcel
 import string
 import random
+import glob
+from pyexcel_ods import save_data
 from server import logger
 from multiprocessing import Process
 import datetime
@@ -219,11 +222,11 @@ def rename_file_type(src_file_name, des_file_type):
 
 
 def generate_valid_file(src_file_name):
-    f_types = ["xlsx", "ods", "txt"]
+    f_types = ["ods", "xlsx", "txt"]
     src_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
     str_split = src_file_name.split('.')
     src_file = os.path.join(src_path, src_file_name)
-
+    pr_pool = []
     for f in f_types:
         new_file = str_split[0] + "." + f
         dst_dir = os.path.join(BULKUPLOAD_CSV_PATH, f)
@@ -243,16 +246,23 @@ def generate_valid_file(src_file_name):
                 # pyexcel.save_as(
                 #     file_name=src_file, dest_file_name=new_dst_file_name
                 # )
-                pyexcel.isave_as(
-                    file_name=src_file, dest_file_name=new_dst_file_name
-                )
-                # keywords = {
-                #     'file_name': src_file,
-                #     'dest_file_name': new_dst_file_name}
-                # t = Process(
-                #     target=pyexcel.save_as,
-                #     kwargs=keywords)
-                # t.start()
+                # pyexcel.isave_as(
+                #     file_name=src_file, dest_file_name=new_dst_file_name
+                # )
+                # if f == "xlsx":
+                #     generate_xl_file(src_file, new_dst_file_name)
+                # else:
+                #     generate_ods_file(src_file, new_dst_file_name)
+                keywords = {
+                    'file_name': src_file,
+                    'dest_file_name': new_dst_file_name}
+                t = Process(
+                    target=pyexcel.isave_as,
+                    kwargs=keywords)
+                t.start()
+                print "Starting %s for %s" % (t, f)
+                # t.join()
+                pr_pool.append(t)
                 endtime = datetime.datetime.now()
                 logger.logKnowledge(
                     "info", "bulkuploadcommon - generate_valid_file",
@@ -268,6 +278,30 @@ def generate_valid_file(src_file_name):
                     "error", "bulkuploadcommon - generate_valid_file",
                     "Exception when writing Ods,xlsx file - %s" % (e))
                 raise RuntimeError(e)
+    return pr_pool
+
+# def generate_xl_file(src_file, new_dst_file_name):
+#     for csvfile in glob.glob(src_file):
+#         workbook = xlsxwriter.Workbook(new_dst_file_name)
+#         worksheet = workbook.add_worksheet()
+#         with open(csvfile, 'rt') as f:
+#             reader = csv.reader(f)
+#             for r, row in enumerate(reader):
+#                 for c, col in enumerate(row):
+#                     worksheet.write(r, c, col)
+#     workbook.close()
+
+# def generate_ods_file(src_file, new_dst_file_name):
+#     data = []
+#     with open(src_file) as f:
+#         sheet = pyexcel.get_sheet(
+#             file_name=src_file, name_columns_by_row=0)
+#         datasheet.to_dict()
+#         # reader = csv.DictReader(f)
+#         # for r in reader:
+#         #     data.append(r)
+#     data = json.dumps(data)
+#     save_data(new_dst_file_name, data)
 
 
 def rename_download_file_type(src_file_name, des_file_type):

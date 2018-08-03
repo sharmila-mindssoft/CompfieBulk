@@ -4,6 +4,7 @@ from server import logger
 import pickle
 import multiprocessing
 import json
+import time
 
 from ..bucsvvalidation.clientunitsvalidation import (
     ValidateClientUnitsBulkCsvData,
@@ -241,6 +242,7 @@ def upload_client_units_bulk_csv(db, request_frame, session_user):
 def client_unit_validate_data(
     request_frame, session_user, csv_name, cu_header, cu_bulk_data
 ):
+    pr_pool = None
     def write_file():
         file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
@@ -259,150 +261,165 @@ def client_unit_validate_data(
                 "IO Error While writing return_data file %s" % (e))
             raise RuntimeError(e)
         return
-    try:
-        # csv data validation
+    # try:
+    # csv data validation
+    logger.logKnowledge("info", "client_unit_validate_data",
+                        "Process begin for pid %s, csv name %s" % (os.getpid(), csv_name))
+    header = pickle.loads(cu_header)
+    client_units_bulk_data = pickle.loads(cu_bulk_data)
+    return_data = None
+    clientUnitObj = ValidateClientUnitsBulkCsvData(
+        db, client_units_bulk_data, session_user,
+        request_frame.bu_client_id,
+        csv_name, header
+    )
+    logger.logKnowledge("info", "client_unit_validate_data",
+                        "clientUnitObj Generated for pid %s" % (os.getpid()))
+    print "starting perform_validation>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+    validationResult = clientUnitObj.perform_validation()
+    print "Finished perform validation>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+    logger.logKnowledge("info", "client_unit_validate_data",
+                        "Perform validation Done for %s " % (os.getpid()))
+    if (
+        "No such file or directory" not in validationResult and
+        validationResult != "Empty CSV File Uploaded" and
+        validationResult != "CSV File lines reached max limit" and
+        validationResult != "Csv Column Mismatched" and
+        "ordinal not in range(128)" not in validationResult and
+        (validationResult["return_status"] is not None and
+            validationResult["return_status"] is True)
+    ):
         logger.logKnowledge("info", "client_unit_validate_data",
-                            "Process begin for pid %s, csv name %s" % (os.getpid(), csv_name))
-        header = pickle.loads(cu_header)
-        client_units_bulk_data = pickle.loads(cu_bulk_data)
-        return_data = None
-        clientUnitObj = ValidateClientUnitsBulkCsvData(
-            db, client_units_bulk_data, session_user,
-            request_frame.bu_client_id,
-            csv_name, header
-        )
+                            "Came into if before generate valid file for %s" % (os.getpid()))
+        print "gonna generate valid file>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+        pr_pool = generate_valid_file(csv_name)
+        print "finished generating valid file pr_poll>>>>>>>>>>>>>>>>>>>", pr_pool
+        csv_args = [
+            request_frame.bu_client_id, request_frame.bu_group_name,
+            csv_name, session_user, validationResult["total"]
+        ]
+        print "save_client_units_mapping_csv>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+        new_csv_id = save_client_units_mapping_csv(db, csv_args)
+        print "new_csv_id>>>>>>>>>>>>>>>>>>>>>>>>>>>", new_csv_id
         logger.logKnowledge("info", "client_unit_validate_data",
-                            "clientUnitObj Generated for pid %s" % (os.getpid()))
-        validationResult = clientUnitObj.perform_validation()
-
-        logger.logKnowledge("info", "client_unit_validate_data",
-                            "Perform validation Done for %s " % (os.getpid()))
-        if (
-            "No such file or directory" not in validationResult and
-            validationResult != "Empty CSV File Uploaded" and
-            validationResult != "CSV File lines reached max limit" and
-            validationResult != "Csv Column Mismatched" and
-            "ordinal not in range(128)" not in validationResult and
-            (validationResult["return_status"] is not None and
-                validationResult["return_status"] is True)
-        ):
-            logger.logKnowledge("info", "client_unit_validate_data",
-                                "Came into if before generate valid file for %s" % (os.getpid()))
-            generate_valid_file(csv_name)
-            csv_args = [
-                request_frame.bu_client_id, request_frame.bu_group_name,
-                csv_name, session_user, validationResult["total"]
-            ]
-            new_csv_id = save_client_units_mapping_csv(db, csv_args)
-            logger.logKnowledge("info", "client_unit_validate_data",
-                                "csv id generated -> %s, pid %s" % (new_csv_id, os.getpid()))
-            if new_csv_id:
-                if save_mapping_client_unit_data(
-                        db, new_csv_id, validationResult["data"]
-                ) is True:
-                    logger.logKnowledge("info", "client_unit_validate_data",
-                                        "save mapping client unit if True for pid %s" % (os.getpid()))
-                    clientUnitObj.save_executive_message(
-                        csv_name, request_frame.bu_group_name,
-                        session_user
-                    )
-                    logger.logKnowledge("info", "client_unit_validate_data",
-                                        "save_executive_message saved for pid %s" % (os.getpid()))
-                    clientUnitObj.source_commit()
-                    result = bu_cu.UploadClientUnitBulkCSVSuccess(
-                        validationResult["total"], validationResult["valid"],
-                        validationResult["invalid"]
-                    ).to_structure()
-                    return_data = json.dumps(result)
-                    logger.logKnowledge(
-                        "info", "client_unit_validate_data",
-                        "return data in first If-> %s for pid %s" % (return_data, os.getpid()))
-        elif (
-            "No such file or directory" not in validationResult and
-            "ordinal not in range(128)" not in validationResult and
-            validationResult != "Empty CSV File Uploaded" and
-            validationResult != "CSV File lines reached max limit" and
-            validationResult != "Csv Column Mismatched" and
-            (validationResult["return_status"] is not None and
-                validationResult["return_status"] is False)
-        ):
-            result = bu_cu.UploadClientUnitBulkCSVFailed(
-                validationResult["invalid_file"],
-                validationResult["mandatory_error"],
-                validationResult["max_length_error"],
-                validationResult["duplicate_error"],
-                validationResult["invalid_char_error"],
-                validationResult["invalid_data_error"],
-                validationResult["inactive_error"],
-                validationResult["max_unit_count_error"],
-                validationResult["total"], validationResult["invalid"]
-            ).to_structure()
-            return_data = json.dumps(result)
-            logger.logKnowledge(
-                        "info", "client_unit_validate_data",
-                        "return data in first elIf-> %s for pid %s" % (return_data, os.getpid()))
-        elif (
-            "No such file or directory" not in validationResult and
-            "ordinal not in range(128)" not in validationResult and
-            validationResult != "CSV File lines reached max limit" and
-            validationResult != "Csv Column Mismatched" and
-            validationResult == "Empty CSV File Uploaded"
-        ):
-            result = bu_cu.EmptyCSVUploaded().to_structure()
-            return_data = json.dumps(result)
-            logger.logKnowledge(
-                        "info", "client_unit_validate_data",
-                        "return data in second elIf-> %s for pid %s" % (return_data, os.getpid()))
-        elif (
-            "No such file or directory" not in validationResult and
-            "ordinal not in range(128)" not in validationResult and
-            validationResult != "Csv Column Mismatched" and
-            validationResult == "CSV File lines reached max limit"
-        ):
-            csv_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
-            file_path = os.path.join(csv_path, csv_name)
-            remove_uploaded_file(file_path)
-            result = bu_cu.CSVFileLinesMaxREached(
-                                            csv_max_lines=CSV_MAX_LINES
-                            ).to_structure()
-            return_data = json.dumps(result)
-            logger.logKnowledge(
-                        "info", "client_unit_validate_data",
-                        "return data in third elIf-> %s" % (return_data))
-        elif (
-            "No such file or directory" not in validationResult and
-            "ordinal not in range(128)" not in validationResult and
-            validationResult == "Csv Column Mismatched"
-        ):
-            result = bu_cu.CSVColumnMisMatched().to_structure()
-            return_data = json.dumps(result)
-            logger.logKnowledge(
-                        "info", "client_unit_validate_data",
-                        "return data in fourth elIf-> %sfor pid %s" % (return_data, os.getpid()))
-        elif (
-            "No such file or directory" in validationResult or
-            "ordinal not in range(128)" in validationResult
-        ):
-            result = bu_cu.InvalidCSVUploaded().to_structure()
-            return_data = json.dumps(result)
-            logger.logKnowledge(
-                        "info", "client_unit_validate_data",
-                        "return data in fifth elIf-> %sfor pid %s" % (return_data, os.getpid()))
-    except AssertionError as error:
-        e = "AssertionError"
-        return_data = json.dumps(e)
-        write_file()
+                            "csv id generated -> %s, pid %s" % (new_csv_id, os.getpid()))
+        if new_csv_id:
+            print "save_mapping_client_unit_data>>>>>>>>>>>>>>>>>>>>>>>"
+            if save_mapping_client_unit_data(
+                    db, new_csv_id, validationResult["data"]
+            ) is True:
+                logger.logKnowledge("info", "client_unit_validate_data",
+                                    "save mapping client unit if True for pid %s" % (os.getpid()))
+                print "save_executive_message>>>>>>>>>>>>>>>>>>>>>>>"
+                clientUnitObj.save_executive_message(
+                    csv_name, request_frame.bu_group_name,
+                    session_user
+                )
+                logger.logKnowledge("info", "client_unit_validate_data",
+                                    "save_executive_message saved for pid %s" % (os.getpid()))
+                clientUnitObj.source_commit()
+                result = bu_cu.UploadClientUnitBulkCSVSuccess(
+                    validationResult["total"], validationResult["valid"],
+                    validationResult["invalid"]
+                ).to_structure()
+                return_data = json.dumps(result)
+                logger.logKnowledge(
+                    "info", "client_unit_validate_data",
+                    "return data in first If-> %s for pid %s" % (return_data, os.getpid()))
+    elif (
+        "No such file or directory" not in validationResult and
+        "ordinal not in range(128)" not in validationResult and
+        validationResult != "Empty CSV File Uploaded" and
+        validationResult != "CSV File lines reached max limit" and
+        validationResult != "Csv Column Mismatched" and
+        (validationResult["return_status"] is not None and
+            validationResult["return_status"] is False)
+    ):
+        result = bu_cu.UploadClientUnitBulkCSVFailed(
+            validationResult["invalid_file"],
+            validationResult["mandatory_error"],
+            validationResult["max_length_error"],
+            validationResult["duplicate_error"],
+            validationResult["invalid_char_error"],
+            validationResult["invalid_data_error"],
+            validationResult["inactive_error"],
+            validationResult["max_unit_count_error"],
+            validationResult["total"], validationResult["invalid"]
+        ).to_structure()
+        return_data = json.dumps(result)
         logger.logKnowledge(
-            "error",
-            "buclientunitscontroller.py - client_unit_validate_data", e)
-        raise error
-    except Exception, e:
-        return_data = json.dumps(str(e))
-        write_file()
+                    "info", "client_unit_validate_data",
+                    "return data in first elIf-> %s for pid %s" % (return_data, os.getpid()))
+    elif (
+        "No such file or directory" not in validationResult and
+        "ordinal not in range(128)" not in validationResult and
+        validationResult != "CSV File lines reached max limit" and
+        validationResult != "Csv Column Mismatched" and
+        validationResult == "Empty CSV File Uploaded"
+    ):
+        result = bu_cu.EmptyCSVUploaded().to_structure()
+        return_data = json.dumps(result)
         logger.logKnowledge(
-            "error",
-            "buclientunitscontroller.py - client_unit_validate_data", e)
-        raise e
+                    "info", "client_unit_validate_data",
+                    "return data in second elIf-> %s for pid %s" % (return_data, os.getpid()))
+    elif (
+        "No such file or directory" not in validationResult and
+        "ordinal not in range(128)" not in validationResult and
+        validationResult != "Csv Column Mismatched" and
+        validationResult == "CSV File lines reached max limit"
+    ):
+        csv_path = os.path.join(BULKUPLOAD_CSV_PATH, "csv")
+        file_path = os.path.join(csv_path, csv_name)
+        remove_uploaded_file(file_path)
+        result = bu_cu.CSVFileLinesMaxREached(
+                                        csv_max_lines=CSV_MAX_LINES
+                        ).to_structure()
+        return_data = json.dumps(result)
+        logger.logKnowledge(
+                    "info", "client_unit_validate_data",
+                    "return data in third elIf-> %s" % (return_data))
+    elif (
+        "No such file or directory" not in validationResult and
+        "ordinal not in range(128)" not in validationResult and
+        validationResult == "Csv Column Mismatched"
+    ):
+        result = bu_cu.CSVColumnMisMatched().to_structure()
+        return_data = json.dumps(result)
+        logger.logKnowledge(
+                    "info", "client_unit_validate_data",
+                    "return data in fourth elIf-> %sfor pid %s" % (return_data, os.getpid()))
+    elif (
+        "No such file or directory" in validationResult or
+        "ordinal not in range(128)" in validationResult
+    ):
+        result = bu_cu.InvalidCSVUploaded().to_structure()
+        return_data = json.dumps(result)
+        logger.logKnowledge(
+                    "info", "client_unit_validate_data",
+                    "return data in fifth elIf-> %sfor pid %s" % (return_data, os.getpid()))
+    # except AssertionError as error:
+    #     e = "AssertionError"
+    #     return_data = json.dumps(e)
+    #     write_file()
+    #     logger.logKnowledge(
+    #         "error",
+    #         "buclientunitscontroller.py - client_unit_validate_data", e)
+    #     raise error
+    # except Exception, e:
+    #     return_data = json.dumps(str(e))
+    #     write_file()
+    #     logger.logKnowledge(
+    #         "error",
+    #         "buclientunitscontroller.py - client_unit_validate_data", e)
+    #     raise e
+    print "Checking process completions>>>>>>>>>>>>>>>>>>>>>>>>>", pr_pool
+    while pr_pool:
+        time.sleep(5)
+        for p in pr_pool:
+            print "%s Alive: %s " % (p, p.is_alive())
+            if not p.is_alive():
+                pr_pool.remove(p)
+    print "write_file() called>>>>>>>>>>>>>>>>>>>>>>>>>", pr_pool
     write_file()
     return
 
@@ -1297,6 +1314,7 @@ def process_get_cu_upload_status(request):
                 "error", "buclientunitscontroller - process_get_cu_upload_status",
                 "IO Error While Reading return_data file %s" % (e))
             raise RuntimeError(e)
+        print return_data
         remove_uploaded_file(file_path)
         if return_data == "InvalidCSV":
             return bu_sm.InvalidCsvFile()
