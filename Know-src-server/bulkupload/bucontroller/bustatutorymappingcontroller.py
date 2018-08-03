@@ -213,6 +213,7 @@ def get_statutory_mapping_csv_list(db, session_user):
 def validate_data(
     request_frame, session_user, csv_name, s_header, s_smap_data
 ):
+    pr_pool = None
     def write_file():
         file_string = csv_name.split(".")
         file_name = "%s_%s.%s" % (
@@ -328,6 +329,14 @@ def validate_data(
             "error",
             "bustatutorymappingcontroller.py - validate_data()", e)
         raise e
+    print "Checking process completions>>>>>>>>>>>>>>>>>>>>>>>>>", pr_pool
+    while pr_pool:
+        time.sleep(5)
+        for p in pr_pool:
+            print "%s Alive: %s " % (p, p.is_alive())
+            if not p.is_alive():
+                pr_pool.remove(p)
+    print "write_file() called>>>>>>>>>>>>>>>>>>>>>>>>>", pr_pool
     write_file()
     print "os pid ---->>>", os.getpid()
     return
