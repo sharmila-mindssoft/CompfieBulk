@@ -10,8 +10,9 @@ import random
 import glob
 from copy import deepcopy
 from pyexcel_ods import save_data
+import odswriter as ods
 from server import logger
-from multiprocessing import Process
+import multiprocessing
 import datetime
 from collections import OrderedDict
 
@@ -249,17 +250,15 @@ def generate_valid_file(src_file_name):
                     keywords = {
                         'file_name': src_file,
                         'dest_file_name': new_dst_file_name}
-                    t = Process(
+                    t = multiprocessing.Process(
                         target=pyexcel.isave_as,
                         kwargs=keywords)
                     t.start()
-                    
                 else:
                     t = Process(
                         target=generate_ods_file,
                         args=(src_file, new_dst_file_name))
                     t.start()
-                pr_pool.append(t)
                 pr_pool.append(t)                
                 endtime = datetime.datetime.now()
                 logger.logKnowledge(
@@ -276,34 +275,37 @@ def generate_valid_file(src_file_name):
                     "error", "bulkuploadcommon - generate_valid_file",
                     "Exception when writing Ods,xlsx file - %s" % (e))
                 raise RuntimeError(e)
-    return pr_pool
+    print "Checking process completions>>>>>>>>>>>>>>>>>>>>>>>>>", pr_pool
+    while pr_pool:
+        time.sleep(5)
+        for p in pr_pool:
+            print "%s Alive: %s " % (p, p.is_alive())
+            if not p.is_alive():
+                pr_pool.remove(p)
+    print "write_file() called>>>>>>>>>>>>>>>>>>>>>>>>>", pr_pool
+    return
 
 def generate_ods_file(src_file, new_dst_file_name):
     print "Reading Started>>>>>>>>>>>>", datetime.datetime.now()
+    rows = []
     with open(src_file, 'r') as csvfile:
         csvreader = csv.reader(csvfile)
-        row_list = []
-        rows = []
         for row in csvreader:
             rows.append(list(row))
-            if len(rows) >= 10000:
-                print "appending in row list>>>>>>>>>>>>>>>", len(rows)
-                row_list.append(deepcopy(rows))
-                rows[:] = []
-                print "appenedrow checking again>>>>>>>>>", len(row_list[0])
-    print "Reading completed>>>>>>>>>>>>", datetime.datetime.now()
+    print "Reading Completed>>>>>>>>>>>>", datetime.datetime.now()
+    ########## pyexcel ods  ######################################
+    data = OrderedDict()
+    data.update({"Sheet 1": rows})
     print "Writing Started>>>>>>>>>>>>", datetime.datetime.now()
-    print "row_list length>>>>>>>>>>>>",len(row_list)
-    sheet_no = 1
-    for d in row_list:
-        sheet = "Sheet %s" % sheet_no
-        print "len of row:>>>>>>>>>>>>>>>>>>>", len(d)
-        data = OrderedDict()
-        data.update({sheet: d})
-        save_data(new_dst_file_name, data)
-        print "Sheet %s write completed>>>>>>>>>>>>>>>" % sheet
-        sheet_no += 1
+    save_data(new_dst_file_name, data)
     print "Writing completed>>>>>>>>>>>>", datetime.datetime.now()
+    ########## pyexce ods  ######################################
+    ########## ODS Writer  ######################################
+    # with ods.writer(open("test.ods","wb")) as odsfile:
+    #     for row in rows:
+    #         odsfile.writerow(row)
+    ########## ODS Writer  ######################################
+
 
 
 def rename_download_file_type(src_file_name, des_file_type):
