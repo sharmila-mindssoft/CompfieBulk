@@ -2,6 +2,7 @@ import os
 import pickle
 import threading
 import json
+import time
 import traceback
 from server import logger
 from ..bucsvvalidation.statutorymappingvalidation import (
@@ -314,6 +315,15 @@ def validate_data(
                 "info", "validate_data",
                 "return_data in else (new_csv_id) : %s" % (return_data)
             )
+        print "Checking process completions>>>>>>>>>>>>>>>>>>>>>>>>>", pr_pool
+        while pr_pool:
+            time.sleep(5)
+            for p in pr_pool:
+                print "%s Alive: %s " % (p, p.is_alive())
+                if not p.is_alive():
+                    pr_pool.remove(p)
+        print "write_file() called>>>>>>>>>>>>>>>>>>>>>>>>>", pr_pool
+        write_file()
     except AssertionError as error:
         e = "AssertionError"
         return_data = json.dumps(e)
@@ -329,15 +339,6 @@ def validate_data(
             "error",
             "bustatutorymappingcontroller.py - validate_data()", e)
         raise e
-    print "Checking process completions>>>>>>>>>>>>>>>>>>>>>>>>>", pr_pool
-    while pr_pool:
-        time.sleep(5)
-        for p in pr_pool:
-            print "%s Alive: %s " % (p, p.is_alive())
-            if not p.is_alive():
-                pr_pool.remove(p)
-    print "write_file() called>>>>>>>>>>>>>>>>>>>>>>>>>", pr_pool
-    write_file()
     print "os pid ---->>>", os.getpid()
     return
 

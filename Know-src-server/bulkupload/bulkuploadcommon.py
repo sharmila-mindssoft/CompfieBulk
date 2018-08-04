@@ -8,10 +8,12 @@ import pyexcel
 import string
 import random
 import glob
+from copy import deepcopy
 from pyexcel_ods import save_data
 from server import logger
 from multiprocessing import Process
 import datetime
+from collections import OrderedDict
 
 from bulkconstants import (
     BULKUPLOAD_INVALID_PATH, BULKUPLOAD_CSV_PATH,
@@ -243,26 +245,22 @@ def generate_valid_file(src_file_name):
                     "info", "bulkuploadcommon - generate_valid_file",
                     "StartTime for %s file - %s, File name %s & Dest filename %s" % (f,
                     (starttime).strftime("%d-%b-%Y %H:%M:%S"), src_file_name, new_file))
-                # pyexcel.save_as(
-                #     file_name=src_file, dest_file_name=new_dst_file_name
-                # )
-                # pyexcel.isave_as(
-                #     file_name=src_file, dest_file_name=new_dst_file_name
-                # )
-                # if f == "xlsx":
-                #     generate_xl_file(src_file, new_dst_file_name)
-                # else:
-                #     generate_ods_file(src_file, new_dst_file_name)
-                keywords = {
-                    'file_name': src_file,
-                    'dest_file_name': new_dst_file_name}
-                t = Process(
-                    target=pyexcel.isave_as,
-                    kwargs=keywords)
-                t.start()
-                print "Starting %s for %s" % (t, f)
-                # t.join()
+                if f == "xlsx":
+                    keywords = {
+                        'file_name': src_file,
+                        'dest_file_name': new_dst_file_name}
+                    t = Process(
+                        target=pyexcel.isave_as,
+                        kwargs=keywords)
+                    t.start()
+                    
+                else:
+                    t = Process(
+                        target=generate_ods_file,
+                        args=(src_file, new_dst_file_name))
+                    t.start()
                 pr_pool.append(t)
+                pr_pool.append(t)                
                 endtime = datetime.datetime.now()
                 logger.logKnowledge(
                     "info", "bulkuploadcommon - generate_valid_file",
@@ -280,28 +278,32 @@ def generate_valid_file(src_file_name):
                 raise RuntimeError(e)
     return pr_pool
 
-# def generate_xl_file(src_file, new_dst_file_name):
-#     for csvfile in glob.glob(src_file):
-#         workbook = xlsxwriter.Workbook(new_dst_file_name)
-#         worksheet = workbook.add_worksheet()
-#         with open(csvfile, 'rt') as f:
-#             reader = csv.reader(f)
-#             for r, row in enumerate(reader):
-#                 for c, col in enumerate(row):
-#                     worksheet.write(r, c, col)
-#     workbook.close()
-
-# def generate_ods_file(src_file, new_dst_file_name):
-#     data = []
-#     with open(src_file) as f:
-#         sheet = pyexcel.get_sheet(
-#             file_name=src_file, name_columns_by_row=0)
-#         datasheet.to_dict()
-#         # reader = csv.DictReader(f)
-#         # for r in reader:
-#         #     data.append(r)
-#     data = json.dumps(data)
-#     save_data(new_dst_file_name, data)
+def generate_ods_file(src_file, new_dst_file_name):
+    print "Reading Started>>>>>>>>>>>>", datetime.datetime.now()
+    with open(src_file, 'r') as csvfile:
+        csvreader = csv.reader(csvfile)
+        row_list = []
+        rows = []
+        for row in csvreader:
+            rows.append(list(row))
+            if len(rows) >= 10000:
+                print "appending in row list>>>>>>>>>>>>>>>", len(rows)
+                row_list.append(deepcopy(rows))
+                rows[:] = []
+                print "appenedrow checking again>>>>>>>>>", len(row_list[0])
+    print "Reading completed>>>>>>>>>>>>", datetime.datetime.now()
+    print "Writing Started>>>>>>>>>>>>", datetime.datetime.now()
+    print "row_list length>>>>>>>>>>>>",len(row_list)
+    sheet_no = 1
+    for d in row_list:
+        sheet = "Sheet %s" % sheet_no
+        print "len of row:>>>>>>>>>>>>>>>>>>>", len(d)
+        data = OrderedDict()
+        data.update({sheet: d})
+        save_data(new_dst_file_name, data)
+        print "Sheet %s write completed>>>>>>>>>>>>>>>" % sheet
+        sheet_no += 1
+    print "Writing completed>>>>>>>>>>>>", datetime.datetime.now()
 
 
 def rename_download_file_type(src_file_name, des_file_type):
